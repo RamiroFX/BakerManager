@@ -60,7 +60,7 @@ public class C_crear_rol extends MouseAdapter implements ActionListener {
         this.vista.jbAgregar.setEnabled(false);
         this.vista.jbQuitar.setEnabled(false);
         this.vista.jtPermisosDisponibles.setModel(modelo.obtenerAccesosDispon());
-        Utils.c_packColumn.packColumns(this.vista.jtPermisosDisponibles, 1);
+        Utilities.c_packColumn.packColumns(this.vista.jtPermisosDisponibles, 1);
     }
 
     private void crearRol() {
@@ -77,7 +77,7 @@ public class C_crear_rol extends MouseAdapter implements ActionListener {
         String itemDescripcion = (String) this.vista.jtPermisosDisponibles.getValueAt(fila, 3);
         this.modelo.agregarAcceso(idMenu, menuDescripcion, idMenuItem, itemDescripcion);
         this.vista.jtPermisosSeleccionados.setModel(this.modelo.obtenerAccesoSelecc());
-        Utils.c_packColumn.packColumns(this.vista.jtPermisosSeleccionados, 1);
+        Utilities.c_packColumn.packColumns(this.vista.jtPermisosSeleccionados, 1);
         this.vista.jbAgregar.setEnabled(false);
         this.vista.jbQuitar.setEnabled(false);
     }
@@ -87,7 +87,7 @@ public class C_crear_rol extends MouseAdapter implements ActionListener {
         int idItem = (int) this.vista.jtPermisosSeleccionados.getValueAt(fila, 2);
         this.modelo.quitarAcceso(idItem);
         this.vista.jtPermisosSeleccionados.setModel(this.modelo.obtenerAccesoSelecc());
-        Utils.c_packColumn.packColumns(this.vista.jtPermisosSeleccionados, 1);
+        Utilities.c_packColumn.packColumns(this.vista.jtPermisosSeleccionados, 1);
         this.vista.jbAgregar.setEnabled(false);
         this.vista.jbQuitar.setEnabled(false);
     }
@@ -124,7 +124,7 @@ public class C_crear_rol extends MouseAdapter implements ActionListener {
             if (e.getClickCount() == 2) {
                 this.modelo.agregarAcceso(idMenu, menuDescripcion, idMenuItem, itemDescripcion);
                 this.vista.jtPermisosSeleccionados.setModel(this.modelo.obtenerAccesoSelecc());
-                Utils.c_packColumn.packColumns(this.vista.jtPermisosSeleccionados, 1);
+                Utilities.c_packColumn.packColumns(this.vista.jtPermisosSeleccionados, 1);
                 this.vista.jbAgregar.setEnabled(false);
                 this.vista.jbQuitar.setEnabled(false);
             }
@@ -141,7 +141,7 @@ public class C_crear_rol extends MouseAdapter implements ActionListener {
             if (e.getClickCount() == 2) {
                 this.modelo.quitarAcceso(idMenuItem);
                 this.vista.jtPermisosSeleccionados.setModel(this.modelo.obtenerAccesoSelecc());
-                Utils.c_packColumn.packColumns(this.vista.jtPermisosSeleccionados, 1);
+                Utilities.c_packColumn.packColumns(this.vista.jtPermisosSeleccionados, 1);
                 this.vista.jbAgregar.setEnabled(false);
                 this.vista.jbQuitar.setEnabled(false);
             }

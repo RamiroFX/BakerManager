@@ -9,7 +9,7 @@ import DB_manager.DB_rol;
 import DB_manager.ResultSetTableModel;
 import Entities.M_menu_item;
 import Entities.M_rol;
-import Utils.ArrayListTableModel;
+import Utilities.ArrayListTableModel;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
 import javax.swing.table.TableModel;

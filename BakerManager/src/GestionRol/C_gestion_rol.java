@@ -46,7 +46,7 @@ public class C_gestion_rol extends MouseAdapter implements ActionListener {
 
     private void mostrarPermisos(int idRol) {
         this.vista.jtPermisos.setModel(this.modelo.consultarPermisos(idRol));
-        Utils.c_packColumn.packColumns(this.vista.jtPermisos, 1);
+        Utilities.c_packColumn.packColumns(this.vista.jtPermisos, 1);
     }
 
     private void eliminarRol() {

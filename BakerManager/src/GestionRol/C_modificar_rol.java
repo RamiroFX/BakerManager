@@ -62,8 +62,8 @@ class C_modificar_rol extends MouseAdapter implements ActionListener {
         this.vista.jbQuitar.setEnabled(false);
         this.vista.jtPermisosDisponibles.setModel(modelo.obtenerAccesosDispon());
         this.vista.jtPermisosSeleccionados.setModel(modelo.obtenerAccesoSelecc());
-        Utils.c_packColumn.packColumns(this.vista.jtPermisosDisponibles, 1);
-        Utils.c_packColumn.packColumns(this.vista.jtPermisosSeleccionados, 1);
+        Utilities.c_packColumn.packColumns(this.vista.jtPermisosDisponibles, 1);
+        Utilities.c_packColumn.packColumns(this.vista.jtPermisosSeleccionados, 1);
     }
 
     private void modificarRol() {
@@ -78,7 +78,7 @@ class C_modificar_rol extends MouseAdapter implements ActionListener {
         int idMenuItem = (Integer.valueOf((String) this.vista.jtPermisosDisponibles.getValueAt(fila, 2)));
         this.modelo.agregarAcceso(idMenu, idMenuItem);
         this.vista.jtPermisosSeleccionados.setModel(this.modelo.obtenerAccesoSelecc());
-        Utils.c_packColumn.packColumns(this.vista.jtPermisosSeleccionados, 1);
+        Utilities.c_packColumn.packColumns(this.vista.jtPermisosSeleccionados, 1);
         this.vista.jbAgregar.setEnabled(false);
         this.vista.jbQuitar.setEnabled(false);
     }
@@ -89,7 +89,7 @@ class C_modificar_rol extends MouseAdapter implements ActionListener {
         int idItem = Integer.valueOf(String.valueOf(this.vista.jtPermisosSeleccionados.getValueAt(fila, 2)));
         this.modelo.quitarAcceso(idMenu, idItem);
         this.vista.jtPermisosSeleccionados.setModel(this.modelo.obtenerAccesoSelecc());
-        Utils.c_packColumn.packColumns(this.vista.jtPermisosSeleccionados, 1);
+        Utilities.c_packColumn.packColumns(this.vista.jtPermisosSeleccionados, 1);
         this.vista.jbAgregar.setEnabled(false);
         this.vista.jbQuitar.setEnabled(false);
     }
@@ -124,7 +124,7 @@ class C_modificar_rol extends MouseAdapter implements ActionListener {
             if (e.getClickCount() == 2) {
                 this.modelo.agregarAcceso(idMenu, idMenuItem);
                 this.vista.jtPermisosSeleccionados.setModel(this.modelo.obtenerAccesoSelecc());
-                Utils.c_packColumn.packColumns(this.vista.jtPermisosSeleccionados, 1);
+                Utilities.c_packColumn.packColumns(this.vista.jtPermisosSeleccionados, 1);
                 this.vista.jbAgregar.setEnabled(false);
                 this.vista.jbQuitar.setEnabled(false);
             }
@@ -142,7 +142,7 @@ class C_modificar_rol extends MouseAdapter implements ActionListener {
             if (e.getClickCount() == 2) {
                 this.modelo.quitarAcceso(idMenu, idMenuItem);
                 this.vista.jtPermisosSeleccionados.setModel(this.modelo.obtenerAccesoSelecc());
-                Utils.c_packColumn.packColumns(this.vista.jtPermisosSeleccionados, 1);
+                Utilities.c_packColumn.packColumns(this.vista.jtPermisosSeleccionados, 1);
                 this.vista.jbAgregar.setEnabled(false);
                 this.vista.jbQuitar.setEnabled(false);
             }

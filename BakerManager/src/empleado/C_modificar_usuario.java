@@ -392,7 +392,7 @@ public class C_modificar_usuario extends MouseAdapter implements ActionListener,
         String descripcionRol = (String) this.vista.jtRolesDisponibles.getValueAt(fila, 1);
         this.modelo.agregarRol(idRol, descripcionRol);
         this.vista.jtRolesSeleccionados.setModel(this.modelo.obtenerRolesSelecc());
-        Utils.c_packColumn.packColumns(this.vista.jtRolesSeleccionados, 1);
+        Utilities.c_packColumn.packColumns(this.vista.jtRolesSeleccionados, 1);
         this.vista.jbAgregarRol.setEnabled(false);
         this.vista.jbQuitarRol.setEnabled(false);
     }
@@ -402,7 +402,7 @@ public class C_modificar_usuario extends MouseAdapter implements ActionListener,
         int idRol = Integer.valueOf(String.valueOf(this.vista.jtRolesSeleccionados.getValueAt(fila, 0)));
         this.modelo.quitarRol(idRol);
         this.vista.jtRolesSeleccionados.setModel(this.modelo.obtenerRolesSelecc());
-        Utils.c_packColumn.packColumns(this.vista.jtRolesSeleccionados, 1);
+        Utilities.c_packColumn.packColumns(this.vista.jtRolesSeleccionados, 1);
         this.vista.jbAgregarRol.setEnabled(false);
         this.vista.jbQuitarRol.setEnabled(false);
     }
@@ -452,7 +452,7 @@ public class C_modificar_usuario extends MouseAdapter implements ActionListener,
             if (e.getClickCount() == 2) {
                 this.modelo.agregarRol(idRol, descripcionRol);
                 this.vista.jtRolesSeleccionados.setModel(this.modelo.obtenerRolesSelecc());
-                Utils.c_packColumn.packColumns(this.vista.jtRolesSeleccionados, 1);
+                Utilities.c_packColumn.packColumns(this.vista.jtRolesSeleccionados, 1);
                 this.vista.jbAgregarRol.setEnabled(false);
                 this.vista.jbQuitarRol.setEnabled(false);
             }
@@ -469,7 +469,7 @@ public class C_modificar_usuario extends MouseAdapter implements ActionListener,
             if (e.getClickCount() == 2) {
                 this.modelo.quitarRol(idRol);
                 this.vista.jtRolesSeleccionados.setModel(this.modelo.obtenerRolesSelecc());
-                Utils.c_packColumn.packColumns(this.vista.jtRolesSeleccionados, 1);
+                Utilities.c_packColumn.packColumns(this.vista.jtRolesSeleccionados, 1);
                 this.vista.jbAgregarRol.setEnabled(false);
                 this.vista.jbQuitarRol.setEnabled(false);
             }

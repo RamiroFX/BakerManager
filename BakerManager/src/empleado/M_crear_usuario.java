@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import Entities.M_funcionario;
 import Entities.M_rol;
-import Utils.ArrayListTableModel;
+import Utilities.ArrayListTableModel;
 import java.util.Vector;
 import javax.swing.JOptionPane;
 
