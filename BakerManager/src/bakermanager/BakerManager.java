@@ -13,7 +13,7 @@ import javax.swing.UnsupportedLookAndFeelException;
  *
  * @author Ramiro
  */
-public class Beltrom {
+public class BakerManager {
     
     private static UIManager.LookAndFeelInfo apariencias[] = UIManager.getInstalledLookAndFeels();
 
@@ -21,13 +21,13 @@ public class Beltrom {
         try {
             UIManager.setLookAndFeel(apariencias[1].getClassName());
         } catch (ClassNotFoundException ex) {
-            Logger.getLogger(Beltrom.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(BakerManager.class.getName()).log(Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            Logger.getLogger(Beltrom.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(BakerManager.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            Logger.getLogger(Beltrom.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(BakerManager.class.getName()).log(Level.SEVERE, null, ex);
         } catch (UnsupportedLookAndFeelException ex) {
-            Logger.getLogger(Beltrom.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(BakerManager.class.getName()).log(Level.SEVERE, null, ex);
         }
         Inicio inicio = new Inicio();
         inicio.mostrarLogin();

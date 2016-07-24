@@ -16,6 +16,7 @@ import Interface.Gestion;
 import bakermanager.C_inicio;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -158,8 +159,12 @@ public class C_gestion_usuario implements Gestion {
         } else if (e.getSource() == this.vista.jbModificarUsuario) {
             int row = this.vista.jtUsuario.getSelectedRow();
             int idEmpleado = Integer.valueOf(String.valueOf(this.vista.jtUsuario.getValueAt(row, 0)));
-            Modificar_empleado modEmpleado = new Modificar_empleado(c_inicio, idEmpleado);
-            modEmpleado.mostrarVista();
+            if (idEmpleado == 1) {
+                JOptionPane.showMessageDialog(null, "El usuario admin no puede ser modificado.", "Atención", JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                Modificar_empleado modEmpleado = new Modificar_empleado(c_inicio, idEmpleado);
+                modEmpleado.mostrarVista();
+            }
         } else if (e.getSource() == this.vista.jbEliminarUsuario) {
             int row = this.vista.jtUsuario.getSelectedRow();
             int idEmpleado = Integer.valueOf(String.valueOf(this.vista.jtUsuario.getValueAt(row, 0)));

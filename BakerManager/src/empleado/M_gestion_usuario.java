@@ -49,9 +49,16 @@ public class M_gestion_usuario {
     }
 
     public void eliminarUsuario(int idEmpleado) {
-        M_funcionario funcionario = DB_Funcionario.obtenerDatosFuncionarioID(idEmpleado);
-        DB_Funcionario.eliminarFuncionarioFX(funcionario);
-        JOptionPane.showMessageDialog(null, "Usuario eliminado", "Atención", JOptionPane.INFORMATION_MESSAGE);
+        if (idEmpleado == 1) {
+            JOptionPane.showMessageDialog(null, "El usuario admin no puede ser eliminado.", "Atención", JOptionPane.INFORMATION_MESSAGE);
+        } else {
+            int opcion = JOptionPane.showConfirmDialog(null, "¿Está seguro que desea continuar? Esta acción es irreversible.", "Atención", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+            if (opcion == JOptionPane.YES_OPTION) {
+                M_funcionario funcionario = DB_Funcionario.obtenerDatosFuncionarioID(idEmpleado);
+                DB_Funcionario.eliminarFuncionarioFX(funcionario);
+                JOptionPane.showMessageDialog(null, "Usuario eliminado", "Atención", JOptionPane.INFORMATION_MESSAGE);
+            }
+        }
     }
 
 }
