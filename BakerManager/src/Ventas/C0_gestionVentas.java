@@ -25,13 +25,13 @@ import javax.swing.JOptionPane;
  *
  * @author Ramiro Ferreira
  */
-public class C_gestionVentas implements Gestion {
+public class C0_gestionVentas implements Gestion {
 
-    public M_gestionVentas modelo;
-    public V_gestionVentas vista;
+    public M0_gestionVentas modelo;
+    public V0_gestionVentas vista;
     public C_inicio c_inicio;
 
-    public C_gestionVentas(M_gestionVentas modelo, V_gestionVentas vista, C_inicio c_inicio) {
+    public C0_gestionVentas(M0_gestionVentas modelo, V0_gestionVentas vista, C_inicio c_inicio) {
         this.modelo = modelo;
         this.vista = vista;
         this.c_inicio = c_inicio;
@@ -132,12 +132,10 @@ public class C_gestionVentas implements Gestion {
 
     @Override
     public void keyPressed(KeyEvent e) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
     public void keyReleased(KeyEvent e) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     private void displayQueryResults() {

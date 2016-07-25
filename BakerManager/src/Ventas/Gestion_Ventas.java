@@ -12,14 +12,14 @@ import bakermanager.C_inicio;
  */
 public class Gestion_Ventas {
 
-    private M_gestionVentas modelo;
-    private C_gestionVentas controlador;
-    private V_gestionVentas vista;
+    private M0_gestionVentas modelo;
+    private C0_gestionVentas controlador;
+    private V0_gestionVentas vista;
 
     public Gestion_Ventas(C_inicio c_inicio) {
-        this.modelo = new M_gestionVentas();
-        this.vista = new V_gestionVentas();
-        this.controlador = new C_gestionVentas(modelo, vista, c_inicio);
+        this.modelo = new M0_gestionVentas();
+        this.vista = new V0_gestionVentas();
+        this.controlador = new C0_gestionVentas(modelo, vista, c_inicio);
     }
 
     public void mostrarVista() {

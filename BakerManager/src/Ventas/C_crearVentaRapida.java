@@ -23,9 +23,9 @@ public class C_crearVentaRapida implements Gestion {
 
     public M_crearVentaRapida modelo;
     public V_crearVentaRapida vista;
-    private C_gestionVentas gestionVentas;
+    private C0_gestionVentas gestionVentas;
 
-    public C_crearVentaRapida(M_crearVentaRapida modelo, V_crearVentaRapida vista, C_gestionVentas gestionVentas) {
+    public C_crearVentaRapida(M_crearVentaRapida modelo, V_crearVentaRapida vista, C0_gestionVentas gestionVentas) {
         this.modelo = modelo;
         this.vista = vista;
         this.gestionVentas = gestionVentas;

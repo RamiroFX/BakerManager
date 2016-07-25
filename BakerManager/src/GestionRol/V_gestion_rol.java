@@ -50,7 +50,9 @@ public class V_gestion_rol extends JDialog {
         this.jbEliminarRol = new JButton("Eliminar rol");
 
         this.jtRoles = new JTable();
+        this.jtRoles.getTableHeader().setReorderingAllowed(false);
         this.jtPermisos = new JTable();
+        this.jtPermisos.getTableHeader().setReorderingAllowed(false);
         this.jspRoles = new JScrollPane(jtRoles);
         this.jspPermisos = new JScrollPane(jtPermisos);
 

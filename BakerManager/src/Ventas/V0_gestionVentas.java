@@ -22,7 +22,7 @@ import net.miginfocom.swing.MigLayout;
  *
  * @author Ramiro Ferreira
  */
-public class V_gestionVentas extends JInternalFrame {
+public class V0_gestionVentas extends JInternalFrame {
 
     public JButton jbBuscar, jbBuscarDetalle, jbBorrar, jbAgregar, jbDetalle,
             jbResumen, jbCliente, jbEmpleado;
@@ -34,7 +34,7 @@ public class V_gestionVentas extends JInternalFrame {
     private JSplitPane jspMid;
     public JDateChooser jddInicio, jddFinal;
 
-    public V_gestionVentas() {
+    public V0_gestionVentas() {
         super("Ventas", true, true, true, true);
         //setPreferredSize(new Dimension(950, 600));
         setSize(950, 600);

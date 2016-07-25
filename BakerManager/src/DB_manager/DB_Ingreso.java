@@ -35,29 +35,29 @@ public class DB_Ingreso {
     public static ResultSetTableModel obtenerIngreso(String inicio, String fin, String tipo_operacion, String nroFactura, M_facturaCabecera factura_cabecera) {
         ResultSetTableModel rstm = null;
 
-        String Query = "SELECT FACA_ID_FACTURA_CABECERA \"ID\", "
-                + "(SELECT PERS_NOMBRE || ' '|| PERS_APELLIDO WHERE PERS_ID_PERSONA = FUNC_ID_PERSONA)\"Empleado\", "
-                + "(SELECT CLIE_ENTIDAD FROM CLIENTE WHERE CLIE_ID_CLIENTE = FACA_ID_CLIENTE) \"Cliente\", "
-                + "to_char(FACA_TIEMPO,'DD/MM/YYYY HH24:MI:SS:MS') \"Tiempo\", "
-                + "ROUND((SELECT SUM (FADE_CANTIDAD*(FADE_PRECIO-(FADE_PRECIO*FADE_DESCUENTO)/100)) FROM FACTURA_DETALLE WHERE FADE_ID_FACTURA_CABECERA = FACA_ID_FACTURA_CABECERA))\"Total\", "
-                + "(SELECT TIOP_DESCRIPCION FROM TIPO_OPERACION WHERE TIOP_ID_TIPO_OPERACION = FACA_ID_COND_VENTA) \"Cond. venta\" "
-                + "FROM FACTURA_CABECERA,FUNCIONARIO, PERSONA "
-                + "WHERE  FACA_TIEMPO BETWEEN '" + inicio + "'::timestamp  "
+        String Query = "SELECT ID_FACTURA_CABECERA \"ID\", "
+                + "(SELECT NOMBRE || ' '|| APELLIDO WHERE F.ID_PERSONA = P.ID_PERSONA)\"Empleado\", "
+                + "(SELECT ENTIDAD FROM CLIENTE WHERE FC.ID_CLIENTE = C.ID_CLIENTE) \"Cliente\", "
+                + "to_char(TIEMPO,'DD/MM/YYYY HH24:MI:SS:MS') \"Tiempo\", "
+                + "ROUND((SELECT SUM (CANTIDAD*(PRECIO-(PRECIO*DESCUENTO)/100)) FROM FACTURA_DETALLE FCC WHERE FCC.ID_FACTURA_CABECERA = FC.ID_FACTURA_CABECERA))\"Total\", "
+                + "(SELECT TO.DESCRIPCION FROM TIPO_OPERACION TO WHERE TO.ID_TIPO_OPERACION = FC.ID_COND_VENTA) \"Cond. venta\" "
+                + "FROM FACTURA_CABECERA FC ,FUNCIONARIO F, PERSONA P "
+                + "WHERE  FC.TIEMPO BETWEEN '" + inicio + "'::timestamp  "
                 + "AND '" + fin + "'::timestamp "
-                + "AND FACA_ID_FUNCIONARIO = FUNC_ID_FUNCIONARIO "
-                + "AND PERS_ID_PERSONA = FUNC_ID_PERSONA ";
+                + "AND FC.ID_FUNCIONARIO = F.ID_FUNCIONARIO "
+                + "AND F.ID_PERSONA = P.ID_PERSONA ";
         if (!nroFactura.isEmpty()) {
-            Query = Query + " AND FACA_ID_FACTURA_CABECERA = " + nroFactura;
+            Query = Query + " AND FC.ID_FACTURA_CABECERA = " + nroFactura;
         }
         if (!"Todos".equals(tipo_operacion)) {
-            Query = Query + " AND FACA_ID_COND_VENTA = (SELECT TIOP_ID_TIPO_OPERACION FROM TIPO_OPERACION WHERE TIOP_DESCRIPCION LIKE'" + tipo_operacion + "')";
+            Query = Query + " AND FC.ID_COND_VENTA = (SELECT TO.ID_TIPO_OPERACION FROM TIPO_OPERACION TO WHERE TO.DESCRIPCION LIKE'" + tipo_operacion + "')";
         }
         if (null != factura_cabecera) {
             if (null != factura_cabecera.getCliente()) {
-                Query = Query + " AND FACA_ID_CLIENTE = " + factura_cabecera.getCliente().getIdCliente();
+                Query = Query + " AND FC.ID_CLIENTE = " + factura_cabecera.getCliente().getIdCliente();
             }
             if (null != factura_cabecera.getFuncionario()) {
-                Query = Query + " AND FACA_ID_FUNCIONARIO = " + factura_cabecera.getFuncionario().getId_funcionario();
+                Query = Query + " AND FC.ID_FUNCIONARIO = " + factura_cabecera.getFuncionario().getId_funcionario();
             }
         }
         try {
@@ -67,7 +67,7 @@ public class DB_Ingreso {
             rs = st.executeQuery(Query);
             rstm = new ResultSetTableModel(rs);
         } catch (SQLException ex) {
-            Logger lgr = Logger.getLogger(DB_Egreso.class.getName());
+            Logger lgr = Logger.getLogger(DB_Ingreso.class.getName());
             lgr.log(Level.SEVERE, ex.getMessage(), ex);
         }
         return rstm;
@@ -77,9 +77,9 @@ public class DB_Ingreso {
      */
 
     public static void insertarIngreso(M_facturaCabecera cabecera, ArrayList<M_facturaDetalle> detalle) {
-        String INSERT_DETALLE = "INSERT INTO FACTURA_DETALLE(FADE_ID_FACTURA_CABECERA, FADE_ID_PRODUCTO, FADE_CANTIDAD, FADE_PRECIO, FADE_DESCUENTO, FADE_EXENTA, FADE_IVA5, FADE_IVA10, FADE_OBSERVACION)VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);";
+        String INSERT_DETALLE = "INSERT INTO FACTURA_DETALLE(ID_FACTURA_CABECERA, ID_PRODUCTO, CANTIDAD, PRECIO, DESCUENTO, OBSERVACION)VALUES (?, ?, ?, ?, ?, ?);";
         //LA SGBD SE ENCARGA DE INSERTAR EL TIMESTAMP.
-        String INSERT_CABECERA = "INSERT INTO FACTURA_CABECERA(FACA_ID_FUNCIONARIO, FACA_ID_CLIENTE, FACA_ID_COND_VENTA)VALUES (?, ?, ?);";
+        String INSERT_CABECERA = "INSERT INTO FACTURA_CABECERA(ID_FUNCIONARIO, ID_CLIENTE, ID_COND_VENTA)VALUES (?, ?, ?);";
         long sq_cabecera = -1L;
         try {
             DB_manager.getConection().setAutoCommit(false);
@@ -101,22 +101,18 @@ public class DB_Ingreso {
                 pst.setDouble(3, detalle.get(i).getCantidad());
                 pst.setInt(4, detalle.get(i).getPrecio());
                 pst.setDouble(5, detalle.get(i).getDescuento());
-                pst.setInt(6, detalle.get(i).getExenta());
-                pst.setInt(7, detalle.get(i).getIva5());
-                pst.setInt(8, detalle.get(i).getIva10());
                 try {
                     if (detalle.get(i).getObservacion() == null) {
-                        pst.setNull(9, Types.VARCHAR);
+                        pst.setNull(6, Types.VARCHAR);
                     } else {
-                        pst.setString(9, detalle.get(i).getObservacion());
+                        pst.setString(6, detalle.get(i).getObservacion());
                     }
                 } catch (Exception e) {
-                    pst.setNull(9, Types.VARCHAR);
+                    pst.setNull(6, Types.VARCHAR);
                 }
                 pst.executeUpdate();
                 pst.close();
             }
-            System.out.println("Se inserto exitosamente");
             DB_manager.establecerTransaccion();
         } catch (SQLException ex) {
             System.out.println(ex.getNextException());
@@ -124,11 +120,11 @@ public class DB_Ingreso {
                 try {
                     DB_manager.getConection().rollback();
                 } catch (SQLException ex1) {
-                    Logger lgr = Logger.getLogger(DB_Egreso.class.getName());
+                    Logger lgr = Logger.getLogger(DB_Ingreso.class.getName());
                     lgr.log(Level.WARNING, ex1.getMessage(), ex1);
                 }
             }
-            Logger lgr = Logger.getLogger(DB_Egreso.class.getName());
+            Logger lgr = Logger.getLogger(DB_Ingreso.class.getName());
             lgr.log(Level.SEVERE, ex.getMessage(), ex);
         } finally {
             try {
@@ -139,7 +135,7 @@ public class DB_Ingreso {
                     rs.close();
                 }
             } catch (SQLException ex) {
-                Logger lgr = Logger.getLogger(DB_Egreso.class.getName());
+                Logger lgr = Logger.getLogger(DB_Ingreso.class.getName());
                 lgr.log(Level.WARNING, ex.getMessage(), ex);
             }
         }
@@ -147,26 +143,26 @@ public class DB_Ingreso {
 
     public static M_facturaCabecera obtenerIngresoCabeceraID(Integer idIngresoCabecera) {
         M_facturaCabecera ingreso_cabecera = null;
-        String query = "SELECT FACA_ID_FACTURA_CABECERA, "
-                + "FACA_ID_FUNCIONARIO, "
-                + "FACA_ID_CLIENTE, "
-                + "FACA_TIEMPO, "
-                + "FACA_ID_COND_VENTA "
+        String query = "SELECT ID_FACTURA_CABECERA, "
+                + "ID_FUNCIONARIO, "
+                + "ID_CLIENTE, "
+                + "TIEMPO, "
+                + "ID_COND_VENTA "
                 + "FROM FACTURA_CABECERA "
-                + "WHERE FACA_ID_FACTURA_CABECERA = " + idIngresoCabecera;
+                + "WHERE ID_FACTURA_CABECERA = " + idIngresoCabecera;
         try {
             pst = DB_manager.getConection().prepareStatement(query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             rs = pst.executeQuery();
             while (rs.next()) {
                 ingreso_cabecera = new M_facturaCabecera();
-                ingreso_cabecera.setIdFacturaCabecera(rs.getInt("FACA_ID_FACTURA_CABECERA"));
-                ingreso_cabecera.setIdCliente(rs.getInt("FACA_ID_CLIENTE"));
-                ingreso_cabecera.setIdCondVenta(rs.getInt("FACA_ID_COND_VENTA"));
-                ingreso_cabecera.setIdFuncionario(rs.getInt("FACA_ID_FUNCIONARIO"));
-                ingreso_cabecera.setTiempo(rs.getTimestamp("FACA_TIEMPO"));
+                ingreso_cabecera.setIdFacturaCabecera(rs.getInt("ID_FACTURA_CABECERA"));
+                ingreso_cabecera.setIdCliente(rs.getInt("ID_CLIENTE"));
+                ingreso_cabecera.setIdCondVenta(rs.getInt("ID_COND_VENTA"));
+                ingreso_cabecera.setIdFuncionario(rs.getInt("ID_FUNCIONARIO"));
+                ingreso_cabecera.setTiempo(rs.getTimestamp("TIEMPO"));
             }
         } catch (SQLException ex) {
-            Logger lgr = Logger.getLogger(DB_Egreso.class.getName());
+            Logger lgr = Logger.getLogger(DB_Ingreso.class.getName());
             lgr.log(Level.SEVERE, ex.getMessage(), ex);
         } finally {
             try {
@@ -177,7 +173,7 @@ public class DB_Ingreso {
                     pst.close();
                 }
             } catch (SQLException ex) {
-                Logger lgr = Logger.getLogger(DB_Egreso.class.getName());
+                Logger lgr = Logger.getLogger(DB_Ingreso.class.getName());
                 lgr.log(Level.WARNING, ex.getMessage(), ex);
             }
         }
@@ -185,19 +181,19 @@ public class DB_Ingreso {
     }
 
     public static ResultSetTableModel obtenerIngresoDetalle(Integer idIngresoCabecera) {
-        String queryProducto = "(SELECT PROD_DESCRIPCION FROM PRODUCTO WHERE PROD_ID_PRODUCTO = FADE_ID_PRODUCTO) \"Producto\", ";
+        String queryProducto = "(SELECT PR.DESCRIPCION FROM PRODUCTO PR WHERE PR.ID_PRODUCTO = FC.ID_PRODUCTO) \"Producto\", ";
         String Query = "SELECT "
-                + "FADE_ID_PRODUCTO \"ID art.\", "
+                + "ID_PRODUCTO \"ID art.\", "
                 + queryProducto
-                + "FADE_CANTIDAD \"Cantidad\", "
-                + "FADE_PRECIO \"Precio\", "
-                + "FADE_DESCUENTO \"Descuento\","
-                + "FADE_EXENTA \"Exenta\", "
-                + "FADE_IVA5 \"IVA 5%\", "
-                + "FADE_IVA10 \"IVA 10%\", "
-                + "FADE_OBSERVACION \"Obs.\" "
+                + "CANTIDAD \"Cantidad\", "
+                + "PRECIO \"Precio\", "
+                + "DESCUENTO \"Descuento\","
+                + "EXENTA \"Exenta\", "
+                + "IVA5 \"IVA 5%\", "
+                + "IVA10 \"IVA 10%\", "
+                + "OBSERVACION \"Obs.\" "
                 + "FROM FACTURA_DETALLE "
-                + "WHERE FADE_ID_FACTURA_CABECERA = " + idIngresoCabecera;
+                + "WHERE ID_FACTURA_CABECERA = " + idIngresoCabecera;
         ResultSetTableModel rstm = null;
         try {
             st = DB_manager.getConection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
@@ -205,7 +201,7 @@ public class DB_Ingreso {
             rs = st.executeQuery(Query);
             rstm = new ResultSetTableModel(rs);
         } catch (SQLException ex) {
-            Logger lgr = Logger.getLogger(DB_Egreso.class.getName());
+            Logger lgr = Logger.getLogger(DB_Ingreso.class.getName());
             lgr.log(Level.SEVERE, ex.getMessage(), ex);
         } /*finally {
          try {
@@ -216,7 +212,7 @@ public class DB_Ingreso {
          st.close();
          }
          } catch (SQLException ex) {
-         Logger lgr = Logger.getLogger(DB_Egreso.class.getName());
+         Logger lgr = Logger.getLogger(DB_Ingreso.class.getName());
          lgr.log(Level.WARNING, ex.getMessage(), ex);
          }
          }*/
@@ -226,15 +222,15 @@ public class DB_Ingreso {
 
     public static ResultSetTableModel obtenerMesa(String inicio, String fin, String tipo_operacion) {
         ResultSetTableModel rstm = null;
-        String q = "SELECT MESA_ID_MESA \"ID\", (SELECT PERS_NOMBRE || ' '|| PERS_APELLIDO WHERE PERS_ID_PERSONA = FUNC_ID_PERSONA)\"Empleado\", "
-                + "(SELECT CLIE_ENTIDAD FROM CLIENTE WHERE CLIE_ID_CLIENTE = MESA_ID_CLIENTE) \"Cliente\", "
-                + "to_char(MESA_TIEMPO,'DD/MM/YYYY HH24:MI:SS:MS') \"Tiempo\", "
-                + "MESA_NUMERO \"Nro. mesa\", "
-                + "ROUND((SELECT SUM(MEDE_CANTIDAD*(MEDE_PRECIO-(MEDE_PRECIO*MEDE_DESCUENTO)/100)) FROM MESA_DETALLE WHERE MEDE_ID_MESA = MESA_ID_MESA))\"Total\" "
-                + "FROM MESA,FUNCIONARIO, PERSONA "
-                + "WHERE MESA_ID_FUNCIONARIO = FUNC_ID_FUNCIONARIO "
-                + "AND PERS_ID_PERSONA = FUNC_ID_PERSONA ";
-        String tiempo = "AND MESA_TIEMPO BETWEEN '" + inicio + "'::timestamp  "
+        String q = "SELECT M.ID_MESA \"ID\", (SELECT NOMBRE || ' '|| APELLIDO WHERE M.ID_PERSONA = P.ID_PERSONA)\"Empleado\", "
+                + "(SELECT C.ENTIDAD FROM CLIENTE C WHERE C.ID_CLIENTE = M.ID_CLIENTE) \"Cliente\", "
+                + "to_char(TIEMPO,'DD/MM/YYYY HH24:MI:SS:MS') \"Tiempo\", "
+                + "NUMERO \"Nro. mesa\", "
+                + "ROUND((SELECT SUM(CANTIDAD*(PRECIO-(PRECIO*DESCUENTO)/100)) FROM DETALLE WHERE ID_MESA = ID_MESA))\"Total\" "
+                + "FROM MESA M,FUNCIONARIO F, PERSONA P"
+                + "WHERE ID_FUNCIONARIO = ID_FUNCIONARIO "
+                + "AND ID_PERSONA = ID_PERSONA ";
+        String tiempo = "AND TIEMPO BETWEEN '" + inicio + "'::timestamp  "
                 + "AND '" + fin + "'::timestamp ";
         if ((!inicio.isEmpty() && !fin.isEmpty())) {
             q = q + tiempo;
@@ -246,27 +242,27 @@ public class DB_Ingreso {
             rs = st.executeQuery(q);
             rstm = new ResultSetTableModel(rs);
         } catch (SQLException ex) {
-            Logger lgr = Logger.getLogger(DB_Egreso.class.getName());
+            Logger lgr = Logger.getLogger(DB_Ingreso.class.getName());
             lgr.log(Level.SEVERE, ex.getMessage(), ex);
         }
         return rstm;
     }
 
     public static ResultSetTableModel obtenerMesaDetalle(int idMesa) {
-        String queryProducto = "(SELECT PROD_DESCRIPCION FROM PRODUCTO WHERE PROD_ID_PRODUCTO = MEDE_ID_PRODUCTO) \"Producto\", ";
+        String queryProducto = "(SELECT DESCRIPCION FROM PRODUCTO WHERE ID_PRODUCTO = ID_PRODUCTO) \"Producto\", ";
         String Query = "SELECT "
-                + "MEDE_ID_MESA_DETALLE \"ID\", "
-                + "MEDE_ID_PRODUCTO \"ID art.\", "
+                + "ID_DETALLE \"ID\", "
+                + "ID_PRODUCTO \"ID art.\", "
                 + queryProducto
-                + "MEDE_CANTIDAD \"Cantidad\", "
-                + "MEDE_PRECIO \"Precio\", "
-                + "MEDE_DESCUENTO \"Descuento\","
-                + "MEDE_EXENTA \"Exenta\", "
-                + "MEDE_IVA5 \"IVA 5%\", "
-                + "MEDE_IVA10 \"IVA 10%\", "
-                + "MEDE_OBSERVACION \"Obs.\" "
-                + "FROM MESA_DETALLE "
-                + "WHERE MEDE_ID_MESA = " + idMesa;
+                + "CANTIDAD \"Cantidad\", "
+                + "PRECIO \"Precio\", "
+                + "DESCUENTO \"Descuento\","
+                + "EXENTA \"Exenta\", "
+                + "IVA5 \"IVA 5%\", "
+                + "IVA10 \"IVA 10%\", "
+                + "OBSERVACION \"Obs.\" "
+                + "FROM DETALLE "
+                + "WHERE ID_MESA = " + idMesa;
         ResultSetTableModel rstm = null;
         try {
             st = DB_manager.getConection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
@@ -274,7 +270,7 @@ public class DB_Ingreso {
             rs = st.executeQuery(Query);
             rstm = new ResultSetTableModel(rs);
         } catch (SQLException ex) {
-            Logger lgr = Logger.getLogger(DB_Egreso.class.getName());
+            Logger lgr = Logger.getLogger(DB_Ingreso.class.getName());
             lgr.log(Level.SEVERE, ex.getMessage(), ex);
         }
         return rstm;
@@ -282,8 +278,8 @@ public class DB_Ingreso {
 
     public static long insertarMesa(M_mesa mesa, ArrayList<M_mesa_detalle> detalle) {
         //LA SGBD SE ENCARGA DE INSERTAR EL TIMESTAMP.
-        String INSERT_DETAIL = "INSERT INTO MESA_DETALLE(MEDE_ID_MESA, MEDE_ID_PRODUCTO, MEDE_CANTIDAD, MEDE_PRECIO, MEDE_DESCUENTO, MEDE_EXENTA, MEDE_IVA5, MEDE_IVA10, MEDE_OBSERVACION)VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);";
-        String INSERT_MESA = "INSERT INTO MESA(MESA_ID_FUNCIONARIO, MESA_ID_CLIENTE, MESA_ID_COND_VENTA, MESA_NUMERO)VALUES (?, ?, ?, ?);";
+        String INSERT_DETAIL = "INSERT INTO DETALLE(ID_MESA, ID_PRODUCTO, CANTIDAD, PRECIO, DESCUENTO, EXENTA, IVA5, IVA10, OBSERVACION)VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);";
+        String INSERT_MESA = "INSERT INTO MESA(ID_FUNCIONARIO, ID_CLIENTE, ID_COND_VENTA, NUMERO)VALUES (?, ?, ?, ?);";
         long sq_cabecera = -1L;
         try {
             DB_manager.getConection().setAutoCommit(false);
@@ -329,11 +325,11 @@ public class DB_Ingreso {
                 try {
                     DB_manager.getConection().rollback();
                 } catch (SQLException ex1) {
-                    Logger lgr = Logger.getLogger(DB_Egreso.class.getName());
+                    Logger lgr = Logger.getLogger(DB_Ingreso.class.getName());
                     lgr.log(Level.WARNING, ex1.getMessage(), ex1);
                 }
             }
-            Logger lgr = Logger.getLogger(DB_Egreso.class.getName());
+            Logger lgr = Logger.getLogger(DB_Ingreso.class.getName());
             lgr.log(Level.SEVERE, ex.getMessage(), ex);
         } finally {
             try {
@@ -344,7 +340,7 @@ public class DB_Ingreso {
                     rs.close();
                 }
             } catch (SQLException ex) {
-                Logger lgr = Logger.getLogger(DB_Egreso.class.getName());
+                Logger lgr = Logger.getLogger(DB_Ingreso.class.getName());
                 lgr.log(Level.WARNING, ex.getMessage(), ex);
             }
         }
@@ -353,77 +349,77 @@ public class DB_Ingreso {
 
     public static M_mesa obtenerMesaID(Integer idMesa) {
         M_mesa mesa = null;
-        String genero = "(SELECT SEXO_DESCRIPCION  FROM SEXO WHERE SEXO_ID_SEXO = PERS_ID_SEXO) \"pers_sexo\"";
-        String pais = "(SELECT PAIS_DESCRIPCION FROM PAIS WHERE PERS_ID_PAIS=PAIS_ID_PAIS) \"PERS_NACIONALIDAD\"";
-        String ciudad = " (SELECT CIUD_DESCRIPCION FROM CIUDAD WHERE PERS_ID_CIUDAD=CIUD_ID_CIUDAD)\"PERS_CIUDAD\"";
-        String estadoCivil = " (SELECT ESCI_DESCRIPCION FROM ESTADO_CIVIL WHERE ESCI_ID_ESTADO_CIVIL=PERS_ID_ESTADO_CIVIL)\"pers_estado_civil\"";
-        String estado = " (SELECT ESTA_DESCRIPCION FROM ESTADO WHERE ESTA_ID_ESTADO=FUNC_ID_ESTADO)\"func_estado\"";
+        String genero = "(SELECT SEXO_DESCRIPCION  FROM SEXO WHERE SEXO_ID_SEXO = ID_SEXO) \"pers_sexo\"";
+        String pais = "(SELECT PAIS_DESCRIPCION FROM PAIS WHERE ID_PAIS=PAIS_ID_PAIS) \"NACIONALIDAD\"";
+        String ciudad = " (SELECT CIUD_DESCRIPCION FROM CIUDAD WHERE ID_CIUDAD=CIUD_ID_CIUDAD)\"CIUDAD\"";
+        String estadoCivil = " (SELECT ESCI_DESCRIPCION FROM ESTADO_CIVIL WHERE ESCI_ID_ESTADO_CIVIL=ID_ESTADO_CIVIL)\"pers_estado_civil\"";
+        String estado = " (SELECT ESTA_DESCRIPCION FROM ESTADO WHERE ESTA_ID_ESTADO=ID_ESTADO)\"func_estado\"";
 
-        String categoria = "(SELECT CLCA_DESCRIPCION FROM CLIENTE_CATEGORIA WHERE CLCA_ID_CLIENTE_CATEGORIA = CLIE_ID_CATEGORIA) \"CATEGORIA\" ";
-        String tipo = "(SELECT CLTI_DESCRIPCION FROM CLIENTE_TIPO WHERE CLTI_ID_CLIENTE_TIPO = CLIE_ID_TIPO) \"TIPO\" ";
+        String categoria = "(SELECT CLCA_DESCRIPCION FROM CLIENTE_CATEGORIA WHERE CLCA_ID_CLIENTE_CATEGORIA = ID_CATEGORIA) \"CATEGORIA\" ";
+        String tipo = "(SELECT CLTI_DESCRIPCION FROM CLIENTE_TIPO WHERE CLTI_ID_CLIENTE_TIPO = ID_TIPO) \"TIPO\" ";
 
-        String q = "SELECT MESA_ID_MESA, MESA_ID_FUNCIONARIO, MESA_ID_CLIENTE, MESA_TIEMPO,MESA_NUMERO, "
-                + "       MESA_ID_COND_VENTA, "
-                + "CLIE_ID_CLIENTE, CLIE_NOMBRE, CLIE_ENTIDAD, CLIE_RUC, CLIE_RUC_IDENTIFICADOR, " + categoria + "," + tipo + ","
-                + "       CLIE_DIRECCION, CLIE_EMAIL, CLIE_PAG_WEB, CLIE_ID_TIPO, CLIE_ID_CATEGORIA, "
-                + "       CLIE_OBSERVACION, "
-                + "FUNC_ID_FUNCIONARIO, FUNC_ID_PERSONA, FUNC_ALIAS, FUNC_FECHA_INGRESO, " + genero + "," + pais + "," + ciudad + "," + estado + "," + estadoCivil + ","
-                + "       FUNC_ID_ESTADO, FUNC_FECHA_SALIDA, FUNC_SALARIO, FUNC_NRO_CELULAR, "
-                + "       FUNC_NRO_TELEFONO, FUNC_EMAIL, FUNC_DIRECCION, FUNC_OBSERVACION,PERS_ID_PERSONA, PERS_CI, PERS_NOMBRE, PERS_APELLIDO, PERS_ID_SEXO, "
-                + "       PERS_FECHA_NACIMIENTO, PERS_ID_ESTADO_CIVIL, PERS_ID_PAIS, PERS_ID_CIUDAD "
+        String q = "SELECT ID_MESA, ID_FUNCIONARIO, ID_CLIENTE, TIEMPO,NUMERO, "
+                + "       ID_COND_VENTA, "
+                + "ID_CLIENTE, NOMBRE, ENTIDAD, RUC, RUC_IDENTIFICADOR, " + categoria + "," + tipo + ","
+                + "       DIRECCION, EMAIL, PAG_WEB, ID_TIPO, ID_CATEGORIA, "
+                + "       OBSERVACION, "
+                + "ID_FUNCIONARIO, ID_PERSONA, ALIAS, FECHA_INGRESO, " + genero + "," + pais + "," + ciudad + "," + estado + "," + estadoCivil + ","
+                + "       ID_ESTADO, FECHA_SALIDA, SALARIO, NRO_CELULAR, "
+                + "       NRO_TELEFONO, EMAIL, DIRECCION, OBSERVACION,ID_PERSONA, CI, NOMBRE, APELLIDO, ID_SEXO, "
+                + "       FECHA_NACIMIENTO, ID_ESTADO_CIVIL, ID_PAIS, ID_CIUDAD "
                 + "  FROM MESA,FUNCIONARIO,CLIENTE,PERSONA "
-                + "  WHERE MESA_ID_FUNCIONARIO = FUNC_ID_FUNCIONARIO "
-                + "AND MESA_ID_CLIENTE = CLIE_ID_CLIENTE "
-                + "AND FUNC_ID_PERSONA = PERS_ID_PERSONA "
-                + "AND MESA_ID_MESA = " + idMesa;
+                + "  WHERE ID_FUNCIONARIO = ID_FUNCIONARIO "
+                + "AND ID_CLIENTE = ID_CLIENTE "
+                + "AND ID_PERSONA = ID_PERSONA "
+                + "AND ID_MESA = " + idMesa;
         try {
             pst = DB_manager.getConection().prepareStatement(q, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             rs = pst.executeQuery();
             while (rs.next()) {
                 M_funcionario f = new M_funcionario();
-                f.setPais(rs.getString("PERS_NACIONALIDAD"));
-                f.setCiudad(rs.getString("PERS_CIUDAD"));
-                f.setFecha_nacimiento(rs.getDate("PERS_FECHA_NACIMIENTO"));
+                f.setPais(rs.getString("NACIONALIDAD"));
+                f.setCiudad(rs.getString("CIUDAD"));
+                f.setFecha_nacimiento(rs.getDate("FECHA_NACIMIENTO"));
                 f.setSexo(rs.getString("pers_sexo"));
                 f.setNro_celular(rs.getString("func_nro_celular"));
                 f.setNro_telefono(rs.getString("func_nro_telefono"));
                 f.setEmail(rs.getString("func_email"));
-                f.setDireccion(rs.getString("FUNC_DIRECCION"));
+                f.setDireccion(rs.getString("DIRECCION"));
                 f.setAlias(rs.getString("func_alias"));
                 f.setNombre(rs.getString("pers_nombre"));
                 f.setApellido(rs.getString("pers_apellido"));
-                f.setFecha_ingreso(rs.getDate("FUNC_FECHA_INGRESO"));
+                f.setFecha_ingreso(rs.getDate("FECHA_INGRESO"));
                 f.setId_persona(rs.getInt("pers_id_persona"));
                 f.setCedula(rs.getInt("pers_ci"));
                 f.setEstado_civil(rs.getString("pers_estado_civil"));
                 f.setId_funcionario(rs.getInt("func_id_funcionario"));
-                f.setObservacion(rs.getString("FUNC_OBSERVACION"));
+                f.setObservacion(rs.getString("OBSERVACION"));
 
                 M_cliente cliente = new M_cliente();
                 cliente.setCategoria(rs.getString("CATEGORIA"));
-                cliente.setDireccion(rs.getString("CLIE_DIRECCION"));
-                cliente.setEmail(rs.getString("CLIE_EMAIL"));
-                cliente.setEntidad(rs.getString("CLIE_ENTIDAD"));
-                cliente.setIdCategoria(rs.getInt("CLIE_ID_CATEGORIA"));
-                cliente.setIdCliente(rs.getInt("CLIE_ID_CLIENTE"));
-                cliente.setIdTipo(rs.getInt("CLIE_ID_TIPO"));
-                cliente.setNombre(rs.getString("CLIE_NOMBRE"));
-                cliente.setObservacion(rs.getString("CLIE_OBSERVACION"));
-                cliente.setPaginaWeb(rs.getString("CLIE_PAG_WEB"));
-                cliente.setRuc(rs.getString("CLIE_RUC"));
-                cliente.setRucId(rs.getString("CLIE_RUC_IDENTIFICADOR"));
+                cliente.setDireccion(rs.getString("DIRECCION"));
+                cliente.setEmail(rs.getString("EMAIL"));
+                cliente.setEntidad(rs.getString("ENTIDAD"));
+                cliente.setIdCategoria(rs.getInt("ID_CATEGORIA"));
+                cliente.setIdCliente(rs.getInt("ID_CLIENTE"));
+                cliente.setIdTipo(rs.getInt("ID_TIPO"));
+                cliente.setNombre(rs.getString("NOMBRE"));
+                cliente.setObservacion(rs.getString("OBSERVACION"));
+                cliente.setPaginaWeb(rs.getString("PAG_WEB"));
+                cliente.setRuc(rs.getString("RUC"));
+                cliente.setRucId(rs.getString("RUC_IDENTIFICADOR"));
                 cliente.setTipo(rs.getString("TIPO"));
 
                 mesa = new M_mesa();
-                mesa.setIdCondVenta(rs.getInt("MESA_ID_COND_VENTA"));
-                mesa.setIdMesa(rs.getInt("MESA_ID_MESA"));
-                mesa.setNumeroMesa(rs.getInt("MESA_NUMERO"));
-                mesa.setTiempo(rs.getTimestamp("MESA_TIEMPO"));
+                mesa.setIdCondVenta(rs.getInt("ID_COND_VENTA"));
+                mesa.setIdMesa(rs.getInt("ID_MESA"));
+                mesa.setNumeroMesa(rs.getInt("NUMERO"));
+                mesa.setTiempo(rs.getTimestamp("TIEMPO"));
                 mesa.setFuncionario(f);
                 mesa.setCliente(cliente);
             }
         } catch (SQLException ex) {
-            Logger lgr = Logger.getLogger(DB_Egreso.class.getName());
+            Logger lgr = Logger.getLogger(DB_Ingreso.class.getName());
             lgr.log(Level.SEVERE, ex.getMessage(), ex);
         } finally {
             try {
@@ -434,7 +430,7 @@ public class DB_Ingreso {
                     pst.close();
                 }
             } catch (SQLException ex) {
-                Logger lgr = Logger.getLogger(DB_Egreso.class.getName());
+                Logger lgr = Logger.getLogger(DB_Ingreso.class.getName());
                 lgr.log(Level.WARNING, ex.getMessage(), ex);
             }
         }
@@ -443,11 +439,11 @@ public class DB_Ingreso {
 
     public static void actualizarMesa(M_mesa mesa) {
         String UPDATE_MESA = "UPDATE MESA SET "
-                + "MESA_ID_FUNCIONARIO= " + mesa.getFuncionario().getId_funcionario() + ", "
-                + "MESA_ID_CLIENTE=" + mesa.getCliente().getIdCliente() + ", "
-                + "MESA_NUMERO=" + mesa.getNumeroMesa() + ", "
-                + "MESA_ID_COND_VENTA = " + mesa.getIdCondVenta()
-                + " WHERE MESA_ID_MESA = " + mesa.getIdMesa();
+                + "ID_FUNCIONARIO= " + mesa.getFuncionario().getId_funcionario() + ", "
+                + "ID_CLIENTE=" + mesa.getCliente().getIdCliente() + ", "
+                + "NUMERO=" + mesa.getNumeroMesa() + ", "
+                + "ID_COND_VENTA = " + mesa.getIdCondVenta()
+                + " WHERE ID_MESA = " + mesa.getIdMesa();
         try {
             DB_manager.habilitarTransaccionManual();
             st = DB_manager.getConection().createStatement();
@@ -472,15 +468,15 @@ public class DB_Ingreso {
     }
 
     public static void actualizarMesaDetalle(M_mesa_detalle mesaDetalle) {
-        String UPDATE_MESA = "UPDATE MESA_DETALLE SET "
-                + "MEDE_CANTIDAD= " + mesaDetalle.getCantidad() + ", "
-                + "MEDE_PRECIO=" + mesaDetalle.getPrecio() + ", "
-                + "MEDE_DESCUENTO=" + mesaDetalle.getDescuento() + ", "
-                + "MEDE_EXENTA=" + mesaDetalle.getExenta() + ", "
-                + "MEDE_IVA5=" + mesaDetalle.getIva5() + ", "
-                + "MEDE_IVA10=" + mesaDetalle.getIva10() + ", "
-                + "MEDE_OBSERVACION= '" + mesaDetalle.getObservacion() + "' "
-                + "WHERE MEDE_ID_MESA_DETALLE = " + mesaDetalle.getIdMesaDetalle();
+        String UPDATE_MESA = "UPDATE DETALLE SET "
+                + "CANTIDAD= " + mesaDetalle.getCantidad() + ", "
+                + "PRECIO=" + mesaDetalle.getPrecio() + ", "
+                + "DESCUENTO=" + mesaDetalle.getDescuento() + ", "
+                + "EXENTA=" + mesaDetalle.getExenta() + ", "
+                + "IVA5=" + mesaDetalle.getIva5() + ", "
+                + "IVA10=" + mesaDetalle.getIva10() + ", "
+                + "OBSERVACION= '" + mesaDetalle.getObservacion() + "' "
+                + "WHERE ID_DETALLE = " + mesaDetalle.getIdMesaDetalle();
         try {
             DB_manager.habilitarTransaccionManual();
             st = DB_manager.getConection().createStatement();
@@ -505,8 +501,8 @@ public class DB_Ingreso {
     }
 
     public static void eliminarMesa(int idMesa) {
-        String DELETE_DETAIL = "DELETE FROM MESA_DETALLE WHERE MEDE_ID_MESA = " + idMesa;
-        String DELETE_HEADER = "DELETE FROM MESA WHERE MESA_ID_MESA = " + idMesa;
+        String DELETE_DETAIL = "DELETE FROM DETALLE WHERE ID_MESA = " + idMesa;
+        String DELETE_HEADER = "DELETE FROM MESA WHERE ID_MESA = " + idMesa;
         try {
             DB_manager.habilitarTransaccionManual();
             st = DB_manager.getConection().createStatement();
@@ -532,7 +528,7 @@ public class DB_Ingreso {
     }
 
     public static void eliminarMesaDetalle(int idMesaDetalle) {
-        String DELETE_DETAIL = "DELETE FROM MESA_DETALLE WHERE MEDE_ID_MESA_DETALLE = " + idMesaDetalle;
+        String DELETE_DETAIL = "DELETE FROM DETALLE WHERE ID_DETALLE = " + idMesaDetalle;
         try {
             DB_manager.habilitarTransaccionManual();
             st = DB_manager.getConection().createStatement();
@@ -556,7 +552,7 @@ public class DB_Ingreso {
     }
 
     public static boolean estaLibreMesa(int numeroMesa) {
-        String QUERY = "SELECT MESA_NUMERO FROM MESA WHERE MESA_NUMERO = " + numeroMesa;
+        String QUERY = "SELECT NUMERO FROM MESA WHERE NUMERO = " + numeroMesa;
         try {
             st = DB_manager.getConection().createStatement();
             // se ejecuta el query y se obtienen los resultados en un ResultSet
@@ -565,17 +561,17 @@ public class DB_Ingreso {
                 return true;
             }
         } catch (SQLException ex) {
-            Logger lgr = Logger.getLogger(DB_Egreso.class.getName());
+            Logger lgr = Logger.getLogger(DB_Ingreso.class.getName());
             lgr.log(Level.SEVERE, ex.getMessage(), ex);
         }
         return false;
     }
 
     public static void insertarMesaDetalle(int idMesa, M_mesa_detalle mesaDetalle) {
-        String INSERT_MESA_DETALLE = "INSERT INTO MESA_DETALLE(MEDE_ID_MESA, MEDE_ID_PRODUCTO, MEDE_CANTIDAD, MEDE_PRECIO, MEDE_DESCUENTO, MEDE_EXENTA, MEDE_IVA5, MEDE_IVA10, MEDE_OBSERVACION)VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);";
+        String INSERT_DETALLE = "INSERT INTO DETALLE(ID_MESA, ID_PRODUCTO, CANTIDAD, PRECIO, DESCUENTO, EXENTA, IVA5, IVA10, OBSERVACION)VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);";
         try {
             DB_manager.getConection().setAutoCommit(false);
-            pst = DB_manager.getConection().prepareStatement(INSERT_MESA_DETALLE);
+            pst = DB_manager.getConection().prepareStatement(INSERT_DETALLE);
             pst.setInt(1, idMesa);
             pst.setInt(2, mesaDetalle.getProducto().getId());
             pst.setDouble(3, mesaDetalle.getCantidad());
@@ -602,11 +598,11 @@ public class DB_Ingreso {
                 try {
                     DB_manager.getConection().rollback();
                 } catch (SQLException ex1) {
-                    Logger lgr = Logger.getLogger(DB_Egreso.class.getName());
+                    Logger lgr = Logger.getLogger(DB_Ingreso.class.getName());
                     lgr.log(Level.WARNING, ex1.getMessage(), ex1);
                 }
             }
-            Logger lgr = Logger.getLogger(DB_Egreso.class.getName());
+            Logger lgr = Logger.getLogger(DB_Ingreso.class.getName());
             lgr.log(Level.SEVERE, ex.getMessage(), ex);
         } finally {
             try {
@@ -617,18 +613,18 @@ public class DB_Ingreso {
                     rs.close();
                 }
             } catch (SQLException ex) {
-                Logger lgr = Logger.getLogger(DB_Egreso.class.getName());
+                Logger lgr = Logger.getLogger(DB_Ingreso.class.getName());
                 lgr.log(Level.WARNING, ex.getMessage(), ex);
             }
         }
     }
 
     public static void transferirMesaAVenta(M_mesa mesa, ArrayList<M_mesa_detalle> detalle) {
-        String INSERT_DETALLE = "INSERT INTO FACTURA_DETALLE(FADE_ID_FACTURA_CABECERA, FADE_ID_PRODUCTO, FADE_CANTIDAD, FADE_PRECIO, FADE_DESCUENTO, FADE_EXENTA, FADE_IVA5, FADE_IVA10, FADE_OBSERVACION)VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);";
+        String INSERT_DETALLE = "INSERT INTO FACTURA_DETALLE(ID_FACTURA_CABECERA, ID_PRODUCTO, CANTIDAD, PRECIO, DESCUENTO, EXENTA, IVA5, IVA10, OBSERVACION)VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);";
         //LA SGBD SE ENCARGA DE INSERTAR EL TIMESTAMP.
-        String INSERT_CABECERA = "INSERT INTO FACTURA_CABECERA(FACA_ID_FUNCIONARIO, FACA_ID_CLIENTE, FACA_ID_COND_VENTA)VALUES (?, ?, ?);";
-        String DELETE_DETAIL = "DELETE FROM MESA_DETALLE WHERE MEDE_ID_MESA = " + mesa.getIdMesa();
-        String DELETE_HEADER = "DELETE FROM MESA WHERE MESA_ID_MESA = " + mesa.getIdMesa();
+        String INSERT_CABECERA = "INSERT INTO FACTURA_CABECERA(ID_FUNCIONARIO, ID_CLIENTE, ID_COND_VENTA)VALUES (?, ?, ?);";
+        String DELETE_DETAIL = "DELETE FROM DETALLE WHERE ID_MESA = " + mesa.getIdMesa();
+        String DELETE_HEADER = "DELETE FROM MESA WHERE ID_MESA = " + mesa.getIdMesa();
         long sq_cabecera = -1L;
         try {
             DB_manager.getConection().setAutoCommit(false);
@@ -676,11 +672,11 @@ public class DB_Ingreso {
                 try {
                     DB_manager.getConection().rollback();
                 } catch (SQLException ex1) {
-                    Logger lgr = Logger.getLogger(DB_Egreso.class.getName());
+                    Logger lgr = Logger.getLogger(DB_Ingreso.class.getName());
                     lgr.log(Level.WARNING, ex1.getMessage(), ex1);
                 }
             }
-            Logger lgr = Logger.getLogger(DB_Egreso.class.getName());
+            Logger lgr = Logger.getLogger(DB_Ingreso.class.getName());
             lgr.log(Level.SEVERE, ex.getMessage(), ex);
         } finally {
             try {
@@ -691,7 +687,7 @@ public class DB_Ingreso {
                     rs.close();
                 }
             } catch (SQLException ex) {
-                Logger lgr = Logger.getLogger(DB_Egreso.class.getName());
+                Logger lgr = Logger.getLogger(DB_Ingreso.class.getName());
                 lgr.log(Level.WARNING, ex.getMessage(), ex);
             }
         }

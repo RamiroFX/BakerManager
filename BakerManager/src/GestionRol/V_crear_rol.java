@@ -55,7 +55,9 @@ public class V_crear_rol extends JDialog {
         jpPermisosDisponibles = new JPanel(new BorderLayout());
         jpPermisosDisponibles.setBorder(new TitledBorder("Accesos disponibles"));
         jtPermisosSeleccionados = new JTable();
+        jtPermisosSeleccionados.getTableHeader().setReorderingAllowed(false);
         jtPermisosDisponibles = new JTable();
+        jtPermisosDisponibles.getTableHeader().setReorderingAllowed(false);
         jspPermisosSeleccionados = new JScrollPane(jtPermisosSeleccionados);
         jspPermisosDisponibles = new JScrollPane(jtPermisosDisponibles);
         jbQuitar = new JButton("Quitar");

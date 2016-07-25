@@ -10,7 +10,7 @@ import Pedido.C_crearPedido;
 import Pedido.C_gestionPedido;
 import Pedido.C_verPedido;
 import Ventas.C_crearVentaRapida;
-import Ventas.C_gestionVentas;
+import Ventas.C0_gestionVentas;
 import Ventas.C_verMesa;
 import Ventas.ConfigurarMesa;
 import java.awt.EventQueue;
@@ -38,7 +38,7 @@ public class C_seleccionar_cliente extends MouseAdapter implements ActionListene
     M_cliente cliente;
     V_seleccionar_cliente vista;
     C_crearVentaRapida c_ingreso;
-    C_gestionVentas gestion_venta;
+    C0_gestionVentas gestion_venta;
     ConfigurarMesa configurarMesa;
     C_verMesa verMesa;
     C_gestionPedido gestionPedido;
@@ -53,7 +53,7 @@ public class C_seleccionar_cliente extends MouseAdapter implements ActionListene
         agregarListeners();
     }
 
-    public C_seleccionar_cliente(V_seleccionar_cliente vista, C_gestionVentas gestion_venta) {
+    public C_seleccionar_cliente(V_seleccionar_cliente vista, C0_gestionVentas gestion_venta) {
         this.gestion_venta = gestion_venta;
         this.vista = vista;
         this.tipo = GESTION_VENTA;

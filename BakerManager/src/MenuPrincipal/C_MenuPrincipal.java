@@ -5,6 +5,8 @@
 package MenuPrincipal;
 
 import Entities.M_menu_item;
+import Ventas.CrearVentas;
+import Ventas.Gestion_Ventas;
 import bakermanager.C_inicio;
 import empleado.Gestion_empleado;
 import java.awt.Dimension;
@@ -34,30 +36,49 @@ public class C_MenuPrincipal implements ActionListener {
     private void inicializarVista() {
         this.vista.jftFecha.setValue(Calendar.getInstance().getTime());
         this.vista.jbEmpleados.setEnabled(false);
-        this.vista.jbMovimientos.setEnabled(false);
+        this.vista.jbVentas.setEnabled(false);
         this.vista.jbProveedores.setEnabled(false);
-        this.vista.jbProducto.setEnabled(false);
+        this.vista.jbProductos.setEnabled(false);
+        this.vista.jbClientes.setEnabled(false);
+        this.vista.jbCompras.setEnabled(false);
+        this.vista.jbPedidos.setEnabled(false);
+        this.vista.jbReportes.setEnabled(false);
         ArrayList<M_menu_item> accesos = c_inicio.modelo.getRol_usuario().getAccesos();
         for (int i = 0; i < accesos.size(); i++) {
             if (this.vista.jbEmpleados.getName().equals(accesos.get(i).getMenuDescripcion())) {
                 this.vista.jbEmpleados.setEnabled(true);
             }
-            if (this.vista.jbMovimientos.getName().equals(accesos.get(i).getMenuDescripcion())) {
-                this.vista.jbMovimientos.setEnabled(true);
+            if (this.vista.jbVentas.getName().equals(accesos.get(i).getMenuDescripcion())) {
+                this.vista.jbVentas.setEnabled(true);
             }
-            if (this.vista.jbProducto.getName().equals(accesos.get(i).getMenuDescripcion())) {
-                this.vista.jbProducto.setEnabled(true);
+            if (this.vista.jbProductos.getName().equals(accesos.get(i).getMenuDescripcion())) {
+                this.vista.jbProductos.setEnabled(true);
             }
             if (this.vista.jbProveedores.getName().equals(accesos.get(i).getMenuDescripcion())) {
                 this.vista.jbProveedores.setEnabled(true);
+            }
+            /**
+             * 
+             */
+            if (this.vista.jbClientes.getName().equals(accesos.get(i).getMenuDescripcion())) {
+                this.vista.jbClientes.setEnabled(true);
+            }
+            if (this.vista.jbCompras.getName().equals(accesos.get(i).getMenuDescripcion())) {
+                this.vista.jbCompras.setEnabled(true);
+            }
+            if (this.vista.jbPedidos.getName().equals(accesos.get(i).getMenuDescripcion())) {
+                this.vista.jbPedidos.setEnabled(true);
+            }
+            if (this.vista.jbReportes.getName().equals(accesos.get(i).getMenuDescripcion())) {
+                this.vista.jbReportes.setEnabled(true);
             }
         }
     }
 
     private void agregarListeners() {
         this.vista.jbProveedores.addActionListener(this);
-        this.vista.jbProducto.addActionListener(this);
-        this.vista.jbMovimientos.addActionListener(this);
+        this.vista.jbProductos.addActionListener(this);
+        this.vista.jbVentas.addActionListener(this);
         this.vista.jbSalir.addActionListener(this);
         this.vista.jbEmpleados.addActionListener(this);
     }
@@ -75,6 +96,9 @@ public class C_MenuPrincipal implements ActionListener {
         if (src.equals(this.vista.jbEmpleados)) {
             Gestion_empleado ges_usuario = new Gestion_empleado(c_inicio);
             ges_usuario.mostrarVista();
+        } else if (src.equals(this.vista.jbVentas)) {
+            Gestion_Ventas gestionVenta = new Gestion_Ventas(c_inicio);
+            gestionVenta.mostrarVista();
         } else if (src.equals(this.vista.jbSalir)) {
             System.exit(0);
         }

@@ -659,14 +659,14 @@ public class DB_Egreso {
 
     public static Vector obtenerTipoOperacion() {
         Vector tiop = null;
-        String q = "SELECT tiop_descripcion  "
+        String q = "SELECT descripcion  "
                 + "FROM TIPO_OPERACION ";
         try {
             st = DB_manager.getConection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             rs = st.executeQuery(q);
             tiop = new Vector();
             while (rs.next()) {
-                tiop.add(rs.getString("tiop_descripcion"));
+                tiop.add(rs.getString("descripcion"));
             }
         } catch (SQLException ex) {
             Logger lgr = Logger.getLogger(DB_Egreso.class.getName());

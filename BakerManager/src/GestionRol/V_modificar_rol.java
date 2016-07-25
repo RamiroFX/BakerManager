@@ -58,7 +58,9 @@ class V_modificar_rol extends JDialog {
         jpPermisosDisponibles = new JPanel(new BorderLayout());
         jpPermisosDisponibles.setBorder(new TitledBorder("Accesos disponibles"));
         jtPermisosSeleccionados = new JTable();
+        this.jtPermisosSeleccionados.getTableHeader().setReorderingAllowed(false);
         jtPermisosDisponibles = new JTable();
+        this.jtPermisosDisponibles.getTableHeader().setReorderingAllowed(false);
         jspPermisosSeleccionados = new JScrollPane(jtPermisosSeleccionados);
         jspPermisosDisponibles = new JScrollPane(jtPermisosDisponibles);
         jbQuitar = new JButton("Quitar");

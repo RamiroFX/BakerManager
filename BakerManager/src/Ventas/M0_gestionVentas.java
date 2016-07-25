@@ -16,13 +16,13 @@ import java.util.Date;
  *
  * @author Ramiro Ferreira
  */
-public class M_gestionVentas {
+public class M0_gestionVentas {
 
     M_facturaCabecera cabecera;
     M_facturaDetalle detalle;
     ArrayList<M_facturaDetalle> detalles;
 
-    public M_gestionVentas() {
+    public M0_gestionVentas() {
         this.cabecera = new M_facturaCabecera();
         this.detalle = new M_facturaDetalle();
         this.detalles = new ArrayList<>();
