@@ -226,17 +226,17 @@ public class DB_Ingreso {
                 + "(SELECT C.ENTIDAD FROM CLIENTE C WHERE C.ID_CLIENTE = M.ID_CLIENTE) \"Cliente\", "
                 + "to_char(TIEMPO,'DD/MM/YYYY HH24:MI:SS:MS') \"Tiempo\", "
                 + "NUMERO \"Nro. mesa\", "
-                + "ROUND((SELECT SUM(CANTIDAD*(PRECIO-(PRECIO*DESCUENTO)/100)) FROM DETALLE WHERE ID_MESA = ID_MESA))\"Total\" "
+                + "ROUND((SELECT SUM(MD.CANTIDAD*(MD.PRECIO-(MD.PRECIO*MD.DESCUENTO)/100)) FROM MESA_DETALLE MD WHERE MD.ID_MESA = M.ID_MESA))\"Total\" "
                 + "FROM MESA M,FUNCIONARIO F, PERSONA P"
-                + "WHERE ID_FUNCIONARIO = ID_FUNCIONARIO "
-                + "AND ID_PERSONA = ID_PERSONA ";
-        String tiempo = "AND TIEMPO BETWEEN '" + inicio + "'::timestamp  "
+                + "WHERE M.ID_FUNCIONARIO = F.ID_FUNCIONARIO "
+                + "AND F.ID_PERSONA = P.ID_PERSONA ";
+        String tiempo = "AND M.TIEMPO BETWEEN '" + inicio + "'::timestamp  "
                 + "AND '" + fin + "'::timestamp ";
         if ((!inicio.isEmpty() && !fin.isEmpty())) {
             q = q + tiempo;
         }
         try {
-            System.out.println("241: " + q);
+            System.out.println("239: " + q);
             st = DB_manager.getConection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             // se ejecuta el query y se obtienen los resultados en un ResultSet
             rs = st.executeQuery(q);
@@ -249,20 +249,26 @@ public class DB_Ingreso {
     }
 
     public static ResultSetTableModel obtenerMesaDetalle(int idMesa) {
-        String queryProducto = "(SELECT DESCRIPCION FROM PRODUCTO WHERE ID_PRODUCTO = ID_PRODUCTO) \"Producto\", ";
+        String queryProducto = "(SELECT P.DESCRIPCION FROM PRODUCTO P WHERE P.ID_PRODUCTO = MD.ID_PRODUCTO) \"Producto\", ";
         String Query = "SELECT "
-                + "ID_DETALLE \"ID\", "
-                + "ID_PRODUCTO \"ID art.\", "
+                + "MD.ID_DETALLE \"ID\", "
+                + "MD.ID_PRODUCTO \"ID art.\", "
                 + queryProducto
-                + "CANTIDAD \"Cantidad\", "
-                + "PRECIO \"Precio\", "
-                + "DESCUENTO \"Descuento\","
-                + "EXENTA \"Exenta\", "
-                + "IVA5 \"IVA 5%\", "
-                + "IVA10 \"IVA 10%\", "
-                + "OBSERVACION \"Obs.\" "
-                + "FROM DETALLE "
-                + "WHERE ID_MESA = " + idMesa;
+                + "MD.CANTIDAD \"Cantidad\", "
+                + "MD.PRECIO \"Precio\", "
+                + "MD.DESCUENTO \"Descuento\", "
+                + "CASE "
+                + "	WHEN P.ID_IMPUESTO = 1 THEN round((MD.PRECIO*MD.DESCUENTO)/100) "
+                + "END AS \"Exenta\", "
+                + "CASE "
+                + "	WHEN P.ID_IMPUESTO = 2 THEN round((MD.PRECIO*MD.DESCUENTO)/100) "
+                + "END AS \"IVA 5%\", "
+                + "CASE "
+                + "	WHEN P.ID_IMPUESTO = 3 THEN round((MD.PRECIO*MD.DESCUENTO)/100) "
+                + "END AS \"IVA 10%\", "
+                + "MD.OBSERVACION \"Obs.\" "
+                + "FROM MESA_DETALLE MD "
+                + "WHERE MD.ID_MESA = " + idMesa;
         ResultSetTableModel rstm = null;
         try {
             st = DB_manager.getConection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
@@ -278,7 +284,7 @@ public class DB_Ingreso {
 
     public static long insertarMesa(M_mesa mesa, ArrayList<M_mesa_detalle> detalle) {
         //LA SGBD SE ENCARGA DE INSERTAR EL TIMESTAMP.
-        String INSERT_DETAIL = "INSERT INTO DETALLE(ID_MESA, ID_PRODUCTO, CANTIDAD, PRECIO, DESCUENTO, EXENTA, IVA5, IVA10, OBSERVACION)VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);";
+        String INSERT_DETAIL = "INSERT INTO MESA_DETALLE(ID_MESA, ID_PRODUCTO, CANTIDAD, PRECIO, DESCUENTO, OBSERVACION)VALUES (?, ?, ?, ?, ?, ?);";
         String INSERT_MESA = "INSERT INTO MESA(ID_FUNCIONARIO, ID_CLIENTE, ID_COND_VENTA, NUMERO)VALUES (?, ?, ?, ?);";
         long sq_cabecera = -1L;
         try {
@@ -302,17 +308,14 @@ public class DB_Ingreso {
                 pst.setDouble(3, detalle.get(i).getCantidad());
                 pst.setInt(4, detalle.get(i).getPrecio());
                 pst.setDouble(5, detalle.get(i).getDescuento());
-                pst.setInt(6, detalle.get(i).getExenta());
-                pst.setInt(7, detalle.get(i).getIva5());
-                pst.setInt(8, detalle.get(i).getIva10());
                 try {
                     if (detalle.get(i).getObservacion() == null) {
-                        pst.setNull(9, Types.VARCHAR);
+                        pst.setNull(6, Types.VARCHAR);
                     } else {
-                        pst.setString(9, detalle.get(i).getObservacion());
+                        pst.setString(6, detalle.get(i).getObservacion());
                     }
                 } catch (Exception e) {
-                    pst.setNull(9, Types.VARCHAR);
+                    pst.setNull(6, Types.VARCHAR);
                 }
                 pst.executeUpdate();
                 pst.close();
@@ -349,29 +352,28 @@ public class DB_Ingreso {
 
     public static M_mesa obtenerMesaID(Integer idMesa) {
         M_mesa mesa = null;
-        String genero = "(SELECT SEXO_DESCRIPCION  FROM SEXO WHERE SEXO_ID_SEXO = ID_SEXO) \"pers_sexo\"";
-        String pais = "(SELECT PAIS_DESCRIPCION FROM PAIS WHERE ID_PAIS=PAIS_ID_PAIS) \"NACIONALIDAD\"";
-        String ciudad = " (SELECT CIUD_DESCRIPCION FROM CIUDAD WHERE ID_CIUDAD=CIUD_ID_CIUDAD)\"CIUDAD\"";
-        String estadoCivil = " (SELECT ESCI_DESCRIPCION FROM ESTADO_CIVIL WHERE ESCI_ID_ESTADO_CIVIL=ID_ESTADO_CIVIL)\"pers_estado_civil\"";
-        String estado = " (SELECT ESTA_DESCRIPCION FROM ESTADO WHERE ESTA_ID_ESTADO=ID_ESTADO)\"func_estado\"";
+        String genero = "(SELECT S.DESCRIPCION  FROM SEXO S WHERE S.ID_SEXO = P.ID_SEXO) \"sexo\"";
+        String pais = "(SELECT PA.DESCRIPCION FROM PAIS PA WHERE PA.ID_PAIS = P.ID_PAIS) \"NACIONALIDAD\"";
+        String ciudad = " (SELECT CI.DESCRIPCION FROM CIUDAD CI WHERE CI.ID_CIUDAD = P.ID_CIUDAD)\"CIUDAD\"";
+        String estadoCivil = " (SELECT EC.DESCRIPCION FROM ESTADO_CIVIL EC WHERE EC.ID_ESTADO_CIVIL = P.ID_ESTADO_CIVIL)\"estado_civil\"";
 
-        String categoria = "(SELECT CLCA_DESCRIPCION FROM CLIENTE_CATEGORIA WHERE CLCA_ID_CLIENTE_CATEGORIA = ID_CATEGORIA) \"CATEGORIA\" ";
-        String tipo = "(SELECT CLTI_DESCRIPCION FROM CLIENTE_TIPO WHERE CLTI_ID_CLIENTE_TIPO = ID_TIPO) \"TIPO\" ";
+        String categoria = "(SELECT CLCA.DESCRIPCION FROM CLIENTE_CATEGORIA CLCA WHERE CLCA.ID_CLIENTE_CATEGORIA = C.ID_CATEGORIA) \"CATEGORIA\" ";
+        String tipo = "(SELECT CLTI.DESCRIPCION FROM CLIENTE_TIPO CLTI WHERE CLTI.ID_CLIENTE_TIPO = C.ID_TIPO) \"TIPO\" ";
 
-        String q = "SELECT ID_MESA, ID_FUNCIONARIO, ID_CLIENTE, TIEMPO,NUMERO, "
-                + "       ID_COND_VENTA, "
-                + "ID_CLIENTE, NOMBRE, ENTIDAD, RUC, RUC_IDENTIFICADOR, " + categoria + "," + tipo + ","
-                + "       DIRECCION, EMAIL, PAG_WEB, ID_TIPO, ID_CATEGORIA, "
-                + "       OBSERVACION, "
-                + "ID_FUNCIONARIO, ID_PERSONA, ALIAS, FECHA_INGRESO, " + genero + "," + pais + "," + ciudad + "," + estado + "," + estadoCivil + ","
-                + "       ID_ESTADO, FECHA_SALIDA, SALARIO, NRO_CELULAR, "
-                + "       NRO_TELEFONO, EMAIL, DIRECCION, OBSERVACION,ID_PERSONA, CI, NOMBRE, APELLIDO, ID_SEXO, "
-                + "       FECHA_NACIMIENTO, ID_ESTADO_CIVIL, ID_PAIS, ID_CIUDAD "
-                + "  FROM MESA,FUNCIONARIO,CLIENTE,PERSONA "
-                + "  WHERE ID_FUNCIONARIO = ID_FUNCIONARIO "
-                + "AND ID_CLIENTE = ID_CLIENTE "
-                + "AND ID_PERSONA = ID_PERSONA "
-                + "AND ID_MESA = " + idMesa;
+        String q = "SELECT M.ID_MESA, M.ID_FUNCIONARIO, M.ID_CLIENTE, M.TIEMPO,M.NUMERO, "
+                + "       M.ID_COND_VENTA, "
+                + "C.ID_CLIENTE, C.NOMBRE, C.ENTIDAD, C.RUC, C.RUC_IDENTIFICADOR, " + categoria + "," + tipo + ","
+                + "       C.DIRECCION, C.EMAIL, C.PAG_WEB, C.ID_TIPO, C.ID_CATEGORIA, "
+                + "       C.OBSERVACION, "
+                + "F.ID_FUNCIONARIO, F.ID_PERSONA, F.ALIAS, F.FECHA_INGRESO, " + genero + "," + pais + "," + ciudad + "," + estadoCivil + ","
+                + "       F.ID_ESTADO, F.FECHA_SALIDA, F.SALARIO, F.NRO_CELULAR, "
+                + "       F.NRO_TELEFONO, F.EMAIL, F.DIRECCION, F.OBSERVACION,P.ID_PERSONA, P.CI, P.NOMBRE, P.APELLIDO, P.ID_SEXO, "
+                + "       P.FECHA_NACIMIENTO, P.ID_ESTADO_CIVIL, P.ID_PAIS, P.ID_CIUDAD "
+                + "  FROM MESA M,FUNCIONARIO F,CLIENTE C,PERSONA P "
+                + "  WHERE M.ID_FUNCIONARIO = F.ID_FUNCIONARIO "
+                + "AND M.ID_CLIENTE = C.ID_CLIENTE "
+                + "AND F.ID_PERSONA = P.ID_PERSONA "
+                + "AND M.ID_MESA = " + idMesa;
         try {
             pst = DB_manager.getConection().prepareStatement(q, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             rs = pst.executeQuery();
@@ -380,19 +382,19 @@ public class DB_Ingreso {
                 f.setPais(rs.getString("NACIONALIDAD"));
                 f.setCiudad(rs.getString("CIUDAD"));
                 f.setFecha_nacimiento(rs.getDate("FECHA_NACIMIENTO"));
-                f.setSexo(rs.getString("pers_sexo"));
-                f.setNro_celular(rs.getString("func_nro_celular"));
-                f.setNro_telefono(rs.getString("func_nro_telefono"));
-                f.setEmail(rs.getString("func_email"));
+                f.setSexo(rs.getString("sexo"));
+                f.setNro_celular(rs.getString("nro_celular"));
+                f.setNro_telefono(rs.getString("nro_telefono"));
+                f.setEmail(rs.getString("email"));
                 f.setDireccion(rs.getString("DIRECCION"));
-                f.setAlias(rs.getString("func_alias"));
-                f.setNombre(rs.getString("pers_nombre"));
-                f.setApellido(rs.getString("pers_apellido"));
+                f.setAlias(rs.getString("alias"));
+                f.setNombre(rs.getString("nombre"));
+                f.setApellido(rs.getString("apellido"));
                 f.setFecha_ingreso(rs.getDate("FECHA_INGRESO"));
-                f.setId_persona(rs.getInt("pers_id_persona"));
-                f.setCedula(rs.getInt("pers_ci"));
-                f.setEstado_civil(rs.getString("pers_estado_civil"));
-                f.setId_funcionario(rs.getInt("func_id_funcionario"));
+                f.setId_persona(rs.getInt("id_persona"));
+                f.setCedula(rs.getInt("ci"));
+                f.setEstado_civil(rs.getString("estado_civil"));
+                f.setId_funcionario(rs.getInt("id_funcionario"));
                 f.setObservacion(rs.getString("OBSERVACION"));
 
                 M_cliente cliente = new M_cliente();
@@ -468,13 +470,10 @@ public class DB_Ingreso {
     }
 
     public static void actualizarMesaDetalle(M_mesa_detalle mesaDetalle) {
-        String UPDATE_MESA = "UPDATE DETALLE SET "
+        String UPDATE_MESA = "UPDATE MESA_DETALLE SET "
                 + "CANTIDAD= " + mesaDetalle.getCantidad() + ", "
                 + "PRECIO=" + mesaDetalle.getPrecio() + ", "
                 + "DESCUENTO=" + mesaDetalle.getDescuento() + ", "
-                + "EXENTA=" + mesaDetalle.getExenta() + ", "
-                + "IVA5=" + mesaDetalle.getIva5() + ", "
-                + "IVA10=" + mesaDetalle.getIva10() + ", "
                 + "OBSERVACION= '" + mesaDetalle.getObservacion() + "' "
                 + "WHERE ID_DETALLE = " + mesaDetalle.getIdMesaDetalle();
         try {
@@ -501,7 +500,7 @@ public class DB_Ingreso {
     }
 
     public static void eliminarMesa(int idMesa) {
-        String DELETE_DETAIL = "DELETE FROM DETALLE WHERE ID_MESA = " + idMesa;
+        String DELETE_DETAIL = "DELETE FROM MESA_DETALLE WHERE ID_MESA = " + idMesa;
         String DELETE_HEADER = "DELETE FROM MESA WHERE ID_MESA = " + idMesa;
         try {
             DB_manager.habilitarTransaccionManual();
@@ -528,7 +527,7 @@ public class DB_Ingreso {
     }
 
     public static void eliminarMesaDetalle(int idMesaDetalle) {
-        String DELETE_DETAIL = "DELETE FROM DETALLE WHERE ID_DETALLE = " + idMesaDetalle;
+        String DELETE_DETAIL = "DELETE FROM MESA_DETALLE WHERE ID_MESA_DETALLE = " + idMesaDetalle;
         try {
             DB_manager.habilitarTransaccionManual();
             st = DB_manager.getConection().createStatement();
@@ -556,7 +555,7 @@ public class DB_Ingreso {
         try {
             st = DB_manager.getConection().createStatement();
             // se ejecuta el query y se obtienen los resultados en un ResultSet
-            rs = st.executeQuery(QUERY);//Bolsa p/ hielo 10*35
+            rs = st.executeQuery(QUERY);
             if (!rs.next()) {
                 return true;
             }
@@ -568,7 +567,7 @@ public class DB_Ingreso {
     }
 
     public static void insertarMesaDetalle(int idMesa, M_mesa_detalle mesaDetalle) {
-        String INSERT_DETALLE = "INSERT INTO DETALLE(ID_MESA, ID_PRODUCTO, CANTIDAD, PRECIO, DESCUENTO, EXENTA, IVA5, IVA10, OBSERVACION)VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);";
+        String INSERT_DETALLE = "INSERT INTO MESA_DETALLE(ID_MESA, ID_PRODUCTO, CANTIDAD, PRECIO, DESCUENTO, OBSERVACION)VALUES (?, ?, ?, ?, ?, ?);";
         try {
             DB_manager.getConection().setAutoCommit(false);
             pst = DB_manager.getConection().prepareStatement(INSERT_DETALLE);
@@ -577,17 +576,14 @@ public class DB_Ingreso {
             pst.setDouble(3, mesaDetalle.getCantidad());
             pst.setInt(4, mesaDetalle.getPrecio());
             pst.setDouble(5, mesaDetalle.getDescuento());
-            pst.setInt(6, mesaDetalle.getExenta());
-            pst.setInt(7, mesaDetalle.getIva5());
-            pst.setInt(8, mesaDetalle.getIva10());
             try {
                 if (mesaDetalle.getObservacion() == null) {
-                    pst.setNull(9, Types.VARCHAR);
+                    pst.setNull(6, Types.VARCHAR);
                 } else {
-                    pst.setString(9, mesaDetalle.getObservacion());
+                    pst.setString(6, mesaDetalle.getObservacion());
                 }
             } catch (Exception e) {
-                pst.setNull(9, Types.VARCHAR);
+                pst.setNull(6, Types.VARCHAR);
             }
             pst.executeUpdate();
             pst.close();
@@ -620,7 +616,7 @@ public class DB_Ingreso {
     }
 
     public static void transferirMesaAVenta(M_mesa mesa, ArrayList<M_mesa_detalle> detalle) {
-        String INSERT_DETALLE = "INSERT INTO FACTURA_DETALLE(ID_FACTURA_CABECERA, ID_PRODUCTO, CANTIDAD, PRECIO, DESCUENTO, EXENTA, IVA5, IVA10, OBSERVACION)VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);";
+        String INSERT_DETALLE = "INSERT INTO FACTURA_DETALLE(ID_FACTURA_CABECERA, ID_PRODUCTO, CANTIDAD, PRECIO, DESCUENTO, OBSERVACION)VALUES (?, ?, ?, ?, ?, ?);";
         //LA SGBD SE ENCARGA DE INSERTAR EL TIMESTAMP.
         String INSERT_CABECERA = "INSERT INTO FACTURA_CABECERA(ID_FUNCIONARIO, ID_CLIENTE, ID_COND_VENTA)VALUES (?, ?, ?);";
         String DELETE_DETAIL = "DELETE FROM DETALLE WHERE ID_MESA = " + mesa.getIdMesa();
@@ -646,17 +642,14 @@ public class DB_Ingreso {
                 pst.setDouble(3, detalle.get(i).getCantidad());
                 pst.setInt(4, detalle.get(i).getPrecio());
                 pst.setDouble(5, detalle.get(i).getDescuento());
-                pst.setInt(6, detalle.get(i).getExenta());
-                pst.setInt(7, detalle.get(i).getIva5());
-                pst.setInt(8, detalle.get(i).getIva10());
                 try {
                     if (detalle.get(i).getObservacion() == null) {
-                        pst.setNull(9, Types.VARCHAR);
+                        pst.setNull(6, Types.VARCHAR);
                     } else {
-                        pst.setString(9, detalle.get(i).getObservacion());
+                        pst.setString(6, detalle.get(i).getObservacion());
                     }
                 } catch (Exception e) {
-                    pst.setNull(9, Types.VARCHAR);
+                    pst.setNull(6, Types.VARCHAR);
                 }
                 pst.executeUpdate();
                 pst.close();
