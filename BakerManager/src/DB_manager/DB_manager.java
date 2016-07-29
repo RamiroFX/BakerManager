@@ -107,8 +107,7 @@ public class DB_manager {
         }
 
         //se crea una sentencia
-        Statement statement
-                = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+        Statement statement = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
 
         // se ejecuta el query y se obtienen los resultados en un ResultSet
         ResultSet r = statement.executeQuery(query);
@@ -147,8 +146,8 @@ public class DB_manager {
 
     public static ResultSetTableModel consultarRubro() {
         ResultSetTableModel rubro = null;
-        String q = "SELECT id_rubro \"ID\" ,descripcion \"Descripcion\" "
-                + "FROM rubro ";
+        String q = "SELECT ID_PRODUCTO_CATEGORIA \"ID\" ,descripcion \"Descripcion\" "
+                + "FROM PRODUCTO_CATEGORIA ";
         try {
             st = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             rs = st.executeQuery(q);
@@ -584,10 +583,12 @@ public class DB_manager {
     }
 
     public static boolean verificarUsuario(String alias, String password) {
-        String q = "SELECT alias  FROM FUNCIONARIO WHERE ALIAS ='" + alias + "' AND PASSWORD ='" + password + "';";
+        String query = "SELECT ALIAS FROM FUNCIONARIO WHERE ALIAS = ? AND PASSWORD = ?;";
         try {
-            st = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-            rs = st.executeQuery(q);
+            pst = getConection().prepareStatement(query);
+            pst.setString(1, alias);
+            pst.setString(2, password);
+            rs = pst.executeQuery();
             return rs.isBeforeFirst();
         } catch (SQLException ex) {
             ex.printStackTrace();

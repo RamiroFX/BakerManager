@@ -28,13 +28,13 @@ public class C_gestion_producto extends MouseAdapter implements ActionListener, 
 
     private M_producto m_producto;
     private M_proveedor proveedor;
-    V_gestion_producto vista;
+    public V_gestion_producto vista;
     public C_inicio c_inicio;
 
-    public C_gestion_producto(C_inicio c_inicio) {
+    public C_gestion_producto(V_gestion_producto vista, C_inicio c_inicio) {
         this.m_producto = new M_producto();
         this.proveedor = new M_proveedor();
-        this.vista = new V_gestion_producto();
+        this.vista = vista;
         this.c_inicio = c_inicio;
         this.vista.setLocation(c_inicio.centrarPantalla(this.vista));
         inicializarVista();

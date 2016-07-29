@@ -5,7 +5,7 @@
 package MenuPrincipal;
 
 import Entities.M_menu_item;
-import Ventas.CrearVentas;
+import Producto.Gestion_Producto;
 import Ventas.Gestion_Ventas;
 import bakermanager.C_inicio;
 import empleado.Gestion_empleado;
@@ -57,9 +57,6 @@ public class C_MenuPrincipal implements ActionListener {
             if (this.vista.jbProveedores.getName().equals(accesos.get(i).getMenuDescripcion())) {
                 this.vista.jbProveedores.setEnabled(true);
             }
-            /**
-             * 
-             */
             if (this.vista.jbClientes.getName().equals(accesos.get(i).getMenuDescripcion())) {
                 this.vista.jbClientes.setEnabled(true);
             }
@@ -99,6 +96,9 @@ public class C_MenuPrincipal implements ActionListener {
         } else if (src.equals(this.vista.jbVentas)) {
             Gestion_Ventas gestionVenta = new Gestion_Ventas(c_inicio);
             gestionVenta.mostrarVista();
+        } else if (src.equals(this.vista.jbProductos)) {
+            Gestion_Producto gestionProducto = new Gestion_Producto(c_inicio);
+            gestionProducto.mostrarVista();
         } else if (src.equals(this.vista.jbSalir)) {
             System.exit(0);
         }

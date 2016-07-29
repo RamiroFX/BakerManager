@@ -357,17 +357,18 @@ public class DB_Producto {
 
     public static void modificarProducto(M_producto producto) {
         System.out.println("actualizarProducto: " + producto.getId());
-        String imp = "(SELECT IMPU.ID_IMPUESTO FROM IMPUESTO IMPU WHERE IMPU.DESCRIPCION = " + producto.getImpuesto() + ")";
-        String query = "UPDATE  producto PROD"
-                + "SET PROD.codigo = " + producto.getCodBarra() + " ,  "
-                + " PROD.ID_MARCA = '" + producto.getMarca() + "' , "
-                + " PROD.ID_IMPUESTO = " + imp + " , "
-                + " PROD.ID_CATEGORIA = '" + producto.getRubro() + "' , "
-                + " PROD.precio_costo = " + producto.getPrecioCosto() + " , "
-                + " PROD.precio_mayorista = " + producto.getPrecioMayorista() + " , "
-                + " PROD.precio_minorista = " + producto.getPrecioVenta() + " , "
-                + " PROD.CANT_ACTUAL = " + producto.getCantActual() + "  "
-                + " WHERE PROD.id_producto = " + producto.getId() + "";
+        String imp = "(SELECT ID_IMPUESTO FROM IMPUESTO WHERE DESCRIPCION = '" + producto.getImpuesto() + "')";
+        String query = "UPDATE  producto "
+                + "SET codigo = '" + producto.getCodBarra() + "' ,  "
+                + " ID_MARCA = " + producto.getIdMarca()+ " , "
+                + " ID_estad = " + producto.getIdMarca()+ " , "
+                + " ID_IMPUESTO = " + producto.getIdImpuesto() + " , "
+                + " ID_CATEGORIA = " + producto.getRubro() + " , "
+                + " precio_costo = " + producto.getPrecioCosto() + " , "
+                + " precio_mayorista = " + producto.getPrecioMayorista() + " , "
+                + " precio_minorista = " + producto.getPrecioVenta() + " , "
+                + " CANT_ACTUAL = " + producto.getCantActual() + "  "
+                + " WHERE id_producto = " + producto.getId() + "";
         try {
             DB_manager.getConection().setAutoCommit(false);
             st = DB_manager.getConection().createStatement();
@@ -476,11 +477,11 @@ public class DB_Producto {
     }
 
     public static boolean existeProducto(String prodDescripcion) {
-        String Query = "SELECT DESCRIPCION FROM PRODUCTO "
-                + "WHERE DESCRIPCION LIKE '" + prodDescripcion + "'";
+        String Query = "SELECT DESCRIPCION FROM PRODUCTO WHERE DESCRIPCION LIKE ?;";
         try {
-            st = DB_manager.getConection().createStatement();
-            rs = st.executeQuery(Query);
+            pst = DB_manager.getConection().prepareStatement(Query);
+            pst.setString(1, prodDescripcion);
+            rs = pst.executeQuery();
             return rs.next();
         } catch (SQLException ex) {
             Logger lgr = Logger.getLogger(DB_Funcionario.class.getName());
