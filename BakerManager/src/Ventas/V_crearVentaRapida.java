@@ -135,7 +135,7 @@ public class V_crearVentaRapida extends JDialog {
 
     private void initSouth() {
         jpSouth = new JPanel();
-        jbAceptar = new JButton("Aceptar");
+        jbAceptar = new JButton("Confirmar venta");
 
         jbSalir = new JButton("Salir");
         jpSouth.add(jbAceptar);

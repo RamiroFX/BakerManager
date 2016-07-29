@@ -101,6 +101,7 @@ public class ConfigurarMesa extends JDialog implements ActionListener, KeyListen
         this.jbCliente.addActionListener(this);
         this.jbAceptar.addActionListener(this);
         this.jbCancelar.addActionListener(this);
+        this.jtfNroMesa.addKeyListener(this);
     }
 
     private void cerrar() {
@@ -183,13 +184,15 @@ public class ConfigurarMesa extends JDialog implements ActionListener, KeyListen
 
     @Override
     public void keyTyped(KeyEvent e) {
-        if (e.getSource().equals(jtfNroMesa)) {
-            crearMesa();
-        }
     }
 
     @Override
     public void keyPressed(KeyEvent e) {
+        if (this.jtfNroMesa.hasFocus()) {
+            if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                crearMesa();
+            }
+        }
     }
 
     @Override

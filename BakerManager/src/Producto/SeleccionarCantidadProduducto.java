@@ -58,7 +58,7 @@ public class SeleccionarCantidadProduducto extends javax.swing.JDialog implement
     public SeleccionarCantidadProduducto(C_seleccionarProducto selecProd, M_producto producto) {
         super(selecProd.vista, true);
         setTitle("Seleccione una cantidad");
-        setSize(new java.awt.Dimension(300, 200));
+        setSize(new java.awt.Dimension(300, 250));
         setLocationRelativeTo(selecProd.vista);
         this.selecProd = selecProd;
         this.producto = selecProd.producto;
@@ -70,7 +70,7 @@ public class SeleccionarCantidadProduducto extends javax.swing.JDialog implement
     public SeleccionarCantidadProduducto(C_crear_egreso crear_egreso, int row) {
         super(crear_egreso.vista, true);
         setTitle("Seleccione una cantidad");
-        setSize(new java.awt.Dimension(300, 200));
+        setSize(new java.awt.Dimension(300, 250));
         setLocationRelativeTo(crear_egreso.vista);
         tipo = MODIFICAR_EGRESO;
         this.crear_egreso = crear_egreso;
@@ -81,7 +81,7 @@ public class SeleccionarCantidadProduducto extends javax.swing.JDialog implement
     public SeleccionarCantidadProduducto(C_crearVentaRapida crear_ingreso, int row) {
         super(crear_ingreso.vista, true);
         setTitle("Seleccione una cantidad");
-        setSize(new java.awt.Dimension(300, 200));
+        setSize(new java.awt.Dimension(300, 250));
         setLocationRelativeTo(crear_ingreso.vista);
         tipo = MODIFICAR_INGRESO;
         this.crear_ingreso = crear_ingreso;
@@ -93,7 +93,7 @@ public class SeleccionarCantidadProduducto extends javax.swing.JDialog implement
     public SeleccionarCantidadProduducto(C_crearPedido crearPedido, int row) {
         super(crearPedido.vista, true);
         setTitle("Seleccione una cantidad");
-        setSize(new java.awt.Dimension(300, 200));
+        setSize(new java.awt.Dimension(300, 250));
         setLocationRelativeTo(crearPedido.vista);
         tipo = MODIFICAR_PEDIDO_DETALLE;
         this.crearPedido = crearPedido;
@@ -105,7 +105,7 @@ public class SeleccionarCantidadProduducto extends javax.swing.JDialog implement
     public SeleccionarCantidadProduducto(C_verMesa verMesa, int idProducto, int idMesaDetalle) {
         super(verMesa.vista, true);
         setTitle("Seleccione una cantidad");
-        setSize(new java.awt.Dimension(300, 200));
+        setSize(new java.awt.Dimension(300, 250));
         setLocationRelativeTo(verMesa.vista);
         tipo = MODIFICAR_MESA_DETALLE;
         this.row = idMesaDetalle;//para almacenar el id de la mesa detalle
@@ -117,7 +117,7 @@ public class SeleccionarCantidadProduducto extends javax.swing.JDialog implement
     public SeleccionarCantidadProduducto(C_verPedido verPedido, int idProducto, int idPedidoDetalle) {
         super(verPedido.vista, true);
         setTitle("Seleccione una cantidad");
-        setSize(new java.awt.Dimension(300, 200));
+        setSize(new java.awt.Dimension(300, 250));
         setLocationRelativeTo(verPedido.vista);
         tipo = VER_PEDIDO_DETALLE;
         this.row = idPedidoDetalle;//para almacenar el id de la mesa detalle

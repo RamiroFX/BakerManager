@@ -133,9 +133,9 @@ public class C_verMesa extends MouseAdapter implements ActionListener {
 
     public void recibirDetalle(M_facturaDetalle detalle) {
         M_mesa_detalle mesaDetalle = new M_mesa_detalle();
-        Integer impExenta = null;
-        Integer imp5 = null;
-        Integer imp10 = null;
+        Integer impExenta = 0;
+        Integer imp5 = 0;
+        Integer imp10 = 0;
         Integer Precio = detalle.getPrecio() - Math.round(Math.round(((detalle.getPrecio() * detalle.getDescuento()) / 100)));
         Integer total = Math.round(Math.round((detalle.getCantidad() * Precio)));
         if (detalle.getProducto().getImpuesto().equals(0)) {
@@ -155,7 +155,7 @@ public class C_verMesa extends MouseAdapter implements ActionListener {
             String aux = detalle.getProducto().getDescripcion();
             detalle.getProducto().setDescripcion(aux + "-(" + detalle.getObservacion() + ")");
         }
-        Object[] rowData = {detalle.getProducto().getId(), detalle.getCantidad(), detalle.getProducto().getDescripcion(), detalle.getPrecio(), detalle.getDescuento(), impExenta, imp5, imp10};
+        //Object[] rowData = {detalle.getProducto().getId(), detalle.getCantidad(), detalle.getProducto().getDescripcion(), detalle.getPrecio(), detalle.getDescuento(), impExenta, imp5, imp10};
         detalle.setExenta(impExenta);
         detalle.setIva5(imp5);
         detalle.setIva10(imp10);
@@ -179,14 +179,20 @@ public class C_verMesa extends MouseAdapter implements ActionListener {
     }
 
     private void eliminarDetalle() {
-        int row = this.vista.jtFacturaDetalle.getSelectedRow();
-        int idMesaDetalle = Integer.valueOf(this.vista.jtFacturaDetalle.getValueAt(row, 0).toString());
-        this.modelo.eliminarVenta(idMesaDetalle);
-        this.modelo.actualizarVentaDetalle();
-        this.vista.jtFacturaDetalle.setModel(this.modelo.getRstm());
-        Utilities.c_packColumn.packColumns(this.vista.jtFacturaDetalle, 1);
-        sumarTotal();
-        actualizarMesas();
+        int response = JOptionPane.showConfirmDialog(null, "¿Está seguro que desea eliminar el detalle?", "Confirmar",
+                JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+        if (response == JOptionPane.YES_OPTION) {
+            int row = this.vista.jtFacturaDetalle.getSelectedRow();
+            int idMesaDetalle = Integer.valueOf(this.vista.jtFacturaDetalle.getValueAt(row, 0).toString());
+            this.modelo.eliminarVenta(idMesaDetalle);
+            this.modelo.actualizarVentaDetalle();
+            this.vista.jtFacturaDetalle.setModel(this.modelo.getRstm());
+            this.vista.jbEliminarDetalle.setEnabled(false);
+            this.vista.jbModificarDetalle.setEnabled(false);
+            Utilities.c_packColumn.packColumns(this.vista.jtFacturaDetalle, 1);
+            sumarTotal();
+            actualizarMesas();
+        }
     }
 
     public void modificarDetalle(M_producto producto, Double cantidad, Integer precio, Double descuento, String observacion, int idMesaDetalle) {

@@ -141,6 +141,7 @@ public class V_gestion_usuario extends JInternalFrame {
         jbModificarUsuario = new javax.swing.JButton();
         jbEliminarUsuario = new javax.swing.JButton("Eliminar usuario");
         jbCambiarPassword = new javax.swing.JButton("Cambiar contraseña");
+        jbCambiarPassword.setName("modificar contrasenha");
         jbCrearUsuario.setName("crear empleado");
         jbModificarUsuario.setName("modificar empleado");
         jbEliminarUsuario.setName("borrar empleado");

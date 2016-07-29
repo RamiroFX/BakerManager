@@ -34,7 +34,7 @@ public class C_crear_producto implements ActionListener {
         inicializarVista();
         agregarListeners();
     }
-    
+
     public C_crear_producto(JDialog c_inicio) {
         this.producto = new M_producto();
         this.proveedor = new M_proveedor();
@@ -45,7 +45,7 @@ public class C_crear_producto implements ActionListener {
 
     public void mostrarVista() {
         //this.vista.setSize(establecerTamañoPanel());
-        this.vista.setSize(800,600);
+        this.vista.setSize(800, 600);
         this.vista.setLocationRelativeTo(this.vista.getParent());
         this.vista.setVisible(true);
     }
@@ -80,9 +80,9 @@ public class C_crear_producto implements ActionListener {
                         javax.swing.JOptionPane.OK_OPTION);
                 return;
             }
-            
-            String prodDescripcion= this.vista.jtfProducto.getText();
-            if(DB_Producto.existeProducto(prodDescripcion)){
+
+            String prodDescripcion = this.vista.jtfProducto.getText();
+            if (DB_Producto.existeProducto(prodDescripcion)) {
                 javax.swing.JOptionPane.showMessageDialog(this.vista, "El nombre del producto se encuentra en uso. Verifique el nombre del producto", "Parametros incorrectos",
                         javax.swing.JOptionPane.OK_OPTION);
                 return;
@@ -98,6 +98,13 @@ public class C_crear_producto implements ActionListener {
             producto.setPrecioMayorista(Integer.valueOf(this.vista.jtfPrecioMayorista.getText()));
             producto.setPrecioVenta(Integer.valueOf(this.vista.jtfPrecioVta.getText()));
             producto.setCantActual(0.0);
+            int idCategoria = DB_manager.obtenerIdProductoCategoria((String) this.vista.jcbRubro.getSelectedItem());
+            int idMarca = DB_manager.obtenerIdMarca((String) this.vista.jcbMarca.getSelectedItem());
+            int idImpuesto = DB_manager.obtenerIdImpuesto((String) this.vista.jcbImpuesto.getSelectedItem());
+            producto.setIdCategoria(idCategoria);
+            producto.setIdEstado(1);//Activo
+            producto.setIdImpuesto(idImpuesto);
+            producto.setIdMarca(idMarca);
             long id_producto = DB_Producto.insertarProducto(producto);
             DB_Producto.insertarCodigoProducto(id_producto);
             if (this.vista.jckBProveedor.isSelected() && !this.vista.jtfProveedor.getText().isEmpty()) {

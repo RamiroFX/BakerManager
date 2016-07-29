@@ -14,6 +14,7 @@ import Producto.SeleccionarProducto;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -39,7 +40,11 @@ public class C_crearVentaRapida implements Gestion {
         this.vista.jtfFuncionario.setText(this.modelo.getCabecera().getFuncionario().getAlias());
         this.vista.jtfClieDireccion.setText(this.modelo.getCabecera().getCliente().getDireccion());
         this.vista.jtfCliente.setText(this.modelo.getCabecera().getCliente().getEntidad() + "(" + this.modelo.getCabecera().getCliente().getNombre() + ")");
-        this.vista.jtfClieTelefono.setText(this.modelo.getTelefono().getNumero());
+        try {
+            this.vista.jtfClieTelefono.setText(this.modelo.getTelefono().getNumero());
+        } catch (Exception e) {
+            this.vista.jtfClieTelefono.setText("");
+        }
         this.vista.jtfClieRuc.setText(this.modelo.getCabecera().getCliente().getRuc() + "-" + this.modelo.getCabecera().getCliente().getRucId());
         this.vista.jrbContado.setSelected(true);
         this.vista.jtFacturaDetalle.setModel(this.modelo.getDtm());
@@ -88,7 +93,6 @@ public class C_crearVentaRapida implements Gestion {
         }
         if (e.getSource().equals(this.vista.jbAceptar)) {
             guardarVenta();
-            cerrar();
         }
         if (e.getSource().equals(this.vista.jbAgregarProducto)) {
             SeleccionarProducto sp = new SeleccionarProducto(this);
@@ -286,7 +290,9 @@ public class C_crearVentaRapida implements Gestion {
     }
 
     private void guardarVenta() {
-        this.modelo.guardarVenta();
+        if (this.modelo.guardarVenta()) {
+            cerrar();
+        }
     }
 
     private void establecerCondicionVenta() {

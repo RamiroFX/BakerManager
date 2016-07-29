@@ -9,6 +9,7 @@ import DB_manager.DB_Egreso;
 import DB_manager.DB_Ingreso;
 import Entities.M_cliente;
 import Entities.M_funcionario;
+import Entities.M_menu_item;
 import Interface.Gestion;
 import bakermanager.C_inicio;
 import empleado.Seleccionar_funcionario;
@@ -16,6 +17,7 @@ import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Vector;
@@ -30,6 +32,7 @@ public class C0_gestionVentas implements Gestion {
     public M0_gestionVentas modelo;
     public V0_gestionVentas vista;
     public C_inicio c_inicio;
+    private ArrayList<M_menu_item> accesos;
 
     public C0_gestionVentas(M0_gestionVentas modelo, V0_gestionVentas vista, C_inicio c_inicio) {
         this.modelo = modelo;
@@ -50,6 +53,32 @@ public class C0_gestionVentas implements Gestion {
         Date today = Calendar.getInstance().getTime();
         this.vista.jddInicio.setDate(today);
         this.vista.jddFinal.setDate(today);
+        accesos = c_inicio.modelo.getRol_usuario().getAccesos();
+        this.vista.jbAgregar.setEnabled(false);
+        this.vista.jbBuscar.setEnabled(false);
+        this.vista.jbBuscarDetalle.setEnabled(false);
+        this.vista.jbDetalle.setEnabled(false);
+        this.vista.jbResumen.setEnabled(false);
+        this.vista.jbCliente.setEnabled(false);
+        this.vista.jbEmpleado.setEnabled(false);
+        this.vista.jcbCondCompra.setEnabled(false);
+        for (int i = 0; i < accesos.size(); i++) {
+            if (this.vista.jbAgregar.getName().equals(accesos.get(i).getItemDescripcion())) {
+                this.vista.jbAgregar.setEnabled(true);
+            }
+            if (this.vista.jbBuscar.getName().equals(accesos.get(i).getItemDescripcion())) {
+                this.vista.jbBuscar.setEnabled(true);
+                this.vista.jbCliente.setEnabled(true);
+                this.vista.jbEmpleado.setEnabled(true);
+                this.vista.jcbCondCompra.setEnabled(true);
+            }
+            if (this.vista.jbDetalle.getName().equals(accesos.get(i).getItemDescripcion())) {
+                this.vista.jbDetalle.setEnabled(true);
+            }
+            if (this.vista.jbResumen.getName().equals(accesos.get(i).getItemDescripcion())) {
+                this.vista.jbResumen.setEnabled(true);
+            }
+        }
     }
 
     @Override

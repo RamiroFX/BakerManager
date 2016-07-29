@@ -4,7 +4,6 @@
  */
 package Ventas;
 
-
 /**
  *
  * @author Ramiro Ferreira

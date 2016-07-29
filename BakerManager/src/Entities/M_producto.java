@@ -12,6 +12,10 @@ package Entities;
 public class M_producto {
     private String descripcion,marca,rubro,estado;
     private Integer id,codigo,impuesto,precioCosto,precioMinorista,precioMayorista;
+    private Integer idMarca;
+    private Integer idEstado;
+    private Integer idCategoria;
+    private Integer idImpuesto;
     private Double cantActual;
 
     public M_producto() {
@@ -183,6 +187,62 @@ public class M_producto {
      */
     public void setCantActual(Double cantActual) {
         this.cantActual = cantActual;
+    }
+
+    /**
+     * @return the idMarca
+     */
+    public Integer getIdMarca() {
+        return idMarca;
+    }
+
+    /**
+     * @param idMarca the idMarca to set
+     */
+    public void setIdMarca(Integer idMarca) {
+        this.idMarca = idMarca;
+    }
+
+    /**
+     * @return the idEstado
+     */
+    public Integer getIdEstado() {
+        return idEstado;
+    }
+
+    /**
+     * @param idEstado the idEstado to set
+     */
+    public void setIdEstado(Integer idEstado) {
+        this.idEstado = idEstado;
+    }
+
+    /**
+     * @return the idCategoria
+     */
+    public Integer getIdCategoria() {
+        return idCategoria;
+    }
+
+    /**
+     * @param idCategoria the idCategoria to set
+     */
+    public void setIdCategoria(Integer idCategoria) {
+        this.idCategoria = idCategoria;
+    }
+
+    /**
+     * @return the idImpuesto
+     */
+    public Integer getIdImpuesto() {
+        return idImpuesto;
+    }
+
+    /**
+     * @param idImpuesto the idImpuesto to set
+     */
+    public void setIdImpuesto(Integer idImpuesto) {
+        this.idImpuesto = idImpuesto;
     }
 
 }

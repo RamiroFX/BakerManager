@@ -54,6 +54,7 @@ public class C_gestion_usuario implements Gestion {
         this.vista.jbModificarUsuario.setEnabled(false);
         this.vista.jbEliminarUsuario.setEnabled(false);
         this.vista.jbGestionRol.setEnabled(false);
+        this.vista.jbCambiarPassword.setEnabled(false);
         ArrayList<M_menu_item> accesos = c_inicio.modelo.getRol_usuario().getAccesos();
         for (int i = 0; i < accesos.size(); i++) {
             if (this.vista.jbCrearUsuario.getName().equals(accesos.get(i).getItemDescripcion())) {
@@ -67,6 +68,9 @@ public class C_gestion_usuario implements Gestion {
             }
             if (this.vista.jbGestionRol.getName().equals(accesos.get(i).getItemDescripcion())) {
                 this.vista.jbGestionRol.setEnabled(true);
+            }
+            if (this.vista.jbCambiarPassword.getName().equals(accesos.get(i).getItemDescripcion())) {
+                this.vista.jbCambiarPassword.setEnabled(true);
             }
             if (this.vista.jtfBuscar.getName().equals(accesos.get(i).getItemDescripcion())) {
                 this.vista.jtfBuscar.setEnabled(true);
@@ -158,12 +162,17 @@ public class C_gestion_usuario implements Gestion {
             crearEmpleado.mostrarVista();
         } else if (e.getSource() == this.vista.jbModificarUsuario) {
             int row = this.vista.jtUsuario.getSelectedRow();
-            int idEmpleado = Integer.valueOf(String.valueOf(this.vista.jtUsuario.getValueAt(row, 0)));
-            if (idEmpleado == 1) {
-                JOptionPane.showMessageDialog(null, "El usuario admin no puede ser modificado.", "Atención", JOptionPane.INFORMATION_MESSAGE);
-            } else {
-                Modificar_empleado modEmpleado = new Modificar_empleado(c_inicio, idEmpleado);
-                modEmpleado.mostrarVista();
+            if (row > 0) {
+                int idEmpleado = Integer.valueOf(String.valueOf(this.vista.jtUsuario.getValueAt(row, 0)));
+                if (idEmpleado == 1) {
+                    JOptionPane.showMessageDialog(null, "El usuario admin no puede ser modificado.", "Atención", JOptionPane.INFORMATION_MESSAGE);
+                } else {
+                    Modificar_empleado modEmpleado = new Modificar_empleado(c_inicio, idEmpleado);
+                    modEmpleado.mostrarVista();
+                }
+
+            }else{
+                JOptionPane.showMessageDialog(null, "Seleccione un usuario para modificar", "Atención", JOptionPane.INFORMATION_MESSAGE);
             }
         } else if (e.getSource() == this.vista.jbEliminarUsuario) {
             int row = this.vista.jtUsuario.getSelectedRow();

@@ -31,23 +31,25 @@ public class DB_Producto {
             if (DB_manager.getConection() == null) {
                 throw new IllegalStateException("Connection already closed.");
             }
-            String estado = "(SELECT ESTA_DESCRIPCION FROM ESTADO WHERE ESTA_ID_ESTADO = PROD_ID_ESTADO)\"Estado\"";
-            String impuesto = "(SELECT IMPU_DESCRIPCION FROM IMPUESTO WHERE IMPU_ID_IMPUESTO = PROD_IMPUESTO)\"Impuesto\"";
-            String q2 = "SELECT PROD_ID_PRODUCTO \"ID\", "
-                    + "PROD_DESCRIPCION \"Descripción\", "
-                    + "PROD_CODIGO \"Código\", "
-                    + "PROD_MARCA \"Marca\", "
-                    + impuesto + ", "
-                    + "PROD_RUBRO \"Rubro\", "
-                    + "PROD_PRECIO_COSTO \"Precio costo\", "
-                    + "PROD_PRECIO_MINORISTA \"Precio minorista\", "
-                    + "PROD_PRECIO_MAYORISTA \"Precio mayorista\", "
+            String categoria = "(SELECT PRCA.DESCRIPCION FROM PRODUCTO_CATEGORIA PRCA WHERE PRCA.ID_PRODUCTO_CATEGORIA = PROD.ID_CATEGORIA)\"Categoria\", ";
+            String marca = "(SELECT MARC.DESCRIPCION FROM MARCA MARC WHERE MARC.ID_MARCA = PROD.ID_MARCA)\"Marca\", ";
+            String estado = "(SELECT ESTA.DESCRIPCION FROM ESTADO ESTA WHERE ESTA.ID_ESTADO = PROD.ID_ESTADO)\"Estado\"";
+            String impuesto = "(SELECT IMPU.DESCRIPCION FROM IMPUESTO IMPU WHERE IMPU.ID_IMPUESTO = PROD.ID_IMPUESTO)\"Impuesto\", ";
+            String q2 = "SELECT PROD.ID_PRODUCTO \"ID\", "
+                    + "PROD.DESCRIPCION \"Descripción\", "
+                    + "PROD.CODIGO \"Código\", "
+                    + marca
+                    + impuesto
+                    + categoria
+                    + "PROD.PRECIO_COSTO \"Precio costo\", "
+                    + "PROD.PRECIO_MINORISTA \"Precio minorista\", "
+                    + "PROD.PRECIO_MAYORISTA \"Precio mayorista\", "
                     + estado + ", "
-                    + "PROD_CANT_ACTUAL \"Cant. actual\" "
-                    + "FROM PRODUCTO "
-                    + "WHERE LOWER(prod_DESCRIPCION) LIKE '" + query + "%' "
-                    + "ORDER BY PROD_DESCRIPCION";
-            //SELECT prod_id_producto   "ID producto"  ,  prod_descripcion  "Descripcion"   FROM producto
+                    + "PROD.CANT_ACTUAL \"Cant. actual\" "
+                    + "FROM PRODUCTO PROD "
+                    + "WHERE LOWER(PROD.DESCRIPCION) LIKE '" + query + "%' "
+                    + "ORDER BY PROD.DESCRIPCION";
+            //SELECT PROD.id_producto   "ID producto"  ,  PROD.descripcion  "Descripcion"   FROM producto
             //se crea una sentencia
             st = DB_manager.getConection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             // se ejecuta el query y se obtienen los resultados en un ResultSet
@@ -66,42 +68,42 @@ public class DB_Producto {
             if (DB_manager.getConection() == null) {
                 throw new IllegalStateException("Connection already closed.");
             }
-            String finalQuery = "ORDER BY PROD_DESCRIPCION";
-            String fromQuery = "FROM PRODUCTO ";
+            String finalQuery = "ORDER BY PROD.DESCRIPCION";
+            String fromQuery = "FROM PRODUCTO PROD ";
             String prov;
             if ("Todos".equals(proveedor)) {
                 prov = "";
             } else {
-                fromQuery = "FROM PROVEEDOR, PRODUCTO, PROVEEDOR_PRODUCTO ";
-                prov = "PRPR_ID_PROVEEDOR = PROV_ID_PROVEEDOR AND PRPR_ID_PRODUCTO = PROD_ID_PRODUCTO "
-                        + "AND PROV_ENTIDAD LIKE'" + proveedor + "' AND ";
+                fromQuery = "FROM PROVEEDOR PROV, PRODUCTO PROD, PROVEEDOR_PRODUCTO PRPR ";
+                prov = "PRPR.ID_PROVEEDOR = PROV.ID_PROVEEDOR AND PRPR.ID_PRODUCTO = PROD.ID_PRODUCTO "
+                        + "AND PROV.ENTIDAD LIKE'" + proveedor + "' AND ";
             }
 
             String imp;
             if ("Todos".equals(impuesto)) {
                 imp = "";
             } else {
-                imp = "AND prod_impuesto =(SELECT IMPU_ID_IMPUESTO FROM IMPUESTO WHERE IMPU_DESCRIPCION = " + impuesto + ")";
+                imp = "AND PROD.ID_IMPUESTO =(SELECT IMPU.ID_IMPUESTO FROM IMPUESTO IMPU WHERE IMPU.DESCRIPCION = " + impuesto + ")";
             }
 
             String marc;
             if ("Todos".equals(marca)) {
                 marc = "";
             } else {
-                marc = "AND PROD_MARCA LIKE '" + marca + "' ";
+                marc = "AND PROD.ID_MARCA LIKE '" + marca + "' ";
             }
 
             String rubr;
             if ("Todos".equals(rubro)) {
                 rubr = "";
             } else {
-                rubr = "AND PROD_RUBRO LIKE '" + rubro + "'  ";
+                rubr = "AND PROD.ID_CATEGORIA LIKE '" + rubro + "'  ";
             }
             String estad;
             if ("Todos".equals(estado)) {
                 estad = "";
             } else {
-                estad = "AND PROD_ID_ESTADO = (SELECT ESTA_ID_ESTADO FROM ESTADO WHERE ESTA_DESCRIPCION LIKE '" + estado + "')";
+                estad = "AND PROD.ID_ESTADO = (SELECT ESTA.ID_ESTADO FROM ESTADO ESTA WHERE ESTA.DESCRIPCION LIKE '" + estado + "')";
             }
             String busqueda_;
             if ("Exclusiva".equals(busqueda)) {
@@ -109,30 +111,31 @@ public class DB_Producto {
             } else {
                 busqueda_ = "%" + descripcion + "%";
             }
-
-            String queryEstado = "(SELECT ESTA_DESCRIPCION FROM ESTADO WHERE ESTA_ID_ESTADO = PROD_ID_ESTADO)\"Estado\"";
-            String queryImpuesto = "(SELECT IMPU_DESCRIPCION FROM IMPUESTO WHERE IMPU_ID_IMPUESTO = PROD_IMPUESTO)\"Impuesto\"";
-            String q2 = "SELECT PROD_ID_PRODUCTO \"ID\", "
-                    + "PROD_DESCRIPCION \"Descripción\", "
-                    + "PROD_CODIGO \"Código\", "
-                    + "PROD_MARCA \"Marca\", "
+            String Q_categoria = "(SELECT PRCA.DESCRIPCION FROM PRODUCTO_CATEGORIA PRCA WHERE PRCA.ID_PRODUCTO_CATEGORIA = PROD.ID_CATEGORIA)\"Categoria\", ";
+            String Q_marca = "(SELECT MARC.DESCRIPCION FROM MARCA MARC WHERE MARC.ID_MARCA = PROD.ID_MARCA)\"Marca\", ";
+            String queryEstado = "(SELECT ESTA.DESCRIPCION FROM ESTADO ESTA WHERE ESTA.ID_ESTADO = PROD.ID_ESTADO)\"Estado\"";
+            String queryImpuesto = "(SELECT IMPU.DESCRIPCION FROM IMPUESTO IMPU WHERE IMPU.ID_IMPUESTO = PROD.ID_IMPUESTO)\"Impuesto\"";
+            String q2 = "SELECT PROD.ID_PRODUCTO \"ID\", "
+                    + "PROD.DESCRIPCION \"Descripción\", "
+                    + "PROD.CODIGO \"Código\", "
+                    + Q_marca
                     + queryImpuesto + ", "
-                    + "PROD_RUBRO \"Rubro\", "
-                    + "PROD_PRECIO_COSTO \"Precio costo\", "
-                    + "PROD_PRECIO_MINORISTA \"Precio minorista\", "
-                    + "PROD_PRECIO_MAYORISTA \"Precio mayorista\", "
+                    + Q_categoria
+                    + "PROD.PRECIO_COSTO \"Precio costo\", "
+                    + "PROD.PRECIO_MINORISTA \"Precio minorista\", "
+                    + "PROD.PRECIO_MAYORISTA \"Precio mayorista\", "
                     + queryEstado + ", "
-                    + "PROD_CANT_ACTUAL \"Cant. actual\" "
+                    + "PROD.CANT_ACTUAL \"Cant. actual\" "
                     + fromQuery
                     + "WHERE "
                     + prov
-                    + "LOWER(prod_DESCRIPCION) LIKE '" + busqueda_ + "' "
+                    + "LOWER(PROD.DESCRIPCION) LIKE '" + busqueda_ + "' "
                     + marc
                     + imp
                     + rubr
                     + estad
                     + finalQuery;
-            //SELECT prod_id_producto   "ID producto"  ,  prod_descripcion  "Descripcion"   FROM producto
+            //SELECT PROD.id_producto   "ID producto"  ,  PROD.descripcion  "Descripcion"   FROM producto
             //se crea una sentencia
             st = DB_manager.getConection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             // se ejecuta el query y se obtienen los resultados en un ResultSet
@@ -151,12 +154,12 @@ public class DB_Producto {
             if (DB_manager.getConection() == null) {
                 throw new IllegalStateException("Connection already closed.");
             }
-            String q2 = "SELECT PROD_ID_PRODUCTO \"ID\", "
-                    + "PROD_DESCRIPCION \"Descripción\" "
-                    + "FROM PRODUCTO "
-                    + "WHERE LOWER(prod_DESCRIPCION) LIKE '" + query + "%' "
-                    + "ORDER BY PROD_DESCRIPCION";
-            //SELECT prod_id_producto   "ID producto"  ,  prod_descripcion  "Descripcion"   FROM producto
+            String q2 = "SELECT PROD.ID_PRODUCTO \"ID\", "
+                    + "PROD.DESCRIPCION \"Descripción\" "
+                    + "FROM PRODUCTO PROD "
+                    + "WHERE LOWER(PROD.DESCRIPCION) LIKE '" + query + "%' "
+                    + "ORDER BY PROD.DESCRIPCION";
+            //SELECT PROD.id_producto   "ID producto"  ,  PROD.descripcion  "Descripcion"   FROM producto
             //se crea una sentencia
             st = DB_manager.getConection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             // se ejecuta el query y se obtienen los resultados en un ResultSet
@@ -175,56 +178,56 @@ public class DB_Producto {
             if (DB_manager.getConection() == null) {
                 throw new IllegalStateException("Connection already closed.");
             }
-            String finalQuery = "ORDER BY PROD_DESCRIPCION";
-            String fromQuery = "FROM PRODUCTO ";
+            String finalQuery = "ORDER BY PROD.DESCRIPCION";
+            String fromQuery = "FROM PRODUCTO PROD ";
             String prov;
             if ("Todos".equals(proveedor)) {
                 prov = "";
             } else {
-                fromQuery = "FROM PROVEEDOR, PRODUCTO, PROVEEDOR_PRODUCTO ";
-                prov = "PRPR_ID_PROVEEDOR = PROV_ID_PROVEEDOR AND PRPR_ID_PRODUCTO = PROD_ID_PRODUCTO "
-                        + "AND PROV_ENTIDAD LIKE'" + proveedor + "' AND ";
+                fromQuery = "FROM PROVEEDOR PROV, PRODUCTO PROD, PROVEEDOR_PRODUCTO PRPR";
+                prov = "PRPR.ID_PROVEEDOR = PROV.ID_PROVEEDOR AND PRPR.ID_PRODUCTO = PROD.ID_PRODUCTO "
+                        + "AND PROV.ENTIDAD LIKE'" + proveedor + "' AND ";
             }
 
             String imp;
             if ("Todos".equals(impuesto)) {
                 imp = "";
             } else {
-                imp = "AND prod_impuesto =(SELECT IMPU_ID_IMPUESTO FROM IMPUESTO WHERE IMPU_DESCRIPCION = " + impuesto + ")";
+                imp = "AND PROD.ID_IMPUESTO =(SELECT IMPU.ID_IMPUESTO FROM IMPUESTO IMPU WHERE IMPU.DESCRIPCION = " + impuesto + ")";
             }
 
             String marc;
             if ("Todos".equals(marca)) {
                 marc = "";
             } else {
-                marc = "AND PROD_MARCA LIKE '" + marca + "' ";
+                marc = "AND PROD.ID_MARCA LIKE '" + marca + "' ";
             }
 
             String rubr;
             if ("Todos".equals(rubro)) {
                 rubr = "";
             } else {
-                rubr = "AND PROD_RUBRO LIKE '" + rubro + "'  ";
+                rubr = "AND PROD.ID_CATEGORIA LIKE '" + rubro + "'  ";
             }
             String estad;
             if ("Todos".equals(estado)) {
                 estad = "";
             } else {
-                estad = "AND PROD_ESTADO = (SELECT ESTA_ID_ESTADO FROM ESTADO WHERE ESTA_DESCRIPCION LIKE '" + estado + "')";
+                estad = "AND PROD.ESTADO = (SELECT ESTA.ID_ESTADO FROM ESTADO ESTA WHERE ESTA.DESCRIPCION LIKE '" + estado + "')";
             }
 
-            String Query = "SELECT PROD_ID_PRODUCTO \"ID\", "
-                    + "PROD_DESCRIPCION \"Descripción\" "
+            String Query = "SELECT PROD.ID_PRODUCTO \"ID\", "
+                    + "PROD.DESCRIPCION \"Descripción\" "
                     + fromQuery
                     + "WHERE "
                     + prov
-                    + "LOWER(prod_DESCRIPCION) LIKE '" + descripcion + "%' "
+                    + "LOWER(PROD.DESCRIPCION) LIKE '" + descripcion + "%' "
                     + marc
                     + imp
                     + rubr
                     + estad
                     + finalQuery;
-            //SELECT prod_id_producto   "ID producto"  ,  prod_descripcion  "Descripcion"   FROM producto
+            //SELECT PROD.id_producto   "ID producto"  ,  PROD.descripcion  "Descripcion"   FROM producto
             //se crea una sentencia
             st = DB_manager.getConection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             // se ejecuta el query y se obtienen los resultados en un ResultSet
@@ -255,7 +258,11 @@ public class DB_Producto {
                 producto.setPrecioCosto(rs.getInt("precio_costo"));
                 producto.setPrecioMayorista(rs.getInt("precio_mayorista"));
                 producto.setPrecioVenta(rs.getInt("precio_minorista"));
-                producto.setRubro(rs.getString("rubro"));
+                producto.setRubro(rs.getString("categoria"));
+                producto.setIdCategoria(rs.getInt("id_categoria"));
+                producto.setIdEstado(rs.getInt("id_estado"));
+                producto.setIdImpuesto(rs.getInt("id_impuesto"));
+                producto.setIdMarca(rs.getInt("id_marca"));
             }
             storedFunct.close();
         } catch (SQLException ex) {
@@ -275,20 +282,21 @@ public class DB_Producto {
         } else {
             prod.setImpuesto(3);
         }
-        int prod_id_estado = Integer.valueOf(prod.getEstado());
+        int id_estado = Integer.valueOf(prod.getEstado());
         String stm = "INSERT INTO PRODUCTO("
-                + "PROD_DESCRIPCION, "
-                + "PROD_CODIGO, "
-                + "PROD_MARCA, "
-                + "PROD_IMPUESTO, "
-                + "PROD_RUBRO, "
-                + "PROD_PRECIO_COSTO, "
-                + "PROD_PRECIO_MINORISTA, "
-                + "PROD_PRECIO_MAYORISTA, "
-                + "PROD_ID_ESTADO, "
-                + "PROD_CANT_ACTUAL)"
+                + "DESCRIPCION, "
+                + "CODIGO, "
+                + "ID_MARCA, "
+                + "ID_IMPUESTO, "
+                + "ID_CATEGORIA, "
+                + "PRECIO_COSTO, "
+                + "PRECIO_MINORISTA, "
+                + "PRECIO_MAYORISTA, "
+                + "ID_ESTADO, "
+                + "CANT_ACTUAL)"
                 + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try {
+            DB_manager.getConection().setAutoCommit(false);
             pst = DB_manager.getConection().prepareStatement(stm, PreparedStatement.RETURN_GENERATED_KEYS);
             pst.setString(1, prod.getDescripcion());
             try {
@@ -300,21 +308,13 @@ public class DB_Producto {
             } catch (Exception e) {
                 pst.setNull(2, Types.NUMERIC);
             }
-            try {
-                if (prod.getMarca() == null) {
-                    pst.setNull(3, Types.VARCHAR);
-                } else {
-                    pst.setString(3, prod.getMarca());
-                }
-            } catch (Exception e) {
-                pst.setNull(3, Types.VARCHAR);
-            }
-            pst.setInt(4, prod.getImpuesto());
-            pst.setString(5, prod.getRubro());
+            pst.setInt(3, prod.getIdMarca());
+            pst.setInt(4, prod.getIdImpuesto());
+            pst.setInt(5, prod.getIdCategoria());
             pst.setInt(6, prod.getPrecioCosto());
             pst.setInt(7, prod.getPrecioVenta());
             pst.setInt(8, prod.getPrecioMayorista());
-            pst.setInt(9, prod_id_estado);
+            pst.setInt(9, id_estado);
             try {
                 if (prod.getCantActual() == null) {
                     pst.setNull(10, Types.DOUBLE);
@@ -329,6 +329,7 @@ public class DB_Producto {
             if (rs != null && rs.next()) {
                 id_producto = rs.getLong(1);
             }
+            DB_manager.establecerTransaccion();
         } catch (SQLException ex) {
             System.out.println(ex.getNextException());
             if (DB_manager.getConection() != null) {
@@ -356,17 +357,17 @@ public class DB_Producto {
 
     public static void modificarProducto(M_producto producto) {
         System.out.println("actualizarProducto: " + producto.getId());
-        String imp = "(SELECT IMPU_ID_IMPUESTO FROM IMPUESTO WHERE IMPU_DESCRIPCION = " + producto.getImpuesto() + ")";
-        String query = "UPDATE  producto "
-                + "SET prod_codigo = " + producto.getCodBarra() + " ,  "
-                + " prod_marca = '" + producto.getMarca() + "' , "
-                + " prod_impuesto = " + imp + " , "
-                + " prod_rubro = '" + producto.getRubro() + "' , "
-                + " prod_precio_costo = " + producto.getPrecioCosto() + " , "
-                + " prod_precio_mayorista = " + producto.getPrecioMayorista() + " , "
-                + " prod_precio_minorista = " + producto.getPrecioVenta() + " , "
-                + " PROD_CANT_ACTUAL = " + producto.getCantActual() + "  "
-                + " WHERE prod_id_producto = " + producto.getId() + "";
+        String imp = "(SELECT IMPU.ID_IMPUESTO FROM IMPUESTO IMPU WHERE IMPU.DESCRIPCION = " + producto.getImpuesto() + ")";
+        String query = "UPDATE  producto PROD"
+                + "SET PROD.codigo = " + producto.getCodBarra() + " ,  "
+                + " PROD.ID_MARCA = '" + producto.getMarca() + "' , "
+                + " PROD.ID_IMPUESTO = " + imp + " , "
+                + " PROD.ID_CATEGORIA = '" + producto.getRubro() + "' , "
+                + " PROD.precio_costo = " + producto.getPrecioCosto() + " , "
+                + " PROD.precio_mayorista = " + producto.getPrecioMayorista() + " , "
+                + " PROD.precio_minorista = " + producto.getPrecioVenta() + " , "
+                + " PROD.CANT_ACTUAL = " + producto.getCantActual() + "  "
+                + " WHERE PROD.id_producto = " + producto.getId() + "";
         try {
             DB_manager.getConection().setAutoCommit(false);
             st = DB_manager.getConection().createStatement();
@@ -404,9 +405,9 @@ public class DB_Producto {
             DB_manager.habilitarTransaccionManual();
             for (int i = 0; i < id.size(); i++) {
                 String query = "UPDATE PRODUCTO SET "
-                        + "PROD_CANT_ACTUAL = "
-                        + "((SELECT PROD_CANT_ACTUAL FROM PRODUCTO WHERE PROD_ID_PRODUCTO = " + id.get(i).toString() + ")+" + cantidad.get(i).toString() + ") "
-                        + "WHERE PROD_ID_PRODUCTO =" + id.get(i).toString();
+                        + "CANT_ACTUAL = "
+                        + "((SELECT CANT_ACTUAL FROM PRODUCTO WHERE ID_PRODUCTO = " + id.get(i).toString() + ")+" + cantidad.get(i).toString() + ") "
+                        + "WHERE ID_PRODUCTO =" + id.get(i).toString();
                 st = DB_manager.getConection().createStatement();
                 st.executeUpdate(query);
             }
@@ -440,8 +441,8 @@ public class DB_Producto {
 
     public static void insertarCodigoProducto(long id_producto) {
         String query = "UPDATE  producto "
-                + "SET prod_codigo = " + id_producto
-                + " WHERE prod_id_producto = " + id_producto + "";
+                + "SET codigo = " + id_producto
+                + " WHERE id_producto = " + id_producto + "";
         try {
             DB_manager.getConection().setAutoCommit(false);
             st = DB_manager.getConection().createStatement();
@@ -475,16 +476,12 @@ public class DB_Producto {
     }
 
     public static boolean existeProducto(String prodDescripcion) {
-        String Query = "SELECT PROD_DESCRIPCION FROM PRODUCTO "
-                + "WHERE PROD_DESCRIPCION LIKE '" + prodDescripcion + "'";
+        String Query = "SELECT DESCRIPCION FROM PRODUCTO "
+                + "WHERE DESCRIPCION LIKE '" + prodDescripcion + "'";
         try {
             st = DB_manager.getConection().createStatement();
             rs = st.executeQuery(Query);
-            if (rs.next()) {
-                return true;
-            }else{
-                return false;
-            }
+            return rs.next();
         } catch (SQLException ex) {
             Logger lgr = Logger.getLogger(DB_Funcionario.class.getName());
             lgr.log(Level.SEVERE, ex.getMessage(), ex);

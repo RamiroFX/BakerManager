@@ -8,6 +8,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.Calendar;
 import javax.swing.JOptionPane;
 
 /**
@@ -34,6 +35,7 @@ public class C_crearVentas extends MouseAdapter implements ActionListener {
 
     private void inicializarComponentes() {
         this.vista.jtfFuncionario.setText(this.gestionVentas.c_inicio.modelo.getRol_usuario().getFuncionario().getAlias());
+        this.vista.jftTiempo.setValue(Calendar.getInstance().getTime());
         this.vista.jbVerMesa.setEnabled(false);
         this.vista.jbEliminarMesa.setEnabled(false);
         this.vista.jtMesa.setModel(this.modelo.getRstmMesa());

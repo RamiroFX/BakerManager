@@ -30,33 +30,33 @@ public class DB_Proveedor {
 
     public static M_proveedor obtenerDatosProveedorID(int idProveedor) {
         M_proveedor proveedor = null;
-        String query = "SELECT PROV_ID_PROVEEDOR, "
-                + "PROV_NOMBRE, "
-                + "PROV_ENTIDAD, "
-                + "PROV_RUC, "
-                + "PROV_RUC_IDENTIFICADOR, "
-                + "PROV_DESCRIPCION, "
-                + "PROV_DIRECCION, "
-                + "PROV_PAG_WEB, "
-                + "PROV_EMAIL, "
-                + "PROV_NOTA "
-                + "FROM PROVEEDOR "
-                + "WHERE prov_id_proveedor = " + idProveedor;
+        String query = "SELECT PROV.ID_PROVEEDOR, "
+                + "PROV.NOMBRE, "
+                + "PROV.ENTIDAD, "
+                + "PROV.RUC, "
+                + "PROV.RUC_IDENTIFICADOR, "
+                + "PROV.DESCRIPCION, "
+                + "PROV.DIRECCION, "
+                + "PROV.PAG_WEB, "
+                + "PROV.EMAIL, "
+                + "PROV.NOTA "
+                + "FROM PROVEEDOR PROV "
+                + "WHERE PROV.id_proveedor = " + idProveedor;
         try {
             st = DB_manager.getConection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             rs = st.executeQuery(query);
             while (rs.next()) {
                 proveedor = new M_proveedor();
-                proveedor.setDescripcion(rs.getString("PROV_DESCRIPCION"));
-                proveedor.setDireccion(rs.getString("PROV_DIRECCION"));
-                proveedor.setEmail(rs.getString("PROV_EMAIL"));
-                proveedor.setPagWeb(rs.getString("PROV_PAG_WEB"));
-                proveedor.setEntidad(rs.getString("PROV_ENTIDAD"));
-                proveedor.setId(rs.getInt("PROV_ID_PROVEEDOR"));
-                proveedor.setNombre(rs.getString("PROV_NOMBRE"));
-                proveedor.setRuc(rs.getString("PROV_RUC"));
-                proveedor.setRuc_id(rs.getString("PROV_RUC_IDENTIFICADOR"));
-                proveedor.setObservacion(rs.getString("PROV_NOTA"));
+                proveedor.setDescripcion(rs.getString("PROV.DESCRIPCION"));
+                proveedor.setDireccion(rs.getString("PROV.DIRECCION"));
+                proveedor.setEmail(rs.getString("PROV.EMAIL"));
+                proveedor.setPagWeb(rs.getString("PROV.PAG_WEB"));
+                proveedor.setEntidad(rs.getString("PROV.ENTIDAD"));
+                proveedor.setId(rs.getInt("PROV.ID_PROVEEDOR"));
+                proveedor.setNombre(rs.getString("PROV.NOMBRE"));
+                proveedor.setRuc(rs.getString("PROV.RUC"));
+                proveedor.setRuc_id(rs.getString("PROV.RUC_IDENTIFICADOR"));
+                proveedor.setObservacion(rs.getString("PROV.NOTA"));
             }
         } catch (SQLException ex) {
             Logger lgr = Logger.getLogger(DB_Proveedor.class.getName());
@@ -90,30 +90,30 @@ public class DB_Proveedor {
 
     public static M_proveedor obtenerDatosProveedor(String entidad) {
         M_proveedor proveedor = null;
-        String query = "SELECT PROV_ID_PROVEEDOR, "
-                + "PROV_NOMBRE, "
-                + "PROV_ENTIDAD, "
-                + "PROV_RUC, "
-                + "PROV_RUC_IDENTIFICADOR, "
-                + "PROV_DESCRIPCION, "
-                + "PROV_DIRECCION, "
-                + "PROV_PAG_WEB, "
-                + "PROV_EMAIL "
-                + "FROM PROVEEDOR "
-                + "WHERE PROV_ENTIDAD LIKE '" + entidad + "'";
+        String query = "SELECT PROV.ID_PROVEEDOR, "
+                + "PROV.NOMBRE, "
+                + "PROV.ENTIDAD, "
+                + "PROV.RUC, "
+                + "PROV.RUC_IDENTIFICADOR, "
+                + "PROV.DESCRIPCION, "
+                + "PROV.DIRECCION, "
+                + "PROV.PAG_WEB, "
+                + "PROV.EMAIL "
+                + "FROM PROVEEDOR PROV"
+                + "WHERE PROV.ENTIDAD LIKE '" + entidad + "'";
         try {
             st = DB_manager.getConection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             rs = st.executeQuery(query);
             while (rs.next()) {
                 proveedor = new M_proveedor();
-                proveedor.setDescripcion(rs.getString("PROV_DESCRIPCION"));
-                proveedor.setDireccion(rs.getString("PROV_DIRECCION"));
-                proveedor.setEmail(rs.getString("PROV_EMAIL"));
-                proveedor.setEntidad(rs.getString("PROV_ENTIDAD"));
-                proveedor.setId(rs.getInt("PROV_ID_PROVEEDOR"));
-                proveedor.setNombre(rs.getString("PROV_NOMBRE"));
-                proveedor.setRuc(rs.getString("PROV_RUC"));
-                proveedor.setRuc_id(rs.getString("PROV_RUC_IDENTIFICADOR"));
+                proveedor.setDescripcion(rs.getString("PROV.DESCRIPCION"));
+                proveedor.setDireccion(rs.getString("PROV.DIRECCION"));
+                proveedor.setEmail(rs.getString("PROV.EMAIL"));
+                proveedor.setEntidad(rs.getString("PROV.ENTIDAD"));
+                proveedor.setId(rs.getInt("PROV.ID_PROVEEDOR"));
+                proveedor.setNombre(rs.getString("PROV.NOMBRE"));
+                proveedor.setRuc(rs.getString("PROV.RUC"));
+                proveedor.setRuc_id(rs.getString("PROV.RUC_IDENTIFICADOR"));
             }
         } catch (SQLException ex) {
             Logger lgr = Logger.getLogger(DB_Proveedor.class.getName());
@@ -147,53 +147,53 @@ public class DB_Proveedor {
 
     public static M_contacto obtenerDatosContactoIdContacto(int idContacto) {
         M_contacto contacto = null;
-        String query = "SELECT PERS_NOMBRE, "
-                + "PERS_APELLIDO, "
-                + "PERS_CI, "
-                + "PERS_ID_SEXO, "
-                + "(SELECT SEXO_DESCRIPCION FROM SEXO WHERE SEXO_ID_SEXO = PERS_ID_SEXO)\"SEXO\", "
-                + "PERS_FECHA_NACIMIENTO, "
-                + "PERS_ID_PAIS, "
-                + "(SELECT PAIS_DESCRIPCION FROM PAIS WHERE PAIS_ID_PAIS =PERS_ID_PAIS)\"PAIS\","
-                + "PERS_ID_ESTADO_CIVIL, "
-                + "(SELECT ESCI_DESCRIPCION FROM ESTADO_CIVIL WHERE ESCI_ID_ESTADO_CIVIL =PERS_ID_ESTADO_CIVIL)\"ESTADO_CIVIL\","
-                + "PERS_ID_CIUDAD, "
-                + "(SELECT CIUD_DESCRIPCION FROM CIUDAD WHERE CIUD_ID_CIUDAD =PERS_ID_CIUDAD)\"CIUDAD\","
-                + "PRCO_ID_PERSONA, "
-                + "PRCO_EMAIL, "
-                + "PRCO_DIRECCION, "
-                + "PRCO_OBSERVACION, "
-                + "PRCO_ID_PROVEEDOR, "
-                + "PRCO_TELEFONO, "
-                + "PRCO_ID_PROVEEDOR_CONTACTO, "
-                + "PERS_ID_PERSONA "
-                + "FROM PROVEEDOR_CONTACTO, PERSONA "
-                + "WHERE PRCO_ID_PERSONA = PERS_ID_PERSONA "
-                + "AND PRCO_ID_PROVEEDOR_CONTACTO = " + idContacto;
+        String query = "SELECT PERS.NOMBRE, "
+                + "PERS.APELLIDO, "
+                + "PERS.CI, "
+                + "PERS.ID_SEXO, "
+                + "(SELECT SEXO.DESCRIPCION FROM SEXO SEXO WHERE SEXO.ID_SEXO = PERS.ID_SEXO)\"SEXO\", "
+                + "PERS.FECHA_NACIMIENTO, "
+                + "PERS.ID_PAIS, "
+                + "(SELECT PAIS.DESCRIPCION FROM PAIS PAIS WHERE PAIS.ID_PAIS =PERS.ID_PAIS)\"PAIS\","
+                + "PERS.ID_ESTADO_CIVIL, "
+                + "(SELECT ESCI.DESCRIPCION FROM ESTADO_CIVIL ESCI WHERE ESCI.ID_ESTADO_CIVIL =PERS.ID_ESTADO_CIVIL)\"ESTADO_CIVIL\","
+                + "PERS.ID_CIUDAD, "
+                + "(SELECT CIUD.DESCRIPCION FROM CIUDAD CIU DWHERE CIUD.ID_CIUDAD =PERS.ID_CIUDAD)\"CIUDAD\","
+                + "PRCO.ID_PERSONA, "
+                + "PRCO.EMAIL, "
+                + "PRCO.DIRECCION, "
+                + "PRCO.OBSERVACION, "
+                + "PRCO.ID_PROVEEDOR, "
+                + "PRCO.TELEFONO, "
+                + "PRCO.ID_PROVEEDOR_CONTACTO, "
+                + "PERS.ID_PERSONA "
+                + "FROM PROVEEDOR_CONTACTO PRCO, PERSONA PERS "
+                + "WHERE PRCO.ID_PERSONA = PERS.ID_PERSONA "
+                + "AND PRCO.ID_PROVEEDOR_CONTACTO = " + idContacto;
         try {
             st = DB_manager.getConection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             rs = st.executeQuery(query);
             while (rs.next()) {
                 contacto = new M_contacto();
-                contacto.setApellido(rs.getString("PERS_APELLIDO"));
-                contacto.setCedula(rs.getInt("PERS_CI"));
-                contacto.setDireccion(rs.getString("PRCO_DIRECCION"));
-                contacto.setEmail(rs.getString("PRCO_EMAIL"));
-                contacto.setFecha_nacimiento(rs.getDate("PERS_FECHA_NACIMIENTO"));
-                contacto.setId_ciudad(rs.getInt("PERS_ID_CIUDAD"));
+                contacto.setApellido(rs.getString("PERS.APELLIDO"));
+                contacto.setCedula(rs.getInt("PERS.CI"));
+                contacto.setDireccion(rs.getString("PRCO.DIRECCION"));
+                contacto.setEmail(rs.getString("PRCO.EMAIL"));
+                contacto.setFecha_nacimiento(rs.getDate("PERS.FECHA_NACIMIENTO"));
+                contacto.setId_ciudad(rs.getInt("PERS.ID_CIUDAD"));
                 contacto.setCiudad(rs.getString("CIUDAD"));
-                contacto.setId_contacto(rs.getInt("PRCO_ID_PROVEEDOR_CONTACTO"));
-                contacto.setId_estado_civil(rs.getInt("PERS_ID_ESTADO_CIVIL"));
+                contacto.setId_contacto(rs.getInt("PRCO.ID_PROVEEDOR_CONTACTO"));
+                contacto.setId_estado_civil(rs.getInt("PERS.ID_ESTADO_CIVIL"));
                 contacto.setEstado_civil(rs.getString("ESTADO_CIVIL"));
-                contacto.setId_pais(rs.getInt("PERS_ID_PAIS"));
+                contacto.setId_pais(rs.getInt("PERS.ID_PAIS"));
                 contacto.setPais(rs.getString("PAIS"));
-                contacto.setId_persona(rs.getInt("PRCO_ID_PERSONA"));
-                contacto.setId_proveedor(rs.getInt("PRCO_ID_PROVEEDOR"));
-                contacto.setId_sexo(rs.getInt("PERS_ID_SEXO"));
+                contacto.setId_persona(rs.getInt("PRCO.ID_PERSONA"));
+                contacto.setId_proveedor(rs.getInt("PRCO.ID_PROVEEDOR"));
+                contacto.setId_sexo(rs.getInt("PERS.ID_SEXO"));
                 contacto.setSexo(rs.getString("SEXO"));
-                contacto.setNombre(rs.getString("PERS_NOMBRE"));
-                contacto.setObservacion(rs.getString("PRCO_OBSERVACION"));
-                contacto.setTelefono(rs.getString("PRCO_TELEFONO"));
+                contacto.setNombre(rs.getString("PERS.NOMBRE"));
+                contacto.setObservacion(rs.getString("PRCO.OBSERVACION"));
+                contacto.setTelefono(rs.getString("PRCO.TELEFONO"));
             }
         } catch (SQLException ex) {
             Logger lgr = Logger.getLogger(DB_Proveedor.class.getName());
@@ -227,10 +227,10 @@ public class DB_Proveedor {
 
     public static ResultSetTableModel consultarProveedor(String proveedor, boolean entidad, boolean ruc, boolean isExclusivo) {
         ResultSetTableModel rstm = null;
-        String select = "SELECT PROV_ID_PROVEEDOR \"ID\",PROV_ENTIDAD \"Entidad\",PROV_NOMBRE \"Nombre proveedor\",PROV_RUC || '-' || PROV_RUC_IDENTIFICADOR \"R.U.C.\" ";
-        String from = "FROM PROVEEDOR ";
+        String select = "SELECT PROV.ID_PROVEEDOR \"ID\",PROV.ENTIDAD \"Entidad\",PROV.NOMBRE \"Nombre proveedor\",PROV.RUC || '-' || PROV.RUC_IDENTIFICADOR \"R.U.C.\" ";
+        String from = "FROM PROVEEDOR PROV ";
         String where = "WHERE ";
-        String orderBy = "ORDER BY PROV_ENTIDAD ";
+        String orderBy = "ORDER BY PROV.ENTIDAD ";
         String prov;
         if (isExclusivo) {
             prov = proveedor + "%";
@@ -238,13 +238,13 @@ public class DB_Proveedor {
             prov = "%" + proveedor + "%";
         }
         if (entidad && ruc) {
-            where = where + "(LOWER(PROV_NOMBRE) LIKE '" + prov + "' OR LOWER(PROV_ENTIDAD) LIKE '" + prov + "') OR LOWER(PROV_RUC) LIKE '" + prov + "'";
+            where = where + "(LOWER(PROV.NOMBRE) LIKE '" + prov + "' OR LOWER(PROV.ENTIDAD) LIKE '" + prov + "') OR LOWER(PROV.RUC) LIKE '" + prov + "'";
         } else if (entidad) {
-            where = where + "(LOWER(PROV_NOMBRE) LIKE '" + prov + "' OR LOWER(PROV_ENTIDAD) LIKE '" + prov + "') ";
+            where = where + "(LOWER(PROV.NOMBRE) LIKE '" + prov + "' OR LOWER(PROV.ENTIDAD) LIKE '" + prov + "') ";
         } else if (ruc) {
-            where = where + "LOWER(PROV_RUC) LIKE '" + prov + "' ";
+            where = where + "LOWER(PROV.RUC) LIKE '" + prov + "' ";
         } else if (!entidad && !ruc) {
-            where = where + "(LOWER(PROV_NOMBRE) LIKE '" + prov + "' OR LOWER(PROV_ENTIDAD) LIKE '" + prov + "') OR LOWER(PROV_RUC) LIKE '" + prov + "'";
+            where = where + "(LOWER(PROV.NOMBRE) LIKE '" + prov + "' OR LOWER(PROV.ENTIDAD) LIKE '" + prov + "') OR LOWER(PROV.RUC) LIKE '" + prov + "'";
         }
         String query = select + from + where + orderBy;
         try {
@@ -262,15 +262,15 @@ public class DB_Proveedor {
     public static ResultSetTableModel obtenerProveedorContacto(int idProveedor) {
         ResultSetTableModel rstm = null;
         String Query = "SELECT "
-                + "PRCO_ID_PROVEEDOR_CONTACTO \"ID\", "
-                + "PERS_NOMBRE \"Nombre\", "
-                + "PERS_APELLIDO \"Apellido\", "
-                + "PRCO_TELEFONO \"Telefono\", "
-                + "PRCO_EMAIL \"E-mail\" "
-                + "FROM  PERSONA, PROVEEDOR, PROVEEDOR_CONTACTO "
-                + "WHERE PERS_ID_PERSONA = PRCO_ID_PERSONA "
-                + "AND PRCO_ID_PROVEEDOR = PROV_ID_PROVEEDOR "
-                + "AND PROV_ID_PROVEEDOR =" + idProveedor;
+                + "PRCO.ID_PROVEEDOR_CONTACTO \"ID\", "
+                + "PERS.NOMBRE \"Nombre\", "
+                + "PERS.APELLIDO \"Apellido\", "
+                + "PRCO.TELEFONO \"Telefono\", "
+                + "PRCO.EMAIL \"E-mail\" "
+                + "FROM  PERSONA PERS, PROVEEDOR PROV, PROVEEDOR_CONTACTO PRCO "
+                + "WHERE PERS.ID_PERSONA = PRCO.ID_PERSONA "
+                + "AND PRCO.ID_PROVEEDOR = PROV.ID_PROVEEDOR "
+                + "AND PROV.ID_PROVEEDOR =" + idProveedor;
         try {
             st = DB_manager.getConection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             // se ejecuta el query y se obtienen los resultados en un ResultSet
@@ -308,11 +308,11 @@ public class DB_Proveedor {
 
     public static ResultSetTableModel obtenerSucursal(int idProveedor) {
         ResultSetTableModel rstm = null;
-        String Query = "SELECT PRSU_ID_PROVEEDOR_SUCURSAL \"ID\", "
-                + "PRSU_DIRECCION \"Dirección\", "
-                + "PRSU_TELEFONO \"Telefono\" "
-                + "FROM PROVEEDOR_SUCURSAL "
-                + "WHERE PRSU_ID_PROVEEDOR =" + idProveedor;
+        String Query = "SELECT PRSU.ID_PROVEEDOR_SUCURSAL \"ID\", "
+                + "PRSU.DIRECCION \"Dirección\", "
+                + "PRSU.TELEFONO \"Telefono\" "
+                + "FROM PROVEEDOR_SUCURSAL PRSU "
+                + "WHERE PRSU.ID_PROVEEDOR =" + idProveedor;
         try {
             st = DB_manager.getConection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             // se ejecuta el query y se obtienen los resultados en un ResultSet
@@ -350,13 +350,13 @@ public class DB_Proveedor {
 
     public static ResultSetTableModel obtenerProveedorTelefono(int idProveedor) {
         ResultSetTableModel rstm = null;
-        String Query = "SELECT TELE_NUMERO \"Número\", "
-                + "TELE_CATEGORIA \"Categoría\", "
-                + "TELE_OBSERVACION \"Observación\" "
-                + "FROM TELEFONO, PROVEEDOR, PROVEEDOR_TELEFONO "
-                + "WHERE TELE_ID_TELEFONO = PRTE_ID_TELEFONO "
-                + "AND PROV_ID_PROVEEDOR = PRTE_ID_PROVEEDOR "
-                + "AND PROV_ID_PROVEEDOR = " + idProveedor;
+        String Query = "SELECT TELE.NUMERO \"Número\", "
+                + "TELE.CATEGORIA \"Categoría\", "
+                + "TELE.OBSERVACION \"Observación\" "
+                + "FROM TELEFONO TELE, PROVEEDOR PROV, PROVEEDOR_TELEFONO PRTE"
+                + "WHERE TELE.ID_TELEFONO = PRTE.ID_TELEFONO "
+                + "AND PROV.ID_PROVEEDOR = PRTE.ID_PROVEEDOR "
+                + "AND PROV.ID_PROVEEDOR = " + idProveedor;
         try {
             st = DB_manager.getConection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             // se ejecuta el query y se obtienen los resultados en un ResultSet
@@ -394,14 +394,14 @@ public class DB_Proveedor {
 
     public static ResultSetTableModel obtenerProveedorTelefonoCompleto(int idProveedor) {
         ResultSetTableModel rstm = null;
-        String Query = "SELECT TELE_ID_TELEFONO \"ID\", "
-                + "TELE_NUMERO \"Número\", "
-                + "TELE_CATEGORIA \"Categoría\", "
-                + "TELE_OBSERVACION \"Observación\" "
-                + "FROM TELEFONO, PROVEEDOR, PROVEEDOR_TELEFONO "
-                + "WHERE TELE_ID_TELEFONO = PRTE_ID_TELEFONO "
-                + "AND PROV_ID_PROVEEDOR = PRTE_ID_PROVEEDOR "
-                + "AND PROV_ID_PROVEEDOR = " + idProveedor;
+        String Query = "SELECT TELE.ID_TELEFONO \"ID\", "
+                + "TELE.NUMERO \"Número\", "
+                + "TELE.CATEGORIA \"Categoría\", "
+                + "TELE.OBSERVACION \"Observación\" "
+                + "FROM TELEFONO TELE, PROVEEDOR PROV, PROVEEDOR_TELEFONO PRTE"
+                + "WHERE TELE.ID_TELEFONO = PRTE.ID_TELEFONO "
+                + "AND PROV.ID_PROVEEDOR = PRTE.ID_PROVEEDOR "
+                + "AND PROV.ID_PROVEEDOR = " + idProveedor;
         try {
             st = DB_manager.getConection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             // se ejecuta el query y se obtienen los resultados en un ResultSet
@@ -439,14 +439,14 @@ public class DB_Proveedor {
 
     public static Vector obtenerProveedores() {
         Vector proveedor = null;
-        String q = "SELECT PROV_ENTIDAD "
-                + "FROM PROVEEDOR ";
+        String q = "SELECT PROV.ENTIDAD "
+                + "FROM PROVEEDOR PROV ";
         try {
             st = DB_manager.getConection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             rs = st.executeQuery(q);
             proveedor = new Vector();
             while (rs.next()) {
-                proveedor.add(rs.getString("PROV_ENTIDAD"));
+                proveedor.add(rs.getString("PROV.ENTIDAD"));
             }
         } catch (SQLException ex) {
             Logger lgr = Logger.getLogger(DB_Proveedor.class.getName());
@@ -480,7 +480,7 @@ public class DB_Proveedor {
 
     public static Vector obtenerEmpleados() {
         Vector proveedor = null;
-        String q = "SELECT FUNC_ID_FUNCIONARIO|| '-'|| PERS_NOMBRE || ' '|| PERS_APELLIDO \"Empleado\" FROM PERSONA, FUNCIONARIO WHERE PERS_ID_PERSONA = FUNC_ID_PERSONA ";
+        String q = "SELECT FUNC.ID_FUNCIONARIO|| '-'|| PERS.NOMBRE || ' '|| PERS.APELLIDO \"Empleado\" FROM PERSONA PERS, FUNCIONARIO FUNC WHERE PERS.ID_PERSONA = FUNC.ID_PERSONA ";
         try {
             System.out.println("q: " + q);
             st = DB_manager.getConection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
@@ -526,12 +526,12 @@ public class DB_Proveedor {
         ArrayList<Long> id_telefono = new ArrayList();
         ArrayList<Long> id_persona = new ArrayList();
         long id_proveedor = -1L;
-        String INSERT_PROVEEDOR = "INSERT INTO PROVEEDOR(PROV_NOMBRE, PROV_ENTIDAD, PROV_RUC, PROV_RUC_IDENTIFICADOR, PROV_DESCRIPCION, PROV_DIRECCION,PROV_PAG_WEB, PROV_EMAIL, PROV_NOTA)VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        String INSERT_TELEFONO = "INSERT INTO TELEFONO(TELE_NUMERO, TELE_CATEGORIA, TELE_OBSERVACION) VALUES (?, ?, ?)";
-        String INSERT_PROVEEDOR_TELEFONO = "INSERT INTO PROVEEDOR_TELEFONO(PRTE_ID_PROVEEDOR, PRTE_ID_TELEFONO) VALUES (?, ?)";
-        String INSERT_PERSONA = "INSERT INTO PERSONA(PERS_CI, PERS_NOMBRE, PERS_APELLIDO, PERS_ID_SEXO, PERS_FECHA_NACIMIENTO, PERS_ID_ESTADO_CIVIL, PERS_ID_PAIS, PERS_ID_CIUDAD)VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-        String INSERT_PROVEEDOR_CONTACTO = "INSERT INTO PROVEEDOR_CONTACTO(PRCO_ID_PERSONA, PRCO_ID_PROVEEDOR, PRCO_EMAIL, PRCO_DIRECCION, PRCO_TELEFONO, PRCO_OBSERVACION)VALUES (?, ?, ?, ?, ?, ?)";
-        String INSERT_SUCURSAL = "INSERT INTO PROVEEDOR_SUCURSAL(PRSU_ID_PROVEEDOR, PRSU_DIRECCION, PRSU_TELEFONO)VALUES (?, ?, ?)";
+        String INSERT_PROVEEDOR = "INSERT INTO PROVEEDOR(PROV.NOMBRE, PROV.ENTIDAD, PROV.RUC, PROV.RUC_IDENTIFICADOR, PROV.DESCRIPCION, PROV.DIRECCION,PROV.PAG_WEB, PROV.EMAIL, PROV.NOTA)VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String INSERT_TELEFONO = "INSERT INTO TELEFONO(TELE.NUMERO, TELE.CATEGORIA, TELE.OBSERVACION) VALUES (?, ?, ?)";
+        String INSERT_PROVEEDOR_TELEFONO = "INSERT INTO PROVEEDOR_TELEFONO(PRTE.ID_PROVEEDOR, PRTE.ID_TELEFONO) VALUES (?, ?)";
+        String INSERT_PERSONA = "INSERT INTO PERSONA(PERS.CI, PERS.NOMBRE, PERS.APELLIDO, PERS.ID_SEXO, PERS.FECHA_NACIMIENTO, PERS.ID_ESTADO_CIVIL, PERS.ID_PAIS, PERS.ID_CIUDAD)VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        String INSERT_PROVEEDOR_CONTACTO = "INSERT INTO PROVEEDOR_CONTACTO(PRCO.ID_PERSONA, PRCO.ID_PROVEEDOR, PRCO.EMAIL, PRCO.DIRECCION, PRCO.TELEFONO, PRCO.OBSERVACION)VALUES (?, ?, ?, ?, ?, ?)";
+        String INSERT_SUCURSAL = "INSERT INTO PROVEEDOR_SUCURSAL(PRSU.ID_PROVEEDOR, PRSU.DIRECCION, PRSU.TELEFONO)VALUES (?, ?, ?)";
         try {
             DB_manager.getConection().setAutoCommit(false);
             pst = DB_manager.getConection().prepareStatement(INSERT_PROVEEDOR, Statement.RETURN_GENERATED_KEYS);
@@ -775,12 +775,12 @@ public class DB_Proveedor {
 
     public static void insertarProveedorContacto(Integer idProveedor, M_contacto contacto) {
         long id_persona = -1L;
-        String INSERT_PERSONA = "INSERT INTO PERSONA(PERS_CI, PERS_NOMBRE, PERS_APELLIDO, PERS_ID_SEXO, PERS_FECHA_NACIMIENTO, PERS_ID_ESTADO_CIVIL, PERS_ID_PAIS, PERS_ID_CIUDAD)VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-        String INSERT_PROVEEDOR_CONTACTO = "INSERT INTO PROVEEDOR_CONTACTO(PRCO_ID_PERSONA, PRCO_ID_PROVEEDOR, PRCO_EMAIL, PRCO_DIRECCION, PRCO_TELEFONO, PRCO_OBSERVACION)VALUES (?, ?, ?, ?, ?, ?)";
+        String INSERT_PERSONA = "INSERT INTO PERSONA(PERS.CI, PERS.NOMBRE, PERS.APELLIDO, PERS.ID_SEXO, PERS.FECHA_NACIMIENTO, PERS.ID_ESTADO_CIVIL, PERS.ID_PAIS, PERS.ID_CIUDAD)VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        String INSERT_PROVEEDOR_CONTACTO = "INSERT INTO PROVEEDOR_CONTACTO(PRCO.ID_PERSONA, PRCO.ID_PROVEEDOR, PRCO.EMAIL, PRCO.DIRECCION, PRCO.TELEFONO, PRCO.OBSERVACION)VALUES (?, ?, ?, ?, ?, ?)";
         try {
             DB_manager.habilitarTransaccionManual();
             pst = DB_manager.getConection().prepareStatement(INSERT_PERSONA, PreparedStatement.RETURN_GENERATED_KEYS);
-            //PERS_CI, PERS_NOMBRE, PERS_APELLIDO, PERS_ID_SEXO, PERS_FECHA_NACIMIENTO, PERS_ID_ESTADO_CIVIL, PERS_ID_PAIS, PERS_ID_CIUDAD
+            //PERS.CI, PERS.NOMBRE, PERS.APELLIDO, PERS.ID_SEXO, PERS.FECHA_NACIMIENTO, PERS.ID_ESTADO_CIVIL, PERS.ID_PAIS, PERS.ID_CIUDAD
             try {
                 if (contacto.getCedula() == null) {
                     pst.setNull(1, Types.INTEGER);
@@ -898,9 +898,9 @@ public class DB_Proveedor {
 
     public static void insertarSucursal(Integer idProveedor, String direccion, String telefono) {
         String q = "INSERT INTO PROVEEDOR_SUCURSAL("
-                + "PRSU_ID_PROVEEDOR, "
-                + "PRSU_DIRECCION, "
-                + "PRSU_TELEFONO)"
+                + "PRSU.ID_PROVEEDOR, "
+                + "PRSU.DIRECCION, "
+                + "PRSU.TELEFONO)"
                 + "VALUES ("
                 + idProveedor + ", '"
                 + direccion + "', '"
@@ -962,8 +962,8 @@ public class DB_Proveedor {
 
     public static void insertarTelefono(Integer idProveedor, String tipoTelefono, String nroTelefono, String observacion) {
         long id_telefono = -1L;
-        String INSERT_TELEFONO = "INSERT INTO TELEFONO(TELE_NUMERO, TELE_CATEGORIA, TELE_OBSERVACION)VALUES (?, ?, ?)";
-        String INSERT_TELEFONO_PROVEEDOR = "INSERT INTO PROVEEDOR_TELEFONO(PRTE_ID_PROVEEDOR, PRTE_ID_TELEFONO)VALUES (?, ?)";
+        String INSERT_TELEFONO = "INSERT INTO TELEFONO(TELE.NUMERO, TELE.CATEGORIA, TELE.OBSERVACION)VALUES (?, ?, ?)";
+        String INSERT_TELEFONO_PROVEEDOR = "INSERT INTO PROVEEDOR_TELEFONO(PRTE.ID_PROVEEDOR, PRTE.ID_TELEFONO)VALUES (?, ?)";
         try {
             DB_manager.habilitarTransaccionManual();
             pst = DB_manager.getConection().prepareStatement(INSERT_TELEFONO, PreparedStatement.RETURN_GENERATED_KEYS);
@@ -1030,7 +1030,7 @@ public class DB_Proveedor {
 
     public static void insertarMarca(String marca) {
         String insert = "INSERT INTO MARCA("
-                + "MARC_DESCRIPCION"
+                + "DESCRIPCION"
                 + ")VALUES ('"
                 + marca + "')";
         try {
@@ -1076,7 +1076,7 @@ public class DB_Proveedor {
 
     public static void insertarImpuesto(String impuesto) {
         String insert = "INSERT INTO IMPUESTO("
-                + "IMPU_DESCRIPCION"
+                + "DESCRIPCION"
                 + ")VALUES ('"
                 + impuesto + "')";
         try {
@@ -1128,7 +1128,7 @@ public class DB_Proveedor {
 
     public static void insertarRubro(String rubro) {
         String insert = "INSERT INTO RUBRO("
-                + "RUBR_DESCRIPCION"
+                + "DESCRIPCION"
                 + ")VALUES ('"
                 + rubro + "')";
         try {
@@ -1177,8 +1177,8 @@ public class DB_Proveedor {
      */
     public static void insertarProveedorProducto(int idProveedor, int idProdcuto) {
         String query = "INSERT INTO PROVEEDOR_PRODUCTO("
-                + "PRPR_ID_PROVEEDOR, "
-                + "PRPR_ID_PRODUCTO)"
+                + "ID_PROVEEDOR, "
+                + "ID_PRODUCTO)"
                 + "VALUES ("
                 + idProveedor + ", "
                 + idProdcuto + ")";
@@ -1227,18 +1227,18 @@ public class DB_Proveedor {
      */
 
     public static void modificarProveedor(M_proveedor proveedor) {
-        String updateProveedor = "UPDATE PROVEEDOR SET "
-                + "PROV_ID_PROVEEDOR=" + proveedor.getId() + ", "
-                + "PROV_NOMBRE='" + proveedor.getNombre() + "', "
-                + "PROV_ENTIDAD='" + proveedor.getEntidad() + "', "
-                + "PROV_RUC='" + proveedor.getRuc() + "', "
-                + "PROV_RUC_IDENTIFICADOR='" + proveedor.getRuc_id() + "', "
-                + "PROV_DESCRIPCION='" + proveedor.getDescripcion() + "', "
-                + "PROV_DIRECCION='" + proveedor.getDireccion() + "', "
-                + "PROV_PAG_WEB='" + proveedor.getPagWeb() + "', "
-                + "PROV_EMAIL='" + proveedor.getEmail() + "', "
-                + "PROV_NOTA='" + proveedor.getObservacion() + "' "
-                + "WHERE PROV_ID_PROVEEDOR = " + proveedor.getId();
+        String updateProveedor = "UPDATE PROVEEDOR PROV SET "
+                + "PROV.ID_PROVEEDOR=" + proveedor.getId() + ", "
+                + "PROV.NOMBRE='" + proveedor.getNombre() + "', "
+                + "PROV.ENTIDAD='" + proveedor.getEntidad() + "', "
+                + "PROV.RUC='" + proveedor.getRuc() + "', "
+                + "PROV.RUC_IDENTIFICADOR='" + proveedor.getRuc_id() + "', "
+                + "PROV.DESCRIPCION='" + proveedor.getDescripcion() + "', "
+                + "PROV.DIRECCION='" + proveedor.getDireccion() + "', "
+                + "PROV.PAG_WEB='" + proveedor.getPagWeb() + "', "
+                + "PROV.EMAIL='" + proveedor.getEmail() + "', "
+                + "PROV.NOTA='" + proveedor.getObservacion() + "' "
+                + "WHERE PROV.ID_PROVEEDOR = " + proveedor.getId();
         try {
             DB_manager.habilitarTransaccionManual();
             st = DB_manager.getConection().createStatement();
@@ -1290,22 +1290,22 @@ public class DB_Proveedor {
     public static void modificarProveedorContacto(Integer id, M_contacto contacto) {
         try {
             DB_manager.habilitarTransaccionManual();
-            String updateContacto = "UPDATE PROVEEDOR_CONTACTO SET "
-                    + "PRCO_EMAIL='" + contacto.getEmail() + "', "
-                    + "PRCO_DIRECCION='" + contacto.getDireccion() + "', "
-                    + "PRCO_OBSERVACION='" + contacto.getObservacion() + "', "
-                    + "PRCO_TELEFONO='" + contacto.getTelefono() + "' "
-                    + "WHERE PRCO_ID_PROVEEDOR_CONTACTO = " + contacto.getId_contacto();
+            String updateContacto = "UPDATE PROVEEDOR_CONTACTO PRCO SET "
+                    + "PRCO.EMAIL='" + contacto.getEmail() + "', "
+                    + "PRCO.DIRECCION='" + contacto.getDireccion() + "', "
+                    + "PRCO.OBSERVACION='" + contacto.getObservacion() + "', "
+                    + "PRCO.TELEFONO='" + contacto.getTelefono() + "' "
+                    + "WHERE PRCO.ID_PROVEEDOR_CONTACTO = " + contacto.getId_contacto();
             String updatePersona = "UPDATE PERSONA SET "
-                    + "PERS_CI=" + contacto.getCedula() + ", "
-                    + "PERS_NOMBRE='" + contacto.getNombre() + "', "
-                    + "PERS_APELLIDO='" + contacto.getApellido() + "', "
-                    + "PERS_ID_SEXO=" + contacto.getId_sexo() + ", "
-                    + "PERS_FECHA_NACIMIENTO='" + contacto.getFecha_nacimiento() + "', "
-                    + "PERS_ID_ESTADO_CIVIL=" + contacto.getId_estado_civil() + ", "
-                    + "PERS_ID_PAIS=" + contacto.getId_pais() + ", "
-                    + "PERS_ID_CIUDAD=" + contacto.getId_ciudad() + " "
-                    + "WHERE PERS_ID_PERSONA = " + contacto.getId_persona();
+                    + "PERS.CI=" + contacto.getCedula() + ", "
+                    + "PERS.NOMBRE='" + contacto.getNombre() + "', "
+                    + "PERS.APELLIDO='" + contacto.getApellido() + "', "
+                    + "PERS.ID_SEXO=" + contacto.getId_sexo() + ", "
+                    + "PERS.FECHA_NACIMIENTO='" + contacto.getFecha_nacimiento() + "', "
+                    + "PERS.ID_ESTADO_CIVIL=" + contacto.getId_estado_civil() + ", "
+                    + "PERS.ID_PAIS=" + contacto.getId_pais() + ", "
+                    + "PERS.ID_CIUDAD=" + contacto.getId_ciudad() + " "
+                    + "WHERE PERS.ID_PERSONA = " + contacto.getId_persona();
             st = DB_manager.getConection().createStatement();
             st.executeUpdate(updatePersona);
             st.close();
@@ -1332,9 +1332,9 @@ public class DB_Proveedor {
 
     public static void modificarSucursal(int idSucursal, String direccion, String telefono) {
         String q = "UPDATE PROVEEDOR_SUCURSAL SET "
-                + "PRSU_DIRECCION='" + direccion + "', "
-                + "PRSU_TELEFONO='" + telefono + "' "
-                + "WHERE PRSU_ID_PROVEEDOR_SUCURSAL = " + idSucursal;
+                + "DIRECCION='" + direccion + "', "
+                + "TELEFONO='" + telefono + "' "
+                + "WHERE ID_PROVEEDOR_SUCURSAL = " + idSucursal;
         try {
             DB_manager.habilitarTransaccionManual();
             st = DB_manager.getConection().createStatement();
@@ -1385,10 +1385,10 @@ public class DB_Proveedor {
 
     public static void modificarTelefono(int idTelefono, String tipoTelefono, String nroTelefono, String observacion) {
         String updateTelefono = "UPDATE TELEFONO SET "
-                + "TELE_NUMERO='" + nroTelefono + "', "
-                + "TELE_CATEGORIA= '" + tipoTelefono + "', "
-                + "TELE_OBSERVACION='" + observacion + "' "
-                + "WHERE TELE_ID_TELEFONO = " + idTelefono;
+                + "NUMERO='" + nroTelefono + "', "
+                + "CATEGORIA= '" + tipoTelefono + "', "
+                + "OBSERVACION='" + observacion + "' "
+                + "WHERE ID_TELEFONO = " + idTelefono;
         try {
             DB_manager.habilitarTransaccionManual();
             st = DB_manager.getConection().createStatement();
@@ -1432,8 +1432,8 @@ public class DB_Proveedor {
 
     public static void modificarMarca(int idMarca, String descripcion) {
         String updateMarca = "UPDATE MARCA SET "
-                + "MARC_DESCRIPCION= '" + descripcion + "' "
-                + "WHERE MARC_ID_MARCA =" + idMarca;
+                + "DESCRIPCION= '" + descripcion + "' "
+                + "WHERE ID_MARCA =" + idMarca;
         try {
             DB_manager.habilitarTransaccionManual();
             st = DB_manager.getConection().createStatement();
@@ -1484,8 +1484,8 @@ public class DB_Proveedor {
 
     public static void modificarImpuesto(int idImpuesto, String descripcion) {
         String updateImpuesto = "UPDATE IMPUESTO SET "
-                + "IMPU_DESCRIPCION= " + descripcion + " "
-                + "WHERE IMPU_ID_IMPUESTO =" + idImpuesto;
+                + "DESCRIPCION= " + descripcion + " "
+                + "WHERE ID_IMPUESTO =" + idImpuesto;
         try {
             DB_manager.habilitarTransaccionManual();
             st = DB_manager.getConection().createStatement();
@@ -1536,8 +1536,8 @@ public class DB_Proveedor {
 
     public static void modificarRubro(int idRubro, String descripcion) {
         String updateMarca = "UPDATE RUBRO SET "
-                + "RUBR_DESCRIPCION= '" + descripcion + "' "
-                + "WHERE RUBR_ID_RUBRO =" + idRubro;
+                + "DESCRIPCION= '" + descripcion + "' "
+                + "WHERE ID_RUBRO =" + idRubro;
         try {
             DB_manager.habilitarTransaccionManual();
             st = DB_manager.getConection().createStatement();
@@ -1581,8 +1581,8 @@ public class DB_Proveedor {
     }
 
     public static void eliminarTelefonoProveedor(int id_telefono) {
-        String q = "DELETE FROM TELEFONO WHERE TELE_ID_TELEFONO =" + id_telefono;
-        String q2 = "DELETE FROM PROVEEDOR_TELEFONO WHERE PRTE_ID_TELEFONO =" + id_telefono;
+        String q = "DELETE FROM TELEFONO WHERE ID_TELEFONO =" + id_telefono;
+        String q2 = "DELETE FROM PROVEEDOR_TELEFONO WHERE ID_TELEFONO =" + id_telefono;
         System.out.println("SQL: " + q);
         try {
             DB_manager.habilitarTransaccionManual();
@@ -1628,7 +1628,7 @@ public class DB_Proveedor {
     }
 
     public static void eliminarSucursal(int id_sucursal) {
-        String q = "DELETE FROM PROVEEDOR_SUCURSAL WHERE PRSU_ID_PROVEEDOR_SUCURSAL =" + id_sucursal;
+        String q = "DELETE FROM PROVEEDOR_SUCURSAL WHERE ID_PROVEEDOR_SUCURSAL =" + id_sucursal;
         System.out.println("SQL: " + q);
         try {
             DB_manager.habilitarTransaccionManual();
@@ -1672,7 +1672,7 @@ public class DB_Proveedor {
     }
 
     public static void eliminarMarca(int id_marca) {
-        String delete = "DELETE FROM MARCA WHERE MARC_ID_MARCA =" + id_marca;
+        String delete = "DELETE FROM MARCA WHERE ID_MARCA =" + id_marca;
         try {
             DB_manager.habilitarTransaccionManual();
             st = DB_manager.getConection().createStatement();
@@ -1715,7 +1715,7 @@ public class DB_Proveedor {
     }
 
     public static void eliminarImpuesto(int idImpuesto) {
-        String delete = "DELETE FROM IMPUESTO WHERE IMPU_ID_IMPUESTO =" + idImpuesto;
+        String delete = "DELETE FROM IMPUESTO WHERE ID_IMPUESTO =" + idImpuesto;
         try {
             DB_manager.habilitarTransaccionManual();
             st = DB_manager.getConection().createStatement();
@@ -1758,7 +1758,7 @@ public class DB_Proveedor {
     }
 
     public static void eliminarRubro(int idRubro) {
-        String delete = "DELETE FROM RUBRO WHERE RUBR_ID_RUBRO =" + idRubro;
+        String delete = "DELETE FROM RUBRO WHERE ID_RUBRO =" + idRubro;
         try {
             DB_manager.habilitarTransaccionManual();
             st = DB_manager.getConection().createStatement();
@@ -1802,8 +1802,8 @@ public class DB_Proveedor {
 
     public static void eliminarProveedorProducto(Integer idProveedor, Integer idProducto) {
         String q = "DELETE FROM PROVEEDOR_PRODUCTO "
-                + "WHERE PRPR_ID_PROVEEDOR = " + idProveedor
-                + " AND PRPR_ID_PRODUCTO =" + idProducto;
+                + "WHERE ID_PROVEEDOR = " + idProveedor
+                + " AND ID_PRODUCTO =" + idProducto;
         System.out.println("SQL: " + q);
         try {
             DB_manager.habilitarTransaccionManual();
@@ -1847,8 +1847,8 @@ public class DB_Proveedor {
     }
 
     public static void eliminarProveedorContacto(M_contacto contacto) {
-        String delete = "DELETE FROM PROVEEDOR_CONTACTO WHERE PRCO_ID_PROVEEDOR_CONTACTO =" + contacto.getId_contacto();
-        String DELETE_PERSONA = "DELETE FROM PERSONA WHERE PERS_ID_PERSONA = " + contacto.getId_persona();
+        String delete = "DELETE FROM PROVEEDOR_CONTACTO WHERE ID_PROVEEDOR_CONTACTO =" + contacto.getId_contacto();
+        String DELETE_PERSONA = "DELETE FROM PERSONA WHERE ID_PERSONA = " + contacto.getId_persona();
         try {
             DB_manager.habilitarTransaccionManual();
             st = DB_manager.getConection().createStatement();

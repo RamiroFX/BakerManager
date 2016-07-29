@@ -52,7 +52,7 @@ public class V_seleccionarProducto extends JDialog {
         jbProveedor = new JButton("Proveedor");
         jcbBusqueda = new JComboBox();
         jtfProveedor = new JTextField();
-        jtfProveedor.setPreferredSize(new Dimension(250, 20));
+        jtfProveedor.setPreferredSize(new Dimension(250, 25));
         jtfProveedor.setEditable(false);
         jpFiltros.add(jbProveedor);
         jpFiltros.add(jtfProveedor);

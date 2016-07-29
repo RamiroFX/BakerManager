@@ -27,11 +27,11 @@ public class DB_charts {
     private static ResultSet rs = null;
 
     public static DefaultPieDataset obtenerComprasClientes(Timestamp inicio, Timestamp fin) {
-        String SELECT = "SELECT CLIE_ENTIDAD ||' ('||  CLIE_NOMBRE ||')' \"Entidad\", ROUND((SELECT SUM(PEDE_CANTIDAD*(PEDE_PRECIO-(PEDE_PRECIO*PEDE_DESCUENTO)/100)))) \"Compra\" ";
-        String FROM = "FROM PEDIDO_DETALLE, PEDIDO, CLIENTE ";
-        String WHERE = "WHERE PEDI_ID_PEDIDO = PEDE_ID_PEDIDO AND CLIE_ID_CLIENTE =  PEDI_ID_CLIENTE ";
-        String GROUPBY = "GROUP BY CLIE_ENTIDAD, CLIE_NOMBRE;";
-        String TIEMPO = "AND PEDI_TIEMPO_RECEPCION BETWEEN '" + inicio + "'::timestamp "
+        String SELECT = "SELECT CLIE.ENTIDAD ||' ('||  CLIE.NOMBRE ||')' \"Entidad\", ROUND((SELECT SUM(PEDE.CANTIDAD*(PEDE.PRECIO-(PEDE.PRECIO*PEDE.DESCUENTO)/100)))) \"Compra\" ";
+        String FROM = "FROM PEDIDO_DETALLE PEDE, PEDIDO PEDI, CLIENTE CLIE ";
+        String WHERE = "WHERE PEDI.ID_PEDIDO = PEDE.ID_PEDIDO AND CLIE.ID_CLIENTE =  PEDI.ID_CLIENTE ";
+        String GROUPBY = "GROUP BY CLIE.ENTIDAD, CLIE.NOMBRE;";
+        String TIEMPO = "AND PEDI.TIEMPO_RECEPCION BETWEEN '" + inicio + "'::timestamp "
                 + "AND '" + fin + "'::timestamp ";
         if (null != inicio && null != fin) {
             WHERE = WHERE + TIEMPO;
@@ -53,11 +53,11 @@ public class DB_charts {
     }
 
     public static DefaultPieDataset obtenerComprasProveedores(Timestamp inicio, Timestamp fin) {
-        String SELECT = "SELECT PROV_ENTIDAD ||' ('||  PROV_NOMBRE ||')' \"Proveedor\", ROUND((SELECT SUM(EGDE_CANTIDAD*(EGDE_PRECIO-(EGDE_PRECIO*EGDE_DESCUENTO)/100)))) \"Compra\"";
-        String FROM = "FROM EGRESO_DETALLE, EGRESO_CABECERA, PROVEEDOR ";
-        String WHERE = "WHERE EGCA_ID_EGRE_CABE = EGDE_ID_EGRESO_CABE AND EGCA_ID_PROVEEDOR = PROV_ID_PROVEEDOR ";
+        String SELECT = "SELECT PROV.ENTIDAD ||' ('||  PROV.NOMBRE ||')' \"Proveedor\", ROUND((SELECT SUM(EGDE.CANTIDAD*(EGDE.PRECIO-(EGDE.PRECIO*EGDE.DESCUENTO)/100)))) \"Compra\"";
+        String FROM = "FROM EGRESO_DETALLE EGDE, EGRESO_CABECERA EGCA, PROVEEDOR PROV ";
+        String WHERE = "WHERE EGCA.ID_EGRE_CABE = EGDE.ID_EGRESO_CABE AND EGCA.ID_PROVEEDOR = PROV.ID_PROVEEDOR ";
         String GROUPBY = "GROUP BY \"Proveedor\" ";
-        String TIEMPO = "AND EGCA_TIEMPO BETWEEN '" + inicio + "'::timestamp "
+        String TIEMPO = "AND EGCA.TIEMPO BETWEEN '" + inicio + "'::timestamp "
                 + "AND '" + fin + "'::timestamp ";
         String ORDERBY = "ORDER BY \"Compra\" DESC ";
         if (null != inicio && null != fin) {

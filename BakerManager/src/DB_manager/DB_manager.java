@@ -131,7 +131,7 @@ public class DB_manager {
     public static Vector obtenerRubro() {
         Vector rubro = null;
         String q = "SELECT descripcion "
-                + "FROM rubro ";
+                + "FROM PRODUCTO_CATEGORIA ";
         try {
             st = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             rs = st.executeQuery(q);
@@ -340,6 +340,74 @@ public class DB_manager {
         return id_ciudad;
     }
 
+    public static Integer obtenerIdMarca(String marca) {
+        Integer idMarca = null;
+        String q = "SELECT ID_MARCA "
+                + "FROM MARCA "
+                + "WHERE DESCRIPCION LIKE '" + marca + "'";
+        try {
+            st = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            rs = st.executeQuery(q);
+            while (rs.next()) {
+                idMarca = (rs.getInt("ID_MARCA"));
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return idMarca;
+    }
+
+    public static Integer obtenerIdProductoCategoria(String categoria) {
+        Integer idMarca = null;
+        String q = "SELECT ID_PRODUCTO_CATEGORIA "
+                + "FROM PRODUCTO_CATEGORIA "
+                + "WHERE DESCRIPCION LIKE '" + categoria + "'";
+        try {
+            st = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            rs = st.executeQuery(q);
+            while (rs.next()) {
+                idMarca = (rs.getInt("ID_PRODUCTO_CATEGORIA"));
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return idMarca;
+    }
+
+    public static Integer obtenerIdImpuesto(String impuesto) {
+        Integer idMarca = null;
+        String q = "SELECT ID_IMPUESTO "
+                + "FROM IMPUESTO "
+                + "WHERE DESCRIPCION = " + impuesto + "";
+        try {
+            st = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            rs = st.executeQuery(q);
+            while (rs.next()) {
+                idMarca = (rs.getInt("ID_IMPUESTO"));
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return idMarca;
+    }
+
+    public static Integer obtenerIdEstado(String estado) {
+        Integer idMarca = null;
+        String q = "SELECT ID_ESTADO "
+                + "FROM ESTADO "
+                + "WHERE DESCRIPCION LIKE '" + estado + "'";
+        try {
+            st = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            rs = st.executeQuery(q);
+            while (rs.next()) {
+                idMarca = (rs.getInt("ID_ESTADO"));
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return idMarca;
+    }
+
     public static String obtenerCiudad(int id) {
         String ciudad = null;
         String q = "SELECT DESCRIPCION "
@@ -515,48 +583,12 @@ public class DB_manager {
         }
     }
 
-    public static int obtenerSqTelefono() {
-        Integer sq = 0;
-        String query = "SELECT MAX(TELE_ID_TELEFONO) \"TELE_ID_TELEFONO\" FROM TELEFONO";
-        try {
-            pst = DB_manager.getConection().prepareStatement(query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-            rs = pst.executeQuery();
-            while (rs.next()) {
-                sq = rs.getInt("TELE_ID_TELEFONO") + 1;
-            }
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        }
-        return sq;
-    }
-
-    public static int obtenerSqPersona() {
-        Integer sq = 0;
-        String query = "SELECT MAX(PERS_ID_PERSONA) \"PERS_ID_PERSONA\" FROM PERSONA";
-        try {
-            pst = DB_manager.getConection().prepareStatement(query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-            rs = pst.executeQuery();
-            while (rs.next()) {
-                sq = rs.getInt("PERS_ID_PERSONA") + 1;
-            }
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        }
-        return sq;
-    }
-
     public static boolean verificarUsuario(String alias, String password) {
         String q = "SELECT alias  FROM FUNCIONARIO WHERE ALIAS ='" + alias + "' AND PASSWORD ='" + password + "';";
         try {
             st = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             rs = st.executeQuery(q);
-            if (!rs.isBeforeFirst()) {
-                System.out.println("No data");
-                return false;
-            }else{
-                System.out.println("We got data!");
-                return true;
-            }
+            return rs.isBeforeFirst();
         } catch (SQLException ex) {
             ex.printStackTrace();
         }

@@ -30,23 +30,23 @@ public class DB_Cliente {
 
     public static ResultSetTableModel consultarCliente(String busqueda, boolean isExclusivo, boolean entidad, boolean ruc) {
         ResultSetTableModel rstm = null;
-        String SELECT = "SELECT CLIE_ID_CLIENTE \"ID\", CLIE_NOMBRE \"Nombre Cliente\", CLIE_ENTIDAD  \"Entidad\", CLIE_RUC || '-' || CLIE_RUC_IDENTIFICADOR \"R.U.C.\" ";
-        String FROM = "FROM CLIENTE ";
+        String SELECT = "SELECT CLIE.ID_CLIENTE \"ID\", CLIE.NOMBRE \"Nombre Cliente\", CLIE.ENTIDAD  \"Entidad\", CLIE.RUC || '-' || CLIE.RUC_IDENTIFICADOR \"R.U.C.\" ";
+        String FROM = "FROM CLIENTE CLIE ";
         String WHERE = "WHERE ";
-        String ORDER_BY = " ORDER BY CLIE_ENTIDAD ";
+        String ORDER_BY = " ORDER BY CLIE.ENTIDAD ";
         if (isExclusivo) {
             busqueda = busqueda + "%";
         } else {
             busqueda = "%" + busqueda + "%";
         }
         if (entidad && ruc) {
-            WHERE = WHERE + "LOWER(CLIE_NOMBRE) LIKE '" + busqueda + "' OR LOWER(CLIE_ENTIDAD) LIKE '" + busqueda + "' OR LOWER(CLIE_RUC) LIKE '" + busqueda + "'";
+            WHERE = WHERE + "LOWER(CLIE.NOMBRE) LIKE '" + busqueda + "' OR LOWER(CLIE.ENTIDAD) LIKE '" + busqueda + "' OR LOWER(CLIE.RUC) LIKE '" + busqueda + "'";
         } else if (entidad) {
-            WHERE = WHERE + "LOWER(CLIE_NOMBRE) LIKE '" + busqueda + "' OR LOWER(CLIE_ENTIDAD) LIKE '" + busqueda + "'";
+            WHERE = WHERE + "LOWER(CLIE.NOMBRE) LIKE '" + busqueda + "' OR LOWER(CLIE.ENTIDAD) LIKE '" + busqueda + "'";
         } else if (ruc) {
-            WHERE = WHERE + "LOWER(CLIE_RUC) LIKE '" + busqueda + "'";
+            WHERE = WHERE + "LOWER(CLIE.RUC) LIKE '" + busqueda + "'";
         } else if (!entidad && !ruc) {
-            WHERE = WHERE + "LOWER(CLIE_NOMBRE) LIKE '" + busqueda + "' OR LOWER(CLIE_ENTIDAD) LIKE '" + busqueda + "' OR LOWER(CLIE_RUC) LIKE '" + busqueda + "'";
+            WHERE = WHERE + "LOWER(CLIE.NOMBRE) LIKE '" + busqueda + "' OR LOWER(CLIE.ENTIDAD) LIKE '" + busqueda + "' OR LOWER(CLIE.RUC) LIKE '" + busqueda + "'";
         }
 
         String QUERY = SELECT + FROM + WHERE + ORDER_BY;
@@ -87,40 +87,40 @@ public class DB_Cliente {
 
     public static M_cliente obtenerDatosClienteID(int idCliente) {
         M_cliente cliente = null;
-        String categoria = "(SELECT CLCA_DESCRIPCION FROM CLIENTE_CATEGORIA WHERE CLCA_ID_CLIENTE_CATEGORIA = CLIE_ID_CATEGORIA) \"CATEGORIA\", ";
-        String tipo = "(SELECT CLTI_DESCRIPCION FROM CLIENTE_TIPO WHERE CLTI_ID_CLIENTE_TIPO = CLIE_ID_TIPO) \"TIPO\" ";
-        String query = "SELECT CLIE_ID_CLIENTE, "
-                + "CLIE_NOMBRE, "
-                + "CLIE_ENTIDAD, "
-                + "CLIE_RUC, "
-                + "CLIE_RUC_IDENTIFICADOR, "
-                + "CLIE_DIRECCION, "
-                + "CLIE_EMAIL, "
-                + "CLIE_PAG_WEB, "
-                + "CLIE_ID_TIPO, "
-                + "CLIE_ID_CATEGORIA, "
-                + "CLIE_OBSERVACION, "
+        String categoria = "(SELECT CLCA.DESCRIPCION FROM CLIENTE_CATEGORIA CLCA WHERE CLCA.ID_CLIENTE_CATEGORIA = CLIE.ID_CATEGORIA) \"CATEGORIA\", ";
+        String tipo = "(SELECT CLTI.DESCRIPCION FROM CLIENTE_TIPO CLTI WHERE CLTI.ID_CLIENTE_TIPO = CLIE.ID_TIPO) \"TIPO\" ";
+        String query = "SELECT CLIE.ID_CLIENTE, "
+                + "CLIE.NOMBRE, "
+                + "CLIE.ENTIDAD, "
+                + "CLIE.RUC, "
+                + "CLIE.RUC_IDENTIFICADOR, "
+                + "CLIE.DIRECCION, "
+                + "CLIE.EMAIL, "
+                + "CLIE.PAG_WEB, "
+                + "CLIE.ID_TIPO, "
+                + "CLIE.ID_CATEGORIA, "
+                + "CLIE.OBSERVACION, "
                 + categoria
                 + tipo
-                + "FROM CLIENTE "
-                + "WHERE CLIE_ID_CLIENTE = " + idCliente;
+                + "FROM CLIENTE CLIE "
+                + "WHERE CLIE.ID_CLIENTE = " + idCliente;
         try {
             st = DB_manager.getConection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             rs = st.executeQuery(query);
             while (rs.next()) {
                 cliente = new M_cliente();
                 cliente.setCategoria(rs.getString("CATEGORIA"));
-                cliente.setDireccion(rs.getString("CLIE_DIRECCION"));
-                cliente.setEmail(rs.getString("CLIE_EMAIL"));
-                cliente.setEntidad(rs.getString("CLIE_ENTIDAD"));
-                cliente.setIdCategoria(rs.getInt("CLIE_ID_CATEGORIA"));
-                cliente.setIdCliente(rs.getInt("CLIE_ID_CLIENTE"));
-                cliente.setIdTipo(rs.getInt("CLIE_ID_TIPO"));
-                cliente.setNombre(rs.getString("CLIE_NOMBRE"));
-                cliente.setObservacion(rs.getString("CLIE_OBSERVACION"));
-                cliente.setPaginaWeb(rs.getString("CLIE_PAG_WEB"));
-                cliente.setRuc(rs.getString("CLIE_RUC"));
-                cliente.setRucId(rs.getString("CLIE_RUC_IDENTIFICADOR"));
+                cliente.setDireccion(rs.getString("DIRECCION"));
+                cliente.setEmail(rs.getString("EMAIL"));
+                cliente.setEntidad(rs.getString("ENTIDAD"));
+                cliente.setIdCategoria(rs.getInt("ID_CATEGORIA"));
+                cliente.setIdCliente(rs.getInt("ID_CLIENTE"));
+                cliente.setIdTipo(rs.getInt("ID_TIPO"));
+                cliente.setNombre(rs.getString("NOMBRE"));
+                cliente.setObservacion(rs.getString("OBSERVACION"));
+                cliente.setPaginaWeb(rs.getString("PAG_WEB"));
+                cliente.setRuc(rs.getString("RUC"));
+                cliente.setRucId(rs.getString("RUC_IDENTIFICADOR"));
                 cliente.setTipo(rs.getString("TIPO"));
             }
         } catch (SQLException ex) {
@@ -144,14 +144,14 @@ public class DB_Cliente {
 
     public static Vector obtenerCategoriaCliente() {
         Vector categoria = null;
-        String q = "SELECT clca_descripcion  "
-                + "FROM cliente_categoria ";
+        String q = "SELECT CLCA.descripcion  "
+                + "FROM cliente_categoria CLCA ";
         try {
             st = DB_manager.getConection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             rs = st.executeQuery(q);
             categoria = new Vector();
             while (rs.next()) {
-                categoria.add(rs.getString("clca_descripcion"));
+                categoria.add(rs.getString("CLCA.descripcion"));
             }
         } catch (SQLException ex) {
             Logger lgr = Logger.getLogger(DB_Cliente.class.getName());
@@ -174,14 +174,14 @@ public class DB_Cliente {
 
     public static Vector obtenerTipoCliente() {
         Vector tipo = null;
-        String q = "SELECT clti_descripcion  "
-                + "FROM cliente_tipo ";
+        String q = "SELECT CLTI.descripcion  "
+                + "FROM cliente_tipo  CLTI ";
         try {
             st = DB_manager.getConection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             rs = st.executeQuery(q);
             tipo = new Vector();
             while (rs.next()) {
-                tipo.add(rs.getString("clti_descripcion"));
+                tipo.add(rs.getString("CLTI.descripcion"));
             }
         } catch (SQLException ex) {
             Logger lgr = Logger.getLogger(DB_Cliente.class.getName());
@@ -210,36 +210,36 @@ public class DB_Cliente {
         ArrayList id_persona = new ArrayList();
         ArrayList id_telefono = new ArrayList();
         String insert_cliente = "INSERT INTO CLIENTE("
-                + "CLIE_NOMBRE, "
-                + "CLIE_ENTIDAD, "
-                + "CLIE_RUC, "
-                + "CLIE_RUC_IDENTIFICADOR, "
-                + "CLIE_DIRECCION, "
-                + "CLIE_EMAIL, "
-                + "CLIE_PAG_WEB, "
-                + "CLIE_ID_TIPO, "
-                + "CLIE_ID_CATEGORIA, "
-                + "CLIE_OBSERVACION"
+                + "NOMBRE, "
+                + "ENTIDAD, "
+                + "RUC, "
+                + "RUC_IDENTIFICADOR, "
+                + "DIRECCION, "
+                + "EMAIL, "
+                + "PAG_WEB, "
+                + "ID_TIPO, "
+                + "ID_CATEGORIA, "
+                + "OBSERVACION"
                 + ")VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
-        String id_categoria = "SELECT CLCA_ID_CLIENTE_CATEGORIA FROM CLIENTE_CATEGORIA WHERE CLCA_DESCRIPCION LIKE '" + cliente.getCategoria() + "'";
-        String id_tipo = "SELECT CLTI_ID_CLIENTE_TIPO FROM CLIENTE_TIPO WHERE CLTI_DESCRIPCION LIKE '" + cliente.getTipo() + "'";
-        String insert_telefono = "INSERT INTO TELEFONO( TELE_NUMERO, TELE_CATEGORIA, TELE_OBSERVACION)VALUES (?, ?, ?)";
-        String insert_telefono_cliente = "INSERT INTO CLIENTE_TELEFONO(CLTE_ID_CLIENTE, CLTE_ID_TELEFONO)VALUES (?, ?)";
-        String insert_sucursal = "INSERT INTO CLIENTE_SUCURSAL(CLSU_ID_CLIENTE, CLSU_DIRECCION, CLSU_TELEFONO)VALUES (?, ?, ?)";
-        String insert_contacto = "INSERT INTO CLIENTE_CONTACTO(CLCO_ID_PERSONA, CLCO_ID_CLIENTE, CLCO_DIRECCION, CLCO_TELEFONO, CLCO_EMAIL, CLCO_OBSERVACION) VALUES (?, ?, ?, ?, ?, ?)";
-        String insert_persona = "INSERT INTO PERSONA(PERS_CI, PERS_NOMBRE, PERS_APELLIDO, PERS_ID_SEXO, PERS_FECHA_NACIMIENTO, PERS_ID_ESTADO_CIVIL, PERS_ID_PAIS, PERS_ID_CIUDAD)VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        String id_categoria = "SELECT CLCA.ID_CLIENTE_CATEGORIA FROM CLIENTE_CATEGORIA WHERE CLCA.DESCRIPCION LIKE '" + cliente.getCategoria() + "'";
+        String id_tipo = "SELECT CLTI.ID_CLIENTE_TIPO FROM CLIENTE_TIPO WHERE CLTI.DESCRIPCION LIKE '" + cliente.getTipo() + "'";
+        String insert_telefono = "INSERT INTO TELEFONO( TELE.NUMERO, TELE.CATEGORIA, TELE.OBSERVACION)VALUES (?, ?, ?)";
+        String insert_telefono_cliente = "INSERT INTO CLIENTE_TELEFONO(CLTE.ID_CLIENTE, CLTE.ID_TELEFONO)VALUES (?, ?)";
+        String insert_sucursal = "INSERT INTO CLIENTE_SUCURSAL(CLSU.ID_CLIENTE, CLSU.DIRECCION, CLSU.TELEFONO)VALUES (?, ?, ?)";
+        String insert_contacto = "INSERT INTO CLIENTE_CONTACTO(CLCO.ID_PERSONA, CLCO.ID_CLIENTE, CLCO.DIRECCION, CLCO.TELEFONO, CLCO.EMAIL, CLCO.OBSERVACION) VALUES (?, ?, ?, ?, ?, ?)";
+        String insert_persona = "INSERT INTO PERSONA(PERS.CI, PERS.NOMBRE, PERS.APELLIDO, PERS.ID_SEXO, PERS.FECHA_NACIMIENTO, PERS.ID_ESTADO_CIVIL, PERS.ID_PAIS, PERS.ID_CIUDAD)VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         try {
             DB_manager.getConection().setAutoCommit(false);
             pst = DB_manager.getConection().prepareStatement(id_categoria, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             rs = pst.executeQuery();
             if (rs != null && rs.next()) {
-                cliente.setIdCategoria(rs.getInt("CLCA_ID_CLIENTE_CATEGORIA"));
+                cliente.setIdCategoria(rs.getInt("ID_CLIENTE_CATEGORIA"));
             }
             rs.close();
             pst = DB_manager.getConection().prepareStatement(id_tipo, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             rs = pst.executeQuery();
             if (rs != null && rs.next()) {
-                cliente.setIdTipo(rs.getInt("CLTI_ID_CLIENTE_TIPO"));
+                cliente.setIdTipo(rs.getInt("ID_CLIENTE_TIPO"));
             }
             rs.close();
             pst = DB_manager.getConection().prepareStatement(insert_cliente, PreparedStatement.RETURN_GENERATED_KEYS);
@@ -429,11 +429,11 @@ public class DB_Cliente {
 
     public static ResultSetTableModel obtenerSucursal(int idCliente) {
         ResultSetTableModel rstm = null;
-        String Query = "SELECT CLSU_ID_CLIENTE_SUCURSAL \"ID\", "
-                + "CLSU_DIRECCION \"Dirección\", "
-                + "CLSU_TELEFONO \"Telefono\" "
-                + "FROM CLIENTE_SUCURSAL "
-                + "WHERE CLSU_ID_CLIENTE =" + idCliente;
+        String Query = "SELECT CLSU.ID_CLIENTE_SUCURSAL \"ID\", "
+                + "CLSU.DIRECCION \"Dirección\", "
+                + "CLSU.TELEFONO \"Telefono\" "
+                + "FROM CLIENTE_SUCURSAL CLSU "
+                + "WHERE CLSU.ID_CLIENTE =" + idCliente;
         try {
             st = DB_manager.getConection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             // se ejecuta el query y se obtienen los resultados en un ResultSet
@@ -471,13 +471,13 @@ public class DB_Cliente {
 
     public static ResultSetTableModel obtenerClienteTelefono(int idCliente) {
         ResultSetTableModel rstm = null;
-        String Query = "SELECT TELE_NUMERO \"Número\", "
-                + "TELE_CATEGORIA \"Categoría\", "
-                + "TELE_OBSERVACION \"Observación\" "
-                + "FROM TELEFONO, CLIENTE, CLIENTE_TELEFONO "
-                + "WHERE TELE_ID_TELEFONO = CLTE_ID_TELEFONO "
-                + "AND CLIE_ID_CLIENTE = CLTE_ID_CLIENTE "
-                + "AND CLIE_ID_CLIENTE = " + idCliente;
+        String Query = "SELECT TELE.NUMERO \"Número\", "
+                + "TELE.CATEGORIA \"Categoría\", "
+                + "TELE.OBSERVACION \"Observación\" "
+                + "FROM TELEFONO TELE, CLIENTE CLIE, CLIENTE_TELEFONO CLTE "
+                + "WHERE TELE.ID_TELEFONO = CLTE.ID_TELEFONO "
+                + "AND CLIE.ID_CLIENTE = CLTE.ID_CLIENTE "
+                + "AND CLIE.ID_CLIENTE = " + idCliente;
         try {
             Statement statement = DB_manager.getConection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             // se ejecuta el query y se obtienen los resultados en un ResultSet
@@ -491,14 +491,14 @@ public class DB_Cliente {
 
     public static ResultSetTableModel obtenerClienteContacto(int idCliente) {
         ResultSetTableModel rstm = null;
-        String select = "SELECT CLCO_ID_CLIENTE_CONTACTO \"ID\","
-                + "PERS_NOMBRE\"Nombre\","
-                + "PERS_APELLIDO\"Apellido\", "
-                + "CLCO_TELEFONO\"Telefono\" "
-                + "FROM CLIENTE_CONTACTO,PERSONA,CLIENTE "
-                + "WHERE CLCO_ID_CLIENTE = CLIE_ID_CLIENTE "
-                + "AND CLCO_ID_PERSONA = PERS_ID_PERSONA "
-                + "AND CLIE_ID_CLIENTE = " + idCliente;
+        String select = "SELECT CLCO.ID_CLIENTE_CONTACTO \"ID\","
+                + "PERS.NOMBRE\"Nombre\","
+                + "PERS.APELLIDO\"Apellido\", "
+                + "CLCO.TELEFONO\"Telefono\" "
+                + "FROM CLIENTE_CONTACTO CLCO, PERSONA PERS, CLIENTE CLIE "
+                + "WHERE CLCO.ID_CLIENTE = CLIE.ID_CLIENTE "
+                + "AND CLCO.ID_PERSONA = PERS.ID_PERSONA "
+                + "AND CLIE.ID_CLIENTE = " + idCliente;
         try {
             st = DB_manager.getConection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             // se ejecuta el query y se obtienen los resultados en un ResultSet
@@ -536,42 +536,42 @@ public class DB_Cliente {
 
     public static M_cliente_contacto obtenerDatosClienteContactoID(int idClienteContacto) {
         M_cliente_contacto contacto = null;
-        String query = "SELECT PERS_ID_PERSONA,CLCO_ID_CLIENTE,CLCO_ID_PERSONA, "
-                + " CLCO_ID_CLIENTE_CONTACTO, PERS_CI, PERS_NOMBRE, PERS_APELLIDO, "
-                + " PERS_ID_SEXO, "
-                + " (SELECT SEXO_DESCRIPCION FROM SEXO WHERE SEXO_ID_SEXO = PERS_ID_SEXO) \"SEXO\","
-                + " PERS_FECHA_NACIMIENTO, PERS_ID_ESTADO_CIVIL,(SELECT ESCI_DESCRIPCION FROM ESTADO_CIVIL WHERE ESCI_ID_ESTADO_CIVIL = PERS_ID_ESTADO_CIVIL)\"ESTADO_CIVIL\", "
-                + " PERS_ID_PAIS,(SELECT PAIS_DESCRIPCION FROM PAIS WHERE PAIS_ID_PAIS = PERS_ID_PAIS)\"PAIS\" ,"
-                + " PERS_ID_CIUDAD,(SELECT CIUD_DESCRIPCION FROM CIUDAD WHERE CIUD_ID_CIUDAD = PERS_ID_CIUDAD)\"CIUDAD\" , "
-                + " CLCO_DIRECCION, "
-                + " CLCO_TELEFONO, CLCO_EMAIL, CLCO_OBSERVACION"
-                + " FROM PERSONA,CLIENTE_CONTACTO"
-                + " WHERE PERS_ID_PERSONA = CLCO_ID_PERSONA"
-                + " AND CLCO_ID_CLIENTE_CONTACTO = " + idClienteContacto;
+        String query = "SELECT PERS.ID_PERSONA,CLCO.ID_CLIENTE,CLCO.ID_PERSONA, "
+                + " CLCO.ID_CLIENTE_CONTACTO, PERS.CI, PERS.NOMBRE, PERS.APELLIDO, "
+                + " PERS.ID_SEXO, "
+                + " (SELECT SEXO.DESCRIPCION FROM SEXO SEXO WHERE SEXO.ID_SEXO = PERS.ID_SEXO) \"SEXO\","
+                + " PERS.FECHA_NACIMIENTO, PERS.ID_ESTADO_CIVIL,(SELECT ESCI_DESCRIPCION FROM ESTADO_CIVIL WHERE ESCI_ID_ESTADO_CIVIL = PERS.ID_ESTADO_CIVIL)\"ESTADO_CIVIL\", "
+                + " PERS.ID_PAIS,(SELECT PAIS.DESCRIPCION FROM PAIS PAIS WHERE PAIS.ID_PAIS = PERS.ID_PAIS)\"PAIS\" ,"
+                + " PERS.ID_CIUDAD,(SELECT CIUD.DESCRIPCION FROM CIUDAD CIUD WHERE CIUD.ID_CIUDAD = PERS.ID_CIUDAD)\"CIUDAD\" , "
+                + " CLCO.DIRECCION, "
+                + " CLCO.TELEFONO, CLCO.EMAIL, CLCO.OBSERVACION"
+                + " FROM PERSONA PERS, CLIENTE_CONTACTO CLCO "
+                + " WHERE PERS.ID_PERSONA = CLCO.ID_PERSONA"
+                + " AND CLCO.ID_CLIENTE_CONTACTO = " + idClienteContacto;
         try {
             st = DB_manager.getConection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             rs = st.executeQuery(query);
             while (rs.next()) {
                 contacto = new M_cliente_contacto();
-                contacto.setApellido(rs.getString("PERS_APELLIDO"));
-                contacto.setCedula(rs.getInt("PERS_CI"));
+                contacto.setApellido(rs.getString("PERS.APELLIDO"));
+                contacto.setCedula(rs.getInt("PERS.CI"));
                 contacto.setCiudad(rs.getString("CIUDAD"));
-                contacto.setDireccion(rs.getString("CLCO_DIRECCION"));
-                contacto.setEmail(rs.getString("CLCO_EMAIL"));
+                contacto.setDireccion(rs.getString("CLCO.DIRECCION"));
+                contacto.setEmail(rs.getString("CLCO.EMAIL"));
                 contacto.setEstado_civil(rs.getString("ESTADO_CIVIL"));
-                contacto.setFecha_nacimiento(rs.getDate("PERS_FECHA_NACIMIENTO"));
-                contacto.setIdCliente(rs.getInt("CLCO_ID_CLIENTE"));
-                contacto.setIdClienteContacto(rs.getInt("CLCO_ID_CLIENTE_CONTACTO"));
-                contacto.setId_ciudad(rs.getInt("PERS_ID_CIUDAD"));
-                contacto.setId_estado_civil(rs.getInt("PERS_ID_ESTADO_CIVIL"));
-                contacto.setId_pais(rs.getInt("PERS_ID_PAIS"));
-                contacto.setId_persona(rs.getInt("PERS_ID_PERSONA"));
-                contacto.setId_sexo(rs.getInt("PERS_ID_SEXO"));
-                contacto.setNombre(rs.getString("PERS_NOMBRE"));
-                contacto.setObservacion(rs.getString("CLCO_OBSERVACION"));
+                contacto.setFecha_nacimiento(rs.getDate("PERS.FECHA_NACIMIENTO"));
+                contacto.setIdCliente(rs.getInt("CLCO.ID_CLIENTE"));
+                contacto.setIdClienteContacto(rs.getInt("CLCO.ID_CLIENTE_CONTACTO"));
+                contacto.setId_ciudad(rs.getInt("PERS.ID_CIUDAD"));
+                contacto.setId_estado_civil(rs.getInt("PERS.ID_ESTADO_CIVIL"));
+                contacto.setId_pais(rs.getInt("PERS.ID_PAIS"));
+                contacto.setId_persona(rs.getInt("PERS.ID_PERSONA"));
+                contacto.setId_sexo(rs.getInt("PERS.ID_SEXO"));
+                contacto.setNombre(rs.getString("PERS.NOMBRE"));
+                contacto.setObservacion(rs.getString("CLCO.OBSERVACION"));
                 contacto.setPais(rs.getString("PAIS"));
                 contacto.setSexo(rs.getString("SEXO"));
-                contacto.setTelefono(rs.getString("CLCO_TELEFONO"));
+                contacto.setTelefono(rs.getString("CLCO.TELEFONO"));
             }
         } catch (SQLException ex) {
             Logger lgr = Logger.getLogger(DB_Cliente.class.getName());
@@ -593,14 +593,14 @@ public class DB_Cliente {
     }
 
     public static void insertarContacto(int idCliente, M_cliente_contacto contacto) {
-        String insert_persona = "INSERT INTO PERSONA(PERS_CI, PERS_NOMBRE, PERS_APELLIDO, PERS_ID_SEXO, PERS_FECHA_NACIMIENTO, PERS_ID_ESTADO_CIVIL, PERS_ID_PAIS, PERS_ID_CIUDAD)VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        String insert_persona = "INSERT INTO PERSONA(CI, NOMBRE, APELLIDO, ID_SEXO, FECHA_NACIMIENTO, ID_ESTADO_CIVIL, ID_PAIS, ID_CIUDAD)VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         String insertContacto = "INSERT INTO CLIENTE_CONTACTO"
-                + "( CLCO_ID_PERSONA, "
-                + "CLCO_ID_CLIENTE, "
-                + "CLCO_DIRECCION, "
-                + "CLCO_TELEFONO, "
-                + "CLCO_EMAIL, "
-                + "CLCO_OBSERVACION"
+                + "( ID_PERSONA, "
+                + "ID_CLIENTE, "
+                + "DIRECCION, "
+                + "TELEFONO, "
+                + "EMAIL, "
+                + "OBSERVACION"
                 + ")VALUES ("
                 + "?, ?, ?, ?, ?, ?)";
         long id_persona = -1L;
@@ -674,9 +674,9 @@ public class DB_Cliente {
     }
 
     public static void eliminarContacto(int idPersona, int idContacto, int idCliente) {
-        String delete_contacto = "DELETE FROM CLIENTE_CONTACTO WHERE CLCO_ID_CLIENTE_CONTACTO =" + idContacto + " "
-                + "AND CLCO_ID_CLIENTE = " + idCliente;
-        String delete_persona = "DELETE FROM PERSONA WHERE PERS_ID_PERSONA =" + idPersona;
+        String delete_contacto = "DELETE FROM CLIENTE_CONTACTO WHERE ID_CLIENTE_CONTACTO =" + idContacto + " "
+                + "AND ID_CLIENTE = " + idCliente;
+        String delete_persona = "DELETE FROM PERSONA WHERE ID_PERSONA =" + idPersona;
         try {
             DB_manager.habilitarTransaccionManual();
             st = DB_manager.getConection().createStatement();
@@ -714,21 +714,21 @@ public class DB_Cliente {
 
     public static void modificarContacto(M_cliente_contacto contacto) {
         String UPDATE_CONTACTO = "UPDATE CLIENTE_CONTACTO SET "
-                + "CLCO_DIRECCION=" + contacto.getDireccion() + ", "
-                + "CLCO_TELEFONO=" + contacto.getTelefono() + ", "
-                + "CLCO_EMAIL=" + contacto.getEmail() + ", "
-                + "CLCO_OBSERVACION= " + contacto.getObservacion() + " "
-                + "WHERE CLCO_ID_CLIENTE_CONTACTO = " + contacto.getIdClienteContacto();
+                + "DIRECCION=" + contacto.getDireccion() + ", "
+                + "TELEFONO=" + contacto.getTelefono() + ", "
+                + "EMAIL=" + contacto.getEmail() + ", "
+                + "OBSERVACION= " + contacto.getObservacion() + " "
+                + "WHERE ID_CLIENTE_CONTACTO = " + contacto.getIdClienteContacto();
         String UPDATE_PERSONA = "UPDATE PERSONA SET "
-                + "PERS_CI=" + contacto.getCedula() + ", "
-                + "PERS_NOMBRE=" + contacto.getNombre() + ", "
-                + "PERS_APELLIDO=" + contacto.getApellido() + ", "
-                + "PERS_ID_SEXO=" + contacto.getId_sexo() + ", "
-                + "PERS_FECHA_NACIMIENTO=" + contacto.getFecha_nacimiento() + ", "
-                + "PERS_ID_ESTADO_CIVIL=" + contacto.getCedula() + ", "
-                + "PERS_ID_PAIS=" + contacto.getId_pais() + ", "
-                + "PERS_ID_CIUDAD" + contacto.getId_ciudad() + " "
-                + "WHERE PERS_ID_PERSONA = " + contacto.getId_persona();
+                + "CI=" + contacto.getCedula() + ", "
+                + "NOMBRE=" + contacto.getNombre() + ", "
+                + "APELLIDO=" + contacto.getApellido() + ", "
+                + "ID_SEXO=" + contacto.getId_sexo() + ", "
+                + "FECHA_NACIMIENTO=" + contacto.getFecha_nacimiento() + ", "
+                + "ID_ESTADO_CIVIL=" + contacto.getCedula() + ", "
+                + "ID_PAIS=" + contacto.getId_pais() + ", "
+                + "ID_CIUDAD" + contacto.getId_ciudad() + " "
+                + "WHERE ID_PERSONA = " + contacto.getId_persona();
         try {
             DB_manager.habilitarTransaccionManual();
             st = DB_manager.getConection().createStatement();
@@ -766,17 +766,17 @@ public class DB_Cliente {
 
     public static void actualizarCliente(M_cliente cliente) {
         String UPDATE_CLIENTE = "UPDATE CLIENTE SET "
-                + "CLIE_NOMBRE= '" + cliente.getNombre() + "', "
-                + "CLIE_ENTIDAD= '" + cliente.getEntidad() + "', "
-                + "CLIE_RUC= '" + cliente.getRuc() + "', "
-                + "CLIE_RUC_IDENTIFICADOR= '" + cliente.getRucId() + "', "
-                + "CLIE_DIRECCION= '" + cliente.getDireccion() + "', "
-                + "CLIE_EMAIL= '" + cliente.getEmail() + "', "
-                + "CLIE_PAG_WEB= '" + cliente.getPaginaWeb() + "', "
-                + "CLIE_ID_TIPO= " + cliente.getIdTipo() + ", "
-                + "CLIE_ID_CATEGORIA= " + cliente.getIdCategoria() + ", "
-                + "CLIE_OBSERVACION= '" + cliente.getObservacion() + "' "
-                + "WHERE CLIE_ID_CLIENTE = " + cliente.getIdCliente();
+                + "NOMBRE= '" + cliente.getNombre() + "', "
+                + "ENTIDAD= '" + cliente.getEntidad() + "', "
+                + "RUC= '" + cliente.getRuc() + "', "
+                + "RUC_IDENTIFICADOR= '" + cliente.getRucId() + "', "
+                + "DIRECCION= '" + cliente.getDireccion() + "', "
+                + "EMAIL= '" + cliente.getEmail() + "', "
+                + "PAG_WEB= '" + cliente.getPaginaWeb() + "', "
+                + "ID_TIPO= " + cliente.getIdTipo() + ", "
+                + "ID_CATEGORIA= " + cliente.getIdCategoria() + ", "
+                + "OBSERVACION= '" + cliente.getObservacion() + "' "
+                + "WHERE ID_CLIENTE = " + cliente.getIdCliente();
         try {
             DB_manager.getConection().setAutoCommit(false);
             st = DB_manager.getConection().createStatement();
@@ -807,10 +807,10 @@ public class DB_Cliente {
 
     public static void actualizarTelefono(int idTelefono, String tipoTelefono, String nroTelefono, String observacion) {
         String updateTelefono = "UPDATE TELEFONO SET "
-                + "TELE_NUMERO='" + nroTelefono + "', "
-                + "TELE_CATEGORIA= '" + tipoTelefono + "', "
-                + "TELE_OBSERVACION='" + observacion + "' "
-                + "WHERE TELE_ID_TELEFONO = " + idTelefono;
+                + "NUMERO='" + nroTelefono + "', "
+                + "CATEGORIA= '" + tipoTelefono + "', "
+                + "OBSERVACION='" + observacion + "' "
+                + "WHERE ID_TELEFONO = " + idTelefono;
         try {
             DB_manager.getConection().setAutoCommit(false);
             st = DB_manager.getConection().createStatement();
@@ -842,16 +842,16 @@ public class DB_Cliente {
     public static void insertarTelefono(Integer idCliente, String tipoTelefono, String nroTelefono, String observacion) {
         long id_telefono = -1L;
         String insertTelefono = "INSERT INTO telefono("
-                + "tele_numero, "
-                + "tele_categoria, "
-                + "tele_observacion"
+                + "numero, "
+                + "categoria, "
+                + "observacion"
                 + ")VALUES ("
                 + nroTelefono + "', '"
                 + tipoTelefono + "', '"
                 + observacion + "')";
         String insertTelProv = "INSERT INTO CLIENTE_TELEFONO("
-                + "CLTE_ID_CLIENTE, "
-                + "CLTE_ID_TELEFONO"
+                + "ID_CLIENTE, "
+                + "ID_TELEFONO"
                 + ")VALUES ("
                 + idCliente + ", "
                 + id_telefono + ")";
@@ -894,10 +894,10 @@ public class DB_Cliente {
     /*
      public static ResultSetTableModel consultarCliente(String toLowerCase, boolean entidad, boolean ruc, boolean exclusivo) {
      ResultSetTableModel rstm = null;
-     String select = "SELECT CLIE_ID_CLIENTE \"ID\",CLIE_ENTIDAD \"Entidad\",CLIE_NOMBRE \"Nombre cliente\", CLIE_RUC \"R.U.C.\" ";
+     String select = "SELECT CLIE.ID_CLIENTE \"ID\",CLIE.ENTIDAD \"Entidad\",CLIE.NOMBRE \"Nombre cliente\", CLIE.RUC \"R.U.C.\" ";
      String from = "FROM CLIENTE ";
      String where = "WHERE ";
-     String orderBy = "ORDER BY CLIE_ENTIDAD ";
+     String orderBy = "ORDER BY CLIE.ENTIDAD ";
      String prov;
      if (exclusivo) {
      prov = toLowerCase + "%";
@@ -905,13 +905,13 @@ public class DB_Cliente {
      prov = "%" + toLowerCase + "%";
      }
      if (entidad && ruc) {
-     where = where + "LOWER(CLIE_NOMBRE) LIKE '" + prov + "' OR LOWER(CLIE_ENTIDAD) LIKE '" + prov + "'  OR LOWER(CLIE_RUC)LIKE '" + prov + "' ";
+     where = where + "LOWER(CLIE.NOMBRE) LIKE '" + prov + "' OR LOWER(CLIE.ENTIDAD) LIKE '" + prov + "'  OR LOWER(CLIE.RUC)LIKE '" + prov + "' ";
      } else if (entidad) {
-     where = where + "LOWER(CLIE_NOMBRE) LIKE '" + prov + "' ";
+     where = where + "LOWER(CLIE.NOMBRE) LIKE '" + prov + "' ";
      } else if (ruc) {
-     where = where + " LOWER(CLIE_RUC)LIKE '" + prov + "' ";
+     where = where + " LOWER(CLIE.RUC)LIKE '" + prov + "' ";
      } else if (!entidad && !ruc) {
-     where = where + "LOWER(CLIE_NOMBRE) LIKE '" + prov + "' OR LOWER(CLIE_ENTIDAD) LIKE '" + prov + "'  OR LOWER(CLIE_RUC)LIKE '" + prov + "' ";
+     where = where + "LOWER(CLIE.NOMBRE) LIKE '" + prov + "' OR LOWER(CLIE.ENTIDAD) LIKE '" + prov + "'  OR LOWER(CLIE.RUC)LIKE '" + prov + "' ";
      }
      String query = select + from + where + orderBy;
      try {
@@ -927,18 +927,18 @@ public class DB_Cliente {
 
     public static ArrayList<M_telefono> obtenerTelefonoCliente(int idCliente) {
         ArrayList telefonos = null;
-        String query = "SELECT TELE_ID_TELEFONO, TELE_NUMERO, TELE_CATEGORIA, TELE_OBSERVACION  FROM TELEFONO, CLIENTE, CLIENTE_TELEFONO  WHERE CLIE_ID_CLIENTE = CLTE_ID_CLIENTE  AND CLTE_ID_TELEFONO = TELE_ID_TELEFONO"
-                + " AND CLIE_ID_CLIENTE = " + idCliente + ";";
+        String query = "SELECT TELE.ID_TELEFONO, TELE.NUMERO, TELE.ID_CATEGORIA, TELE.OBSERVACION  FROM TELEFONO TELE, CLIENTE CLIE, CLIENTE_TELEFONO CLTE WHERE CLIE.ID_CLIENTE = CLTE.ID_CLIENTE  AND CLTE.ID_TELEFONO = TELE.ID_TELEFONO"
+                + " AND CLIE.ID_CLIENTE = " + idCliente + ";";
         try {
             st = DB_manager.getConection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             rs = st.executeQuery(query);
             telefonos = new ArrayList();
             while (rs.next()) {
                 M_telefono telefono = new M_telefono();
-                telefono.setId_telefono(rs.getInt("CLIE_ID_CLIENTE"));
-                telefono.setCategoria(rs.getString("TELE_CATEGORIA"));
-                telefono.setNumero(rs.getString("TELE_NUMERO"));
-                telefono.setObservacion(rs.getString("TELE_OBSERVACION"));
+                telefono.setId_telefono(rs.getInt("CLIE.ID_CLIENTE"));
+                telefono.setCategoria(rs.getString("TELE.ID_CATEGORIA"));
+                telefono.setNumero(rs.getString("TELE.NUMERO"));
+                telefono.setObservacion(rs.getString("TELE.OBSERVACION"));
                 telefonos.add(telefono);
             }
         } catch (SQLException ex) {

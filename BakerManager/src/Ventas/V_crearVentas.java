@@ -17,6 +17,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.border.EtchedBorder;
 import javax.swing.text.DateFormatter;
 import javax.swing.text.DefaultFormatterFactory;
 import net.miginfocom.swing.MigLayout;
@@ -50,7 +51,7 @@ public class V_crearVentas extends JDialog {
     private void initComponents() {
         jpNorth = new JPanel();
         jtfFuncionario = new JTextField();
-        jtfFuncionario.setPreferredSize(new Dimension(250, 20));
+        jtfFuncionario.setPreferredSize(new Dimension(250, 30));
         jtfFuncionario.setEditable(false);
         jftTiempo = new JFormattedTextField(
                 new DefaultFormatterFactory(
@@ -60,7 +61,7 @@ public class V_crearVentas extends JDialog {
         //jftFecha.setText("00/00/00");
         //jftFecha.setText(DateFormat.getDateInstance().format(getFecha()));
         jftTiempo.setEditable(false);
-        jftTiempo.setPreferredSize(new Dimension(250, 20));
+        jftTiempo.setPreferredSize(new Dimension(250, 30));
         jpNorth.add(new JLabel("Funcionario: "));
         jpNorth.add(jtfFuncionario);
         jpNorth.add(new JLabel("Tiempo: "));
@@ -86,6 +87,7 @@ public class V_crearVentas extends JDialog {
         jpCenter.add(jspp, BorderLayout.CENTER);
 
         jpSouth = new JPanel();
+        jpSouth.setBorder(new EtchedBorder());
         jbVentaRapida = new JButton("Venta rápida");
         jbSalir = new JButton("Salir");
         jpSouth.add(jbVentaRapida);

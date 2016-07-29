@@ -86,6 +86,7 @@ public class V0_gestionVentas extends JInternalFrame {
          jtfBuscar.setFont(new java.awt.Font("Times New Roman", 0, 16));
          jpJtextFieldTop.add(jtfBuscar);*/
         jbBuscar = new JButton("Buscar");
+        jbBuscar.setName("buscar venta");
         jbBorrar = new JButton("Borrar");
         jbBuscarDetalle = new JButton("Buscar por detalle");
         jpBotonesTop.add(jbBuscar);
@@ -114,8 +115,12 @@ public class V0_gestionVentas extends JInternalFrame {
     private void initBot() {
         jpBot = new JPanel();
         jbAgregar = new JButton("Crear venta");
+        jbAgregar.setName("crear venta");
         jbDetalle = new JButton("Ver detalle");
+        jbDetalle.setName("detalle venta");
         jbResumen = new JButton("Ver resumen");
+        jbResumen.setName("resumen venta");
+        jbResumen.setEnabled(false);
         jpBot.add(jbAgregar);
         jpBot.add(jbDetalle);
         jpBot.add(jbResumen);

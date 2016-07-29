@@ -37,10 +37,10 @@ public class DB_Ingreso {
 
         String Query = "SELECT ID_FACTURA_CABECERA \"ID\", "
                 + "(SELECT NOMBRE || ' '|| APELLIDO WHERE F.ID_PERSONA = P.ID_PERSONA)\"Empleado\", "
-                + "(SELECT ENTIDAD FROM CLIENTE WHERE FC.ID_CLIENTE = C.ID_CLIENTE) \"Cliente\", "
+                + "(SELECT ENTIDAD FROM CLIENTE C WHERE FC.ID_CLIENTE = C.ID_CLIENTE) \"Cliente\", "
                 + "to_char(TIEMPO,'DD/MM/YYYY HH24:MI:SS:MS') \"Tiempo\", "
                 + "ROUND((SELECT SUM (CANTIDAD*(PRECIO-(PRECIO*DESCUENTO)/100)) FROM FACTURA_DETALLE FCC WHERE FCC.ID_FACTURA_CABECERA = FC.ID_FACTURA_CABECERA))\"Total\", "
-                + "(SELECT TO.DESCRIPCION FROM TIPO_OPERACION TO WHERE TO.ID_TIPO_OPERACION = FC.ID_COND_VENTA) \"Cond. venta\" "
+                + "(SELECT TIOP.DESCRIPCION FROM TIPO_OPERACION TIOP WHERE TIOP.ID_TIPO_OPERACION = FC.ID_COND_VENTA) \"Cond. venta\" "
                 + "FROM FACTURA_CABECERA FC ,FUNCIONARIO F, PERSONA P "
                 + "WHERE  FC.TIEMPO BETWEEN '" + inicio + "'::timestamp  "
                 + "AND '" + fin + "'::timestamp "
@@ -50,7 +50,7 @@ public class DB_Ingreso {
             Query = Query + " AND FC.ID_FACTURA_CABECERA = " + nroFactura;
         }
         if (!"Todos".equals(tipo_operacion)) {
-            Query = Query + " AND FC.ID_COND_VENTA = (SELECT TO.ID_TIPO_OPERACION FROM TIPO_OPERACION TO WHERE TO.DESCRIPCION LIKE'" + tipo_operacion + "')";
+            Query = Query + " AND FC.ID_COND_VENTA = (SELECT TIOP.ID_TIPO_OPERACION FROM TIPO_OPERACION TIOP WHERE TIOP.DESCRIPCION LIKE'" + tipo_operacion + "')";
         }
         if (null != factura_cabecera) {
             if (null != factura_cabecera.getCliente()) {
@@ -181,18 +181,24 @@ public class DB_Ingreso {
     }
 
     public static ResultSetTableModel obtenerIngresoDetalle(Integer idIngresoCabecera) {
-        String queryProducto = "(SELECT PR.DESCRIPCION FROM PRODUCTO PR WHERE PR.ID_PRODUCTO = FC.ID_PRODUCTO) \"Producto\", ";
+        String queryProducto = "(SELECT P.DESCRIPCION FROM PRODUCTO P WHERE P.ID_PRODUCTO = FD.ID_PRODUCTO) \"Producto\", ";
         String Query = "SELECT "
-                + "ID_PRODUCTO \"ID art.\", "
+                + "FD.ID_PRODUCTO \"ID art.\", "
                 + queryProducto
-                + "CANTIDAD \"Cantidad\", "
-                + "PRECIO \"Precio\", "
-                + "DESCUENTO \"Descuento\","
-                + "EXENTA \"Exenta\", "
-                + "IVA5 \"IVA 5%\", "
-                + "IVA10 \"IVA 10%\", "
+                + "FD.CANTIDAD \"Cantidad\", "
+                + "FD.PRECIO \"Precio\", "
+                + "FD.DESCUENTO \"Descuento\","
+                + "CASE "
+                + "	WHEN P.ID_IMPUESTO = 1 THEN ROUND(FD.CANTIDAD*(FD.PRECIO-(FD.PRECIO*FD.DESCUENTO)/100))ELSE '0' "
+                + "END AS \"Exenta\", "
+                + "CASE "
+                + "	WHEN P.ID_IMPUESTO = 2 THEN ROUND(FD.CANTIDAD*(FD.PRECIO-(FD.PRECIO*FD.DESCUENTO)/100))ELSE '0' "
+                + "END AS \"IVA 5%\", "
+                + "CASE "
+                + "	WHEN P.ID_IMPUESTO = 3 THEN ROUND(FD.CANTIDAD*(FD.PRECIO-(FD.PRECIO*FD.DESCUENTO)/100))ELSE '0' "
+                + "END AS \"IVA 10%\", "
                 + "OBSERVACION \"Obs.\" "
-                + "FROM FACTURA_DETALLE "
+                + "FROM FACTURA_DETALLE FD, PRODUCTO P "
                 + "WHERE ID_FACTURA_CABECERA = " + idIngresoCabecera;
         ResultSetTableModel rstm = null;
         try {
@@ -222,12 +228,12 @@ public class DB_Ingreso {
 
     public static ResultSetTableModel obtenerMesa(String inicio, String fin, String tipo_operacion) {
         ResultSetTableModel rstm = null;
-        String q = "SELECT M.ID_MESA \"ID\", (SELECT NOMBRE || ' '|| APELLIDO WHERE M.ID_PERSONA = P.ID_PERSONA)\"Empleado\", "
+        String q = "SELECT M.ID_MESA \"ID\", (SELECT NOMBRE || ' '|| APELLIDO WHERE F.ID_PERSONA = P.ID_PERSONA)\"Empleado\", "
                 + "(SELECT C.ENTIDAD FROM CLIENTE C WHERE C.ID_CLIENTE = M.ID_CLIENTE) \"Cliente\", "
                 + "to_char(TIEMPO,'DD/MM/YYYY HH24:MI:SS:MS') \"Tiempo\", "
-                + "NUMERO \"Nro. mesa\", "
+                + "MESA_NUMERO \"Nro. mesa\", "
                 + "ROUND((SELECT SUM(MD.CANTIDAD*(MD.PRECIO-(MD.PRECIO*MD.DESCUENTO)/100)) FROM MESA_DETALLE MD WHERE MD.ID_MESA = M.ID_MESA))\"Total\" "
-                + "FROM MESA M,FUNCIONARIO F, PERSONA P"
+                + "FROM MESA M,FUNCIONARIO F, PERSONA P "
                 + "WHERE M.ID_FUNCIONARIO = F.ID_FUNCIONARIO "
                 + "AND F.ID_PERSONA = P.ID_PERSONA ";
         String tiempo = "AND M.TIEMPO BETWEEN '" + inicio + "'::timestamp  "
@@ -249,27 +255,28 @@ public class DB_Ingreso {
     }
 
     public static ResultSetTableModel obtenerMesaDetalle(int idMesa) {
-        String queryProducto = "(SELECT P.DESCRIPCION FROM PRODUCTO P WHERE P.ID_PRODUCTO = MD.ID_PRODUCTO) \"Producto\", ";
         String Query = "SELECT "
-                + "MD.ID_DETALLE \"ID\", "
+                + "MD.ID_MESA_DETALLE \"ID\", "
                 + "MD.ID_PRODUCTO \"ID art.\", "
-                + queryProducto
+                + "P.DESCRIPCION  \"Producto\", "
                 + "MD.CANTIDAD \"Cantidad\", "
                 + "MD.PRECIO \"Precio\", "
                 + "MD.DESCUENTO \"Descuento\", "
                 + "CASE "
-                + "	WHEN P.ID_IMPUESTO = 1 THEN round((MD.PRECIO*MD.DESCUENTO)/100) "
+                + "	WHEN P.ID_IMPUESTO = 1 THEN round(MD.CANTIDAD*(MD.PRECIO-(MD.PRECIO*MD.DESCUENTO)/100))ELSE '0' "
                 + "END AS \"Exenta\", "
                 + "CASE "
-                + "	WHEN P.ID_IMPUESTO = 2 THEN round((MD.PRECIO*MD.DESCUENTO)/100) "
+                + "	WHEN P.ID_IMPUESTO = 2 THEN round(MD.CANTIDAD*(MD.PRECIO-(MD.PRECIO*MD.DESCUENTO)/100))ELSE '0' "
                 + "END AS \"IVA 5%\", "
                 + "CASE "
-                + "	WHEN P.ID_IMPUESTO = 3 THEN round((MD.PRECIO*MD.DESCUENTO)/100) "
+                + "	WHEN P.ID_IMPUESTO = 3 THEN round(MD.CANTIDAD*(MD.PRECIO-(MD.PRECIO*MD.DESCUENTO)/100))ELSE '0' "
                 + "END AS \"IVA 10%\", "
                 + "MD.OBSERVACION \"Obs.\" "
-                + "FROM MESA_DETALLE MD "
-                + "WHERE MD.ID_MESA = " + idMesa;
+                + "FROM MESA_DETALLE MD, PRODUCTO P "
+                + "WHERE  P.ID_PRODUCTO = MD.ID_PRODUCTO "
+                + "AND MD.ID_MESA = " + idMesa;
         ResultSetTableModel rstm = null;
+        System.out.println("273-ingreso: " + Query);
         try {
             st = DB_manager.getConection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             // se ejecuta el query y se obtienen los resultados en un ResultSet
@@ -285,7 +292,7 @@ public class DB_Ingreso {
     public static long insertarMesa(M_mesa mesa, ArrayList<M_mesa_detalle> detalle) {
         //LA SGBD SE ENCARGA DE INSERTAR EL TIMESTAMP.
         String INSERT_DETAIL = "INSERT INTO MESA_DETALLE(ID_MESA, ID_PRODUCTO, CANTIDAD, PRECIO, DESCUENTO, OBSERVACION)VALUES (?, ?, ?, ?, ?, ?);";
-        String INSERT_MESA = "INSERT INTO MESA(ID_FUNCIONARIO, ID_CLIENTE, ID_COND_VENTA, NUMERO)VALUES (?, ?, ?, ?);";
+        String INSERT_MESA = "INSERT INTO MESA(ID_FUNCIONARIO, ID_CLIENTE, ID_COND_VENTA, MESA_NUMERO)VALUES (?, ?, ?, ?);";
         long sq_cabecera = -1L;
         try {
             DB_manager.getConection().setAutoCommit(false);
@@ -360,13 +367,13 @@ public class DB_Ingreso {
         String categoria = "(SELECT CLCA.DESCRIPCION FROM CLIENTE_CATEGORIA CLCA WHERE CLCA.ID_CLIENTE_CATEGORIA = C.ID_CATEGORIA) \"CATEGORIA\" ";
         String tipo = "(SELECT CLTI.DESCRIPCION FROM CLIENTE_TIPO CLTI WHERE CLTI.ID_CLIENTE_TIPO = C.ID_TIPO) \"TIPO\" ";
 
-        String q = "SELECT M.ID_MESA, M.ID_FUNCIONARIO, M.ID_CLIENTE, M.TIEMPO,M.NUMERO, "
+        String q = "SELECT M.ID_MESA, M.ID_FUNCIONARIO, M.ID_CLIENTE, M.TIEMPO,M.MESA_NUMERO, "
                 + "       M.ID_COND_VENTA, "
                 + "C.ID_CLIENTE, C.NOMBRE, C.ENTIDAD, C.RUC, C.RUC_IDENTIFICADOR, " + categoria + "," + tipo + ","
                 + "       C.DIRECCION, C.EMAIL, C.PAG_WEB, C.ID_TIPO, C.ID_CATEGORIA, "
                 + "       C.OBSERVACION, "
                 + "F.ID_FUNCIONARIO, F.ID_PERSONA, F.ALIAS, F.FECHA_INGRESO, " + genero + "," + pais + "," + ciudad + "," + estadoCivil + ","
-                + "       F.ID_ESTADO, F.FECHA_SALIDA, F.SALARIO, F.NRO_CELULAR, "
+                + "      F.NRO_CELULAR, "
                 + "       F.NRO_TELEFONO, F.EMAIL, F.DIRECCION, F.OBSERVACION,P.ID_PERSONA, P.CI, P.NOMBRE, P.APELLIDO, P.ID_SEXO, "
                 + "       P.FECHA_NACIMIENTO, P.ID_ESTADO_CIVIL, P.ID_PAIS, P.ID_CIUDAD "
                 + "  FROM MESA M,FUNCIONARIO F,CLIENTE C,PERSONA P "
@@ -415,7 +422,7 @@ public class DB_Ingreso {
                 mesa = new M_mesa();
                 mesa.setIdCondVenta(rs.getInt("ID_COND_VENTA"));
                 mesa.setIdMesa(rs.getInt("ID_MESA"));
-                mesa.setNumeroMesa(rs.getInt("NUMERO"));
+                mesa.setNumeroMesa(rs.getInt("MESA_NUMERO"));
                 mesa.setTiempo(rs.getTimestamp("TIEMPO"));
                 mesa.setFuncionario(f);
                 mesa.setCliente(cliente);
@@ -475,7 +482,7 @@ public class DB_Ingreso {
                 + "PRECIO=" + mesaDetalle.getPrecio() + ", "
                 + "DESCUENTO=" + mesaDetalle.getDescuento() + ", "
                 + "OBSERVACION= '" + mesaDetalle.getObservacion() + "' "
-                + "WHERE ID_DETALLE = " + mesaDetalle.getIdMesaDetalle();
+                + "WHERE ID_MESA_DETALLE = " + mesaDetalle.getIdMesaDetalle();
         try {
             DB_manager.habilitarTransaccionManual();
             st = DB_manager.getConection().createStatement();
@@ -551,14 +558,12 @@ public class DB_Ingreso {
     }
 
     public static boolean estaLibreMesa(int numeroMesa) {
-        String QUERY = "SELECT NUMERO FROM MESA WHERE NUMERO = " + numeroMesa;
+        String QUERY = "SELECT MESA_NUMERO FROM MESA WHERE MESA_NUMERO = " + numeroMesa;
         try {
             st = DB_manager.getConection().createStatement();
             // se ejecuta el query y se obtienen los resultados en un ResultSet
             rs = st.executeQuery(QUERY);
-            if (!rs.next()) {
-                return true;
-            }
+            return !rs.isBeforeFirst();
         } catch (SQLException ex) {
             Logger lgr = Logger.getLogger(DB_Ingreso.class.getName());
             lgr.log(Level.SEVERE, ex.getMessage(), ex);
@@ -619,7 +624,7 @@ public class DB_Ingreso {
         String INSERT_DETALLE = "INSERT INTO FACTURA_DETALLE(ID_FACTURA_CABECERA, ID_PRODUCTO, CANTIDAD, PRECIO, DESCUENTO, OBSERVACION)VALUES (?, ?, ?, ?, ?, ?);";
         //LA SGBD SE ENCARGA DE INSERTAR EL TIMESTAMP.
         String INSERT_CABECERA = "INSERT INTO FACTURA_CABECERA(ID_FUNCIONARIO, ID_CLIENTE, ID_COND_VENTA)VALUES (?, ?, ?);";
-        String DELETE_DETAIL = "DELETE FROM DETALLE WHERE ID_MESA = " + mesa.getIdMesa();
+        String DELETE_DETAIL = "DELETE FROM MESA_DETALLE WHERE ID_MESA = " + mesa.getIdMesa();
         String DELETE_HEADER = "DELETE FROM MESA WHERE ID_MESA = " + mesa.getIdMesa();
         long sq_cabecera = -1L;
         try {

@@ -12,6 +12,7 @@ import Entities.M_facturaDetalle;
 import Entities.M_funcionario;
 import Entities.M_telefono;
 import java.util.ArrayList;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -30,7 +31,11 @@ public class M_crearVentaRapida {
         this.cabecera = new M_facturaCabecera();
         this.cabecera.setCliente(DB_Cliente.obtenerDatosClienteID(1));//mostrador
         this.cabecera.setIdCondVenta(1);//contado
-        this.telefono = DB_Cliente.obtenerTelefonoCliente(this.cabecera.getCliente().getIdCliente()).get(1);
+        try {
+            this.telefono = DB_Cliente.obtenerTelefonoCliente(this.cabecera.getCliente().getIdCliente()).get(1);
+        } catch (Exception e) {
+            this.telefono = null;
+        }
         this.detalle = new M_facturaDetalle();
         this.detalles = new ArrayList<>();
         dtm = new DefaultTableModel();
@@ -88,8 +93,17 @@ public class M_crearVentaRapida {
         this.dtm = dtm;
     }
 
-    public void guardarVenta() {
-        DB_Ingreso.insertarIngreso(getCabecera(), getDetalles());
+    public boolean guardarVenta() {
+        if (getDetalles().isEmpty()) {
+            JOptionPane.showConfirmDialog(null, "Seleccione por lo menos un artículo.", "Atención", JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
+        } else {
+            int response = JOptionPane.showConfirmDialog(null, "¿Está seguro que desea confirmar la venta?", "Confirmar", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+            if (response == JOptionPane.YES_OPTION) {
+                DB_Ingreso.insertarIngreso(getCabecera(), getDetalles());
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
