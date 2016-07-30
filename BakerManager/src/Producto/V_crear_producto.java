@@ -29,7 +29,7 @@ public class V_crear_producto extends JDialog {
     public JTextField jtfBuscar, jtfProducto, jtfCodigo, jtfPrecioCosto,
             jtfPrecioVta, jtfPrecioMayorista, jtfProveedor;
     public JTextArea jtaIngredientes;
-    public JComboBox jcbImpuesto, jcbMarca, jcbRubro;
+    public JComboBox jcbImpuesto, jcbMarca, jcbCategoria;
     public JButton jbAceptar, jbCancelar, jbProveedor;
     private JPanel jpPrincipal, jpBotones;
     JCheckBox jckBProveedor;
@@ -92,7 +92,7 @@ public class V_crear_producto extends JDialog {
 
             //comboboxes
             jcbImpuesto = new JComboBox();
-            jcbRubro = new JComboBox();
+            jcbCategoria = new JComboBox();
             jcbMarca = new JComboBox();
             jtfProveedor = new JTextField();
             jtfProveedor.setEditable(false);
@@ -106,7 +106,7 @@ public class V_crear_producto extends JDialog {
             jpPrincipal.add(jlImpuesto);
             jpPrincipal.add(jcbImpuesto);
             jpPrincipal.add(jlRubro);
-            jpPrincipal.add(jcbRubro);
+            jpPrincipal.add(jcbCategoria);
             jpPrincipal.add(jlPrecioCosto);
             jpPrincipal.add(jtfPrecioCosto);
             jpPrincipal.add(jlMarca);

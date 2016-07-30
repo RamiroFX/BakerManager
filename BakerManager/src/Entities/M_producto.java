@@ -10,8 +10,8 @@ package Entities;
  * @author Ramiro
  */
 public class M_producto {
-    private String descripcion,marca,rubro,estado;
-    private Integer id,codigo,impuesto,precioCosto,precioMinorista,precioMayorista;
+    private String descripcion,marca,categoria,estado,codigo;
+    private Integer id,impuesto,precioCosto,precioMinorista,precioMayorista;
     private Integer idMarca;
     private Integer idEstado;
     private Integer idCategoria;
@@ -21,10 +21,10 @@ public class M_producto {
     public M_producto() {
     }
 
-    public M_producto(String descripcion, String marca, String rubro, String estado, Integer id, Integer codigo, Integer impuesto, int precioCosto, Integer precioMinorista, Integer precioMayorista, Double cantActual) {
+    public M_producto(String descripcion, String marca, String rubro, String estado, Integer id, String codigo, Integer impuesto, int precioCosto, Integer precioMinorista, Integer precioMayorista, Double cantActual) {
         this.descripcion = descripcion;
         this.marca = marca;
-        this.rubro = rubro;
+        this.categoria = rubro;
         this.estado = estado;
         this.id = id;
         this.codigo = codigo;
@@ -64,17 +64,17 @@ public class M_producto {
     }
 
     /**
-     * @return the rubro
+     * @return the categoria
      */
-    public String getRubro() {
-        return rubro;
+    public String getCategoria() {
+        return categoria;
     }
 
     /**
-     * @param rubro the rubro to set
+     * @param rubro the categoria to set
      */
-    public void setRubro(String rubro) {
-        this.rubro = rubro;
+    public void setCategoria(String rubro) {
+        this.categoria = rubro;
     }
 
     /**
@@ -108,14 +108,14 @@ public class M_producto {
     /**
      * @return the codBarra
      */
-    public Integer getCodBarra() {
+    public String getCodBarra() {
         return codigo;
     }
 
     /**
      * @param codBarra the codBarra to set
      */
-    public void setCodBarra(Integer codBarra) {
+    public void setCodBarra(String codBarra) {
         this.codigo = codBarra;
     }
 

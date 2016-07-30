@@ -5,6 +5,7 @@
 package Producto;
 
 import bakermanager.C_inicio;
+import bakermanager.V_inicio;
 import java.awt.BorderLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
@@ -30,11 +31,11 @@ public class V_modificar_producto extends javax.swing.JDialog {
     public JTextField jtfProducto, jtfCodigo, jtfPrecioCosto,
             jtfPrecioVta, jtfPrecioMayorista, jtfCantActual;
     public JTextArea jtaIngredientes;
-    public JComboBox jcbImpuesto, jcbMarca, jcbSuspendido, jcbCalcularStock, jcbRubro;
+    public JComboBox jcbImpuesto, jcbMarca, jcbEstado, jcbCalcularStock, jcbRubro;
     public JButton jbAceptar, jbCancelar;
 
-    public V_modificar_producto(C_inicio mainFrame) {
-        super(mainFrame.vista, "Modificar Producto", DEFAULT_MODALITY_TYPE);
+    public V_modificar_producto(V_inicio mainFrame) {
+        super(mainFrame, "Modificar Producto", DEFAULT_MODALITY_TYPE);
         setName("jdModificarProducto");
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         getContentPane().setLayout(new java.awt.BorderLayout());
@@ -87,7 +88,7 @@ public class V_modificar_producto extends javax.swing.JDialog {
         jcbImpuesto = new JComboBox();
         jcbRubro = new JComboBox();
         jcbMarca = new JComboBox();
-        jcbSuspendido = new JComboBox();
+        jcbEstado = new JComboBox();
         jcbCalcularStock = new JComboBox();
         jpMid1.add(jlProducto);
         jpMid1.add(jtfProducto);
@@ -106,7 +107,7 @@ public class V_modificar_producto extends javax.swing.JDialog {
         jpMid1.add(jlPrecioMayorista);
         jpMid1.add(jtfPrecioMayorista);
         jpMid1.add(jlSuspendido);
-        jpMid1.add(jcbSuspendido);
+        jpMid1.add(jcbEstado);
         jpMid1.add(jlCalcularStock);
         jpMid1.add(jcbCalcularStock);
         jpMid1.add(jlCantActual);

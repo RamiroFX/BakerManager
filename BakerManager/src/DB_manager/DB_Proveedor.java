@@ -85,6 +85,7 @@ public class DB_Proveedor {
          lgr.log(Level.WARNING, ex.getMessage(), ex);
          }
          }*/
+
         return proveedor;
     }
 
@@ -142,6 +143,7 @@ public class DB_Proveedor {
          lgr.log(Level.WARNING, ex.getMessage(), ex);
          }
          }*/
+
         return proveedor;
     }
 
@@ -222,6 +224,7 @@ public class DB_Proveedor {
          lgr.log(Level.WARNING, ex.getMessage(), ex);
          }
          }*/
+
         return contacto;
     }
 
@@ -303,6 +306,7 @@ public class DB_Proveedor {
          lgr.log(Level.WARNING, ex.getMessage(), ex);
          }
          }*/
+
         return rstm;
     }
 
@@ -345,6 +349,7 @@ public class DB_Proveedor {
          lgr.log(Level.WARNING, ex.getMessage(), ex);
          }
          }*/
+
         return rstm;
     }
 
@@ -389,6 +394,7 @@ public class DB_Proveedor {
          lgr.log(Level.WARNING, ex.getMessage(), ex);
          }
          }*/
+
         return rstm;
     }
 
@@ -434,6 +440,7 @@ public class DB_Proveedor {
          lgr.log(Level.WARNING, ex.getMessage(), ex);
          }
          }*/
+
         return rstm;
     }
 
@@ -475,6 +482,7 @@ public class DB_Proveedor {
          lgr.log(Level.WARNING, ex.getMessage(), ex);
          }
          }*/
+
         return proveedor;
     }
 
@@ -516,6 +524,7 @@ public class DB_Proveedor {
          lgr.log(Level.WARNING, ex.getMessage(), ex);
          }
          }*/
+
         return proveedor;
     }
 
@@ -771,6 +780,7 @@ public class DB_Proveedor {
          lgr.log(Level.WARNING, ex.getMessage(), ex);
          }
          }*/
+
     }
 
     public static void insertarProveedorContacto(Integer idProveedor, M_contacto contacto) {
@@ -894,6 +904,7 @@ public class DB_Proveedor {
          lgr.log(Level.WARNING, ex.getMessage(), ex);
          }
          }*/
+
     }
 
     public static void insertarSucursal(Integer idProveedor, String direccion, String telefono) {
@@ -916,13 +927,11 @@ public class DB_Proveedor {
                 try {
                     DB_manager.getConection().rollback();
 
-
                 } catch (SQLException ex1) {
                     Logger lgr = Logger.getLogger(DB_Proveedor.class
                             .getName());
                     lgr.log(Level.WARNING, ex1.getMessage(), ex1);
                 }
-
 
             }
             Logger lgr = Logger.getLogger(DB_Proveedor.class
@@ -958,6 +967,7 @@ public class DB_Proveedor {
          lgr.log(Level.WARNING, ex.getMessage(), ex);
          }
          }*/
+
     }
 
     public static void insertarTelefono(Integer idProveedor, String tipoTelefono, String nroTelefono, String observacion) {
@@ -1026,16 +1036,17 @@ public class DB_Proveedor {
          lgr.log(Level.WARNING, ex.getMessage(), ex);
          }
          }*/
+
     }
 
     public static void insertarMarca(String marca) {
         String insert = "INSERT INTO MARCA("
                 + "DESCRIPCION"
-                + ")VALUES ('"
-                + marca + "')";
+                + ")VALUES (?);";
         try {
             DB_manager.habilitarTransaccionManual();
             pst = DB_manager.getConection().prepareStatement(insert);
+            pst.setString(1, marca);
             pst.executeUpdate();
             DB_manager.establecerTransaccion();
         } catch (SQLException ex) {
@@ -1072,6 +1083,7 @@ public class DB_Proveedor {
          lgr.log(Level.WARNING, ex.getMessage(), ex);
          }
          }*/
+
     }
 
     public static void insertarImpuesto(String impuesto) {
@@ -1124,6 +1136,7 @@ public class DB_Proveedor {
          lgr.log(Level.WARNING, ex.getMessage(), ex);
          }
          }*/
+
     }
 
     public static void insertarRubro(String rubro) {
@@ -1170,6 +1183,7 @@ public class DB_Proveedor {
          lgr.log(Level.WARNING, ex.getMessage(), ex);
          }
          }*/
+
     }
 
     /*
@@ -1221,6 +1235,7 @@ public class DB_Proveedor {
          lgr.log(Level.WARNING, ex.getMessage(), ex);
          }
          }*/
+
     }
     /*
      * falta refacturiuzar
@@ -1285,6 +1300,7 @@ public class DB_Proveedor {
          lgr.log(Level.WARNING, ex.getMessage(), ex);
          }
          }*/
+
     }
 
     public static void modificarProveedorContacto(Integer id, M_contacto contacto) {
@@ -1381,6 +1397,7 @@ public class DB_Proveedor {
          lgr.log(Level.WARNING, ex.getMessage(), ex);
          }
          }*/
+
     }
 
     public static void modificarTelefono(int idTelefono, String tipoTelefono, String nroTelefono, String observacion) {
@@ -1428,6 +1445,7 @@ public class DB_Proveedor {
          lgr.log(Level.WARNING, ex.getMessage(), ex);
          }
          }*/
+
     }
 
     public static void modificarMarca(int idMarca, String descripcion) {
@@ -1480,6 +1498,7 @@ public class DB_Proveedor {
          lgr.log(Level.WARNING, ex.getMessage(), ex);
          }
          }*/
+
     }
 
     public static void modificarImpuesto(int idImpuesto, String descripcion) {
@@ -1532,6 +1551,7 @@ public class DB_Proveedor {
          lgr.log(Level.WARNING, ex.getMessage(), ex);
          }
          }*/
+
     }
 
     public static void modificarRubro(int idRubro, String descripcion) {
@@ -1578,6 +1598,7 @@ public class DB_Proveedor {
          lgr.log(Level.WARNING, ex.getMessage(), ex);
          }
          }*/
+
     }
 
     public static void eliminarTelefonoProveedor(int id_telefono) {
@@ -1625,6 +1646,7 @@ public class DB_Proveedor {
          lgr.log(Level.WARNING, ex.getMessage(), ex);
          }
          }/**/
+
     }
 
     public static void eliminarSucursal(int id_sucursal) {
@@ -1669,6 +1691,7 @@ public class DB_Proveedor {
          lgr.log(Level.WARNING, ex.getMessage(), ex);
          }
          }*/
+
     }
 
     public static void eliminarMarca(int id_marca) {
@@ -1712,6 +1735,7 @@ public class DB_Proveedor {
          lgr.log(Level.WARNING, ex.getMessage(), ex);
          }
          }*/
+
     }
 
     public static void eliminarImpuesto(int idImpuesto) {
@@ -1755,6 +1779,7 @@ public class DB_Proveedor {
          lgr.log(Level.WARNING, ex.getMessage(), ex);
          }
          }*/
+
     }
 
     public static void eliminarRubro(int idRubro) {
@@ -1798,6 +1823,7 @@ public class DB_Proveedor {
          lgr.log(Level.WARNING, ex.getMessage(), ex);
          }
          }*/
+
     }
 
     public static void eliminarProveedorProducto(Integer idProveedor, Integer idProducto) {
@@ -1844,6 +1870,7 @@ public class DB_Proveedor {
          lgr.log(Level.WARNING, ex.getMessage(), ex);
          }
          }*/
+
     }
 
     public static void eliminarProveedorContacto(M_contacto contacto) {
@@ -1890,5 +1917,6 @@ public class DB_Proveedor {
          lgr.log(Level.WARNING, ex.getMessage(), ex);
          }
          }*/
+
     }
 }

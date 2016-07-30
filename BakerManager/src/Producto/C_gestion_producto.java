@@ -133,7 +133,7 @@ public class C_gestion_producto extends MouseAdapter implements ActionListener, 
         this.vista.jtfPrecioCosto.setText(String.valueOf(getProducto().getPrecioCosto()));
         this.vista.jtfPrecioMayorista.setText(String.valueOf(getProducto().getPrecioMayorista()));
         this.vista.jtfPrecioVta.setText(String.valueOf(getProducto().getPrecioVenta()));
-        this.vista.jtfRubro.setText(getProducto().getRubro());
+        this.vista.jtfRubro.setText(getProducto().getCategoria());
         this.vista.jtfImpuesto.setText(String.valueOf(getProducto().getImpuesto()));
         this.vista.jtfMarca.setText(getProducto().getMarca());
         this.vista.jtfSuspendido.setText(getProducto().getEstado());
@@ -151,11 +151,11 @@ public class C_gestion_producto extends MouseAdapter implements ActionListener, 
         } else if (e.getSource() == this.vista.jbBorrar) {
             borrarParametros();;
         } else if (e.getSource() == this.vista.jbModificar) {
-            C_modificar_producto c_modProd = new C_modificar_producto(this, getProducto());
+            Modificar_producto c_modProd = new Modificar_producto(this, getProducto().getId());
             c_modProd.mostrarVista();
         } else if (e.getSource() == this.vista.jbAgregar) {
-            C_crear_producto c_creaProd = new C_crear_producto(this);
-            c_creaProd.mostrarVista();
+            Crear_producto crearProd = new Crear_producto(this);
+            crearProd.mostrarVista();
         } else if (e.getSource().equals(this.vista.jbParametros)) {
             Parametros param = new Parametros(c_inicio, this);
             param.setVisible(true);
@@ -186,7 +186,7 @@ public class C_gestion_producto extends MouseAdapter implements ActionListener, 
             this.vista.jtfPrecioCosto.setText(String.valueOf(getProducto().getPrecioCosto()));
             this.vista.jtfPrecioMayorista.setText(String.valueOf(getProducto().getPrecioMayorista()));
             this.vista.jtfPrecioVta.setText(String.valueOf(getProducto().getPrecioVenta()));
-            this.vista.jtfRubro.setText(getProducto().getRubro());
+            this.vista.jtfRubro.setText(getProducto().getCategoria());
             this.vista.jtfImpuesto.setText(String.valueOf(getProducto().getImpuesto()));
             this.vista.jtfMarca.setText(getProducto().getMarca());
             this.vista.jtfSuspendido.setText(getProducto().getEstado());

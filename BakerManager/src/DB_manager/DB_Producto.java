@@ -249,7 +249,7 @@ public class DB_Producto {
             while (rs.next()) {
                 producto = new M_producto();
                 producto.setCantActual(rs.getDouble("cant_actual"));
-                producto.setCodBarra(rs.getInt("codigo"));
+                producto.setCodBarra(rs.getString("codigo"));
                 producto.setDescripcion(rs.getString("descripcion"));
                 producto.setEstado(rs.getString("estado"));
                 producto.setId(rs.getInt("id_producto"));
@@ -258,7 +258,7 @@ public class DB_Producto {
                 producto.setPrecioCosto(rs.getInt("precio_costo"));
                 producto.setPrecioMayorista(rs.getInt("precio_mayorista"));
                 producto.setPrecioVenta(rs.getInt("precio_minorista"));
-                producto.setRubro(rs.getString("categoria"));
+                producto.setCategoria(rs.getString("categoria"));
                 producto.setIdCategoria(rs.getInt("id_categoria"));
                 producto.setIdEstado(rs.getInt("id_estado"));
                 producto.setIdImpuesto(rs.getInt("id_impuesto"));
@@ -274,15 +274,6 @@ public class DB_Producto {
 
     public static long insertarProducto(M_producto prod) {
         long id_producto = -1L;
-        //parche
-        if (prod.getImpuesto().equals(0)) {
-            prod.setImpuesto(1);
-        } else if (prod.getImpuesto().equals(5)) {
-            prod.setImpuesto(2);
-        } else {
-            prod.setImpuesto(3);
-        }
-        int id_estado = Integer.valueOf(prod.getEstado());
         String stm = "INSERT INTO PRODUCTO("
                 + "DESCRIPCION, "
                 + "CODIGO, "
@@ -301,12 +292,12 @@ public class DB_Producto {
             pst.setString(1, prod.getDescripcion());
             try {
                 if (prod.getCodBarra() == null) {
-                    pst.setNull(2, Types.NUMERIC);
+                    pst.setNull(2, Types.VARCHAR);
                 } else {
-                    pst.setInt(2, prod.getCodBarra());
+                    pst.setString(2, prod.getCodBarra());
                 }
             } catch (Exception e) {
-                pst.setNull(2, Types.NUMERIC);
+                pst.setNull(2, Types.VARCHAR);
             }
             pst.setInt(3, prod.getIdMarca());
             pst.setInt(4, prod.getIdImpuesto());
@@ -314,7 +305,7 @@ public class DB_Producto {
             pst.setInt(6, prod.getPrecioCosto());
             pst.setInt(7, prod.getPrecioVenta());
             pst.setInt(8, prod.getPrecioMayorista());
-            pst.setInt(9, id_estado);
+            pst.setInt(9, prod.getIdEstado());
             try {
                 if (prod.getCantActual() == null) {
                     pst.setNull(10, Types.DOUBLE);
@@ -355,24 +346,27 @@ public class DB_Producto {
         return id_producto;
     }
 
-    public static void modificarProducto(M_producto producto) {
-        System.out.println("actualizarProducto: " + producto.getId());
-        String imp = "(SELECT ID_IMPUESTO FROM IMPUESTO WHERE DESCRIPCION = '" + producto.getImpuesto() + "')";
-        String query = "UPDATE  producto "
-                + "SET codigo = '" + producto.getCodBarra() + "' ,  "
-                + " ID_MARCA = " + producto.getIdMarca()+ " , "
-                + " ID_estad = " + producto.getIdMarca()+ " , "
-                + " ID_IMPUESTO = " + producto.getIdImpuesto() + " , "
-                + " ID_CATEGORIA = " + producto.getRubro() + " , "
-                + " precio_costo = " + producto.getPrecioCosto() + " , "
-                + " precio_mayorista = " + producto.getPrecioMayorista() + " , "
-                + " precio_minorista = " + producto.getPrecioVenta() + " , "
-                + " CANT_ACTUAL = " + producto.getCantActual() + "  "
-                + " WHERE id_producto = " + producto.getId() + "";
+    public static int modificarProducto(M_producto producto) {
+        String UPDATE = "UPDATE  producto SET CODIGO = ?, ID_MARCA = ?,"
+                + " ID_ESTADO = ?, ID_IMPUESTO = ?, ID_CATEGORIA = ?, "
+                + "PRECIO_COSTO = ?, PRECIO_MAYORISTA = ?, PRECIO_MINORISTA = ?, "
+                + "CANT_ACTUAL = ? WHERE ID_PRODUCTO = ? ;";
+        int result = -1;
         try {
+
             DB_manager.getConection().setAutoCommit(false);
-            st = DB_manager.getConection().createStatement();
-            st.executeUpdate(query);
+            pst = DB_manager.getConection().prepareStatement(UPDATE);
+            pst.setString(1, producto.getCodBarra());
+            pst.setInt(2, producto.getIdMarca());
+            pst.setInt(3, producto.getIdEstado());
+            pst.setInt(4, producto.getIdImpuesto());
+            pst.setInt(5, producto.getIdCategoria());
+            pst.setInt(6, producto.getPrecioCosto());
+            pst.setInt(7, producto.getPrecioMayorista());
+            pst.setInt(8, producto.getPrecioVenta());
+            pst.setDouble(9, producto.getCantActual());
+            pst.setInt(10, producto.getId());
+            result = pst.executeUpdate();
             DB_manager.getConection().commit();
         } catch (SQLException ex) {
             System.out.println(ex.getNextException());
@@ -399,6 +393,7 @@ public class DB_Producto {
                 lgr.log(Level.WARNING, ex.getMessage(), ex);
             }
         }
+        return result;
     }
 
     public static void sumarStock(ArrayList<Integer> id, ArrayList<Double> cantidad) {

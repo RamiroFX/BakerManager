@@ -4,8 +4,6 @@
  */
 package Producto;
 
-import DB_manager.DB_Producto;
-import DB_manager.DB_manager;
 import Entities.M_producto;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -19,13 +17,13 @@ import javax.swing.JOptionPane;
 public class C_modificar_producto implements ActionListener {
 
     C_gestion_producto controlador;
-    private M_producto producto;
+    private M_modificar_producto modelo;
     V_modificar_producto vista;
 
-    public C_modificar_producto(C_gestion_producto c_jifProductos, M_producto producto) {
-        this.controlador = c_jifProductos;
-        this.producto = c_jifProductos.getProducto();
-        this.vista = new V_modificar_producto(c_jifProductos.c_inicio);
+    public C_modificar_producto(M_modificar_producto modelo, V_modificar_producto vista, C_gestion_producto gestionProducto) {
+        this.controlador = gestionProducto;
+        this.modelo = modelo;
+        this.vista = vista;
         inicializarVista();
         agregarListeners();
         completarCampos();
@@ -43,26 +41,22 @@ public class C_modificar_producto implements ActionListener {
     }
 
     private void inicializarVista() {
-        Vector impuesto = DB_manager.obtenerImpuesto();
+        Vector impuesto = modelo.obtenerImpuesto();
         for (int i = 0; i < impuesto.size(); i++) {
             this.vista.jcbImpuesto.addItem(impuesto.get(i));
         }
-        Vector rubro = DB_manager.obtenerRubro();
+        Vector rubro = modelo.obtenerRubro();
         for (int i = 0; i < rubro.size(); i++) {
             this.vista.jcbRubro.addItem(rubro.get(i));
         }
-        Vector marca = DB_manager.obtenerMarca();
+        Vector marca = modelo.obtenerMarca();
         for (int i = 0; i < marca.size(); i++) {
             this.vista.jcbMarca.addItem(marca.get(i));
         }
-        Vector estado = DB_manager.obtenerEstado();
+        Vector estado = modelo.obtenerEstado();
         for (int i = 0; i < estado.size(); i++) {
-            this.vista.jcbSuspendido.addItem(estado.get(i));
+            this.vista.jcbEstado.addItem(estado.get(i));
         }
-        /*        Vector respuesta = DB_manager.consultarRespuesta();
-         for (int i = 0; i < respuesta.size(); i++) {
-         this.jdModProd.jcbCalcularStock.addItem(respuesta.get(i));
-         }*/
     }
 
     private void cerrar() {
@@ -75,37 +69,73 @@ public class C_modificar_producto implements ActionListener {
     }
 
     private void completarCampos() {
-        this.vista.jlTituloProducto.setText(this.producto.getDescripcion());
-        this.vista.jtfProducto.setText(this.producto.getDescripcion());
-        this.vista.jtfCodigo.setText(String.valueOf(this.producto.getId()));
-        this.vista.jtfPrecioCosto.setText(String.valueOf(this.producto.getPrecioCosto()));
-        this.vista.jtfPrecioMayorista.setText(String.valueOf(this.producto.getPrecioMayorista()));
-        this.vista.jtfPrecioVta.setText(String.valueOf(this.producto.getPrecioVenta()));
-        this.vista.jcbRubro.setSelectedItem(this.producto.getRubro());
-        this.vista.jcbImpuesto.setSelectedItem(String.valueOf(this.producto.getImpuesto()));
-        this.vista.jcbMarca.setSelectedItem(this.producto.getMarca());
-        this.vista.jtfCantActual.setText(String.valueOf(this.producto.getCantActual()));
-        this.vista.jcbSuspendido.setSelectedItem(this.producto.getEstado());
-    }
-
-    private void actualizarProducto() {
-        DB_Producto.modificarProducto(producto);
+        this.vista.jlTituloProducto.setText(this.modelo.producto.getDescripcion());
+        this.vista.jtfProducto.setText(this.modelo.producto.getDescripcion());
+        this.vista.jtfCodigo.setText(String.valueOf(this.modelo.producto.getId()));
+        this.vista.jtfPrecioCosto.setText(String.valueOf(this.modelo.producto.getPrecioCosto()));
+        this.vista.jtfPrecioMayorista.setText(String.valueOf(this.modelo.producto.getPrecioMayorista()));
+        this.vista.jtfPrecioVta.setText(String.valueOf(this.modelo.producto.getPrecioVenta()));
+        this.vista.jcbRubro.setSelectedItem(this.modelo.producto.getCategoria());
+        this.vista.jcbImpuesto.setSelectedItem(String.valueOf(this.modelo.producto.getImpuesto()));
+        this.vista.jcbMarca.setSelectedItem(this.modelo.producto.getMarca());
+        this.vista.jtfCantActual.setText(String.valueOf(this.modelo.producto.getCantActual()));
+        this.vista.jcbEstado.setSelectedItem(this.modelo.producto.getEstado());
     }
 
     private void modificarProductos() {
+        M_producto producto = new M_producto();
+        producto.setDescripcion(this.vista.jtfProducto.getText());
+        producto.setCodBarra(this.vista.jtfCodigo.getText());
+        producto.setCategoria((String) this.vista.jcbRubro.getSelectedItem());
+        producto.setImpuesto((Integer.valueOf((String) this.vista.jcbImpuesto.getSelectedItem())));
         try {
-            producto.setDescripcion(this.vista.jtfProducto.getText());
-            producto.setId(Integer.valueOf(this.vista.jtfCodigo.getText()));
-            producto.setCodBarra(Integer.valueOf(this.vista.jtfCodigo.getText()));
             producto.setPrecioCosto(Integer.valueOf(this.vista.jtfPrecioCosto.getText()));
-            producto.setPrecioMayorista(Integer.valueOf(this.vista.jtfPrecioMayorista.getText()));
-            producto.setPrecioVenta(Integer.valueOf(this.vista.jtfPrecioVta.getText()));
-            producto.setRubro((String) this.vista.jcbRubro.getSelectedItem());
-            producto.setImpuesto((Integer.valueOf((String) this.vista.jcbImpuesto.getSelectedItem())));
-            producto.setCantActual(Double.valueOf(this.vista.jtfCantActual.getText()));
-            producto.setMarca((String) this.vista.jcbMarca.getSelectedItem());
+            if (producto.getPrecioCosto() > 999999999) {
+                JOptionPane.showMessageDialog(vista, "Precio de costo. Máximo 9 dígitos permitido", "Atención", JOptionPane.ERROR_MESSAGE);
+                this.vista.jtfPrecioCosto.setText("");
+                return;
+            }
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(vista, "Un parametro es incorrecto", "Atención", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(vista, "Ingrese un precio de costo válido. Solo números enteros.", "Atención", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        try {
+            producto.setPrecioMayorista(Integer.valueOf(this.vista.jtfPrecioMayorista.getText()));
+            if (producto.getPrecioMayorista() > 999999999) {
+                JOptionPane.showMessageDialog(vista, "Precio mayorista. Máximo 9 dígitos permitido", "Atención", JOptionPane.ERROR_MESSAGE);
+                this.vista.jtfPrecioMayorista.setText("");
+                return;
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(vista, "Ingrese un precio mayorista válido. Solo números enteros.", "Atención", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        try {
+            producto.setPrecioVenta(Integer.valueOf(this.vista.jtfPrecioVta.getText()));
+            if (producto.getPrecioVenta() > 999999999) {
+                JOptionPane.showMessageDialog(vista, "Precio de venta. Máximo 9 dígitos permitido", "Atención", JOptionPane.ERROR_MESSAGE);
+                this.vista.jtfPrecioVta.setText("");
+                return;
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(vista, "Ingrese un precio de venta válido. Solo números enteros.", "Atención", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        try {
+            producto.setCantActual(Double.valueOf(this.vista.jtfCantActual.getText()));
+            if (producto.getCantActual() > 999999) {
+                JOptionPane.showMessageDialog(vista, "Cantidad actual. Máximo 6 dígitos permitido", "Atención", JOptionPane.ERROR_MESSAGE);
+                this.vista.jtfCantActual.setText("");
+                return;
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(vista, "Ingrese una cantidad válida.", "Atención", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        producto.setMarca((String) this.vista.jcbMarca.getSelectedItem());
+        producto.setEstado((String) this.vista.jcbEstado.getSelectedItem());
+        if (modelo.actualizarProducto(producto)) {
+            cerrar();
         }
     }
 
@@ -122,8 +152,6 @@ public class C_modificar_producto implements ActionListener {
         }
         if (e.getSource() == this.vista.jbAceptar) {
             modificarProductos();
-            actualizarProducto();
-            cerrar();
         }
     }
 }

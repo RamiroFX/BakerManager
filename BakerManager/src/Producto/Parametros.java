@@ -100,10 +100,15 @@ public class Parametros extends javax.swing.JDialog implements ActionListener, M
 
     private void agregarMarca(String marca) {
         System.out.println("marca: " + marca);
-        DB_Proveedor.insertarMarca(marca);
-        this.jbModificar.setEnabled(false);
-        this.jbEliminar.setEnabled(false);
-        this.jtMarcas.setModel(DB_manager.consultarMarca());
+        Integer b = DB_manager.obtenerIdMarca(marca);
+        if (b != null) {
+            DB_Proveedor.insertarMarca(marca);
+            this.jbModificar.setEnabled(false);
+            this.jbEliminar.setEnabled(false);
+            this.jtMarcas.setModel(DB_manager.consultarMarca());
+        } else {
+            JOptionPane.showMessageDialog(this, "Marca existente.", "Alerta", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     private void modificarMarca(String marca) {
