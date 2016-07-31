@@ -1139,14 +1139,14 @@ public class DB_Proveedor {
 
     }
 
-    public static void insertarRubro(String rubro) {
-        String insert = "INSERT INTO RUBRO("
+    public static void insertarCategoria(String categoria) {
+        String insert = "INSERT INTO PRODUCTO_CATEGORIA("
                 + "DESCRIPCION"
-                + ")VALUES ('"
-                + rubro + "')";
+                + ")VALUES (?)";
         try {
             DB_manager.habilitarTransaccionManual();
             pst = DB_manager.getConection().prepareStatement(insert);
+            pst.setString(1, categoria);
             pst.executeUpdate();
             DB_manager.establecerTransaccion();
         } catch (SQLException ex) {
@@ -1242,18 +1242,18 @@ public class DB_Proveedor {
      */
 
     public static void modificarProveedor(M_proveedor proveedor) {
-        String updateProveedor = "UPDATE PROVEEDOR PROV SET "
-                + "PROV.ID_PROVEEDOR=" + proveedor.getId() + ", "
-                + "PROV.NOMBRE='" + proveedor.getNombre() + "', "
-                + "PROV.ENTIDAD='" + proveedor.getEntidad() + "', "
-                + "PROV.RUC='" + proveedor.getRuc() + "', "
-                + "PROV.RUC_IDENTIFICADOR='" + proveedor.getRuc_id() + "', "
-                + "PROV.DESCRIPCION='" + proveedor.getDescripcion() + "', "
-                + "PROV.DIRECCION='" + proveedor.getDireccion() + "', "
-                + "PROV.PAG_WEB='" + proveedor.getPagWeb() + "', "
-                + "PROV.EMAIL='" + proveedor.getEmail() + "', "
-                + "PROV.NOTA='" + proveedor.getObservacion() + "' "
-                + "WHERE PROV.ID_PROVEEDOR = " + proveedor.getId();
+        String updateProveedor = "UPDATE PROVEEDOR SET "
+                + "ID_PROVEEDOR=" + proveedor.getId() + ", "
+                + "NOMBRE='" + proveedor.getNombre() + "', "
+                + "ENTIDAD='" + proveedor.getEntidad() + "', "
+                + "RUC='" + proveedor.getRuc() + "', "
+                + "RUC_IDENTIFICADOR='" + proveedor.getRuc_id() + "', "
+                + "DESCRIPCION='" + proveedor.getDescripcion() + "', "
+                + "DIRECCION='" + proveedor.getDireccion() + "', "
+                + "PAG_WEB='" + proveedor.getPagWeb() + "', "
+                + "EMAIL='" + proveedor.getEmail() + "', "
+                + "NOTA='" + proveedor.getObservacion() + "' "
+                + "WHERE ID_PROVEEDOR = " + proveedor.getId();
         try {
             DB_manager.habilitarTransaccionManual();
             st = DB_manager.getConection().createStatement();
@@ -1306,22 +1306,22 @@ public class DB_Proveedor {
     public static void modificarProveedorContacto(Integer id, M_contacto contacto) {
         try {
             DB_manager.habilitarTransaccionManual();
-            String updateContacto = "UPDATE PROVEEDOR_CONTACTO PRCO SET "
-                    + "PRCO.EMAIL='" + contacto.getEmail() + "', "
-                    + "PRCO.DIRECCION='" + contacto.getDireccion() + "', "
-                    + "PRCO.OBSERVACION='" + contacto.getObservacion() + "', "
-                    + "PRCO.TELEFONO='" + contacto.getTelefono() + "' "
-                    + "WHERE PRCO.ID_PROVEEDOR_CONTACTO = " + contacto.getId_contacto();
+            String updateContacto = "UPDATE PROVEEDOR_CONTACTO SET "
+                    + "EMAIL='" + contacto.getEmail() + "', "
+                    + "DIRECCION='" + contacto.getDireccion() + "', "
+                    + "OBSERVACION='" + contacto.getObservacion() + "', "
+                    + "TELEFONO='" + contacto.getTelefono() + "' "
+                    + "WHERE ID_PROVEEDOR_CONTACTO = " + contacto.getId_contacto();
             String updatePersona = "UPDATE PERSONA SET "
-                    + "PERS.CI=" + contacto.getCedula() + ", "
-                    + "PERS.NOMBRE='" + contacto.getNombre() + "', "
-                    + "PERS.APELLIDO='" + contacto.getApellido() + "', "
-                    + "PERS.ID_SEXO=" + contacto.getId_sexo() + ", "
-                    + "PERS.FECHA_NACIMIENTO='" + contacto.getFecha_nacimiento() + "', "
-                    + "PERS.ID_ESTADO_CIVIL=" + contacto.getId_estado_civil() + ", "
-                    + "PERS.ID_PAIS=" + contacto.getId_pais() + ", "
-                    + "PERS.ID_CIUDAD=" + contacto.getId_ciudad() + " "
-                    + "WHERE PERS.ID_PERSONA = " + contacto.getId_persona();
+                    + "CI=" + contacto.getCedula() + ", "
+                    + "NOMBRE='" + contacto.getNombre() + "', "
+                    + "APELLIDO='" + contacto.getApellido() + "', "
+                    + "ID_SEXO=" + contacto.getId_sexo() + ", "
+                    + "FECHA_NACIMIENTO='" + contacto.getFecha_nacimiento() + "', "
+                    + "ID_ESTADO_CIVIL=" + contacto.getId_estado_civil() + ", "
+                    + "ID_PAIS=" + contacto.getId_pais() + ", "
+                    + "ID_CIUDAD=" + contacto.getId_ciudad() + " "
+                    + "WHERE ID_PERSONA = " + contacto.getId_persona();
             st = DB_manager.getConection().createStatement();
             st.executeUpdate(updatePersona);
             st.close();
@@ -1554,15 +1554,17 @@ public class DB_Proveedor {
 
     }
 
-    public static void modificarRubro(int idRubro, String descripcion) {
-        String updateMarca = "UPDATE RUBRO SET "
-                + "DESCRIPCION= '" + descripcion + "' "
-                + "WHERE ID_RUBRO =" + idRubro;
+    public static void modificarCategoria(int idCategoria, String descripcion) {
+        String updateMarca = "UPDATE PRODUCTO_CATEGORIA SET "
+                + "DESCRIPCION = ? "
+                + "WHERE ID_PRODUCTO_CATEGORIA = ? ;";
         try {
             DB_manager.habilitarTransaccionManual();
-            st = DB_manager.getConection().createStatement();
-            st.executeUpdate(updateMarca);
-            st.close();
+            pst = DB_manager.getConection().prepareStatement(updateMarca);
+            pst.setString(1, descripcion);
+            pst.setInt(2, idCategoria);
+            pst.executeUpdate();
+            pst.close();
             DB_manager.establecerTransaccion();
         } catch (SQLException ex) {
             System.out.println(ex.getNextException());
@@ -1782,8 +1784,8 @@ public class DB_Proveedor {
 
     }
 
-    public static void eliminarRubro(int idRubro) {
-        String delete = "DELETE FROM RUBRO WHERE ID_RUBRO =" + idRubro;
+    public static void eliminarProductoCategoria(int idCategoria) {
+        String delete = "DELETE FROM PRODUCTO_CATEGORIA WHERE ID_PRODUCTO_CATEGORIA = " + idCategoria;
         try {
             DB_manager.habilitarTransaccionManual();
             st = DB_manager.getConection().createStatement();

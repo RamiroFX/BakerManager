@@ -144,7 +144,7 @@ public class DB_manager {
         return rubro;
     }
 
-    public static ResultSetTableModel consultarRubro() {
+    public static ResultSetTableModel consultarCategoria() {
         ResultSetTableModel rubro = null;
         String q = "SELECT ID_PRODUCTO_CATEGORIA \"ID\" ,descripcion \"Descripcion\" "
                 + "FROM PRODUCTO_CATEGORIA ";
@@ -356,6 +356,22 @@ public class DB_manager {
         return idMarca;
     }
 
+    public static boolean marcaEnUso(int idMarca) {
+        boolean enUso = false;
+        String q = "SELECT DISTINCT ID_MARCA "
+                + "FROM PRODUCTO "
+                + "WHERE ID_MARCA = ? ;";
+        try {
+            pst = con.prepareStatement(q);
+            pst.setInt(1, idMarca);
+            rs = pst.executeQuery();
+            return !rs.isBeforeFirst();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return enUso;
+    }
+
     public static Integer obtenerIdProductoCategoria(String categoria) {
         Integer idMarca = null;
         String q = "SELECT ID_PRODUCTO_CATEGORIA "
@@ -371,6 +387,22 @@ public class DB_manager {
             ex.printStackTrace();
         }
         return idMarca;
+    }
+
+    public static boolean productCategoriaEnUso(int idCategoria) {
+        boolean enUso = false;
+        String q = "SELECT DISTINCT ID_CATEGORIA "
+                + "FROM PRODUCTO "
+                + "WHERE ID_CATEGORIA = ? ;";
+        try {
+            pst = con.prepareStatement(q);
+            pst.setInt(1, idCategoria);
+            rs = pst.executeQuery();
+            return !rs.isBeforeFirst();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return enUso;
     }
 
     public static Integer obtenerIdImpuesto(String impuesto) {
