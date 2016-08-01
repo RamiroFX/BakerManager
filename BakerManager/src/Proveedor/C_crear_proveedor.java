@@ -16,6 +16,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -100,10 +101,14 @@ public class C_crear_proveedor extends MouseAdapter implements ActionListener, K
         this.vista.jbQuitarSucursal.setEnabled(false);
     }
 
-    void recibirTelefono(String tipoTelefono, String nroTelefono, String observacion) {
-        Object[] fila = {nroTelefono, tipoTelefono, observacion};
-        modelo.dtmTelefono.addRow(fila);
-        this.vista.jtTelefono.updateUI();
+    public void recibirTelefono(String tipoTelefono, String nroTelefono, String observacion) {
+        if (modelo.existeTelefono(nroTelefono)) {
+            JOptionPane.showMessageDialog(vista, "Telefono en uso.", "Atención", JOptionPane.ERROR_MESSAGE);
+        } else {
+            Object[] fila = {nroTelefono, tipoTelefono, observacion};
+            modelo.dtmTelefono.addRow(fila);
+            this.vista.jtTelefono.updateUI();
+        }
     }
 
     void modificarTelefono(String tipoTelefono, String nroTelefono, String observacion) {

@@ -6,7 +6,6 @@ package Proveedor;
 
 import Contacto.AgregarContacto;
 import Contacto.ModificarContacto;
-import DB_manager.DB_Proveedor;
 import Entities.M_contacto;
 import Entities.M_proveedor;
 import java.awt.Color;
@@ -17,8 +16,6 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.JOptionPane;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableModel;
 
 /**
  *
@@ -27,15 +24,15 @@ import javax.swing.table.TableModel;
 public class C_modificar_proveedor extends MouseAdapter implements ActionListener, KeyListener {
 
     public V_crear_proveedor vista;
+    private M_modificar_proveedor modelo;
     C_gestion_proveedores padre;
-    DefaultTableModel dtmSucursal, dtmTelefono;
-    M_proveedor proveedor;
     int idTelefono, idContacto;
 
-    public C_modificar_proveedor(C_gestion_proveedores padre, int idProveedor) {
+    public C_modificar_proveedor(M_modificar_proveedor modelo, V_crear_proveedor vista, C_gestion_proveedores padre) {
         this.padre = padre;
-        this.vista = new V_crear_proveedor(this.padre.c_inicio.vista, false);
-        inicializarVista(idProveedor);
+        this.modelo = modelo;
+        this.vista = vista;
+        inicializarVista();
         agregarListeners();
     }
 
@@ -44,81 +41,49 @@ public class C_modificar_proveedor extends MouseAdapter implements ActionListene
         this.vista.setVisible(true);
     }
 
-    private void inicializarVista(int idProveedor) {
-        proveedor = DB_Proveedor.obtenerDatosProveedorID(idProveedor);
-        this.vista.jtfRazonSocial.setText(proveedor.getEntidad());
-        this.vista.jtfNombreFantasia.setText(proveedor.getNombre());
-        this.vista.jtfDireccion.setText(proveedor.getDireccion());
-        this.vista.jtfRUC.setText(proveedor.getRuc());
-        this.vista.jtfRUC_ID.setText(proveedor.getRuc_id());
-        this.vista.jtfPagWeb.setText(proveedor.getPagWeb());
-        this.vista.jtfemail.setText(proveedor.getEmail());
-        this.vista.jtfDescripcion.setText(proveedor.getDescripcion());
-        this.vista.jtaNota.setText(proveedor.getObservacion());
+    private void inicializarVista() {
+        this.vista.jtfRazonSocial.setText(modelo.proveedor.getEntidad());
+        this.vista.jtfNombreFantasia.setText(modelo.proveedor.getNombre());
+        this.vista.jtfDireccion.setText(modelo.proveedor.getDireccion());
+        this.vista.jtfRUC.setText(modelo.proveedor.getRuc());
+        this.vista.jtfRUC_ID.setText(modelo.proveedor.getRuc_id());
+        this.vista.jtfPagWeb.setText(modelo.proveedor.getPagWeb());
+        this.vista.jtfemail.setText(modelo.proveedor.getEmail());
+        this.vista.jtfDescripcion.setText(modelo.proveedor.getDescripcion());
+        this.vista.jtaNota.setText(modelo.proveedor.getObservacion());
         this.vista.jbModContacto.setEnabled(false);
         this.vista.jbQuitarContacto.setEnabled(false);
-        inicializarTablaTelefono(idProveedor);
-        inicializarTablaSucursal(idProveedor);
-        inicializarTablaContacto(idProveedor);
+        inicializarTablaTelefono();
+        inicializarTablaSucursal();
+        inicializarTablaContacto();
     }
 
-    private void inicializarTablaTelefono(int idProveedor) {
-        dtmTelefono = new DefaultTableModel();
-        dtmTelefono.addColumn("ID");
-        dtmTelefono.addColumn("Telefono");
-        dtmTelefono.addColumn("Tipo Telefono");
-        dtmTelefono.addColumn("Observacion");
-        TableModel tm = DB_Proveedor.obtenerProveedorTelefonoCompleto(idProveedor);
-        int cantFila = tm.getRowCount();
-        int cantCol = tm.getColumnCount();
-        for (int i = 0; i < cantFila; i++) {
-            Object[] o = new Object[cantCol];
-            for (int x = 0; x < cantCol; x++) {
-                o[x] = tm.getValueAt(i, x);
-            }
-            dtmTelefono.addRow(o);
-        }
-        this.vista.jtTelefono.setModel(dtmTelefono);
-
+    private void inicializarTablaTelefono() {
+        this.vista.jtTelefono.setModel(modelo.dtmTelefono);
         this.vista.jbQuitarSucursal.setEnabled(false);
         this.vista.jbQuitarTelefono.setEnabled(false);
         this.vista.jbModTelefono.setEnabled(false);
         this.vista.jbModSucursal.setEnabled(false);
     }
 
-    private void inicializarTablaSucursal(int idProveedor) {
-        dtmSucursal = new DefaultTableModel();
-        dtmSucursal.addColumn("ID");
-        dtmSucursal.addColumn("Direccion");
-        dtmSucursal.addColumn("Telefono");
-
-        TableModel tm = DB_Proveedor.obtenerSucursal(idProveedor);
-        int cantFila = tm.getRowCount();
-        int cantCol = tm.getColumnCount();
-        for (int i = 0; i < cantFila; i++) {
-            Object[] o = new Object[cantCol];
-            for (int x = 0; x < cantCol; x++) {
-                o[x] = tm.getValueAt(i, x);
-            }
-            dtmSucursal.addRow(o);
-        }
-        this.vista.jtSucursal.setModel(dtmSucursal);
+    private void inicializarTablaSucursal() {
+        this.vista.jtSucursal.setModel(modelo.dtmSucursal);
     }
 
-    private void inicializarTablaContacto(int idProveedor) {
-        this.vista.jtContacto.setModel(DB_Proveedor.obtenerProveedorContacto(idProveedor));
+    private void inicializarTablaContacto() {
+        this.vista.jtContacto.setModel(modelo.obtenerProveedorContacto());
     }
 
     public void recibirTelefono(String tipoTelefono, String nroTelefono, String observacion) {
-        DB_Proveedor.insertarTelefono(proveedor.getId(), tipoTelefono, nroTelefono, observacion);
-        this.vista.jtTelefono.setModel(DB_Proveedor.obtenerProveedorTelefonoCompleto(proveedor.getId()));
+        modelo.insertarTelefono(tipoTelefono, nroTelefono, observacion);
+        this.vista.jtTelefono.setModel(modelo.obtenerProveedorTelefonoCompleto());
         Utilities.c_packColumn.packColumns(this.vista.jtTelefono, 1);
     }
 
     public void modificarTelefono(String tipoTelefono, String nroTelefono, String observacion) {
         int id_telefono = Integer.valueOf(String.valueOf(this.vista.jtTelefono.getValueAt(this.vista.jtTelefono.getSelectedRow(), 0)));
-        DB_Proveedor.modificarTelefono(id_telefono, tipoTelefono, nroTelefono, observacion);
-        this.vista.jtTelefono.setModel(DB_Proveedor.obtenerProveedorTelefonoCompleto(proveedor.getId()));
+        modelo.modificarTelefono(id_telefono, tipoTelefono, nroTelefono, observacion);
+        this.vista.jtTelefono.setModel(modelo.obtenerProveedorTelefonoCompleto());
         Utilities.c_packColumn.packColumns(this.vista.jtTelefono, 1);
         this.vista.jbQuitarTelefono.setEnabled(false);
         this.vista.jbModTelefono.setEnabled(false);
@@ -129,10 +94,10 @@ public class C_modificar_proveedor extends MouseAdapter implements ActionListene
         if (option == JOptionPane.YES_OPTION) {
             try {
                 int id_telefono = Integer.valueOf(String.valueOf(this.vista.jtTelefono.getValueAt(this.vista.jtTelefono.getSelectedRow(), 0)));
-                DB_Proveedor.eliminarTelefonoProveedor(id_telefono);
+                modelo.eliminarTelefonoProveedor(id_telefono);
                 this.vista.jbQuitarTelefono.setEnabled(false);
                 this.vista.jbModTelefono.setEnabled(false);
-                this.vista.jtTelefono.setModel(DB_Proveedor.obtenerProveedorTelefonoCompleto(proveedor.getId()));
+                this.vista.jtTelefono.setModel(modelo.obtenerProveedorTelefonoCompleto());
                 Utilities.c_packColumn.packColumns(this.vista.jtTelefono, 1);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -142,8 +107,8 @@ public class C_modificar_proveedor extends MouseAdapter implements ActionListene
     }
 
     public void recibirSucursal(String direccion, String telefono) {
-        DB_Proveedor.insertarSucursal(proveedor.getId(), direccion, telefono);
-        this.vista.jtSucursal.setModel(DB_Proveedor.obtenerSucursal(proveedor.getId()));
+        modelo.insertarSucursal(direccion, telefono);
+        this.vista.jtSucursal.setModel(modelo.obtenerSucursal());
         Utilities.c_packColumn.packColumns(this.vista.jtSucursal, 1);
     }
 
@@ -151,8 +116,8 @@ public class C_modificar_proveedor extends MouseAdapter implements ActionListene
         this.vista.jbQuitarSucursal.setEnabled(false);
         this.vista.jbModSucursal.setEnabled(false);
         int id_sucursal = Integer.valueOf(String.valueOf(this.vista.jtSucursal.getValueAt(this.vista.jtSucursal.getSelectedRow(), 0)));
-        DB_Proveedor.modificarSucursal(id_sucursal, direccion, telefono);
-        this.vista.jtSucursal.setModel(DB_Proveedor.obtenerSucursal(proveedor.getId()));
+        modelo.modificarSucursal(id_sucursal, direccion, telefono);
+        this.vista.jtSucursal.setModel(modelo.obtenerSucursal());
         Utilities.c_packColumn.packColumns(this.vista.jtSucursal, 1);
     }
 
@@ -161,10 +126,10 @@ public class C_modificar_proveedor extends MouseAdapter implements ActionListene
         if (option == JOptionPane.YES_OPTION) {
             try {
                 int id_sucursal = Integer.valueOf(String.valueOf(this.vista.jtSucursal.getValueAt(this.vista.jtSucursal.getSelectedRow(), 0)));
-                DB_Proveedor.eliminarSucursal(id_sucursal);
+                modelo.eliminarSucursal(id_sucursal);
                 this.vista.jbQuitarSucursal.setEnabled(false);
                 this.vista.jbModSucursal.setEnabled(false);
-                this.vista.jtSucursal.setModel(DB_Proveedor.obtenerSucursal(proveedor.getId()));
+                this.vista.jtSucursal.setModel(modelo.obtenerSucursal());
                 Utilities.c_packColumn.packColumns(this.vista.jtSucursal, 1);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -173,16 +138,16 @@ public class C_modificar_proveedor extends MouseAdapter implements ActionListene
     }
 
     public void recibirContacto(M_contacto contacto) {
-        DB_Proveedor.insertarProveedorContacto(proveedor.getId(), contacto);
-        this.vista.jtContacto.setModel(DB_Proveedor.obtenerProveedorContacto(proveedor.getId()));
+        modelo.insertarProveedorContacto(contacto);
+        this.vista.jtContacto.setModel(modelo.obtenerProveedorContacto());
         Utilities.c_packColumn.packColumns(this.vista.jtContacto, 1);
     }
 
     public void modificarContacto(M_contacto contacto) {
         this.vista.jbQuitarContacto.setEnabled(false);
         this.vista.jbModContacto.setEnabled(false);
-        DB_Proveedor.modificarProveedorContacto(proveedor.getId(), contacto);
-        this.vista.jtContacto.setModel(DB_Proveedor.obtenerProveedorContacto(proveedor.getId()));
+        modelo.modificarProveedorContacto(contacto);
+        this.vista.jtContacto.setModel(modelo.obtenerProveedorContacto());
         Utilities.c_packColumn.packColumns(this.vista.jtContacto, 1);
     }
 
@@ -191,11 +156,11 @@ public class C_modificar_proveedor extends MouseAdapter implements ActionListene
         if (option == JOptionPane.YES_OPTION) {
             try {
                 int idContacto = Integer.valueOf(String.valueOf(this.vista.jtContacto.getValueAt(this.vista.jtContacto.getSelectedRow(), 0)));
-                M_contacto contacto_temp = DB_Proveedor.obtenerDatosContactoIdContacto(idContacto);
-                DB_Proveedor.eliminarProveedorContacto(contacto_temp);
+                M_contacto contacto_temp = modelo.obtenerDatosContactoIdContacto(idContacto);
+                modelo.eliminarProveedorContacto(contacto_temp);
                 this.vista.jbQuitarContacto.setEnabled(false);
                 this.vista.jbModContacto.setEnabled(false);
-                this.vista.jtContacto.setModel(DB_Proveedor.obtenerProveedorContacto(proveedor.getId()));
+                this.vista.jtContacto.setModel(modelo.obtenerProveedorContacto());
                 Utilities.c_packColumn.packColumns(this.vista.jtContacto, 1);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -223,7 +188,9 @@ public class C_modificar_proveedor extends MouseAdapter implements ActionListene
     private void validarDatos() {
         /*
          * VALIDAR RAZON SOCIAL
+         60 caracteres maximo
          */
+        String entidad;
         if (this.vista.jtfRazonSocial.getText().isEmpty()) {
             this.vista.jtfRazonSocial.setBackground(Color.red);
             javax.swing.JOptionPane.showMessageDialog(this.vista,
@@ -232,62 +199,179 @@ public class C_modificar_proveedor extends MouseAdapter implements ActionListene
                     javax.swing.JOptionPane.OK_OPTION);
             this.vista.jtpCenter.setSelectedComponent(vista.jpDatosGenerales);
             return;
+        } else if (this.vista.jtfRazonSocial.getText().length() > 60) {
+            this.vista.jtfRazonSocial.setBackground(Color.red);
+            javax.swing.JOptionPane.showMessageDialog(this.vista,
+                    "El máximo permitido de caracteres es 60 para Razón social.",
+                    "Parametros incorrectos",
+                    javax.swing.JOptionPane.OK_OPTION);
+            this.vista.jtpCenter.setSelectedComponent(vista.jpDatosGenerales);
+            return;
         } else {
-            proveedor.setEntidad(this.vista.jtfRazonSocial.getText());
+            entidad = this.vista.jtfRazonSocial.getText().trim();
         }
         /*
          * VALIDAR NOMBRE FANTASIA
          */
-        if (this.vista.jtfNombreFantasia.getText().isEmpty()) {
-            this.vista.jtfNombreFantasia.setBackground(Color.red);
+
+        String nombreFantasia = this.vista.jtfNombreFantasia.getText().trim();
+        if (nombreFantasia.length() > 120) {
+            this.vista.jtfRazonSocial.setBackground(Color.red);
             javax.swing.JOptionPane.showMessageDialog(this.vista,
-                    "El campo Nombre fantasía esta vacio",
+                    "El máximo permitido de caracteres es 60 para Razón social.",
                     "Parametros incorrectos",
                     javax.swing.JOptionPane.OK_OPTION);
             this.vista.jtpCenter.setSelectedComponent(vista.jpDatosGenerales);
             return;
-        } else {
-            proveedor.setNombre(this.vista.jtfNombreFantasia.getText());
+        } else if (nombreFantasia.isEmpty()) {
+            nombreFantasia = null;
         }
+        /*
+         if (this.vista.jtfNombreFantasia.getText().isEmpty()) {
+         this.vista.jtfNombreFantasia.setBackground(Color.red);
+         javax.swing.JOptionPane.showMessageDialog(this.vista,
+         "El campo Nombre fantasía esta vacio",
+         "Parametros incorrectos",
+         javax.swing.JOptionPane.OK_OPTION);
+         this.vista.jtpCenter.setSelectedComponent(vista.jpDatosGenerales);
+         return;
+         } else {
+         nombreFantasia = this.vista.jtfNombreFantasia.getText();
+         }*/
         /*
          * VALIDAR R.U.C.
          */
-        if (this.vista.jtfRUC.getText().isEmpty()) {
+        String ruc = this.vista.jtfRUC.getText().trim();
+        if (ruc.length() > 30) {
             this.vista.jtfRUC.setBackground(Color.red);
             javax.swing.JOptionPane.showMessageDialog(this.vista,
-                    "El campo R.U.C. esta vacio",
+                    "El máximo permitido de caracteres es 30 para R.U.C.",
                     "Parametros incorrectos",
                     javax.swing.JOptionPane.OK_OPTION);
             this.vista.jtpCenter.setSelectedComponent(vista.jpDatosGenerales);
             return;
-        } else {
-            proveedor.setRuc(this.vista.jtfRUC.getText());
+        } else if (ruc.isEmpty()) {
+            ruc = null;
         }
+        /*
+         if (this.vista.jtfRUC.getText().isEmpty()) {
+         this.vista.jtfRUC.setBackground(Color.red);
+         javax.swing.JOptionPane.showMessageDialog(this.vista,
+         "El campo R.U.C. esta vacio",
+         "Parametros incorrectos",
+         javax.swing.JOptionPane.OK_OPTION);
+         this.vista.jtpCenter.setSelectedComponent(vista.jpDatosGenerales);
+         return;
+         } else {
+         ruc = this.vista.jtfRUC.getText();
+         }*/
         /*
          * VALIDAR R.U.C. ID
          */
-        if (this.vista.jtfRUC_ID.getText().isEmpty()) {
+        String rucId = this.vista.jtfRUC_ID.getText().trim();
+        if (rucId.length() > 30) {
             this.vista.jtfRUC_ID.setBackground(Color.red);
             javax.swing.JOptionPane.showMessageDialog(this.vista,
-                    "El campo R.U.C. División esta vacio",
+                    "El máximo permitido de caracteres es 3 para Division R.U.C.",
                     "Parametros incorrectos",
                     javax.swing.JOptionPane.OK_OPTION);
             this.vista.jtpCenter.setSelectedComponent(vista.jpDatosGenerales);
             return;
-        } else {
-            proveedor.setRuc_id(this.vista.jtfRUC_ID.getText());
+        } else if (rucId.isEmpty()) {
+            rucId = null;
         }
-        proveedor.setDescripcion(this.vista.jtfDescripcion.getText());
-        proveedor.setDireccion(this.vista.jtfDireccion.getText());
-        proveedor.setEmail(this.vista.jtfemail.getText());
-        proveedor.setPagWeb(this.vista.jtfPagWeb.getText());
-        proveedor.setObservacion(this.vista.jtaNota.getText());
-        DB_Proveedor.modificarProveedor(proveedor);
-        cerrar();
+        /*
+         if (this.vista.jtfRUC_ID.getText().isEmpty()) {
+         this.vista.jtfRUC_ID.setBackground(Color.red);
+         javax.swing.JOptionPane.showMessageDialog(this.vista,
+         "El campo R.U.C. División esta vacio",
+         "Parametros incorrectos",
+         javax.swing.JOptionPane.OK_OPTION);
+         this.vista.jtpCenter.setSelectedComponent(vista.jpDatosGenerales);
+         return;
+         } else {
+         rucId = this.vista.jtfRUC_ID.getText();
+
+         }*/
+        String descripcion = this.vista.jtfDescripcion.getText().trim();
+        if (descripcion.length() > 120) {
+            this.vista.jtfDescripcion.setBackground(Color.red);
+            javax.swing.JOptionPane.showMessageDialog(this.vista,
+                    "El máximo permitido de caracteres es 120 para descripción.",
+                    "Parametros incorrectos",
+                    javax.swing.JOptionPane.OK_OPTION);
+            this.vista.jtpCenter.setSelectedComponent(vista.jpDatosGenerales);
+            return;
+        } else if (descripcion.isEmpty()) {
+            descripcion = null;
+        }
+        String direccion = this.vista.jtfDireccion.getText().trim();
+        if (direccion.length() > 120) {
+            this.vista.jtfDireccion.setBackground(Color.red);
+            javax.swing.JOptionPane.showMessageDialog(this.vista,
+                    "El máximo permitido de caracteres es 120 para dirección.",
+                    "Parametros incorrectos",
+                    javax.swing.JOptionPane.OK_OPTION);
+            this.vista.jtpCenter.setSelectedComponent(vista.jpDatosGenerales);
+            return;
+        } else if (direccion.isEmpty()) {
+            direccion = null;
+        }
+        String email = this.vista.jtfemail.getText().trim();
+        if (email.length() > 120) {
+            this.vista.jtfemail.setBackground(Color.red);
+            javax.swing.JOptionPane.showMessageDialog(this.vista,
+                    "El máximo permitido de caracteres es 30 para e-mail.",
+                    "Parametros incorrectos",
+                    javax.swing.JOptionPane.OK_OPTION);
+            this.vista.jtpCenter.setSelectedComponent(vista.jpDatosGenerales);
+            return;
+        } else if (email.isEmpty()) {
+            email = null;
+        }
+        String pagWeb = this.vista.jtfPagWeb.getText().trim();
+        if (pagWeb.length() > 120) {
+            this.vista.jtfPagWeb.setBackground(Color.red);
+            javax.swing.JOptionPane.showMessageDialog(this.vista,
+                    "El máximo permitido de caracteres es 30 para Web.",
+                    "Parametros incorrectos",
+                    javax.swing.JOptionPane.OK_OPTION);
+            this.vista.jtpCenter.setSelectedComponent(vista.jpDatosGenerales);
+            return;
+        } else if (pagWeb.isEmpty()) {
+            pagWeb = null;
+        }
+        String obs = this.vista.jtaNota.getText().trim();
+        if (obs.length() > 120) {
+            this.vista.jtaNota.setBackground(Color.red);
+            javax.swing.JOptionPane.showMessageDialog(this.vista,
+                    "El máximo permitido de caracteres es 120 para Observacion.",
+                    "Parametros incorrectos",
+                    javax.swing.JOptionPane.OK_OPTION);
+            this.vista.jtpCenter.setSelectedComponent(vista.jpDatosGenerales);
+            return;
+        } else if (obs.isEmpty()) {
+            obs = null;
+        }
+        M_proveedor proveedor = new M_proveedor();
+        proveedor.setEntidad(entidad);
+        proveedor.setNombre(nombreFantasia);
+        proveedor.setRuc(ruc);
+        proveedor.setRuc_id(rucId);
+        proveedor.setDescripcion(descripcion);
+        proveedor.setDireccion(direccion);
+        proveedor.setEmail(email);
+        proveedor.setPagWeb(pagWeb);
+        proveedor.setObservacion(obs);
+        boolean b = modelo.modificarProveedor(proveedor);
+        if (b) {
+            actualizarTablaProveedores();
+            cerrar();
+        }
     }
 
     private void actualizarTablaProveedores() {
-        this.padre.vista.jtProveedor.setModel(DB_Proveedor.consultarProveedor(" ", true, true, false));
+        this.padre.vista.jtProveedor.setModel(modelo.consultarProveedor(" ", true, true, false));
         Utilities.c_packColumn.packColumns(this.padre.vista.jtProveedor, 2);
     }
 

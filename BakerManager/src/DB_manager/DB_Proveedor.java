@@ -1246,22 +1246,65 @@ public class DB_Proveedor {
 
     public static void modificarProveedor(M_proveedor proveedor) {
         String updateProveedor = "UPDATE PROVEEDOR SET "
-                + "ID_PROVEEDOR=" + proveedor.getId() + ", "
-                + "NOMBRE='" + proveedor.getNombre() + "', "
-                + "ENTIDAD='" + proveedor.getEntidad() + "', "
-                + "RUC='" + proveedor.getRuc() + "', "
-                + "RUC_IDENTIFICADOR='" + proveedor.getRuc_id() + "', "
-                + "DESCRIPCION='" + proveedor.getDescripcion() + "', "
-                + "DIRECCION='" + proveedor.getDireccion() + "', "
-                + "PAG_WEB='" + proveedor.getPagWeb() + "', "
-                + "EMAIL='" + proveedor.getEmail() + "', "
-                + "NOTA='" + proveedor.getObservacion() + "' "
-                + "WHERE ID_PROVEEDOR = " + proveedor.getId();
+                + "NOMBRE = ?, "
+                + "ENTIDAD = ?, "
+                + "RUC = ?, "
+                + "RUC_IDENTIFICADOR = ?, "
+                + "DESCRIPCION = ?, "
+                + "DIRECCION = ?, "
+                + "PAG_WEB = ?, "
+                + "EMAIL = ?, "
+                + "OBSERVACION = ? "
+                + "WHERE ID_PROVEEDOR = ? ;";
         try {
             DB_manager.habilitarTransaccionManual();
-            st = DB_manager.getConection().createStatement();
-            st.executeUpdate(updateProveedor);
-            st.close();
+            pst = DB_manager.getConection().prepareStatement(updateProveedor);
+            //nombre
+            if (proveedor.getNombre() != null) {
+                pst.setString(1, proveedor.getNombre());
+            } else {
+                pst.setNull(1, Types.VARCHAR);
+            }
+            pst.setString(2, proveedor.getEntidad());//not null
+            //ruc
+            if (proveedor.getRuc() != null) {
+                pst.setString(3, proveedor.getRuc());
+            } else {
+                pst.setNull(3, Types.VARCHAR);
+            }
+            if (proveedor.getRuc_id() != null) {
+                pst.setString(4, proveedor.getRuc_id());
+            } else {
+                pst.setNull(4, Types.VARCHAR);
+            }
+            if (proveedor.getDescripcion() != null) {
+                pst.setString(5, proveedor.getDescripcion());
+            } else {
+                pst.setNull(5, Types.VARCHAR);
+            }
+            if (proveedor.getDireccion() != null) {
+                pst.setString(6, proveedor.getDireccion());
+            } else {
+                pst.setNull(6, Types.VARCHAR);
+            }
+            if (proveedor.getPagWeb() != null) {
+                pst.setString(7, proveedor.getPagWeb());
+            } else {
+                pst.setNull(7, Types.VARCHAR);
+            }
+            if (proveedor.getEmail() != null) {
+                pst.setString(8, proveedor.getEmail());
+            } else {
+                pst.setNull(8, Types.VARCHAR);
+            }
+            if (proveedor.getObservacion() != null) {
+                pst.setString(9, proveedor.getObservacion());
+            } else {
+                pst.setNull(9, Types.VARCHAR);
+            }
+            pst.setInt(10, proveedor.getId());
+            pst.executeUpdate();
+            pst.close();
             DB_manager.establecerTransaccion();
         } catch (SQLException ex) {
             System.out.println(ex.getNextException());
@@ -1405,15 +1448,31 @@ public class DB_Proveedor {
 
     public static void modificarTelefono(int idTelefono, String tipoTelefono, String nroTelefono, String observacion) {
         String updateTelefono = "UPDATE TELEFONO SET "
-                + "NUMERO='" + nroTelefono + "', "
-                + "CATEGORIA= '" + tipoTelefono + "', "
-                + "OBSERVACION='" + observacion + "' "
-                + "WHERE ID_TELEFONO = " + idTelefono;
+                + "NUMERO = ?, "
+                + "ID_CATEGORIA = ?, "
+                + "OBSERVACION = ? "
+                + "WHERE ID_TELEFONO = ? ;";
         try {
             DB_manager.habilitarTransaccionManual();
-            st = DB_manager.getConection().createStatement();
-            st.executeUpdate(updateTelefono);
-            st.close();
+            String telefonoCategoria = "SELECT ID_TELEFONO_CATEGORIA FROM TELEFONO_CATEGORIA WHERE DESCRIPCION LIKE '" + tipoTelefono + "'";
+            st = DB_manager.getConection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            // se ejecuta el query y se obtienen los resultados en un ResultSet
+            rs = st.executeQuery(telefonoCategoria);
+            int id_categoria = 0;
+            while (rs.next()) {
+                id_categoria = rs.getInt("ID_TELEFONO_CATEGORIA");
+            }
+            pst = DB_manager.getConection().prepareStatement(updateTelefono);
+            pst.setString(1, nroTelefono);
+            pst.setInt(2, id_categoria);
+            if (observacion == null) {
+                pst.setString(3, observacion);
+            } else {
+                pst.setNull(3, Types.VARCHAR);
+            }
+            pst.setInt(4, idTelefono);
+            pst.executeUpdate();
+            pst.close();
             DB_manager.establecerTransaccion();
         } catch (SQLException ex) {
             if (DB_manager.getConection() != null) {
@@ -1936,5 +1995,34 @@ public class DB_Proveedor {
             ex.printStackTrace();
         }
         return false;
+    }
+
+    public static ArrayList<M_telefono> obtenerTelefonos(int idProveedor) {
+        ArrayList<M_telefono> telefonos = null;
+        String QUERY = "SELECT TELE.ID_TELEFONO, TELE.NUMERO, TECA.ID_TELEFONO_CATEGORIA, TECA.DESCRIPCION, "
+                + "TELE.OBSERVACION "
+                + "FROM TELEFONO TELE, TELEFONO_CATEGORIA TECA, "
+                + "PROVEEDOR_TELEFONO PRTE "
+                + "WHERE TELE.ID_TELEFONO =  PRTE.ID_TELEFONO  "
+                + "AND TELE.ID_CATEGORIA = TECA.ID_TELEFONO_CATEGORIA "
+                + "AND PRTE.ID_PROVEEDOR = ? ;";
+        try {
+            pst = DB_manager.getConection().prepareStatement(QUERY, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            rs = pst.executeQuery();
+            telefonos = new ArrayList();
+            while (rs.next()) {
+                M_telefono telefono = new M_telefono();
+                telefono.setId_telefono(rs.getInt("TELE.ID_TELEFONO"));
+                telefono.setCategoria(rs.getString("TECA.DESCRIPCION"));
+                telefono.setNumero(rs.getString("TELE.NUMERO"));
+                telefono.setIdCategoria(rs.getInt("TECA.ID_TELEFONO_CATEGORIA"));
+                telefono.setCategoria(rs.getString("TELE.OBSERVACION"));
+                telefonos.add(telefono);
+            }
+        } catch (SQLException ex) {
+            Logger lgr = Logger.getLogger(DB_Proveedor.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        }
+        return telefonos;
     }
 }

@@ -22,7 +22,7 @@ public class C_modificar_telefono implements ActionListener {
     private static final int MODIFICAR_CLIENTE = 2;
     private static final int CREAR_PROVEEDOR = 3;
     private static final int MODIFICAR_PROVEEDOR = 4;
-    private int telefono = 0;
+    private int TELEFONO = 0;
     V_crear_telefono vista;
     C_crear_proveedor crearProveedor;
     C_modificar_proveedor modiciarProveedor;
@@ -33,7 +33,7 @@ public class C_modificar_telefono implements ActionListener {
         this.vista = new V_crear_telefono(crearTelefono.vista);
         inicializarVista();
         agregarListeners();
-        telefono = CREAR_PROVEEDOR;
+        TELEFONO = CREAR_PROVEEDOR;
     }
 
     public C_modificar_telefono(C_modificar_proveedor modiciarProveedor) {
@@ -42,7 +42,7 @@ public class C_modificar_telefono implements ActionListener {
         this.vista.setTitle("Modificar teléfono");
         inicializarVista();
         agregarListeners();
-        telefono = MODIFICAR_PROVEEDOR;
+        TELEFONO = MODIFICAR_PROVEEDOR;
     }
 
     public C_modificar_telefono(C_crear_cliente crearCliente) {
@@ -51,7 +51,7 @@ public class C_modificar_telefono implements ActionListener {
         this.vista.setTitle("Modificar teléfono");
         inicializarVista();
         agregarListeners();
-        telefono = CREAR_CLIENTE;
+        TELEFONO = CREAR_CLIENTE;
     }
 
     private void inicializarVista() {
@@ -103,20 +103,13 @@ public class C_modificar_telefono implements ActionListener {
             return;
         }
         String tipoTelefono = this.vista.jcbCategoria.getSelectedItem().toString();
-        switch (telefono) {
+        switch (TELEFONO) {
             case (CREAR_PROVEEDOR): {
                 this.crearProveedor.modificarTelefono(tipoTelefono, nroTelefono, observacion);
             }
             break;
             case (MODIFICAR_PROVEEDOR): {
-                int option = JOptionPane.showConfirmDialog(vista, "¿Desea confirmar esta operación?", "Atención", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-                if (option == JOptionPane.YES_OPTION) {
-                    try {
-                        this.modiciarProveedor.modificarTelefono(tipoTelefono, nroTelefono, observacion);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
+                this.modiciarProveedor.modificarTelefono(tipoTelefono, nroTelefono, observacion);
             }
             break;
             case (CREAR_CLIENTE): {

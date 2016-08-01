@@ -23,9 +23,6 @@ import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
-import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
-import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
  *
@@ -145,7 +142,7 @@ class C_gestion_proveedores extends MouseAdapter implements ActionListener, KeyL
             crearProveedor.mostrarVista();
         }
         if (ae.getSource() == this.vista.jbModificarProveedor) {
-            C_modificar_proveedor modificarProveedor = new C_modificar_proveedor(this, idProveedor);
+            Modificar_proveedor modificarProveedor = new Modificar_proveedor(this, idProveedor);
             modificarProveedor.mostrarVista();
         } else if (ae.getSource() == this.vista.jtfBuscar) {
             displayQueryResults();
@@ -189,22 +186,6 @@ class C_gestion_proveedores extends MouseAdapter implements ActionListener, KeyL
             return true;
         }
 
-    }
-
-    private void cambiarImagen() {
-        JFileChooser fileChooser = new JFileChooser();
-        FileNameExtensionFilter extensionFilter = new FileNameExtensionFilter("JPG & PNG", "jpg", "png");
-        fileChooser.setFileFilter(extensionFilter);
-        int estado = fileChooser.showOpenDialog(this.vista);
-        if (estado == JFileChooser.APPROVE_OPTION) {
-            fileImage = fileChooser.getSelectedFile();
-            image = new ImageIcon(fileImage.getPath());
-            if (!isValidImage(fileImage)) {
-                JOptionPane.showMessageDialog(fileChooser, "Seleccione una otra imagen de 200 x 200 pixeles o menos", "Atención", JOptionPane.INFORMATION_MESSAGE);
-            } else {
-                this.vista.jlFoto.setIcon(image);
-            }
-        }
     }
 
     private void establecerImagen(File fileImage, String name) {

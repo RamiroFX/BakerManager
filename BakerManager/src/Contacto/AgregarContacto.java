@@ -106,7 +106,7 @@ public class AgregarContacto extends JDialog implements ActionListener {
         jlFechaNacimiento.setHorizontalAlignment(swingConstant);
         dccFechaNacimiento = new com.toedter.calendar.JDateChooser();
         dccFechaNacimiento.setDateFormatString("dd/MM/yyyy");
-        jlCedulaIdentidad = new javax.swing.JLabel("Cedula de identidad ");
+        jlCedulaIdentidad = new javax.swing.JLabel("Cedula de identidad (**)");
         jlCedulaIdentidad.setHorizontalAlignment(swingConstant);
         jftCedulaIdentidad = new javax.swing.JFormattedTextField();
         jlNacionalidad = new javax.swing.JLabel("Nacionalidad");

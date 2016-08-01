@@ -6,6 +6,7 @@
 package Proveedor;
 
 import DB_manager.DB_Proveedor;
+import DB_manager.DB_manager;
 import DB_manager.ResultSetTableModel;
 import Entities.M_contacto;
 import Entities.M_proveedor;
@@ -59,5 +60,9 @@ public class M_crear_proveedor {
 
     public ResultSetTableModel consultarProveedor(String proveedor, boolean entidad, boolean ruc, boolean isExclusivo) {
         return DB_Proveedor.consultarProveedor(proveedor, entidad, ruc, isExclusivo);
+    }
+
+    boolean existeTelefono(String nroTelefono) {
+        return DB_manager.existeTelefono(nroTelefono);
     }
 }

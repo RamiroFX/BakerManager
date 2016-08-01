@@ -657,4 +657,17 @@ public class DB_manager {
         }
         return false;
     }
+
+    public static boolean existeTelefono(String telefono) {
+        String query = "SELECT NUMERO FROM TELEFONO WHERE NUMERO = ? ;";
+        try {
+            pst = getConection().prepareStatement(query);
+            pst.setString(1, telefono);
+            rs = pst.executeQuery();
+            return rs.isBeforeFirst();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return false;
+    }
 }

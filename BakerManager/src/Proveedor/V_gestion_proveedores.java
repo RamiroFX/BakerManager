@@ -25,8 +25,6 @@ class V_gestion_proveedores extends JInternalFrame {
     public javax.swing.JButton jbModificarProveedor;
     public javax.swing.JButton jbCrearProveedor;
     //PESTAÑA 1    
-    private javax.swing.JPanel jpFoto;
-    public javax.swing.JLabel jlFoto;
     private javax.swing.JLabel jlEntidad;
     public javax.swing.JTextField jtfEntidad;
     private javax.swing.JLabel jlNombre;
@@ -95,8 +93,6 @@ class V_gestion_proveedores extends JInternalFrame {
         jspProveedor.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
         jspProveedor.setViewportView(jtProveedor);
         jTabbedPane = new javax.swing.JTabbedPane();
-        jpFoto = new javax.swing.JPanel();
-        jlFoto = new javax.swing.JLabel();
         jlNombre = new javax.swing.JLabel();
         jtfNombre = new javax.swing.JTextField();
         jtfNombre.setEditable(false);
@@ -137,11 +133,6 @@ class V_gestion_proveedores extends JInternalFrame {
         jbCrearProveedor = new javax.swing.JButton("Crear proveedor");
         jbModificarProveedor = new javax.swing.JButton("Modificar proveedor");
 
-        jpFoto.setBorder(javax.swing.BorderFactory.createTitledBorder("Imagen identificativa"));
-        jlFoto.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jlFoto.setPreferredSize(new java.awt.Dimension(100, 100));
-        jpFoto.add(jlFoto);
-
         jpDatosEmp = new javax.swing.JPanel(new MigLayout());
         jlNombre.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jlNombre.setText("Nombre");
@@ -172,7 +163,6 @@ class V_gestion_proveedores extends JInternalFrame {
 
         jpDatosEmpresariales = new javax.swing.JPanel();
         jpDatosEmpresariales.setLayout(new java.awt.BorderLayout());
-        jpDatosEmpresariales.add(jpFoto, java.awt.BorderLayout.NORTH);
         jpDatosEmpresariales.add(jpDatosEmp, java.awt.BorderLayout.CENTER);
 
 
