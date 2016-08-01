@@ -371,7 +371,7 @@ public class C_modificar_proveedor extends MouseAdapter implements ActionListene
     }
 
     private void actualizarTablaProveedores() {
-        this.padre.vista.jtProveedor.setModel(modelo.consultarProveedor(" ", true, true, false));
+        this.padre.vista.jtProveedor.setModel(modelo.consultarProveedor("", true, true, false));
         Utilities.c_packColumn.packColumns(this.padre.vista.jtProveedor, 2);
     }
 

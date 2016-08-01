@@ -788,12 +788,11 @@ public class DB_Proveedor {
 
     public static void insertarProveedorContacto(Integer idProveedor, M_contacto contacto) {
         long id_persona = -1L;
-        String INSERT_PERSONA = "INSERT INTO PERSONA(PERS.CI, PERS.NOMBRE, PERS.APELLIDO, PERS.ID_SEXO, PERS.FECHA_NACIMIENTO, PERS.ID_ESTADO_CIVIL, PERS.ID_PAIS, PERS.ID_CIUDAD)VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-        String INSERT_PROVEEDOR_CONTACTO = "INSERT INTO PROVEEDOR_CONTACTO(PRCO.ID_PERSONA, PRCO.ID_PROVEEDOR, PRCO.EMAIL, PRCO.DIRECCION, PRCO.TELEFONO, PRCO.OBSERVACION)VALUES (?, ?, ?, ?, ?, ?)";
+        String INSERT_PERSONA = "INSERT INTO PERSONA(CI, NOMBRE, APELLIDO, ID_SEXO, FECHA_NACIMIENTO, ID_ESTADO_CIVIL, ID_PAIS, ID_CIUDAD)VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        String INSERT_PROVEEDOR_CONTACTO = "INSERT INTO PROVEEDOR_CONTACTO(ID_PERSONA, ID_PROVEEDOR, EMAIL, DIRECCION, TELEFONO, OBSERVACION)VALUES (?, ?, ?, ?, ?, ?)";
         try {
             DB_manager.habilitarTransaccionManual();
             pst = DB_manager.getConection().prepareStatement(INSERT_PERSONA, PreparedStatement.RETURN_GENERATED_KEYS);
-            //PERS.CI, PERS.NOMBRE, PERS.APELLIDO, PERS.ID_SEXO, PERS.FECHA_NACIMIENTO, PERS.ID_ESTADO_CIVIL, PERS.ID_PAIS, PERS.ID_CIUDAD
             try {
                 if (contacto.getCedula() == null) {
                     pst.setNull(1, Types.INTEGER);
@@ -912,17 +911,21 @@ public class DB_Proveedor {
 
     public static void insertarSucursal(Integer idProveedor, String direccion, String telefono) {
         String q = "INSERT INTO PROVEEDOR_SUCURSAL("
-                + "PRSU.ID_PROVEEDOR, "
-                + "PRSU.DIRECCION, "
-                + "PRSU.TELEFONO)"
-                + "VALUES ("
-                + idProveedor + ", '"
-                + direccion + "', '"
-                + telefono + "')";
+                + "ID_PROVEEDOR, "
+                + "DIRECCION, "
+                + "TELEFONO)"
+                + "VALUES (?, ?, ?)";
         try {
             DB_manager.habilitarTransaccionManual();
-            PreparedStatement pstmt = DB_manager.getConection().prepareStatement(q);
-            pstmt.executeUpdate();
+            pst = DB_manager.getConection().prepareStatement(q);
+            pst.setInt(1, idProveedor);
+            pst.setString(2, direccion);
+            if (telefono != null) {
+                pst.setString(3, telefono);
+            } else {
+                pst.setNull(3, Types.VARCHAR);
+            }
+            pst.executeUpdate();
             DB_manager.establecerTransaccion();
         } catch (SQLException ex) {
             System.out.println(ex.getNextException());
@@ -975,13 +978,22 @@ public class DB_Proveedor {
 
     public static void insertarTelefono(Integer idProveedor, String tipoTelefono, String nroTelefono, String observacion) {
         long id_telefono = -1L;
-        String INSERT_TELEFONO = "INSERT INTO TELEFONO(TELE.NUMERO, TELE.CATEGORIA, TELE.OBSERVACION)VALUES (?, ?, ?)";
-        String INSERT_TELEFONO_PROVEEDOR = "INSERT INTO PROVEEDOR_TELEFONO(PRTE.ID_PROVEEDOR, PRTE.ID_TELEFONO)VALUES (?, ?)";
+        String INSERT_TELEFONO = "INSERT INTO TELEFONO(NUMERO, ID_CATEGORIA, OBSERVACION)VALUES (?, ?, ?)";
+        String INSERT_TELEFONO_PROVEEDOR = "INSERT INTO PROVEEDOR_TELEFONO(ID_PROVEEDOR, ID_TELEFONO)VALUES (?, ?)";
         try {
             DB_manager.habilitarTransaccionManual();
+            String telefonoCategoria = "SELECT ID_TELEFONO_CATEGORIA FROM TELEFONO_CATEGORIA WHERE DESCRIPCION LIKE '" + tipoTelefono + "'";
+            st = DB_manager.getConection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            // se ejecuta el query y se obtienen los resultados en un ResultSet
+            rs = st.executeQuery(telefonoCategoria);
+            int id_categoria = 0;
+            while (rs.next()) {
+                id_categoria = rs.getInt("ID_TELEFONO_CATEGORIA");
+            }
             pst = DB_manager.getConection().prepareStatement(INSERT_TELEFONO, PreparedStatement.RETURN_GENERATED_KEYS);
+
             pst.setString(1, nroTelefono);
-            pst.setString(2, tipoTelefono);
+            pst.setInt(2, id_categoria);
             pst.setString(3, observacion);
             pst.executeUpdate();
             rs = pst.getGeneratedKeys();
@@ -1349,31 +1361,79 @@ public class DB_Proveedor {
 
     }
 
-    public static void modificarProveedorContacto(Integer id, M_contacto contacto) {
+    public static void modificarProveedorContacto(M_contacto contacto) {
         try {
             DB_manager.habilitarTransaccionManual();
             String updateContacto = "UPDATE PROVEEDOR_CONTACTO SET "
-                    + "EMAIL='" + contacto.getEmail() + "', "
-                    + "DIRECCION='" + contacto.getDireccion() + "', "
-                    + "OBSERVACION='" + contacto.getObservacion() + "', "
-                    + "TELEFONO='" + contacto.getTelefono() + "' "
-                    + "WHERE ID_PROVEEDOR_CONTACTO = " + contacto.getId_contacto();
+                    + "EMAIL = ?, "
+                    + "DIRECCION = ?, "
+                    + "OBSERVACION = ?, "
+                    + "TELEFONO = ? "
+                    + "WHERE ID_PROVEEDOR_CONTACTO = ? ;";
             String updatePersona = "UPDATE PERSONA SET "
-                    + "CI=" + contacto.getCedula() + ", "
-                    + "NOMBRE='" + contacto.getNombre() + "', "
-                    + "APELLIDO='" + contacto.getApellido() + "', "
-                    + "ID_SEXO=" + contacto.getId_sexo() + ", "
-                    + "FECHA_NACIMIENTO='" + contacto.getFecha_nacimiento() + "', "
-                    + "ID_ESTADO_CIVIL=" + contacto.getId_estado_civil() + ", "
-                    + "ID_PAIS=" + contacto.getId_pais() + ", "
-                    + "ID_CIUDAD=" + contacto.getId_ciudad() + " "
-                    + "WHERE ID_PERSONA = " + contacto.getId_persona();
-            st = DB_manager.getConection().createStatement();
-            st.executeUpdate(updatePersona);
-            st.close();
-            st = DB_manager.getConection().createStatement();
-            st.executeUpdate(updateContacto);
-            st.close();
+                    + "CI = ?, "
+                    + "NOMBRE = ?, "
+                    + "APELLIDO = ?, "
+                    + "ID_SEXO = ?, "
+                    + "FECHA_NACIMIENTO = ?, "
+                    + "ID_ESTADO_CIVIL = ?, "
+                    + "ID_PAIS = ?, "
+                    + "ID_CIUDAD = ? "
+                    + "WHERE ID_PERSONA = ? ;";
+            pst = DB_manager.getConection().prepareStatement(updatePersona);
+            try {
+                if (contacto.getCedula() == null) {
+                    pst.setNull(1, Types.INTEGER);
+                } else {
+                    pst.setInt(1, (int) contacto.getCedula());
+                }
+            } catch (Exception e) {
+                pst.setNull(1, Types.INTEGER);
+            }
+            pst.setString(2, contacto.getNombre());
+            pst.setString(3, contacto.getApellido());
+            pst.setInt(4, contacto.getId_sexo());
+            try {
+                if (contacto.getFecha_nacimiento() == null) {
+                    pst.setNull(5, Types.DATE);
+                } else {
+                    pst.setDate(5, new java.sql.Date(contacto.getFecha_nacimiento().getTime()));
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                pst.setNull(5, Types.DATE);
+            }
+            pst.setInt(6, contacto.getId_estado_civil());
+            pst.setInt(7, contacto.getId_pais());
+            pst.setInt(8, contacto.getId_ciudad());
+            pst.setInt(9, contacto.getId_persona());
+            pst.executeUpdate();
+            pst.close();
+
+            pst = DB_manager.getConection().prepareStatement(updateContacto);
+            if (contacto.getEmail() != null) {
+                pst.setString(1, contacto.getEmail());
+            } else {
+                pst.setNull(1, Types.VARCHAR);
+            }
+            if (contacto.getDireccion() != null) {
+                pst.setString(2, contacto.getDireccion());
+            } else {
+                pst.setNull(2, Types.VARCHAR);
+            }
+            if (contacto.getObservacion() != null) {
+                pst.setString(3, contacto.getObservacion());
+            } else {
+                pst.setNull(3, Types.VARCHAR);
+            }
+            if (contacto.getTelefono() != null) {
+                pst.setString(4, contacto.getTelefono());
+            } else {
+                pst.setNull(4, Types.VARCHAR);
+            }
+            pst.setInt(5, contacto.getId_contacto());
+            pst.executeUpdate();
+            pst.close();
             DB_manager.establecerTransaccion();
         } catch (SQLException ex) {
             System.out.println(ex.getNextException());
@@ -1394,14 +1454,17 @@ public class DB_Proveedor {
 
     public static void modificarSucursal(int idSucursal, String direccion, String telefono) {
         String q = "UPDATE PROVEEDOR_SUCURSAL SET "
-                + "DIRECCION='" + direccion + "', "
-                + "TELEFONO='" + telefono + "' "
-                + "WHERE ID_PROVEEDOR_SUCURSAL = " + idSucursal;
+                + "DIRECCION = ?, "
+                + "TELEFONO = ? "
+                + "WHERE ID_PROVEEDOR_SUCURSAL = ? ;";
         try {
             DB_manager.habilitarTransaccionManual();
-            st = DB_manager.getConection().createStatement();
-            st.executeUpdate(q);
-            st.close();
+            pst = DB_manager.getConection().prepareStatement(q);
+            pst.setString(1, direccion);
+            pst.setString(2, telefono);
+            pst.setInt(3, idSucursal);
+            pst.executeUpdate();
+            pst.close();
             DB_manager.establecerTransaccion();
         } catch (SQLException ex) {
             System.out.println(ex.getNextException());
@@ -1672,9 +1735,9 @@ public class DB_Proveedor {
         try {
             DB_manager.habilitarTransaccionManual();
             st = DB_manager.getConection().createStatement();
-            st.executeUpdate(q);
-            st = DB_manager.getConection().createStatement();
             st.executeUpdate(q2);
+            st = DB_manager.getConection().createStatement();
+            st.executeUpdate(q);
             DB_manager.establecerTransaccion();
         } catch (SQLException ex) {
             System.out.println(ex.getNextException());
@@ -2008,15 +2071,16 @@ public class DB_Proveedor {
                 + "AND PRTE.ID_PROVEEDOR = ? ;";
         try {
             pst = DB_manager.getConection().prepareStatement(QUERY, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            pst.setInt(1, idProveedor);
             rs = pst.executeQuery();
             telefonos = new ArrayList();
             while (rs.next()) {
                 M_telefono telefono = new M_telefono();
-                telefono.setId_telefono(rs.getInt("TELE.ID_TELEFONO"));
-                telefono.setCategoria(rs.getString("TECA.DESCRIPCION"));
-                telefono.setNumero(rs.getString("TELE.NUMERO"));
-                telefono.setIdCategoria(rs.getInt("TECA.ID_TELEFONO_CATEGORIA"));
-                telefono.setCategoria(rs.getString("TELE.OBSERVACION"));
+                telefono.setId_telefono(rs.getInt("ID_TELEFONO"));
+                telefono.setCategoria(rs.getString("DESCRIPCION"));
+                telefono.setNumero(rs.getString("NUMERO"));
+                telefono.setIdCategoria(rs.getInt("ID_TELEFONO_CATEGORIA"));
+                telefono.setCategoria(rs.getString("OBSERVACION"));
                 telefonos.add(telefono);
             }
         } catch (SQLException ex) {

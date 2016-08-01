@@ -102,14 +102,7 @@ public class C_crear_telefono implements ActionListener {
             }
             break;
             case (MODIFICAR_PROVEEDOR): {
-                int option = JOptionPane.showConfirmDialog(vista, "¿Desea confirmar esta operación?", "Atención", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-                if (option == JOptionPane.YES_OPTION) {
-                    try {
-                        this.modiciarProveedor.recibirTelefono(tipoTelefono, nroTelefono, observacion);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
+                this.modiciarProveedor.recibirTelefono(tipoTelefono, nroTelefono, observacion);
             }
             break;
             case (CREAR_CLIENTE): {

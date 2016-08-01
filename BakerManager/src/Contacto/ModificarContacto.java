@@ -16,7 +16,10 @@ import Proveedor.C_modificar_proveedor;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.math.BigInteger;
+import java.sql.Types;
 import java.util.Date;
+import java.util.Objects;
 import java.util.Vector;
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -56,7 +59,7 @@ public class ModificarContacto extends JDialog implements ActionListener {
         this.crearCliente = crearCliente;
         accion = CREAR_CLIENTE_CONTACTO;
         clie_contacto = new M_cliente_contacto();
-        setSize(800, 300);
+        setSize(800, 350);
         setLocationRelativeTo(crearCliente.vista);
         inicializarVista();
         agregarListeners();
@@ -67,7 +70,7 @@ public class ModificarContacto extends JDialog implements ActionListener {
         this.modificarCliente = modificarCliente;
         accion = MODIFICAR_CLIENTE_CONTACTO;
         clie_contacto = DB_Cliente.obtenerDatosClienteContactoID(idContacto);
-        setSize(800, 300);
+        setSize(800, 350);
         setLocationRelativeTo(modificarCliente.vista);
         inicializarVista();
         agregarListeners();
@@ -78,7 +81,7 @@ public class ModificarContacto extends JDialog implements ActionListener {
         this.crearProveedor = crearProveedor;
         accion = CREAR_PROVEEDOR_CONTACTO;
         prov_contacto = new M_contacto();
-        setSize(800, 300);
+        setSize(800, 350);
         setLocationRelativeTo(crearProveedor.vista);
         inicializarVista();
         agregarListeners();
@@ -89,7 +92,7 @@ public class ModificarContacto extends JDialog implements ActionListener {
         this.modificarProveedor = modificarProveedor;
         accion = MODIFICAR_PROVEEDOR_CONTACTO;
         prov_contacto = DB_Proveedor.obtenerDatosContactoIdContacto(idContacto);
-        setSize(800, 300);
+        setSize(800, 350);
         setLocationRelativeTo(modificarProveedor.vista);
         inicializarVista();
         agregarListeners();
@@ -216,7 +219,11 @@ public class ModificarContacto extends JDialog implements ActionListener {
             jtfObservacion.setText(clie_contacto.getObservacion());
             jtfNombre.setText(clie_contacto.getNombre());
             jtfApellido.setText(clie_contacto.getApellido());
-            jftCedulaIdentidad.setText(clie_contacto.getCedula().toString());
+            if (clie_contacto.getCedula() == 0) {
+                jftCedulaIdentidad.setText("");
+            } else {
+                jftCedulaIdentidad.setText(clie_contacto.getCedula().toString());
+            }
             dccFechaNacimiento.setDate(clie_contacto.getFecha_nacimiento());
         } else if (accion == CREAR_PROVEEDOR_CONTACTO || accion == MODIFICAR_PROVEEDOR_CONTACTO) {
             jcbNacionalidad.setSelectedItem(prov_contacto.getPais());
@@ -229,7 +236,11 @@ public class ModificarContacto extends JDialog implements ActionListener {
             jtfObservacion.setText(prov_contacto.getObservacion());
             jtfNombre.setText(prov_contacto.getNombre());
             jtfApellido.setText(prov_contacto.getApellido());
-            jftCedulaIdentidad.setText(prov_contacto.getCedula().toString());
+            if (prov_contacto.getCedula() == 0) {
+                jftCedulaIdentidad.setText("");
+            } else {
+                jftCedulaIdentidad.setText(prov_contacto.getCedula().toString());
+            }
             dccFechaNacimiento.setDate(prov_contacto.getFecha_nacimiento());
         }
     }
@@ -245,44 +256,47 @@ public class ModificarContacto extends JDialog implements ActionListener {
     }
 
     private boolean validarDatos() {
-        String nombre;
+        String nombre = this.jtfNombre.getText().trim();
         /*
          * VALIDAR Nombre
          */
-        if (this.jtfNombre.getText().isEmpty()) {
+        if (nombre.isEmpty()) {
             this.jtfNombre.setBackground(Color.red);
             javax.swing.JOptionPane.showMessageDialog(this,
                     "El campo Nombre esta vacío",
                     "Parametros incorrectos",
                     javax.swing.JOptionPane.OK_OPTION);
             return false;
-        } else {
-            nombre = jtfNombre.getText();
+        } else if (nombre.length() > 30) {
+            this.jtfNombre.setBackground(Color.red);
+            javax.swing.JOptionPane.showMessageDialog(this,
+                    "El campo Nombre supera 30 caracteres",
+                    "Parametros incorrectos",
+                    javax.swing.JOptionPane.OK_OPTION);
+            return false;
         }
-        String apellido;
+        String apellido = jtfApellido.getText().trim();
         /*
          * VALIDAR Apellido
          */
-        if (this.jtfApellido.getText().isEmpty()) {
+        if (apellido.isEmpty()) {
             this.jtfApellido.setBackground(Color.red);
             javax.swing.JOptionPane.showMessageDialog(this,
                     "El campo Apellido esta vacío",
                     "Parametros incorrectos",
                     javax.swing.JOptionPane.OK_OPTION);
             return false;
-        } else {
-            apellido = jtfApellido.getText();
-        }
-
-        Date fechaNacimiento;
-        if (null == dccFechaNacimiento.getDate()) {
-            fechaNacimiento = null;
+        } else if (apellido.length() > 30) {
+            this.jtfApellido.setBackground(Color.red);
             javax.swing.JOptionPane.showMessageDialog(this,
-                    "Error en el campo Fecha nacimiento, inserte una fecha válida",
+                    "El campo Nombre supera 30 caracteres",
                     "Parametros incorrectos",
                     javax.swing.JOptionPane.OK_OPTION);
             return false;
-        } else {
+        }
+
+        Date fechaNacimiento = null;
+        if (dccFechaNacimiento.getDate() != null) {
             try {
                 fechaNacimiento = dccFechaNacimiento.getDate();
             } catch (Exception e) {
@@ -293,12 +307,31 @@ public class ModificarContacto extends JDialog implements ActionListener {
                 return false;
             }
         }
-        Integer cedula;
-        if (null == jftCedulaIdentidad.getText()) {
-            cedula = null;
-        } else {
+        Integer cedula = null;
+        if (!jftCedulaIdentidad.getText().trim().isEmpty()) {
             try {
-                cedula = Integer.valueOf(jftCedulaIdentidad.getText());
+                cedula = Integer.valueOf(jftCedulaIdentidad.getText().trim());
+                if (DB_manager.existCi(cedula)) {
+                    if (accion == CREAR_CLIENTE_CONTACTO || accion == MODIFICAR_CLIENTE_CONTACTO) {
+                        if (!Objects.equals(this.clie_contacto.getCedula(), cedula)) {
+                            this.jftCedulaIdentidad.setBackground(Color.red);
+                            javax.swing.JOptionPane.showMessageDialog(this,
+                                    "Cédula en uso",
+                                    "Parametros incorrectos",
+                                    javax.swing.JOptionPane.OK_OPTION);
+                            return false;
+                        }
+                    } else if (accion == CREAR_PROVEEDOR_CONTACTO || accion == MODIFICAR_PROVEEDOR_CONTACTO) {
+                        if (!Objects.equals(this.prov_contacto.getCedula(), cedula)) {
+                            this.jftCedulaIdentidad.setBackground(Color.red);
+                            javax.swing.JOptionPane.showMessageDialog(this,
+                                    "Cédula en uso",
+                                    "Parametros incorrectos",
+                                    javax.swing.JOptionPane.OK_OPTION);
+                            return false;
+                        }
+                    }
+                }
             } catch (Exception e) {
                 this.jftCedulaIdentidad.setBackground(Color.red);
                 javax.swing.JOptionPane.showMessageDialog(this,
@@ -308,15 +341,55 @@ public class ModificarContacto extends JDialog implements ActionListener {
                 return false;
             }
         }
+        String telefono = jtfTelefonoContacto.getText().trim();
+        if (telefono.length() > 30) {
+            this.jtfTelefonoContacto.setBackground(Color.red);
+            javax.swing.JOptionPane.showMessageDialog(this,
+                    "El campo telefono supera 30 caracteres",
+                    "Parametros incorrectos",
+                    javax.swing.JOptionPane.OK_OPTION);
+            return false;
+        } else if (telefono.isEmpty()) {
+            telefono = null;
+        }
+        String direccion = jtfDireccionContacto.getText().trim();
+        if (direccion.length() > 120) {
+            this.jtfDireccionContacto.setBackground(Color.red);
+            javax.swing.JOptionPane.showMessageDialog(this,
+                    "El campo dirección supera 120 caracteres",
+                    "Parametros incorrectos",
+                    javax.swing.JOptionPane.OK_OPTION);
+            return false;
+        } else if (direccion.isEmpty()) {
+            direccion = null;
+        }
+        String email = jtfCorreoElecContacto.getText().trim();
+        if (email.length() > 30) {
+            this.jtfCorreoElecContacto.setBackground(Color.red);
+            javax.swing.JOptionPane.showMessageDialog(this,
+                    "El campo email supera 30 caracteres",
+                    "Parametros incorrectos",
+                    javax.swing.JOptionPane.OK_OPTION);
+            return false;
+        } else if (email.isEmpty()) {
+            email = null;
+        }
+        String observacion = jtfObservacion.getText().trim();
+        if (observacion.length() > 120) {
+            this.jtfObservacion.setBackground(Color.red);
+            javax.swing.JOptionPane.showMessageDialog(this,
+                    "El campo Observación supera 120 caracteres",
+                    "Parametros incorrectos",
+                    javax.swing.JOptionPane.OK_OPTION);
+            return false;
+        } else if (observacion.isEmpty()) {
+            observacion = null;
+        }
         if (accion == CREAR_CLIENTE_CONTACTO || accion == MODIFICAR_CLIENTE_CONTACTO) {
             String nacionalidad = jcbNacionalidad.getSelectedItem().toString();
             String ciudad = jcbCiudad.getSelectedItem().toString();
             String genero = jcbGenero.getSelectedItem().toString();
             String estadoCivil = jcbEstadoCivil.getSelectedItem().toString();
-            String telefono = jtfTelefonoContacto.getText();
-            String direccion = jtfDireccionContacto.getText();
-            String email = jtfCorreoElecContacto.getText();
-            String Observacion = jtfObservacion.getText();
             clie_contacto.setApellido(apellido);
             clie_contacto.setCedula(cedula);
             clie_contacto.setCiudad(ciudad);
@@ -325,7 +398,7 @@ public class ModificarContacto extends JDialog implements ActionListener {
             clie_contacto.setEstado_civil(estadoCivil);
             clie_contacto.setFecha_nacimiento(fechaNacimiento);
             clie_contacto.setNombre(nombre);
-            clie_contacto.setObservacion(Observacion);
+            clie_contacto.setObservacion(observacion);
             clie_contacto.setPais(nacionalidad);
             clie_contacto.setSexo(genero);
             clie_contacto.setTelefono(telefono);
@@ -338,10 +411,6 @@ public class ModificarContacto extends JDialog implements ActionListener {
             String ciudad = jcbCiudad.getSelectedItem().toString();
             String genero = jcbGenero.getSelectedItem().toString();
             String estadoCivil = jcbEstadoCivil.getSelectedItem().toString();
-            String telefono = jtfTelefonoContacto.getText();
-            String direccion = jtfDireccionContacto.getText();
-            String email = jtfCorreoElecContacto.getText();
-            String Observacion = jtfObservacion.getText();
             prov_contacto.setApellido(apellido);
             prov_contacto.setCedula(cedula);
             prov_contacto.setCiudad(ciudad);
@@ -350,7 +419,7 @@ public class ModificarContacto extends JDialog implements ActionListener {
             prov_contacto.setEstado_civil(estadoCivil);
             prov_contacto.setFecha_nacimiento(fechaNacimiento);
             prov_contacto.setNombre(nombre);
-            prov_contacto.setObservacion(Observacion);
+            prov_contacto.setObservacion(observacion);
             prov_contacto.setPais(nacionalidad);
             prov_contacto.setSexo(genero);
             prov_contacto.setTelefono(telefono);

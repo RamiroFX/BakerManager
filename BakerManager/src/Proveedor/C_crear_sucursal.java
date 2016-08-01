@@ -82,6 +82,8 @@ public class C_crear_sucursal implements ActionListener {
                     "Parametros incorrectos",
                     javax.swing.JOptionPane.OK_OPTION);
             return;
+        } else if (telefono.isEmpty()) {
+            telefono = null;
         }
 //        int crearClienteCantFila = this.crearCliente.dtmSucursal.getRowCount();
 //        for (int i = 0; i < crearClienteCantFila; i++) {

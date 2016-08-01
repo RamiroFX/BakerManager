@@ -2,7 +2,6 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package Entities;
 
 import java.util.Date;
@@ -12,6 +11,7 @@ import java.util.Date;
  * @author Ramiro Ferreira
  */
 public class M_persona {
+
     private String nombre;
     private String apellido;
     private String sexo;
@@ -19,8 +19,7 @@ public class M_persona {
     private String ciudad;
     private Date fechaNacimiento;
     private String estadoCivil;
-    private Integer id_persona,id_pais, id_ciudad,id_estado_civil,id_sexo;
-    private Number cedula;
+    private Integer id_persona, id_pais, id_ciudad, id_estado_civil, id_sexo, cedula;
 
     public M_persona() {
         super();
@@ -153,7 +152,7 @@ public class M_persona {
     /**
      * @return the ci
      */
-    public Number getCedula() {
+    public Integer getCedula() {
         return cedula;
     }
 

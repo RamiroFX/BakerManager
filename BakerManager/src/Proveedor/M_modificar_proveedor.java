@@ -59,17 +59,18 @@ public class M_modificar_proveedor {
 
     }
 
-    public boolean modificarProveedor(M_proveedor proveedor) {
-        M_proveedor prov = DB_Proveedor.obtenerDatosProveedor(proveedor.getEntidad());
+    public boolean modificarProveedor(M_proveedor proveedorModificado) {
+        M_proveedor prov = DB_Proveedor.obtenerDatosProveedor(proveedorModificado.getEntidad());
         if (prov.getEntidad().equals(this.proveedor.getEntidad())) {
             if (!prov.getRuc().equals(this.proveedor.getRuc())) {
-                boolean b = DB_Proveedor.existeRuc(proveedor.getRuc());
+                boolean b = DB_Proveedor.existeRuc(proveedorModificado.getRuc());
                 if (b) {
                     JOptionPane.showMessageDialog(null, "El R.U.C. seleccionado se encuentra en uso", "Atención", JOptionPane.ERROR_MESSAGE);
                     return false;
                 }
             } else {
-                DB_Proveedor.modificarProveedor(proveedor);
+                proveedorModificado.setId(this.proveedor.getId());
+                DB_Proveedor.modificarProveedor(proveedorModificado);
                 return true;
             }
         } else {
@@ -83,8 +84,13 @@ public class M_modificar_proveedor {
         return DB_Proveedor.obtenerProveedorContacto(this.proveedor.getId());
     }
 
-    void insertarTelefono(String tipoTelefono, String nroTelefono, String observacion) {
-        DB_Proveedor.insertarTelefono(proveedor.getId(), tipoTelefono, nroTelefono, observacion);
+    public void insertarTelefono(String tipoTelefono, String nroTelefono, String observacion) {
+        boolean b = DB_manager.existeTelefono(nroTelefono);
+        if (b) {
+            JOptionPane.showMessageDialog(null, "El telefono se encuentra en uso.", "Atención", JOptionPane.ERROR_MESSAGE);
+        } else {
+            DB_Proveedor.insertarTelefono(proveedor.getId(), tipoTelefono, nroTelefono, observacion);
+        }
     }
 
     public ResultSetTableModel obtenerProveedorTelefonoCompleto() {
@@ -95,27 +101,20 @@ public class M_modificar_proveedor {
         boolean b = DB_manager.existeTelefono(nroTelefono);
         if (b) {
             ArrayList<M_telefono> telefonos = DB_Proveedor.obtenerTelefonos(proveedor.getId());
-            for (int i = 0; i < telefonos.size(); i++) {
-                if (telefonos.get(i).getNumero().equals(nroTelefono)) {
-                    JOptionPane.showMessageDialog(null, "El telefono ya se encuentra en uso", "Atención", JOptionPane.ERROR_MESSAGE);
+            for (M_telefono telefono : telefonos) {
+                if (telefono.getNumero().equals(nroTelefono)) {
+                    JOptionPane.showMessageDialog(null, "El telefono no ha cambiado.", "Atención", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
             }
-            int option = JOptionPane.showConfirmDialog(null, "¿Desea confirmar esta operación?", "Atención", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-            if (option == JOptionPane.YES_OPTION) {
+            JOptionPane.showMessageDialog(null, "El telefono se encuentra en uso.", "Atención", JOptionPane.ERROR_MESSAGE);
+        } else {
+            int opt = JOptionPane.showConfirmDialog(null, "¿Desea confirmar esta operación?", "Atención", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+            if (opt == JOptionPane.YES_OPTION) {
                 try {
                     DB_Proveedor.modificarTelefono(id_telefono, tipoTelefono, nroTelefono, observacion);
                 } catch (Exception e) {
                     e.printStackTrace();
-                }
-            } else {
-                int opt = JOptionPane.showConfirmDialog(null, "¿Desea confirmar esta operación?", "Atención", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-                if (opt == JOptionPane.YES_OPTION) {
-                    try {
-                        DB_Proveedor.modificarTelefono(id_telefono, tipoTelefono, nroTelefono, observacion);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
                 }
             }
         }
@@ -146,7 +145,7 @@ public class M_modificar_proveedor {
     }
 
     public void modificarProveedorContacto(M_contacto contacto) {
-        DB_Proveedor.modificarProveedorContacto(proveedor.getId(), contacto);
+        DB_Proveedor.modificarProveedorContacto(contacto);
     }
 
     public M_contacto obtenerDatosContactoIdContacto(int idContacto) {

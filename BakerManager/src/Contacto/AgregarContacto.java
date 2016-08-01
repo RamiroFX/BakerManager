@@ -292,6 +292,8 @@ public class AgregarContacto extends JDialog implements ActionListener {
                     "Parametros incorrectos",
                     javax.swing.JOptionPane.OK_OPTION);
             return false;
+        } else if (telefono.isEmpty()) {
+            telefono = null;
         }
         String direccion = jtfDireccionContacto.getText().trim();
         if (direccion.length() > 120) {
@@ -301,6 +303,8 @@ public class AgregarContacto extends JDialog implements ActionListener {
                     "Parametros incorrectos",
                     javax.swing.JOptionPane.OK_OPTION);
             return false;
+        } else if (direccion.isEmpty()) {
+            direccion = null;
         }
         String email = jtfCorreoElecContacto.getText().trim();
         if (email.length() > 30) {
@@ -310,17 +314,20 @@ public class AgregarContacto extends JDialog implements ActionListener {
                     "Parametros incorrectos",
                     javax.swing.JOptionPane.OK_OPTION);
             return false;
+        } else if (email.isEmpty()) {
+            email = null;
         }
-        String Observacion = jtfObservacion.getText().trim();
-        if (Observacion.length() > 120) {
+        String observacion = jtfObservacion.getText().trim();
+        if (observacion.length() > 120) {
             this.jtfObservacion.setBackground(Color.red);
             javax.swing.JOptionPane.showMessageDialog(this,
                     "El campo Observación supera 120 caracteres",
                     "Parametros incorrectos",
                     javax.swing.JOptionPane.OK_OPTION);
             return false;
+        } else if (observacion.isEmpty()) {
+            observacion = null;
         }
-
         if (accion == CREAR_CLIENTE_CONTACTO || accion == MODIFICAR_CLIENTE_CONTACTO) {
             clie_contacto = new M_cliente_contacto();
             String nacionalidad = jcbNacionalidad.getSelectedItem().toString();
@@ -336,7 +343,7 @@ public class AgregarContacto extends JDialog implements ActionListener {
             clie_contacto.setEstado_civil(estadoCivil);
             clie_contacto.setFecha_nacimiento(fechaNacimiento);
             clie_contacto.setNombre(nombre);
-            clie_contacto.setObservacion(Observacion);
+            clie_contacto.setObservacion(observacion);
             clie_contacto.setPais(nacionalidad);
             clie_contacto.setSexo(genero);
             clie_contacto.setTelefono(telefono);
@@ -358,7 +365,7 @@ public class AgregarContacto extends JDialog implements ActionListener {
             prov_contacto.setEstado_civil(estadoCivil);
             prov_contacto.setFecha_nacimiento(fechaNacimiento);
             prov_contacto.setNombre(nombre);
-            prov_contacto.setObservacion(Observacion);
+            prov_contacto.setObservacion(observacion);
             prov_contacto.setPais(nacionalidad);
             prov_contacto.setSexo(genero);
             prov_contacto.setTelefono(telefono);
