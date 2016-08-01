@@ -5,9 +5,11 @@
 package Proveedor;
 
 import Cliente.C_crear_cliente;
+import DB_manager.DB_manager;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Vector;
 import javax.swing.JOptionPane;
 
 /**
@@ -29,13 +31,15 @@ public class C_crear_telefono implements ActionListener {
     public C_crear_telefono(C_crear_proveedor crearTelefono) {
         this.crearProveedor = crearTelefono;
         this.vista = new V_crear_telefono(crearTelefono.vista);
+        inicializarVista();
         agregarListeners();
         telefono = CREAR_PROVEEDOR;
     }
 
-    C_crear_telefono(C_modificar_proveedor modiciarProveedor) {
+    public C_crear_telefono(C_modificar_proveedor modiciarProveedor) {
         this.modiciarProveedor = modiciarProveedor;
         this.vista = new V_crear_telefono(modiciarProveedor.vista);
+        inicializarVista();
         agregarListeners();
         telefono = MODIFICAR_PROVEEDOR;
     }
@@ -43,8 +47,16 @@ public class C_crear_telefono implements ActionListener {
     public C_crear_telefono(C_crear_cliente crearCliente) {
         this.crearCliente = crearCliente;
         this.vista = new V_crear_telefono(crearCliente.vista);
+        inicializarVista();
         agregarListeners();
         telefono = CREAR_CLIENTE;
+    }
+
+    private void inicializarVista() {
+        Vector telefonoCategoria = DB_manager.obtenerTelefonoCategoria();
+        for (int i = 0; i < telefonoCategoria.size(); i++) {
+            this.vista.jcbCategoria.addItem(telefonoCategoria.get(i));
+        }
     }
 
     public void mostrarVista() {
@@ -58,25 +70,32 @@ public class C_crear_telefono implements ActionListener {
     }
 
     private void controlarDatos() {
-        if (this.vista.jtfTipoTelefono.getText().isEmpty()) {
-            this.vista.jtfTipoTelefono.setBackground(Color.red);
-            javax.swing.JOptionPane.showMessageDialog(this.vista,
-                    "El campo Tipo telefono esta vacio",
-                    "Parametros incorrectos",
-                    javax.swing.JOptionPane.OK_OPTION);
-            return;
-        }
-        if (this.vista.jtfTelefono.getText().isEmpty()) {
+        String nroTelefono = this.vista.jtfTelefono.getText().trim();
+        if (nroTelefono.isEmpty()) {
             this.vista.jtfTelefono.setBackground(Color.red);
             javax.swing.JOptionPane.showMessageDialog(this.vista,
                     "El campo telefono esta vacio",
                     "Parametros incorrectos",
                     javax.swing.JOptionPane.OK_OPTION);
             return;
+        } else if (nroTelefono.length() > 30) {
+            this.vista.jtfTelefono.setBackground(Color.red);
+            javax.swing.JOptionPane.showMessageDialog(this.vista,
+                    "El máximo permitido de caracteres es 30 para telefono.",
+                    "Parametros incorrectos",
+                    javax.swing.JOptionPane.OK_OPTION);
+            return;
         }
-        String tipoTelefono = this.vista.jtfTipoTelefono.getText();
-        String nroTelefono = this.vista.jtfTelefono.getText();
-        String observacion = this.vista.jtfObservacion.getText();
+        String observacion = this.vista.jtfObservacion.getText().trim();
+        if (nroTelefono.length() > 120) {
+            this.vista.jtfObservacion.setBackground(Color.red);
+            javax.swing.JOptionPane.showMessageDialog(this.vista,
+                    "El máximo permitido de caracteres es 120 para observación-telefono.",
+                    "Parametros incorrectos",
+                    javax.swing.JOptionPane.OK_OPTION);
+            return;
+        }
+        String tipoTelefono = this.vista.jcbCategoria.getSelectedItem().toString();
         switch (telefono) {
             case (CREAR_PROVEEDOR): {
                 this.crearProveedor.recibirTelefono(tipoTelefono, nroTelefono, observacion);

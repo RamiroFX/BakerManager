@@ -39,7 +39,7 @@ public class DB_Proveedor {
                 + "PROV.DIRECCION, "
                 + "PROV.PAG_WEB, "
                 + "PROV.EMAIL, "
-                + "PROV.NOTA "
+                + "PROV.OBSERVACION "
                 + "FROM PROVEEDOR PROV "
                 + "WHERE PROV.id_proveedor = " + idProveedor;
         try {
@@ -47,16 +47,16 @@ public class DB_Proveedor {
             rs = st.executeQuery(query);
             while (rs.next()) {
                 proveedor = new M_proveedor();
-                proveedor.setDescripcion(rs.getString("PROV.DESCRIPCION"));
-                proveedor.setDireccion(rs.getString("PROV.DIRECCION"));
-                proveedor.setEmail(rs.getString("PROV.EMAIL"));
-                proveedor.setPagWeb(rs.getString("PROV.PAG_WEB"));
-                proveedor.setEntidad(rs.getString("PROV.ENTIDAD"));
-                proveedor.setId(rs.getInt("PROV.ID_PROVEEDOR"));
-                proveedor.setNombre(rs.getString("PROV.NOMBRE"));
-                proveedor.setRuc(rs.getString("PROV.RUC"));
-                proveedor.setRuc_id(rs.getString("PROV.RUC_IDENTIFICADOR"));
-                proveedor.setObservacion(rs.getString("PROV.NOTA"));
+                proveedor.setDescripcion(rs.getString("DESCRIPCION"));
+                proveedor.setDireccion(rs.getString("DIRECCION"));
+                proveedor.setEmail(rs.getString("EMAIL"));
+                proveedor.setPagWeb(rs.getString("PAG_WEB"));
+                proveedor.setEntidad(rs.getString("ENTIDAD"));
+                proveedor.setId(rs.getInt("ID_PROVEEDOR"));
+                proveedor.setNombre(rs.getString("NOMBRE"));
+                proveedor.setRuc(rs.getString("RUC"));
+                proveedor.setRuc_id(rs.getString("RUC_IDENTIFICADOR"));
+                proveedor.setObservacion(rs.getString("OBSERVACION"));
             }
         } catch (SQLException ex) {
             Logger lgr = Logger.getLogger(DB_Proveedor.class.getName());
@@ -100,21 +100,22 @@ public class DB_Proveedor {
                 + "PROV.DIRECCION, "
                 + "PROV.PAG_WEB, "
                 + "PROV.EMAIL "
-                + "FROM PROVEEDOR PROV"
+                + "FROM PROVEEDOR PROV "
                 + "WHERE PROV.ENTIDAD LIKE '" + entidad + "'";
         try {
             st = DB_manager.getConection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             rs = st.executeQuery(query);
             while (rs.next()) {
                 proveedor = new M_proveedor();
-                proveedor.setDescripcion(rs.getString("PROV.DESCRIPCION"));
-                proveedor.setDireccion(rs.getString("PROV.DIRECCION"));
-                proveedor.setEmail(rs.getString("PROV.EMAIL"));
-                proveedor.setEntidad(rs.getString("PROV.ENTIDAD"));
-                proveedor.setId(rs.getInt("PROV.ID_PROVEEDOR"));
-                proveedor.setNombre(rs.getString("PROV.NOMBRE"));
-                proveedor.setRuc(rs.getString("PROV.RUC"));
-                proveedor.setRuc_id(rs.getString("PROV.RUC_IDENTIFICADOR"));
+                proveedor.setPagWeb(rs.getString("PAG_WEB"));
+                proveedor.setDescripcion(rs.getString("DESCRIPCION"));
+                proveedor.setDireccion(rs.getString("DIRECCION"));
+                proveedor.setEmail(rs.getString("EMAIL"));
+                proveedor.setEntidad(rs.getString("ENTIDAD"));
+                proveedor.setId(rs.getInt("ID_PROVEEDOR"));
+                proveedor.setNombre(rs.getString("NOMBRE"));
+                proveedor.setRuc(rs.getString("RUC"));
+                proveedor.setRuc_id(rs.getString("RUC_IDENTIFICADOR"));
             }
         } catch (SQLException ex) {
             Logger lgr = Logger.getLogger(DB_Proveedor.class.getName());
@@ -160,7 +161,7 @@ public class DB_Proveedor {
                 + "PERS.ID_ESTADO_CIVIL, "
                 + "(SELECT ESCI.DESCRIPCION FROM ESTADO_CIVIL ESCI WHERE ESCI.ID_ESTADO_CIVIL =PERS.ID_ESTADO_CIVIL)\"ESTADO_CIVIL\","
                 + "PERS.ID_CIUDAD, "
-                + "(SELECT CIUD.DESCRIPCION FROM CIUDAD CIU DWHERE CIUD.ID_CIUDAD =PERS.ID_CIUDAD)\"CIUDAD\","
+                + "(SELECT CIUD.DESCRIPCION FROM CIUDAD CIUD WHERE CIUD.ID_CIUDAD =PERS.ID_CIUDAD)\"CIUDAD\","
                 + "PRCO.ID_PERSONA, "
                 + "PRCO.EMAIL, "
                 + "PRCO.DIRECCION, "
@@ -177,25 +178,25 @@ public class DB_Proveedor {
             rs = st.executeQuery(query);
             while (rs.next()) {
                 contacto = new M_contacto();
-                contacto.setApellido(rs.getString("PERS.APELLIDO"));
-                contacto.setCedula(rs.getInt("PERS.CI"));
-                contacto.setDireccion(rs.getString("PRCO.DIRECCION"));
-                contacto.setEmail(rs.getString("PRCO.EMAIL"));
-                contacto.setFecha_nacimiento(rs.getDate("PERS.FECHA_NACIMIENTO"));
-                contacto.setId_ciudad(rs.getInt("PERS.ID_CIUDAD"));
+                contacto.setApellido(rs.getString("APELLIDO"));
+                contacto.setCedula(rs.getInt("CI"));
+                contacto.setDireccion(rs.getString("DIRECCION"));
+                contacto.setEmail(rs.getString("EMAIL"));
+                contacto.setFecha_nacimiento(rs.getDate("FECHA_NACIMIENTO"));
+                contacto.setId_ciudad(rs.getInt("ID_CIUDAD"));
                 contacto.setCiudad(rs.getString("CIUDAD"));
-                contacto.setId_contacto(rs.getInt("PRCO.ID_PROVEEDOR_CONTACTO"));
-                contacto.setId_estado_civil(rs.getInt("PERS.ID_ESTADO_CIVIL"));
+                contacto.setId_contacto(rs.getInt("ID_PROVEEDOR_CONTACTO"));
+                contacto.setId_estado_civil(rs.getInt("ID_ESTADO_CIVIL"));
                 contacto.setEstado_civil(rs.getString("ESTADO_CIVIL"));
-                contacto.setId_pais(rs.getInt("PERS.ID_PAIS"));
+                contacto.setId_pais(rs.getInt("ID_PAIS"));
                 contacto.setPais(rs.getString("PAIS"));
-                contacto.setId_persona(rs.getInt("PRCO.ID_PERSONA"));
-                contacto.setId_proveedor(rs.getInt("PRCO.ID_PROVEEDOR"));
-                contacto.setId_sexo(rs.getInt("PERS.ID_SEXO"));
+                contacto.setId_persona(rs.getInt("ID_PERSONA"));
+                contacto.setId_proveedor(rs.getInt("ID_PROVEEDOR"));
+                contacto.setId_sexo(rs.getInt("ID_SEXO"));
                 contacto.setSexo(rs.getString("SEXO"));
-                contacto.setNombre(rs.getString("PERS.NOMBRE"));
-                contacto.setObservacion(rs.getString("PRCO.OBSERVACION"));
-                contacto.setTelefono(rs.getString("PRCO.TELEFONO"));
+                contacto.setNombre(rs.getString("NOMBRE"));
+                contacto.setObservacion(rs.getString("OBSERVACION"));
+                contacto.setTelefono(rs.getString("TELEFONO"));
             }
         } catch (SQLException ex) {
             Logger lgr = Logger.getLogger(DB_Proveedor.class.getName());
@@ -356,11 +357,12 @@ public class DB_Proveedor {
     public static ResultSetTableModel obtenerProveedorTelefono(int idProveedor) {
         ResultSetTableModel rstm = null;
         String Query = "SELECT TELE.NUMERO \"Número\", "
-                + "TELE.CATEGORIA \"Categoría\", "
+                + "TECA.DESCRIPCION \"Categoría\", "
                 + "TELE.OBSERVACION \"Observación\" "
-                + "FROM TELEFONO TELE, PROVEEDOR PROV, PROVEEDOR_TELEFONO PRTE"
+                + "FROM TELEFONO TELE, PROVEEDOR PROV, PROVEEDOR_TELEFONO PRTE, TELEFONO_CATEGORIA TECA "
                 + "WHERE TELE.ID_TELEFONO = PRTE.ID_TELEFONO "
                 + "AND PROV.ID_PROVEEDOR = PRTE.ID_PROVEEDOR "
+                + "AND TELE.ID_CATEGORIA = TECA.ID_TELEFONO_CATEGORIA "
                 + "AND PROV.ID_PROVEEDOR = " + idProveedor;
         try {
             st = DB_manager.getConection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
@@ -402,11 +404,12 @@ public class DB_Proveedor {
         ResultSetTableModel rstm = null;
         String Query = "SELECT TELE.ID_TELEFONO \"ID\", "
                 + "TELE.NUMERO \"Número\", "
-                + "TELE.CATEGORIA \"Categoría\", "
+                + "TECA.DESCRIPCION \"Categoría\", "
                 + "TELE.OBSERVACION \"Observación\" "
-                + "FROM TELEFONO TELE, PROVEEDOR PROV, PROVEEDOR_TELEFONO PRTE"
+                + "FROM TELEFONO TELE, PROVEEDOR PROV, PROVEEDOR_TELEFONO PRTE, TELEFONO_CATEGORIA TECA "
                 + "WHERE TELE.ID_TELEFONO = PRTE.ID_TELEFONO "
                 + "AND PROV.ID_PROVEEDOR = PRTE.ID_PROVEEDOR "
+                + "AND TELE.ID_CATEGORIA = TECA.ID_TELEFONO_CATEGORIA "
                 + "AND PROV.ID_PROVEEDOR = " + idProveedor;
         try {
             st = DB_manager.getConection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
@@ -535,12 +538,12 @@ public class DB_Proveedor {
         ArrayList<Long> id_telefono = new ArrayList();
         ArrayList<Long> id_persona = new ArrayList();
         long id_proveedor = -1L;
-        String INSERT_PROVEEDOR = "INSERT INTO PROVEEDOR(PROV.NOMBRE, PROV.ENTIDAD, PROV.RUC, PROV.RUC_IDENTIFICADOR, PROV.DESCRIPCION, PROV.DIRECCION,PROV.PAG_WEB, PROV.EMAIL, PROV.NOTA)VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        String INSERT_TELEFONO = "INSERT INTO TELEFONO(TELE.NUMERO, TELE.CATEGORIA, TELE.OBSERVACION) VALUES (?, ?, ?)";
-        String INSERT_PROVEEDOR_TELEFONO = "INSERT INTO PROVEEDOR_TELEFONO(PRTE.ID_PROVEEDOR, PRTE.ID_TELEFONO) VALUES (?, ?)";
-        String INSERT_PERSONA = "INSERT INTO PERSONA(PERS.CI, PERS.NOMBRE, PERS.APELLIDO, PERS.ID_SEXO, PERS.FECHA_NACIMIENTO, PERS.ID_ESTADO_CIVIL, PERS.ID_PAIS, PERS.ID_CIUDAD)VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-        String INSERT_PROVEEDOR_CONTACTO = "INSERT INTO PROVEEDOR_CONTACTO(PRCO.ID_PERSONA, PRCO.ID_PROVEEDOR, PRCO.EMAIL, PRCO.DIRECCION, PRCO.TELEFONO, PRCO.OBSERVACION)VALUES (?, ?, ?, ?, ?, ?)";
-        String INSERT_SUCURSAL = "INSERT INTO PROVEEDOR_SUCURSAL(PRSU.ID_PROVEEDOR, PRSU.DIRECCION, PRSU.TELEFONO)VALUES (?, ?, ?)";
+        String INSERT_PROVEEDOR = "INSERT INTO PROVEEDOR(NOMBRE, ENTIDAD, RUC, RUC_IDENTIFICADOR, DESCRIPCION, DIRECCION, PAG_WEB, EMAIL, OBSERVACION)VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String INSERT_TELEFONO = "INSERT INTO TELEFONO(NUMERO, ID_CATEGORIA, OBSERVACION) VALUES (?, ?, ?)";
+        String INSERT_PROVEEDOR_TELEFONO = "INSERT INTO PROVEEDOR_TELEFONO(ID_PROVEEDOR, ID_TELEFONO) VALUES (?, ?)";
+        String INSERT_PERSONA = "INSERT INTO PERSONA(CI, NOMBRE, APELLIDO, ID_SEXO, FECHA_NACIMIENTO, ID_ESTADO_CIVIL, ID_PAIS, ID_CIUDAD)VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        String INSERT_PROVEEDOR_CONTACTO = "INSERT INTO PROVEEDOR_CONTACTO(ID_PERSONA, ID_PROVEEDOR, EMAIL, DIRECCION, TELEFONO, OBSERVACION)VALUES (?, ?, ?, ?, ?, ?)";
+        String INSERT_SUCURSAL = "INSERT INTO PROVEEDOR_SUCURSAL(ID_PROVEEDOR, DIRECCION, TELEFONO)VALUES (?, ?, ?)";
         try {
             DB_manager.getConection().setAutoCommit(false);
             pst = DB_manager.getConection().prepareStatement(INSERT_PROVEEDOR, Statement.RETURN_GENERATED_KEYS);
@@ -634,17 +637,17 @@ public class DB_Proveedor {
             pst.close();
             if (telefono.length > 0) {
                 for (int i = 0; i < telefono.length; i++) {
+                    String telefonoCategoria = "SELECT ID_TELEFONO_CATEGORIA FROM TELEFONO_CATEGORIA WHERE DESCRIPCION LIKE '" + telefono[i].getCategoria() + "'";
+                    st = DB_manager.getConection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+                    // se ejecuta el query y se obtienen los resultados en un ResultSet
+                    rs = st.executeQuery(telefonoCategoria);
+                    int id_categoria = 0;
+                    while (rs.next()) {
+                        id_categoria = rs.getInt("ID_TELEFONO_CATEGORIA");
+                    }
                     pst = DB_manager.getConection().prepareStatement(INSERT_TELEFONO, PreparedStatement.RETURN_GENERATED_KEYS);
                     pst.setString(1, telefono[i].getNumero());//not null
-                    try {
-                        if (telefono[i].getCategoria() == null) {
-                            pst.setNull(2, Types.VARCHAR);
-                        } else {
-                            pst.setString(2, telefono[i].getCategoria());
-                        }
-                    } catch (Exception e) {
-                        pst.setNull(2, Types.VARCHAR);
-                    }
+                    pst.setInt(2, id_categoria);//not null
                     try {
                         if (telefono[i].getObservacion() == null) {
                             pst.setNull(3, Types.VARCHAR);
@@ -1920,5 +1923,18 @@ public class DB_Proveedor {
          }
          }*/
 
+    }
+
+    public static boolean existeRuc(String ruc) {
+        String query = "SELECT RUC FROM PROVEEDOR WHERE RUC = ?;";
+        try {
+            pst = DB_manager.getConection().prepareStatement(query);
+            pst.setString(1, ruc);
+            rs = pst.executeQuery();
+            return rs.isBeforeFirst();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return false;
     }
 }

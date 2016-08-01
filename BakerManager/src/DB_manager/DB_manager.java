@@ -271,6 +271,23 @@ public class DB_manager {
         return pais;
     }
 
+    public static Vector obtenerTelefonoCategoria() {
+        Vector telefonCategoria = null;
+        String q = "SELECT descripcion  "
+                + "FROM TELEFONO_CATEGORIA ";
+        try {
+            st = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            rs = st.executeQuery(q);
+            telefonCategoria = new Vector();
+            while (rs.next()) {
+                telefonCategoria.add(rs.getString("descripcion"));
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return telefonCategoria;
+    }
+
     public static Integer obtenerIdPais(String nombrePais) {
         Integer pais = null;
         String q = "SELECT id_pais  "
@@ -625,7 +642,19 @@ public class DB_manager {
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
-        System.out.println("There is NO data");
+        return false;
+    }
+
+    public static boolean existCi(int cedula) {
+        String query = "SELECT CI FROM PERSONA WHERE CI = ?;";
+        try {
+            pst = getConection().prepareStatement(query);
+            pst.setInt(1, cedula);
+            rs = pst.executeQuery();
+            return rs.isBeforeFirst();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
         return false;
     }
 }

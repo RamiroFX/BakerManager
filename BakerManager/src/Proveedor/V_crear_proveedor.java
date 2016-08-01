@@ -4,15 +4,18 @@
  */
 package Proveedor;
 
+import javax.swing.JLabel;
+import net.miginfocom.swing.MigLayout;
+
 /**
  *
  * @author Usuario
  */
 public class V_crear_proveedor extends javax.swing.JDialog {
 
-    public javax.swing.JPanel jpImagen, jpNorth, jpSouth, jpDatosGenerales,
+    public javax.swing.JPanel jpNorth, jpSouth, jpDatosGenerales,
             jpDatosSucursal;
-    public javax.swing.JButton jbAceptar, jbCambiarImagen, jbCancelar,
+    public javax.swing.JButton jbAceptar, jbCancelar,
             jbAgregarTelefono, jbQuitarTelefono, jbModTelefono, jbAgregarSucursal, jbQuitarSucursal, jbModSucursal;
     public javax.swing.JTextField jtfRazonSocial, jtfNombreFantasia, jtfRUC, jtfRUC_ID,
             jtfDescripcion, jtfDireccion, jtfemail, jtfPagWeb, jtfTelefono;
@@ -25,14 +28,12 @@ public class V_crear_proveedor extends javax.swing.JDialog {
     public javax.swing.JScrollPane jspContacto;
     //FIN VARIABLES DE CONTACTO
     public javax.swing.JTabbedPane jtpCenter;
-    public javax.swing.JTextArea jtaAyuda, jtaNota;
-    public javax.swing.JScrollPane jspAyuda;
-    public javax.swing.JLabel jlImagen;
+    public javax.swing.JTextArea jtaNota;
     public javax.swing.JTable jtTelefono, jtSucursal;
     public javax.swing.JScrollPane jspTelefono, jspNota, jspSucursal;
 
-    public V_crear_proveedor(javax.swing.JFrame v_jfMain, boolean modal, boolean isCreate) {
-        super(v_jfMain, modal);
+    public V_crear_proveedor(javax.swing.JFrame v_jfMain, boolean isCreate) {
+        super(v_jfMain, true);
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         if (isCreate) {
             setTitle("Crear proveedor");
@@ -42,7 +43,7 @@ public class V_crear_proveedor extends javax.swing.JDialog {
             setName("jdModificarProveedor");
         }
         setAlwaysOnTop(false);
-        setPreferredSize(new java.awt.Dimension(800, 600));
+        setPreferredSize(new java.awt.Dimension(870, 400));
         setResizable(false);
         initComponents();
     }
@@ -64,26 +65,9 @@ public class V_crear_proveedor extends javax.swing.JDialog {
     }
 
     private void initPaneNorth() {
-        //Panel
-        jpImagen = new javax.swing.JPanel(new java.awt.BorderLayout());
-        jpImagen.setBorder(javax.swing.BorderFactory.createTitledBorder("Imagen"));
-        //Label & Button
-        jlImagen = new javax.swing.JLabel();
-        jlImagen.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jlImagen.setPreferredSize(new java.awt.Dimension(200, 200));
-        jbCambiarImagen = new javax.swing.JButton("Cambiar imagen");
-        //Adding components into panel
-        jpImagen.add(jlImagen, java.awt.BorderLayout.CENTER);
-        jpImagen.add(jbCambiarImagen, java.awt.BorderLayout.SOUTH);
-        jpNorth = new javax.swing.JPanel(new java.awt.GridLayout(1, 2));
-        javax.swing.JPanel panel2 = new javax.swing.JPanel(new java.awt.GridLayout(1, 2));
-        jtaAyuda = new javax.swing.JTextArea();
-        jtaAyuda.setEditable(false);
-        jtaAyuda.setEnabled(false);
-        jtaAyuda.setText("Los campos marcados con un asterisco(*) son obligatorios.");
-        jspAyuda = new javax.swing.JScrollPane(jtaAyuda);
-        jpNorth.add(jpImagen);
-        jpNorth.add(new javax.swing.JLabel("Los campos marcados con un asterisco(*) son obligatorios."));
+        jpNorth = new javax.swing.JPanel(new MigLayout("center"));
+        jpNorth.add(new JLabel("Los campos marcados con un asterisco(*) son obligatorios."), "wrap");
+        jpNorth.add(new JLabel("Los campos marcados con dos asteriscos(**) son únicos."));
     }
 
     private void initDatosGenerales() {
@@ -103,11 +87,11 @@ public class V_crear_proveedor extends javax.swing.JDialog {
         jtaNota = new javax.swing.JTextArea();
         jspNota = new javax.swing.JScrollPane(jtaNota);
 
-        jlRazonSocial = new javax.swing.JLabel("Razón social");
+        jlRazonSocial = new javax.swing.JLabel("Razón social(*)(**)");
         jlRazonSocial.setHorizontalAlignment(swingConstant);
         jlNombreFantasia = new javax.swing.JLabel("Nombre fantasía");
         jlNombreFantasia.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        jlRUC = new javax.swing.JLabel("R.U.C.");
+        jlRUC = new javax.swing.JLabel("R.U.C. (**)");
         jlRUC.setHorizontalAlignment(swingConstant);
         jlRUC_ID = new javax.swing.JLabel("División");
         jlRUC_ID.setHorizontalAlignment(swingConstant);

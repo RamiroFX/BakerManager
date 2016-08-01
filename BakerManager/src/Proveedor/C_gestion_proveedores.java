@@ -66,7 +66,7 @@ class C_gestion_proveedores extends MouseAdapter implements ActionListener, KeyL
     }
 
     private void inicializarVista() {
-        this.vista.jtProveedor.setModel(DB_Proveedor.consultarProveedor(" ", true, true, false));
+        this.vista.jtProveedor.setModel(DB_Proveedor.consultarProveedor("", true, true, false));
         Utilities.c_packColumn.packColumns(this.vista.jtProveedor, 2);
         this.vista.jbModificarProveedor.setEnabled(false);
     }
@@ -141,7 +141,7 @@ class C_gestion_proveedores extends MouseAdapter implements ActionListener, KeyL
 
     public void actionPerformed(ActionEvent ae) {
         if (ae.getSource() == this.vista.jbCrearProveedor) {
-            C_crear_proveedor crearProveedor = new C_crear_proveedor(this);
+            Crear_proveedor crearProveedor = new Crear_proveedor(this);
             crearProveedor.mostrarVista();
         }
         if (ae.getSource() == this.vista.jbModificarProveedor) {

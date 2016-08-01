@@ -4,7 +4,7 @@
  */
 package Proveedor;
 
-import MenuPrincipal.C_MenuPrincipal;
+import bakermanager.C_inicio;
 
 /**
  *
@@ -15,9 +15,9 @@ public class Gestion_proveedores {
     V_gestion_proveedores vista;
     C_gestion_proveedores controlador;
 
-    public Gestion_proveedores(C_MenuPrincipal c_menu_principal) {
+    public Gestion_proveedores(C_inicio c_inicio) {
         this.vista = new V_gestion_proveedores();
-        this.controlador = new C_gestion_proveedores(c_menu_principal.c_inicio);
+        this.controlador = new C_gestion_proveedores(c_inicio);
     }
 
     public void mostrarVista() {

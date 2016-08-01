@@ -23,7 +23,7 @@ public class V_crear_sucursal extends JDialog {
 
     public V_crear_sucursal(JDialog jdialog) {
         super(jdialog, "Agregar sucursal", DEFAULT_MODALITY_TYPE);
-        setPreferredSize(new java.awt.Dimension(400, 120));
+        setPreferredSize(new java.awt.Dimension(400, 130));
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setAlwaysOnTop(false);
         setName("jdCrearSucursal");

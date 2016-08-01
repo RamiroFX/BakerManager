@@ -58,18 +58,27 @@ public class C_crear_sucursal implements ActionListener {
     }
 
     private void controlarDatos() {
-        if (this.vista.jtfDireccion.getText().isEmpty()) {
+        String direccion = this.vista.jtfDireccion.getText().trim();
+        if (direccion.isEmpty()) {
             this.vista.jtfDireccion.setBackground(Color.red);
             javax.swing.JOptionPane.showMessageDialog(this.vista,
                     "El campo dirección esta vacio",
                     "Parametros incorrectos",
                     javax.swing.JOptionPane.OK_OPTION);
             return;
+        } else if (direccion.length() > 150) {
+            this.vista.jtfDireccion.setBackground(Color.red);
+            javax.swing.JOptionPane.showMessageDialog(this.vista,
+                    "El máximo permitido de caracteres es de 150 para dirección",
+                    "Parametros incorrectos",
+                    javax.swing.JOptionPane.OK_OPTION);
+            return;
         }
-        if (this.vista.jtfTelefono.getText().isEmpty()) {
+        String telefono = this.vista.jtfTelefono.getText().trim();
+        if (telefono.length() > 30) {
             this.vista.jtfTelefono.setBackground(Color.red);
             javax.swing.JOptionPane.showMessageDialog(this.vista,
-                    "El campo telefono esta vacio",
+                    "El máximo permitido de caracteres es de 30 para telefono",
                     "Parametros incorrectos",
                     javax.swing.JOptionPane.OK_OPTION);
             return;
@@ -84,7 +93,7 @@ public class C_crear_sucursal implements ActionListener {
                 int option = JOptionPane.showConfirmDialog(this.vista, "¿Desea confirmar esta operación?", "Atención", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
                 if (option == JOptionPane.YES_OPTION) {
                     try {
-                        this.crearCliente.recibirSucursal(this.vista.jtfDireccion.getText(), this.vista.jtfTelefono.getText());
+                        this.crearCliente.recibirSucursal(direccion, telefono);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -99,7 +108,7 @@ public class C_crear_sucursal implements ActionListener {
                 int option = JOptionPane.showConfirmDialog(this.vista, "¿Desea confirmar esta operación?", "Atención", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
                 if (option == JOptionPane.YES_OPTION) {
                     try {
-                        this.modificarProveedor.recibirSucursal(this.vista.jtfDireccion.getText(), this.vista.jtfTelefono.getText());
+                        this.modificarProveedor.recibirSucursal(direccion, telefono);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -107,7 +116,7 @@ public class C_crear_sucursal implements ActionListener {
             }
             break;
             case (CREAR_PROVEEDOR): {
-                this.crearProveedor.recibirSucursal(this.vista.jtfDireccion.getText(), this.vista.jtfTelefono.getText());
+                this.crearProveedor.recibirSucursal(direccion, telefono);
             }
             break;
             default: {

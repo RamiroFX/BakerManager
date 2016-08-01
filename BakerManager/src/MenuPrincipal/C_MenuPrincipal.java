@@ -6,6 +6,7 @@ package MenuPrincipal;
 
 import Entities.M_menu_item;
 import Producto.Gestion_Producto;
+import Proveedor.Gestion_proveedores;
 import Ventas.Gestion_Ventas;
 import bakermanager.C_inicio;
 import empleado.Gestion_empleado;
@@ -99,6 +100,9 @@ public class C_MenuPrincipal implements ActionListener {
         } else if (src.equals(this.vista.jbProductos)) {
             Gestion_Producto gestionProducto = new Gestion_Producto(c_inicio);
             gestionProducto.mostrarVista();
+        } else if (src.equals(this.vista.jbProveedores)) {
+            Gestion_proveedores gestionProveedor = new Gestion_proveedores(c_inicio);
+            gestionProveedor.mostrarVista();
         } else if (src.equals(this.vista.jbSalir)) {
             System.exit(0);
         }

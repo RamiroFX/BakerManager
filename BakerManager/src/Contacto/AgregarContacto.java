@@ -53,7 +53,7 @@ public class AgregarContacto extends JDialog implements ActionListener {
         super(crearCliente.vista, "Agregar contacto", true);
         this.crearCliente = crearCliente;
         accion = CREAR_CLIENTE_CONTACTO;
-        setSize(800, 300);
+        setSize(800, 330);
         setLocationRelativeTo(crearCliente.vista);
         inicializarVista();
         agregarListeners();
@@ -63,7 +63,7 @@ public class AgregarContacto extends JDialog implements ActionListener {
         super(modificarCliente.vista, "Agregar contacto", true);
         this.modificarCliente = modificarCliente;
         accion = MODIFICAR_CLIENTE_CONTACTO;
-        setSize(800, 300);
+        setSize(800, 330);
         setLocationRelativeTo(modificarCliente.vista);
         inicializarVista();
         agregarListeners();
@@ -73,7 +73,7 @@ public class AgregarContacto extends JDialog implements ActionListener {
         super(crearProveedor.vista, "Agregar contacto", true);
         this.crearProveedor = crearProveedor;
         accion = CREAR_PROVEEDOR_CONTACTO;
-        setSize(800, 300);
+        setSize(800, 330);
         setLocationRelativeTo(crearProveedor.vista);
         inicializarVista();
         agregarListeners();
@@ -83,7 +83,7 @@ public class AgregarContacto extends JDialog implements ActionListener {
         super(modificarProveedor.vista, "Agregar contacto", true);
         this.modificarProveedor = modificarProveedor;
         accion = MODIFICAR_PROVEEDOR_CONTACTO;
-        setSize(800, 300);
+        setSize(800, 330);
         setLocationRelativeTo(modificarProveedor.vista);
         inicializarVista();
         agregarListeners();
@@ -212,33 +212,43 @@ public class AgregarContacto extends JDialog implements ActionListener {
     }
 
     private boolean validarDatos() {
-        String nombre;
+        String nombre = this.jtfNombre.getText().trim();
         /*
          * VALIDAR Nombre
          */
-        if (this.jtfNombre.getText().isEmpty()) {
+        if (nombre.isEmpty()) {
             this.jtfNombre.setBackground(Color.red);
             javax.swing.JOptionPane.showMessageDialog(this,
                     "El campo Nombre esta vacío",
                     "Parametros incorrectos",
                     javax.swing.JOptionPane.OK_OPTION);
             return false;
-        } else {
-            nombre = jtfNombre.getText();
+        } else if (nombre.length() > 30) {
+            this.jtfNombre.setBackground(Color.red);
+            javax.swing.JOptionPane.showMessageDialog(this,
+                    "El campo Nombre supera 30 caracteres",
+                    "Parametros incorrectos",
+                    javax.swing.JOptionPane.OK_OPTION);
+            return false;
         }
-        String apellido;
+        String apellido = jtfApellido.getText().trim();
         /*
          * VALIDAR Apellido
          */
-        if (this.jtfApellido.getText().isEmpty()) {
+        if (apellido.isEmpty()) {
             this.jtfApellido.setBackground(Color.red);
             javax.swing.JOptionPane.showMessageDialog(this,
                     "El campo Apellido esta vacío",
                     "Parametros incorrectos",
                     javax.swing.JOptionPane.OK_OPTION);
             return false;
-        } else {
-            apellido = jtfApellido.getText();
+        } else if (apellido.length() > 30) {
+            this.jtfApellido.setBackground(Color.red);
+            javax.swing.JOptionPane.showMessageDialog(this,
+                    "El campo Nombre supera 30 caracteres",
+                    "Parametros incorrectos",
+                    javax.swing.JOptionPane.OK_OPTION);
+            return false;
         }
 
         Date fechaNacimiento = null;
@@ -257,6 +267,14 @@ public class AgregarContacto extends JDialog implements ActionListener {
         if (!jftCedulaIdentidad.getText().isEmpty()) {
             try {
                 cedula = Integer.valueOf(jftCedulaIdentidad.getText());
+                if (DB_manager.existCi(cedula)) {
+                    this.jftCedulaIdentidad.setBackground(Color.red);
+                    javax.swing.JOptionPane.showMessageDialog(this,
+                            "Cédula en uso",
+                            "Parametros incorrectos",
+                            javax.swing.JOptionPane.OK_OPTION);
+                    return false;
+                }
             } catch (Exception e) {
                 this.jftCedulaIdentidad.setBackground(Color.red);
                 javax.swing.JOptionPane.showMessageDialog(this,
@@ -266,16 +284,50 @@ public class AgregarContacto extends JDialog implements ActionListener {
                 return false;
             }
         }
+        String telefono = jtfTelefonoContacto.getText().trim();
+        if (telefono.length() > 30) {
+            this.jtfTelefonoContacto.setBackground(Color.red);
+            javax.swing.JOptionPane.showMessageDialog(this,
+                    "El campo telefono supera 30 caracteres",
+                    "Parametros incorrectos",
+                    javax.swing.JOptionPane.OK_OPTION);
+            return false;
+        }
+        String direccion = jtfDireccionContacto.getText().trim();
+        if (direccion.length() > 120) {
+            this.jtfDireccionContacto.setBackground(Color.red);
+            javax.swing.JOptionPane.showMessageDialog(this,
+                    "El campo dirección supera 120 caracteres",
+                    "Parametros incorrectos",
+                    javax.swing.JOptionPane.OK_OPTION);
+            return false;
+        }
+        String email = jtfCorreoElecContacto.getText().trim();
+        if (email.length() > 30) {
+            this.jtfCorreoElecContacto.setBackground(Color.red);
+            javax.swing.JOptionPane.showMessageDialog(this,
+                    "El campo email supera 30 caracteres",
+                    "Parametros incorrectos",
+                    javax.swing.JOptionPane.OK_OPTION);
+            return false;
+        }
+        String Observacion = jtfObservacion.getText().trim();
+        if (Observacion.length() > 120) {
+            this.jtfObservacion.setBackground(Color.red);
+            javax.swing.JOptionPane.showMessageDialog(this,
+                    "El campo Observación supera 120 caracteres",
+                    "Parametros incorrectos",
+                    javax.swing.JOptionPane.OK_OPTION);
+            return false;
+        }
+
         if (accion == CREAR_CLIENTE_CONTACTO || accion == MODIFICAR_CLIENTE_CONTACTO) {
             clie_contacto = new M_cliente_contacto();
             String nacionalidad = jcbNacionalidad.getSelectedItem().toString();
             String ciudad = jcbCiudad.getSelectedItem().toString();
             String genero = jcbGenero.getSelectedItem().toString();
             String estadoCivil = jcbEstadoCivil.getSelectedItem().toString();
-            String telefono = jtfTelefonoContacto.getText();
-            String direccion = jtfDireccionContacto.getText();
-            String email = jtfCorreoElecContacto.getText();
-            String Observacion = jtfObservacion.getText();
+
             clie_contacto.setApellido(apellido);
             clie_contacto.setCedula(cedula);
             clie_contacto.setCiudad(ciudad);
@@ -298,10 +350,6 @@ public class AgregarContacto extends JDialog implements ActionListener {
             String ciudad = jcbCiudad.getSelectedItem().toString();
             String genero = jcbGenero.getSelectedItem().toString();
             String estadoCivil = jcbEstadoCivil.getSelectedItem().toString();
-            String telefono = jtfTelefonoContacto.getText();
-            String direccion = jtfDireccionContacto.getText();
-            String email = jtfCorreoElecContacto.getText();
-            String Observacion = jtfObservacion.getText();
             prov_contacto.setApellido(apellido);
             prov_contacto.setCedula(cedula);
             prov_contacto.setCiudad(ciudad);

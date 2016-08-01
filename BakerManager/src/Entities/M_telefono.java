@@ -9,7 +9,7 @@ package Entities;
  * @author Usuario
  */
 public class M_telefono {
-    private Integer id_telefono;
+    private Integer id_telefono, idCategoria;
     private String numero;
     private String categoria;
     private String observacion;
@@ -68,5 +68,19 @@ public class M_telefono {
      */
     public void setObservacion(String observacion) {
         this.observacion = observacion;
+    }
+
+    /**
+     * @return the idCategoria
+     */
+    public Integer getIdCategoria() {
+        return idCategoria;
+    }
+
+    /**
+     * @param idCategoria the idCategoria to set
+     */
+    public void setIdCategoria(Integer idCategoria) {
+        this.idCategoria = idCategoria;
     }
 }

@@ -34,7 +34,7 @@ public class C_modificar_proveedor extends MouseAdapter implements ActionListene
 
     public C_modificar_proveedor(C_gestion_proveedores padre, int idProveedor) {
         this.padre = padre;
-        this.vista = new V_crear_proveedor(this.padre.c_inicio.vista, true, false);
+        this.vista = new V_crear_proveedor(this.padre.c_inicio.vista, false);
         inicializarVista(idProveedor);
         agregarListeners();
     }
