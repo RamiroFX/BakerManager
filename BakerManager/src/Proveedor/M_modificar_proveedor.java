@@ -60,24 +60,33 @@ public class M_modificar_proveedor {
     }
 
     public boolean modificarProveedor(M_proveedor proveedorModificado) {
-        M_proveedor prov = DB_Proveedor.obtenerDatosProveedor(proveedorModificado.getEntidad());
-        if (prov.getEntidad().equals(this.proveedor.getEntidad())) {
-            if (!prov.getRuc().equals(this.proveedor.getRuc())) {
-                boolean b = DB_Proveedor.existeRuc(proveedorModificado.getRuc());
-                if (b) {
-                    JOptionPane.showMessageDialog(null, "El R.U.C. seleccionado se encuentra en uso", "Atención", JOptionPane.ERROR_MESSAGE);
-                    return false;
-                }
-            } else {
-                proveedorModificado.setId(this.proveedor.getId());
-                DB_Proveedor.modificarProveedor(proveedorModificado);
-                return true;
-            }
-        } else {
-            JOptionPane.showMessageDialog(null, "Proveedor existente", "Atención", JOptionPane.ERROR_MESSAGE);
-            return false;
+        String entidadActual = this.proveedor.getEntidad();
+        String entidadNueva = proveedorModificado.getEntidad();
+        String rucActual = this.proveedor.getRuc();
+        String rucNuevo = proveedorModificado.getRuc();
+        if (null == this.proveedor.getRuc()) {
+            rucActual = "";
         }
-        return false;
+        if (null == proveedorModificado.getRuc()) {
+            rucNuevo = "";
+        }
+        if (!entidadActual.equalsIgnoreCase(entidadNueva)) {
+            M_proveedor prov = DB_Proveedor.obtenerDatosProveedor(entidadNueva);
+            if (prov != null) {
+                JOptionPane.showMessageDialog(null, "La razón social ya existe", "Atención", JOptionPane.ERROR_MESSAGE);
+                return false;
+            }
+        }
+        if (!rucActual.equalsIgnoreCase(rucNuevo)) {
+            boolean b = DB_Proveedor.existeRuc(rucNuevo);
+            if (b) {
+                JOptionPane.showMessageDialog(null, "El R.U.C. seleccionado se encuentra en uso", "Atención", JOptionPane.ERROR_MESSAGE);
+                return false;
+            }
+        }
+        proveedorModificado.setId(this.proveedor.getId());
+        DB_Proveedor.modificarProveedor(proveedorModificado);
+        return true;
     }
 
     public ResultSetTableModel obtenerProveedorContacto() {

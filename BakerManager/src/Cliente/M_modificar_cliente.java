@@ -90,56 +90,37 @@ class M_modificar_cliente {
     }
 
     public boolean actualizarCliente(M_cliente clienteModificado) {
-        M_cliente clie = DB_Cliente.obtenerDatosCliente(clienteModificado.getEntidad());
-        int idActual = this.cliente.getIdCliente();
-        int idNuevo = -1;
+        String entidadActual = this.cliente.getEntidad();
+        String entidadNueva = clienteModificado.getEntidad();
         String rucActual = this.cliente.getRuc();
         String rucNuevo = clienteModificado.getRuc();
-        if (clie != null) {
-            idNuevo = clie.getIdCliente();
+        if (null == this.cliente.getRuc()) {
+            rucActual = "";
         }
-        if (idActual == idNuevo) {
-            //Es el mismo cliente. La entidad(unico) es igual. Verificar R.U.C.
-            if (rucActual == null ? rucNuevo == null : rucActual.equals(rucNuevo)) {
-                int idCategoria = DB_Cliente.obtenerIdCategoria(clienteModificado.getCategoria());
-                int idTipo = DB_Cliente.obtenerIdTipo(clienteModificado.getTipo());
-                clienteModificado.setIdCliente(this.cliente.getIdCliente());
-                clienteModificado.setIdCategoria(idCategoria);
-                clienteModificado.setIdTipo(idTipo);
-                DB_Cliente.actualizarCliente(clienteModificado);
-                return true;
-            } else if (DB_Cliente.existeRuc(rucNuevo)) {
+        if (null == clienteModificado.getRuc()) {
+            rucNuevo = "";
+        }
+        if (!entidadActual.equalsIgnoreCase(entidadNueva)) {
+            M_cliente prov = DB_Cliente.obtenerDatosCliente(entidadNueva);
+            if (prov != null) {
+                JOptionPane.showMessageDialog(null, "La razón social ya existe", "Atención", JOptionPane.ERROR_MESSAGE);
+                return false;
+            }
+        }
+        if (!rucActual.equalsIgnoreCase(rucNuevo)) {
+            boolean b = DB_Cliente.existeRuc(rucNuevo);
+            if (b) {
                 JOptionPane.showMessageDialog(null, "El R.U.C. seleccionado se encuentra en uso", "Atención", JOptionPane.ERROR_MESSAGE);
                 return false;
-            } else {
-                int idCategoria = DB_Cliente.obtenerIdCategoria(clienteModificado.getCategoria());
-                int idTipo = DB_Cliente.obtenerIdTipo(clienteModificado.getTipo());
-                clienteModificado.setIdCliente(this.cliente.getIdCliente());
-                clienteModificado.setIdCategoria(idCategoria);
-                clienteModificado.setIdTipo(idTipo);
-                DB_Cliente.actualizarCliente(clienteModificado);
-                return true;
             }
-        } else if (rucActual == null ? rucNuevo == null : rucActual.equals(rucNuevo)) {
-            int idCategoria = DB_Cliente.obtenerIdCategoria(clienteModificado.getCategoria());
-            int idTipo = DB_Cliente.obtenerIdTipo(clienteModificado.getTipo());
-            clienteModificado.setIdCliente(this.cliente.getIdCliente());
-            clienteModificado.setIdCategoria(idCategoria);
-            clienteModificado.setIdTipo(idTipo);
-            DB_Cliente.actualizarCliente(clienteModificado);
-            return true;
-        } else if (DB_Cliente.existeRuc(clienteModificado.getRuc())) {
-            JOptionPane.showMessageDialog(null, "El R.U.C. seleccionado se encuentra en uso", "Atención", JOptionPane.ERROR_MESSAGE);
-            return false;
-        } else {
-            int idCategoria = DB_Cliente.obtenerIdCategoria(clienteModificado.getCategoria());
-            int idTipo = DB_Cliente.obtenerIdTipo(clienteModificado.getTipo());
-            clienteModificado.setIdCliente(this.cliente.getIdCliente());
-            clienteModificado.setIdCategoria(idCategoria);
-            clienteModificado.setIdTipo(idTipo);
-            DB_Cliente.actualizarCliente(clienteModificado);
-            return true;
         }
+        int idCategoria = DB_Cliente.obtenerIdCategoria(clienteModificado.getCategoria());
+        int idTipo = DB_Cliente.obtenerIdTipo(clienteModificado.getTipo());
+        clienteModificado.setIdCliente(this.cliente.getIdCliente());
+        clienteModificado.setIdCategoria(idCategoria);
+        clienteModificado.setIdTipo(idTipo);
+        DB_Cliente.actualizarCliente(clienteModificado);
+        return true;
     }
 
     public ResultSetTableModel consultarCliente(String string, boolean b, boolean b0, boolean b1) {

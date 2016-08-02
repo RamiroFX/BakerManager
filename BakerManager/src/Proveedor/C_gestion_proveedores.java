@@ -33,12 +33,8 @@ class C_gestion_proveedores extends MouseAdapter implements ActionListener, KeyL
     public C_inicio c_inicio;
     private M_proveedor m_proveedor;
     private M_contacto contacto;
-    private ImageIcon foto;
     int idProveedor;
     V_gestion_proveedores vista;
-    String imagePath;
-    ImageIcon image;
-    File fileImage;
 
     public C_gestion_proveedores(C_inicio c_inicio) {
         this.c_inicio = c_inicio;
@@ -104,25 +100,6 @@ class C_gestion_proveedores extends MouseAdapter implements ActionListener, KeyL
 
     }
 
-    public void displayQueryResults(final String q) {
-        /*
-         * Para permitir que los mensajes puedan ser desplegados, no se ejecuta
-         * el query directamente, sino que se lo coloca en una cola de eventos
-         * para que se ejecute luego de los eventos pendientes.
-         */
-        EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                /*
-                 * Se utiliza el objeto factory para obtener un TableModel
-                 * para los resultados del query.
-                 */
-                vista.jtProveedor.setModel(DB_Proveedor.consultarProveedor(q, true, true, false));
-                Utilities.c_packColumn.packColumns(vista.jtProveedor, 2);
-                // se borra el msg.
-            }
-        });
-    }
-
     private void displayQueryResults() {
         EventQueue.invokeLater(new Runnable() {
             @Override
@@ -132,6 +109,7 @@ class C_gestion_proveedores extends MouseAdapter implements ActionListener, KeyL
                 boolean nombre = vista.jckbRUC.isSelected();
                 boolean exclusivo = vista.jrbExclusivo.isSelected();
                 vista.jtProveedor.setModel(DB_Proveedor.consultarProveedor(proveedor.toLowerCase(), entidad, nombre, exclusivo));
+                Utilities.c_packColumn.packColumns(vista.jtProveedor, 2);
             }
         });
     }
@@ -169,23 +147,6 @@ class C_gestion_proveedores extends MouseAdapter implements ActionListener, KeyL
         g.drawImage(originalImage, 0, 0, scaledWidth, scaledHeight, null);
         g.dispose();
         return scaledBI;
-    }
-
-    public boolean isValidImage(File fileImage) {
-        this.fileImage = fileImage;
-        ImageIcon imagen = new ImageIcon(fileImage.getPath());
-        if (imagen.getIconHeight() > 200 && imagen.getIconWidth() > 200) {
-            try {
-                imagen.setImage(createResizedCopy(imagen.getImage(), 200, 200, false));
-                return true;
-            } catch (Exception e) {
-                this.fileImage = null;
-                return false;
-            }
-        } else {
-            return true;
-        }
-
     }
 
     private void establecerImagen(File fileImage, String name) {
@@ -230,11 +191,15 @@ class C_gestion_proveedores extends MouseAdapter implements ActionListener, KeyL
         setProveedor(DB_Proveedor.obtenerDatosProveedorID(idProveedor));
         this.vista.jtfEntidad.setText(getProveedor().getEntidad());
         this.vista.jtfNombre.setText(getProveedor().getNombre());
-        if (null == getProveedor().getRuc()) {
-            this.vista.jtfRUC.setText("");
-        } else {
-            this.vista.jtfRUC.setText(getProveedor().getRuc() + "-" + getProveedor().getRuc_id());
+        String ruc = "";
+        String rucId = "";
+        if (null != getProveedor().getRuc()) {
+            ruc = getProveedor().getRuc();
         }
+        if (null != getProveedor().getRuc_id()) {
+            rucId = getProveedor().getRuc_id();
+        }
+        this.vista.jtfRUC.setText(ruc + " - " + rucId);
         this.vista.jftDescripcion.setText(getProveedor().getDescripcion());
         this.vista.jtfDireccion.setText(getProveedor().getDireccion());
         this.vista.jtfEmail.setText(getProveedor().getEmail());
@@ -275,11 +240,15 @@ class C_gestion_proveedores extends MouseAdapter implements ActionListener, KeyL
             if ((fila > -1) && (columna > -1)) {
                 this.vista.jtfEntidad.setText(getProveedor().getEntidad());
                 this.vista.jtfNombre.setText(getProveedor().getNombre());
-                if (null == getProveedor().getRuc()) {
-                    this.vista.jtfRUC.setText("");
-                } else {
-                    this.vista.jtfRUC.setText(getProveedor().getRuc() + "-" + getProveedor().getRuc_id());
+                String ruc = "";
+                String rucId = "";
+                if (null != getProveedor().getRuc()) {
+                    ruc = getProveedor().getRuc();
                 }
+                if (null != getProveedor().getRuc_id()) {
+                    rucId = getProveedor().getRuc_id();
+                }
+                this.vista.jtfRUC.setText(ruc + " - " + rucId);
                 this.vista.jftDescripcion.setText(getProveedor().getDescripcion());
                 this.vista.jtfDireccion.setText(getProveedor().getDireccion());
                 this.vista.jtfEmail.setText(getProveedor().getEmail());
