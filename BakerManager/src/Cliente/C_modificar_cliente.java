@@ -79,6 +79,8 @@ public class C_modificar_cliente extends MouseAdapter implements ActionListener,
         this.vista.jtSucursal.addMouseListener(this);
         this.vista.jtTelefono.addMouseListener(this);
         this.vista.jtContacto.addMouseListener(this);
+        this.vista.jtfRazonSocial.addMouseListener(this);
+        this.vista.jtfRUC.addMouseListener(this);
     }
 
     private void completarCampos() {
@@ -200,7 +202,7 @@ public class C_modificar_cliente extends MouseAdapter implements ActionListener,
          60 caracteres maximo
          */
         String entidad;
-        if (this.vista.jtfRazonSocial.getText().isEmpty()) {
+        if (this.vista.jtfRazonSocial.getText().trim().isEmpty()) {
             this.vista.jtfRazonSocial.setBackground(Color.red);
             javax.swing.JOptionPane.showMessageDialog(this.vista,
                     "El campo Razón social esta vacio",
