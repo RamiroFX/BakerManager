@@ -10,7 +10,7 @@ package Cliente;
  */
 public class V_crear_cliente extends javax.swing.JDialog {
 
-    public javax.swing.JPanel jpImagen, jpNorth, jpSouth, jpDatosGenerales;
+    public javax.swing.JPanel jpNorth, jpSouth, jpDatosGenerales;
     /**
      * **DATOS CONTACTO****
      */
@@ -29,7 +29,7 @@ public class V_crear_cliente extends javax.swing.JDialog {
     /**
      * **FIN DATOS SUCURSAL****
      */
-    public javax.swing.JButton jbAceptar, jbCambiarImagen, jbCancelar,
+    public javax.swing.JButton jbAceptar, jbCancelar,
             jbAgregarTelefono, jbQuitarTelefono, jbModTelefono;
     public javax.swing.JTextField jtfRazonSocial, jtfNombreFantasia, jtfRUC, jtfRUC_ID,
             jtfPaginaWeb, jtfDireccion, jtfemail, jtfTelefono;
@@ -46,9 +46,7 @@ public class V_crear_cliente extends javax.swing.JDialog {
     public javax.swing.JComboBox jcbTipoCliente, jcbCategoriaCliente;
     //FIN VARIABLES DE CONTACTO
     public javax.swing.JTabbedPane jtpCenter;
-    public javax.swing.JTextArea jtaAyuda, jtaNota;
-    public javax.swing.JScrollPane jspAyuda;
-    public javax.swing.JLabel jlImagen;
+    public javax.swing.JTextArea jtaNota;
     public javax.swing.JTable jtTelefono, jtSucursal;
     public javax.swing.JScrollPane jspTelefono, jspNota, jspSucursal;
 
@@ -63,7 +61,7 @@ public class V_crear_cliente extends javax.swing.JDialog {
             setName("jdModificarCliente");
         }
         setAlwaysOnTop(false);
-        setPreferredSize(new java.awt.Dimension(800, 600));
+        setPreferredSize(new java.awt.Dimension(870, 400));
         setResizable(false);
         initComponents();
     }
@@ -85,25 +83,9 @@ public class V_crear_cliente extends javax.swing.JDialog {
     }
 
     private void initPaneNorth() {
-        //Panel
-        jpImagen = new javax.swing.JPanel(new java.awt.BorderLayout());
-        jpImagen.setBorder(javax.swing.BorderFactory.createTitledBorder("Imagen"));
-        //Label & Button
-        jlImagen = new javax.swing.JLabel();
-        jlImagen.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jlImagen.setPreferredSize(new java.awt.Dimension(200, 200));
-        jbCambiarImagen = new javax.swing.JButton("Cambiar imagen");
-        //Adding components into panel
-        jpImagen.add(jlImagen, java.awt.BorderLayout.CENTER);
-        jpImagen.add(jbCambiarImagen, java.awt.BorderLayout.SOUTH);
-        jpNorth = new javax.swing.JPanel(new java.awt.GridLayout(1, 2));
-        jtaAyuda = new javax.swing.JTextArea();
-        jtaAyuda.setEditable(false);
-        jtaAyuda.setEnabled(false);
-        jtaAyuda.setText("Los campos marcados con un asterisco(*) son obligatorios.");
-        jspAyuda = new javax.swing.JScrollPane(jtaAyuda);
-        jpNorth.add(jpImagen);
-        jpNorth.add(new javax.swing.JLabel("Los campos marcados con un asterisco(*) son obligatorios."));
+        jpNorth = new javax.swing.JPanel(new net.miginfocom.swing.MigLayout("center"));
+        jpNorth.add(new javax.swing.JLabel("Los campos marcados con un asterisco(*) son obligatorios."), "wrap");
+        jpNorth.add(new javax.swing.JLabel("Los campos marcados con dos asteriscos(**) son únicos."));
     }
 
     private void initDatosGenerales() {
@@ -124,11 +106,11 @@ public class V_crear_cliente extends javax.swing.JDialog {
         jtaNota = new javax.swing.JTextArea();
         jspNota = new javax.swing.JScrollPane(jtaNota);
 
-        jlRazonSocial = new javax.swing.JLabel("Razón social(*)");
+        jlRazonSocial = new javax.swing.JLabel("Razón social(*)(**)");
         jlRazonSocial.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        jlNombreFantasia = new javax.swing.JLabel("Nombre (*)");
+        jlNombreFantasia = new javax.swing.JLabel("Nombre");
         jlNombreFantasia.setHorizontalAlignment(swingConstant);
-        jlRUC = new javax.swing.JLabel("R.U.C.");
+        jlRUC = new javax.swing.JLabel("R.U.C.(**)");
         jlRUC.setHorizontalAlignment(swingConstant);
         jlRUC_ID = new javax.swing.JLabel("División");
         jlRUC_ID.setHorizontalAlignment(swingConstant);

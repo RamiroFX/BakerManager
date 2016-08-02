@@ -124,7 +124,7 @@ public class M_modificar_proveedor {
         DB_Proveedor.eliminarTelefonoProveedor(id_telefono);
     }
 
-    void insertarSucursal(String direccion, String telefono) {
+    public void insertarSucursal(String direccion, String telefono) {
         DB_Proveedor.insertarSucursal(proveedor.getId(), direccion, telefono);
     }
 

@@ -5,6 +5,7 @@
 package Proveedor;
 
 import Cliente.C_crear_cliente;
+import Cliente.C_modificar_cliente;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -25,6 +26,7 @@ public class C_crear_sucursal implements ActionListener {
     C_crear_proveedor crearProveedor;
     C_crear_cliente crearCliente;
     C_modificar_proveedor modificarProveedor;
+    C_modificar_cliente modificarCliente;
 
     public C_crear_sucursal(C_crear_proveedor crearProveedor) {
         this.crearProveedor = crearProveedor;
@@ -45,6 +47,13 @@ public class C_crear_sucursal implements ActionListener {
         this.vista = new V_crear_sucursal(crearCliente.vista);
         agregarListeners();
         this.sucursal = CREAR_CLIENTE;
+    }
+
+    public C_crear_sucursal(C_modificar_cliente modificarCliente) {
+        this.modificarCliente = modificarCliente;
+        this.vista = new V_crear_sucursal(modificarCliente.vista);
+        agregarListeners();
+        this.sucursal = MODIFICAR_CLIENTE;
     }
 
     public void mostrarVista() {
@@ -85,11 +94,6 @@ public class C_crear_sucursal implements ActionListener {
         } else if (telefono.isEmpty()) {
             telefono = null;
         }
-//        int crearClienteCantFila = this.crearCliente.dtmSucursal.getRowCount();
-//        for (int i = 0; i < crearClienteCantFila; i++) {
-//            String sucursal = this.crearCliente.dtmSucursal.getValueAt(i, 1).toString();
-//            String sucursalActual=this.vista.jtfDireccion.getText();
-//        }
         switch (sucursal) {
             case (CREAR_CLIENTE): {
                 int option = JOptionPane.showConfirmDialog(this.vista, "¿Desea confirmar esta operación?", "Atención", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
@@ -103,7 +107,14 @@ public class C_crear_sucursal implements ActionListener {
             }
             break;
             case (MODIFICAR_CLIENTE): {
-                //this.modificarCliente.recibirSucursal(this.vista.jtfDireccion.getText(), this.vista.jtfTelefono.getText());
+                int option = JOptionPane.showConfirmDialog(this.vista, "¿Desea confirmar esta operación?", "Atención", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                if (option == JOptionPane.YES_OPTION) {
+                    try {
+                        this.modificarCliente.recibirSucursal(direccion, telefono);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
             }
             break;
             case (MODIFICAR_PROVEEDOR): {

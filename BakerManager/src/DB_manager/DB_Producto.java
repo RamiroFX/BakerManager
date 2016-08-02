@@ -178,13 +178,13 @@ public class DB_Producto {
             if (DB_manager.getConection() == null) {
                 throw new IllegalStateException("Connection already closed.");
             }
-            String finalQuery = "ORDER BY PROD.DESCRIPCION";
+            String finalQuery = "ORDER BY PROD.DESCRIPCION ";
             String fromQuery = "FROM PRODUCTO PROD ";
             String prov;
             if ("Todos".equals(proveedor)) {
                 prov = "";
             } else {
-                fromQuery = "FROM PROVEEDOR PROV, PRODUCTO PROD, PROVEEDOR_PRODUCTO PRPR";
+                fromQuery = "FROM PROVEEDOR PROV, PRODUCTO PROD, PROVEEDOR_PRODUCTO PRPR ";
                 prov = "PRPR.ID_PROVEEDOR = PROV.ID_PROVEEDOR AND PRPR.ID_PRODUCTO = PROD.ID_PRODUCTO "
                         + "AND PROV.ENTIDAD LIKE'" + proveedor + "' AND ";
             }
@@ -193,7 +193,7 @@ public class DB_Producto {
             if ("Todos".equals(impuesto)) {
                 imp = "";
             } else {
-                imp = "AND PROD.ID_IMPUESTO =(SELECT IMPU.ID_IMPUESTO FROM IMPUESTO IMPU WHERE IMPU.DESCRIPCION = " + impuesto + ")";
+                imp = "AND PROD.ID_IMPUESTO =(SELECT IMPU.ID_IMPUESTO FROM IMPUESTO IMPU WHERE IMPU.DESCRIPCION = " + impuesto + ") ";
             }
 
             String marc;
@@ -213,7 +213,7 @@ public class DB_Producto {
             if ("Todos".equals(estado)) {
                 estad = "";
             } else {
-                estad = "AND PROD.ESTADO = (SELECT ESTA.ID_ESTADO FROM ESTADO ESTA WHERE ESTA.DESCRIPCION LIKE '" + estado + "')";
+                estad = "AND PROD.ESTADO = (SELECT ESTA.ID_ESTADO FROM ESTADO ESTA WHERE ESTA.DESCRIPCION LIKE '" + estado + "') ";
             }
 
             String Query = "SELECT PROD.ID_PRODUCTO \"ID\", "

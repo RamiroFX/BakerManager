@@ -10,13 +10,13 @@ import bakermanager.C_inicio;
  *
  * @author Administrador
  */
-public class SeleccionarRol {
+public class seleccionarRol {
 
     private C_seleccionarRol controlador;
     private V_jifSeleccionarRol vista;
     private C_inicio c_main;
 
-    public SeleccionarRol(C_inicio c_main) {
+    public seleccionarRol(C_inicio c_main) {
         this.c_main = c_main;
         vista = new V_jifSeleccionarRol();
         controlador = new C_seleccionarRol(vista, this.c_main);

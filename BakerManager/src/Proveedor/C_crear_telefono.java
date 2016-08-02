@@ -5,6 +5,7 @@
 package Proveedor;
 
 import Cliente.C_crear_cliente;
+import Cliente.C_modificar_cliente;
 import DB_manager.DB_manager;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
@@ -27,6 +28,7 @@ public class C_crear_telefono implements ActionListener {
     C_crear_proveedor crearProveedor;
     C_modificar_proveedor modiciarProveedor;
     C_crear_cliente crearCliente;
+    C_modificar_cliente modificarCliente;
 
     public C_crear_telefono(C_crear_proveedor crearTelefono) {
         this.crearProveedor = crearTelefono;
@@ -50,6 +52,14 @@ public class C_crear_telefono implements ActionListener {
         inicializarVista();
         agregarListeners();
         telefono = CREAR_CLIENTE;
+    }
+
+    public C_crear_telefono(C_modificar_cliente modificarCliente) {
+        this.modificarCliente = modificarCliente;
+        this.vista = new V_crear_telefono(modificarCliente.vista);
+        inicializarVista();
+        agregarListeners();
+        telefono = MODIFICAR_CLIENTE;
     }
 
     private void inicializarVista() {
@@ -107,6 +117,10 @@ public class C_crear_telefono implements ActionListener {
             break;
             case (CREAR_CLIENTE): {
                 this.crearCliente.recibirTelefono(tipoTelefono, nroTelefono, observacion);
+            }
+            break;
+            case (MODIFICAR_CLIENTE): {
+                this.modificarCliente.recibirTelefono(tipoTelefono, nroTelefono, observacion);
             }
             break;
             default: {

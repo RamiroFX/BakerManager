@@ -52,12 +52,12 @@ public class ModificarContacto extends JDialog implements ActionListener {
     private static final int MODIFICAR_CLIENTE_CONTACTO = 2;
     private static final int CREAR_PROVEEDOR_CONTACTO = 3;
     private static final int MODIFICAR_PROVEEDOR_CONTACTO = 4;
-    private int accion;
+    private int ACCION;
 
     public ModificarContacto(C_crear_cliente crearCliente) {
         super(crearCliente.vista, "Agregar contacto", true);
         this.crearCliente = crearCliente;
-        accion = CREAR_CLIENTE_CONTACTO;
+        ACCION = CREAR_CLIENTE_CONTACTO;
         clie_contacto = new M_cliente_contacto();
         setSize(800, 350);
         setLocationRelativeTo(crearCliente.vista);
@@ -68,7 +68,7 @@ public class ModificarContacto extends JDialog implements ActionListener {
     public ModificarContacto(C_modificar_cliente modificarCliente, int idContacto) {
         super(modificarCliente.vista, "Agregar contacto", true);
         this.modificarCliente = modificarCliente;
-        accion = MODIFICAR_CLIENTE_CONTACTO;
+        ACCION = MODIFICAR_CLIENTE_CONTACTO;
         clie_contacto = DB_Cliente.obtenerDatosClienteContactoID(idContacto);
         setSize(800, 350);
         setLocationRelativeTo(modificarCliente.vista);
@@ -79,7 +79,7 @@ public class ModificarContacto extends JDialog implements ActionListener {
     public ModificarContacto(C_crear_proveedor crearProveedor) {
         super(crearProveedor.vista, "Agregar contacto", true);
         this.crearProveedor = crearProveedor;
-        accion = CREAR_PROVEEDOR_CONTACTO;
+        ACCION = CREAR_PROVEEDOR_CONTACTO;
         prov_contacto = new M_contacto();
         setSize(800, 350);
         setLocationRelativeTo(crearProveedor.vista);
@@ -90,7 +90,7 @@ public class ModificarContacto extends JDialog implements ActionListener {
     public ModificarContacto(C_modificar_proveedor modificarProveedor, int idContacto) {
         super(modificarProveedor.vista, "Agregar contacto", true);
         this.modificarProveedor = modificarProveedor;
-        accion = MODIFICAR_PROVEEDOR_CONTACTO;
+        ACCION = MODIFICAR_PROVEEDOR_CONTACTO;
         prov_contacto = DB_Proveedor.obtenerDatosContactoIdContacto(idContacto);
         setSize(800, 350);
         setLocationRelativeTo(modificarProveedor.vista);
@@ -208,7 +208,7 @@ public class ModificarContacto extends JDialog implements ActionListener {
         for (int i = 0; i < estado_civil.size(); i++) {
             this.jcbEstadoCivil.addItem(estado_civil.get(i));
         }
-        if (accion == CREAR_CLIENTE_CONTACTO || accion == MODIFICAR_CLIENTE_CONTACTO) {
+        if (ACCION == CREAR_CLIENTE_CONTACTO || ACCION == MODIFICAR_CLIENTE_CONTACTO) {
             jcbNacionalidad.setSelectedItem(clie_contacto.getPais());
             jcbCiudad.setSelectedItem(clie_contacto.getCiudad());
             jcbGenero.setSelectedItem(clie_contacto.getSexo());
@@ -225,7 +225,7 @@ public class ModificarContacto extends JDialog implements ActionListener {
                 jftCedulaIdentidad.setText(clie_contacto.getCedula().toString());
             }
             dccFechaNacimiento.setDate(clie_contacto.getFecha_nacimiento());
-        } else if (accion == CREAR_PROVEEDOR_CONTACTO || accion == MODIFICAR_PROVEEDOR_CONTACTO) {
+        } else if (ACCION == CREAR_PROVEEDOR_CONTACTO || ACCION == MODIFICAR_PROVEEDOR_CONTACTO) {
             jcbNacionalidad.setSelectedItem(prov_contacto.getPais());
             jcbCiudad.setSelectedItem(prov_contacto.getCiudad());
             jcbGenero.setSelectedItem(prov_contacto.getSexo());
@@ -312,7 +312,7 @@ public class ModificarContacto extends JDialog implements ActionListener {
             try {
                 cedula = Integer.valueOf(jftCedulaIdentidad.getText().trim());
                 if (DB_manager.existCi(cedula)) {
-                    if (accion == CREAR_CLIENTE_CONTACTO || accion == MODIFICAR_CLIENTE_CONTACTO) {
+                    if (ACCION == CREAR_CLIENTE_CONTACTO || ACCION == MODIFICAR_CLIENTE_CONTACTO) {
                         if (!Objects.equals(this.clie_contacto.getCedula(), cedula)) {
                             this.jftCedulaIdentidad.setBackground(Color.red);
                             javax.swing.JOptionPane.showMessageDialog(this,
@@ -321,7 +321,7 @@ public class ModificarContacto extends JDialog implements ActionListener {
                                     javax.swing.JOptionPane.OK_OPTION);
                             return false;
                         }
-                    } else if (accion == CREAR_PROVEEDOR_CONTACTO || accion == MODIFICAR_PROVEEDOR_CONTACTO) {
+                    } else if (ACCION == CREAR_PROVEEDOR_CONTACTO || ACCION == MODIFICAR_PROVEEDOR_CONTACTO) {
                         if (!Objects.equals(this.prov_contacto.getCedula(), cedula)) {
                             this.jftCedulaIdentidad.setBackground(Color.red);
                             javax.swing.JOptionPane.showMessageDialog(this,
@@ -385,7 +385,7 @@ public class ModificarContacto extends JDialog implements ActionListener {
         } else if (observacion.isEmpty()) {
             observacion = null;
         }
-        if (accion == CREAR_CLIENTE_CONTACTO || accion == MODIFICAR_CLIENTE_CONTACTO) {
+        if (ACCION == CREAR_CLIENTE_CONTACTO || ACCION == MODIFICAR_CLIENTE_CONTACTO) {
             String nacionalidad = jcbNacionalidad.getSelectedItem().toString();
             String ciudad = jcbCiudad.getSelectedItem().toString();
             String genero = jcbGenero.getSelectedItem().toString();
@@ -406,7 +406,7 @@ public class ModificarContacto extends JDialog implements ActionListener {
             clie_contacto.setId_estado_civil(DB_manager.obtenerIdEstadoCivil(estadoCivil));
             clie_contacto.setId_pais(DB_manager.obtenerIdPais(nacionalidad));
             clie_contacto.setId_sexo(DB_manager.obtenerIdGenero(genero));
-        } else if (accion == CREAR_PROVEEDOR_CONTACTO || accion == MODIFICAR_PROVEEDOR_CONTACTO) {
+        } else if (ACCION == CREAR_PROVEEDOR_CONTACTO || ACCION == MODIFICAR_PROVEEDOR_CONTACTO) {
             String nacionalidad = jcbNacionalidad.getSelectedItem().toString();
             String ciudad = jcbCiudad.getSelectedItem().toString();
             String genero = jcbGenero.getSelectedItem().toString();
@@ -433,13 +433,13 @@ public class ModificarContacto extends JDialog implements ActionListener {
 
     private void modificarContacto() {
         if (validarDatos()) {
-            switch (accion) {
+            switch (ACCION) {
                 case CREAR_CLIENTE_CONTACTO: {
                     //this.crearCliente.modificarContacto(clie_contacto);
                     break;
                 }
                 case MODIFICAR_CLIENTE_CONTACTO: {
-                    //this.modificarCliente.modificarContacto(clie_contacto);
+                    this.modificarCliente.modificarContacto(clie_contacto);
                     break;
                 }
                 case CREAR_PROVEEDOR_CONTACTO: {

@@ -390,7 +390,7 @@ public class DB_manager {
     }
 
     public static Integer obtenerIdProductoCategoria(String categoria) {
-        Integer idMarca = null;
+        Integer idCategoria = null;
         String q = "SELECT ID_PRODUCTO_CATEGORIA "
                 + "FROM PRODUCTO_CATEGORIA "
                 + "WHERE DESCRIPCION LIKE '" + categoria + "'";
@@ -398,12 +398,12 @@ public class DB_manager {
             st = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             rs = st.executeQuery(q);
             while (rs.next()) {
-                idMarca = (rs.getInt("ID_PRODUCTO_CATEGORIA"));
+                idCategoria = (rs.getInt("ID_PRODUCTO_CATEGORIA"));
             }
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
-        return idMarca;
+        return idCategoria;
     }
 
     public static boolean productCategoriaEnUso(int idCategoria) {

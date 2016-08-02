@@ -30,7 +30,7 @@ public class DB_Cliente {
 
     public static ResultSetTableModel consultarCliente(String busqueda, boolean isExclusivo, boolean entidad, boolean ruc) {
         ResultSetTableModel rstm = null;
-        String SELECT = "SELECT CLIE.ID_CLIENTE \"ID\", CLIE.NOMBRE \"Nombre Cliente\", CLIE.ENTIDAD  \"Entidad\", CLIE.RUC || '-' || CLIE.RUC_IDENTIFICADOR \"R.U.C.\" ";
+        String SELECT = "SELECT CLIE.ID_CLIENTE \"ID\", CLIE.ENTIDAD  \"Entidad\", CLIE.NOMBRE \"Nombre Cliente\", CLIE.RUC || '-' || CLIE.RUC_IDENTIFICADOR \"R.U.C.\" ";
         String FROM = "FROM CLIENTE CLIE ";
         String WHERE = "WHERE ";
         String ORDER_BY = " ORDER BY CLIE.ENTIDAD ";
@@ -82,6 +82,7 @@ public class DB_Cliente {
          lgr.log(Level.WARNING, ex.getMessage(), ex);
          }
          }*/
+
         return rstm;
     }
 
@@ -151,7 +152,7 @@ public class DB_Cliente {
             rs = st.executeQuery(q);
             categoria = new Vector();
             while (rs.next()) {
-                categoria.add(rs.getString("CLCA.descripcion"));
+                categoria.add(rs.getString("descripcion"));
             }
         } catch (SQLException ex) {
             Logger lgr = Logger.getLogger(DB_Cliente.class.getName());
@@ -181,7 +182,7 @@ public class DB_Cliente {
             rs = st.executeQuery(q);
             tipo = new Vector();
             while (rs.next()) {
-                tipo.add(rs.getString("CLTI.descripcion"));
+                tipo.add(rs.getString("descripcion"));
             }
         } catch (SQLException ex) {
             Logger lgr = Logger.getLogger(DB_Cliente.class.getName());
@@ -221,13 +222,13 @@ public class DB_Cliente {
                 + "ID_CATEGORIA, "
                 + "OBSERVACION"
                 + ")VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
-        String id_categoria = "SELECT CLCA.ID_CLIENTE_CATEGORIA FROM CLIENTE_CATEGORIA WHERE CLCA.DESCRIPCION LIKE '" + cliente.getCategoria() + "'";
-        String id_tipo = "SELECT CLTI.ID_CLIENTE_TIPO FROM CLIENTE_TIPO WHERE CLTI.DESCRIPCION LIKE '" + cliente.getTipo() + "'";
-        String insert_telefono = "INSERT INTO TELEFONO( TELE.NUMERO, TELE.CATEGORIA, TELE.OBSERVACION)VALUES (?, ?, ?)";
-        String insert_telefono_cliente = "INSERT INTO CLIENTE_TELEFONO(CLTE.ID_CLIENTE, CLTE.ID_TELEFONO)VALUES (?, ?)";
-        String insert_sucursal = "INSERT INTO CLIENTE_SUCURSAL(CLSU.ID_CLIENTE, CLSU.DIRECCION, CLSU.TELEFONO)VALUES (?, ?, ?)";
-        String insert_contacto = "INSERT INTO CLIENTE_CONTACTO(CLCO.ID_PERSONA, CLCO.ID_CLIENTE, CLCO.DIRECCION, CLCO.TELEFONO, CLCO.EMAIL, CLCO.OBSERVACION) VALUES (?, ?, ?, ?, ?, ?)";
-        String insert_persona = "INSERT INTO PERSONA(PERS.CI, PERS.NOMBRE, PERS.APELLIDO, PERS.ID_SEXO, PERS.FECHA_NACIMIENTO, PERS.ID_ESTADO_CIVIL, PERS.ID_PAIS, PERS.ID_CIUDAD)VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        String id_categoria = "SELECT ID_CLIENTE_CATEGORIA FROM CLIENTE_CATEGORIA WHERE DESCRIPCION LIKE '" + cliente.getCategoria() + "'";
+        String id_tipo = "SELECT ID_CLIENTE_TIPO FROM CLIENTE_TIPO WHERE DESCRIPCION LIKE '" + cliente.getTipo() + "'";
+        String insert_telefono = "INSERT INTO TELEFONO( NUMERO, ID_CATEGORIA, OBSERVACION)VALUES (?, ?, ?)";
+        String insert_telefono_cliente = "INSERT INTO CLIENTE_TELEFONO(ID_CLIENTE, ID_TELEFONO)VALUES (?, ?)";
+        String insert_sucursal = "INSERT INTO CLIENTE_SUCURSAL(ID_CLIENTE, DIRECCION, TELEFONO)VALUES (?, ?, ?)";
+        String insert_contacto = "INSERT INTO CLIENTE_CONTACTO(ID_PERSONA, ID_CLIENTE, DIRECCION, TELEFONO, EMAIL, OBSERVACION) VALUES (?, ?, ?, ?, ?, ?)";
+        String insert_persona = "INSERT INTO PERSONA(CI, NOMBRE, APELLIDO, ID_SEXO, FECHA_NACIMIENTO, ID_ESTADO_CIVIL, ID_PAIS, ID_CIUDAD)VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         try {
             DB_manager.getConection().setAutoCommit(false);
             pst = DB_manager.getConection().prepareStatement(id_categoria, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
@@ -318,9 +319,17 @@ public class DB_Cliente {
             rs.close();
             if (telefono.length > 0) {
                 for (int i = 0; i < telefono.length; i++) {
+                    String telefonoCategoria = "SELECT ID_TELEFONO_CATEGORIA FROM TELEFONO_CATEGORIA WHERE DESCRIPCION LIKE '" + telefono[i].getCategoria() + "'";
+                    st = DB_manager.getConection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+                    // se ejecuta el query y se obtienen los resultados en un ResultSet
+                    rs = st.executeQuery(telefonoCategoria);
+                    int id_categoria2 = 0;
+                    while (rs.next()) {
+                        id_categoria2 = rs.getInt("ID_TELEFONO_CATEGORIA");
+                    }
                     pst = DB_manager.getConection().prepareStatement(insert_telefono, PreparedStatement.RETURN_GENERATED_KEYS);
                     pst.setString(1, telefono[i].getNumero());
-                    pst.setString(2, telefono[i].getCategoria());
+                    pst.setInt(2, id_categoria2);
                     pst.setString(3, telefono[i].getObservacion());
                     pst.executeUpdate();
                     rs = pst.getGeneratedKeys();
@@ -466,17 +475,19 @@ public class DB_Cliente {
          lgr.log(Level.WARNING, ex.getMessage(), ex);
          }
          }*/
+
         return rstm;
     }
 
     public static ResultSetTableModel obtenerClienteTelefono(int idCliente) {
         ResultSetTableModel rstm = null;
         String Query = "SELECT TELE.NUMERO \"Número\", "
-                + "TELE.CATEGORIA \"Categoría\", "
+                + "TECA.DESCRIPCION \"Categoría\", "
                 + "TELE.OBSERVACION \"Observación\" "
-                + "FROM TELEFONO TELE, CLIENTE CLIE, CLIENTE_TELEFONO CLTE "
+                + "FROM TELEFONO TELE, CLIENTE CLIE, CLIENTE_TELEFONO CLTE, TELEFONO_CATEGORIA TECA "
                 + "WHERE TELE.ID_TELEFONO = CLTE.ID_TELEFONO "
                 + "AND CLIE.ID_CLIENTE = CLTE.ID_CLIENTE "
+                + "AND TELE.ID_CATEGORIA = TECA.ID_TELEFONO_CATEGORIA "
                 + "AND CLIE.ID_CLIENTE = " + idCliente;
         try {
             Statement statement = DB_manager.getConection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
@@ -531,6 +542,7 @@ public class DB_Cliente {
          lgr.log(Level.WARNING, ex.getMessage(), ex);
          }
          }*/
+
         return rstm;
     }
 
@@ -540,7 +552,7 @@ public class DB_Cliente {
                 + " CLCO.ID_CLIENTE_CONTACTO, PERS.CI, PERS.NOMBRE, PERS.APELLIDO, "
                 + " PERS.ID_SEXO, "
                 + " (SELECT SEXO.DESCRIPCION FROM SEXO SEXO WHERE SEXO.ID_SEXO = PERS.ID_SEXO) \"SEXO\","
-                + " PERS.FECHA_NACIMIENTO, PERS.ID_ESTADO_CIVIL,(SELECT ESCI_DESCRIPCION FROM ESTADO_CIVIL WHERE ESCI_ID_ESTADO_CIVIL = PERS.ID_ESTADO_CIVIL)\"ESTADO_CIVIL\", "
+                + " PERS.FECHA_NACIMIENTO, PERS.ID_ESTADO_CIVIL,(SELECT ESCI.DESCRIPCION FROM ESTADO_CIVIL ESCI WHERE ESCI.ID_ESTADO_CIVIL = PERS.ID_ESTADO_CIVIL)\"ESTADO_CIVIL\", "
                 + " PERS.ID_PAIS,(SELECT PAIS.DESCRIPCION FROM PAIS PAIS WHERE PAIS.ID_PAIS = PERS.ID_PAIS)\"PAIS\" ,"
                 + " PERS.ID_CIUDAD,(SELECT CIUD.DESCRIPCION FROM CIUDAD CIUD WHERE CIUD.ID_CIUDAD = PERS.ID_CIUDAD)\"CIUDAD\" , "
                 + " CLCO.DIRECCION, "
@@ -553,25 +565,25 @@ public class DB_Cliente {
             rs = st.executeQuery(query);
             while (rs.next()) {
                 contacto = new M_cliente_contacto();
-                contacto.setApellido(rs.getString("PERS.APELLIDO"));
-                contacto.setCedula(rs.getInt("PERS.CI"));
+                contacto.setApellido(rs.getString("APELLIDO"));
+                contacto.setCedula(rs.getInt("CI"));
                 contacto.setCiudad(rs.getString("CIUDAD"));
-                contacto.setDireccion(rs.getString("CLCO.DIRECCION"));
-                contacto.setEmail(rs.getString("CLCO.EMAIL"));
+                contacto.setDireccion(rs.getString("DIRECCION"));
+                contacto.setEmail(rs.getString("EMAIL"));
                 contacto.setEstado_civil(rs.getString("ESTADO_CIVIL"));
-                contacto.setFecha_nacimiento(rs.getDate("PERS.FECHA_NACIMIENTO"));
-                contacto.setIdCliente(rs.getInt("CLCO.ID_CLIENTE"));
-                contacto.setIdClienteContacto(rs.getInt("CLCO.ID_CLIENTE_CONTACTO"));
-                contacto.setId_ciudad(rs.getInt("PERS.ID_CIUDAD"));
-                contacto.setId_estado_civil(rs.getInt("PERS.ID_ESTADO_CIVIL"));
-                contacto.setId_pais(rs.getInt("PERS.ID_PAIS"));
-                contacto.setId_persona(rs.getInt("PERS.ID_PERSONA"));
-                contacto.setId_sexo(rs.getInt("PERS.ID_SEXO"));
-                contacto.setNombre(rs.getString("PERS.NOMBRE"));
-                contacto.setObservacion(rs.getString("CLCO.OBSERVACION"));
+                contacto.setFecha_nacimiento(rs.getDate("FECHA_NACIMIENTO"));
+                contacto.setIdCliente(rs.getInt("ID_CLIENTE"));
+                contacto.setIdClienteContacto(rs.getInt("ID_CLIENTE_CONTACTO"));
+                contacto.setId_ciudad(rs.getInt("ID_CIUDAD"));
+                contacto.setId_estado_civil(rs.getInt("ID_ESTADO_CIVIL"));
+                contacto.setId_pais(rs.getInt("ID_PAIS"));
+                contacto.setId_persona(rs.getInt("ID_PERSONA"));
+                contacto.setId_sexo(rs.getInt("ID_SEXO"));
+                contacto.setNombre(rs.getString("NOMBRE"));
+                contacto.setObservacion(rs.getString("OBSERVACION"));
                 contacto.setPais(rs.getString("PAIS"));
                 contacto.setSexo(rs.getString("SEXO"));
-                contacto.setTelefono(rs.getString("CLCO.TELEFONO"));
+                contacto.setTelefono(rs.getString("TELEFONO"));
             }
         } catch (SQLException ex) {
             Logger lgr = Logger.getLogger(DB_Cliente.class.getName());
@@ -593,20 +605,12 @@ public class DB_Cliente {
     }
 
     public static void insertarContacto(int idCliente, M_cliente_contacto contacto) {
-        String insert_persona = "INSERT INTO PERSONA(CI, NOMBRE, APELLIDO, ID_SEXO, FECHA_NACIMIENTO, ID_ESTADO_CIVIL, ID_PAIS, ID_CIUDAD)VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-        String insertContacto = "INSERT INTO CLIENTE_CONTACTO"
-                + "( ID_PERSONA, "
-                + "ID_CLIENTE, "
-                + "DIRECCION, "
-                + "TELEFONO, "
-                + "EMAIL, "
-                + "OBSERVACION"
-                + ")VALUES ("
-                + "?, ?, ?, ?, ?, ?)";
         long id_persona = -1L;
+        String INSERT_PERSONA = "INSERT INTO PERSONA(CI, NOMBRE, APELLIDO, ID_SEXO, FECHA_NACIMIENTO, ID_ESTADO_CIVIL, ID_PAIS, ID_CIUDAD)VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        String INSERT_PROVEEDOR_CONTACTO = "INSERT INTO CLIENTE_CONTACTO(ID_PERSONA, ID_CLIENTE, EMAIL, DIRECCION, TELEFONO, OBSERVACION)VALUES (?, ?, ?, ?, ?, ?)";
         try {
-            DB_manager.getConection().setAutoCommit(false);
-            pst = DB_manager.getConection().prepareStatement(insert_persona, PreparedStatement.RETURN_GENERATED_KEYS);
+            DB_manager.habilitarTransaccionManual();
+            pst = DB_manager.getConection().prepareStatement(INSERT_PERSONA, PreparedStatement.RETURN_GENERATED_KEYS);
             try {
                 if (contacto.getCedula() == null) {
                     pst.setNull(1, Types.INTEGER);
@@ -614,7 +618,6 @@ public class DB_Cliente {
                     pst.setInt(1, (int) contacto.getCedula());
                 }
             } catch (Exception e) {
-                e.printStackTrace();
                 pst.setNull(1, Types.INTEGER);
             }
             pst.setString(2, contacto.getNombre());
@@ -638,39 +641,131 @@ public class DB_Cliente {
             if (rs != null && rs.next()) {
                 id_persona = rs.getLong(1);
             }
-            pst = DB_manager.getConection().prepareStatement(insertContacto, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            rs.close();
+            pst.close();
+            pst = DB_manager.getConection().prepareStatement(INSERT_PROVEEDOR_CONTACTO);
             pst.setInt(1, (int) id_persona);
             pst.setInt(2, idCliente);
-            pst.setString(3, contacto.getDireccion());
-            pst.setString(4, contacto.getTelefono());
-            pst.setString(5, contacto.getEmail());
-            pst.setString(6, contacto.getObservacion());
-            rs = pst.executeQuery();
-            DB_manager.getConection().commit();
+            try {
+                if (contacto.getEmail() == null) {
+                    pst.setNull(3, Types.VARCHAR);
+                } else {
+                    pst.setString(3, contacto.getEmail());
+                }
+            } catch (Exception e) {
+                pst.setNull(3, Types.VARCHAR);
+            }
+            try {
+                if (contacto.getDireccion() == null) {
+                    pst.setNull(4, Types.VARCHAR);
+                } else {
+                    pst.setString(4, contacto.getDireccion());
+                }
+            } catch (Exception e) {
+                pst.setNull(4, Types.VARCHAR);
+            }
+            try {
+                if (contacto.getTelefono() == null) {
+                    pst.setNull(5, Types.VARCHAR);
+                } else {
+                    pst.setString(5, contacto.getTelefono());
+                }
+            } catch (Exception e) {
+                pst.setNull(5, Types.VARCHAR);
+            }
+            try {
+                if (contacto.getObservacion() == null) {
+                    pst.setNull(6, Types.VARCHAR);
+                } else {
+                    pst.setString(6, contacto.getObservacion());
+                }
+            } catch (Exception e) {
+                pst.setNull(6, Types.VARCHAR);
+            }
+            pst.executeUpdate();
+            pst.close();
+            DB_manager.establecerTransaccion();
         } catch (SQLException ex) {
             if (DB_manager.getConection() != null) {
                 try {
                     DB_manager.getConection().rollback();
                 } catch (SQLException ex1) {
-                    Logger lgr = Logger.getLogger(DB_Cliente.class.getName());
+                    Logger lgr = Logger.getLogger(DB_Proveedor.class
+                            .getName());
                     lgr.log(Level.WARNING, ex1.getMessage(), ex1);
                 }
             }
-            Logger lgr = Logger.getLogger(DB_Cliente.class.getName());
+            Logger lgr = Logger.getLogger(DB_Proveedor.class
+                    .getName());
             lgr.log(Level.SEVERE, ex.getMessage(), ex);
-        } finally {
-            try {
-                if (st != null) {
-                    st.close();
-                }
-                if (pst != null) {
-                    pst.close();
-                }
-            } catch (SQLException ex) {
-                Logger lgr = Logger.getLogger(DB_Cliente.class.getName());
-                lgr.log(Level.WARNING, ex.getMessage(), ex);
-            }
         }
+    }
+
+    public static void insertarSucursal(Integer idCliente, String direccion, String telefono) {
+        String q = "INSERT INTO CLIENTE_SUCURSAL("
+                + "ID_CLIENTE, "
+                + "DIRECCION, "
+                + "TELEFONO)"
+                + "VALUES (?, ?, ?)";
+        try {
+            DB_manager.habilitarTransaccionManual();
+            pst = DB_manager.getConection().prepareStatement(q);
+            pst.setInt(1, idCliente);
+            pst.setString(2, direccion);
+            if (telefono != null) {
+                pst.setString(3, telefono);
+            } else {
+                pst.setNull(3, Types.VARCHAR);
+            }
+            pst.executeUpdate();
+            DB_manager.establecerTransaccion();
+        } catch (SQLException ex) {
+            System.out.println(ex.getNextException());
+            if (DB_manager.getConection() != null) {
+                try {
+                    DB_manager.getConection().rollback();
+
+                } catch (SQLException ex1) {
+                    Logger lgr = Logger.getLogger(DB_Proveedor.class
+                            .getName());
+                    lgr.log(Level.WARNING, ex1.getMessage(), ex1);
+                }
+
+            }
+            Logger lgr = Logger.getLogger(DB_Proveedor.class
+                    .getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        }/* finally {
+         try {
+         if (pst != null) {
+         pst.close();
+         }
+         if (rs != null) {
+         rs.close();
+
+
+         }
+         } catch (SQLException ex) {
+         Logger lgr = Logger.getLogger(DB_Proveedor.class
+         .getName());
+         lgr.log(Level.WARNING, ex.getMessage(), ex);
+         }/* finally {
+         try {
+         if (pst != null) {
+         pst.close();
+         }
+         if (rs != null) {
+         rs.close();
+
+
+         }
+         } catch (SQLException ex) {
+         Logger lgr = Logger.getLogger(DB_Proveedor.class
+         .getName());
+         lgr.log(Level.WARNING, ex.getMessage(), ex);
+         }
+         }*/
+
     }
 
     public static void eliminarContacto(int idPersona, int idContacto, int idCliente) {
@@ -713,95 +808,170 @@ public class DB_Cliente {
     }
 
     public static void modificarContacto(M_cliente_contacto contacto) {
-        String UPDATE_CONTACTO = "UPDATE CLIENTE_CONTACTO SET "
-                + "DIRECCION=" + contacto.getDireccion() + ", "
-                + "TELEFONO=" + contacto.getTelefono() + ", "
-                + "EMAIL=" + contacto.getEmail() + ", "
-                + "OBSERVACION= " + contacto.getObservacion() + " "
-                + "WHERE ID_CLIENTE_CONTACTO = " + contacto.getIdClienteContacto();
-        String UPDATE_PERSONA = "UPDATE PERSONA SET "
-                + "CI=" + contacto.getCedula() + ", "
-                + "NOMBRE=" + contacto.getNombre() + ", "
-                + "APELLIDO=" + contacto.getApellido() + ", "
-                + "ID_SEXO=" + contacto.getId_sexo() + ", "
-                + "FECHA_NACIMIENTO=" + contacto.getFecha_nacimiento() + ", "
-                + "ID_ESTADO_CIVIL=" + contacto.getCedula() + ", "
-                + "ID_PAIS=" + contacto.getId_pais() + ", "
-                + "ID_CIUDAD" + contacto.getId_ciudad() + " "
-                + "WHERE ID_PERSONA = " + contacto.getId_persona();
+        String updateContacto = "UPDATE CLIENTE_CONTACTO SET "
+                + "EMAIL = ?, "
+                + "DIRECCION = ?, "
+                + "OBSERVACION = ?, "
+                + "TELEFONO = ? "
+                + "WHERE ID_CLIENTE_CONTACTO = ? ;";
+        String updatePersona = "UPDATE PERSONA SET "
+                + "CI = ?, "
+                + "NOMBRE = ?, "
+                + "APELLIDO = ?, "
+                + "ID_SEXO = ?, "
+                + "FECHA_NACIMIENTO = ?, "
+                + "ID_ESTADO_CIVIL = ?, "
+                + "ID_PAIS = ?, "
+                + "ID_CIUDAD = ? "
+                + "WHERE ID_PERSONA = ? ;";
         try {
             DB_manager.habilitarTransaccionManual();
-            st = DB_manager.getConection().createStatement();
-            st.executeUpdate(UPDATE_CONTACTO);
-            st.close();
-            st = DB_manager.getConection().createStatement();
-            st.executeUpdate(UPDATE_PERSONA);
-            st.close();
+            pst = DB_manager.getConection().prepareStatement(updatePersona);
+            try {
+                if (contacto.getCedula() == null) {
+                    pst.setNull(1, Types.INTEGER);
+                } else {
+                    pst.setInt(1, (int) contacto.getCedula());
+                }
+            } catch (Exception e) {
+                pst.setNull(1, Types.INTEGER);
+            }
+            pst.setString(2, contacto.getNombre());
+            pst.setString(3, contacto.getApellido());
+            pst.setInt(4, contacto.getId_sexo());
+            try {
+                if (contacto.getFecha_nacimiento() == null) {
+                    pst.setNull(5, Types.DATE);
+                } else {
+                    pst.setDate(5, new java.sql.Date(contacto.getFecha_nacimiento().getTime()));
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                pst.setNull(5, Types.DATE);
+            }
+            pst.setInt(6, contacto.getId_estado_civil());
+            pst.setInt(7, contacto.getId_pais());
+            pst.setInt(8, contacto.getId_ciudad());
+            pst.setInt(9, contacto.getId_persona());
+            pst.executeUpdate();
+            pst.close();
+
+            pst = DB_manager.getConection().prepareStatement(updateContacto);
+            if (contacto.getEmail() != null) {
+                pst.setString(1, contacto.getEmail());
+            } else {
+                pst.setNull(1, Types.VARCHAR);
+            }
+            if (contacto.getDireccion() != null) {
+                pst.setString(2, contacto.getDireccion());
+            } else {
+                pst.setNull(2, Types.VARCHAR);
+            }
+            if (contacto.getObservacion() != null) {
+                pst.setString(3, contacto.getObservacion());
+            } else {
+                pst.setNull(3, Types.VARCHAR);
+            }
+            if (contacto.getTelefono() != null) {
+                pst.setString(4, contacto.getTelefono());
+            } else {
+                pst.setNull(4, Types.VARCHAR);
+            }
+            pst.setInt(5, contacto.getIdClienteContacto());
+            pst.executeUpdate();
+            pst.close();
             DB_manager.establecerTransaccion();
         } catch (SQLException ex) {
+            System.out.println(ex.getNextException());
             if (DB_manager.getConection() != null) {
                 try {
                     DB_manager.getConection().rollback();
                 } catch (SQLException ex1) {
-                    Logger lgr = Logger.getLogger(DB_Cliente.class.getName());
+                    Logger lgr = Logger.getLogger(DB_Proveedor.class
+                            .getName());
                     lgr.log(Level.WARNING, ex1.getMessage(), ex1);
                 }
             }
-            Logger lgr = Logger.getLogger(DB_Cliente.class.getName());
+            Logger lgr = Logger.getLogger(DB_Proveedor.class
+                    .getName());
             lgr.log(Level.SEVERE, ex.getMessage(), ex);
-        } finally {
-            try {
-                if (st != null) {
-                    st.close();
-                }
-                if (pst != null) {
-                    pst.close();
-                }
-            } catch (SQLException ex) {
-                Logger lgr = Logger.getLogger(DB_Cliente.class.getName());
-                lgr.log(Level.WARNING, ex.getMessage(), ex);
-            }
         }
     }
 
     public static void actualizarCliente(M_cliente cliente) {
-        String UPDATE_CLIENTE = "UPDATE CLIENTE SET "
-                + "NOMBRE= '" + cliente.getNombre() + "', "
-                + "ENTIDAD= '" + cliente.getEntidad() + "', "
-                + "RUC= '" + cliente.getRuc() + "', "
-                + "RUC_IDENTIFICADOR= '" + cliente.getRucId() + "', "
-                + "DIRECCION= '" + cliente.getDireccion() + "', "
-                + "EMAIL= '" + cliente.getEmail() + "', "
-                + "PAG_WEB= '" + cliente.getPaginaWeb() + "', "
-                + "ID_TIPO= " + cliente.getIdTipo() + ", "
-                + "ID_CATEGORIA= " + cliente.getIdCategoria() + ", "
-                + "OBSERVACION= '" + cliente.getObservacion() + "' "
-                + "WHERE ID_CLIENTE = " + cliente.getIdCliente();
+        String updateProveedor = "UPDATE CLIENTE SET "
+                + "NOMBRE = ?, "
+                + "ENTIDAD = ?, "
+                + "RUC = ?, "
+                + "RUC_IDENTIFICADOR = ?, "
+                + "DIRECCION = ?, "
+                + "PAG_WEB = ?, "
+                + "EMAIL = ?, "
+                + "OBSERVACION = ?, "
+                + "ID_TIPO= ?, "
+                + "ID_CATEGORIA= ? "
+                + "WHERE ID_CLIENTE = ? ;";
         try {
-            DB_manager.getConection().setAutoCommit(false);
-            st = DB_manager.getConection().createStatement();
-            st.executeUpdate(UPDATE_CLIENTE);
-            DB_manager.getConection().commit();
+            DB_manager.habilitarTransaccionManual();
+            pst = DB_manager.getConection().prepareStatement(updateProveedor);
+            //nombre
+            if (cliente.getNombre() != null) {
+                pst.setString(1, cliente.getNombre());
+            } else {
+                pst.setNull(1, Types.VARCHAR);
+            }
+            pst.setString(2, cliente.getEntidad());//not null
+            //ruc
+            if (cliente.getRuc() != null) {
+                pst.setString(3, cliente.getRuc());
+            } else {
+                pst.setNull(3, Types.VARCHAR);
+            }
+            if (cliente.getRucId() != null) {
+                pst.setString(4, cliente.getRucId());
+            } else {
+                pst.setNull(4, Types.VARCHAR);
+            }
+            if (cliente.getDireccion() != null) {
+                pst.setString(5, cliente.getDireccion());
+            } else {
+                pst.setNull(5, Types.VARCHAR);
+            }
+            if (cliente.getPaginaWeb() != null) {
+                pst.setString(6, cliente.getPaginaWeb());
+            } else {
+                pst.setNull(6, Types.VARCHAR);
+            }
+            if (cliente.getEmail() != null) {
+                pst.setString(7, cliente.getEmail());
+            } else {
+                pst.setNull(7, Types.VARCHAR);
+            }
+            if (cliente.getObservacion() != null) {
+                pst.setString(8, cliente.getObservacion());
+            } else {
+                pst.setNull(8, Types.VARCHAR);
+            }
+            pst.setInt(9, cliente.getIdTipo());
+            pst.setInt(10, cliente.getIdCategoria());
+            pst.setInt(11, cliente.getIdCliente());
+            pst.executeUpdate();
+            pst.close();
+            DB_manager.establecerTransaccion();
         } catch (SQLException ex) {
+            System.out.println(ex.getNextException());
             if (DB_manager.getConection() != null) {
                 try {
                     DB_manager.getConection().rollback();
                 } catch (SQLException ex1) {
-                    Logger lgr = Logger.getLogger(DB_Cliente.class.getName());
+                    Logger lgr = Logger.getLogger(DB_Proveedor.class
+                            .getName());
                     lgr.log(Level.WARNING, ex1.getMessage(), ex1);
                 }
             }
-            Logger lgr = Logger.getLogger(DB_Cliente.class.getName());
+            Logger lgr = Logger.getLogger(DB_Proveedor.class
+                    .getName());
             lgr.log(Level.SEVERE, ex.getMessage(), ex);
-        } finally {
-            try {
-                if (st != null) {
-                    st.close();
-                }
-            } catch (SQLException ex) {
-                Logger lgr = Logger.getLogger(DB_Cliente.class.getName());
-                lgr.log(Level.WARNING, ex.getMessage(), ex);
-            }
         }
     }
 
@@ -841,31 +1011,33 @@ public class DB_Cliente {
 
     public static void insertarTelefono(Integer idCliente, String tipoTelefono, String nroTelefono, String observacion) {
         long id_telefono = -1L;
-        String insertTelefono = "INSERT INTO telefono("
-                + "numero, "
-                + "categoria, "
-                + "observacion"
-                + ")VALUES ("
-                + nroTelefono + "', '"
-                + tipoTelefono + "', '"
-                + observacion + "')";
-        String insertTelProv = "INSERT INTO CLIENTE_TELEFONO("
-                + "ID_CLIENTE, "
-                + "ID_TELEFONO"
-                + ")VALUES ("
-                + idCliente + ", "
-                + id_telefono + ")";
+        String INSERT_TELEFONO = "INSERT INTO TELEFONO(NUMERO, ID_CATEGORIA, OBSERVACION)VALUES (?, ?, ?)";
+        String INSERT_TELEFONO_PROVEEDOR = "INSERT INTO CLIENTE_TELEFONO(ID_CLIENTE, ID_TELEFONO)VALUES (?, ?)";
         try {
             DB_manager.habilitarTransaccionManual();
-            pst = DB_manager.getConection().prepareStatement(insertTelefono, PreparedStatement.RETURN_GENERATED_KEYS);
+            String telefonoCategoria = "SELECT ID_TELEFONO_CATEGORIA FROM TELEFONO_CATEGORIA WHERE DESCRIPCION LIKE '" + tipoTelefono + "'";
+            st = DB_manager.getConection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            // se ejecuta el query y se obtienen los resultados en un ResultSet
+            rs = st.executeQuery(telefonoCategoria);
+            int id_categoria = 0;
+            while (rs.next()) {
+                id_categoria = rs.getInt("ID_TELEFONO_CATEGORIA");
+            }
+            pst = DB_manager.getConection().prepareStatement(INSERT_TELEFONO, PreparedStatement.RETURN_GENERATED_KEYS);
+
+            pst.setString(1, nroTelefono);
+            pst.setInt(2, id_categoria);
+            pst.setString(3, observacion);
             pst.executeUpdate();
             rs = pst.getGeneratedKeys();
             if (rs != null && rs.next()) {
                 id_telefono = rs.getLong(1);
             }
-            rs.close();
             pst.close();
-            pst = DB_manager.getConection().prepareStatement(insertTelProv);
+            rs.close();
+            pst = DB_manager.getConection().prepareStatement(INSERT_TELEFONO_PROVEEDOR);
+            pst.setInt(1, idCliente);
+            pst.setInt(2, (int) id_telefono);
             pst.executeUpdate();
             pst.close();
             DB_manager.establecerTransaccion();
@@ -874,21 +1046,14 @@ public class DB_Cliente {
                 try {
                     DB_manager.getConection().rollback();
                 } catch (SQLException ex1) {
-                    Logger lgr = Logger.getLogger(DB_Proveedor.class.getName());
+                    Logger lgr = Logger.getLogger(DB_Proveedor.class
+                            .getName());
                     lgr.log(Level.WARNING, ex1.getMessage(), ex1);
                 }
             }
-            Logger lgr = Logger.getLogger(DB_Proveedor.class.getName());
+            Logger lgr = Logger.getLogger(DB_Proveedor.class
+                    .getName());
             lgr.log(Level.SEVERE, ex.getMessage(), ex);
-        } finally {
-            try {
-                if (st != null) {
-                    st.close();
-                }
-            } catch (SQLException ex) {
-                Logger lgr = Logger.getLogger(DB_Proveedor.class.getName());
-                lgr.log(Level.WARNING, ex.getMessage(), ex);
-            }
         }
     }
     /*
@@ -958,5 +1123,276 @@ public class DB_Cliente {
             }
         }
         return telefonos;
+    }
+
+    public static M_cliente obtenerDatosCliente(String entidad) {
+        M_cliente cliente = null;
+        String query = "SELECT CLIE.ID_CLIENTE, "
+                + "CLIE.NOMBRE, "
+                + "CLIE.ENTIDAD, "
+                + "CLIE.RUC, "
+                + "CLIE.RUC_IDENTIFICADOR, "
+                + "CLCA.DESCRIPCION \"CLCA_DESCRIPCION\", "
+                + "CLTI.DESCRIPCION \"CLTI_DESCRIPCION\", "
+                + "CLIE.ID_TIPO, "
+                + "CLIE.ID_CATEGORIA, "
+                + "CLIE.DIRECCION, "
+                + "CLIE.PAG_WEB, "
+                + "CLIE.EMAIL "
+                + "FROM CLIENTE CLIE, CLIENTE_TIPO CLTI, CLIENTE_CATEGORIA CLCA "
+                + "WHERE CLIE.ID_CATEGORIA = CLCA.ID_CLIENTE_CATEGORIA "
+                + "AND CLIE.ID_TIPO = CLTI.ID_CLIENTE_TIPO "
+                + "AND CLIE.ENTIDAD LIKE '" + entidad + "'";
+        try {
+            st = DB_manager.getConection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            rs = st.executeQuery(query);
+            while (rs.next()) {
+                cliente = new M_cliente();
+                cliente.setPaginaWeb(rs.getString("PAG_WEB"));
+                cliente.setDireccion(rs.getString("DIRECCION"));
+                cliente.setEmail(rs.getString("EMAIL"));
+                cliente.setEntidad(rs.getString("ENTIDAD"));
+                cliente.setIdCliente(rs.getInt("ID_CLIENTE"));
+                cliente.setNombre(rs.getString("NOMBRE"));
+                cliente.setRuc(rs.getString("RUC"));
+                cliente.setRucId(rs.getString("RUC_IDENTIFICADOR"));
+                cliente.setIdCategoria(rs.getInt("ID_CATEGORIA"));
+                cliente.setIdTipo(rs.getInt("ID_TIPO"));
+                cliente.setCategoria(rs.getString("CLCA_DESCRIPCION"));
+                cliente.setTipo(rs.getString("CLTI_DESCRIPCION"));
+            }
+        } catch (SQLException ex) {
+            Logger lgr = Logger.getLogger(DB_Cliente.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        }
+        return cliente;
+    }
+
+    public static boolean existeRuc(String ruc) {
+        String query = "SELECT RUC FROM CLIENTE WHERE RUC = ?;";
+        try {
+            pst = DB_manager.getConection().prepareStatement(query);
+            pst.setString(1, ruc);
+            rs = pst.executeQuery();
+            return rs.isBeforeFirst();
+        } catch (SQLException ex) {
+            Logger lgr = Logger.getLogger(DB_Cliente.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        }
+        return false;
+    }
+
+    public static void modificarSucursal(int id_sucursal, String direccion, String telefono) {
+        String q = "UPDATE CLIENTE_SUCURSAL SET "
+                + "DIRECCION = ?, "
+                + "TELEFONO = ? "
+                + "WHERE ID_CLIENTE_SUCURSAL = ? ;";
+        try {
+            DB_manager.habilitarTransaccionManual();
+            pst = DB_manager.getConection().prepareStatement(q);
+            pst.setString(1, direccion);
+            pst.setString(2, telefono);
+            pst.setInt(3, id_sucursal);
+            pst.executeUpdate();
+            pst.close();
+            DB_manager.establecerTransaccion();
+        } catch (SQLException ex) {
+            System.out.println(ex.getNextException());
+            if (DB_manager.getConection() != null) {
+                try {
+                    DB_manager.getConection().rollback();
+                } catch (SQLException ex1) {
+                    Logger lgr = Logger.getLogger(DB_Proveedor.class
+                            .getName());
+                    lgr.log(Level.WARNING, ex1.getMessage(), ex1);
+                }
+            }
+            Logger lgr = Logger.getLogger(DB_Proveedor.class
+                    .getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        }
+    }
+
+    public static void eliminarSucursal(int id_sucursal) {
+        String q = "DELETE FROM CLIENTE_SUCURSAL WHERE ID_CLIENTE_SUCURSAL =" + id_sucursal;
+        System.out.println("SQL: " + q);
+        try {
+            DB_manager.habilitarTransaccionManual();
+            st = DB_manager.getConection().createStatement();
+            st.executeUpdate(q);
+            DB_manager.establecerTransaccion();
+        } catch (SQLException ex) {
+            System.out.println(ex.getNextException());
+            if (DB_manager.getConection() != null) {
+                try {
+                    DB_manager.getConection().rollback();
+                } catch (SQLException ex1) {
+                    Logger lgr = Logger.getLogger(DB_Proveedor.class
+                            .getName());
+                    lgr.log(Level.WARNING, ex1.getMessage(), ex1);
+                }
+            }
+            Logger lgr = Logger.getLogger(DB_Proveedor.class
+                    .getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        }
+    }
+
+    public static ResultSetTableModel obtenerClienteTelefonoCompleto(Integer idCliente) {
+        ResultSetTableModel rstm = null;
+        String Query = "SELECT TELE.ID_TELEFONO \"ID\", "
+                + "TELE.NUMERO \"Número\", "
+                + "TECA.DESCRIPCION \"Categoría\", "
+                + "TELE.OBSERVACION \"Observación\" "
+                + "FROM TELEFONO TELE, CLIENTE CLIE, CLIENTE_TELEFONO CLTE, TELEFONO_CATEGORIA TECA "
+                + "WHERE TELE.ID_TELEFONO = CLTE.ID_TELEFONO "
+                + "AND CLIE.ID_CLIENTE = CLTE.ID_CLIENTE "
+                + "AND TELE.ID_CATEGORIA = TECA.ID_TELEFONO_CATEGORIA "
+                + "AND CLIE.ID_CLIENTE = " + idCliente;
+        try {
+            st = DB_manager.getConection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            // se ejecuta el query y se obtienen los resultados en un ResultSet
+            rs = st.executeQuery(Query);
+            rstm = new ResultSetTableModel(rs);
+        } catch (SQLException ex) {
+            Logger lgr = Logger.getLogger(DB_Proveedor.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        }
+        return rstm;
+    }
+
+    public static void modificarTelefono(int idTelefono, String tipoTelefono, String nroTelefono, String observacion) {
+        String updateTelefono = "UPDATE TELEFONO SET "
+                + "NUMERO = ?, "
+                + "ID_CATEGORIA = ?, "
+                + "OBSERVACION = ? "
+                + "WHERE ID_TELEFONO = ? ;";
+        try {
+            DB_manager.habilitarTransaccionManual();
+            String telefonoCategoria = "SELECT ID_TELEFONO_CATEGORIA FROM TELEFONO_CATEGORIA WHERE DESCRIPCION LIKE '" + tipoTelefono + "'";
+            st = DB_manager.getConection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            // se ejecuta el query y se obtienen los resultados en un ResultSet
+            rs = st.executeQuery(telefonoCategoria);
+            int id_categoria = 0;
+            while (rs.next()) {
+                id_categoria = rs.getInt("ID_TELEFONO_CATEGORIA");
+            }
+            pst = DB_manager.getConection().prepareStatement(updateTelefono);
+            pst.setString(1, nroTelefono);
+            pst.setInt(2, id_categoria);
+            if (observacion == null) {
+                pst.setString(3, observacion);
+            } else {
+                pst.setNull(3, Types.VARCHAR);
+            }
+            pst.setInt(4, idTelefono);
+            pst.executeUpdate();
+            pst.close();
+            DB_manager.establecerTransaccion();
+        } catch (SQLException ex) {
+            if (DB_manager.getConection() != null) {
+                try {
+                    DB_manager.getConection().rollback();
+                } catch (SQLException ex1) {
+                    Logger lgr = Logger.getLogger(DB_Proveedor.class
+                            .getName());
+                    lgr.log(Level.WARNING, ex1.getMessage(), ex1);
+                }
+            }
+            Logger lgr = Logger.getLogger(DB_Proveedor.class
+                    .getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        }
+    }
+
+    public static ArrayList<M_telefono> obtenerTelefonos(Integer idCliente) {
+        ArrayList<M_telefono> telefonos = null;
+        String QUERY = "SELECT TELE.ID_TELEFONO, TELE.NUMERO, TECA.ID_TELEFONO_CATEGORIA, TECA.DESCRIPCION, "
+                + "TELE.OBSERVACION "
+                + "FROM TELEFONO TELE, TELEFONO_CATEGORIA TECA, "
+                + "CLIENTE_TELEFONO CLTE "
+                + "WHERE TELE.ID_TELEFONO =  CLTE.ID_TELEFONO  "
+                + "AND TELE.ID_CATEGORIA = TECA.ID_TELEFONO_CATEGORIA "
+                + "AND CLTE.ID_CLIENTE = ? ;";
+        try {
+            pst = DB_manager.getConection().prepareStatement(QUERY, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            pst.setInt(1, idCliente);
+            rs = pst.executeQuery();
+            telefonos = new ArrayList();
+            while (rs.next()) {
+                M_telefono telefono = new M_telefono();
+                telefono.setId_telefono(rs.getInt("ID_TELEFONO"));
+                telefono.setCategoria(rs.getString("DESCRIPCION"));
+                telefono.setNumero(rs.getString("NUMERO"));
+                telefono.setIdCategoria(rs.getInt("ID_TELEFONO_CATEGORIA"));
+                telefono.setCategoria(rs.getString("OBSERVACION"));
+                telefonos.add(telefono);
+            }
+        } catch (SQLException ex) {
+            Logger lgr = Logger.getLogger(DB_Cliente.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        }
+        return telefonos;
+    }
+
+    public static void eliminarTelefono(int id_telefono) {
+        String Q2 = "DELETE FROM TELEFONO WHERE ID_TELEFONO =" + id_telefono;
+        String Q1 = "DELETE FROM CLIENTE_TELEFONO WHERE ID_TELEFONO =" + id_telefono;
+        try {
+            DB_manager.habilitarTransaccionManual();
+            st = DB_manager.getConection().createStatement();
+            st.executeUpdate(Q1);
+            st = DB_manager.getConection().createStatement();
+            st.executeUpdate(Q2);
+            DB_manager.establecerTransaccion();
+        } catch (SQLException ex) {
+            System.out.println(ex.getNextException());
+            if (DB_manager.getConection() != null) {
+                try {
+                    DB_manager.getConection().rollback();
+                } catch (SQLException ex1) {
+                    Logger lgr = Logger.getLogger(DB_Proveedor.class
+                            .getName());
+                    lgr.log(Level.WARNING, ex1.getMessage(), ex1);
+                }
+            }
+            Logger lgr = Logger.getLogger(DB_Cliente.class
+                    .getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        }
+    }
+
+    public static int obtenerIdCategoria(String categoria) {
+        Integer idCategoria = null;
+        String q = "SELECT ID_CLIENTE_CATEGORIA "
+                + "FROM CLIENTE_CATEGORIA "
+                + "WHERE DESCRIPCION LIKE '" + categoria + "'";
+        try {
+            st = DB_manager.getConection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            rs = st.executeQuery(q);
+            while (rs.next()) {
+                idCategoria = (rs.getInt("ID_CLIENTE_CATEGORIA"));
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return idCategoria;
+    }
+
+    public static int obtenerIdTipo(String tipo) {
+        Integer idCategoria = null;
+        String q = "SELECT ID_CLIENTE_TIPO "
+                + "FROM CLIENTE_TIPO "
+                + "WHERE DESCRIPCION LIKE '" + tipo + "'";
+        try {
+            st = DB_manager.getConection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            rs = st.executeQuery(q);
+            while (rs.next()) {
+                idCategoria = (rs.getInt("ID_CLIENTE_TIPO"));
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return idCategoria;
     }
 }

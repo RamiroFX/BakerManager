@@ -26,7 +26,7 @@ public class C_modificar_proveedor extends MouseAdapter implements ActionListene
     public V_crear_proveedor vista;
     private M_modificar_proveedor modelo;
     C_gestion_proveedores padre;
-    int idTelefono, idContacto;
+    int idContacto;
 
     public C_modificar_proveedor(M_modificar_proveedor modelo, V_crear_proveedor vista, C_gestion_proveedores padre) {
         this.padre = padre;
@@ -101,7 +101,6 @@ public class C_modificar_proveedor extends MouseAdapter implements ActionListene
                 Utilities.c_packColumn.packColumns(this.vista.jtTelefono, 1);
             } catch (Exception e) {
                 e.printStackTrace();
-                return;
             }
         }
     }

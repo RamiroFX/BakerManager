@@ -111,13 +111,17 @@ public class C_crear_proveedor extends MouseAdapter implements ActionListener, K
         }
     }
 
-    void modificarTelefono(String tipoTelefono, String nroTelefono, String observacion) {
-        int row = this.vista.jtTelefono.getSelectedRow();
-        modelo.dtmTelefono.setValueAt(nroTelefono, row, 0);
-        modelo.dtmTelefono.setValueAt(tipoTelefono, row, 1);
-        modelo.dtmTelefono.setValueAt(observacion, row, 2);
-        this.vista.jbQuitarTelefono.setEnabled(false);
-        this.vista.jbModTelefono.setEnabled(false);
+    public void modificarTelefono(String tipoTelefono, String nroTelefono, String observacion) {
+        if (modelo.existeTelefono(nroTelefono)) {
+            JOptionPane.showMessageDialog(vista, "Telefono en uso.", "Atención", JOptionPane.ERROR_MESSAGE);
+        } else {
+            int row = this.vista.jtTelefono.getSelectedRow();
+            modelo.dtmTelefono.setValueAt(nroTelefono, row, 0);
+            modelo.dtmTelefono.setValueAt(tipoTelefono, row, 1);
+            modelo.dtmTelefono.setValueAt(observacion, row, 2);
+            this.vista.jbQuitarTelefono.setEnabled(false);
+            this.vista.jbModTelefono.setEnabled(false);
+        }
     }
 
     private void quitarTelefono() {
@@ -132,14 +136,26 @@ public class C_crear_proveedor extends MouseAdapter implements ActionListener, K
             telefono[i] = new M_telefono();
             telefono[i].setCategoria(modelo.dtmTelefono.getValueAt(i, 1).toString());
             telefono[i].setNumero(modelo.dtmTelefono.getValueAt(i, 0).toString());
-            telefono[i].setObservacion(modelo.dtmTelefono.getValueAt(i, 2).toString());
+            String obs = modelo.dtmTelefono.getValueAt(i, 2).toString();
+            if (obs.isEmpty()) {
+                telefono[i].setObservacion(null);
+            } else {
+                telefono[i].setObservacion(obs);
+            }
         }
         int cantSuc = modelo.dtmSucursal.getRowCount();
         M_sucursal[] sucursal = new M_sucursal[cantSuc];
         for (int i = 0; i < cantSuc; i++) {
             sucursal[i] = new M_sucursal();
             sucursal[i].setDireccion(modelo.dtmSucursal.getValueAt(i, 0).toString());
-            sucursal[i].setTelefono(modelo.dtmSucursal.getValueAt(i, 1).toString());
+            if (modelo.dtmSucursal.getValueAt(i, 1) != null) {
+                String tel = modelo.dtmSucursal.getValueAt(i, 1).toString();
+                if (tel.isEmpty()) {
+                    sucursal[i].setTelefono(null);
+                } else {
+                    sucursal[i].setTelefono(tel);
+                }
+            }
         }
         /*
          * VALIDAR RAZON SOCIAL

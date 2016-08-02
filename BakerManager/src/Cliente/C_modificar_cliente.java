@@ -5,9 +5,13 @@
 package Cliente;
 
 import Contacto.AgregarContacto;
-import DB_manager.DB_Cliente;
+import Contacto.ModificarContacto;
 import Entities.M_cliente;
 import Entities.M_cliente_contacto;
+import Proveedor.C_crear_sucursal;
+import Proveedor.C_crear_telefono;
+import Proveedor.C_modificar_sucursal;
+import Proveedor.C_modificar_telefono;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -15,10 +19,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
 import java.util.Vector;
 import javax.swing.JOptionPane;
-import javax.swing.table.DefaultTableModel;
 
 /**
  *
@@ -27,15 +29,14 @@ import javax.swing.table.DefaultTableModel;
 public class C_modificar_cliente extends MouseAdapter implements ActionListener, KeyListener {
 
     public V_crear_cliente vista;
+    public M_modificar_cliente modelo;
     C_gestion_cliente padre;
-    public DefaultTableModel dtmSucursal, dtmTelefono, dtmContacto;
-    M_cliente cliente;
-    ArrayList<M_cliente_contacto> contactos;
+    int idContacto;
 
-    public C_modificar_cliente(C_gestion_cliente padre, M_cliente cliente) {
+    public C_modificar_cliente(M_modificar_cliente modelo, V_crear_cliente vista, C_gestion_cliente padre) {
         this.padre = padre;
-        this.cliente = cliente;
-        this.vista = new V_crear_cliente(this.padre.c_inicio.vista, true);
+        this.modelo = modelo;
+        this.vista = vista;
         inicializarVista();
         agregarListeners();
     }
@@ -46,19 +47,17 @@ public class C_modificar_cliente extends MouseAdapter implements ActionListener,
     }
 
     private void inicializarVista() {
-        this.vista.setTitle("Modificar cliente");
-        contactos = new ArrayList<>();
         this.vista.jbQuitarSucursal.setEnabled(false);
         this.vista.jbQuitarTelefono.setEnabled(false);
         this.vista.jbModTelefono.setEnabled(false);
         this.vista.jbModSucursal.setEnabled(false);
         this.vista.jbModContacto.setEnabled(false);
         this.vista.jbQuitarContacto.setEnabled(false);
-        Vector tipo_cliente = DB_Cliente.obtenerTipoCliente();
+        Vector tipo_cliente = modelo.obtenerTipoCliente();
         for (int i = 0; i < tipo_cliente.size(); i++) {
             this.vista.jcbTipoCliente.addItem(tipo_cliente.get(i));
         }
-        Vector categoria_cliente = DB_Cliente.obtenerCategoriaCliente();
+        Vector categoria_cliente = modelo.obtenerCategoriaCliente();
         for (int i = 0; i < categoria_cliente.size(); i++) {
             this.vista.jcbCategoriaCliente.addItem(categoria_cliente.get(i));
         }
@@ -75,6 +74,7 @@ public class C_modificar_cliente extends MouseAdapter implements ActionListener,
         this.vista.jbModSucursal.addActionListener(this);
         this.vista.jbModTelefono.addActionListener(this);
         this.vista.jbAgregarContacto.addActionListener(this);
+        this.vista.jbModContacto.addActionListener(this);
         this.vista.jbQuitarContacto.addActionListener(this);
         this.vista.jtSucursal.addMouseListener(this);
         this.vista.jtTelefono.addMouseListener(this);
@@ -82,28 +82,38 @@ public class C_modificar_cliente extends MouseAdapter implements ActionListener,
     }
 
     private void completarCampos() {
-        this.vista.jtfRazonSocial.setText(cliente.getEntidad());
-        this.vista.jtfNombreFantasia.setText(cliente.getNombre());
-        this.vista.jtfRUC.setText(cliente.getRuc());
-        this.vista.jtaNota.setText(cliente.getObservacion());
-        this.vista.jtfemail.setText(cliente.getEmail());
-        this.vista.jtfPaginaWeb.setText(cliente.getPaginaWeb());
-        this.vista.jtfDireccion.setText(cliente.getDireccion());
-        this.vista.jtfRUC_ID.setText(cliente.getRucId());
-        this.vista.jtfDireccion.setText(cliente.getDireccion());
-        this.vista.jtfemail.setText(cliente.getEmail());
-        this.vista.jtfPaginaWeb.setText(cliente.getPaginaWeb());
-        this.vista.jcbCategoriaCliente.setSelectedItem(cliente.getCategoria());
-        this.vista.jcbTipoCliente.setSelectedItem(cliente.getTipo());
-        this.vista.jtaNota.setText(cliente.getObservacion());
+        this.vista.jtfRazonSocial.setText(modelo.cliente.getEntidad());
+        this.vista.jtfNombreFantasia.setText(modelo.cliente.getNombre());
+        this.vista.jtfRUC.setText(modelo.cliente.getRuc());
+        this.vista.jtaNota.setText(modelo.cliente.getObservacion());
+        this.vista.jtfemail.setText(modelo.cliente.getEmail());
+        this.vista.jtfPaginaWeb.setText(modelo.cliente.getPaginaWeb());
+        this.vista.jtfDireccion.setText(modelo.cliente.getDireccion());
+        this.vista.jtfRUC_ID.setText(modelo.cliente.getRucId());
+        this.vista.jtfDireccion.setText(modelo.cliente.getDireccion());
+        this.vista.jtfemail.setText(modelo.cliente.getEmail());
+        this.vista.jtfPaginaWeb.setText(modelo.cliente.getPaginaWeb());
+        this.vista.jcbCategoriaCliente.setSelectedItem(modelo.cliente.getCategoria());
+        this.vista.jcbTipoCliente.setSelectedItem(modelo.cliente.getTipo());
+        this.vista.jtaNota.setText(modelo.cliente.getObservacion());
 
-        this.vista.jtTelefono.setModel(DB_Cliente.obtenerClienteTelefono(cliente.getIdCliente()));
-        this.vista.jtSucursal.setModel(DB_Cliente.obtenerSucursal(cliente.getIdCliente()));
-        this.vista.jtContacto.setModel(DB_Cliente.obtenerClienteContacto(cliente.getIdCliente()));
+        this.vista.jtTelefono.setModel(modelo.obtenerClienteTelefono());
+        this.vista.jtSucursal.setModel(modelo.obtenerSucursal());
+        this.vista.jtContacto.setModel(modelo.obtenerClienteContacto());
     }
 
     public void recibirContacto(M_cliente_contacto contacto) {
-        DB_Cliente.insertarContacto(cliente.getIdCliente(), contacto);
+        modelo.insertarContacto(contacto);
+        this.vista.jtContacto.setModel(modelo.obtenerClienteContacto());
+        Utilities.c_packColumn.packColumns(this.vista.jtContacto, 1);
+    }
+
+    public void modificarContacto(M_cliente_contacto contacto) {
+        this.vista.jbQuitarContacto.setEnabled(false);
+        this.vista.jbModContacto.setEnabled(false);
+        modelo.modificarClienteContacto(contacto);
+        this.vista.jtContacto.setModel(modelo.obtenerClienteContacto());
+        Utilities.c_packColumn.packColumns(this.vista.jtContacto, 1);
     }
 
     private void quitarContacto() {
@@ -111,11 +121,73 @@ public class C_modificar_cliente extends MouseAdapter implements ActionListener,
         if (option == JOptionPane.YES_OPTION) {
             try {
                 int idContacto = Integer.valueOf(String.valueOf(this.vista.jtContacto.getValueAt(this.vista.jtContacto.getSelectedRow(), 0)));
-                M_cliente_contacto contacto = DB_Cliente.obtenerDatosClienteContactoID(idContacto);
-                DB_Cliente.eliminarContacto(contacto.getId_persona(), contacto.getIdClienteContacto(), contacto.getIdCliente());
+                M_cliente_contacto contacto = modelo.obtenerDatosClienteContactoID(idContacto);
+                modelo.eliminarContacto(contacto);
                 this.vista.jbQuitarContacto.setEnabled(false);
                 this.vista.jbModContacto.setEnabled(false);
-                this.vista.jtContacto.setModel(DB_Cliente.obtenerClienteContacto(cliente.getIdCliente()));
+                this.vista.jtContacto.setModel(modelo.obtenerClienteContacto());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void recibirSucursal(String direccion, String telefono) {
+        modelo.insertarSucursal(direccion, telefono);
+        this.vista.jtSucursal.setModel(modelo.obtenerSucursal());
+        Utilities.c_packColumn.packColumns(this.vista.jtSucursal, 1);
+    }
+
+    public void modificarSucursal(String direccion, String telefono) {
+        this.vista.jbQuitarSucursal.setEnabled(false);
+        this.vista.jbModSucursal.setEnabled(false);
+        int id_sucursal = Integer.valueOf(String.valueOf(this.vista.jtSucursal.getValueAt(this.vista.jtSucursal.getSelectedRow(), 0)));
+        modelo.modificarSucursal(id_sucursal, direccion, telefono);
+        this.vista.jtSucursal.setModel(modelo.obtenerSucursal());
+        Utilities.c_packColumn.packColumns(this.vista.jtSucursal, 1);
+    }
+
+    private void quitarSucursal() {
+        int option = JOptionPane.showConfirmDialog(vista, "¿Desea confirmar esta operación?", "Atención", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+        if (option == JOptionPane.YES_OPTION) {
+            try {
+                int id_sucursal = Integer.valueOf(String.valueOf(this.vista.jtSucursal.getValueAt(this.vista.jtSucursal.getSelectedRow(), 0)));
+                modelo.eliminarSucursal(id_sucursal);
+                this.vista.jbQuitarSucursal.setEnabled(false);
+                this.vista.jbModSucursal.setEnabled(false);
+                this.vista.jtSucursal.setModel(modelo.obtenerSucursal());
+                Utilities.c_packColumn.packColumns(this.vista.jtSucursal, 1);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void recibirTelefono(String tipoTelefono, String nroTelefono, String observacion) {
+        modelo.insertarTelefono(tipoTelefono, nroTelefono, observacion);
+        this.vista.jtTelefono.setModel(modelo.obtenerProveedorTelefonoCompleto());
+        Utilities.c_packColumn.packColumns(this.vista.jtTelefono, 1);
+    }
+
+    public void modificarTelefono(String tipoTelefono, String nroTelefono, String observacion) {
+        int id_telefono = Integer.valueOf(String.valueOf(this.vista.jtTelefono.getValueAt(this.vista.jtTelefono.getSelectedRow(), 0)));
+        modelo.modificarTelefono(id_telefono, tipoTelefono, nroTelefono, observacion);
+        this.vista.jtTelefono.setModel(modelo.obtenerProveedorTelefonoCompleto());
+        Utilities.c_packColumn.packColumns(this.vista.jtTelefono, 1);
+        this.vista.jbQuitarTelefono.setEnabled(false);
+        this.vista.jbModTelefono.setEnabled(false);
+    }
+
+    private void quitarTelefono() {
+        int option = JOptionPane.showConfirmDialog(vista, "¿Desea confirmar esta operación?", "Atención", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+        if (option == JOptionPane.YES_OPTION) {
+            try {
+                int id_telefono = Integer.valueOf(String.valueOf(this.vista.jtTelefono.getValueAt(this.vista.jtTelefono.getSelectedRow(), 0)));
+                modelo.eliminarTelefonoProveedor(id_telefono);
+                this.vista.jbQuitarTelefono.setEnabled(false);
+                this.vista.jbModTelefono.setEnabled(false);
+                this.vista.jtTelefono.setModel(modelo.obtenerProveedorTelefonoCompleto());
+                Utilities.c_packColumn.packColumns(this.vista.jtTelefono, 1);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -123,31 +195,11 @@ public class C_modificar_cliente extends MouseAdapter implements ActionListener,
     }
 
     private void validarDatos() {
-        /*int cantTel = dtmTelefono.getRowCount();
-         M_telefono[] telefono = new M_telefono[cantTel];
-         for (int i = 0; i < cantTel; i++) {
-         telefono[i] = new M_telefono();
-         telefono[i].setCategoria(dtmTelefono.getValueAt(i, 1).toString());
-         telefono[i].setNumero(dtmTelefono.getValueAt(i, 0).toString());
-         telefono[i].setObservacion(dtmTelefono.getValueAt(i, 2).toString());
-         }
-         int cantSuc = dtmSucursal.getRowCount();
-         M_sucursal[] sucursal = new M_sucursal[cantSuc];
-         for (int i = 0; i < cantSuc; i++) {
-         sucursal[i] = new M_sucursal();
-         sucursal[i].setDireccion(dtmSucursal.getValueAt(i, 0).toString());
-         sucursal[i].setTelefono(dtmSucursal.getValueAt(i, 1).toString());
-         }
-         int cantContacto = dtmContacto.getRowCount();
-         M_cliente_contacto[] contacto = new M_cliente_contacto[cantContacto];
-         for (int i = 0; i < cantContacto; i++) {
-         contacto[i] = new M_cliente_contacto();
-         contacto[i].setDireccion(dtmContacto.getValueAt(i, 0).toString());
-         contacto[i].setTelefono(dtmContacto.getValueAt(i, 1).toString());
-         }*/
         /*
          * VALIDAR RAZON SOCIAL
+         60 caracteres maximo
          */
+        String entidad;
         if (this.vista.jtfRazonSocial.getText().isEmpty()) {
             this.vista.jtfRazonSocial.setBackground(Color.red);
             javax.swing.JOptionPane.showMessageDialog(this.vista,
@@ -156,58 +208,145 @@ public class C_modificar_cliente extends MouseAdapter implements ActionListener,
                     javax.swing.JOptionPane.OK_OPTION);
             this.vista.jtpCenter.setSelectedComponent(vista.jpDatosGenerales);
             return;
-        } else {
-            cliente.setEntidad(this.vista.jtfRazonSocial.getText());
-        }
-        /*
-         * VALIDAR NOMBRE FANTASIA
-         */
-        if (this.vista.jtfNombreFantasia.getText().isEmpty()) {
-            this.vista.jtfNombreFantasia.setBackground(Color.red);
+        } else if (this.vista.jtfRazonSocial.getText().length() > 60) {
+            this.vista.jtfRazonSocial.setBackground(Color.red);
             javax.swing.JOptionPane.showMessageDialog(this.vista,
-                    "El campo Nombre fantasía esta vacio",
+                    "El máximo permitido de caracteres es 60 para Razón social.",
                     "Parametros incorrectos",
                     javax.swing.JOptionPane.OK_OPTION);
             this.vista.jtpCenter.setSelectedComponent(vista.jpDatosGenerales);
             return;
         } else {
-            cliente.setNombre(this.vista.jtfNombreFantasia.getText());
+            entidad = this.vista.jtfRazonSocial.getText().trim();
         }
-        cliente.setRuc(this.vista.jtfRUC.getText());
-        if (this.vista.jtaNota.getText().isEmpty()) {
-            cliente.setObservacion(null);
-        } else {
-            cliente.setObservacion(this.vista.jtaNota.getText());
+        /*
+         * VALIDAR NOMBRE FANTASIA
+         */
+
+        String nombreFantasia = this.vista.jtfNombreFantasia.getText().trim();
+        if (nombreFantasia.length() > 120) {
+            this.vista.jtfRazonSocial.setBackground(Color.red);
+            javax.swing.JOptionPane.showMessageDialog(this.vista,
+                    "El máximo permitido de caracteres es 60 para Razón social.",
+                    "Parametros incorrectos",
+                    javax.swing.JOptionPane.OK_OPTION);
+            this.vista.jtpCenter.setSelectedComponent(vista.jpDatosGenerales);
+            return;
+        } else if (nombreFantasia.isEmpty()) {
+            nombreFantasia = null;
         }
-        if (this.vista.jtfemail.getText().isEmpty()) {
-            cliente.setEmail(null);
-        } else {
-            cliente.setEmail(this.vista.jtfemail.getText());
+        /*
+         if (this.vista.jtfNombreFantasia.getText().isEmpty()) {
+         this.vista.jtfNombreFantasia.setBackground(Color.red);
+         javax.swing.JOptionPane.showMessageDialog(this.vista,
+         "El campo Nombre fantasía esta vacio",
+         "Parametros incorrectos",
+         javax.swing.JOptionPane.OK_OPTION);
+         this.vista.jtpCenter.setSelectedComponent(vista.jpDatosGenerales);
+         return;
+         } else {
+         nombreFantasia = this.vista.jtfNombreFantasia.getText();
+         }*/
+        /*
+         * VALIDAR R.U.C.
+         */
+        String ruc = this.vista.jtfRUC.getText().trim();
+        if (ruc.length() > 30) {
+            this.vista.jtfRUC.setBackground(Color.red);
+            javax.swing.JOptionPane.showMessageDialog(this.vista,
+                    "El máximo permitido de caracteres es 30 para R.U.C.",
+                    "Parametros incorrectos",
+                    javax.swing.JOptionPane.OK_OPTION);
+            this.vista.jtpCenter.setSelectedComponent(vista.jpDatosGenerales);
+            return;
+        } else if (ruc.isEmpty()) {
+            ruc = null;
         }
-        if (this.vista.jtfPaginaWeb.getText().isEmpty()) {
-            cliente.setPaginaWeb(null);
-        } else {
-            cliente.setPaginaWeb(this.vista.jtfPaginaWeb.getText());
+        /*
+         * VALIDAR R.U.C. ID
+         */
+        String rucId = this.vista.jtfRUC_ID.getText().trim();
+        if (rucId.length() > 30) {
+            this.vista.jtfRUC_ID.setBackground(Color.red);
+            javax.swing.JOptionPane.showMessageDialog(this.vista,
+                    "El máximo permitido de caracteres es 3 para Division R.U.C.",
+                    "Parametros incorrectos",
+                    javax.swing.JOptionPane.OK_OPTION);
+            this.vista.jtpCenter.setSelectedComponent(vista.jpDatosGenerales);
+            return;
+        } else if (rucId.isEmpty()) {
+            rucId = null;
         }
-        if (this.vista.jtfDireccion.getText().isEmpty()) {
-            cliente.setDireccion(null);
-        } else {
-            cliente.setDireccion(this.vista.jtfDireccion.getText());
+        String direccion = this.vista.jtfDireccion.getText().trim();
+        if (direccion.length() > 120) {
+            this.vista.jtfDireccion.setBackground(Color.red);
+            javax.swing.JOptionPane.showMessageDialog(this.vista,
+                    "El máximo permitido de caracteres es 120 para dirección.",
+                    "Parametros incorrectos",
+                    javax.swing.JOptionPane.OK_OPTION);
+            this.vista.jtpCenter.setSelectedComponent(vista.jpDatosGenerales);
+            return;
+        } else if (direccion.isEmpty()) {
+            direccion = null;
         }
-        cliente.setRucId(this.vista.jtfRUC_ID.getText());
-        cliente.setDireccion(this.vista.jtfDireccion.getText());
-        cliente.setEmail(this.vista.jtfemail.getText());
-        cliente.setPaginaWeb(this.vista.jtfPaginaWeb.getText());
-        cliente.setCategoria(this.vista.jcbCategoriaCliente.getSelectedItem().toString());
-        cliente.setTipo(this.vista.jcbTipoCliente.getSelectedItem().toString());
-        cliente.setObservacion(this.vista.jtaNota.getText());
-        DB_Cliente.actualizarCliente(cliente);
-        actualizarTablaClientes();
-        cerrar();
+        String email = this.vista.jtfemail.getText().trim();
+        if (email.length() > 120) {
+            this.vista.jtfemail.setBackground(Color.red);
+            javax.swing.JOptionPane.showMessageDialog(this.vista,
+                    "El máximo permitido de caracteres es 30 para e-mail.",
+                    "Parametros incorrectos",
+                    javax.swing.JOptionPane.OK_OPTION);
+            this.vista.jtpCenter.setSelectedComponent(vista.jpDatosGenerales);
+            return;
+        } else if (email.isEmpty()) {
+            email = null;
+        }
+        String pagWeb = this.vista.jtfPaginaWeb.getText().trim();
+        if (pagWeb.length() > 120) {
+            this.vista.jtfPaginaWeb.setBackground(Color.red);
+            javax.swing.JOptionPane.showMessageDialog(this.vista,
+                    "El máximo permitido de caracteres es 30 para Web.",
+                    "Parametros incorrectos",
+                    javax.swing.JOptionPane.OK_OPTION);
+            this.vista.jtpCenter.setSelectedComponent(vista.jpDatosGenerales);
+            return;
+        } else if (pagWeb.isEmpty()) {
+            pagWeb = null;
+        }
+        String obs = this.vista.jtaNota.getText().trim();
+        if (obs.length() > 120) {
+            this.vista.jtaNota.setBackground(Color.red);
+            javax.swing.JOptionPane.showMessageDialog(this.vista,
+                    "El máximo permitido de caracteres es 120 para Observacion.",
+                    "Parametros incorrectos",
+                    javax.swing.JOptionPane.OK_OPTION);
+            this.vista.jtpCenter.setSelectedComponent(vista.jpDatosGenerales);
+            return;
+        } else if (obs.isEmpty()) {
+            obs = null;
+        }
+        String categoria = this.vista.jcbCategoriaCliente.getSelectedItem().toString();
+        String tipo = this.vista.jcbTipoCliente.getSelectedItem().toString();
+        M_cliente cliente = new M_cliente();
+        cliente.setEntidad(entidad);
+        cliente.setNombre(nombreFantasia);
+        cliente.setRuc(ruc);
+        cliente.setRucId(rucId);
+        cliente.setDireccion(direccion);
+        cliente.setEmail(email);
+        cliente.setTipo(tipo);
+        cliente.setCategoria(categoria);
+        cliente.setPaginaWeb(pagWeb);
+        cliente.setObservacion(obs);
+        boolean b = modelo.actualizarCliente(cliente);
+        if (b) {
+            actualizarTablaClientes();
+            cerrar();
+        }
     }
 
     private void actualizarTablaClientes() {
-        this.padre.vista.jtCliente.setModel(DB_Cliente.consultarCliente("", false, true, true));
+        this.padre.vista.jtCliente.setModel(modelo.consultarCliente("", false, true, true));
     }
 
     private void cerrar() {
@@ -221,32 +360,36 @@ public class C_modificar_cliente extends MouseAdapter implements ActionListener,
             AgregarContacto crear_contacto = new AgregarContacto(this);
             crear_contacto.mostrarVista();
         }
+        if (e.getSource().equals(this.vista.jbModContacto)) {
+            ModificarContacto crear_contacto = new ModificarContacto(this, idContacto);
+            crear_contacto.mostrarVista();
+        }
         if (e.getSource().equals(this.vista.jbQuitarContacto)) {
             quitarContacto();
         }
-        /*
-         if (e.getSource().equals(this.vista.jbAgregarSucursal)) {
-         C_crear_sucursal crear_sucursal = new C_crear_sucursal(this);
-         crear_sucursal.mostrarVista();
-         }
-         if (e.getSource().equals(this.vista.jbModSucursal)) {
-         C_modificar_sucursal modificar_sucursal = new C_modificar_sucursal(this);
-         modificar_sucursal.mostrarVista();
-         }
-         if (e.getSource().equals(this.vista.jbQuitarSucursal)) {
-         quitarSucursal();
-         }
-         if (e.getSource().equals(this.vista.jbAgregarTelefono)) {
-         C_crear_telefono crear_telefono = new C_crear_telefono(this);
-         crear_telefono.mostrarVista();
-         }
-         if (e.getSource().equals(this.vista.jbModTelefono)) {
-         C_modificar_telefono modificar_telefono = new C_modificar_telefono(this);
-         modificar_telefono.mostrarVista();
-         }
-         if (e.getSource().equals(this.vista.jbQuitarTelefono)) {
-         quitarTelefono();
-         }*/
+
+        if (e.getSource().equals(this.vista.jbAgregarSucursal)) {
+            C_crear_sucursal crear_sucursal = new C_crear_sucursal(this);
+            crear_sucursal.mostrarVista();
+        }
+        if (e.getSource().equals(this.vista.jbModSucursal)) {
+            C_modificar_sucursal modificar_sucursal = new C_modificar_sucursal(this);
+            modificar_sucursal.mostrarVista();
+        }
+        if (e.getSource().equals(this.vista.jbQuitarSucursal)) {
+            quitarSucursal();
+        }
+        if (e.getSource().equals(this.vista.jbAgregarTelefono)) {
+            C_crear_telefono crear_telefono = new C_crear_telefono(this);
+            crear_telefono.mostrarVista();
+        }
+        if (e.getSource().equals(this.vista.jbModTelefono)) {
+            C_modificar_telefono modificar_telefono = new C_modificar_telefono(this);
+            modificar_telefono.mostrarVista();
+        }
+        if (e.getSource().equals(this.vista.jbQuitarTelefono)) {
+            quitarTelefono();
+        }
         if (e.getSource().equals(this.vista.jbAceptar)) {
             validarDatos();
         }
@@ -275,10 +418,10 @@ public class C_modificar_cliente extends MouseAdapter implements ActionListener,
             int columna = this.vista.jtTelefono.columnAtPoint(e.getPoint());
             if ((fila > -1) && (columna > -1)) {
                 this.vista.jbQuitarTelefono.setEnabled(true);
-                this.vista.jbModSucursal.setEnabled(true);
+                this.vista.jbModTelefono.setEnabled(true);
             } else {
                 this.vista.jbQuitarTelefono.setEnabled(false);
-                this.vista.jbModSucursal.setEnabled(false);
+                this.vista.jbModTelefono.setEnabled(false);
             }
         }
         if (this.vista.jtpCenter.getSelectedComponent().equals(this.vista.jpDatosSucursal)) {
@@ -295,6 +438,7 @@ public class C_modificar_cliente extends MouseAdapter implements ActionListener,
         if (this.vista.jtpCenter.getSelectedComponent().equals(this.vista.jpDatosContacto)) {
             int fila = this.vista.jtContacto.rowAtPoint(e.getPoint());
             int columna = this.vista.jtContacto.columnAtPoint(e.getPoint());
+            idContacto = Integer.valueOf(this.vista.jtContacto.getValueAt(fila, 0).toString());
             if ((fila > -1) && (columna > -1)) {
                 this.vista.jbQuitarContacto.setEnabled(true);
                 this.vista.jbModContacto.setEnabled(true);

@@ -5,12 +5,12 @@
 package Proveedor;
 
 import Cliente.C_crear_cliente;
+import Cliente.C_modificar_cliente;
 import DB_manager.DB_manager;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Vector;
-import javax.swing.JOptionPane;
 
 /**
  *
@@ -25,8 +25,9 @@ public class C_modificar_telefono implements ActionListener {
     private int TELEFONO = 0;
     V_crear_telefono vista;
     C_crear_proveedor crearProveedor;
-    C_modificar_proveedor modiciarProveedor;
+    C_modificar_proveedor modificarProveedor;
     C_crear_cliente crearCliente;
+    C_modificar_cliente modificarCliente;
 
     public C_modificar_telefono(C_crear_proveedor crearTelefono) {
         this.crearProveedor = crearTelefono;
@@ -37,7 +38,7 @@ public class C_modificar_telefono implements ActionListener {
     }
 
     public C_modificar_telefono(C_modificar_proveedor modiciarProveedor) {
-        this.modiciarProveedor = modiciarProveedor;
+        this.modificarProveedor = modiciarProveedor;
         this.vista = new V_crear_telefono(modiciarProveedor.vista);
         this.vista.setTitle("Modificar teléfono");
         inicializarVista();
@@ -47,11 +48,20 @@ public class C_modificar_telefono implements ActionListener {
 
     public C_modificar_telefono(C_crear_cliente crearCliente) {
         this.crearCliente = crearCliente;
-        this.vista = new V_crear_telefono(modiciarProveedor.vista);
+        this.vista = new V_crear_telefono(crearCliente.vista);
         this.vista.setTitle("Modificar teléfono");
         inicializarVista();
         agregarListeners();
         TELEFONO = CREAR_CLIENTE;
+    }
+
+    public C_modificar_telefono(C_modificar_cliente modificarCliente) {
+        this.modificarCliente = modificarCliente;
+        this.vista = new V_crear_telefono(modificarCliente.vista);
+        this.vista.setTitle("Modificar teléfono");
+        inicializarVista();
+        agregarListeners();
+        TELEFONO = MODIFICAR_CLIENTE;
     }
 
     private void inicializarVista() {
@@ -109,11 +119,15 @@ public class C_modificar_telefono implements ActionListener {
             }
             break;
             case (MODIFICAR_PROVEEDOR): {
-                this.modiciarProveedor.modificarTelefono(tipoTelefono, nroTelefono, observacion);
+                this.modificarProveedor.modificarTelefono(tipoTelefono, nroTelefono, observacion);
             }
             break;
             case (CREAR_CLIENTE): {
                 this.crearCliente.modificarTelefono(tipoTelefono, nroTelefono, observacion);
+            }
+            break;
+            case (MODIFICAR_CLIENTE): {
+                this.modificarCliente.modificarTelefono(tipoTelefono, nroTelefono, observacion);
             }
             break;
             default: {

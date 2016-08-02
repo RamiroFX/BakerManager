@@ -10,15 +10,17 @@ package Cliente;
  */
 public class Modificar_cliente {
 
-    V_crear_cliente vista;
-    C_modificar_cliente controlador;
+    private M_modificar_cliente modelo;
+    private V_crear_cliente vista;
+    private C_modificar_cliente controlador;
 
-    public Modificar_cliente(C_gestion_cliente gestionCliente) {
-        vista = new V_crear_cliente(gestionCliente.c_inicio.vista, false);
-        controlador = new C_modificar_cliente(gestionCliente, gestionCliente.getCliente());
+    public Modificar_cliente(C_gestion_cliente gestionCliente, int idCliente) {
+        this.vista = new V_crear_cliente(gestionCliente.c_inicio.vista, false);
+        this.modelo = new M_modificar_cliente(idCliente);
+        this.controlador = new C_modificar_cliente(this.modelo, this.vista, gestionCliente);
     }
 
     public void mostrarVista() {
-        controlador.mostrarVista();
+        this.controlador.mostrarVista();
     }
 }

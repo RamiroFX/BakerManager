@@ -195,7 +195,12 @@ public class C_gestion_cliente implements Gestion {
         if (null == getCliente().getRuc()) {
             this.vista.jtfRUC.setText("");
         } else {
-            this.vista.jtfRUC.setText(getCliente().getRuc() + "-" + getCliente().getRucId());
+            String rucId = getCliente().getRucId();
+            if (rucId == null) {
+                this.vista.jtfRUC.setText(getCliente().getRuc());
+            } else {
+                this.vista.jtfRUC.setText(getCliente().getRuc() + "-" + rucId);
+            }
         }
         this.vista.jtfObservacion.setText(getCliente().getObservacion());
         this.vista.jtfDireccion.setText(getCliente().getDireccion());
@@ -218,7 +223,7 @@ public class C_gestion_cliente implements Gestion {
             crear_cliente.mostrarVista();
         }
         if (e.getSource().equals(this.vista.jbModificarCliente)) {
-            Modificar_cliente modificarCliente = new Modificar_cliente(this);
+            Modificar_cliente modificarCliente = new Modificar_cliente(this, idCliente);
             modificarCliente.mostrarVista();
         }
         if (e.getSource().equals(this.vista.jrbExclusivo)) {
@@ -249,7 +254,12 @@ public class C_gestion_cliente implements Gestion {
                 if (null == getCliente().getRuc()) {
                     this.vista.jtfRUC.setText("");
                 } else {
-                    this.vista.jtfRUC.setText(getCliente().getRuc() + "-" + getCliente().getRucId());
+                    String rucId = getCliente().getRucId();
+                    if (rucId == null) {
+                        this.vista.jtfRUC.setText(getCliente().getRuc());
+                    } else {
+                        this.vista.jtfRUC.setText(getCliente().getRuc() + "-" + rucId);
+                    }
                 }
                 this.vista.jtfObservacion.setText(getCliente().getObservacion());
                 this.vista.jtfDireccion.setText(getCliente().getDireccion());

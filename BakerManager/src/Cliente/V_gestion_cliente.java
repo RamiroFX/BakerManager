@@ -26,9 +26,7 @@ public class V_gestion_cliente extends JInternalFrame {
     private javax.swing.JTabbedPane jTabbedPane;
     public javax.swing.JButton jbModificarCliente;
     public javax.swing.JButton jbCrearCliente;
-    //PESTAÑA 1    
-    private javax.swing.JPanel jpFoto;
-    public javax.swing.JLabel jlFoto;
+    //PESTAÑA 1
     private javax.swing.JLabel jlEntidad;
     public javax.swing.JTextField jtfEntidad;
     private javax.swing.JLabel jlNombre;
@@ -72,7 +70,7 @@ public class V_gestion_cliente extends JInternalFrame {
     public JTextField jtfBuscar;
     public JCheckBox jckbEntidadNombre, jckbRuc;
     public JRadioButton jrbExclusivo, jrbInclusivo;
-    
+
     public V_gestion_cliente() {
         setClosable(true);
         setForeground(java.awt.Color.white);
@@ -81,7 +79,7 @@ public class V_gestion_cliente extends JInternalFrame {
         setResizable(true);
         setTitle("Gestión de clientes ");
         setName("jifGestionClientes");
-        setSize(900, 700);
+        setSize(850, 600);
         initComponents();
     }
 
@@ -93,21 +91,23 @@ public class V_gestion_cliente extends JInternalFrame {
         jspClientes.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
         jspClientes.setViewportView(jtCliente);
         jTabbedPane = new javax.swing.JTabbedPane();
-        jpFoto = new javax.swing.JPanel();
-        jlFoto = new javax.swing.JLabel();
         jlNombre = new javax.swing.JLabel();
         jlNombre.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jlNombre.setText("Nombre");
         jtfNombre = new javax.swing.JTextField();
+        jtfNombre.setEditable(false);
         jlEntidad = new javax.swing.JLabel();
         jlEntidad.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jlEntidad.setText("Entidad");
         jtfEntidad = new javax.swing.JTextField();
+        jtfEntidad.setEditable(false);
         jlRUC = new javax.swing.JLabel();
         jlRUC.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jlRUC.setText("R.U.C.");
         jtfRUC = new javax.swing.JTextField();
+        jtfRUC.setEditable(false);
         jtfObservacion = new javax.swing.JTextField();
+        jtfObservacion.setEditable(false);
         jlObservacion = new javax.swing.JLabel();
         jlObservacion.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jlObservacion.setText("Notas");
@@ -127,10 +127,15 @@ public class V_gestion_cliente extends JInternalFrame {
         jlEmailCliente.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jlEmailCliente.setText("E-mail");
         jtfDireccion = new javax.swing.JTextField();
+        jtfDireccion.setEditable(false);
         jtfTipoCliente = new javax.swing.JTextField();
+        jtfTipoCliente.setEditable(false);
         jtfCategoriaCliente = new javax.swing.JTextField();
+        jtfCategoriaCliente.setEditable(false);
         jtfPaginaWebCliente = new javax.swing.JTextField();
+        jtfPaginaWebCliente.setEditable(false);
         jtfEmailCliente = new javax.swing.JTextField();
+        jtfEmailCliente.setEditable(false);
         jlTelefono = new javax.swing.JLabel();
         jtTelefono = new JTable();
         jspTelefono = new JScrollPane(jtTelefono);
@@ -138,13 +143,6 @@ public class V_gestion_cliente extends JInternalFrame {
 
         jbCrearCliente = new javax.swing.JButton();
         jbModificarCliente = new javax.swing.JButton();
-
-        jpFoto.setBorder(javax.swing.BorderFactory.createTitledBorder("Imagen identificativa"));
-        jlFoto.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jlFoto.setPreferredSize(new java.awt.Dimension(200, 200));
-        jpFoto.add(jlFoto);
-
-
 
         jpDatosEmp = new javax.swing.JPanel(new MigLayout());
         jpDatosEmp.add(jlEntidad);
@@ -170,18 +168,12 @@ public class V_gestion_cliente extends JInternalFrame {
 
         jpDatosEmpresariales = new javax.swing.JPanel();
         jpDatosEmpresariales.setLayout(new java.awt.BorderLayout());
-        jpDatosEmpresariales.add(jpFoto, java.awt.BorderLayout.NORTH);
         jpDatosEmpresariales.add(jpDatosEmp, java.awt.BorderLayout.CENTER);
-
 
         jpDatosSucursal = new javax.swing.JPanel(new java.awt.BorderLayout());
         jtSucursal = new JTable();
         jspSucursal = new JScrollPane(jtSucursal);
         jpDatosSucursal.add(jspSucursal, java.awt.BorderLayout.CENTER);
-
-
-
-
 
         jpDatosContacto = new javax.swing.JPanel(new java.awt.BorderLayout());
         jtContacto = new JTable();
@@ -190,13 +182,13 @@ public class V_gestion_cliente extends JInternalFrame {
         jpDatosContacto.add(jpDatosContactoSouth, java.awt.BorderLayout.SOUTH);
 
         jTabbedPane.addTab("Datos empresariales", jpDatosEmpresariales);
-        jTabbedPane.addTab("Datos de sucursales", jpDatosSucursal);
-        jTabbedPane.addTab("Datos de contactos", jpDatosContacto);
+        jTabbedPane.addTab("Sucursales", jpDatosSucursal);
+        jTabbedPane.addTab("Contactos", jpDatosContacto);
 
         JPanel jpaux = new JPanel(new BorderLayout());
         jpaux.add(jpNorth, BorderLayout.NORTH);
         jpaux.add(jspClientes, BorderLayout.CENTER);
-        
+
         jpCenter = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, jpaux, jTabbedPane);
         jpCenter.setDividerLocation(this.getWidth() / 2);
         jpCenter.setOneTouchExpandable(true);

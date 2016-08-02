@@ -5,6 +5,7 @@
 package Proveedor;
 
 import Cliente.C_crear_cliente;
+import Cliente.C_modificar_cliente;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -20,17 +21,18 @@ public class C_modificar_sucursal implements ActionListener {
     private static final int MODIFICAR_CLIENTE = 2;
     private static final int CREAR_PROVEEDOR = 3;
     private static final int MODIFICAR_PROVEEDOR = 4;
-    private int sucursal = 0;
+    private int SUCURSAL = 0;
     V_crear_sucursal vista;
     C_crear_proveedor crearProveedor;
     C_modificar_proveedor modificarProveedor;
     C_crear_cliente crearCliente;
+    C_modificar_cliente modificarCliente;
 
     public C_modificar_sucursal(C_crear_proveedor crearProveedor) {
         this.crearProveedor = crearProveedor;
         this.vista = new V_crear_sucursal(crearProveedor.vista);
         agregarListeners();
-        sucursal = CREAR_PROVEEDOR;
+        SUCURSAL = CREAR_PROVEEDOR;
     }
 
     public C_modificar_sucursal(C_modificar_proveedor modificarProveedor) {
@@ -38,14 +40,21 @@ public class C_modificar_sucursal implements ActionListener {
         this.vista = new V_crear_sucursal(modificarProveedor.vista);
         this.vista.setTitle("Modificar sucursal");
         agregarListeners();
-        sucursal = MODIFICAR_PROVEEDOR;
+        SUCURSAL = MODIFICAR_PROVEEDOR;
     }
 
     public C_modificar_sucursal(C_crear_cliente crearCliente) {
         this.crearCliente = crearCliente;
-        this.vista = new V_crear_sucursal(crearProveedor.vista);
+        this.vista = new V_crear_sucursal(crearCliente.vista);
         agregarListeners();
-        sucursal = CREAR_CLIENTE;
+        SUCURSAL = CREAR_CLIENTE;
+    }
+
+    public C_modificar_sucursal(C_modificar_cliente modificarCliente) {
+        this.modificarCliente = modificarCliente;
+        this.vista = new V_crear_sucursal(modificarCliente.vista);
+        agregarListeners();
+        SUCURSAL = MODIFICAR_CLIENTE;
     }
 
     public void mostrarVista() {
@@ -86,7 +95,7 @@ public class C_modificar_sucursal implements ActionListener {
         } else if (telefono.isEmpty()) {
             telefono = null;
         }
-        switch (sucursal) {
+        switch (SUCURSAL) {
             case (CREAR_PROVEEDOR): {
                 this.crearProveedor.modificarSucursal(direccion, telefono);
             }
@@ -105,6 +114,11 @@ public class C_modificar_sucursal implements ActionListener {
             case (CREAR_CLIENTE): {
                 this.crearCliente.modificarSucursal(direccion, telefono);
             }
+            break;
+            case (MODIFICAR_CLIENTE): {
+                this.modificarCliente.modificarSucursal(direccion, telefono);
+            }
+            break;
             default: {
                 cerrar();
             }

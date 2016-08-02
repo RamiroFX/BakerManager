@@ -59,7 +59,7 @@ public class C_login implements ActionListener, KeyListener {
     }
 
     private void crearSeleccionRol() {
-        SeleccionarRol seleccionarRol = new SeleccionarRol(c_inicio);
+        seleccionarRol seleccionarRol = new seleccionarRol(c_inicio);
         seleccionarRol.mostrarVista();
     }
 
