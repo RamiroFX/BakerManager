@@ -35,9 +35,9 @@ public class C_gestionEgresos extends MouseAdapter implements ActionListener, Ke
     V_gestion_egresos vista;
     public C_inicio c_inicio;
 
-    public C_gestionEgresos(C_inicio c_inicio) {
+    public C_gestionEgresos(V_gestion_egresos vista, C_inicio c_inicio) {
         this.m_egreso_cabecera = new M_egreso_cabecera();
-        this.vista = new V_gestion_egresos();
+        this.vista = vista;
         this.c_inicio = c_inicio;
         this.vista.setLocation(c_inicio.centrarPantalla(this.vista));
         inicializarVista();

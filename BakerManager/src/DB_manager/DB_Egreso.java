@@ -38,7 +38,7 @@ public class DB_Egreso {
                 + "EGCA.NRO_FACTURA \"Nro. factura\", "
                 + "(SELECT PERS.NOMBRE || ' '|| PERS.APELLIDO WHERE PERS.ID_PERSONA = FUNC.ID_PERSONA)\"Empleado\", "
                 + "to_char(EGCA.TIEMPO,'DD/MM/YYYY HH24:MI:SS:MS') \"Tiempo\", "
-                + "(SELECT TIOP.DESCRIPCION FROM TIPO_OPERACION TIOP WHERE TIOP.ID_TIPO_OPERACION = EGCA.ID_COND_VENTA) \"Cond. venta\" "
+                + "(SELECT TIOP.DESCRIPCION FROM TIPO_OPERACION TIOP WHERE TIOP.ID_TIPO_OPERACION = EGCA.ID_COND_COMPRA) \"Cond. venta\" "
                 + "FROM EGRESO_CABECERA EGCA, FUNCIONARIO FUNC, PERSONA PERS "
                 + "WHERE  EGCA.TIEMPO BETWEEN '" + inicio + "'::timestamp  "
                 + "AND '" + fin + "'::timestamp "
@@ -119,7 +119,7 @@ public class DB_Egreso {
         if ("Todos".equals(tipo_operacion)) {
             tiop = "";
         } else {
-            tiop = " AND EGCA.ID_COND_VENTA = " + tipo_operacion;
+            tiop = " AND EGCA.ID_COND_COMPRA = " + tipo_operacion;
         }
         String numero_fac = "";
         try {
@@ -136,8 +136,8 @@ public class DB_Egreso {
                 + "EGCA.NRO_FACTURA \"Nro. factura\", "
                 + "(SELECT PERS.NOMBRE || ' '|| PERS.APELLIDO WHERE PERS.ID_PERSONA = FUNC.ID_PERSONA)\"Empleado\", "
                 + "to_char(EGCA.TIEMPO,'DD/MM/YYYY HH24:MI:SS:MS') \"Tiempo\", "
-                + "(SELECT SUM(EGDE.TOTAL) FROM EGRESO_DETALLE EGDE WHERE EGCA.ID_EGRESO_CABECERA = EGDE.ID_EGRESO_CABE)\"Total\", "
-                + "(SELECT TIOP.DESCRIPCION FROM TIPO_OPERACION TIOP WHERE TIOP.ID_TIPO_OPERACION = EGCA.ID_COND_VENTA) \"Cond. venta\" "
+                + "ROUND((SELECT SUM (CANTIDAD*(PRECIO-(PRECIO*DESCUENTO)/100)) FROM EGRESO_DETALLE EGDE WHERE EGDE.ID_EGRESO_DETALLE = EGCA.ID_EGRESO_CABECERA))\"Total\", "
+                + "(SELECT TIOP.DESCRIPCION FROM TIPO_OPERACION TIOP WHERE TIOP.ID_TIPO_OPERACION = EGCA.ID_COND_COMPRA) \"Cond. compra\" "
                 + fromQuery
                 + "WHERE EGCA.ID_FUNCIONARIO = FUNC.ID_FUNCIONARIO "
                 + "AND PERS.ID_PERSONA = FUNC.ID_PERSONA "
@@ -185,20 +185,28 @@ public class DB_Egreso {
     }
 
     public static ResultSetTableModel obtenerEgresoDetalle(int idEgresoCabecera) {
-        String queryProducto = "(SELECT PROD.DESCRIPCION FROM PRODUCTO PROD WHERE PROD.ID_PRODUCTO = EGDE.ID_PRODUCTO) \"Producto\", ";
         String Query = "SELECT "
                 + "EGDE.ID_PRODUCTO \"ID art.\", "
-                + queryProducto
+                + "P.DESCRIPCION \"Producto\", "
                 + "EGDE.CANTIDAD \"Cantidad\", "
                 + "EGDE.PRECIO \"Precio\", "
                 + "EGDE.DESCUENTO \"Descuento\","
-                + "EGDE.EXENTA \"Exenta\", "
-                + "EGDE.CINCO \"IVA 5%\", "
-                + "EGDE.DIEZ \"IVA 10%\", "
-                + "EGDE.OBSERVACION \"Obs.\" "
-                + "FROM EGRESO_DETALLE EGDE "
-                + "WHERE EGDE.ID_EGRESO_CABE = " + idEgresoCabecera;
+                + "CASE "
+                + "	WHEN P.ID_IMPUESTO = 1 THEN ROUND(EGDE.CANTIDAD*(EGDE.PRECIO-(EGDE.PRECIO*EGDE.DESCUENTO)/100))ELSE '0' "
+                + "END AS \"Exenta\", "
+                + "CASE "
+                + "	WHEN P.ID_IMPUESTO = 2 THEN ROUND(EGDE.CANTIDAD*(EGDE.PRECIO-(EGDE.PRECIO*EGDE.DESCUENTO)/100))ELSE '0' "
+                + "END AS \"IVA 5%\", "
+                + "CASE "
+                + "	WHEN P.ID_IMPUESTO = 3 THEN ROUND(EGDE.CANTIDAD*(EGDE.PRECIO-(EGDE.PRECIO*EGDE.DESCUENTO)/100))ELSE '0' "
+                + "END AS \"IVA 10%\", "
+                + "OBSERVACION \"Obs.\" "
+                + "FROM EGRESO_DETALLE EGDE, PRODUCTO P "
+                + "WHERE EGDE.ID_PRODUCTO = P.ID_PRODUCTO "
+                + "AND EGDE.ID_EGRESO_CABECERA = " + idEgresoCabecera;
         ResultSetTableModel rstm = null;
+        System.out.println("208-egreso:");
+        System.out.println(Query);
         try {
             st = DB_manager.getConection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             // se ejecuta el query y se obtienen los resultados en un ResultSet
@@ -238,7 +246,7 @@ public class DB_Egreso {
     public static ResultSetTableModel obtenerEgresoDetalleAvanzado(String producto, String proveedor, String marca, String impuesto, String rubro, String estado, String fechaInicio, String fechaFinal, String tipo_operacion, String idEmpleado, boolean busqDescripcion) {
         ResultSetTableModel rstm = null;
         String fromQuery = "FROM EGRESO_DETALLE EGDE,PRODUCTO PROD, EGRESO_CABECERA EGCA ";
-        String whereQuery = "WHERE EGDE.ID_PRODUCTO = PROD.ID_PRODUCTO AND EGCA.ID_EGRESO_CABECERA = EGDE.ID_EGRESO_CABE ";
+        String whereQuery = "WHERE EGDE.ID_PRODUCTO = PROD.ID_PRODUCTO AND EGCA.ID_EGRESO_CABECERA = EGDE.ID_EGRESO_CABECERA ";
         String fInicio = "";
         String fFinal;
         if ("Todos".equals(fechaInicio)) {
@@ -305,7 +313,7 @@ public class DB_Egreso {
         if ("Todos".equals(tipo_operacion)) {
             tiop = "";
         } else {
-            tiop = " AND EGCA.ID_COND_VENTA = " + tipo_operacion;
+            tiop = " AND EGCA.ID_COND_COMPRA = " + tipo_operacion;
         }
 
         String busqueda;
@@ -373,8 +381,8 @@ public class DB_Egreso {
                 + "EGCA.ID_FUNCIONARIO, "
                 + "EGCA.TIEMPO, "
                 + "EGCA.NRO_FACTURA, "
-                + "(SELECT TIOP.DESCRIPCION FROM TIPO_OPERACION TIOP WHERE TIOP.ID_TIPO_OPERACION = EGCA.ID_COND_VENTA)\"EGCA.COND_VENTA\", "
-                + "EGCA.ID_COND_VENTA "
+                + "(SELECT TIOP.DESCRIPCION FROM TIPO_OPERACION TIOP WHERE TIOP.ID_TIPO_OPERACION = EGCA.ID_COND_COMPRA)\"EGCA.ID_COND_COMPRA\", "
+                + "EGCA.ID_COND_COMPRA "
                 + "FROM EGRESO_CABECERA EGCA "
                 + "WHERE EGCA.ID_EGRESO_CABECERA = " + idEgresoCabecera;
         try {
@@ -382,13 +390,13 @@ public class DB_Egreso {
             rs = pst.executeQuery();
             while (rs.next()) {
                 egreso_cabecera = new M_egreso_cabecera();
-                egreso_cabecera.setId_cabecera(rs.getInt("EGCA.ID_EGRESO_CABECERA"));
-                egreso_cabecera.setId_condVenta(rs.getInt("EGCA.ID_COND_VENTA"));
-                egreso_cabecera.setId_empleado(rs.getInt("EGCA.ID_FUNCIONARIO"));
-                egreso_cabecera.setId_proveedor(rs.getInt("EGCA.ID_PROVEEDOR"));
-                egreso_cabecera.setTiempo(rs.getTimestamp("EGCA.TIEMPO"));
-                egreso_cabecera.setNro_factura(rs.getInt("EGCA.NRO_FACTURA"));
-                egreso_cabecera.setCondVenta(rs.getString("EGCA.COND_VENTA"));
+                egreso_cabecera.setId_cabecera(rs.getInt("ID_EGRESO_CABECERA"));
+                egreso_cabecera.setId_condVenta(rs.getInt("ID_COND_COMPRA"));
+                egreso_cabecera.setId_empleado(rs.getInt("ID_FUNCIONARIO"));
+                egreso_cabecera.setId_proveedor(rs.getInt("ID_PROVEEDOR"));
+                egreso_cabecera.setTiempo(rs.getTimestamp("TIEMPO"));
+                egreso_cabecera.setNro_factura(rs.getInt("NRO_FACTURA"));
+                egreso_cabecera.setCondVenta(rs.getString("ID_COND_COMPRA"));
             }
         } catch (SQLException ex) {
             Logger lgr = Logger.getLogger(DB_Egreso.class.getName());
@@ -444,7 +452,7 @@ public class DB_Egreso {
         if ("Todos".equals(tipo_operacion)) {
             tiop = "";
         } else {
-            tiop = " AND EGCA.ID_COND_VENTA = " + tipo_operacion;
+            tiop = " AND EGCA.ID_COND_COMPRA = " + tipo_operacion;
         }
         String numero_fac = "";
         try {
@@ -474,7 +482,7 @@ public class DB_Egreso {
                 + "WHERE EGCA.ID_FUNCIONARIO = FUNC.ID_FUNCIONARIO "
                 + "AND PERS.ID_PERSONA = FUNC.ID_PERSONA "
                 + "AND EGCA.ID_PROVEEDOR = PROV.ID_PROVEEDOR "
-                + "AND EGCA.ID_EGRESO_CABECERA = EGDE.ID_EGRESO_CABE "
+                + "AND EGCA.ID_EGRESO_CABECERA = EGDE.ID_EGRESO_CABECERA "
                 + prov
                 + fInicio
                 + fFinal
@@ -531,11 +539,11 @@ public class DB_Egreso {
                 + "EGCA.NRO_FACTURA \"Nro. factura\", "
                 + "(SELECT PERS.NOMBRE || ' '|| PERS.APELLIDO WHERE PERS.ID_PERSONA = FUNC.ID_PERSONA)\"Empleado\", "
                 + "EGCA.TIEMPO \"Tiempo\", "
-                + "(SELECT TIOP.DESCRIPCION FROM TIPO_OPERACION TIOP WHERE TIOP.ID_TIPO_OPERACION = EGCA.ID_COND_VENTA) \"Cond. venta\" "
+                + "(SELECT TIOP.DESCRIPCION FROM TIPO_OPERACION TIOP WHERE TIOP.ID_TIPO_OPERACION = EGCA.ID_COND_COMPRA) \"Cond. venta\" "
                 + "FROM EGRESO_CABECERA EGCA, EGRESO_DETALLE EGDE, FUNCIONARIO FUNC, PERSONA PERS "
                 + "WHERE EGCA.ID_FUNCIONARIO = FUNC.ID_FUNCIONARIO "
                 + "AND PERS.ID_PERSONA = FUNC.ID_PERSONA "
-                + "AND EGCA.ID_EGRESO_CABECERA = EGDE.ID_EGRESO_CABE "
+                + "AND EGCA.ID_EGRESO_CABECERA = EGDE.ID_EGRESO_CABECERA "
                 + "AND EGDE.ID_EGRESO_DETALLE = " + idEgresoDetalle;
         try {
             st = DB_manager.getConection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
@@ -577,10 +585,10 @@ public class DB_Egreso {
         Integer totalEgreso = 0;
         String query = "SELECT SUM(EGDE.TOTAL)\"Total\" "
                 + "FROM EGRESO_DETALLE EGDE, EGRESO_CABECERA EGCA "
-                + "WHERE EGCA.ID_EGRESO_CABECERA = EGDE.ID_EGRESO_CABE "
+                + "WHERE EGCA.ID_EGRESO_CABECERA = EGDE.ID_EGRESO_CABECERA "
                 + "AND EGCA.TIEMPO BETWEEN '" + inicio + "'::timestamp  "
                 + "AND '" + fin + "'::timestamp "
-                + "AND EGCA.ID_COND_VENTA = " + tipo_operacion;
+                + "AND EGCA.ID_COND_COMPRA = " + tipo_operacion;
         try {
             pst = DB_manager.getConection().prepareStatement(query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             rs = pst.executeQuery();
@@ -612,12 +620,12 @@ public class DB_Egreso {
                 + "EGCA.NRO_FACTURA \"Nro. factura\", "
                 + " (SELECT PERS.NOMBRE || ' '|| PERS.APELLIDO WHERE PERS.ID_PERSONA = FUNC.ID_PERSONA)\"Empleado\", "
                 + " EGCA.TIEMPO \"Tiempo\","
-                + "(SELECT SUM(EGDE.TOTAL) FROM EGRESO_DETALLE EGDE WHERE EGCA.ID_EGRESO_CABECERA = EGDE.ID_EGRESO_CABE)\"Total\", "
-                + "(SELECT TIOP.DESCRIPCION FROM TIPO_OPERACION TIOP WHERE TIOP.ID_TIPO_OPERACION = EGCA.ID_COND_VENTA) \"Cond. venta\" "
+                + "(SELECT SUM(EGDE.TOTAL) FROM EGRESO_DETALLE EGDE WHERE EGCA.ID_EGRESO_CABECERA = EGDE.ID_EGRESO_CABECERA)\"Total\", "
+                + "(SELECT TIOP.DESCRIPCION FROM TIPO_OPERACION TIOP WHERE TIOP.ID_TIPO_OPERACION = EGCA.ID_COND_COMPRA) \"Cond. venta\" "
                 + "FROM EGRESO_CABECERA EGCA, FUNCIONARIO FUNC, PERSONA PERS, EGRESO_DETALLE EGDE "
                 + "WHERE PERS.ID_PERSONA = FUNC.ID_PERSONA "
                 + "AND EGCA.ID_FUNCIONARIO = FUNC.ID_FUNCIONARIO "
-                + "AND EGCA.ID_EGRESO_CABECERA = EGDE.ID_EGRESO_CABE "
+                + "AND EGCA.ID_EGRESO_CABECERA = EGDE.ID_EGRESO_CABECERA "
                 + "AND EGCA.TIEMPO BETWEEN '" + inicio + "'::timestamp  "
                 + "AND '" + fin + "'::timestamp";
         ResultSetTableModel rstm = null;
@@ -722,8 +730,8 @@ public class DB_Egreso {
      */
 
     public static void insertarEgresoTEMPORAL(M_egreso_cabecera egreso_cabecera, M_egreso_detalle[] egreso_detalle) {
-        String insertDetalle = "INSERT INTO egreso_detalle(id_egreso_cabe, id_producto, cantidad, precio, descuento, observacion)VALUES (?, ?, ?, ?, ?, ?)";
-        String INSERT_CABECERA = "INSERT INTO egreso_cabecera(nro_factura, id_proveedor, id_funcionario, tiempo, id_cond_venta)VALUES (?, ?, ?, ?, ?)";
+        String insertDetalle = "INSERT INTO egreso_detalle(id_egreso_cabecera, id_producto, cantidad, precio, descuento, observacion)VALUES (?, ?, ?, ?, ?, ?)";
+        String INSERT_CABECERA = "INSERT INTO egreso_cabecera(nro_factura, id_proveedor, id_funcionario, tiempo, ID_COND_COMPRA)VALUES (?, ?, ?, ?, ?)";
         long sq_egreso_cabecera = -1L;
         try {
             DB_manager.getConection().setAutoCommit(false);

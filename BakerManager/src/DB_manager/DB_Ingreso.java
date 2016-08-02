@@ -181,10 +181,9 @@ public class DB_Ingreso {
     }
 
     public static ResultSetTableModel obtenerIngresoDetalle(Integer idIngresoCabecera) {
-        String queryProducto = "(SELECT P.DESCRIPCION FROM PRODUCTO P WHERE P.ID_PRODUCTO = FD.ID_PRODUCTO) \"Producto\", ";
         String Query = "SELECT "
                 + "FD.ID_PRODUCTO \"ID art.\", "
-                + queryProducto
+                + "P.DESCRIPCION \"Producto\", "
                 + "FD.CANTIDAD \"Cantidad\", "
                 + "FD.PRECIO \"Precio\", "
                 + "FD.DESCUENTO \"Descuento\","
@@ -199,7 +198,8 @@ public class DB_Ingreso {
                 + "END AS \"IVA 10%\", "
                 + "OBSERVACION \"Obs.\" "
                 + "FROM FACTURA_DETALLE FD, PRODUCTO P "
-                + "WHERE ID_FACTURA_CABECERA = " + idIngresoCabecera;
+                + "WHERE FD.ID_PRODUCTO = P.ID_PRODUCTO "
+                + "AND ID_FACTURA_CABECERA = " + idIngresoCabecera;
         ResultSetTableModel rstm = null;
         try {
             st = DB_manager.getConection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);

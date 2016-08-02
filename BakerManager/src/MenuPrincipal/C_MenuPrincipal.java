@@ -5,6 +5,7 @@
 package MenuPrincipal;
 
 import Cliente.Gestion_cliente;
+import Egresos.Gestion_Egreso;
 import Entities.M_menu_item;
 import Producto.Gestion_Producto;
 import Proveedor.Gestion_proveedores;
@@ -77,6 +78,7 @@ public class C_MenuPrincipal implements ActionListener {
     private void agregarListeners() {
         this.vista.jbClientes.addActionListener(this);
         this.vista.jbProveedores.addActionListener(this);
+        this.vista.jbCompras.addActionListener(this);
         this.vista.jbProductos.addActionListener(this);
         this.vista.jbVentas.addActionListener(this);
         this.vista.jbSalir.addActionListener(this);
@@ -108,6 +110,9 @@ public class C_MenuPrincipal implements ActionListener {
         } else if (src.equals(this.vista.jbClientes)) {
             Gestion_cliente gestionCliente = new Gestion_cliente(c_inicio);
             gestionCliente.mostrarVista();
+        } else if (src.equals(this.vista.jbCompras)) {
+            Gestion_Egreso gestionEgreso = new Gestion_Egreso(c_inicio);
+            gestionEgreso.mostrarVista();
         } else if (src.equals(this.vista.jbSalir)) {
             System.exit(0);
         }

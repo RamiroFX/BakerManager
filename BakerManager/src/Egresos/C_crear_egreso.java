@@ -179,7 +179,7 @@ public class C_crear_egreso extends MouseAdapter implements ActionListener {
 
     public void recibirProveedor(M_proveedor proveedor) {
         this.modelo.proveedor = proveedor;
-        this.vista.jtfProveedor.setText(this.modelo.proveedor.getNombre());
+        this.vista.jtfProveedor.setText(this.modelo.proveedor.getEntidad());
     }
 
     private void sumarTotal() {
