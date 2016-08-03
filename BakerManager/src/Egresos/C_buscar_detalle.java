@@ -22,6 +22,7 @@ import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Vector;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -54,9 +55,9 @@ public class C_buscar_detalle extends MouseAdapter implements ActionListener, Ke
             this.vista.jcbMarca.addItem(marca.get(i));
         }
         Vector rubro = DB_manager.obtenerRubro();
-        this.vista.jcbRubro.addItem("Todos");
+        this.vista.jcbCategoria.addItem("Todos");
         for (int i = 0; i < rubro.size(); i++) {
-            this.vista.jcbRubro.addItem(rubro.get(i));
+            this.vista.jcbCategoria.addItem(rubro.get(i));
         }
         Vector impuesto = DB_manager.obtenerImpuesto();
         this.vista.jcbImpuesto.addItem("Todos");
@@ -147,10 +148,18 @@ public class C_buscar_detalle extends MouseAdapter implements ActionListener, Ke
                     fechaFinal = "Todos";
                 }
                 String producto = vista.jtfBuscar.getText();
+                if (producto.length() > 50) {
+                    JOptionPane.showMessageDialog(vista, "Su busqueda sobrepasa el máximo de 50 caracteres.", "Atención", JOptionPane.INFORMATION_MESSAGE);
+                    return;
+                }
+                producto = producto.replace("!", "!!")
+                        .replace("%", "!%")
+                        .replace("_", "!_")
+                        .replace("[", "![");
                 String proveedor = proveedor();
                 String marca = vista.jcbMarca.getSelectedItem().toString();
                 String impuesto = vista.jcbImpuesto.getSelectedItem().toString();
-                String rubro = vista.jcbRubro.getSelectedItem().toString();
+                String categoria = vista.jcbCategoria.getSelectedItem().toString();
                 String estado = vista.jcbEstado.getSelectedItem().toString();
                 String empleado = empleado();
                 String tiop = tipoOperacion();
@@ -161,7 +170,7 @@ public class C_buscar_detalle extends MouseAdapter implements ActionListener, Ke
                  */
                 vista.jtIzq.setModel(DB_Egreso.obtenerEgresoDetalleAvanzado(
                         producto, proveedor, marca, impuesto,
-                        rubro, estado, fechaInicio, fechaFinal, tiop, empleado, tipoBusquedaDescripcion));
+                        categoria, estado, fechaInicio, fechaFinal, tiop, empleado, tipoBusquedaDescripcion));
             }
         });
     }
@@ -180,7 +189,7 @@ public class C_buscar_detalle extends MouseAdapter implements ActionListener, Ke
         this.vista.jcbEstado.setSelectedItem("Todos");
         this.vista.jcbImpuesto.setSelectedItem("Todos");
         this.vista.jcbMarca.setSelectedItem("Todos");
-        this.vista.jcbRubro.setSelectedItem("Todos");
+        this.vista.jcbCategoria.setSelectedItem("Todos");
         this.proveedor = null;
         this.funcionario = null;
     }

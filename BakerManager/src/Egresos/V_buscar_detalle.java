@@ -29,7 +29,7 @@ public class V_buscar_detalle extends JDialog {
     public JButton jbBuscar, jbBorrar, jbCerrar, jbDetalle, jbProveedor, 
             jbFuncionario;
     public JTextField jtfBuscar, jtfProveedor, jtfFuncionario;
-    public JComboBox jcbImpuesto, jcbMarca, jcbEstado, jcbRubro, jcbCondCompra;
+    public JComboBox jcbImpuesto, jcbMarca, jcbEstado, jcbCategoria, jcbCondCompra;
     private JPanel jpTop, jpBotonesTop, jpBot;
     public JTable jtIzq, jtDer;
     private JScrollPane jspEgresoCabecera, jspEgresoDetalle;
@@ -61,7 +61,7 @@ public class V_buscar_detalle extends JDialog {
         jcbImpuesto = new JComboBox();
         jcbMarca = new JComboBox();
         jcbEstado = new JComboBox();
-        jcbRubro = new JComboBox();
+        jcbCategoria = new JComboBox();
         jbFuncionario = new JButton("Funcionario");
         jtfFuncionario = new JTextField();
         jtfFuncionario.setEditable(false);
@@ -96,8 +96,8 @@ public class V_buscar_detalle extends JDialog {
         jpTop.add(jddInicio, "growx");
         jpTop.add(new JLabel("Marca:"));
         jpTop.add(jcbMarca);
-        jpTop.add(new JLabel("Rubro:"));
-        jpTop.add(jcbRubro, "growx, wrap");
+        jpTop.add(new JLabel("Categoría:"));
+        jpTop.add(jcbCategoria, "growx, wrap");
         jpTop.add(new JLabel("Fecha final:"));
         jpTop.add(jddFinal, "growx");
         jpTop.add(new JLabel("Impuesto:"));

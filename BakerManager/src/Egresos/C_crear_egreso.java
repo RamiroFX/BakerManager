@@ -128,7 +128,7 @@ public class C_crear_egreso extends MouseAdapter implements ActionListener {
                     Integer ivaExenta = Integer.valueOf(String.valueOf(dtm.getValueAt(i, 5)));
                     Integer iva5 = Integer.valueOf(String.valueOf(dtm.getValueAt(i, 6)));
                     Integer iva10 = Integer.valueOf(String.valueOf(dtm.getValueAt(i, 7)));
-                    Precio = Precio - Math.round(Math.round(((Precio * Descuento) / 100)));
+                    //Precio = Precio - Math.round(Math.round(((Precio * Descuento) / 100)));
                     Integer total = Math.round(Math.round(Cantidad * Precio));
                     this.modelo.egreso_detalle[i] = new M_egreso_detalle();
                     this.modelo.egreso_detalle[i].setId_cabecera(this.modelo.egreso_cabecera.getId_cabecera());
@@ -179,7 +179,7 @@ public class C_crear_egreso extends MouseAdapter implements ActionListener {
 
     public void recibirProveedor(M_proveedor proveedor) {
         this.modelo.proveedor = proveedor;
-        this.vista.jtfProveedor.setText(this.modelo.proveedor.getEntidad());
+        this.vista.jtfProveedor.setText(this.modelo.proveedor.getEntidad()+" | "+proveedor.getRuc()+"-"+proveedor.getRuc_id());
     }
 
     private void sumarTotal() {

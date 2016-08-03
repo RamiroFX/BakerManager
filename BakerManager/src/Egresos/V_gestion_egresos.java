@@ -111,6 +111,6 @@ public class V_gestion_egresos extends JInternalFrame {
         jpBot.add(jbAgregar);
         jpBot.add(jbDetalle);
         jpBot.add(jbResumen);
-        jpBot.add(jbGraficos);
+        //jpBot.add(jbGraficos);
     }
 }

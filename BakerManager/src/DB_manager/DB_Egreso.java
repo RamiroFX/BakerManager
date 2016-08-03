@@ -243,7 +243,7 @@ public class DB_Egreso {
         return rstm;
     }
 
-    public static ResultSetTableModel obtenerEgresoDetalleAvanzado(String producto, String proveedor, String marca, String impuesto, String rubro, String estado, String fechaInicio, String fechaFinal, String tipo_operacion, String idEmpleado, boolean busqDescripcion) {
+    public static ResultSetTableModel obtenerEgresoDetalleAvanzado(String producto, String proveedor, String marca, String impuesto, String categoria, String estado, String fechaInicio, String fechaFinal, String tipo_operacion, String idEmpleado, boolean busqDescripcion) {
         ResultSetTableModel rstm = null;
         String fromQuery = "FROM EGRESO_DETALLE EGDE,PRODUCTO PROD, EGRESO_CABECERA EGCA ";
         String whereQuery = "WHERE EGDE.ID_PRODUCTO = PROD.ID_PRODUCTO AND EGCA.ID_EGRESO_CABECERA = EGDE.ID_EGRESO_CABECERA ";
@@ -278,7 +278,7 @@ public class DB_Egreso {
         if ("Todos".equals(marca)) {
             marc = "";
         } else {
-            marc = "AND PROD.MARCA LIKE '" + marca + "' ";
+            marc = "AND PROD.ID_MARCA = (SELECT MARC.ID_MARCA FROM MARCA MARC WHERE MARC.DESCRIPCION = '" + marca + "') ";
         }
         String imp;
         if ("Todos".equals(impuesto)) {
@@ -288,10 +288,10 @@ public class DB_Egreso {
         }
 
         String rubr;
-        if ("Todos".equals(rubro)) {
+        if ("Todos".equals(categoria)) {
             rubr = "";
         } else {
-            rubr = "AND PROD.ID_RUBRO LIKE '" + rubro + "'  ";
+            rubr = "AND PROD.ID_CATEGORIA = (SELECT PRCA.ID_PRODUCTO_CATEGORIA FROM PRODUCTO_CATEGORIA PRCA WHERE PRCA.DESCRIPCION = '" + categoria + "') ";
         }
         String estad;
         if ("Todos".equals(estado)) {
@@ -318,14 +318,14 @@ public class DB_Egreso {
 
         String busqueda;
         if (busqDescripcion) {
-            busqueda = "AND LOWER(PROD.DESCRIPCION) LIKE '" + producto + "%' ";
+            busqueda = "AND LOWER(PROD.DESCRIPCION) LIKE LOWER (?) ESCAPE '!' ";
         } else {
-            busqueda = "AND LOWER(EGDE.OBSERVACION) LIKE '" + producto + "%' ";
+            busqueda = "AND LOWER(EGDE.OBSERVACION) LIKE LOWER (?) ESCAPE '!' ";
         }
 
         String Query = "SELECT EGDE.ID_EGRESO_DETALLE\"ID det.\", "
                 + "(SELECT PROD.DESCRIPCION FROM PRODUCTO PROD WHERE PROD.ID_PRODUCTO = EGDE.ID_PRODUCTO) \"Producto\", "
-                + "EGDE.OBSERVACION \"Obs.\",EGDE.CANTIDAD \"Cantidad\", EGDE.PRECIO \"Precio\", EGDE.TOTAL \"Total\", EGCA.TIEMPO \"Tiempo\" "
+                + "EGDE.OBSERVACION \"Obs.\",EGDE.CANTIDAD \"Cantidad\", EGDE.PRECIO \"Precio\", (EGDE.PRECIO*EGDE.CANTIDAD)\"Total\", EGCA.TIEMPO \"Tiempo\" "
                 + fromQuery
                 + whereQuery
                 + busqueda
@@ -339,9 +339,14 @@ public class DB_Egreso {
                 + tiop
                 + empleado;
         try {
-            st = DB_manager.getConection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-            // se ejecuta el query y se obtienen los resultados en un ResultSet
-            rs = st.executeQuery(Query);
+            System.out.println("342-Egreso:" + Query);
+            /*st = DB_manager.getConection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+             // se ejecuta el query y se obtienen los resultados en un ResultSet
+             rs = st.executeQuery(Query);*/
+
+            pst = DB_manager.getConection().prepareStatement(Query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            pst.setString(1, producto + "%");
+            rs = pst.executeQuery();
             rstm = new ResultSetTableModel(rs);
         } catch (SQLException ex) {
             Logger lgr = Logger.getLogger(DB_Egreso.class.getName());
@@ -418,7 +423,7 @@ public class DB_Egreso {
     }
 
     public static ArrayList obtenerEgresosDetalle(String proveedor_entidad, Integer nro_factura, String idEmpleado, String inicio, String fin, String tipo_operacion) {
-        String fromQuery = "FROM EGRESO_DETALLE EGDE, EGRESO_CABECERA EGCA,FUNCIONARIO FUNC, PERSONA PERS, PROVEEDOR PROV ";
+        String fromQuery = "FROM EGRESO_DETALLE EGDE, EGRESO_CABECERA EGCA,FUNCIONARIO FUNC, PERSONA PERS, PROVEEDOR PROV, PRODUCTO P ";
         String fInicio = "";
         String fFinal;
         if ("Todos".equals(inicio)) {
@@ -466,14 +471,20 @@ public class DB_Egreso {
         }
         String Query = "SELECT EGDE.ID_EGRESO_DETALLE, "
                 + "EGDE.ID_PRODUCTO , "
-                + "(SELECT PROD.DESCRIPCION FROM PRODUCTO PROD WHERE PROD.ID_PRODUCTO = EGDE.ID_PRODUCTO) \"PRODUCTO\", "
+                + "P.DESCRIPCION  \"PRODUCTO\", "
                 + "EGDE.CANTIDAD , "
                 + "EGDE.PRECIO , "
                 + "EGDE.DESCUENTO, "
-                + "EGDE.EXENTA, "
-                + "EGDE.CINCO, "
-                + "EGDE.DIEZ, "
-                + "EGDE.TOTAL, "
+                + "CASE "
+                + "	WHEN P.ID_IMPUESTO = 1 THEN ROUND(EGDE.CANTIDAD*(EGDE.PRECIO-(EGDE.PRECIO*EGDE.DESCUENTO)/100))ELSE '0' "
+                + "END AS \"EXENTA\", "
+                + "CASE "
+                + "	WHEN P.ID_IMPUESTO = 2 THEN ROUND(EGDE.CANTIDAD*(EGDE.PRECIO-(EGDE.PRECIO*EGDE.DESCUENTO)/100))ELSE '0' "
+                + "END AS \"CINCO\", "
+                + "CASE "
+                + "	WHEN P.ID_IMPUESTO = 3 THEN ROUND(EGDE.CANTIDAD*(EGDE.PRECIO-(EGDE.PRECIO*EGDE.DESCUENTO)/100))ELSE '0' "
+                + "END AS \"DIEZ\", "
+                + "(EGDE.CANTIDAD*EGDE.PRECIO ) \"TOTAL\", "
                 + "PROV.ENTIDAD, "
                 + "EGDE.OBSERVACION, "
                 + "EGCA.tiempo, "
@@ -483,6 +494,7 @@ public class DB_Egreso {
                 + "AND PERS.ID_PERSONA = FUNC.ID_PERSONA "
                 + "AND EGCA.ID_PROVEEDOR = PROV.ID_PROVEEDOR "
                 + "AND EGCA.ID_EGRESO_CABECERA = EGDE.ID_EGRESO_CABECERA "
+                + "AND EGDE.ID_PRODUCTO = P.ID_PRODUCTO "
                 + prov
                 + fInicio
                 + fFinal
@@ -498,19 +510,19 @@ public class DB_Egreso {
             M_egreso_detalleFX egreso_detalle;
             while (rs.next()) {
                 egreso_detalle = new M_egreso_detalleFX();
-                egreso_detalle.setCantidad(rs.getDouble("EGDE.CANTIDAD"));
-                egreso_detalle.setDescuento(rs.getDouble("EGDE.DESCUENTO"));
-                egreso_detalle.setId_cabecera(rs.getInt("EGCA.ID_EGRESO_CABECERA"));
-                egreso_detalle.setId_detalle(rs.getInt("EGDE.ID_EGRESO_DETALLE"));
+                egreso_detalle.setCantidad(rs.getDouble("CANTIDAD"));
+                egreso_detalle.setDescuento(rs.getDouble("DESCUENTO"));
+                egreso_detalle.setId_cabecera(rs.getInt("ID_EGRESO_CABECERA"));
+                egreso_detalle.setId_detalle(rs.getInt("ID_EGRESO_DETALLE"));
                 egreso_detalle.setProducto(rs.getString("Producto"));
-                egreso_detalle.setIva_cinco(rs.getInt("EGDE.CINCO"));
-                egreso_detalle.setIva_diez(rs.getInt("EGDE.DIEZ"));
-                egreso_detalle.setIva_exenta(rs.getInt("EGDE.EXENTA"));
-                egreso_detalle.setPrecio(rs.getInt("EGDE.PRECIO"));
-                egreso_detalle.setTotal(rs.getInt("EGDE.TOTAL"));
-                egreso_detalle.setProveedor(rs.getString("PROV.ENTIDAD"));
-                egreso_detalle.setObservacion(rs.getString("EGDE.OBSERVACION"));
-                egreso_detalle.setTiempo(rs.getDate("EGCA.tiempo"));
+                egreso_detalle.setIva_cinco(rs.getInt("CINCO"));
+                egreso_detalle.setIva_diez(rs.getInt("DIEZ"));
+                egreso_detalle.setIva_exenta(rs.getInt("EXENTA"));
+                egreso_detalle.setPrecio(rs.getInt("PRECIO"));
+                egreso_detalle.setTotal(rs.getInt("TOTAL"));
+                egreso_detalle.setProveedor(rs.getString("ENTIDAD"));
+                egreso_detalle.setObservacion(rs.getString("OBSERVACION"));
+                egreso_detalle.setTiempo(rs.getDate("tiempo"));
                 Arraylist.add(egreso_detalle);
             }
         } catch (SQLException ex) {
