@@ -152,7 +152,7 @@ public class C_crearPedido extends MouseAdapter implements ActionListener {
             imp5 = 0;
             imp10 = total;
         }
-        if (!detalle.getObservacion().isEmpty()) {
+        if (null != detalle.getObservacion()) {
             String aux = detalle.getProducto().getDescripcion();
             detalle.getProducto().setDescripcion(aux + "-(" + detalle.getObservacion() + ")");
         }
@@ -267,10 +267,7 @@ public class C_crearPedido extends MouseAdapter implements ActionListener {
         SimpleDateFormat sdfs = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss");
         String fechaEntrega = sdf.format(vista.jdcFechaEntrega.getDate()) + " " + vista.jcbHora.getSelectedItem() + ":" + vista.jcbMinuto.getSelectedItem() + ":00";
         try {
-            System.out.println("fechaEntrega: " + fechaEntrega);
-            System.out.println("sdfs.parse(fechaEntrega): " + sdfs.parse(fechaEntrega));
             entrega = sdfs.parse(fechaEntrega);
-            System.out.println("entrega: " + entrega);
         } catch (Exception ex) {
             ex.printStackTrace();
             JOptionPane.showMessageDialog(vista, "La fecha de entrega debe ser mayor que la fecha fecha actual (" + sdfs.format(today) + ").", "Fecha inválida", JOptionPane.WARNING_MESSAGE);
@@ -278,6 +275,22 @@ public class C_crearPedido extends MouseAdapter implements ActionListener {
         }
         if (today.before(entrega)) {
             this.modelo.getPedido().setTiempoEntrega(new Timestamp(entrega.getTime()));
+            String direccion = this.vista.jtfDireccionPedido.getText().trim();
+            String referencia = this.vista.jtfReferencia.getText().trim();
+            if (direccion.length() > 150) {
+                JOptionPane.showMessageDialog(vista, "El campo dirección sobrepasa el máximo de 150 caracteres.", "Atención", JOptionPane.ERROR_MESSAGE);
+                return;
+            } else if (direccion.isEmpty()) {
+                direccion = null;
+            }
+            if (referencia.length() > 150) {
+                JOptionPane.showMessageDialog(vista, "El campo referncia sobrepasa el máximo de 150 caracteres.", "Atención", JOptionPane.ERROR_MESSAGE);
+                return;
+            } else if (referencia.isEmpty()) {
+                referencia = null;
+            }
+            this.modelo.getPedido().setDireccion(direccion);
+            this.modelo.getPedido().setReferencia(referencia);
             this.modelo.insertarPedido();
         } else {
             vista.jdcFechaEntrega.setDate(today);

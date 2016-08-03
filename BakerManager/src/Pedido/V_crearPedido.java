@@ -183,7 +183,7 @@ public class V_crearPedido extends JDialog {
 
     private void initSouth() {
         jpSouth = new JPanel();
-        jbAceptar = new JButton("Aceptar");
+        jbAceptar = new JButton("Guardar cambios");
 
         jbSalir = new JButton("Salir");
         jpSouth.add(jbAceptar);

@@ -288,6 +288,7 @@ public class C_gestionPedido implements Gestion {
             this.vista.jtPedidoDetalle.setModel(this.modelo.getDtm());
             Utilities.c_packColumn.packColumns(this.vista.jtPedido, 1);
             controlarTablaPedido();
+            this.modelo.borrarDatos();
             this.vista.jbDetalle.setEnabled(false);
             this.vista.jbPagoPedido.setEnabled(false);
             this.vista.jbCancelarPedido.setEnabled(false);

@@ -195,6 +195,7 @@ public class C_verPedido extends MouseAdapter implements ActionListener {
     }
 
     private void jbModificarDetalleButtonHandler() {
+        System.out.println("198-verPedido-jbModificarDetalleButtonHandler");
         int row = this.vista.jtPedidoDetalle.getSelectedRow();
         int idPedidoDetalle = Integer.valueOf(String.valueOf(this.vista.jtPedidoDetalle.getValueAt(row, 0)));
         int idProducto = Integer.valueOf(String.valueOf(this.vista.jtPedidoDetalle.getValueAt(row, 1)));
@@ -203,6 +204,7 @@ public class C_verPedido extends MouseAdapter implements ActionListener {
     }
 
     public void modificarDetalle(Double cantidad, Integer precio, Double descuento, String observacion, int idDetalle) {
+        System.out.println("198-verPedido-modificarDetalle");
         this.modelo.getDetalle().setCantidad(cantidad);
         this.modelo.getDetalle().setPrecio(precio);
         this.modelo.getDetalle().setDescuento(descuento);
@@ -254,25 +256,50 @@ public class C_verPedido extends MouseAdapter implements ActionListener {
     }
 
     private void guardarVenta() {
-        String referencia = vista.jtfReferencia.getText();
-        String direccion = vista.jtfDireccionPedido.getText();
-        Date fechaEntrega = vista.jdcFechaEntrega.getDate();
-        int horaEntrega = Integer.valueOf(String.valueOf(vista.jcbHora.getSelectedItem()));
-        int minutoEntrega = Integer.valueOf(String.valueOf(vista.jcbMinuto.getSelectedItem()));
-        Calendar calendario = Calendar.getInstance();
-        calendario.setTime(fechaEntrega);
-        calendario.set(Calendar.HOUR_OF_DAY, horaEntrega);
-        calendario.set(Calendar.MINUTE, minutoEntrega);
-        Timestamp nuevaEntrega = new Timestamp(calendario.getTime().getTime());
-        if (nuevaEntrega.after(this.modelo.getPedido().getTiempoEntrega())) {
-            this.modelo.getPedido().setReferencia(referencia);
+        /*Date fechaEntrega = vista.jdcFechaEntrega.getDate();
+         int horaEntrega = Integer.valueOf(String.valueOf(vista.jcbHora.getSelectedItem()));
+         int minutoEntrega = Integer.valueOf(String.valueOf(vista.jcbMinuto.getSelectedItem()));
+         Calendar calendario = Calendar.getInstance();
+         calendario.setTime(fechaEntrega);
+         calendario.set(Calendar.HOUR_OF_DAY, horaEntrega);
+         calendario.set(Calendar.MINUTE, minutoEntrega);
+         Timestamp fechaAEntregar = new Timestamp(calendario.getTime().getTime());
+         System.out.println("fechaAEntregar: " + fechaAEntregar);
+         System.out.println("getTiempoEntrega: " + this.modelo.getPedido().getTiempoEntrega());
+         if (this.modelo.getPedido().getTiempoEntrega().after(fechaAEntregar)) {*/
+        Date today = Calendar.getInstance().getTime();
+        Date entrega = null;
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        SimpleDateFormat sdfs = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss");
+        String fechaEntrega = sdf.format(vista.jdcFechaEntrega.getDate()) + " " + vista.jcbHora.getSelectedItem() + ":" + vista.jcbMinuto.getSelectedItem() + ":00";
+        try {
+            entrega = sdfs.parse(fechaEntrega);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(vista, "La fecha de entrega debe ser mayor que la fecha fecha actual (" + sdfs.format(today) + ").", "Fecha inválida", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        if (today.before(entrega)) {
+            String direccion = this.vista.jtfDireccionPedido.getText().trim();
+            String referencia = this.vista.jtfReferencia.getText().trim();
+            if (direccion.length() > 150) {
+                JOptionPane.showMessageDialog(vista, "El campo dirección sobrepasa el máximo de 150 caracteres.", "Atención", JOptionPane.ERROR_MESSAGE);
+                return;
+            } else if (direccion.isEmpty()) {
+                direccion = null;
+            }
+            if (referencia.length() > 150) {
+                JOptionPane.showMessageDialog(vista, "El campo referncia sobrepasa el máximo de 150 caracteres.", "Atención", JOptionPane.ERROR_MESSAGE);
+                return;
+            } else if (referencia.isEmpty()) {
+                referencia = null;
+            }
             this.modelo.getPedido().setDireccion(direccion);
-            this.modelo.getPedido().setTiempoEntrega(new Timestamp(calendario.getTime().getTime()));
+            this.modelo.getPedido().setReferencia(referencia);
+            this.modelo.getPedido().setTiempoEntrega(new Timestamp(entrega.getTime()));
             this.modelo.actualizarPedido();
             cerrar();
         } else {
-            SimpleDateFormat sdfs = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss");
-            Date today = Calendar.getInstance().getTime();
             JOptionPane.showMessageDialog(vista, "La fecha de entrega debe ser mayor que la fecha fecha actual (" + sdfs.format(today) + ").", "Atención", JOptionPane.WARNING_MESSAGE);
         }
     }

@@ -27,9 +27,9 @@ public class DB_charts {
     private static ResultSet rs = null;
 
     public static DefaultPieDataset obtenerComprasClientes(Timestamp inicio, Timestamp fin) {
-        String SELECT = "SELECT CLIE.ENTIDAD ||' ('||  CLIE.NOMBRE ||')' \"Entidad\", ROUND((SELECT SUM(PEDE.CANTIDAD*(PEDE.PRECIO-(PEDE.PRECIO*PEDE.DESCUENTO)/100)))) \"Compra\" ";
-        String FROM = "FROM PEDIDO_DETALLE PEDE, PEDIDO PEDI, CLIENTE CLIE ";
-        String WHERE = "WHERE PEDI.ID_PEDIDO = PEDE.ID_PEDIDO AND CLIE.ID_CLIENTE =  PEDI.ID_CLIENTE ";
+        String SELECT = "SELECT CLIE.ENTIDAD  \"Entidad\", ROUND((SELECT SUM(PEDE.CANTIDAD*(PEDE.PRECIO-(PEDE.PRECIO*PEDE.DESCUENTO)/100)))) \"Compra\" ";
+        String FROM = "FROM PEDIDO_DETALLE PEDE, PEDIDO_CABECERA PEDI, CLIENTE CLIE ";
+        String WHERE = "WHERE PEDI.ID_PEDIDO_CABECERA = PEDE.ID_PEDIDO_CABECERA AND CLIE.ID_CLIENTE =  PEDI.ID_CLIENTE ";
         String GROUPBY = "GROUP BY CLIE.ENTIDAD, CLIE.NOMBRE;";
         String TIEMPO = "AND PEDI.TIEMPO_RECEPCION BETWEEN '" + inicio + "'::timestamp "
                 + "AND '" + fin + "'::timestamp ";
@@ -55,7 +55,7 @@ public class DB_charts {
     public static DefaultPieDataset obtenerComprasProveedores(Timestamp inicio, Timestamp fin) {
         String SELECT = "SELECT PROV.ENTIDAD ||' ('||  PROV.NOMBRE ||')' \"Proveedor\", ROUND((SELECT SUM(EGDE.CANTIDAD*(EGDE.PRECIO-(EGDE.PRECIO*EGDE.DESCUENTO)/100)))) \"Compra\"";
         String FROM = "FROM EGRESO_DETALLE EGDE, EGRESO_CABECERA EGCA, PROVEEDOR PROV ";
-        String WHERE = "WHERE EGCA.ID_EGRE_CABE = EGDE.ID_EGRESO_CABE AND EGCA.ID_PROVEEDOR = PROV.ID_PROVEEDOR ";
+        String WHERE = "WHERE EGCA.ID_EGRESO_CABECERA = EGDE.ID_EGRESO_CABECERA AND EGCA.ID_PROVEEDOR = PROV.ID_PROVEEDOR ";
         String GROUPBY = "GROUP BY \"Proveedor\" ";
         String TIEMPO = "AND EGCA.TIEMPO BETWEEN '" + inicio + "'::timestamp "
                 + "AND '" + fin + "'::timestamp ";

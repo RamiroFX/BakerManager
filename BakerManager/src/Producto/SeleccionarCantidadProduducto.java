@@ -33,7 +33,7 @@ public class SeleccionarCantidadProduducto extends javax.swing.JDialog implement
     public static final int MODIFICAR_EGRESO = 8;
     public static final int MODIFICAR_MESA_DETALLE = 9;
     public static final int MODIFICAR_PEDIDO_DETALLE = 10;
-    public static final int VER_PEDIDO_DETALLE = 6;
+    public static final int VER_PEDIDO_DETALLE = 11;
     private javax.swing.JButton jbCancel;
     private javax.swing.JButton jbOK;
     private javax.swing.JLabel jlCantidad, jlDescuento, jlPrecio, jlObservacion;
@@ -116,6 +116,7 @@ public class SeleccionarCantidadProduducto extends javax.swing.JDialog implement
 
     public SeleccionarCantidadProduducto(C_verPedido verPedido, int idProducto, int idPedidoDetalle) {
         super(verPedido.vista, true);
+        System.out.println("119-SeleccionarCantidadProduducto");
         setTitle("Seleccione una cantidad");
         setSize(new java.awt.Dimension(300, 250));
         setLocationRelativeTo(verPedido.vista);
@@ -196,10 +197,17 @@ public class SeleccionarCantidadProduducto extends javax.swing.JDialog implement
     public void enviarCantidad() {
         if (checkearCantidad() && checkearDescuento()) {
             try {
-                cantidad = Double.valueOf(String.valueOf(this.jtfCantidad.getText()));
-                descuento = Double.valueOf(String.valueOf(this.jtfDescuento.getText()));
-                precio = Integer.valueOf(String.valueOf(this.jtfPrecio.getText()));
-                observacion = String.valueOf(this.jtfObservacion.getText());
+                cantidad = Double.valueOf(String.valueOf(this.jtfCantidad.getText().trim()));
+                descuento = Double.valueOf(String.valueOf(this.jtfDescuento.getText().trim()));
+                precio = Integer.valueOf(String.valueOf(this.jtfPrecio.getText().trim()));
+                observacion = String.valueOf(this.jtfObservacion.getText().trim());
+                if (observacion.length() > 120) {
+                    JOptionPane.showMessageDialog(null, "Observacion sobrepaso el máximo de 120 caracteres permitidos.", "Atención", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                if (observacion.isEmpty()) {
+                    observacion = null;
+                }
                 switch (tipo) {
                     case (C_seleccionarProducto.CREAR_INGRESO_RAPIDO): {
                         M_facturaDetalle detalle = new M_facturaDetalle();
@@ -259,7 +267,6 @@ public class SeleccionarCantidadProduducto extends javax.swing.JDialog implement
                         break;
                     }
                     case (C_seleccionarProducto.AGREGAR_PEDIDO_DETALLE): {
-                        //selecProd.verPedido.modificarDetalle(cantidad, precio, descuento, observacion, row);
                         M_pedidoDetalle detalle = new M_pedidoDetalle();
                         detalle.setCantidad(cantidad);
                         detalle.setDescuento(descuento);
@@ -269,13 +276,16 @@ public class SeleccionarCantidadProduducto extends javax.swing.JDialog implement
                         selecProd.verPedido.recibirDetalle(detalle);
                         break;
                     }
+                    case (VER_PEDIDO_DETALLE): {
+                        verPedido.modificarDetalle(cantidad, precio, descuento, observacion, row);
+                        break;
+                    }
                     default: {
                         dispose();
                         break;
                     }
                 }
             } catch (Exception e) {
-                e.printStackTrace();
                 JOptionPane.showMessageDialog(this, "Un campo es inválido", "Atención", JOptionPane.ERROR_MESSAGE);
             }
         }
