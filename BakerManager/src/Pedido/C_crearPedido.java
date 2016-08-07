@@ -156,7 +156,7 @@ public class C_crearPedido extends MouseAdapter implements ActionListener {
             String aux = detalle.getProducto().getDescripcion();
             detalle.getProducto().setDescripcion(aux + "-(" + detalle.getObservacion() + ")");
         }
-        Object[] rowData = {detalle.getProducto().getId(), detalle.getCantidad(), detalle.getProducto().getDescripcion(), detalle.getPrecio(), detalle.getDescuento(), impExenta, imp5, imp10};
+        Object[] rowData = {detalle.getProducto().getId(), detalle.getProducto().getDescripcion(), detalle.getCantidad(), detalle.getPrecio(), detalle.getDescuento(), impExenta, imp5, imp10};
         detalle.setIva_exenta(impExenta);
         detalle.setIva_cinco(imp5);
         detalle.setIva_diez(imp10);
@@ -178,15 +178,17 @@ public class C_crearPedido extends MouseAdapter implements ActionListener {
     }
 
     public void modificarDetalle(Double cantidad, Integer precio, Double descuento, String observacion, int row) {
-        this.modelo.getDtm().setValueAt(cantidad, row, 1);
-        this.modelo.getDtm().setValueAt(precio, row, 3);
-        this.modelo.getDtm().setValueAt(descuento, row, 4);
+        this.modelo.getDtm().setValueAt(cantidad, row, 2);//producto
+        this.modelo.getDtm().setValueAt(precio, row, 3);//precio
+        this.modelo.getDtm().setValueAt(descuento, row, 4);//descuento
         M_producto prod = this.modelo.getDetalles().get(row).getProducto();
         String producto = prod.getDescripcion();
-        if (!observacion.isEmpty()) {
-            producto = producto + "- " + observacion + ")";
+        if (null != observacion) {
+            if (!observacion.isEmpty()) {
+                producto = producto + "- " + observacion + ")";
+            }
         }
-        this.modelo.getDtm().setValueAt(producto, row, 2);
+        this.modelo.getDtm().setValueAt(producto, row, 1);
         Integer impExenta = null;
         Integer imp5 = null;
         Integer imp10 = null;

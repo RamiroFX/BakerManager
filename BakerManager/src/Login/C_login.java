@@ -32,7 +32,7 @@ public class C_login implements ActionListener, KeyListener {
 
     private void inicializarVista() {
         //this.vista.txtNombre.setText(this.modelo.configuracion.getUser());
-        this.vista.txtNombre.setText("admin");
+        //this.vista.txtNombre.setText("admin");
         this.vista.txtPassword.requestFocusInWindow();
     }
 
