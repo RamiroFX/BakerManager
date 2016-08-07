@@ -75,7 +75,7 @@ public class C_gestion_producto extends MouseAdapter implements ActionListener, 
         this.vista.jcbEstado.addItem("Todos");
         for (int i = 0; i < estado.size(); i++) {
             this.vista.jcbEstado.addItem(estado.get(i));
-        }
+        }        
     }
 
     public void mostrarVista() {

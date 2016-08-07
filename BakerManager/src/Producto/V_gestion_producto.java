@@ -35,7 +35,7 @@ public class V_gestion_producto extends JInternalFrame {
     public JComboBox jcbImpuesto, jcbMarca, jcbEstado, jcbRubro;
     private JPanel jpTop, jpBotonesTop, jpJtextFieldTop, jpMid, jpBot, jpMid1;
     public JTable jtProducto;
-    private JScrollPane jspTabla;
+    private JScrollPane jspProducto;
     private JSplitPane jspMid;
 
     public V_gestion_producto() {
@@ -49,40 +49,6 @@ public class V_gestion_producto extends JInternalFrame {
         getContentPane().add(jspMid, "Center");
         getContentPane().add(jpBot, "South");
     }
-    /*
-     private void initTop() {
-     jpTop = new JPanel(new MigLayout("", "[fill][fill]","[fill][]"));
-     JPanel jpFiltros = new JPanel(new FlowLayout(FlowLayout.CENTER));
-     jcbProveedor = new JComboBox();
-     jcbImpuesto = new JComboBox();
-     jcbMarca = new JComboBox();
-     jcbEstado = new JComboBox();
-     jcbRubro = new JComboBox();
-     jpFiltros.add(new JLabel("Proveedor:"));
-     jpFiltros.add(jcbProveedor);
-     jpFiltros.add(new JLabel("Marca:"));
-     jpFiltros.add(jcbMarca);
-     jpFiltros.add(new JLabel("Rubro:"));
-     jpFiltros.add(jcbRubro);
-     jpFiltros.add(new JLabel("Impuesto:"));
-     jpFiltros.add(jcbImpuesto);
-     jpFiltros.add(new JLabel("Estado:"));
-     jpFiltros.add(jcbEstado);
-     jpBotonesTop = new JPanel();
-     jpJtextFieldTop = new JPanel(new BorderLayout());
-     jtfBuscar = new JTextField();
-     jtfBuscar.setHorizontalAlignment(JTextField.CENTER);
-     jtfBuscar.setFont(new java.awt.Font("Times New Roman", 0, 16));
-     jpJtextFieldTop.add(jtfBuscar);
-     jbBuscar = new JButton("Buscar");
-     jbBorrar = new JButton("Borrar");
-     jpBotonesTop.add(jbBuscar);
-     jpBotonesTop.add(jbBorrar);
-     jpTop.add(jpJtextFieldTop,"pushx");
-     jpTop.add(jpBotonesTop,"wrap");
-     jpTop.add(jpFiltros,"span");
-     jpTop.setBorder(new EtchedBorder(EtchedBorder.RAISED));
-     }*/
 
     private void initTop() {
         jpTop = new JPanel(new MigLayout("", "[fill][fill]", "[fill][]"));
@@ -124,7 +90,7 @@ public class V_gestion_producto extends JInternalFrame {
     private void initMid() {
         //Panel medio izquierda
         jtProducto = new JTable();
-        jspTabla = new JScrollPane(jtProducto);
+        jspProducto = new JScrollPane(jtProducto);
 
         //panel medio derecha
         jpMid = new JPanel(new BorderLayout());
@@ -193,7 +159,7 @@ public class V_gestion_producto extends JInternalFrame {
 
         jpMid.add(jpMid1, "Center");
         //creamos nuestro splitpane y agregamos los dos paneles del medio
-        jspMid = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, jspTabla, jpMid);
+        jspMid = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, jspProducto, jpMid);
         jspMid.setDividerLocation(this.getWidth() / 2);
         jspMid.setOneTouchExpandable(true);
     }
