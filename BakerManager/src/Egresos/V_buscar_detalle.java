@@ -4,6 +4,7 @@
  */
 package Egresos;
 
+import Utilities.JTablePagination;
 import bakermanager.C_inicio;
 import com.toedter.calendar.JDateChooser;
 import java.awt.Dimension;
@@ -26,13 +27,14 @@ import net.miginfocom.swing.MigLayout;
  */
 public class V_buscar_detalle extends JDialog {
 
-    public JButton jbBuscar, jbBorrar, jbCerrar, jbDetalle, jbProveedor, 
+    public JButton jbBuscar, jbBorrar, jbCerrar, jbDetalle, jbProveedor,
             jbFuncionario;
     public JTextField jtfBuscar, jtfProveedor, jtfFuncionario;
     public JComboBox jcbImpuesto, jcbMarca, jcbEstado, jcbCategoria, jcbCondCompra;
     private JPanel jpTop, jpBotonesTop, jpBot;
-    public JTable jtIzq, jtDer;
-    private JScrollPane jspEgresoCabecera, jspEgresoDetalle;
+    public JTable jtCabecera;
+    private JScrollPane jspEgresoCabecera;
+    public JTablePagination jtDetalle;
     private JSplitPane jspMid;
     public JDateChooser jddInicio, jddFinal;
     public JRadioButton jrbDescripcion, jrbObservacion;
@@ -77,8 +79,8 @@ public class V_buscar_detalle extends JDialog {
         jtfBuscar.setFont(new java.awt.Font("Times New Roman", 0, 16));
         jbBuscar = new JButton("Buscar");
         jbBorrar = new JButton("Borrar");
-        jrbDescripcion= new JRadioButton("Descripción",true);
-        jrbObservacion= new JRadioButton("Observación");        
+        jrbDescripcion = new JRadioButton("Descripción", true);
+        jrbObservacion = new JRadioButton("Observación");
         javax.swing.ButtonGroup bg1 = new javax.swing.ButtonGroup();
         bg1.add(jrbDescripcion);
         bg1.add(jrbObservacion);
@@ -112,14 +114,15 @@ public class V_buscar_detalle extends JDialog {
 
     private void initMid() {
         //Panel medio izquierda
-        jtIzq = new JTable();
-        jspEgresoCabecera = new JScrollPane(jtIzq);
+        /*jtDetalle = new JTable();
+         jspEgresoDetalle = new JScrollPane(jtDetalle);*/
+        jtDetalle = new JTablePagination(100);
 
         //panel medio derecha
-        jtDer = new JTable();
-        jspEgresoDetalle = new JScrollPane(jtDer);
+        jtCabecera = new JTable();
+        jspEgresoCabecera = new JScrollPane(jtCabecera);
         //creamos nuestro splitpane y agregamos los dos paneles del medio
-        jspMid = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, jspEgresoCabecera, jspEgresoDetalle);
+        jspMid = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, jtDetalle, jspEgresoCabecera);
         jspMid.setDividerLocation(this.getWidth() / 2);
         jspMid.setOneTouchExpandable(true);
     }

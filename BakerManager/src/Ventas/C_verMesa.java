@@ -151,9 +151,11 @@ public class C_verMesa extends MouseAdapter implements ActionListener {
             imp5 = 0;
             imp10 = total;
         }
-        if (!detalle.getObservacion().isEmpty()) {
-            String aux = detalle.getProducto().getDescripcion();
-            detalle.getProducto().setDescripcion(aux + "-(" + detalle.getObservacion() + ")");
+        if (null != detalle.getObservacion()) {
+            if (!detalle.getObservacion().isEmpty()) {
+                String aux = detalle.getProducto().getDescripcion();
+                detalle.getProducto().setDescripcion(aux + "-(" + detalle.getObservacion() + ")");
+            }
         }
         //Object[] rowData = {detalle.getProducto().getId(), detalle.getCantidad(), detalle.getProducto().getDescripcion(), detalle.getPrecio(), detalle.getDescuento(), impExenta, imp5, imp10};
         detalle.setExenta(impExenta);

@@ -83,10 +83,10 @@ public class C_gestionEgresos extends MouseAdapter implements ActionListener, Ke
         this.vista.jbAgregar.addActionListener(this);
         this.vista.jbDetalle.addActionListener(this);
         this.vista.jbBuscarDetalle.addActionListener(this);
-        this.vista.jtEgresoCabecera.addMouseListener(this);
+        this.vista.jtEgresoCabecera.table.addMouseListener(this);
         this.vista.jbResumen.addActionListener(this);
         this.vista.jbGraficos.addActionListener(this);
-        this.vista.jtEgresoCabecera.addKeyListener(this);
+        this.vista.jtEgresoCabecera.table.addKeyListener(this);
     }
 
     private String empleado() {
@@ -165,16 +165,16 @@ public class C_gestionEgresos extends MouseAdapter implements ActionListener, Ke
                  * Se utiliza el objeto factory para obtener un TableModel
                  * para los resultados del query.
                  */
-                vista.jtEgresoCabecera.setModel(DB_Egreso.obtenerEgreso(proveedor, nro_factura, empleado, fechaInicio, fechaFinal, tiop));
-                Utilities.c_packColumn.packColumns(vista.jtEgresoCabecera, 1);
+                vista.jtEgresoCabecera.establecerModelo(DB_Egreso.obtenerEgreso(proveedor, nro_factura, empleado, fechaInicio, fechaFinal, tiop));
+                Utilities.c_packColumn.packColumns(vista.jtEgresoCabecera.table, 1);
                 controlarTablaEgreso();
             }
         });
     }
 
     private void completarCampos() {
-        int fila = vista.jtEgresoCabecera.getSelectedRow();
-        int idEgrsoCabecera = Integer.valueOf(String.valueOf(vista.jtEgresoCabecera.getValueAt(fila, 0).toString()));
+        int fila = vista.jtEgresoCabecera.table.getSelectedRow();
+        int idEgrsoCabecera = Integer.valueOf(String.valueOf(vista.jtEgresoCabecera.table.getValueAt(fila, 0).toString()));
         this.vista.jtEgresoDetalle.setModel(DB_Egreso.obtenerEgresoDetalle(idEgrsoCabecera));
         Utilities.c_packColumn.packColumns(vista.jtEgresoDetalle, 1);
     }
@@ -213,7 +213,7 @@ public class C_gestionEgresos extends MouseAdapter implements ActionListener, Ke
         String empleado = empleado();
         String proveedor = proveedor();
         String tiop = tipoOperacion();
-        Resumen_egreso re = new Resumen_egreso(c_inicio, this.vista.jtEgresoCabecera.getModel(), proveedor, nro_factura, empleado, vista.jddInicio.getDate(), vista.jddFinal.getDate(), tiop);
+        Resumen_egreso re = new Resumen_egreso(c_inicio, this.vista.jtEgresoCabecera.table.getModel(), proveedor, nro_factura, empleado, vista.jddInicio.getDate(), vista.jddFinal.getDate(), tiop);
         re.setVisible(true);
 
     }
@@ -242,7 +242,7 @@ public class C_gestionEgresos extends MouseAdapter implements ActionListener, Ke
         } else if (e.getSource().equals(this.vista.jbGraficos)) {
             verGraficos();
         } else if (e.getSource() == this.vista.jbDetalle) {
-            Integer idEgresoCabecera = Integer.valueOf(String.valueOf(this.vista.jtEgresoCabecera.getValueAt(this.vista.jtEgresoCabecera.getSelectedRow(), 0)));
+            Integer idEgresoCabecera = Integer.valueOf(String.valueOf(this.vista.jtEgresoCabecera.table.getValueAt(this.vista.jtEgresoCabecera.table.getSelectedRow(), 0)));
             Ver_Egresos ver_egreso = new Ver_Egresos(c_inicio, idEgresoCabecera);
             ver_egreso.mostrarVista();
             this.vista.jbDetalle.setEnabled(false);
@@ -251,10 +251,10 @@ public class C_gestionEgresos extends MouseAdapter implements ActionListener, Ke
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        if (e.getSource().equals(this.vista.jtEgresoCabecera)) {
-            int fila = this.vista.jtEgresoCabecera.rowAtPoint(e.getPoint());
-            int columna = this.vista.jtEgresoCabecera.columnAtPoint(e.getPoint());
-            Integer idEgresoCabecera = Integer.valueOf(String.valueOf(this.vista.jtEgresoCabecera.getValueAt(fila, 0)));
+        if (e.getSource().equals(this.vista.jtEgresoCabecera.table)) {
+            int fila = this.vista.jtEgresoCabecera.table.rowAtPoint(e.getPoint());
+            int columna = this.vista.jtEgresoCabecera.table.columnAtPoint(e.getPoint());
+            Integer idEgresoCabecera = Integer.valueOf(String.valueOf(this.vista.jtEgresoCabecera.table.getValueAt(fila, 0)));
             //setProducto(DBmanagerProducto.mostrarProducto(idProducto));
             setEgreso_cabecera(DB_Egreso.obtenerEgresoCabeceraID(idEgresoCabecera));
             if ((fila > -1) && (columna > -1)) {
@@ -280,7 +280,7 @@ public class C_gestionEgresos extends MouseAdapter implements ActionListener, Ke
     }
 
     public void keyReleased(KeyEvent e) {
-        if (this.vista.jtEgresoCabecera.hasFocus()) {
+        if (this.vista.jtEgresoCabecera.table.hasFocus()) {
             completarCampos();
         }
     }
@@ -303,7 +303,7 @@ public class C_gestionEgresos extends MouseAdapter implements ActionListener, Ke
     }
 
     private void controlarTablaEgreso() {
-        if (this.vista.jtEgresoCabecera.getRowCount() > 0) {
+        if (this.vista.jtEgresoCabecera.table.getRowCount() > 0) {
             this.vista.jbResumen.setEnabled(true);
         } else {
             this.vista.jbResumen.setEnabled(false);

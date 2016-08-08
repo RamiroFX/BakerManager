@@ -86,8 +86,8 @@ public class C_buscar_detalle extends MouseAdapter implements ActionListener, Ke
         this.vista.jbDetalle.addActionListener(this);
         this.vista.jbCerrar.addActionListener(this);
         this.vista.jtfBuscar.addKeyListener(this);
-        this.vista.jtIzq.addMouseListener(this);
-        this.vista.jtDer.addMouseListener(this);
+        this.vista.jtDetalle.table.addMouseListener(this);
+        this.vista.jtCabecera.addMouseListener(this);
     }
 
     private String empleado() {
@@ -168,7 +168,10 @@ public class C_buscar_detalle extends MouseAdapter implements ActionListener, Ke
                  * Se utiliza el objeto factory para obtener un TableModel
                  * para los resultados del query.
                  */
-                vista.jtIzq.setModel(DB_Egreso.obtenerEgresoDetalleAvanzado(
+                /*vista.jtDetalle.setModel(DB_Egreso.obtenerEgresoDetalleAvanzado(
+                 producto, proveedor, marca, impuesto,
+                 categoria, estado, fechaInicio, fechaFinal, tiop, empleado, tipoBusquedaDescripcion));*/
+                vista.jtDetalle.establecerModelo(DB_Egreso.obtenerEgresoDetalleAvanzado(
                         producto, proveedor, marca, impuesto,
                         categoria, estado, fechaInicio, fechaFinal, tiop, empleado, tipoBusquedaDescripcion));
             }
@@ -176,9 +179,9 @@ public class C_buscar_detalle extends MouseAdapter implements ActionListener, Ke
     }
 
     private void completarCampos() {
-        int fila = vista.jtIzq.getSelectedRow();
-        int idEgrsoCabecera = Integer.valueOf(String.valueOf(vista.jtIzq.getValueAt(fila, 0).toString()));
-        this.vista.jtDer.setModel(DB_Egreso.obtenerEgresoDetalle(idEgrsoCabecera));
+        int fila = vista.jtDetalle.table.getSelectedRow();
+        int idEgrsoCabecera = Integer.valueOf(String.valueOf(vista.jtDetalle.table.getValueAt(fila, 0).toString()));
+        this.vista.jtCabecera.setModel(DB_Egreso.obtenerEgresoDetalle(idEgrsoCabecera));
     }
 
     private void borrarParametros() {
@@ -207,7 +210,7 @@ public class C_buscar_detalle extends MouseAdapter implements ActionListener, Ke
         } else if (e.getSource() == this.vista.jbBorrar) {
             borrarParametros();
         } else if (e.getSource() == this.vista.jbDetalle) {
-            Integer idEgresoCabecera = Integer.valueOf(String.valueOf(this.vista.jtDer.getValueAt(this.vista.jtDer.getSelectedRow(), 0)));
+            Integer idEgresoCabecera = Integer.valueOf(String.valueOf(this.vista.jtCabecera.getValueAt(this.vista.jtCabecera.getSelectedRow(), 0)));
             Ver_Egresos ver_egreso = new Ver_Egresos(c_inicio, idEgresoCabecera);
             ver_egreso.mostrarVista();
             this.vista.jbDetalle.setEnabled(false);
@@ -226,19 +229,19 @@ public class C_buscar_detalle extends MouseAdapter implements ActionListener, Ke
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        if (e.getSource().equals(this.vista.jtIzq)) {
-            int fila = this.vista.jtIzq.rowAtPoint(e.getPoint());
-            int columna = this.vista.jtIzq.columnAtPoint(e.getPoint());
-            Integer idEgresoDetalle = Integer.valueOf(String.valueOf(this.vista.jtIzq.getValueAt(fila, 0)));
+        if (e.getSource().equals(this.vista.jtDetalle.table)) {
+            int fila = this.vista.jtDetalle.table.rowAtPoint(e.getPoint());
+            int columna = this.vista.jtDetalle.table.columnAtPoint(e.getPoint());
+            Integer idEgresoDetalle = Integer.valueOf(String.valueOf(this.vista.jtDetalle.table.getValueAt(fila, 0)));
             if ((fila > -1) && (columna > -1)) {
-                this.vista.jtDer.setModel(DB_Egreso.obtenerEgresoCabecera(idEgresoDetalle));
+                this.vista.jtCabecera.setModel(DB_Egreso.obtenerEgresoCabecera(idEgresoDetalle));
                 this.vista.jbDetalle.setEnabled(false);
             }
         }
-        if (e.getSource().equals(this.vista.jtDer)) {
-            int fila = this.vista.jtIzq.rowAtPoint(e.getPoint());
-            int columna = this.vista.jtIzq.columnAtPoint(e.getPoint());
-            Integer idEgresoCabecera = Integer.valueOf(String.valueOf(this.vista.jtIzq.getValueAt(fila, 0)));
+        if (e.getSource().equals(this.vista.jtCabecera)) {
+            int fila = this.vista.jtDetalle.table.rowAtPoint(e.getPoint());
+            int columna = this.vista.jtDetalle.table.columnAtPoint(e.getPoint());
+            Integer idEgresoCabecera = Integer.valueOf(String.valueOf(this.vista.jtDetalle.table.getValueAt(fila, 0)));
             if ((fila > -1) && (columna > -1)) {
                 this.vista.jbDetalle.setEnabled(true);
             } else {
@@ -262,7 +265,7 @@ public class C_buscar_detalle extends MouseAdapter implements ActionListener, Ke
     }
 
     public void keyReleased(KeyEvent e) {
-        if (this.vista.jtIzq.hasFocus()) {
+        if (this.vista.jtDetalle.table.hasFocus()) {
             completarCampos();
         }
     }

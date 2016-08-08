@@ -22,23 +22,20 @@ import javax.swing.JTable;
 import javax.swing.RowFilter;
 import javax.swing.RowFilter.Entry;
 import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
 public class JTablePagination extends JPanel {
 
-    JTable table;
-
+    public JTable table;
     RadioButtonUI ui = new RadioButtonUI();
     int pageSize = 5;
-
-    JTablePaginationModel model = new JTablePaginationModel();
-    TableRowSorter sorter = new TableRowSorter(model);
+    public TableRowSorter sorter = new TableRowSorter();
     Box box = Box.createHorizontalBox();
 
-    public JTablePagination(JTable jtable) {
+    public JTablePagination(int numberPages) {
         super(new BorderLayout());
-        table = jtable;
-        table = new JTable(model) {
+        table = new JTable() {
             public Component prepareRenderer(TableCellRenderer tcr, int row,
                     int column) {
                 Component c = super.prepareRenderer(tcr, row, column);
@@ -56,11 +53,16 @@ public class JTablePagination extends JPanel {
         table.setIntercellSpacing(new Dimension());
         table.setShowGrid(false);
         table.setRowSorter(sorter);
-        showPages(100, 1);
+        showPages(numberPages, 1);
 
         add(new JScrollPane(table));
         add(box, BorderLayout.SOUTH);
-        setPreferredSize(new Dimension(320, 240));
+    }
+
+    public void establecerModelo(TableModel model) {
+        sorter.setModel(model);
+        table.setModel(model);
+        showPages(100, 1);
     }
 
     private void showPages(final int itemsPerPage, final int currentPageIndex) {
@@ -71,7 +73,7 @@ public class JTablePagination extends JPanel {
         if (startPageIndex <= 0) {
             startPageIndex = 1;
         }
-        int maxPageIndex = (model.getRowCount() / itemsPerPage) + 1;
+        int maxPageIndex = (table.getModel().getRowCount() / itemsPerPage) + 1;
         int endPageIndex = currentPageIndex + pageSize - 1;
         if (endPageIndex > maxPageIndex) {
             endPageIndex = maxPageIndex;
@@ -80,7 +82,7 @@ public class JTablePagination extends JPanel {
         if (currentPageIndex > 1) {
             l
                     .add(createRadioButtons(itemsPerPage, currentPageIndex - 1,
-                                    "Prev"));
+                    "Prev "));
         }
         for (int i = startPageIndex; i <= endPageIndex; i++) {
             l.add(createLinks(itemsPerPage, currentPageIndex, i - 1));
@@ -88,7 +90,7 @@ public class JTablePagination extends JPanel {
         if (currentPageIndex < maxPageIndex) {
             l
                     .add(createRadioButtons(itemsPerPage, currentPageIndex + 1,
-                                    "Next"));
+                    " Next"));
         }
 
         box.removeAll();
@@ -106,7 +108,7 @@ public class JTablePagination extends JPanel {
 
     private JRadioButton createLinks(final int itemsPerPage, final int current,
             final int target) {
-        JRadioButton radio = new JRadioButton("" + (target + 1)) {
+        JRadioButton radio = new JRadioButton(" " + (target + 1)) {
             protected void fireStateChanged() {
                 ButtonModel model = getModel();
                 if (!model.isEnabled()) {

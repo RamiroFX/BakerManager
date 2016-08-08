@@ -185,7 +185,7 @@ public class C_crearPedido extends MouseAdapter implements ActionListener {
         String producto = prod.getDescripcion();
         if (null != observacion) {
             if (!observacion.isEmpty()) {
-                producto = producto + "- " + observacion + ")";
+                producto = producto + "- (" + observacion + ")";
             }
         }
         this.modelo.getDtm().setValueAt(producto, row, 1);

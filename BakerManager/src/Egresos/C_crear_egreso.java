@@ -179,7 +179,7 @@ public class C_crear_egreso extends MouseAdapter implements ActionListener {
 
     public void recibirProveedor(M_proveedor proveedor) {
         this.modelo.proveedor = proveedor;
-        this.vista.jtfProveedor.setText(this.modelo.proveedor.getEntidad()+" | "+proveedor.getRuc()+"-"+proveedor.getRuc_id());
+        this.vista.jtfProveedor.setText(this.modelo.proveedor.getEntidad() + " | " + proveedor.getRuc() + "-" + proveedor.getRuc_id());
     }
 
     private void sumarTotal() {
@@ -219,9 +219,11 @@ public class C_crear_egreso extends MouseAdapter implements ActionListener {
             imp5 = 0;
             imp10 = total;
         }
-        if (!observacion.isEmpty()) {
-            String aux = producto.getDescripcion();
-            producto.setDescripcion(aux + "-(" + observacion + ")");
+        if (null != observacion) {
+            if (!observacion.isEmpty()) {
+                String aux = producto.getDescripcion();
+                producto.setDescripcion(aux + "-(" + observacion + ")");
+            }
         }
         Object[] rowData = {producto.getId(), cantidad, producto.getDescripcion(), precio, descuento, impExenta, imp5, imp10};
         this.dtm.addRow(rowData);
@@ -249,8 +251,10 @@ public class C_crear_egreso extends MouseAdapter implements ActionListener {
         }
         this.dtm.setValueAt(cantidad, row, 1);
         String producto = this.dtm.getValueAt(row, 2).toString();
-        if (!observacion.isEmpty()) {
-            producto = producto + "-(" + observacion + ")";
+        if (null != observacion) {
+            if (!observacion.isEmpty()) {
+                producto = producto + "-(" + observacion + ")";
+            }
         }
         this.dtm.setValueAt(producto, row, 2);
         this.dtm.setValueAt(precio, row, 3);

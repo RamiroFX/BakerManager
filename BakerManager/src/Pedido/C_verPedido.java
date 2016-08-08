@@ -204,7 +204,6 @@ public class C_verPedido extends MouseAdapter implements ActionListener {
     }
 
     public void modificarDetalle(Double cantidad, Integer precio, Double descuento, String observacion, int idDetalle) {
-        System.out.println("198-verPedido-modificarDetalle");
         this.modelo.getDetalle().setCantidad(cantidad);
         this.modelo.getDetalle().setPrecio(precio);
         this.modelo.getDetalle().setDescuento(descuento);
@@ -256,17 +255,6 @@ public class C_verPedido extends MouseAdapter implements ActionListener {
     }
 
     private void guardarVenta() {
-        /*Date fechaEntrega = vista.jdcFechaEntrega.getDate();
-         int horaEntrega = Integer.valueOf(String.valueOf(vista.jcbHora.getSelectedItem()));
-         int minutoEntrega = Integer.valueOf(String.valueOf(vista.jcbMinuto.getSelectedItem()));
-         Calendar calendario = Calendar.getInstance();
-         calendario.setTime(fechaEntrega);
-         calendario.set(Calendar.HOUR_OF_DAY, horaEntrega);
-         calendario.set(Calendar.MINUTE, minutoEntrega);
-         Timestamp fechaAEntregar = new Timestamp(calendario.getTime().getTime());
-         System.out.println("fechaAEntregar: " + fechaAEntregar);
-         System.out.println("getTiempoEntrega: " + this.modelo.getPedido().getTiempoEntrega());
-         if (this.modelo.getPedido().getTiempoEntrega().after(fechaAEntregar)) {*/
         Date today = Calendar.getInstance().getTime();
         Date entrega = null;
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");

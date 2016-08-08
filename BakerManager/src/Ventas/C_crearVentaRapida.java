@@ -14,7 +14,6 @@ import Producto.SeleccionarProducto;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
-import javax.swing.JOptionPane;
 
 /**
  *
@@ -175,9 +174,11 @@ public class C_crearVentaRapida implements Gestion {
             imp5 = 0;
             imp10 = total;
         }
-        if (!detalle.getObservacion().isEmpty()) {
-            String aux = detalle.getProducto().getDescripcion();
-            detalle.getProducto().setDescripcion(aux + "-(" + detalle.getObservacion() + ")");
+        if (null != detalle.getObservacion()) {
+            if (!detalle.getObservacion().isEmpty()) {
+                String aux = detalle.getProducto().getDescripcion();
+                detalle.getProducto().setDescripcion(aux + "-(" + detalle.getObservacion() + ")");
+            }
         }
         Object[] rowData = {detalle.getProducto().getId(), detalle.getCantidad(), detalle.getProducto().getDescripcion(), detalle.getPrecio(), detalle.getDescuento(), impExenta, imp5, imp10};
         detalle.setExenta(impExenta);
@@ -207,8 +208,10 @@ public class C_crearVentaRapida implements Gestion {
         this.modelo.getDtm().setValueAt(descuento, row, 4);
         M_producto prod = this.modelo.getDetalles().get(row).getProducto();
         String producto = prod.getDescripcion();
-        if (!observacion.isEmpty()) {
-            producto = producto + "- " + observacion + ")";
+        if (null != observacion) {
+            if (!observacion.isEmpty()) {
+                producto = producto + "- (" + observacion + ")";
+            }
         }
         this.modelo.getDtm().setValueAt(producto, row, 2);
         Integer impExenta = null;

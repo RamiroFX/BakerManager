@@ -4,6 +4,7 @@
  */
 package Egresos;
 
+import Utilities.JTablePagination;
 import com.toedter.calendar.JDateChooser;
 import java.awt.Dimension;
 import javax.swing.JButton;
@@ -29,7 +30,8 @@ public class V_gestion_egresos extends JInternalFrame {
     public JTextField jtfNroFactura, jtfProveedor, jtfFuncionario;
     public JComboBox jcbCondCompra;
     private JPanel jpTop, jpBotonesTop, jpBot;
-    public JTable jtEgresoCabecera, jtEgresoDetalle;
+    public JTable jtEgresoDetalle;
+    public JTablePagination jtEgresoCabecera;
     private JScrollPane jspEgresoCabecera, jspEgresoDetalle;
     private JSplitPane jspMid;
     public JDateChooser jddInicio, jddFinal;
@@ -90,7 +92,7 @@ public class V_gestion_egresos extends JInternalFrame {
 
     private void initMid() {
         //Panel medio izquierda
-        jtEgresoCabecera = new JTable();
+        jtEgresoCabecera = new JTablePagination(100);
         jspEgresoCabecera = new JScrollPane(jtEgresoCabecera);
 
         //panel medio derecha

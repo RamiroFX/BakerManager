@@ -92,8 +92,8 @@ public class C_gestion_producto extends MouseAdapter implements ActionListener, 
         this.vista.jbAsigProdProv.addActionListener(this);
         this.vista.jbProveedor.addActionListener(this);
         this.vista.jbParametros.addActionListener(this);
-        this.vista.jtProducto.addMouseListener(this);
-        this.vista.jtProducto.addKeyListener(this);
+        this.vista.jtProducto.table.addMouseListener(this);
+        this.vista.jtProducto.table.addKeyListener(this);
     }
 
     public void displayQueryResults() {
@@ -117,13 +117,13 @@ public class C_gestion_producto extends MouseAdapter implements ActionListener, 
                  * para los resultados del query.
                  */
 
-                vista.jtProducto.setModel(DB_Producto.consultaSimpleProducto(desc.toLowerCase(), proveedor, marca, rubro, impuesto, estado));
+                vista.jtProducto.establecerModelo(DB_Producto.consultaSimpleProducto(desc.toLowerCase(), proveedor, marca, rubro, impuesto, estado));
             }
         });
     }
 
     private void completarCampos() {
-        Integer idProducto = Integer.valueOf(String.valueOf(this.vista.jtProducto.getValueAt(this.vista.jtProducto.getSelectedRow(), 0)));
+        Integer idProducto = Integer.valueOf(String.valueOf(this.vista.jtProducto.table.getValueAt(this.vista.jtProducto.table.getSelectedRow(), 0)));
         //setProducto(DBmanagerProducto.mostrarProducto(idProducto));
         setProducto(DB_Producto.obtenerDatosProductoID(idProducto));
         this.vista.jbModificar.setEnabled(true);
@@ -173,9 +173,9 @@ public class C_gestion_producto extends MouseAdapter implements ActionListener, 
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        int fila = this.vista.jtProducto.rowAtPoint(e.getPoint());
-        int columna = this.vista.jtProducto.columnAtPoint(e.getPoint());
-        Integer idProducto = Integer.valueOf(String.valueOf(this.vista.jtProducto.getValueAt(fila, 0)));
+        int fila = this.vista.jtProducto.table.rowAtPoint(e.getPoint());
+        int columna = this.vista.jtProducto.table.columnAtPoint(e.getPoint());
+        Integer idProducto = Integer.valueOf(String.valueOf(this.vista.jtProducto.table.getValueAt(fila, 0)));
         //setProducto(DBmanagerProducto.mostrarProducto(idProducto));
         setProducto(DB_Producto.obtenerDatosProductoID(idProducto));
         if ((fila > -1) && (columna > -1)) {
