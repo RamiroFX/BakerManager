@@ -81,7 +81,6 @@ public class DB_Pedido {
         }
         Query = Query + " ORDER BY PEDI.TIEMPO_RECEPCION";
         try {
-            System.out.println("82-pedido: " + Query);
             st = DB_manager.getConection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             // se ejecuta el query y se obtienen los resultados en un ResultSet
             rs = st.executeQuery(Query);

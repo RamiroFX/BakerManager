@@ -91,71 +91,6 @@ public class C_gestionPedido implements Gestion {
         this.vista.dispose();
     }
 
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        if (e.getSource().equals(this.vista.jbAgregar)) {
-            crearPedido();
-        } else if (e.getSource().equals(this.vista.jbPedidosPendientes)) {
-            jbPedidosPendientesButtonHandler();
-        } else if (e.getSource().equals(this.vista.jbPagoPedido)) {
-            pagarPedido();
-        } else if (e.getSource().equals(this.vista.jbCancelarPedido)) {
-            cancelarPedido();
-        } else if (e.getSource().equals(this.vista.jbBuscar)) {
-            displayQueryResults();
-        } else if (e.getSource().equals(this.vista.jbCliente)) {
-            Seleccionar_cliente sc = new Seleccionar_cliente(this);
-            sc.mostrarVista();
-        } else if (e.getSource().equals(this.vista.jbEmpleado)) {
-            Seleccionar_funcionario sf = new Seleccionar_funcionario(this);
-            sf.mostrarVista();
-        } else if (e.getSource().equals(this.vista.jbBorrar)) {
-            borrarDatos();
-        } else if (e.getSource().equals(this.vista.jbResumen)) {
-            verResumen();
-        } else if (e.getSource().equals(this.vista.jbCharts)) {
-            verDiagramas();
-        } else if (e.getSource().equals(this.vista.jbDetalle)) {
-            verDetalle();
-        }
-    }
-
-    @Override
-    public void mouseClicked(MouseEvent e) {
-        if (e.getSource().equals(this.vista.jtPedido)) {
-            obtenerPedidoDetalle(e);
-        }
-    }
-
-    @Override
-    public void mousePressed(MouseEvent e) {
-    }
-
-    @Override
-    public void mouseReleased(MouseEvent e) {
-    }
-
-    @Override
-    public void mouseEntered(MouseEvent e) {
-    }
-
-    @Override
-    public void mouseExited(MouseEvent e) {
-    }
-
-    @Override
-    public void keyTyped(KeyEvent e) {
-    }
-
-    @Override
-    public void keyPressed(KeyEvent e) {
-    }
-
-    @Override
-    public void keyReleased(KeyEvent e) {
-        keyReleasedHandler(e);
-    }
-
     private void displayQueryResults() {
         EventQueue.invokeLater(new Runnable() {
             @Override
@@ -212,16 +147,18 @@ public class C_gestionPedido implements Gestion {
         int fila = this.vista.jtPedido.rowAtPoint(e.getPoint());
         int columna = this.vista.jtPedido.columnAtPoint(e.getPoint());
         Integer idPedido = Integer.valueOf(String.valueOf(this.vista.jtPedido.getValueAt(fila, 0)));
-        this.modelo.setPedido(modelo.obtenerPedido(idPedido));
+        //this.modelo.setPedido(modelo.obtenerPedido(idPedido));
         controlarTablaPedido();
-        if (this.modelo.getPedido().getIdEstado() == 1) {
-            this.vista.jbPagoPedido.setEnabled(true);
-            this.vista.jbCancelarPedido.setEnabled(true);
-        } else {
-            this.vista.jbPagoPedido.setEnabled(false);
-            this.vista.jbCancelarPedido.setEnabled(false);
-        }
+        /**/
         if ((fila > -1) && (columna > -1)) {
+            String estado = String.valueOf(this.vista.jtPedido.getValueAt(fila, 6));
+            if (!estado.equals("Entregado")) {
+                this.vista.jbPagoPedido.setEnabled(true);
+                this.vista.jbCancelarPedido.setEnabled(true);
+            } else {
+                this.vista.jbPagoPedido.setEnabled(false);
+                this.vista.jbCancelarPedido.setEnabled(false);
+            }
             this.vista.jtPedidoDetalle.setModel(modelo.obtenerPedidoDetalle(idPedido));
             Utilities.c_packColumn.packColumns(this.vista.jtPedidoDetalle, 1);
         }
@@ -306,19 +243,92 @@ public class C_gestionPedido implements Gestion {
             int row = this.vista.jtPedido.getSelectedRow();
             int columna = this.vista.jtPedido.getSelectedRow();
             int idPedido = Integer.valueOf(String.valueOf(this.vista.jtPedido.getValueAt(row, 0)));
-            this.modelo.setPedido(modelo.obtenerPedido(idPedido));
+            //this.modelo.setPedido(modelo.obtenerPedido(idPedido));
             controlarTablaPedido();
-            if (this.modelo.getPedido().getIdEstado() == 1) {
-                this.vista.jbPagoPedido.setEnabled(true);
-                this.vista.jbCancelarPedido.setEnabled(true);
-            } else {
-                this.vista.jbPagoPedido.setEnabled(false);
-                this.vista.jbCancelarPedido.setEnabled(false);
-            }
+            /*if (this.modelo.getPedido().getIdEstado() == 1) {
+             this.vista.jbPagoPedido.setEnabled(true);
+             this.vista.jbCancelarPedido.setEnabled(true);
+             } else {
+             this.vista.jbPagoPedido.setEnabled(false);
+             this.vista.jbCancelarPedido.setEnabled(false);
+             }*/
             if ((row > -1) && (columna > -1)) {
+                String estado = String.valueOf(this.vista.jtPedido.getValueAt(row, 6));
+                if (!estado.equals("Entregado")) {
+                    this.vista.jbPagoPedido.setEnabled(true);
+                    this.vista.jbCancelarPedido.setEnabled(true);
+                } else {
+                    this.vista.jbPagoPedido.setEnabled(false);
+                    this.vista.jbCancelarPedido.setEnabled(false);
+                }
                 this.vista.jtPedidoDetalle.setModel(modelo.obtenerPedidoDetalle(idPedido));
                 Utilities.c_packColumn.packColumns(this.vista.jtPedidoDetalle, 1);
             }
         }
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if (e.getSource().equals(this.vista.jbAgregar)) {
+            crearPedido();
+        } else if (e.getSource().equals(this.vista.jbPedidosPendientes)) {
+            jbPedidosPendientesButtonHandler();
+        } else if (e.getSource().equals(this.vista.jbPagoPedido)) {
+            pagarPedido();
+        } else if (e.getSource().equals(this.vista.jbCancelarPedido)) {
+            cancelarPedido();
+        } else if (e.getSource().equals(this.vista.jbBuscar)) {
+            displayQueryResults();
+        } else if (e.getSource().equals(this.vista.jbCliente)) {
+            Seleccionar_cliente sc = new Seleccionar_cliente(this);
+            sc.mostrarVista();
+        } else if (e.getSource().equals(this.vista.jbEmpleado)) {
+            Seleccionar_funcionario sf = new Seleccionar_funcionario(this);
+            sf.mostrarVista();
+        } else if (e.getSource().equals(this.vista.jbBorrar)) {
+            borrarDatos();
+        } else if (e.getSource().equals(this.vista.jbResumen)) {
+            verResumen();
+        } else if (e.getSource().equals(this.vista.jbCharts)) {
+            verDiagramas();
+        } else if (e.getSource().equals(this.vista.jbDetalle)) {
+            verDetalle();
+        }
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+        if (e.getSource().equals(this.vista.jtPedido)) {
+            obtenerPedidoDetalle(e);
+        }
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+    }
+
+    @Override
+    public void keyTyped(KeyEvent e) {
+    }
+
+    @Override
+    public void keyPressed(KeyEvent e) {
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
+        keyReleasedHandler(e);
     }
 }
