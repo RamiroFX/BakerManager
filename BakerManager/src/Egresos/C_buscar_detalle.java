@@ -54,7 +54,7 @@ public class C_buscar_detalle extends MouseAdapter implements ActionListener, Ke
         for (int i = 0; i < marca.size(); i++) {
             this.vista.jcbMarca.addItem(marca.get(i));
         }
-        Vector rubro = DB_manager.obtenerRubro();
+        Vector rubro = DB_manager.obtenerCategoria();
         this.vista.jcbCategoria.addItem("Todos");
         for (int i = 0; i < rubro.size(); i++) {
             this.vista.jcbCategoria.addItem(rubro.get(i));

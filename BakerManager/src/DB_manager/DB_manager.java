@@ -12,6 +12,8 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
 /**
@@ -127,7 +129,7 @@ public class DB_manager {
         }
     }
 
-    public static Vector obtenerRubro() {
+    public static Vector obtenerCategoria() {
         Vector rubro = null;
         String q = "SELECT descripcion "
                 + "FROM PRODUCTO_CATEGORIA ";
@@ -187,6 +189,34 @@ public class DB_manager {
             ex.printStackTrace();
         }
         return impuesto;
+    }
+
+    public static ResultSetTableModel consultarPais() {
+        ResultSetTableModel pais = null;
+        String q = "SELECT id_pais \"ID\" , descripcion\"Descripcion\" "
+                + "FROM pais ";
+        try {
+            st = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            rs = st.executeQuery(q);
+            pais = new ResultSetTableModel(rs);
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return pais;
+    }
+
+    public static ResultSetTableModel consultarCiudad() {
+        ResultSetTableModel pais = null;
+        String q = "SELECT id_ciudad \"ID\" , descripcion\"Descripcion\" "
+                + "FROM CIUDAD ";
+        try {
+            st = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            rs = st.executeQuery(q);
+            pais = new ResultSetTableModel(rs);
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return pais;
     }
 
     public static Vector obtenerEstado() {
@@ -669,5 +699,195 @@ public class DB_manager {
             ex.printStackTrace();
         }
         return false;
+    }
+
+    public static void insertarPais(String pais) {
+        String insert = "INSERT INTO PAIS("
+                + "DESCRIPCION"
+                + ")VALUES (?);";
+        try {
+            DB_manager.habilitarTransaccionManual();
+            pst = DB_manager.getConection().prepareStatement(insert);
+            pst.setString(1, pais);
+            pst.executeUpdate();
+            DB_manager.establecerTransaccion();
+        } catch (SQLException ex) {
+            System.out.println(ex.getNextException());
+            if (DB_manager.getConection() != null) {
+                try {
+                    DB_manager.getConection().rollback();
+                } catch (SQLException ex1) {
+                    Logger lgr = Logger.getLogger(DB_manager.class
+                            .getName());
+                    lgr.log(Level.WARNING, ex1.getMessage(), ex1);
+                }
+            }
+            Logger lgr = Logger.getLogger(DB_manager.class
+                    .getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        }
+    }
+
+    public static void insertarCiudad(String ciudad) {
+        String insert = "INSERT INTO CIUDAD("
+                + "DESCRIPCION"
+                + ")VALUES (?);";
+        try {
+            DB_manager.habilitarTransaccionManual();
+            pst = DB_manager.getConection().prepareStatement(insert);
+            pst.setString(1, ciudad);
+            pst.executeUpdate();
+            DB_manager.establecerTransaccion();
+        } catch (SQLException ex) {
+            System.out.println(ex.getNextException());
+            if (DB_manager.getConection() != null) {
+                try {
+                    DB_manager.getConection().rollback();
+                } catch (SQLException ex1) {
+                    Logger lgr = Logger.getLogger(DB_manager.class
+                            .getName());
+                    lgr.log(Level.WARNING, ex1.getMessage(), ex1);
+                }
+            }
+            Logger lgr = Logger.getLogger(DB_manager.class
+                    .getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        }
+    }
+
+    public static void modificarPais(int idPais, String descripcion) {
+        String updatePais = "UPDATE PAIS SET "
+                + "DESCRIPCION = ? "
+                + "WHERE ID_PAIS = ? ;";
+        try {
+            DB_manager.habilitarTransaccionManual();
+            pst = DB_manager.getConection().prepareStatement(updatePais);
+            pst.setString(1, descripcion);
+            pst.setInt(2, idPais);
+            pst.executeUpdate();
+            pst.close();
+            DB_manager.establecerTransaccion();
+        } catch (SQLException ex) {
+            System.out.println(ex.getNextException());
+            if (DB_manager.getConection() != null) {
+                try {
+                    DB_manager.getConection().rollback();
+                } catch (SQLException ex1) {
+                    Logger lgr = Logger.getLogger(DB_manager.class
+                            .getName());
+                    lgr.log(Level.WARNING, ex1.getMessage(), ex1);
+                }
+            }
+            Logger lgr = Logger.getLogger(DB_manager.class
+                    .getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        }
+    }
+
+    public static void modificarCiudad(int idCiudad, String descripcion) {
+        String updateMarca = "UPDATE CIUDAD SET "
+                + "DESCRIPCION = ? "
+                + "WHERE ID_CIUDAD = ? ;";
+        try {
+            DB_manager.habilitarTransaccionManual();
+            pst = DB_manager.getConection().prepareStatement(updateMarca);
+            pst.setString(1, descripcion);
+            pst.setInt(2, idCiudad);
+            pst.executeUpdate();
+            pst.close();
+            DB_manager.establecerTransaccion();
+        } catch (SQLException ex) {
+            System.out.println(ex.getNextException());
+            if (DB_manager.getConection() != null) {
+                try {
+                    DB_manager.getConection().rollback();
+                } catch (SQLException ex1) {
+                    Logger lgr = Logger.getLogger(DB_manager.class
+                            .getName());
+                    lgr.log(Level.WARNING, ex1.getMessage(), ex1);
+                }
+            }
+            Logger lgr = Logger.getLogger(DB_manager.class
+                    .getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        }
+    }
+
+    public static boolean paisEnUso(int idPais) {
+        boolean enUso = false;
+        String q = "SELECT DISTINCT ID_PAIS "
+                + "FROM PERSONA "
+                + "WHERE ID_PAIS = ? ;";
+        try {
+            pst = con.prepareStatement(q);
+            pst.setInt(1, idPais);
+            rs = pst.executeQuery();
+            return !rs.isBeforeFirst();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return enUso;
+    }
+
+    public static boolean ciudadEnUso(int idCiudad) {
+        boolean enUso = false;
+        String q = "SELECT DISTINCT ID_CIUDAD "
+                + "FROM PERSONA "
+                + "WHERE ID_CIUDAD = ? ;";
+        try {
+            pst = con.prepareStatement(q);
+            pst.setInt(1, idCiudad);
+            rs = pst.executeQuery();
+            return !rs.isBeforeFirst();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return enUso;
+    }
+
+    public static void eliminarPais(int idPais) {
+        String delete = "DELETE FROM PAIS WHERE ID_PAIS =" + idPais;
+        try {
+            DB_manager.habilitarTransaccionManual();
+            st = DB_manager.getConection().createStatement();
+            st.executeUpdate(delete);
+            DB_manager.establecerTransaccion();
+        } catch (SQLException ex) {
+            if (DB_manager.getConection() != null) {
+                try {
+                    DB_manager.getConection().rollback();
+                } catch (SQLException ex1) {
+                    Logger lgr = Logger.getLogger(DB_manager.class
+                            .getName());
+                    lgr.log(Level.WARNING, ex1.getMessage(), ex1);
+                }
+            }
+            Logger lgr = Logger.getLogger(DB_manager.class
+                    .getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        }
+    }
+
+    public static void eliminarCiudad(int idCiudad) {
+        String delete = "DELETE FROM CIUDAD WHERE ID_CIUDAD =" + idCiudad;
+        try {
+            DB_manager.habilitarTransaccionManual();
+            st = DB_manager.getConection().createStatement();
+            st.executeUpdate(delete);
+            DB_manager.establecerTransaccion();
+        } catch (SQLException ex) {
+            if (DB_manager.getConection() != null) {
+                try {
+                    DB_manager.getConection().rollback();
+                } catch (SQLException ex1) {
+                    Logger lgr = Logger.getLogger(DB_manager.class
+                            .getName());
+                    lgr.log(Level.WARNING, ex1.getMessage(), ex1);
+                }
+            }
+            Logger lgr = Logger.getLogger(DB_manager.class
+                    .getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        }
     }
 }

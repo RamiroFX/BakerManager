@@ -2,9 +2,8 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package Producto;
+package empleado;
 
-import DB_manager.DB_Proveedor;
 import DB_manager.DB_manager;
 import bakermanager.C_inicio;
 import java.awt.event.ActionEvent;
@@ -22,29 +21,17 @@ import net.miginfocom.swing.MigLayout;
  *
  * @author Usuario
  */
-public class Parametros extends javax.swing.JDialog implements ActionListener, MouseListener {
+public class EmpleadoParametros extends javax.swing.JDialog implements ActionListener, MouseListener {
 
     private javax.swing.JButton jbCrear, jbModificar, jbEliminar;
-    private javax.swing.JLabel jl;
     private JTabbedPane jtpCenter;
     private JPanel jpSouth;
-    JScrollPane jspMarcas, jspCategorias;
-    JTable jtMarcas, jtCategorias;
-    C_gestion_producto gestion_producto;
+    JScrollPane jspPais, jspCiudad;
+    JTable jtPais, jtCiudad;
+    C_gestion_usuario gestion_usuario;
 
-    public Parametros(C_inicio c_inicio) {
+    public EmpleadoParametros(C_inicio c_inicio) {
         super(c_inicio.vista, true);
-        setTitle("Parametros");
-        setSize(new java.awt.Dimension(400, 300));
-        setLocationRelativeTo(c_inicio.vista);
-        initComponents();
-        inicializarVista();
-        agregarListener();
-    }
-
-    Parametros(C_inicio c_inicio, C_gestion_producto aThis) {
-        super(c_inicio.vista, true);
-        gestion_producto = aThis;
         setTitle("Parametros");
         setSize(new java.awt.Dimension(400, 300));
         setLocationRelativeTo(c_inicio.vista);
@@ -56,27 +43,27 @@ public class Parametros extends javax.swing.JDialog implements ActionListener, M
     private void inicializarVista() {
         jbEliminar.setEnabled(false);
         jbModificar.setEnabled(false);
-        jtMarcas.setModel(DB_manager.consultarMarca());
-        jtCategorias.setModel(DB_manager.consultarCategoria());
+        jtPais.setModel(DB_manager.consultarPais());
+        jtCiudad.setModel(DB_manager.consultarCiudad());
     }
 
     private void initMarcas() {
-        jtMarcas = new JTable();
-        jspMarcas = new JScrollPane(jtMarcas);
+        jtPais = new JTable();
+        jspPais = new JScrollPane(jtPais);
 
     }
 
     private void initCategorias() {
-        jtCategorias = new JTable();
-        jspCategorias = new JScrollPane(jtCategorias);
+        jtCiudad = new JTable();
+        jspCiudad = new JScrollPane(jtCiudad);
     }
 
     private void initComponents() {
         initMarcas();
         initCategorias();
         jtpCenter = new JTabbedPane();
-        jtpCenter.add("Marcas", jspMarcas);
-        jtpCenter.add("Categorias", jspCategorias);
+        jtpCenter.add("País", jspPais);
+        jtpCenter.add("Ciudad", jspCiudad);
         jpSouth = new JPanel();
         jbCrear = new javax.swing.JButton("Agregar");
         jbModificar = new javax.swing.JButton("Modificar");
@@ -91,15 +78,15 @@ public class Parametros extends javax.swing.JDialog implements ActionListener, M
 
     private void agregarListener() {
         jtpCenter.addMouseListener(this);
-        jtCategorias.addMouseListener(this);
-        jtMarcas.addMouseListener(this);
+        jtCiudad.addMouseListener(this);
+        jtPais.addMouseListener(this);
         jbCrear.addActionListener(this);
         jbModificar.addActionListener(this);
         jbEliminar.addActionListener(this);
     }
 
-    private void agregarMarca(String marca) {
-        String m = marca.trim();
+    private void agregarPais(String pais) {
+        String m = pais.trim();
         if (m.length() < 1 || m.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Inserte 1 caracter por lo menos.", "Alerta", JOptionPane.ERROR_MESSAGE);
             return;
@@ -108,19 +95,19 @@ public class Parametros extends javax.swing.JDialog implements ActionListener, M
             JOptionPane.showMessageDialog(this, "Máximo permitido 30 caracteres.", "Alerta", JOptionPane.ERROR_MESSAGE);
             return;
         }
-        Integer b = DB_manager.obtenerIdMarca(m);
+        Integer b = DB_manager.obtenerIdPais(m);
         if (b == null) {
-            DB_Proveedor.insertarMarca(m);
+            DB_manager.insertarPais(m);
             this.jbModificar.setEnabled(false);
             this.jbEliminar.setEnabled(false);
-            this.jtMarcas.setModel(DB_manager.consultarMarca());
+            this.jtPais.setModel(DB_manager.consultarPais());
         } else {
-            JOptionPane.showMessageDialog(this, "Marca existente.", "Alerta", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "País existente.", "Alerta", JOptionPane.ERROR_MESSAGE);
         }
     }
 
-    private void modificarMarca(String marca) {
-        String m = marca.trim();
+    private void modificarPais(String pais) {
+        String m = pais.trim();
         if (m.length() < 1 || m.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Inserte 1 caracter por lo menos.", "Alerta", JOptionPane.ERROR_MESSAGE);
             return;
@@ -129,41 +116,62 @@ public class Parametros extends javax.swing.JDialog implements ActionListener, M
             JOptionPane.showMessageDialog(this, "Máximo permitido 30 caracteres.", "Alerta", JOptionPane.ERROR_MESSAGE);
             return;
         }
-        Integer b = DB_manager.obtenerIdMarca(m);
+        Integer b = DB_manager.obtenerIdPais(m);
         if (b == null) {
-            int idMarca = Integer.valueOf(String.valueOf(this.jtMarcas.getValueAt(jtMarcas.getSelectedRow(), 0)));
-            DB_Proveedor.modificarMarca(idMarca, marca);
+            int idMarca = Integer.valueOf(String.valueOf(this.jtPais.getValueAt(jtPais.getSelectedRow(), 0)));
+            DB_manager.modificarPais(idMarca, pais);
             this.jbModificar.setEnabled(false);
             this.jbEliminar.setEnabled(false);
-            this.jtMarcas.setModel(DB_manager.consultarMarca());
+            this.jtPais.setModel(DB_manager.consultarPais());
         } else {
-            JOptionPane.showMessageDialog(this, "Marca existente.", "Alerta", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "País existente.", "Alerta", JOptionPane.ERROR_MESSAGE);
         }
     }
 
-    private void eliminarMarca() {
-        int idMarca = Integer.valueOf(String.valueOf(this.jtMarcas.getValueAt(jtMarcas.getSelectedRow(), 0)));
-        boolean m = DB_manager.marcaEnUso(idMarca);
+    private void eliminarPais() {
+        int idPais = Integer.valueOf(String.valueOf(this.jtPais.getValueAt(jtPais.getSelectedRow(), 0)));
+        boolean m = DB_manager.paisEnUso(idPais);
         if (m) {
             int option = JOptionPane.showConfirmDialog(this, "¿Desea confirmar esta operación?", "Atención", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
             if (option == JOptionPane.YES_OPTION) {
                 try {
-                    DB_Proveedor.eliminarMarca(idMarca);
+                    DB_manager.eliminarPais(idPais);
                     this.jbModificar.setEnabled(false);
                     this.jbEliminar.setEnabled(false);
-                    this.jtMarcas.setModel(DB_manager.consultarMarca());
+                    this.jtPais.setModel(DB_manager.consultarPais());
                 } catch (Exception e) {
                     e.printStackTrace();
                     return;
                 }
             }
         } else {
-            JOptionPane.showMessageDialog(this, "Existe productos que se encuentran utilizando la marca seleccionada.", "Alerta", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Existe personas que se encuentran utilizando el país seleccionado.", "Alerta", JOptionPane.ERROR_MESSAGE);
         }
     }
 
-    private void agregarCategoria(String categoria) {
-        String c = categoria.trim();
+    private void agregarCiudad(String ciudad) {
+        String ciud = ciudad.trim();
+        if (ciud.length() < 1 || ciud.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Inserte 1 caracter por lo menos.", "Alerta", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        if (ciud.length() > 30) {
+            JOptionPane.showMessageDialog(this, "Máximo permitido 30 caracteres.", "Alerta", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        Integer b = DB_manager.obtenerIdCiudad(ciud);
+        if (b == null) {
+            DB_manager.insertarCiudad(ciud);
+            this.jbModificar.setEnabled(false);
+            this.jbEliminar.setEnabled(false);
+            this.jtCiudad.setModel(DB_manager.consultarCiudad());
+        } else {
+            JOptionPane.showMessageDialog(this, "Ciudad existente.", "Alerta", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void modificarCiudad(String ciudad) {
+        String c = ciudad.trim();
         if (c.length() < 1 || c.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Inserte 1 caracter por lo menos.", "Alerta", JOptionPane.ERROR_MESSAGE);
             return;
@@ -172,135 +180,81 @@ public class Parametros extends javax.swing.JDialog implements ActionListener, M
             JOptionPane.showMessageDialog(this, "Máximo permitido 30 caracteres.", "Alerta", JOptionPane.ERROR_MESSAGE);
             return;
         }
-        Integer b = DB_manager.obtenerIdProductoCategoria(c);
+        Integer b = DB_manager.obtenerIdCiudad(c);
         if (b == null) {
-            DB_Proveedor.insertarCategoria(c);
+            int idCiudad = Integer.valueOf(String.valueOf(this.jtCiudad.getValueAt(jtCiudad.getSelectedRow(), 0)));
+            DB_manager.modificarCiudad(idCiudad, ciudad);
             this.jbModificar.setEnabled(false);
             this.jbEliminar.setEnabled(false);
-            this.jtCategorias.setModel(DB_manager.consultarCategoria());
+            this.jtCiudad.setModel(DB_manager.consultarCiudad());
         } else {
-            JOptionPane.showMessageDialog(this, "Categoría existente.", "Alerta", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Ciudad existente.", "Alerta", JOptionPane.ERROR_MESSAGE);
         }
     }
 
-    private void modificarCategoria(String categoria) {
-        String c = categoria.trim();
-        if (c.length() < 1 || c.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Inserte 1 caracter por lo menos.", "Alerta", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-        if (c.length() > 30) {
-            JOptionPane.showMessageDialog(this, "Máximo permitido 30 caracteres.", "Alerta", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-        Integer b = DB_manager.obtenerIdProductoCategoria(c);
-        if (b == null) {
-            int idRubro = Integer.valueOf(String.valueOf(this.jtCategorias.getValueAt(jtCategorias.getSelectedRow(), 0)));
-            DB_Proveedor.modificarCategoria(idRubro, categoria);
-            this.jbModificar.setEnabled(false);
-            this.jbEliminar.setEnabled(false);
-            this.jtCategorias.setModel(DB_manager.consultarCategoria());
-        } else {
-            JOptionPane.showMessageDialog(this, "Categoría existente.", "Alerta", JOptionPane.ERROR_MESSAGE);
-        }
-    }
-
-    private void eliminarCategoria() {
-        int idCategoria = Integer.valueOf(String.valueOf(this.jtCategorias.getValueAt(jtCategorias.getSelectedRow(), 0)));
-        boolean m = DB_manager.productCategoriaEnUso(idCategoria);
+    private void eliminarCiudad() {
+        int idCiudad = Integer.valueOf(String.valueOf(this.jtCiudad.getValueAt(jtCiudad.getSelectedRow(), 0)));
+        boolean m = DB_manager.ciudadEnUso(idCiudad);
         if (m) {
             int option = JOptionPane.showConfirmDialog(this, "¿Desea confirmar esta operación?", "Atención", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
             if (option == JOptionPane.YES_OPTION) {
                 try {
-                    DB_Proveedor.eliminarProductoCategoria(idCategoria);
+                    DB_manager.eliminarCiudad(idCiudad);
                     this.jbModificar.setEnabled(false);
                     this.jbEliminar.setEnabled(false);
-                    this.jtCategorias.setModel(DB_manager.consultarCategoria());
+                    this.jtCiudad.setModel(DB_manager.consultarCiudad());
                 } catch (Exception e) {
                     e.printStackTrace();
                     return;
                 }
             }
         } else {
-            JOptionPane.showMessageDialog(this, "Existe productos que se encuentran utilizando la categoría seleccionada.", "Alerta", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Existen personas que se encuentran utilizando la ciudad seleccionada.", "Alerta", JOptionPane.ERROR_MESSAGE);
         }
     }
-    /*
-     private void agregarImpuesto(String impuesto) {
-     DB_Proveedor.insertarImpuesto(impuesto);
-     this.jbModificar.setEnabled(false);
-     this.jbEliminar.setEnabled(false);
-     this.jtImpuesto.setModel(DB_manager.consultarImpuesto());
-     }
-     private void modificarImpuesto(String impuesto) {
-     int idImpuesto = Integer.valueOf(String.valueOf(this.jtImpuesto.getValueAt(jtImpuesto.getSelectedRow(), 0)));
-     DB_Proveedor.modificarCategoria(idImpuesto, impuesto);
-     this.jbModificar.setEnabled(false);
-     this.jbEliminar.setEnabled(false);
-     this.jtImpuesto.setModel(DB_manager.consultarImpuesto());
-     }
-     private void eliminarImpuesto() {
-     int option = JOptionPane.showConfirmDialog(this, "¿Desea confirmar esta operación?", "Atención", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-     if (option == JOptionPane.YES_OPTION) {
-     try {
-     int idImpuesto = Integer.valueOf(String.valueOf(this.jtImpuesto.getValueAt(jtImpuesto.getSelectedRow(), 0)));
-     DB_Proveedor.eliminarProductoCategoria(idImpuesto);
-     this.jbModificar.setEnabled(false);
-     this.jbEliminar.setEnabled(false);
-     this.jtImpuesto.setModel(DB_manager.consultarImpuesto());
-     } catch (Exception e) {
-     e.printStackTrace();
-     return;
-     }
-     }
-     }
-     */
 
     private void createButtonHandler() {
-        if (this.jtpCenter.getSelectedComponent().equals(this.jspMarcas)) {
+        if (this.jtpCenter.getSelectedComponent().equals(this.jspPais)) {
             String marca = JOptionPane.showInputDialog(this, "Inserte el nombre de la marca", "Insertar marca", JOptionPane.PLAIN_MESSAGE);
             if (marca != null) {
                 if (!marca.isEmpty()) {
-                    agregarMarca(marca);
+                    agregarPais(marca);
                 }
             }
-        } else if (this.jtpCenter.getSelectedComponent().equals(this.jspCategorias)) {
+        } else if (this.jtpCenter.getSelectedComponent().equals(this.jspCiudad)) {
             String rubro = JOptionPane.showInputDialog(this, "Inserte el nombre del rubro", "Insertar categoria", JOptionPane.PLAIN_MESSAGE);
             if (rubro != null) {
                 if (!rubro.isEmpty()) {
-                    agregarCategoria(rubro);
+                    agregarCiudad(rubro);
                 }
             }
         }
-        gestion_producto.actualizarVista();
     }
 
     private void updateButtonHandler() {
-        if (this.jtpCenter.getSelectedComponent().equals(this.jspMarcas)) {
+        if (this.jtpCenter.getSelectedComponent().equals(this.jspPais)) {
             String marca = JOptionPane.showInputDialog(this, "Inserte el nombre de la marca", "Insertar marca", JOptionPane.PLAIN_MESSAGE);
             if (marca != null) {
                 if (!marca.isEmpty()) {
-                    modificarMarca(marca);
+                    modificarPais(marca);
                 }
             }
-        } else if (this.jtpCenter.getSelectedComponent().equals(this.jspCategorias)) {
+        } else if (this.jtpCenter.getSelectedComponent().equals(this.jspCiudad)) {
             String rubro = JOptionPane.showInputDialog(this, "Inserte el nombre del rubro", "Insertar categoria", JOptionPane.PLAIN_MESSAGE);
             if (rubro != null) {
                 if (!rubro.isEmpty()) {
-                    modificarCategoria(rubro);
+                    modificarCiudad(rubro);
                 }
             }
         }
-        gestion_producto.actualizarVista();
     }
 
     private void deleteButtonHandler() {
-        if (this.jtpCenter.getSelectedComponent().equals(this.jspMarcas)) {
-            eliminarMarca();
-        } else if (this.jtpCenter.getSelectedComponent().equals(this.jspCategorias)) {
-            eliminarCategoria();
+        if (this.jtpCenter.getSelectedComponent().equals(this.jspPais)) {
+            eliminarPais();
+        } else if (this.jtpCenter.getSelectedComponent().equals(this.jspCiudad)) {
+            eliminarCiudad();
         }
-        gestion_producto.actualizarVista();
     }
 
     @Override
@@ -322,9 +276,9 @@ public class Parametros extends javax.swing.JDialog implements ActionListener, M
             this.jbModificar.setEnabled(false);
             this.jbEliminar.setEnabled(false);
         }
-        if (e.getSource().equals(this.jtMarcas)) {
-            int fila = this.jtMarcas.rowAtPoint(e.getPoint());
-            int columna = this.jtMarcas.columnAtPoint(e.getPoint());
+        if (e.getSource().equals(this.jtPais)) {
+            int fila = this.jtPais.rowAtPoint(e.getPoint());
+            int columna = this.jtPais.columnAtPoint(e.getPoint());
             if ((fila > -1) && (columna > -1)) {
                 this.jbModificar.setEnabled(true);
                 this.jbEliminar.setEnabled(true);
@@ -333,9 +287,9 @@ public class Parametros extends javax.swing.JDialog implements ActionListener, M
                 this.jbEliminar.setEnabled(false);
             }
         }
-        if (e.getSource().equals(this.jtCategorias)) {
-            int fila = this.jtCategorias.rowAtPoint(e.getPoint());
-            int columna = this.jtCategorias.columnAtPoint(e.getPoint());
+        if (e.getSource().equals(this.jtCiudad)) {
+            int fila = this.jtCiudad.rowAtPoint(e.getPoint());
+            int columna = this.jtCiudad.columnAtPoint(e.getPoint());
             if ((fila > -1) && (columna > -1)) {
                 this.jbModificar.setEnabled(true);
                 this.jbEliminar.setEnabled(true);

@@ -1575,13 +1575,15 @@ public class DB_Proveedor {
 
     public static void modificarMarca(int idMarca, String descripcion) {
         String updateMarca = "UPDATE MARCA SET "
-                + "DESCRIPCION= '" + descripcion + "' "
-                + "WHERE ID_MARCA =" + idMarca;
+                + "DESCRIPCION = ? "
+                + "WHERE ID_MARCA = ? ;";
         try {
             DB_manager.habilitarTransaccionManual();
-            st = DB_manager.getConection().createStatement();
-            st.executeUpdate(updateMarca);
-            st.close();
+            pst = DB_manager.getConection().prepareStatement(updateMarca);
+            pst.setString(1, descripcion);
+            pst.setInt(2, idMarca);
+            pst.executeUpdate();
+            pst.close();
             DB_manager.establecerTransaccion();
         } catch (SQLException ex) {
             System.out.println(ex.getNextException());
@@ -1829,7 +1831,6 @@ public class DB_Proveedor {
             st.executeUpdate(delete);
             DB_manager.establecerTransaccion();
         } catch (SQLException ex) {
-            System.out.println(ex.getNextException());
             if (DB_manager.getConection() != null) {
                 try {
                     DB_manager.getConection().rollback();

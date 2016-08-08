@@ -28,7 +28,7 @@ public class M_modificar_producto {
     }
 
     public Vector obtenerRubro() {
-        return DB_manager.obtenerRubro();
+        return DB_manager.obtenerCategoria();
     }
 
     public Vector obtenerMarca() {

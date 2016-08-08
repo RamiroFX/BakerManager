@@ -2,13 +2,11 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package empleado;
 /*
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
 
 import java.awt.BorderLayout;
 import javax.swing.JButton;
@@ -25,7 +23,7 @@ import net.miginfocom.swing.MigLayout;
  * @author Administrador
  */
 public class V_gestion_usuario extends JInternalFrame {
-    
+
     private javax.swing.JPanel jpDatosPersonalesVarios2;
     private javax.swing.JPanel jpDatosPersonalesVarios1;
     private javax.swing.JScrollPane jScrollPane1;
@@ -34,6 +32,7 @@ public class V_gestion_usuario extends JInternalFrame {
     public javax.swing.JButton jbModificarUsuario;
     public javax.swing.JButton jbEliminarUsuario;
     public javax.swing.JButton jbCambiarPassword;
+    public javax.swing.JButton jbUsuarioParametros;
     public javax.swing.JButton jbCrearUsuario;
     public javax.swing.JButton jbGestionRol;
     private javax.swing.JLabel jlAlias;
@@ -74,13 +73,11 @@ public class V_gestion_usuario extends JInternalFrame {
     public javax.swing.JTextField jtfNroCelular;
     public javax.swing.JTextField jtfNroTelefono;
     public javax.swing.JComboBox jcbRol;
-
-    
     JPanel jpNorth;
     public JTextField jtfBuscar;
     public JCheckBox jckbNombreApellido, jckbCedula;
     public JRadioButton jrbExclusivo, jrbInclusivo;
-    
+
     public V_gestion_usuario() {
         setClosable(true);
         setForeground(java.awt.Color.white);
@@ -92,7 +89,6 @@ public class V_gestion_usuario extends JInternalFrame {
         setPreferredSize(new java.awt.Dimension(800, 600));
         initComponents();
     }
-
 
     private void initComponents() {
         initFilter();
@@ -142,10 +138,12 @@ public class V_gestion_usuario extends JInternalFrame {
         jbEliminarUsuario = new javax.swing.JButton("Eliminar usuario");
         jbCambiarPassword = new javax.swing.JButton("Cambiar contraseña");
         jbCambiarPassword.setName("modificar contrasenha");
+        jbUsuarioParametros = new javax.swing.JButton("Parametros");
+        jbUsuarioParametros.setName("parametros empleado");
         jbCrearUsuario.setName("crear empleado");
         jbModificarUsuario.setName("modificar empleado");
         jbEliminarUsuario.setName("borrar empleado");
-        
+
         jpDatosPersonales1 = new javax.swing.JPanel();
         jpDatosPersonales1.setLayout(new java.awt.BorderLayout());
 
@@ -250,10 +248,10 @@ public class V_gestion_usuario extends JInternalFrame {
         JPanel jpaux = new JPanel(new BorderLayout());
         jpaux.add(jpNorth, BorderLayout.NORTH);
         jpaux.add(jScrollPane1, BorderLayout.CENTER);
-        
+
         jpCenter.add(jpaux);
         jpCenter.add(jTabbedPane);
-        
+
         //JP SOUTH
         jpSouth = new javax.swing.JPanel();
         jpSouth.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
@@ -265,6 +263,7 @@ public class V_gestion_usuario extends JInternalFrame {
         jpSouth.add(jbModificarUsuario);
         jpSouth.add(jbEliminarUsuario);
         jpSouth.add(jbCambiarPassword);
+        jpSouth.add(jbUsuarioParametros);
         jpSouth.add(jbGestionRol);
 
         //ADDING INTO CONTAINER
@@ -272,7 +271,7 @@ public class V_gestion_usuario extends JInternalFrame {
         getContentPane().add(jpSouth, java.awt.BorderLayout.SOUTH);
 
     }
-    
+
     private void initFilter() {
         jtfBuscar = new JTextField();
         jtfBuscar.setName("buscar empleado");
@@ -294,5 +293,4 @@ public class V_gestion_usuario extends JInternalFrame {
         jpNorth.add(jrbExclusivo, width + ", cell 0 1, span");
         jpNorth.add(jrbInclusivo, width + ", cell 0 1");
     }
-    
 }

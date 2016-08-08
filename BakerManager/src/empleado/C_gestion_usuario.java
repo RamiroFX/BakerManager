@@ -43,8 +43,8 @@ public class C_gestion_usuario implements Gestion {
         this.vista.jbEliminarUsuario.setEnabled(false);
         this.vista.jftCedulaIdentidad.setFormatterFactory(
                 new javax.swing.text.DefaultFormatterFactory(
-                        new javax.swing.text.NumberFormatter(
-                                new java.text.DecimalFormat("#,##0"))));
+                new javax.swing.text.NumberFormatter(
+                new java.text.DecimalFormat("#,##0"))));
         this.vista.jtfBuscar.setEnabled(false);
         this.vista.jckbCedula.setEnabled(false);
         this.vista.jckbNombreApellido.setEnabled(false);
@@ -55,6 +55,7 @@ public class C_gestion_usuario implements Gestion {
         this.vista.jbEliminarUsuario.setEnabled(false);
         this.vista.jbGestionRol.setEnabled(false);
         this.vista.jbCambiarPassword.setEnabled(false);
+        this.vista.jbUsuarioParametros.setEnabled(false);
         ArrayList<M_menu_item> accesos = c_inicio.modelo.getRol_usuario().getAccesos();
         for (int i = 0; i < accesos.size(); i++) {
             if (this.vista.jbCrearUsuario.getName().equals(accesos.get(i).getItemDescripcion())) {
@@ -71,6 +72,9 @@ public class C_gestion_usuario implements Gestion {
             }
             if (this.vista.jbCambiarPassword.getName().equals(accesos.get(i).getItemDescripcion())) {
                 this.vista.jbCambiarPassword.setEnabled(true);
+            }
+            if (this.vista.jbUsuarioParametros.getName().equals(accesos.get(i).getItemDescripcion())) {
+                this.vista.jbUsuarioParametros.setEnabled(true);
             }
             if (this.vista.jtfBuscar.getName().equals(accesos.get(i).getItemDescripcion())) {
                 this.vista.jtfBuscar.setEnabled(true);
@@ -116,6 +120,7 @@ public class C_gestion_usuario implements Gestion {
         this.vista.jrbExclusivo.addActionListener(this);
         this.vista.jrbInclusivo.addActionListener(this);
         this.vista.jbCambiarPassword.addActionListener(this);
+        this.vista.jbUsuarioParametros.addActionListener(this);
     }
 
     public void displayQueryResults() {
@@ -156,6 +161,11 @@ public class C_gestion_usuario implements Gestion {
         cp.setVisible(true);
     }
 
+    private void empleadoParametros() {
+        EmpleadoParametros ep = new EmpleadoParametros(c_inicio);
+        ep.setVisible(true);
+    }
+
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == this.vista.jbCrearUsuario) {
             Crear_empleado crearEmpleado = new Crear_empleado(c_inicio);
@@ -171,7 +181,7 @@ public class C_gestion_usuario implements Gestion {
                     modEmpleado.mostrarVista();
                 }
 
-            }else{
+            } else {
                 JOptionPane.showMessageDialog(null, "Seleccione un usuario para modificar", "Atención", JOptionPane.INFORMATION_MESSAGE);
             }
         } else if (e.getSource() == this.vista.jbEliminarUsuario) {
@@ -181,6 +191,8 @@ public class C_gestion_usuario implements Gestion {
             this.vista.jtUsuario.setModel(modelo.consultarFuncionario("", false, false, false));
         } else if (e.getSource() == this.vista.jbCambiarPassword) {
             cambiarContraseña();
+        } else if (e.getSource() == this.vista.jbUsuarioParametros) {
+            empleadoParametros();
         } else if (e.getSource() == this.vista.jbGestionRol) {
             Gestion_rol gestion_rol = new Gestion_rol(c_inicio);
             gestion_rol.mostrarVista();

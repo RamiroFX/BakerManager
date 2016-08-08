@@ -61,7 +61,7 @@ public class C_gestion_producto extends MouseAdapter implements ActionListener, 
         for (int i = 0; i < marca.size(); i++) {
             this.vista.jcbMarca.addItem(marca.get(i));
         }
-        Vector rubro = DB_manager.obtenerRubro();
+        Vector rubro = DB_manager.obtenerCategoria();
         this.vista.jcbRubro.addItem("Todos");
         for (int i = 0; i < rubro.size(); i++) {
             this.vista.jcbRubro.addItem(rubro.get(i));
@@ -157,7 +157,7 @@ public class C_gestion_producto extends MouseAdapter implements ActionListener, 
             Crear_producto crearProd = new Crear_producto(this);
             crearProd.mostrarVista();
         } else if (e.getSource().equals(this.vista.jbParametros)) {
-            Parametros param = new Parametros(c_inicio, this);
+            ProductoParametros param = new ProductoParametros(c_inicio, this);
             param.setVisible(true);
         } else if (e.getSource() == this.vista.jbEliminar) {
             //DBmanagerProducto.eliminarProducto(producto);
@@ -220,7 +220,7 @@ public class C_gestion_producto extends MouseAdapter implements ActionListener, 
         for (int i = 0; i < marca.size(); i++) {
             this.vista.jcbMarca.addItem(marca.get(i));
         }
-        Vector rubro = DB_manager.obtenerRubro();
+        Vector rubro = DB_manager.obtenerCategoria();
         this.vista.jcbRubro.removeAllItems();
         this.vista.jcbRubro.addItem("Todos");
         for (int i = 0; i < rubro.size(); i++) {

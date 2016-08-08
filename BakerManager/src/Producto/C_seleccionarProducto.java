@@ -100,7 +100,7 @@ public class C_seleccionarProducto extends MouseAdapter implements ActionListene
         for (int i = 0; i < marca.size(); i++) {
             this.vista.jcbMarca.addItem(marca.get(i));
         }
-        Vector rubro = DB_manager.obtenerRubro();
+        Vector rubro = DB_manager.obtenerCategoria();
         this.vista.jcbRubro.addItem("Todos");
         for (int i = 0; i < rubro.size(); i++) {
             this.vista.jcbRubro.addItem(rubro.get(i));

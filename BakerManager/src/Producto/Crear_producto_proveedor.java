@@ -155,7 +155,7 @@ public class Crear_producto_proveedor extends JDialog implements ActionListener,
         for (int i = 0; i < marca.size(); i++) {
             jcbMarca.addItem(marca.get(i));
         }
-        Vector rubro = DB_manager.obtenerRubro();
+        Vector rubro = DB_manager.obtenerCategoria();
         jcbRubro.addItem("Todos");
         for (int i = 0; i < rubro.size(); i++) {
             jcbRubro.addItem(rubro.get(i));

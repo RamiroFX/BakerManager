@@ -39,7 +39,7 @@ class M_crear_producto {
     }
 
     public Vector obtenerRubro() {
-        return DB_manager.obtenerRubro();
+        return DB_manager.obtenerCategoria();
 
     }
 
