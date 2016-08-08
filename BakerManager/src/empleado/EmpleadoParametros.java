@@ -215,14 +215,14 @@ public class EmpleadoParametros extends javax.swing.JDialog implements ActionLis
 
     private void createButtonHandler() {
         if (this.jtpCenter.getSelectedComponent().equals(this.jspPais)) {
-            String marca = JOptionPane.showInputDialog(this, "Inserte el nombre de la marca", "Insertar marca", JOptionPane.PLAIN_MESSAGE);
+            String marca = JOptionPane.showInputDialog(this, "Inserte el nombre del país", "Insertar país", JOptionPane.PLAIN_MESSAGE);
             if (marca != null) {
                 if (!marca.isEmpty()) {
                     agregarPais(marca);
                 }
             }
         } else if (this.jtpCenter.getSelectedComponent().equals(this.jspCiudad)) {
-            String rubro = JOptionPane.showInputDialog(this, "Inserte el nombre del rubro", "Insertar categoria", JOptionPane.PLAIN_MESSAGE);
+            String rubro = JOptionPane.showInputDialog(this, "Inserte el nombre de la ciudad", "Insertar ciudad", JOptionPane.PLAIN_MESSAGE);
             if (rubro != null) {
                 if (!rubro.isEmpty()) {
                     agregarCiudad(rubro);
@@ -233,17 +233,17 @@ public class EmpleadoParametros extends javax.swing.JDialog implements ActionLis
 
     private void updateButtonHandler() {
         if (this.jtpCenter.getSelectedComponent().equals(this.jspPais)) {
-            String marca = JOptionPane.showInputDialog(this, "Inserte el nombre de la marca", "Insertar marca", JOptionPane.PLAIN_MESSAGE);
-            if (marca != null) {
-                if (!marca.isEmpty()) {
-                    modificarPais(marca);
+            String pais = JOptionPane.showInputDialog(this, "Inserte el nombre del país", "Insertar pais", JOptionPane.PLAIN_MESSAGE);
+            if (pais != null) {
+                if (!pais.isEmpty()) {
+                    modificarPais(pais);
                 }
             }
         } else if (this.jtpCenter.getSelectedComponent().equals(this.jspCiudad)) {
-            String rubro = JOptionPane.showInputDialog(this, "Inserte el nombre del rubro", "Insertar categoria", JOptionPane.PLAIN_MESSAGE);
-            if (rubro != null) {
-                if (!rubro.isEmpty()) {
-                    modificarCiudad(rubro);
+            String ciudad = JOptionPane.showInputDialog(this, "Inserte el nombre de la ciudad", "Insertar ciudad", JOptionPane.PLAIN_MESSAGE);
+            if (ciudad != null) {
+                if (!ciudad.isEmpty()) {
+                    modificarCiudad(ciudad);
                 }
             }
         }
