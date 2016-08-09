@@ -206,7 +206,9 @@ public class C_gestionPedido implements Gestion {
     private void pagarPedido() {
         int opcion = JOptionPane.showConfirmDialog(vista, "¿Desea confirmas esta operación?", "Atención", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
         if (opcion == JOptionPane.YES_OPTION) {
-            this.modelo.pagarPedido();
+            int fila = this.vista.jtPedido.getSelectedRow();
+            Integer idPedido = Integer.valueOf(String.valueOf(this.vista.jtPedido.getValueAt(fila, 0)));
+            this.modelo.pagarPedido(idPedido);
             this.vista.jtPedido.setModel(this.modelo.getPedidosPendientes());
             this.vista.jtPedidoDetalle.setModel(this.modelo.getDtm());
             Utilities.c_packColumn.packColumns(this.vista.jtPedido, 1);
@@ -220,7 +222,9 @@ public class C_gestionPedido implements Gestion {
     private void cancelarPedido() {
         int opcion = JOptionPane.showConfirmDialog(vista, "¿Desea confirmas esta operación?", "Atención", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
         if (opcion == JOptionPane.YES_OPTION) {
-            this.modelo.cancelarPedido();
+            int fila = this.vista.jtPedido.getSelectedRow();
+            Integer idPedido = Integer.valueOf(String.valueOf(this.vista.jtPedido.getValueAt(fila, 0)));
+            this.modelo.cancelarPedido(idPedido);
             this.vista.jtPedido.setModel(this.modelo.getPedidosPendientes());
             this.vista.jtPedidoDetalle.setModel(this.modelo.getDtm());
             Utilities.c_packColumn.packColumns(this.vista.jtPedido, 1);

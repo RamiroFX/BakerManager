@@ -39,7 +39,7 @@ public class BakerManager {
         calendario.set(Calendar.HOUR_OF_DAY, 0);
         calendario.set(Calendar.MINUTE, 0);
         calendario.set(Calendar.SECOND, 0);
-        calendario.set(Calendar.DAY_OF_MONTH, 10);
+        calendario.set(Calendar.DAY_OF_MONTH, 19);
         calendario.set(Calendar.MONTH, 7);//AGOSTO
         calendario.set(Calendar.YEAR, 2016);
         if (today.before(calendario.getTime())) {

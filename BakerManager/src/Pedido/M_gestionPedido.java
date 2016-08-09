@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Vector;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableModel;
 
 /**
  *
@@ -106,14 +105,15 @@ public class M_gestionPedido {
         return DB_Pedido.obtenerPedidos(b, inicio, fin, condVenta, nroPedido, estado, getPedido(), true);
     }
 
-    public void cancelarPedido() {
-        DB_Pedido.cancelarPedido(getPedido().getIdPedido());
+    public void cancelarPedido(int idPedido) {
+        DB_Pedido.cancelarPedido(idPedido);
         borrarDatos();
     }
 
-    public void pagarPedido() {
-        setDetalles(DB_Pedido.obtenerPedidoDetalles(getPedido().getIdPedido()));
-        DB_Pedido.pagarPedido(getPedido(), getDetalles());
+    public void pagarPedido(int idPedido) {
+        M_pedido p = DB_Pedido.obtenerPedido(idPedido);
+        setDetalles(DB_Pedido.obtenerPedidoDetalles(p.getIdPedido()));
+        DB_Pedido.pagarPedido(p, getDetalles());
     }
 
     Vector obtenerTipoOperacion() {
