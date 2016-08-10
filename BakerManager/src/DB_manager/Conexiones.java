@@ -16,6 +16,7 @@ public class Conexiones {
 
     final public static int SGBD_ORACLE = 0;
     final public static int SGBD_POSTGRES = 1;
+    final public static int SGBD_MYSQL = 2;
 
     public static void cargarDriver(int db_type) throws ClassNotFoundException {
         switch (db_type) {
@@ -25,6 +26,10 @@ public class Conexiones {
             }
             case SGBD_POSTGRES: {
                 Class.forName("org.postgresql.Driver");
+                break;
+            }
+            case SGBD_MYSQL: {
+                Class.forName("com.mysql.jdbc.Driver");
                 break;
             }
         }
@@ -48,6 +53,10 @@ public class Conexiones {
                 url = "jdbc:oracle:thin:@localhost:1521:orcl";
                 con = DriverManager.getConnection(url, user, password);
                 break;
+            case SGBD_MYSQL:
+                url = "jdbc:mysql://localhost:3306/bakermanager";
+                con = DriverManager.getConnection(url, user, password);
+                break;
         }
         return con;
     }
@@ -59,6 +68,9 @@ public class Conexiones {
                 con = DriverManager.getConnection(url, user, password);
                 break;
             case SGBD_ORACLE:
+                con = DriverManager.getConnection(url, user, password);
+                break;
+            case SGBD_MYSQL:
                 con = DriverManager.getConnection(url, user, password);
                 break;
         }
