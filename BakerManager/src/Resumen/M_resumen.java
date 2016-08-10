@@ -11,12 +11,10 @@ import Entities.M_egreso_cabecera;
 import Entities.M_egreso_detalleFX;
 import Entities.M_pedido;
 import Pedido.C_gestionPedido;
-import Pedido.M_gestionPedido;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import javax.swing.table.TableModel;
 
 /**
  *
