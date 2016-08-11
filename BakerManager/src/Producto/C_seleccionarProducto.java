@@ -22,6 +22,7 @@ import java.awt.EventQueue;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.Vector;
+import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
 /**
@@ -143,6 +144,10 @@ public class C_seleccionarProducto extends MouseAdapter implements ActionListene
             @Override
             public void run() {
                 String desc = vista.jtfBuscar.getText();
+                if (desc.length() > 30) {
+                    JOptionPane.showMessageDialog(vista, "El texto ingresado supera el máximo permitido de 30 caracteres.", "Atención", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
                 String marca = vista.jcbMarca.getSelectedItem().toString();
                 String rubro = vista.jcbRubro.getSelectedItem().toString();
                 String impuesto = vista.jcbImpuesto.getSelectedItem().toString();

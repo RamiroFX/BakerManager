@@ -60,9 +60,13 @@ public class JTablePagination extends JPanel {
     }
 
     public void establecerModelo(TableModel model) {
-        sorter.setModel(model);
-        table.setModel(model);
-        showPages(100, 1);
+        try {
+            sorter.setModel(model);
+            table.setModel(model);
+            showPages(100, 1);
+        } catch (Exception e) {
+            
+        }
     }
 
     private void showPages(final int itemsPerPage, final int currentPageIndex) {

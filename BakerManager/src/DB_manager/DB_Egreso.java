@@ -136,7 +136,7 @@ public class DB_Egreso {
                 + "EGCA.NRO_FACTURA \"Nro. factura\", "
                 + "(SELECT PERS.NOMBRE || ' '|| PERS.APELLIDO WHERE PERS.ID_PERSONA = FUNC.ID_PERSONA)\"Empleado\", "
                 + "to_char(EGCA.TIEMPO,'DD/MM/YYYY HH24:MI:SS:MS') \"Tiempo\", "
-                + "ROUND((SELECT SUM (CANTIDAD*(PRECIO-(PRECIO*DESCUENTO)/100)) FROM EGRESO_DETALLE EGDE WHERE EGDE.ID_EGRESO_DETALLE = EGCA.ID_EGRESO_CABECERA))\"Total\", "
+                + "ROUND((SELECT SUM (CANTIDAD*(PRECIO-(PRECIO*DESCUENTO)/100)) FROM EGRESO_DETALLE EGDE WHERE EGDE.ID_EGRESO_CABECERA = EGCA.ID_EGRESO_CABECERA))\"Total\", "
                 + "(SELECT TIOP.DESCRIPCION FROM TIPO_OPERACION TIOP WHERE TIOP.ID_TIPO_OPERACION = EGCA.ID_COND_COMPRA) \"Cond. compra\" "
                 + fromQuery
                 + "WHERE EGCA.ID_FUNCIONARIO = FUNC.ID_FUNCIONARIO "
@@ -268,7 +268,7 @@ public class DB_Egreso {
         if ("Todos".equals(proveedor)) {
             prov = "";
         } else {
-            fromQuery = fromQuery + ", PROVEEDOR PROV, PROVEEDOR_PRODUCTO PRPR";
+            fromQuery = fromQuery + ", PROVEEDOR PROV, PROVEEDOR_PRODUCTO PRPR ";
             whereQuery = whereQuery + " AND PROV.ID_PROVEEDOR = EGCA.ID_PROVEEDOR "
                     + "AND PRPR.ID_PRODUCTO = PROD.ID_PRODUCTO ";
             prov = " AND PROV.ENTIDAD LIKE'" + proveedor + "' ";
