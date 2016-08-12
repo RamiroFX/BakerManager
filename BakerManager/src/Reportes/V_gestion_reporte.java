@@ -5,10 +5,12 @@
  */
 package Reportes;
 
+import javax.swing.JInternalFrame;
+
 /**
  *
  * @author Ramiro
  */
-public class V_gestion_reporte {
+public class V_gestion_reporte extends JInternalFrame{
     
 }

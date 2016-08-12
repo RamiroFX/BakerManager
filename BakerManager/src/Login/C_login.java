@@ -4,6 +4,7 @@
  */
 package Login;
 
+import Utilities.Config;
 import bakermanager.C_inicio;
 import com.nitido.utils.toaster.Toaster;
 import java.awt.EventQueue;
@@ -31,7 +32,7 @@ public class C_login implements ActionListener, KeyListener {
     }
 
     private void inicializarVista() {
-        //this.vista.txtNombre.setText(this.modelo.configuracion.getUser());
+        this.vista.txtNombre.setText(Config.getUser());
         //this.vista.txtNombre.setText("admin");
         this.vista.txtPassword.requestFocusInWindow();
     }
@@ -84,6 +85,7 @@ public class C_login implements ActionListener, KeyListener {
                 //se conecta contra la base de datos
                 if (modelo.conectar("postgres", "postgres")) {
                     if (modelo.verificarUsuario(user, password)) {
+                        Config.setUser(user);
                         c_inicio.modelo.getRol_usuario().setFuncionario(modelo.funcionario);
                         mostrarMensaje("La conexion se ha establecido con exito \n"
                                 + "Bienvenido " + c_inicio.modelo.getRol_usuario().getFuncionario().getNombre() + " " + c_inicio.modelo.getRol_usuario().getFuncionario().getApellido() + "!");

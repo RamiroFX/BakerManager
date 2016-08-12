@@ -148,7 +148,6 @@ public class DB_Egreso {
                 + tiop
                 + numero_fac;
         try {
-            System.out.println("151- Egreso: " + Query);
             st = DB_manager.getConection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             // se ejecuta el query y se obtienen los resultados en un ResultSet
             rs = st.executeQuery(Query);
@@ -205,8 +204,6 @@ public class DB_Egreso {
                 + "WHERE EGDE.ID_PRODUCTO = P.ID_PRODUCTO "
                 + "AND EGDE.ID_EGRESO_CABECERA = " + idEgresoCabecera;
         ResultSetTableModel rstm = null;
-        System.out.println("208-egreso:");
-        System.out.println(Query);
         try {
             st = DB_manager.getConection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             // se ejecuta el query y se obtienen los resultados en un ResultSet
@@ -339,11 +336,6 @@ public class DB_Egreso {
                 + tiop
                 + empleado;
         try {
-            System.out.println("342-Egreso:" + Query);
-            /*st = DB_manager.getConection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-             // se ejecuta el query y se obtienen los resultados en un ResultSet
-             rs = st.executeQuery(Query);*/
-
             pst = DB_manager.getConection().prepareStatement(Query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             pst.setString(1, producto + "%");
             rs = pst.executeQuery();
@@ -780,7 +772,6 @@ public class DB_Egreso {
                 pst.executeUpdate();
                 pst.close();
             }
-            System.out.println("Se inserto exitosamente");
             DB_manager.establecerTransaccion();
         } catch (SQLException ex) {
             System.out.println(ex.getNextException());

@@ -32,7 +32,7 @@ public class V_gestion_egresos extends JInternalFrame {
     private JPanel jpTop, jpBotonesTop, jpBot;
     public JTable jtEgresoDetalle;
     public JTablePagination jtEgresoCabecera;
-    private JScrollPane jspEgresoCabecera, jspEgresoDetalle;
+    private JScrollPane jspEgresoDetalle;
     private JSplitPane jspMid;
     public JDateChooser jddInicio, jddFinal;
 
@@ -93,13 +93,12 @@ public class V_gestion_egresos extends JInternalFrame {
     private void initMid() {
         //Panel medio izquierda
         jtEgresoCabecera = new JTablePagination(100);
-        jspEgresoCabecera = new JScrollPane(jtEgresoCabecera);
 
         //panel medio derecha
         jtEgresoDetalle = new JTable();
         jspEgresoDetalle = new JScrollPane(jtEgresoDetalle);
         //creamos nuestro splitpane y agregamos los dos paneles del medio
-        jspMid = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, jspEgresoCabecera, jspEgresoDetalle);
+        jspMid = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, jtEgresoCabecera, jspEgresoDetalle);
         jspMid.setDividerLocation(this.getWidth() / 2);
         jspMid.setOneTouchExpandable(true);
     }

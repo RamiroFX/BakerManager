@@ -279,7 +279,6 @@ public class DB_Pedido {
                 + "AND PEDI.ID_CLIENTE =" + idCliente
                 + " GROUP BY CLIE.NOMBRE,PEDE.PRECIO,\"Producto\",PROD.ID_IMPUESTO,\"Obs.\";";
         ResultSetTableModel rstm = null;
-        System.out.println("282-pedido: " + Query);
         try {
             st = DB_manager.getConection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             // se ejecuta el query y se obtienen los resultados en un ResultSet
