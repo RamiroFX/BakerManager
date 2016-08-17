@@ -87,6 +87,7 @@ public class V_seleccionarProducto extends JDialog {
         jtProducto = new JTable();
         jspProducto = new JScrollPane(jtProducto);
         jbCrearProducto = new JButton("Crear producto");
+        jbCrearProducto.setName("crear producto");
         jbAceptar = new JButton("Aceptar");
         jbSalir = new JButton("Cerrar");
         jpBotones = new JPanel();
