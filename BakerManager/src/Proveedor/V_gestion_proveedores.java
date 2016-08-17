@@ -5,6 +5,7 @@
 package Proveedor;
 
 import java.awt.BorderLayout;
+import java.awt.Insets;
 import javax.swing.JCheckBox;
 import javax.swing.JInternalFrame;
 import javax.swing.JPanel;
@@ -130,8 +131,11 @@ class V_gestion_proveedores extends JInternalFrame {
         jtTelefono = new JTable();
         jspTelefono = new JScrollPane(jtTelefono);
 
+        Insets inset = new Insets(10, 10, 10, 10);
         jbCrearProveedor = new javax.swing.JButton("Crear proveedor");
+        jbCrearProveedor.setMargin(inset);
         jbModificarProveedor = new javax.swing.JButton("Modificar proveedor");
+        jbModificarProveedor.setMargin(inset);
 
         jpDatosEmp = new javax.swing.JPanel(new MigLayout());
         jlNombre.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);

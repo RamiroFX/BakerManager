@@ -198,6 +198,10 @@ public class SeleccionarCantidadProduducto extends javax.swing.JDialog implement
         if (checkearCantidad() && checkearDescuento()) {
             try {
                 cantidad = Double.valueOf(String.valueOf(this.jtfCantidad.getText().trim()));
+                if (cantidad <= 0.0) {
+                    JOptionPane.showMessageDialog(this, "Inserte un valor mayor a 0 en Cantidad.", "Atención", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(this, "Inserte un valor válido para Cantidad.", "Atención", JOptionPane.ERROR_MESSAGE);
                 return;

@@ -6,6 +6,7 @@ package Pedido;
 
 import com.toedter.calendar.JDateChooser;
 import java.awt.Dimension;
+import java.awt.Insets;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
@@ -124,12 +125,19 @@ public class V_gestionPedido extends JInternalFrame {
 
     private void initBot() {
         jpBot = new JPanel();
+        Insets inset = new Insets(10, 10, 10, 10);
         jbAgregar = new JButton("Crear pedido");
+        jbAgregar.setMargin(inset);
         jbPagoPedido = new JButton("Pago de pedido");
+        jbPagoPedido.setMargin(inset);
         jbCancelarPedido = new JButton("Cancelar pedido");
+        jbCancelarPedido.setMargin(inset);
         jbDetalle = new JButton("Ver detalle");
+        jbDetalle.setMargin(inset);
         jbResumen = new JButton("Ver resumen");
+        jbResumen.setMargin(inset);
         jbCharts = new JButton("Diagramas");
+        jbCharts.setMargin(inset);
         jpBot.add(jbAgregar);
         jpBot.add(jbPagoPedido);
         jpBot.add(jbCancelarPedido);

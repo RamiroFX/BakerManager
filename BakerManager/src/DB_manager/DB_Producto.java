@@ -74,7 +74,7 @@ public class DB_Producto {
             if ("Todos".equals(proveedor)) {
                 prov = "";
             } else {
-                fromQuery = "FROM PROVEEDOR PROV, PRODUCTO PROD, PROVEEDOR_PRODUCTO PRPR ";
+                fromQuery = fromQuery + ", PROVEEDOR PROV, PROVEEDOR_PRODUCTO PRPR ";
                 prov = "PRPR.ID_PROVEEDOR = PROV.ID_PROVEEDOR AND PRPR.ID_PRODUCTO = PROD.ID_PRODUCTO "
                         + "AND PROV.ENTIDAD LIKE'" + proveedor + "' AND ";
             }
@@ -90,7 +90,8 @@ public class DB_Producto {
             if ("Todos".equals(marca)) {
                 marc = "";
             } else {
-                marc = "AND PROD.ID_MARCA LIKE '" + marca + "' ";
+                fromQuery = fromQuery + ", MARCA MARC ";
+                marc = "AND MARC.DESCRIPCION LIKE '" + marca + "' ";
             }
 
             String rubr;
@@ -115,7 +116,7 @@ public class DB_Producto {
             String Q_marca = "(SELECT MARC.DESCRIPCION FROM MARCA MARC WHERE MARC.ID_MARCA = PROD.ID_MARCA)\"Marca\", ";
             String queryEstado = "(SELECT ESTA.DESCRIPCION FROM ESTADO ESTA WHERE ESTA.ID_ESTADO = PROD.ID_ESTADO)\"Estado\"";
             String queryImpuesto = "(SELECT IMPU.DESCRIPCION FROM IMPUESTO IMPU WHERE IMPU.ID_IMPUESTO = PROD.ID_IMPUESTO)\"Impuesto\"";
-            String q2 = "SELECT PROD.ID_PRODUCTO \"ID\", "
+            String FINAL_QUERY = "SELECT PROD.ID_PRODUCTO \"ID\", "
                     + "PROD.DESCRIPCION \"Descripción\", "
                     + "PROD.CODIGO \"Código\", "
                     + Q_marca
@@ -137,9 +138,11 @@ public class DB_Producto {
                     + finalQuery;
             //SELECT PROD.id_producto   "ID producto"  ,  PROD.descripcion  "Descripcion"   FROM producto
             //se crea una sentencia
+            System.out.println("140-producto:");
+            System.out.println(FINAL_QUERY);
             st = DB_manager.getConection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             // se ejecuta el query y se obtienen los resultados en un ResultSet
-            rs = st.executeQuery(q2);
+            rs = st.executeQuery(FINAL_QUERY);
             rstm = new ResultSetTableModel(rs);
         } catch (SQLException ex) {
             Logger lgr = Logger.getLogger(DB_Producto.class.getName());

@@ -12,6 +12,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -71,16 +72,21 @@ public class C_login implements ActionListener, KeyListener {
     public void logIn() {
         EventQueue.invokeLater(new Runnable() {
             public void run() {
-                //modelo.configuracion.setUser(c_inicio.getFuncionario().getAlias());
-                //direccion de base de datos
-                String url = vista.Conexion;
                 //alias de usuario
                 String user = vista.txtNombre.getText();
+                if (user.isEmpty() || user.length() > 15) {
+                    JOptionPane.showMessageDialog(vista, "Ingrese un nombre de usuario", "Atención", JOptionPane.INFORMATION_MESSAGE);
+                    return;
+                }
                 //contraseña
                 String password = "";
                 char[] pss = vista.txtPassword.getPassword();
                 for (char c : pss) {
                     password = password + c;
+                }
+                if (password.isEmpty() || password.length() > 15) {
+                    JOptionPane.showMessageDialog(vista, "Ingrese una contraseña válida", "Atención", JOptionPane.INFORMATION_MESSAGE);
+                    return;
                 }
                 //se conecta contra la base de datos
                 if (modelo.conectar("postgres", "postgres")) {
@@ -89,12 +95,12 @@ public class C_login implements ActionListener, KeyListener {
                         c_inicio.modelo.getRol_usuario().setFuncionario(modelo.funcionario);
                         mostrarMensaje("La conexion se ha establecido con exito \n"
                                 + "Bienvenido " + c_inicio.modelo.getRol_usuario().getFuncionario().getNombre() + " " + c_inicio.modelo.getRol_usuario().getFuncionario().getApellido() + "!");
-                    //una vez correcto el nombre/contraseña se elimina la pantalla de logeo
+                        //una vez correcto el nombre/contraseña se elimina la pantalla de logeo
                         //y se procede a mostrar la pantalla de seleccion de rol
                         vista.dispose();
                         vista = null;
                         crearSeleccionRol();
-                    //se habilita la opcion de deslogeo
+                        //se habilita la opcion de deslogeo
                         //c_main.vista.getJMbarraMenu().jmiLogOut.setEnabled(true);
                         //se coloca en la barra de menu el nombre de usuario
                         c_inicio.vista.setJtfUsuario(c_inicio.modelo.getRol_usuario().getFuncionario().getAlias());

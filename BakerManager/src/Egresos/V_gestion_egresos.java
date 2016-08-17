@@ -7,6 +7,7 @@ package Egresos;
 import Utilities.JTablePagination;
 import com.toedter.calendar.JDateChooser;
 import java.awt.Dimension;
+import java.awt.Insets;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JInternalFrame;
@@ -105,10 +106,15 @@ public class V_gestion_egresos extends JInternalFrame {
 
     private void initBot() {
         jpBot = new JPanel();
+        Insets insets = new Insets(10, 10, 10, 10);
         jbAgregar = new JButton("Crear egreso");
+        jbAgregar.setMargin(insets);
         jbDetalle = new JButton("Ver detalle");
+        jbDetalle.setMargin(insets);
         jbResumen = new JButton("Ver resumen");
+        jbResumen.setMargin(insets);
         jbGraficos = new JButton("Ver gráficos");
+        jbGraficos.setMargin(insets);
         jpBot.add(jbAgregar);
         jpBot.add(jbDetalle);
         jpBot.add(jbResumen);

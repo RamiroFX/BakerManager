@@ -9,6 +9,7 @@ package empleado;
  */
 
 import java.awt.BorderLayout;
+import java.awt.Insets;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JInternalFrame;
@@ -141,6 +142,14 @@ public class V_gestion_usuario extends JInternalFrame {
         jbUsuarioParametros = new javax.swing.JButton("Parametros");
         jbUsuarioParametros.setName("parametros empleado");
         jbCrearUsuario.setName("crear empleado");
+
+        Insets insets = new Insets(10, 10, 10, 10);
+        jbCrearUsuario.setMargin(insets);
+        jbModificarUsuario.setMargin(insets);
+        jbEliminarUsuario.setMargin(insets);
+        jbCambiarPassword.setMargin(insets);
+        jbUsuarioParametros.setMargin(insets);
+
         jbModificarUsuario.setName("modificar empleado");
         jbEliminarUsuario.setName("borrar empleado");
 
@@ -259,6 +268,7 @@ public class V_gestion_usuario extends JInternalFrame {
         jbModificarUsuario.setText("Actualizar usuario");
         jbGestionRol = new JButton("Gestión de roles");
         jbGestionRol.setName("roles");
+        jbGestionRol.setMargin(insets);
         jpSouth.add(jbCrearUsuario);
         jpSouth.add(jbModificarUsuario);
         jpSouth.add(jbEliminarUsuario);

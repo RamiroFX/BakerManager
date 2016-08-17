@@ -8,14 +8,13 @@ import Utilities.JTablePagination;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.awt.Insets;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JInternalFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
-import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.border.EtchedBorder;
 import net.miginfocom.swing.MigLayout;
@@ -165,13 +164,19 @@ public class V_gestion_producto extends JInternalFrame {
 
     private void initBot() {
         jpBot = new JPanel();
+        Insets insets = new Insets(10, 10, 10, 10);
         jbParametros = new JButton("Parametros");
+        jbParametros.setMargin(insets);
         jbModificar = new JButton("Modificar");
+        jbModificar.setMargin(insets);
         jbModificar.setEnabled(false);
         jbAgregar = new JButton("Agregar");
+        jbAgregar.setMargin(insets);
         jbEliminar = new JButton("Eliminar");
+        jbEliminar.setMargin(insets);
         jbEliminar.setEnabled(false);
         jbAsigProdProv = new JButton("Prod-Proveedor");
+        jbAsigProdProv.setMargin(insets);
         //jpBot.add(jbParametros);
         jpBot.add(jbModificar);
         jpBot.add(jbAgregar);

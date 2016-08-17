@@ -6,6 +6,7 @@ package Ventas;
 
 import com.toedter.calendar.JDateChooser;
 import java.awt.Dimension;
+import java.awt.Insets;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JInternalFrame;
@@ -114,12 +115,16 @@ public class V0_gestionVentas extends JInternalFrame {
 
     private void initBot() {
         jpBot = new JPanel();
+        Insets insets = new Insets(10, 10, 10, 10);
         jbAgregar = new JButton("Crear venta");
         jbAgregar.setName("crear venta");
+        jbAgregar.setMargin(insets);
         jbDetalle = new JButton("Ver detalle");
         jbDetalle.setName("detalle venta");
+        jbDetalle.setMargin(insets);
         jbResumen = new JButton("Ver resumen");
         jbResumen.setName("resumen venta");
+        jbResumen.setMargin(insets);
         jbResumen.setEnabled(false);
         jpBot.add(jbAgregar);
         jpBot.add(jbDetalle);
