@@ -7,13 +7,16 @@ package Producto;
 import DB_manager.DB_Producto;
 import DB_manager.DB_manager;
 import Egresos.C_crear_egreso;
+import Entities.M_menu_item;
 import Entities.M_producto;
 import Entities.M_proveedor;
+import MenuPrincipal.DatosUsuario;
 import Pedido.C_crearPedido;
 import Pedido.C_verPedido;
 import Proveedor.Seleccionar_proveedor;
 import Ventas.C_crearVentaRapida;
 import Ventas.C_verMesa;
+import bakermanager.C_inicio;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -21,6 +24,7 @@ import java.awt.event.MouseEvent;
 import java.awt.EventQueue;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.ArrayList;
 import java.util.Vector;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
@@ -92,7 +96,14 @@ public class C_seleccionarProducto extends MouseAdapter implements ActionListene
     }
 
     private void inicializarVista() {
+        this.vista.jbCrearProducto.setEnabled(false);
         this.vista.jbAceptar.setEnabled(false);
+        ArrayList<M_menu_item> accesos = DatosUsuario.getRol_usuario().getAccesos();
+        for (int i = 0; i < accesos.size(); i++) {
+            if (this.vista.jbCrearProducto.getName().equals(accesos.get(i).getItemDescripcion())) {
+                this.vista.jbCrearProducto.setEnabled(true);
+            }
+        }
         this.vista.jtProducto.setModel(DB_Producto.consultarProducto(""));
         Utilities.c_packColumn.packColumns(this.vista.jtProducto, 1);
 

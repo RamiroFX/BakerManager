@@ -62,49 +62,48 @@ public class DB_Producto {
         return rstm;
     }
 
-    public static ResultSetTableModel consultarProducto(String descripcion, String proveedor, String marca, String rubro, String impuesto, String estado, String busqueda) {
+    public static ResultSetTableModel consultarProducto(String descripcion, String proveedor, String marca, String categoria, String impuesto, String estado, String busqueda) {
         ResultSetTableModel rstm = null;
         try {
             if (DB_manager.getConection() == null) {
                 throw new IllegalStateException("Connection already closed.");
             }
             String finalQuery = "ORDER BY PROD.DESCRIPCION";
-            String fromQuery = "FROM PRODUCTO PROD ";
+            String fromQuery = "FROM PRODUCTO PROD, MARCA MARC, PRODUCTO_CATEGORIA PRCA, ESTADO ESTA, IMPUESTO IMPU ";
             String prov;
             if ("Todos".equals(proveedor)) {
                 prov = "";
             } else {
                 fromQuery = fromQuery + ", PROVEEDOR PROV, PROVEEDOR_PRODUCTO PRPR ";
-                prov = "PRPR.ID_PROVEEDOR = PROV.ID_PROVEEDOR AND PRPR.ID_PRODUCTO = PROD.ID_PRODUCTO "
-                        + "AND PROV.ENTIDAD LIKE'" + proveedor + "' AND ";
+                prov = "AND PRPR.ID_PROVEEDOR = PROV.ID_PROVEEDOR AND PRPR.ID_PRODUCTO = PROD.ID_PRODUCTO "
+                        + "AND PROV.ENTIDAD LIKE'" + proveedor + "' ";
             }
 
             String imp;
             if ("Todos".equals(impuesto)) {
                 imp = "";
             } else {
-                imp = "AND PROD.ID_IMPUESTO =(SELECT IMPU.ID_IMPUESTO FROM IMPUESTO IMPU WHERE IMPU.DESCRIPCION = " + impuesto + ")";
+                imp = "AND PROD.ID_IMPUESTO =(SELECT IMP.ID_IMPUESTO FROM IMPUESTO IMP WHERE IMP.DESCRIPCION = " + impuesto + ")";
             }
 
             String marc;
             if ("Todos".equals(marca)) {
                 marc = "";
             } else {
-                fromQuery = fromQuery + ", MARCA MARC ";
-                marc = "AND MARC.DESCRIPCION LIKE '" + marca + "' ";
+                marc = "AND PROD.ID_MARCA =(SELECT M.ID_MARCA FROM MARCA M WHERE M.DESCRIPCION LIKE '" + marca + "')";
             }
 
-            String rubr;
-            if ("Todos".equals(rubro)) {
-                rubr = "";
+            String categ;
+            if ("Todos".equals(categoria)) {
+                categ = "";
             } else {
-                rubr = "AND PROD.ID_CATEGORIA LIKE '" + rubro + "'  ";
+                categ = "AND PROD.ID_CATEGORIA =(SELECT C.ID_PRODUCTO_CATEGORIA FROM PRODUCTO_CATEGORIA C WHERE C.DESCRIPCION LIKE '" + categoria + "')";
             }
             String estad;
             if ("Todos".equals(estado)) {
                 estad = "";
             } else {
-                estad = "AND PROD.ID_ESTADO = (SELECT ESTA.ID_ESTADO FROM ESTADO ESTA WHERE ESTA.DESCRIPCION LIKE '" + estado + "')";
+                estad = "AND PROD.ID_ESTADO = (SELECT EST.ID_ESTADO FROM ESTADO EST WHERE EST.DESCRIPCION LIKE '" + estado + "')";
             }
             String busqueda_;
             if ("Exclusiva".equals(busqueda)) {
@@ -112,28 +111,27 @@ public class DB_Producto {
             } else {
                 busqueda_ = "%" + descripcion + "%";
             }
-            String Q_categoria = "(SELECT PRCA.DESCRIPCION FROM PRODUCTO_CATEGORIA PRCA WHERE PRCA.ID_PRODUCTO_CATEGORIA = PROD.ID_CATEGORIA)\"Categoria\", ";
-            String Q_marca = "(SELECT MARC.DESCRIPCION FROM MARCA MARC WHERE MARC.ID_MARCA = PROD.ID_MARCA)\"Marca\", ";
-            String queryEstado = "(SELECT ESTA.DESCRIPCION FROM ESTADO ESTA WHERE ESTA.ID_ESTADO = PROD.ID_ESTADO)\"Estado\"";
-            String queryImpuesto = "(SELECT IMPU.DESCRIPCION FROM IMPUESTO IMPU WHERE IMPU.ID_IMPUESTO = PROD.ID_IMPUESTO)\"Impuesto\"";
             String FINAL_QUERY = "SELECT PROD.ID_PRODUCTO \"ID\", "
                     + "PROD.DESCRIPCION \"Descripción\", "
                     + "PROD.CODIGO \"Código\", "
-                    + Q_marca
-                    + queryImpuesto + ", "
-                    + Q_categoria
+                    + "MARC.DESCRIPCION \"Marca\", "
+                    + "IMPU.DESCRIPCION \"Impuesto\", "
+                    + "PRCA.DESCRIPCION \"Categoría\", "
                     + "PROD.PRECIO_COSTO \"Precio costo\", "
                     + "PROD.PRECIO_MINORISTA \"Precio minorista\", "
                     + "PROD.PRECIO_MAYORISTA \"Precio mayorista\", "
-                    + queryEstado + ", "
+                    + "ESTA.DESCRIPCION \"Estado\", "
                     + "PROD.CANT_ACTUAL \"Cant. actual\" "
                     + fromQuery
-                    + "WHERE "
+                    + "WHERE PROD.ID_MARCA = MARC.ID_MARCA "
+                    + "AND PROD.ID_IMPUESTO = IMPU.ID_IMPUESTO "
+                    + "AND PROD.ID_CATEGORIA = PRCA.ID_PRODUCTO_CATEGORIA "
+                    + "AND PROD.ID_ESTADO = ESTA.ID_ESTADO "
                     + prov
-                    + "LOWER(PROD.DESCRIPCION) LIKE '" + busqueda_ + "' "
+                    + "AND LOWER(PROD.DESCRIPCION) LIKE '" + busqueda_ + "' "
                     + marc
                     + imp
-                    + rubr
+                    + categ
                     + estad
                     + finalQuery;
             //SELECT PROD.id_producto   "ID producto"  ,  PROD.descripcion  "Descripcion"   FROM producto
