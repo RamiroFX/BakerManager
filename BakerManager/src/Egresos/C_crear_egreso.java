@@ -59,8 +59,9 @@ public class C_crear_egreso extends MouseAdapter implements ActionListener {
         this.vista.jbAgregarProv.addActionListener(this);
         this.vista.jbAceptar.addActionListener(this);
         this.vista.jtProductos.addMouseListener(this);
-        this.vista.jbModificarCelda.addActionListener(this);
-        this.vista.jbEliminarCelda.addActionListener(this);
+        this.vista.jbModificarDetalle.addActionListener(this);
+        this.vista.jbEliminarDetalle.addActionListener(this);
+        this.vista.jbSalir.addActionListener(this);
     }
 
     private void initComp() {
@@ -74,8 +75,8 @@ public class C_crear_egreso extends MouseAdapter implements ActionListener {
         dtm.addColumn("5 %");
         dtm.addColumn("10 %");
         this.vista.jtProductos.setModel(dtm);
-        this.vista.jbModificarCelda.setEnabled(false);
-        this.vista.jbEliminarCelda.setEnabled(false);
+        this.vista.jbModificarDetalle.setEnabled(false);
+        this.vista.jbEliminarDetalle.setEnabled(false);
     }
 
     private void insertarEgreso() {
@@ -183,18 +184,20 @@ public class C_crear_egreso extends MouseAdapter implements ActionListener {
     }
 
     private void sumarTotal() {
+        Integer exenta = 0;
+        Integer iva5 = 0;
+        Integer iva10 = 0;
+        Integer total = 0;
         int cantFilas = this.dtm.getRowCount();
-        Integer totalExenta = 0, total5 = 0, total10 = 0, total = 0;
         for (int i = 0; i < cantFilas; i++) {
-            Integer ivaExenta = Integer.valueOf(String.valueOf(dtm.getValueAt(i, 5)));
-            totalExenta = totalExenta + ivaExenta;
-            Integer iva5 = Integer.valueOf(String.valueOf(dtm.getValueAt(i, 6)));
-            total5 = total5 + iva5;
-            Integer iva10 = Integer.valueOf(String.valueOf(dtm.getValueAt(i, 7)));
-            total10 = total10 + iva10;
+            exenta = exenta + Integer.valueOf(String.valueOf(dtm.getValueAt(i, 5)));
+            iva5 = iva5 + Integer.valueOf(String.valueOf(dtm.getValueAt(i, 6)));
+            iva10 = iva10 + Integer.valueOf(String.valueOf(dtm.getValueAt(i, 7)));
         }
-        total = totalExenta + total5 + total10;
-        //this.vista.jtfTotal.setText(total.toString());
+        total = exenta + iva5 + iva10;
+        this.vista.jftExenta.setValue(exenta);
+        this.vista.jftIva5.setValue(iva5);
+        this.vista.jftIva10.setValue(iva10);
         this.vista.jftTotal.setValue(total);
     }
 
@@ -263,16 +266,20 @@ public class C_crear_egreso extends MouseAdapter implements ActionListener {
     }
 
     private void eliminarCompra(int row) {
-        this.vista.jbModificarCelda.setEnabled(false);
-        this.vista.jbEliminarCelda.setEnabled(false);
+        this.vista.jbModificarDetalle.setEnabled(false);
+        this.vista.jbEliminarDetalle.setEnabled(false);
         dtm.removeRow(row);
         sumarTotal();
     }
 
+    private void cerrar() {
+        this.vista.dispose();
+    }
+
     @Override
     public void mouseClicked(MouseEvent e) {
-        this.vista.jbModificarCelda.setEnabled(true);
-        this.vista.jbEliminarCelda.setEnabled(true);
+        this.vista.jbModificarDetalle.setEnabled(true);
+        this.vista.jbEliminarDetalle.setEnabled(true);
     }
 
     @Override
@@ -286,11 +293,13 @@ public class C_crear_egreso extends MouseAdapter implements ActionListener {
         } else if (e.getSource().equals(this.vista.jbAceptar)) {
             insertarEgreso();
             System.runFinalization();
-        } else if (e.getSource().equals(this.vista.jbModificarCelda)) {
+        } else if (e.getSource().equals(this.vista.jbModificarDetalle)) {
             SeleccionarCantidadProduducto scp = new SeleccionarCantidadProduducto(this, this.vista.jtProductos.getSelectedRow());
             scp.setVisible(true);
-        } else if (e.getSource().equals(this.vista.jbEliminarCelda)) {
+        } else if (e.getSource().equals(this.vista.jbEliminarDetalle)) {
             eliminarCompra(this.vista.jtProductos.getSelectedRow());
+        } else if (e.getSource().equals(this.vista.jbSalir)) {
+            cerrar();
         }
     }
 }

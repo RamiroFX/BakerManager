@@ -138,8 +138,6 @@ public class DB_Producto {
                     + finalQuery;
             //SELECT PROD.id_producto   "ID producto"  ,  PROD.descripcion  "Descripcion"   FROM producto
             //se crea una sentencia
-            System.out.println("140-producto:");
-            System.out.println(FINAL_QUERY);
             st = DB_manager.getConection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             // se ejecuta el query y se obtienen los resultados en un ResultSet
             rs = st.executeQuery(FINAL_QUERY);

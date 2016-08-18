@@ -226,7 +226,8 @@ public class C_crearPedido extends MouseAdapter implements ActionListener {
         Integer iva5 = 0;
         Integer iva10 = 0;
         Integer total = 0;
-        for (int i = 0; i < this.modelo.getDtm().getRowCount(); i++) {
+        int cantFilas = this.modelo.getDtm().getRowCount();
+        for (int i = 0; i < cantFilas; i++) {
             exenta = exenta + Integer.valueOf(String.valueOf(this.modelo.getDtm().getValueAt(i, 5)));
             iva5 = iva5 + Integer.valueOf(String.valueOf(this.modelo.getDtm().getValueAt(i, 6)));
             iva10 = iva10 + Integer.valueOf(String.valueOf(this.modelo.getDtm().getValueAt(i, 7)));
