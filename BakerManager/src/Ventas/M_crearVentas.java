@@ -4,8 +4,8 @@
  */
 package Ventas;
 
-import DB_manager.DB_Ingreso;
-import DB_manager.ResultSetTableModel;
+import DB.DB_Ingreso;
+import DB.ResultSetTableModel;
 import Entities.M_funcionario;
 import Entities.M_mesa;
 import Entities.M_mesa_detalle;

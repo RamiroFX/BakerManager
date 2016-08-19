@@ -5,8 +5,8 @@
  */
 package empleado;
 
-import DB_manager.DB_Funcionario;
-import DB_manager.ResultSetTableModel;
+import DB.DB_Funcionario;
+import DB.ResultSetTableModel;
 import Entities.M_funcionario;
 import java.util.Vector;
 import javax.swing.JOptionPane;

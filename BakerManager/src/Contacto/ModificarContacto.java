@@ -6,9 +6,9 @@ package Contacto;
 
 import Cliente.C_crear_cliente;
 import Cliente.C_modificar_cliente;
-import DB_manager.DB_Cliente;
-import DB_manager.DB_Proveedor;
-import DB_manager.DB_manager;
+import DB.DB_Cliente;
+import DB.DB_Proveedor;
+import DB.DB_manager;
 import Entities.M_cliente_contacto;
 import Entities.M_contacto;
 import Proveedor.C_crear_proveedor;

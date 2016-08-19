@@ -4,7 +4,7 @@
  */
 package Pedido;
 
-import DB_manager.DB_Pedido;
+import DB.DB_Pedido;
 import Entities.M_pedido;
 import Entities.M_pedidoDetalle;
 import java.util.ArrayList;

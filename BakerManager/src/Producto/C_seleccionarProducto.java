@@ -4,8 +4,8 @@
  */
 package Producto;
 
-import DB_manager.DB_Producto;
-import DB_manager.DB_manager;
+import DB.DB_Producto;
+import DB.DB_manager;
 import Egresos.C_crear_egreso;
 import Entities.M_menu_item;
 import Entities.M_producto;

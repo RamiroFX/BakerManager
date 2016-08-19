@@ -5,9 +5,9 @@
  */
 package Cliente;
 
-import DB_manager.DB_Cliente;
-import DB_manager.DB_manager;
-import DB_manager.ResultSetTableModel;
+import DB.DB_Cliente;
+import DB.DB_manager;
+import DB.ResultSetTableModel;
 import Entities.M_cliente;
 import Entities.M_cliente_contacto;
 import Entities.M_telefono;

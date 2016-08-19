@@ -5,8 +5,8 @@
  */
 package Producto;
 
-import DB_manager.DB_Producto;
-import DB_manager.DB_manager;
+import DB.DB_Producto;
+import DB.DB_manager;
 import Entities.M_producto;
 import java.util.Vector;
 

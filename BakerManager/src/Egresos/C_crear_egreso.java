@@ -4,8 +4,8 @@
  */
 package Egresos;
 
-import DB_manager.DB_Egreso;
-import DB_manager.DB_Producto;
+import DB.DB_Egreso;
+import DB.DB_Producto;
 import Entities.M_egreso_detalle;
 import Entities.M_producto;
 import Entities.M_proveedor;

@@ -4,7 +4,7 @@
  */
 package Proveedor;
 
-import DB_manager.DB_Proveedor;
+import DB.DB_Proveedor;
 import Entities.M_contacto;
 import Entities.M_proveedor;
 import bakermanager.C_inicio;

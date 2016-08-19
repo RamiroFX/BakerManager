@@ -4,9 +4,9 @@
  */
 package Login;
 
-import DB_manager.DB_Funcionario;
-import DB_manager.DB_rol;
-import DB_manager.DB_rol_usuario;
+import DB.DB_Funcionario;
+import DB.DB_rol;
+import DB.DB_rol_usuario;
 import MenuPrincipal.DatosUsuario;
 import MenuPrincipal.MenuPrincipal;
 import bakermanager.C_inicio;

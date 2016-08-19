@@ -4,7 +4,7 @@
  */
 package empleado;
 
-import DB_manager.DB_manager;
+import DB.DB_manager;
 import bakermanager.C_inicio;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

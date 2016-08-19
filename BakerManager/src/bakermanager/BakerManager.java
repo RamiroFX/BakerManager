@@ -5,7 +5,7 @@
  */
 package bakermanager;
 
-import DB_manager.DB_manager;
+import DB.DB_manager;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.logging.Level;

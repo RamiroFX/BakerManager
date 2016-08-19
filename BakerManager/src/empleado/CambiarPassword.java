@@ -5,7 +5,7 @@
  */
 package empleado;
 
-import DB_manager.DB_Funcionario;
+import DB.DB_Funcionario;
 import bakermanager.C_inicio;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

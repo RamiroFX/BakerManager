@@ -4,7 +4,7 @@
  */
 package Cliente;
 
-import DB_manager.DB_Cliente;
+import DB.DB_Cliente;
 import Entities.M_cliente;
 import Pedido.C_crearPedido;
 import Pedido.C_gestionPedido;

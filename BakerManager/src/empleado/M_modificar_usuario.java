@@ -5,10 +5,10 @@
  */
 package empleado;
 
-import DB_manager.DB_Funcionario;
-import DB_manager.DB_manager;
-import DB_manager.DB_rol;
-import DB_manager.ResultSetTableModel;
+import DB.DB_Funcionario;
+import DB.DB_manager;
+import DB.DB_rol;
+import DB.ResultSetTableModel;
 import Entities.M_funcionario;
 import Entities.M_rol;
 import java.util.Date;

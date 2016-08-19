@@ -4,9 +4,9 @@
  */
 package Ventas;
 
-import DB_manager.DB_Cliente;
-import DB_manager.DB_Funcionario;
-import DB_manager.DB_Ingreso;
+import DB.DB_Cliente;
+import DB.DB_Funcionario;
+import DB.DB_Ingreso;
 import Entities.M_facturaCabecera;
 import Entities.M_facturaDetalle;
 import Entities.M_funcionario;

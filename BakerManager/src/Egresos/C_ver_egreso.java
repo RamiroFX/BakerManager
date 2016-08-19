@@ -4,8 +4,8 @@
  */
 package Egresos;
 
-import DB_manager.DB_Egreso;
-import DB_manager.DB_Proveedor;
+import DB.DB_Egreso;
+import DB.DB_Proveedor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 

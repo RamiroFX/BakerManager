@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package DB_manager;
+package DB;
 
 import Entities.M_cliente;
 import Entities.M_funcionario;
@@ -706,7 +706,7 @@ public class DB_Pedido {
 
     public static ArrayList<M_pedidoDetalle> obtenerPedidoDetalles(Integer idPedido) {
         ArrayList<M_pedidoDetalle> detalles = null;
-        String query = "SELECT ID_PEDIDO_DETALLE, ID_PEDIDO_CABECERA, ID_PRODUCTO, CANTIDAD, PRECIO, DESCUENTO, OBSERVACION FROM PEDIDO_DETALLE WHERE ID_PEDIDO_CABECERA = " + idPedido;
+        String query = "SELECT ID_PEDIDO_DETALLE, ID_PEDIDO_CABECERA, ID_PRODUCTO,(SELECT P.DESCRIPCION FROM PRODUCTO P WHERE P.ID_PRODUCTO = PD.ID_PRODUCTO)\"PRODUCTO\", CANTIDAD, PRECIO, DESCUENTO, OBSERVACION FROM PEDIDO_DETALLE PD WHERE PD.ID_PEDIDO_CABECERA = " + idPedido;
         try {
             st = DB_manager.getConection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             rs = st.executeQuery(query);
@@ -721,6 +721,7 @@ public class DB_Pedido {
                 detalle.setPrecio(rs.getInt("PRECIO"));
                 M_producto producto = new M_producto();
                 producto.setId(rs.getInt("ID_PRODUCTO"));
+                producto.setDescripcion(rs.getString("PRODUCTO"));
                 detalle.setProducto(producto);
                 detalles.add(detalle);
             }

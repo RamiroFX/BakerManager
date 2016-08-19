@@ -5,8 +5,8 @@
 package Ventas;
 
 import Cliente.Seleccionar_cliente;
-import DB_manager.DB_Egreso;
-import DB_manager.DB_Ingreso;
+import DB.DB_Egreso;
+import DB.DB_Ingreso;
 import Entities.M_cliente;
 import Entities.M_funcionario;
 import Entities.M_menu_item;

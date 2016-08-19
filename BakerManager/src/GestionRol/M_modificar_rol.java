@@ -5,8 +5,8 @@
  */
 package GestionRol;
 
-import DB_manager.DB_rol;
-import DB_manager.ResultSetTableModel;
+import DB.DB_rol;
+import DB.ResultSetTableModel;
 import Entities.M_rol;
 import javax.swing.JOptionPane;
 import javax.swing.table.TableModel;

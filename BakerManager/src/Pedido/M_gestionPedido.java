@@ -4,9 +4,9 @@
  */
 package Pedido;
 
-import DB_manager.DB_Egreso;
-import DB_manager.DB_Pedido;
-import DB_manager.ResultSetTableModel;
+import DB.DB_Egreso;
+import DB.DB_Pedido;
+import DB.ResultSetTableModel;
 import Entities.M_cliente;
 import Entities.M_funcionario;
 import Entities.M_pedido;

@@ -4,7 +4,7 @@
  */
 package Proveedor;
 
-import DB_manager.DB_Proveedor;
+import DB.DB_Proveedor;
 import Egresos.C_buscar_detalle;
 import Egresos.C_crear_egreso;
 import Egresos.C_gestionEgresos;

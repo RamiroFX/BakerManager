@@ -4,8 +4,8 @@
  */
 package Login;
 
-import DB_manager.DB_Funcionario;
-import DB_manager.DB_manager;
+import DB.DB_Funcionario;
+import DB.DB_manager;
 import Entities.M_funcionario;
 import Utilities.Config;
 import java.sql.SQLException;

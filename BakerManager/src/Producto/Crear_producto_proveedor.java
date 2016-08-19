@@ -4,9 +4,9 @@
  */
 package Producto;
 
-import DB_manager.DB_Producto;
-import DB_manager.DB_Proveedor;
-import DB_manager.DB_manager;
+import DB.DB_Producto;
+import DB.DB_Proveedor;
+import DB.DB_manager;
 import Entities.M_proveedor;
 import Proveedor.Seleccionar_proveedor;
 import java.awt.BorderLayout;

@@ -5,7 +5,7 @@
 package Egresos;
 
 import Charts.MenuDiagramas;
-import DB_manager.DB_Egreso;
+import DB.DB_Egreso;
 import Entities.M_egreso_cabecera;
 import Entities.M_funcionario;
 import Entities.M_proveedor;

@@ -4,7 +4,7 @@
  */
 package Egresos;
 
-import DB_manager.DB_Egreso;
+import DB.DB_Egreso;
 import Entities.M_egreso_detalleFX;
 import Excel.C_create_excel;
 import bakermanager.C_inicio;

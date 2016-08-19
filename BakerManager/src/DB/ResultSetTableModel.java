@@ -3,7 +3,7 @@
  * and open the template in the editor.
  */
 
-package DB_manager;
+package DB;
 
 
 import java.sql.ResultSet;

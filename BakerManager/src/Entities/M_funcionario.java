@@ -1,6 +1,6 @@
 package Entities;
 
-import DB_manager.DB_manager;
+import DB.DB_manager;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;

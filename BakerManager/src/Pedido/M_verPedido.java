@@ -4,8 +4,8 @@
  */
 package Pedido;
 
-import DB_manager.DB_Pedido;
-import DB_manager.ResultSetTableModel;
+import DB.DB_Pedido;
+import DB.ResultSetTableModel;
 import Entities.M_pedido;
 import Entities.M_pedidoDetalle;
 

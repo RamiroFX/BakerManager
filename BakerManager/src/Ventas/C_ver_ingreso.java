@@ -4,8 +4,8 @@
  */
 package Ventas;
 
-import DB_manager.DB_Cliente;
-import DB_manager.DB_Ingreso;
+import DB.DB_Cliente;
+import DB.DB_Ingreso;
 import Entities.M_cliente;
 import Entities.M_facturaCabecera;
 import java.awt.event.ActionEvent;

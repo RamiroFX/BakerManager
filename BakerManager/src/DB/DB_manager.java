@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package DB_manager;
+package DB;
 
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;

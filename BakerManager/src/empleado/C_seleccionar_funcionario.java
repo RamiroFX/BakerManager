@@ -4,8 +4,8 @@
  */
 package empleado;
 
-import DB_manager.DB_Cliente;
-import DB_manager.DB_Funcionario;
+import DB.DB_Cliente;
+import DB.DB_Funcionario;
 import Egresos.C_buscar_detalle;
 import Egresos.C_gestionEgresos;
 import Entities.M_funcionario;

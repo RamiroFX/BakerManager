@@ -6,7 +6,7 @@ package Pedido;
 
 import Charts.Diagramas;
 import Cliente.Seleccionar_cliente;
-import DB_manager.ResultSetTableModel;
+import DB.ResultSetTableModel;
 import Entities.M_cliente;
 import Entities.M_funcionario;
 import Interface.Gestion;

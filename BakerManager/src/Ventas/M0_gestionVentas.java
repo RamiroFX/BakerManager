@@ -4,8 +4,8 @@
  */
 package Ventas;
 
-import DB_manager.DB_Ingreso;
-import DB_manager.ResultSetTableModel;
+import DB.DB_Ingreso;
+import DB.ResultSetTableModel;
 import Entities.M_facturaCabecera;
 import Entities.M_facturaDetalle;
 import java.sql.Timestamp;

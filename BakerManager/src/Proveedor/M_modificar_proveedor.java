@@ -4,9 +4,9 @@
  */
 package Proveedor;
 
-import DB_manager.DB_Proveedor;
-import DB_manager.DB_manager;
-import DB_manager.ResultSetTableModel;
+import DB.DB_Proveedor;
+import DB.DB_manager;
+import DB.ResultSetTableModel;
 import Entities.M_contacto;
 import Entities.M_proveedor;
 import Entities.M_telefono;

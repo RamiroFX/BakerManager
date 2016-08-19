@@ -6,7 +6,7 @@ package Proveedor;
 
 import Cliente.C_crear_cliente;
 import Cliente.C_modificar_cliente;
-import DB_manager.DB_manager;
+import DB.DB_manager;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

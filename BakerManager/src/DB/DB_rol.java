@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package DB_manager;
+package DB;
 
 import Entities.M_menu_item;
 import Entities.M_rol;

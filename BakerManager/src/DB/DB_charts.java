@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package DB_manager;
+package DB;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -27,7 +27,7 @@ public class DB_charts {
     private static ResultSet rs = null;
 
     public static DefaultPieDataset obtenerComprasClientes(Timestamp inicio, Timestamp fin) {
-        String SELECT = "SELECT CLIE.ENTIDAD  \"Entidad\", ROUND((SELECT SUM(PEDE.CANTIDAD*(PEDE.PRECIO-(PEDE.PRECIO*PEDE.DESCUENTO)/100)))) \"Compra\" ";
+        String SELECT = "SELECT CLIE.ENTIDAD  \"Entidad\", ROUND((SUM(PEDE.CANTIDAD*(PEDE.PRECIO-(PEDE.PRECIO*PEDE.DESCUENTO)/100)))) \"Compra\" ";
         String FROM = "FROM PEDIDO_DETALLE PEDE, PEDIDO_CABECERA PEDI, CLIENTE CLIE ";
         String WHERE = "WHERE PEDI.ID_PEDIDO_CABECERA = PEDE.ID_PEDIDO_CABECERA AND CLIE.ID_CLIENTE =  PEDI.ID_CLIENTE ";
         String GROUPBY = "GROUP BY CLIE.ENTIDAD, CLIE.NOMBRE;";

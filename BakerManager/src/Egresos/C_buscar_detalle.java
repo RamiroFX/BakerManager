@@ -4,8 +4,8 @@
  */
 package Egresos;
 
-import DB_manager.DB_Egreso;
-import DB_manager.DB_manager;
+import DB.DB_Egreso;
+import DB.DB_manager;
 import Entities.M_funcionario;
 import Entities.M_proveedor;
 import Proveedor.Seleccionar_proveedor;

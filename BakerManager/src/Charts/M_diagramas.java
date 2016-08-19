@@ -4,7 +4,7 @@
  */
 package Charts;
 
-import DB_manager.DB_charts;
+import DB.DB_charts;
 import Entities.M_cliente;
 import Entities.M_funcionario;
 import Pedido.M_gestionPedido;

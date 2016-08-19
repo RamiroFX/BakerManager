@@ -4,7 +4,7 @@
  */
 package Charts;
 
-import DB_manager.DB_charts;
+import DB.DB_charts;
 import Entities.M_funcionario;
 import Entities.M_proveedor;
 import java.sql.Timestamp;
