@@ -128,17 +128,16 @@ public class DB_Producto {
                     + "AND PROD.ID_CATEGORIA = PRCA.ID_PRODUCTO_CATEGORIA "
                     + "AND PROD.ID_ESTADO = ESTA.ID_ESTADO "
                     + prov
-                    + "AND LOWER(PROD.DESCRIPCION) LIKE '" + busqueda_ + "' "
+                    + "AND LOWER(PROD.DESCRIPCION) LIKE ? "
                     + marc
                     + imp
                     + categ
                     + estad
                     + finalQuery;
-            //SELECT PROD.id_producto   "ID producto"  ,  PROD.descripcion  "Descripcion"   FROM producto
             //se crea una sentencia
-            st = DB_manager.getConection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-            // se ejecuta el query y se obtienen los resultados en un ResultSet
-            rs = st.executeQuery(FINAL_QUERY);
+            pst = DB_manager.getConection().prepareStatement(FINAL_QUERY,ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            pst.setString(1, busqueda_);
+            rs = pst.executeQuery();
             rstm = new ResultSetTableModel(rs);
         } catch (SQLException ex) {
             Logger lgr = Logger.getLogger(DB_Producto.class.getName());
