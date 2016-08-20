@@ -55,21 +55,15 @@ public class C_seleccionarRol implements ActionListener, KeyListener {
         vista.jcbRol.addKeyListener(this);
     }
 
-    private void controlarAccesoBarraMenu(Vector v) {
-        Iterator it = v.iterator();
-        while (it.hasNext()) {
-            String rolMenuItem = it.next().toString();
-            System.out.println(rolMenuItem);
-//            if (rolMenuItem.equals("jifGestionUsuario")) {
-//                c_inicio.v_mainFrame.getJMbarraMenu().jmGestionUsuario.setEnabled(true);
-//            } else if (rolMenuItem.equals("jifGestionProducto")) {
-//                c_inicio.v_mainFrame.getJMbarraMenu().jmGestionProducto.setEnabled(true);
-//            } else if (rolMenuItem.equals("jifGestionCompra")) {
-//                c_inicio.v_mainFrame.getJMbarraMenu().jmGestionCompra.setEnabled(true);
-//            } else if (rolMenuItem.equals("jifGestionVenta")) {
-//                c_inicio.v_mainFrame.getJMbarraMenu().jmGestionVenta.setEnabled(true);
-//            }
-        }
+    private void agregarPermisosYProceder() {
+        vista.dispose();
+        c_inicio.modelo.getRol_usuario().getFuncionario().setOcupacion((String) vista.jcbRol.getSelectedItem());
+        c_inicio.setRol_usuario(DB_rol_usuario.obtenerRolUsuario(c_inicio.modelo.getRol_usuario().getFuncionario().getId_funcionario()));
+        c_inicio.getRol_usuario().setRolActual(DB_rol.obtenerRol((String) vista.jcbRol.getSelectedItem()));
+        c_inicio.getRol_usuario().setAccesos(DB_rol.obtenerAccesos(c_inicio.getRol_usuario().getRolActual().getId()));
+        DatosUsuario.setRol_usuario(c_inicio.getRol_usuario());
+        MenuPrincipal c_menuPrincipal = new MenuPrincipal(c_inicio);
+        c_menuPrincipal.mostrarVista();
     }
 
     public void actionPerformed(ActionEvent e) {
@@ -79,15 +73,7 @@ public class C_seleccionarRol implements ActionListener, KeyListener {
             //c_main.vista.getJMbarraMenu().jmiLogIn.setEnabled(true);
             vista.cerrar();
         } else if (e.getSource() == vista.jbAceptar) {
-            vista.dispose();
-            c_inicio.modelo.getRol_usuario().getFuncionario().setOcupacion((String) vista.jcbRol.getSelectedItem());
-            c_inicio.setRol_usuario(DB_rol_usuario.obtenerRolUsuario(c_inicio.modelo.getRol_usuario().getFuncionario().getId_funcionario()));
-            c_inicio.getRol_usuario().setRolActual(DB_rol.obtenerRol((String) vista.jcbRol.getSelectedItem()));
-            c_inicio.getRol_usuario().setAccesos(DB_rol.obtenerAccesos(c_inicio.getRol_usuario().getRolActual().getId()));
-            DatosUsuario.setRol_usuario(c_inicio.getRol_usuario());
-            System.out.println("DatosUsuario: "+DatosUsuario.getRol_usuario().getFuncionario().getAlias());
-            MenuPrincipal c_menuPrincipal = new MenuPrincipal(c_inicio);
-            c_menuPrincipal.mostrarVista();
+            agregarPermisosYProceder();
         }
     }
 
@@ -102,13 +88,7 @@ public class C_seleccionarRol implements ActionListener, KeyListener {
         }
         if (this.vista.jbAceptar.hasFocus()) {
             if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-                vista.dispose();
-                c_inicio.modelo.getRol_usuario().getFuncionario().setOcupacion((String) vista.jcbRol.getSelectedItem());
-                c_inicio.setRol_usuario(DB_rol_usuario.obtenerRolUsuario(c_inicio.modelo.getRol_usuario().getFuncionario().getId_funcionario()));
-                c_inicio.getRol_usuario().setRolActual(DB_rol.obtenerRol((String) vista.jcbRol.getSelectedItem()));
-                c_inicio.getRol_usuario().setAccesos(DB_rol.obtenerAccesos(c_inicio.getRol_usuario().getRolActual().getId()));
-                MenuPrincipal c_menuPrincipal = new MenuPrincipal(c_inicio);
-                c_menuPrincipal.mostrarVista();
+                agregarPermisosYProceder();
             }
         }
     }
