@@ -138,14 +138,14 @@ public class DB_Pedido {
                 + "PEDI.ID_COND_VENTA, "
                 + "PEDI.ID_PEDIDO_ESTADO, "
                 + "(SELECT PEES.DESCRIPCION FROM PEDIDO_ESTADO PEES WHERE PEES.ID_PEDIDO_ESTADO = PEDI.ID_PEDIDO_ESTADO) \"ESTADO\","
-                + "PEDI.DIRECCION, "
+                + "PEDI.DIRECCION \"PDIRECCION\", "
                 + "PEDI.REFERENCIA, "
                 + "CLIE.ID_CLIENTE, CLIE.NOMBRE, CLIE.ENTIDAD, CLIE.RUC, CLIE.RUC_IDENTIFICADOR, " + categoria + "," + tipo + ","
-                + "       CLIE.DIRECCION, CLIE.EMAIL, CLIE.PAG_WEB, CLIE.ID_TIPO, CLIE.ID_CATEGORIA, "
+                + "       CLIE.DIRECCION \"CDIRECCION\", CLIE.EMAIL, CLIE.PAG_WEB, CLIE.ID_TIPO, CLIE.ID_CATEGORIA, "
                 + "       CLIE.OBSERVACION, "
                 + "FUNC.ID_FUNCIONARIO, FUNC.ID_PERSONA, FUNC.ALIAS, FUNC.FECHA_INGRESO, " + genero + "," + pais + "," + ciudad + "," + estadoCivil + ","
                 + "       FUNC.NRO_CELULAR, "
-                + "       FUNC.NRO_TELEFONO, FUNC.EMAIL, FUNC.DIRECCION, FUNC.OBSERVACION,PERS.ID_PERSONA, PERS.CI, PERS.NOMBRE, PERS.APELLIDO, PERS.ID_SEXO, "
+                + "       FUNC.NRO_TELEFONO, FUNC.EMAIL \"FEMAIL\", FUNC.DIRECCION \"FDIRECCION\", FUNC.OBSERVACION,PERS.ID_PERSONA, PERS.CI, PERS.NOMBRE \"FNOMBRE\", PERS.APELLIDO, PERS.ID_SEXO, "
                 + "       PERS.FECHA_NACIMIENTO, PERS.ID_ESTADO_CIVIL, PERS.ID_PAIS, PERS.ID_CIUDAD "
                 + "FROM PEDIDO_CABECERA PEDI, FUNCIONARIO FUNC, CLIENTE CLIE, PERSONA PERS "
                 + "WHERE  PEDI.ID_FUNCIONARIO = FUNC.ID_FUNCIONARIO "
@@ -163,10 +163,10 @@ public class DB_Pedido {
                 f.setSexo(rs.getString("sexo"));
                 f.setNro_celular(rs.getString("nro_celular"));
                 f.setNro_telefono(rs.getString("nro_telefono"));
-                f.setEmail(rs.getString("email"));
-                f.setDireccion(rs.getString("DIRECCION"));
+                f.setEmail(rs.getString("FEMAIL"));
+                f.setDireccion(rs.getString("FDIRECCION"));
                 f.setAlias(rs.getString("alias"));
-                f.setNombre(rs.getString("nombre"));
+                f.setNombre(rs.getString("FNOMBRE"));
                 f.setApellido(rs.getString("apellido"));
                 f.setFecha_ingreso(rs.getDate("FECHA_INGRESO"));
                 f.setId_persona(rs.getInt("id_persona"));
@@ -177,7 +177,7 @@ public class DB_Pedido {
 
                 M_cliente cliente = new M_cliente();
                 cliente.setCategoria(rs.getString("CATEGORIA"));
-                cliente.setDireccion(rs.getString("DIRECCION"));
+                cliente.setDireccion(rs.getString("CDIRECCION"));
                 cliente.setEmail(rs.getString("EMAIL"));
                 cliente.setEntidad(rs.getString("ENTIDAD"));
                 cliente.setIdCategoria(rs.getInt("ID_CATEGORIA"));
@@ -200,7 +200,7 @@ public class DB_Pedido {
                 pedido.setFuncionario(f);
                 pedido.setTiempoEntrega(rs.getTimestamp("TIEMPO_ENTREGA"));
                 pedido.setTiempoRecepcion(rs.getTimestamp("TIEMPO_RECEPCION"));
-                pedido.setDireccion(rs.getString("DIRECCION"));
+                pedido.setDireccion(rs.getString("PDIRECCION"));
                 pedido.setReferencia(rs.getString("REFERENCIA"));
             }
         } catch (SQLException ex) {

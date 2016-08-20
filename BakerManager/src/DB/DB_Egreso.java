@@ -148,6 +148,7 @@ public class DB_Egreso {
                 + tiop
                 + numero_fac;
         try {
+            Query = Query + " ORDER BY EGCA.TIEMPO";
             st = DB_manager.getConection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             // se ejecuta el query y se obtienen los resultados en un ResultSet
             rs = st.executeQuery(Query);

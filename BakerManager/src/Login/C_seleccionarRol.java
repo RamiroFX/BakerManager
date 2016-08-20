@@ -85,6 +85,7 @@ public class C_seleccionarRol implements ActionListener, KeyListener {
             c_inicio.getRol_usuario().setRolActual(DB_rol.obtenerRol((String) vista.jcbRol.getSelectedItem()));
             c_inicio.getRol_usuario().setAccesos(DB_rol.obtenerAccesos(c_inicio.getRol_usuario().getRolActual().getId()));
             DatosUsuario.setRol_usuario(c_inicio.getRol_usuario());
+            System.out.println("DatosUsuario: "+DatosUsuario.getRol_usuario().getFuncionario().getAlias());
             MenuPrincipal c_menuPrincipal = new MenuPrincipal(c_inicio);
             c_menuPrincipal.mostrarVista();
         }

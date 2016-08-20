@@ -137,21 +137,21 @@ public class Impresora {
     public static void imprimirPedido(M_rol_usuario rol_usuario, M_pedido pedidoCabecera) {
         PrintService service = PrintServiceLookup.lookupDefaultPrintService();
         Date today = Calendar.getInstance().getTime();
-        SimpleDateFormat sdfs = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss");
+        SimpleDateFormat sdfs = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
         String fechaEntrega = sdfs.format(today);
         String CABECERA = "Fecha y hora:" + fechaEntrega + "\n"
-                + "Cajero:" + pedidoCabecera.getFuncionario().getNombre() + "\n"
+                + "Cajero: " + pedidoCabecera.getFuncionario().getNombre() + "\n"
                 + "Cliente: " + pedidoCabecera.getCliente().getEntidad() + "\n"
-                + "Fecha pedido: " + pedidoCabecera.getTiempoRecepcion() + "\n"
+                + "Fecha pedido: " + sdfs.format(pedidoCabecera.getTiempoRecepcion()) + "\n"
                 + "---------------------------------\n";
         ArrayList<M_pedidoDetalle> pedidoDetalle = DB_Pedido.obtenerPedidoDetalles(pedidoCabecera.getIdPedido());
-        String COLUMNAS = "cant  producto   precio  subtotal\n";
+        String COLUMNAS = "producto   cant  precio  subtotal\n";
         String DETALLE = "";
         int total = 0;
         for (M_pedidoDetalle pedidoDetalle1 : pedidoDetalle) {
             int subtotal = Math.round(Math.round(pedidoDetalle1.getCantidad() * pedidoDetalle1.getPrecio()));
             total = total + subtotal;
-            DETALLE = DETALLE + pedidoDetalle1.getCantidad() + " " + pedidoDetalle1.getProducto().getDescripcion() + " " + pedidoDetalle1.getPrecio() + "  " + subtotal + "\n";
+            DETALLE = DETALLE + "-> " + pedidoDetalle1.getProducto().getDescripcion() + "\n" + pedidoDetalle1.getCantidad() + " " + pedidoDetalle1.getPrecio() + "  " + subtotal + "\n";
         }
         String SUMATOTAL = "---------------------------------\n"
                 + "Total= " + total + "\n";
@@ -174,20 +174,20 @@ public class Impresora {
     public static void imprimirPedido(M_rol_usuario rol_usuario, M_pedido pedidoCabecera, ArrayList<M_pedidoDetalle> pedidoDetalle) {
         PrintService service = PrintServiceLookup.lookupDefaultPrintService();
         Date today = Calendar.getInstance().getTime();
-        SimpleDateFormat sdfs = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss");
+        SimpleDateFormat sdfs = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
         String fechaEntrega = sdfs.format(today);
         String CABECERA = "Fecha y hora:" + fechaEntrega + "\n"
-                + "Cajero:" + pedidoCabecera.getFuncionario().getNombre() + "\n"
+                + "Cajero: " + pedidoCabecera.getFuncionario().getNombre() + "\n"
                 + "Cliente: " + pedidoCabecera.getCliente().getEntidad() + "\n"
-                + "Fecha pedido: " + pedidoCabecera.getTiempoRecepcion() + "\n"
+                + "Fecha pedido: " + sdfs.format(pedidoCabecera.getTiempoRecepcion()) + "\n"
                 + "---------------------------------\n";
-        String COLUMNAS = "cant  producto   precio  subtotal\n";
+        String COLUMNAS = "producto   cant  precio  subtotal\n";
         String DETALLE = "";
         int total = 0;
         for (M_pedidoDetalle pedidoDetalle1 : pedidoDetalle) {
             int subtotal = Math.round(Math.round(pedidoDetalle1.getCantidad() * pedidoDetalle1.getPrecio()));
             total = total + subtotal;
-            DETALLE = DETALLE + pedidoDetalle1.getCantidad() + " " + pedidoDetalle1.getProducto().getDescripcion() + " " + pedidoDetalle1.getPrecio() + "  " + subtotal + "\n";
+            DETALLE = DETALLE + "-> " + pedidoDetalle1.getProducto().getDescripcion() + "\n" + pedidoDetalle1.getCantidad() + " " + pedidoDetalle1.getPrecio() + "  " + subtotal + "\n";
         }
         String SUMATOTAL = "---------------------------------\n"
                 + "Total= " + total + "\n";
