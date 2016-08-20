@@ -7,8 +7,11 @@ package Pedido;
 import Cliente.Seleccionar_cliente;
 import Entities.M_cliente;
 import Entities.M_pedidoDetalle;
+import MenuPrincipal.DatosUsuario;
 import Producto.SeleccionarCantidadProduducto;
 import Producto.SeleccionarProducto;
+import Utilities.Impresora;
+import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -104,38 +107,7 @@ public class C_verPedido extends MouseAdapter implements ActionListener {
             this.vista.jbModificarDetalle.addActionListener(this);
         }
         this.vista.jbSalir.addActionListener(this);
-    }
-
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        Object source = e.getSource();
-        if (source.equals(this.vista.jbAceptar)) {
-            guardarVenta();
-        } else if (source.equals(this.vista.jrbContado)) {
-            establecerCondicionVenta();
-        } else if (source.equals(this.vista.jrbCredito)) {
-            establecerCondicionVenta();
-        } else if (source.equals(this.vista.jbSeleccionarProducto)) {
-            SeleccionarProducto sp = new SeleccionarProducto(this);
-            sp.mostrarVista();
-        } else if (source.equals(this.vista.jbCliente)) {
-            Seleccionar_cliente sc = new Seleccionar_cliente(this);
-            sc.mostrarVista();
-        } else if (source.equals(this.vista.jbEliminarDetalle)) {
-            eliminarDetalle();
-        } else if (source.equals(this.vista.jbModificarDetalle)) {
-            jbModificarDetalleButtonHandler();
-        } else if (source.equals(this.vista.jbSalir)) {
-            cerrar();
-        }
-    }
-
-    @Override
-    public void mouseClicked(MouseEvent e) {
-        if (e.getSource().equals(this.vista.jtPedidoDetalle)) {
-            this.vista.jbModificarDetalle.setEnabled(true);
-            this.vista.jbEliminarDetalle.setEnabled(true);
-        }
+        this.vista.jbImprimir.addActionListener(this);
     }
 
     private void establecerCondicionVenta() {
@@ -289,6 +261,52 @@ public class C_verPedido extends MouseAdapter implements ActionListener {
             cerrar();
         } else {
             JOptionPane.showMessageDialog(vista, "La fecha de entrega debe ser mayor que la fecha fecha actual (" + sdfs.format(today) + ").", "Atención", JOptionPane.WARNING_MESSAGE);
+        }
+    }
+
+    private void imprimir() {
+        EventQueue.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                int opcion = JOptionPane.showConfirmDialog(vista, "¿Desea imprimir el pedido?", "Atención", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+                if (opcion == JOptionPane.YES_OPTION) {
+                    Impresora.imprimirPedido(DatosUsuario.getRol_usuario(), modelo.getPedido());
+                }
+            }
+        });
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        Object source = e.getSource();
+        if (source.equals(this.vista.jbAceptar)) {
+            guardarVenta();
+        } else if (source.equals(this.vista.jrbContado)) {
+            establecerCondicionVenta();
+        } else if (source.equals(this.vista.jrbCredito)) {
+            establecerCondicionVenta();
+        } else if (source.equals(this.vista.jbSeleccionarProducto)) {
+            SeleccionarProducto sp = new SeleccionarProducto(this);
+            sp.mostrarVista();
+        } else if (source.equals(this.vista.jbCliente)) {
+            Seleccionar_cliente sc = new Seleccionar_cliente(this);
+            sc.mostrarVista();
+        } else if (source.equals(this.vista.jbEliminarDetalle)) {
+            eliminarDetalle();
+        } else if (source.equals(this.vista.jbModificarDetalle)) {
+            jbModificarDetalleButtonHandler();
+        } else if (source.equals(this.vista.jbImprimir)) {
+            imprimir();
+        } else if (source.equals(this.vista.jbSalir)) {
+            cerrar();
+        }
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+        if (e.getSource().equals(this.vista.jtPedidoDetalle)) {
+            this.vista.jbModificarDetalle.setEnabled(true);
+            this.vista.jbEliminarDetalle.setEnabled(true);
         }
     }
 }

@@ -12,8 +12,8 @@ import Entities.M_rol_usuario;
  * @author Ramiro
  */
 public class DatosUsuario {
-    
-    public static M_rol_usuario rol_usuario;
+
+    private static M_rol_usuario rol_usuario;
 
     public DatosUsuario() {
     }
@@ -25,6 +25,5 @@ public class DatosUsuario {
     public static M_rol_usuario getRol_usuario() {
         return rol_usuario;
     }
-    
-    
+
 }

@@ -15,11 +15,9 @@ import Entities.M_pedido;
 import Entities.M_pedidoDetalle;
 import Entities.M_rol_usuario;
 import MenuPrincipal.DatosUsuario;
-import java.awt.Desktop;
 import java.awt.print.PageFormat;
 import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
-import java.io.FileInputStream;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -34,9 +32,6 @@ import javax.print.PrintException;
 import javax.print.PrintService;
 import javax.print.PrintServiceLookup;
 import javax.print.SimpleDoc;
-import javax.print.attribute.HashPrintRequestAttributeSet;
-import javax.print.attribute.PrintRequestAttributeSet;
-import javax.print.attribute.standard.MediaSize;
 import javax.swing.JOptionPane;
 
 /**
@@ -57,7 +52,6 @@ public class Impresora {
             + "\n\n\n\n\n\n\n\n\n\n";
 
     public static void imprimirCocina(String textoAImprimir) {
-        agregarLogoATicket(textoAImprimir);
         PrintService[] services = PrintServiceLookup.lookupPrintServices(null, null); //nos da el array de los servicios de impresion
 
         byte[] bytes = textoAImprimir.getBytes();
@@ -109,42 +103,6 @@ public class Impresora {
 //        }
     }
 
-    public static void imprimirCaja(String textoAImprimir) {
-        agregarLogoATicket(textoAImprimir);
-        PrintService[] services = PrintServiceLookup.lookupPrintServices(null, null); //nos da el array de los servicios de impresion
-
-        byte[] bytes = textoAImprimir.getBytes();
-
-//Especificamos el tipo de dato a imprimir
-//Tipo: bytes; Subtipo: autodetectado
-        DocFlavor flavor = DocFlavor.BYTE_ARRAY.AUTOSENSE;
-
-        Doc doc = new SimpleDoc(bytes, flavor, null);
-//Creamos un trabajo de impresión
-        DocPrintJob job = null;
-        if (services.length > 0) {
-//            for (int i = 0; i < services.length; i++) {
-//                if (services[i].getName().equals("caja")) {//aqui escribimos/elegimos la impresora por la que queremos imprimir
-//                    job = services[i].createPrintJob();// System.out.println(i+": "+services[i].getName());
-//                }
-//            }
-            for (PrintService service : services) {
-                if (service.getName().equals("caja")) {
-                    //aqui escribimos/elegimos la impresora por la que queremos imprimir
-                    job = service.createPrintJob(); // System.out.println(i+": "+services[i].getName());
-                }
-            }
-        }
-
-//Imprimimos dentro de un try obligatoriamente
-        try {
-            job.print(doc, null);
-        } catch (PrintException ex) {
-            System.out.println(ex);
-        }
-
-    }
-
     public static void imprimirGenerico(String contentTicket) {
         PrintService service = PrintServiceLookup.lookupDefaultPrintService();
         byte[] bytes = contentTicket.getBytes();
@@ -162,8 +120,6 @@ public class Impresora {
         }
     }
 
-    //TODO arreglo de impresoras de caja
-    //TODO arreglo de impresoras de cocina
     public static void main(String[] args) {
         try {
             //ServicioDeImpresion impresion = new ServicioDeImpresion();
@@ -188,16 +144,18 @@ public class Impresora {
                 + "Cliente: " + pedidoCabecera.getCliente().getEntidad() + "\n"
                 + "Fecha pedido: " + pedidoCabecera.getTiempoRecepcion() + "\n"
                 + "---------------------------------\n";
-
         ArrayList<M_pedidoDetalle> pedidoDetalle = DB_Pedido.obtenerPedidoDetalles(pedidoCabecera.getIdPedido());
         String COLUMNAS = "cant  producto   precio  subtotal\n";
         String DETALLE = "";
-        for (int i = 0; i < pedidoDetalle.size(); i++) {
-            int subtotal = Math.round(Math.round(pedidoDetalle.get(i).getCantidad() * pedidoDetalle.get(i).getPrecio()));
-            DETALLE = DETALLE + pedidoDetalle.get(i).getCantidad() + " " + pedidoDetalle.get(i).getProducto().getDescripcion() + " " + pedidoDetalle.get(i).getPrecio() + "  " + subtotal + "\n";
+        int total = 0;
+        for (M_pedidoDetalle pedidoDetalle1 : pedidoDetalle) {
+            int subtotal = Math.round(Math.round(pedidoDetalle1.getCantidad() * pedidoDetalle1.getPrecio()));
+            total = total + subtotal;
+            DETALLE = DETALLE + pedidoDetalle1.getCantidad() + " " + pedidoDetalle1.getProducto().getDescripcion() + " " + pedidoDetalle1.getPrecio() + "  " + subtotal + "\n";
         }
-        String ticket = TICKET_CABECERA + CABECERA + COLUMNAS + DETALLE + TICKET_PIE_SIN_GRACIAS;
-        System.out.println(ticket);
+        String SUMATOTAL = "---------------------------------\n"
+                + "Total= " + total + "\n";
+        String ticket = TICKET_CABECERA + CABECERA + COLUMNAS + DETALLE + SUMATOTAL + TICKET_PIE_SIN_GRACIAS;
         byte[] bytes = ticket.getBytes();
         DocFlavor flavor = DocFlavor.BYTE_ARRAY.AUTOSENSE;
         Doc doc = new SimpleDoc(bytes, flavor, null);
@@ -213,9 +171,39 @@ public class Impresora {
         }
     }
 
-    private static String agregarLogoATicket(String textoAImprimir) {
-        //TODO hacer pruebas de impresión de logo
-        //TODO tal vez también se necesite imprimir una parte común al final
-        return textoAImprimir;
+    public static void imprimirPedido(M_rol_usuario rol_usuario, M_pedido pedidoCabecera, ArrayList<M_pedidoDetalle> pedidoDetalle) {
+        PrintService service = PrintServiceLookup.lookupDefaultPrintService();
+        Date today = Calendar.getInstance().getTime();
+        SimpleDateFormat sdfs = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss");
+        String fechaEntrega = sdfs.format(today);
+        String CABECERA = "Fecha y hora:" + fechaEntrega + "\n"
+                + "Cajero:" + pedidoCabecera.getFuncionario().getNombre() + "\n"
+                + "Cliente: " + pedidoCabecera.getCliente().getEntidad() + "\n"
+                + "Fecha pedido: " + pedidoCabecera.getTiempoRecepcion() + "\n"
+                + "---------------------------------\n";
+        String COLUMNAS = "cant  producto   precio  subtotal\n";
+        String DETALLE = "";
+        int total = 0;
+        for (M_pedidoDetalle pedidoDetalle1 : pedidoDetalle) {
+            int subtotal = Math.round(Math.round(pedidoDetalle1.getCantidad() * pedidoDetalle1.getPrecio()));
+            total = total + subtotal;
+            DETALLE = DETALLE + pedidoDetalle1.getCantidad() + " " + pedidoDetalle1.getProducto().getDescripcion() + " " + pedidoDetalle1.getPrecio() + "  " + subtotal + "\n";
+        }
+        String SUMATOTAL = "---------------------------------\n"
+                + "Total= " + total + "\n";
+        String ticket = TICKET_CABECERA + CABECERA + COLUMNAS + DETALLE + SUMATOTAL + TICKET_PIE_SIN_GRACIAS;
+        byte[] bytes = ticket.getBytes();
+        DocFlavor flavor = DocFlavor.BYTE_ARRAY.AUTOSENSE;
+        Doc doc = new SimpleDoc(bytes, flavor, null);
+        DocPrintJob job = service.createPrintJob();
+        try {
+            if (job != null) {
+                job.print(doc, null);
+            } else {
+                JOptionPane.showMessageDialog(null, "No se pudo imprimir", "Error", JOptionPane.INFORMATION_MESSAGE);
+            }
+        } catch (PrintException ex) {
+            System.out.println(ex);
+        }
     }
 }
