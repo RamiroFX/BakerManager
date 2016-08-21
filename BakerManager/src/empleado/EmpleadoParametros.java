@@ -86,18 +86,19 @@ public class EmpleadoParametros extends javax.swing.JDialog implements ActionLis
     }
 
     private void agregarPais(String pais) {
-        String m = pais.trim();
-        if (m.length() < 1 || m.isEmpty()) {
+        String p = pais.trim();
+        if (p.length() < 1 || p.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Inserte 1 caracter por lo menos.", "Alerta", JOptionPane.ERROR_MESSAGE);
             return;
         }
-        if (m.length() > 30) {
+        if (p.length() > 30) {
             JOptionPane.showMessageDialog(this, "Máximo permitido 30 caracteres.", "Alerta", JOptionPane.ERROR_MESSAGE);
             return;
         }
-        Integer b = DB_manager.obtenerIdPais(m);
+        Integer b = DB_manager.obtenerIdPais(p.toLowerCase());
+        System.out.println("b: " + b);
         if (b == null) {
-            DB_manager.insertarPais(m);
+            DB_manager.insertarPais(p);
             this.jbModificar.setEnabled(false);
             this.jbEliminar.setEnabled(false);
             this.jtPais.setModel(DB_manager.consultarPais());
@@ -116,9 +117,14 @@ public class EmpleadoParametros extends javax.swing.JDialog implements ActionLis
             JOptionPane.showMessageDialog(this, "Máximo permitido 30 caracteres.", "Alerta", JOptionPane.ERROR_MESSAGE);
             return;
         }
-        Integer b = DB_manager.obtenerIdPais(m);
+        Integer b = DB_manager.obtenerIdPais(m.toLowerCase());
+        int idMarca = Integer.valueOf(String.valueOf(this.jtPais.getValueAt(jtPais.getSelectedRow(), 0)));
         if (b == null) {
-            int idMarca = Integer.valueOf(String.valueOf(this.jtPais.getValueAt(jtPais.getSelectedRow(), 0)));
+            DB_manager.modificarPais(idMarca, pais);
+            this.jbModificar.setEnabled(false);
+            this.jbEliminar.setEnabled(false);
+            this.jtPais.setModel(DB_manager.consultarPais());
+        } else if (b == idMarca) {
             DB_manager.modificarPais(idMarca, pais);
             this.jbModificar.setEnabled(false);
             this.jbEliminar.setEnabled(false);
@@ -159,7 +165,7 @@ public class EmpleadoParametros extends javax.swing.JDialog implements ActionLis
             JOptionPane.showMessageDialog(this, "Máximo permitido 30 caracteres.", "Alerta", JOptionPane.ERROR_MESSAGE);
             return;
         }
-        Integer b = DB_manager.obtenerIdCiudad(ciud);
+        Integer b = DB_manager.obtenerIdCiudad(ciud.toLowerCase());
         if (b == null) {
             DB_manager.insertarCiudad(ciud);
             this.jbModificar.setEnabled(false);
@@ -180,9 +186,14 @@ public class EmpleadoParametros extends javax.swing.JDialog implements ActionLis
             JOptionPane.showMessageDialog(this, "Máximo permitido 30 caracteres.", "Alerta", JOptionPane.ERROR_MESSAGE);
             return;
         }
-        Integer b = DB_manager.obtenerIdCiudad(c);
+        int idCiudad = Integer.valueOf(String.valueOf(this.jtCiudad.getValueAt(jtCiudad.getSelectedRow(), 0)));
+        Integer b = DB_manager.obtenerIdCiudad(c.toLowerCase());
         if (b == null) {
-            int idCiudad = Integer.valueOf(String.valueOf(this.jtCiudad.getValueAt(jtCiudad.getSelectedRow(), 0)));
+            DB_manager.modificarCiudad(idCiudad, ciudad);
+            this.jbModificar.setEnabled(false);
+            this.jbEliminar.setEnabled(false);
+            this.jtCiudad.setModel(DB_manager.consultarCiudad());
+        } else if (b == idCiudad) {
             DB_manager.modificarCiudad(idCiudad, ciudad);
             this.jbModificar.setEnabled(false);
             this.jbEliminar.setEnabled(false);

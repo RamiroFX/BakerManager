@@ -322,10 +322,11 @@ public class DB_manager {
         Integer pais = null;
         String q = "SELECT id_pais  "
                 + "FROM pais "
-                + " WHERE DESCRIPCION LIKE '" + nombrePais + "'";
+                + " WHERE LOWER(DESCRIPCION) LIKE ?;";
         try {
-            st = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-            rs = st.executeQuery(q);
+            pst = con.prepareStatement(q, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            pst.setString(1, nombrePais);
+            rs = pst.executeQuery();
             while (rs.next()) {
                 pais = (rs.getInt("id_pais"));
             }
@@ -339,10 +340,11 @@ public class DB_manager {
         Integer sexo = null;
         String q = "SELECT ID_SEXO "
                 + "FROM SEXO "
-                + "WHERE DESCRIPCION LIKE '" + genero + "'";
+                + " WHERE LOWER(DESCRIPCION) LIKE ?;";
         try {
-            st = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-            rs = st.executeQuery(q);
+            pst = con.prepareStatement(q, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            pst.setString(1, genero);
+            rs = pst.executeQuery();
             while (rs.next()) {
                 sexo = (rs.getInt("ID_SEXO"));
             }
@@ -356,10 +358,11 @@ public class DB_manager {
         Integer est_civil = null;
         String q = "SELECT ID_ESTADO_CIVIL "
                 + "FROM ESTADO_CIVIL "
-                + "WHERE DESCRIPCION LIKE '" + estado_civil + "'";
+                + " WHERE LOWER(DESCRIPCION) LIKE ?;";
         try {
-            st = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-            rs = st.executeQuery(q);
+            pst = con.prepareStatement(q, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            pst.setString(1, estado_civil);
+            rs = pst.executeQuery();
             while (rs.next()) {
                 est_civil = (rs.getInt("ID_ESTADO_CIVIL"));
             }
@@ -373,10 +376,11 @@ public class DB_manager {
         Integer id_ciudad = null;
         String q = "SELECT ID_CIUDAD "
                 + "FROM CIUDAD "
-                + "WHERE DESCRIPCION LIKE '" + ciudad + "'";
+                + " WHERE LOWER(DESCRIPCION) LIKE ?;";
         try {
-            st = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-            rs = st.executeQuery(q);
+            pst = con.prepareStatement(q, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            pst.setString(1, ciudad);
+            rs = pst.executeQuery();
             while (rs.next()) {
                 id_ciudad = (rs.getInt("ID_CIUDAD"));
             }
@@ -390,10 +394,11 @@ public class DB_manager {
         Integer idMarca = null;
         String q = "SELECT ID_MARCA "
                 + "FROM MARCA "
-                + "WHERE DESCRIPCION LIKE '" + marca + "'";
+                + " WHERE LOWER(DESCRIPCION) LIKE ?;";
         try {
-            st = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-            rs = st.executeQuery(q);
+            pst = con.prepareStatement(q, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            pst.setString(1, marca);
+            rs = pst.executeQuery();
             while (rs.next()) {
                 idMarca = (rs.getInt("ID_MARCA"));
             }
@@ -423,10 +428,11 @@ public class DB_manager {
         Integer idCategoria = null;
         String q = "SELECT ID_PRODUCTO_CATEGORIA "
                 + "FROM PRODUCTO_CATEGORIA "
-                + "WHERE DESCRIPCION LIKE '" + categoria + "'";
+                + " WHERE LOWER(DESCRIPCION) LIKE ?;";
         try {
-            st = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-            rs = st.executeQuery(q);
+            pst = con.prepareStatement(q, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            pst.setString(1, categoria);
+            rs = pst.executeQuery();
             while (rs.next()) {
                 idCategoria = (rs.getInt("ID_PRODUCTO_CATEGORIA"));
             }
@@ -456,10 +462,11 @@ public class DB_manager {
         Integer idMarca = null;
         String q = "SELECT ID_IMPUESTO "
                 + "FROM IMPUESTO "
-                + "WHERE DESCRIPCION = " + impuesto + "";
+                + " WHERE DESCRIPCION = ? ;";
         try {
-            st = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-            rs = st.executeQuery(q);
+            pst = con.prepareStatement(q, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            pst.setString(1, impuesto);
+            rs = pst.executeQuery();
             while (rs.next()) {
                 idMarca = (rs.getInt("ID_IMPUESTO"));
             }
@@ -473,10 +480,11 @@ public class DB_manager {
         Integer idMarca = null;
         String q = "SELECT ID_ESTADO "
                 + "FROM ESTADO "
-                + "WHERE DESCRIPCION LIKE '" + estado + "'";
+                + " WHERE LOWER(DESCRIPCION) LIKE ?;";
         try {
-            st = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-            rs = st.executeQuery(q);
+            pst = con.prepareStatement(q, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            pst.setString(1, estado);
+            rs = pst.executeQuery();
             while (rs.next()) {
                 idMarca = (rs.getInt("ID_ESTADO"));
             }
