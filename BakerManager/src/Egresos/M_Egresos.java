@@ -4,6 +4,7 @@
  */
 package Egresos;
 
+import DB.DB_Egreso;
 import Entities.M_egreso_cabecera;
 import Entities.M_egreso_detalle;
 import Entities.M_funcionario;
@@ -27,5 +28,9 @@ public class M_Egresos {
         this.empleado = new M_funcionario();
         this.egreso_cabecera = new M_egreso_cabecera();
         this.tiempo = null;
+    }
+
+    public boolean existeProveedorNroFactura(int idProveedor, Integer nroFactura) {
+        return DB_Egreso.existeProveedorNroFactura(idProveedor, nroFactura);
     }
 }

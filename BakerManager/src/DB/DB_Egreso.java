@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -799,5 +800,23 @@ public class DB_Egreso {
                 lgr.log(Level.WARNING, ex.getMessage(), ex);
             }
         }
+    }
+
+    public static boolean existeProveedorNroFactura(int idProveedor, Integer nroFactura) {
+        String QUERY = "SELECT ID_EGRESO_CABECERA FROM EGRESO_CABECERA WHERE ID_PROVEEDOR = ? AND NRO_FACTURA = ?";
+        try {
+            pst = DB_manager.getConection().prepareStatement(QUERY);
+            pst.setInt(1, idProveedor);
+            if (nroFactura == null) {
+                pst.setNull(2, Types.INTEGER);
+            } else {
+                pst.setInt(2, nroFactura);
+            }
+            rs = pst.executeQuery();
+            return rs.isBeforeFirst();
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(null, "Problema verificando existencia de compra", "Error interno", JOptionPane.ERROR_MESSAGE);
+        }
+        return false;
     }
 }

@@ -91,8 +91,8 @@ public class C_crear_egreso extends MouseAdapter implements ActionListener {
             } else {
                 this.modelo.egreso_cabecera.setId_condVenta(2);
             }
+            Integer nro_factura = null;
             try {
-                Integer nro_factura = null;
                 if (!vista.jtfNroFactura.getText().isEmpty()) {
                     nro_factura = Integer.valueOf(String.valueOf(vista.jtfNroFactura.getText()));
                     this.modelo.egreso_cabecera.setNro_factura(nro_factura);
@@ -101,6 +101,10 @@ public class C_crear_egreso extends MouseAdapter implements ActionListener {
                 }
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(vista, "El numero de factura debe ser solo numérico", "Atención", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+            if (this.modelo.existeProveedorNroFactura(this.modelo.proveedor.getId(), nro_factura)) {
+                JOptionPane.showMessageDialog(vista, "La compra con el proveedor y el número de factura seleccionado ya existe", "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
             int option = JOptionPane.showConfirmDialog(vista, "¿Desea confirmar la compra?", "Atención", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
@@ -123,7 +127,6 @@ public class C_crear_egreso extends MouseAdapter implements ActionListener {
                     String Observacion = String.valueOf(dtm.getValueAt(i, 2));
 
                     //Precio = Precio - Math.round(Math.round(((Precio * descuento) / 100)));
-
                     Integer Precio = Integer.valueOf(String.valueOf(dtm.getValueAt(i, 3)));
                     Double Descuento = Double.valueOf(String.valueOf(dtm.getValueAt(i, 4)));
                     Integer ivaExenta = Integer.valueOf(String.valueOf(dtm.getValueAt(i, 5)));
