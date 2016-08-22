@@ -270,7 +270,7 @@ public class C_verPedido extends MouseAdapter implements ActionListener {
             public void run() {
                 int opcion = JOptionPane.showConfirmDialog(vista, "¿Desea imprimir el pedido?", "Atención", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
                 if (opcion == JOptionPane.YES_OPTION) {
-                    Impresora.imprimirPedido(DatosUsuario.getRol_usuario(), modelo.getPedido());
+                    Impresora.imprimirPedidoGuardado(DatosUsuario.getRol_usuario(), modelo.getPedido());
                 }
             }
         });

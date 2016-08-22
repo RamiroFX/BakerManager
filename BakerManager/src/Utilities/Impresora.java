@@ -9,8 +9,11 @@ package Utilities;
  *
  * @author Ramiro
  */
+import DB.DB_Ingreso;
 import DB.DB_Pedido;
 import DB.DB_manager;
+import Entities.M_facturaCabecera;
+import Entities.M_facturaDetalle;
 import Entities.M_pedido;
 import Entities.M_pedidoDetalle;
 import Entities.M_rol_usuario;
@@ -18,6 +21,7 @@ import MenuPrincipal.DatosUsuario;
 import java.awt.print.PageFormat;
 import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
+import java.io.ByteArrayInputStream;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -25,6 +29,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.activation.MimeType;
 import javax.print.Doc;
 import javax.print.DocFlavor;
 import javax.print.DocPrintJob;
@@ -32,6 +37,9 @@ import javax.print.PrintException;
 import javax.print.PrintService;
 import javax.print.PrintServiceLookup;
 import javax.print.SimpleDoc;
+import javax.print.attribute.Attribute;
+import javax.print.attribute.AttributeSet;
+import javax.print.attribute.DocAttributeSet;
 import javax.swing.JOptionPane;
 
 /**
@@ -40,6 +48,7 @@ import javax.swing.JOptionPane;
  */
 public class Impresora {
 
+    private final static SimpleDateFormat sdfs = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
     private final static String TICKET_CABECERA = "**** Panaderia Le Croissant ****\n"
             + "R.U.C.: 3777437-9\n"
             + "Direccion: Av. Rodriguez de Francia esq.Brasil 1199\n"
@@ -129,15 +138,14 @@ public class Impresora {
             Logger.getLogger(Impresora.class.getName()).log(Level.SEVERE, null, ex);
         }
         M_pedido pedido = DB_Pedido.obtenerPedido(1552);
-        Impresora.imprimirPedido(DatosUsuario.getRol_usuario(), pedido);
+        Impresora.imprimirPedidoGuardado(DatosUsuario.getRol_usuario(), pedido);
         //Impresora.imprimirGenerico(TICKET_CABECERA + TICKET_PIE);
 
     }
 
-    public static void imprimirPedido(M_rol_usuario rol_usuario, M_pedido pedidoCabecera) {
+    public static void imprimirPedidoGuardado(M_rol_usuario rol_usuario, M_pedido pedidoCabecera) {
         PrintService service = PrintServiceLookup.lookupDefaultPrintService();
         Date today = Calendar.getInstance().getTime();
-        SimpleDateFormat sdfs = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
         String fechaEntrega = sdfs.format(today);
         String CABECERA = "Fecha y hora:" + fechaEntrega + "\n"
                 + "Cajero: " + pedidoCabecera.getFuncionario().getNombre() + "\n"
@@ -174,7 +182,6 @@ public class Impresora {
     public static void imprimirPedido(M_rol_usuario rol_usuario, M_pedido pedidoCabecera, ArrayList<M_pedidoDetalle> pedidoDetalle) {
         PrintService service = PrintServiceLookup.lookupDefaultPrintService();
         Date today = Calendar.getInstance().getTime();
-        SimpleDateFormat sdfs = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
         String fechaEntrega = sdfs.format(today);
         String CABECERA = "Fecha y hora:" + fechaEntrega + "\n"
                 + "Cajero: " + pedidoCabecera.getFuncionario().getNombre() + "\n"
@@ -185,6 +192,76 @@ public class Impresora {
         String DETALLE = "";
         int total = 0;
         for (M_pedidoDetalle pedidoDetalle1 : pedidoDetalle) {
+            int subtotal = Math.round(Math.round(pedidoDetalle1.getCantidad() * pedidoDetalle1.getPrecio()));
+            total = total + subtotal;
+            DETALLE = DETALLE + "-> " + pedidoDetalle1.getProducto().getDescripcion() + "\n" + pedidoDetalle1.getCantidad() + " " + pedidoDetalle1.getPrecio() + "  " + subtotal + "\n";
+        }
+        String SUMATOTAL = "---------------------------------\n"
+                + "Total= " + total + "\n";
+        String ticket = TICKET_CABECERA + CABECERA + COLUMNAS + DETALLE + SUMATOTAL + TICKET_PIE_SIN_GRACIAS;
+        byte[] bytes = ticket.getBytes();
+        DocFlavor flavor = DocFlavor.BYTE_ARRAY.AUTOSENSE;
+        Doc doc = new SimpleDoc(bytes, flavor, null);
+        DocPrintJob job = service.createPrintJob();
+        try {
+            if (job != null) {
+                job.print(doc, null);
+            } else {
+                JOptionPane.showMessageDialog(null, "No se pudo imprimir", "Error", JOptionPane.INFORMATION_MESSAGE);
+            }
+        } catch (PrintException ex) {
+            System.out.println(ex);
+        }
+    }
+
+    public static void imprimirVentaGuardada(M_rol_usuario rol_usuario, M_facturaCabecera facturaCabecera) {
+        PrintService service = PrintServiceLookup.lookupDefaultPrintService();
+        Date today = Calendar.getInstance().getTime();
+        String fechaEntrega = sdfs.format(today);
+        String CABECERA = "Fecha y hora:" + fechaEntrega + "\n"
+                + "Ticket nro.: " + facturaCabecera.getIdFacturaCabecera() + "\n"
+                + "Cajero: " + facturaCabecera.getFuncionario().getNombre() + "\n"
+                + "Cliente: " + facturaCabecera.getCliente().getEntidad() + "\n" + "---------------------------------\n";
+        ArrayList<M_facturaDetalle> facturaDetalle = DB_Ingreso.obtenerVentaDetalles(facturaCabecera.getIdFacturaCabecera());
+        String COLUMNAS = "producto   cant  precio  subtotal\n";
+        String DETALLE = "";
+        int total = 0;
+        for (M_facturaDetalle facturaDetalle1 : facturaDetalle) {
+            int subtotal = Math.round(Math.round(facturaDetalle1.getCantidad() * facturaDetalle1.getPrecio()));
+            total = total + subtotal;
+            DETALLE = DETALLE + "-> " + facturaDetalle1.getProducto().getDescripcion() + "\n" + facturaDetalle1.getCantidad() + " " + facturaDetalle1.getPrecio() + "  " + subtotal + "\n";
+        }
+        String SUMATOTAL = "---------------------------------\n"
+                + "Total= " + total + "\n";
+        String ticket = TICKET_CABECERA + CABECERA + COLUMNAS + DETALLE + SUMATOTAL + TICKET_PIE_SIN_GRACIAS;
+        byte[] bytes = ticket.getBytes();
+        DocFlavor flavor = DocFlavor.BYTE_ARRAY.AUTOSENSE;
+        Doc doc = new SimpleDoc(bytes, flavor, null);
+        DocPrintJob job = service.createPrintJob();
+        try {
+            if (job != null) {
+                job.print(doc, null);
+            } else {
+                JOptionPane.showMessageDialog(null, "No se pudo imprimir", "Error", JOptionPane.INFORMATION_MESSAGE);
+            }
+        } catch (PrintException ex) {
+            System.out.println(ex);
+        }
+    }
+
+    public static void imprimirVenta(M_rol_usuario rol_usuario, M_facturaCabecera facturaCabecera, ArrayList<M_facturaDetalle> facturaDetalle) {
+        PrintService service = PrintServiceLookup.lookupDefaultPrintService();
+        Date today = Calendar.getInstance().getTime();
+        String fechaEntrega = sdfs.format(today);
+        String CABECERA = "Fecha y hora:" + fechaEntrega + "\n"
+                + "Ticket nro.: " + facturaCabecera.getIdFacturaCabecera() + "\n"
+                + "Cajero: " + facturaCabecera.getFuncionario().getNombre() + "\n"
+                + "Cliente: " + facturaCabecera.getCliente().getEntidad() + "\n"
+                + "---------------------------------\n";
+        String COLUMNAS = "producto   cant  precio  subtotal\n";
+        String DETALLE = "";
+        int total = 0;
+        for (M_facturaDetalle pedidoDetalle1 : facturaDetalle) {
             int subtotal = Math.round(Math.round(pedidoDetalle1.getCantidad() * pedidoDetalle1.getPrecio()));
             total = total + subtotal;
             DETALLE = DETALLE + "-> " + pedidoDetalle1.getProducto().getDescripcion() + "\n" + pedidoDetalle1.getCantidad() + " " + pedidoDetalle1.getPrecio() + "  " + subtotal + "\n";

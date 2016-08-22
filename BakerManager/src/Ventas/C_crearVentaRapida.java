@@ -9,11 +9,15 @@ import Entities.M_cliente;
 import Entities.M_facturaDetalle;
 import Entities.M_producto;
 import Interface.Gestion;
+import MenuPrincipal.DatosUsuario;
 import Producto.SeleccionarCantidadProduducto;
 import Producto.SeleccionarProducto;
+import Utilities.Impresora;
+import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -67,6 +71,7 @@ public class C_crearVentaRapida implements Gestion {
         this.vista.jbSalir.addActionListener(this);
         this.vista.jbAceptar.addActionListener(this);
         this.vista.jbAgregarProducto.addActionListener(this);
+        this.vista.jbImprimir.addActionListener(this);
         this.vista.jbCliente.addActionListener(this);
         this.vista.jtFacturaDetalle.addMouseListener(this);
         this.vista.jbEliminarDetalle.addActionListener(this);
@@ -96,6 +101,9 @@ public class C_crearVentaRapida implements Gestion {
         if (e.getSource().equals(this.vista.jbAgregarProducto)) {
             SeleccionarProducto sp = new SeleccionarProducto(this);
             sp.mostrarVista();
+        }
+        if (e.getSource().equals(this.vista.jbImprimir)) {
+            imprimirTicket();
         }
         if (e.getSource().equals(this.vista.jbCliente)) {
             Seleccionar_cliente sp = new Seleccionar_cliente(this);
@@ -153,6 +161,22 @@ public class C_crearVentaRapida implements Gestion {
     @Override
     public void keyReleased(KeyEvent e) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    private void imprimirTicket() {
+        EventQueue.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                if (modelo.getDetalles().isEmpty()) {
+                    JOptionPane.showMessageDialog(vista, "No hay productos cargados", "Atención", JOptionPane.INFORMATION_MESSAGE);
+                } else {
+                    int opcion = JOptionPane.showConfirmDialog(vista, "¿Desea imprimir el ticket?", "Atención", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+                    if (opcion == JOptionPane.YES_OPTION) {
+                        Impresora.imprimirVenta(DatosUsuario.getRol_usuario(), modelo.getCabecera(), modelo.getDetalles());
+                    }
+                }
+            }
+        });
     }
 
     public void recibirDetalle(M_facturaDetalle detalle) {

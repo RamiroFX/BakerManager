@@ -133,10 +133,13 @@ public class SeleccionarCantidadProduducto extends javax.swing.JDialog implement
                 if (this.selecProd.crearPedido.modelo.getPedido() != null) {
                     if (this.selecProd.crearPedido.modelo.getPedido().getCliente() != null) {
                         if (this.selecProd.crearPedido.modelo.getPedido().getCliente().getCategoria() != null) {
-                            if (this.selecProd.crearPedido.modelo.getPedido().getCliente().getCategoria().equals("Mayorista")) {
-                                jtfPrecio.setText(producto.getPrecioMayorista().toString());
-                            } else if (this.selecProd.crearPedido.modelo.getPedido().getCliente().getCategoria().equals("Mayorista")) {
-                                jtfPrecio.setText(producto.getPrecioVenta().toString());
+                            switch (this.selecProd.crearPedido.modelo.getPedido().getCliente().getCategoria()) {
+                                case "Mayorista":
+                                    jtfPrecio.setText(producto.getPrecioMayorista().toString());
+                                    break;
+                                case "Minorista":
+                                    jtfPrecio.setText(producto.getPrecioVenta().toString());
+                                    break;
                             }
                         } else {
                             jtfPrecio.setText(producto.getPrecioVenta().toString());
@@ -146,7 +149,7 @@ public class SeleccionarCantidadProduducto extends javax.swing.JDialog implement
                 break;
             }
             default: {
-                jtfPrecio.setText(producto.getPrecioCosto().toString());
+                jtfPrecio.setText(producto.getPrecioVenta().toString());
                 break;
             }
         }

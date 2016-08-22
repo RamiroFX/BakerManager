@@ -25,6 +25,7 @@ import net.miginfocom.swing.MigLayout;
  */
 public class V_crearVentaRapida extends JDialog {
     //NORTE
+
     JPanel jpNorth;
     public JTextField jtfCliente, jtfFuncionario, jtfClieDireccion, jtfClieTelefono, jtfClieRuc;
     public JButton jbCliente;
@@ -39,7 +40,7 @@ public class V_crearVentaRapida extends JDialog {
     public JFormattedTextField jftIva5, jftIva10, jftExenta, jftTotal;
     //SUR
     JPanel jpSouth;
-    public JButton jbAceptar, jbSalir;
+    public JButton jbAceptar, jbImprimir, jbSalir;
 
     public V_crearVentaRapida(JFrame frame) {
         super(frame, "Crear venta", JDialog.ModalityType.APPLICATION_MODAL);
@@ -136,9 +137,10 @@ public class V_crearVentaRapida extends JDialog {
     private void initSouth() {
         jpSouth = new JPanel();
         jbAceptar = new JButton("Confirmar venta");
-
+        jbImprimir = new JButton("Imprimir");
         jbSalir = new JButton("Salir");
         jpSouth.add(jbAceptar);
+        jpSouth.add(jbImprimir);
         jpSouth.add(jbSalir);
     }
 }

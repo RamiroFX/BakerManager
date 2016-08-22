@@ -25,7 +25,7 @@ public class DB_Producto {
     private static PreparedStatement pst = null;
     private static ResultSet rs = null;
 
-    public static ResultSetTableModel consultarProducto(String query) {
+    public static ResultSetTableModel consultarProducto(String prodDescripcion) {
         ResultSetTableModel rstm = null;
         try {
             if (DB_manager.getConection() == null) {
@@ -47,13 +47,14 @@ public class DB_Producto {
                     + estado + ", "
                     + "PROD.CANT_ACTUAL \"Cant. actual\" "
                     + "FROM PRODUCTO PROD "
-                    + "WHERE LOWER(PROD.DESCRIPCION) LIKE '" + query + "%' "
+                    + "WHERE LOWER(PROD.DESCRIPCION) LIKE ? "
                     + "ORDER BY PROD.DESCRIPCION";
             //SELECT PROD.id_producto   "ID producto"  ,  PROD.descripcion  "Descripcion"   FROM producto
             //se crea una sentencia
-            st = DB_manager.getConection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            pst = DB_manager.getConection().prepareStatement(q2, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            pst.setString(1, prodDescripcion + "%");
             // se ejecuta el query y se obtienen los resultados en un ResultSet
-            rs = st.executeQuery(q2);
+            rs = pst.executeQuery();
             rstm = new ResultSetTableModel(rs);
         } catch (SQLException ex) {
             Logger lgr = Logger.getLogger(DB_Producto.class.getName());
@@ -135,7 +136,7 @@ public class DB_Producto {
                     + estad
                     + finalQuery;
             //se crea una sentencia
-            pst = DB_manager.getConection().prepareStatement(FINAL_QUERY,ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            pst = DB_manager.getConection().prepareStatement(FINAL_QUERY, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             pst.setString(1, busqueda_);
             rs = pst.executeQuery();
             rstm = new ResultSetTableModel(rs);
@@ -477,7 +478,7 @@ public class DB_Producto {
             rs = pst.executeQuery();
             return rs.next();
         } catch (SQLException ex) {
-            Logger lgr = Logger.getLogger(DB_Funcionario.class.getName());
+            Logger lgr = Logger.getLogger(DB_Producto.class.getName());
             lgr.log(Level.SEVERE, ex.getMessage(), ex);
 
         } finally {
@@ -489,7 +490,34 @@ public class DB_Producto {
                     st.close();
                 }
             } catch (SQLException ex) {
-                Logger lgr = Logger.getLogger(DB_Funcionario.class.getName());
+                Logger lgr = Logger.getLogger(DB_Producto.class.getName());
+                lgr.log(Level.WARNING, ex.getMessage(), ex);
+            }
+        }
+        return false;
+    }
+
+    public static boolean existeCodigo(String prodCodigo) {
+        String Query = "SELECT CODIGO FROM PRODUCTO WHERE DESCRIPCION LIKE ?;";
+        try {
+            pst = DB_manager.getConection().prepareStatement(Query);
+            pst.setString(1, prodCodigo);
+            rs = pst.executeQuery();
+            return rs.next();
+        } catch (SQLException ex) {
+            Logger lgr = Logger.getLogger(DB_Producto.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (st != null) {
+                    st.close();
+                }
+            } catch (SQLException ex) {
+                Logger lgr = Logger.getLogger(DB_Producto.class.getName());
                 lgr.log(Level.WARNING, ex.getMessage(), ex);
             }
         }

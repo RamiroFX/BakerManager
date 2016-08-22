@@ -11,6 +11,8 @@ import Entities.M_facturaCabecera;
 import Entities.M_facturaDetalle;
 import Entities.M_funcionario;
 import Entities.M_telefono;
+import MenuPrincipal.DatosUsuario;
+import Utilities.Impresora;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
@@ -99,7 +101,12 @@ public class M_crearVentaRapida {
         } else {
             int response = JOptionPane.showConfirmDialog(null, "¿Está seguro que desea confirmar la venta?", "Confirmar", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
             if (response == JOptionPane.YES_OPTION) {
-                DB_Ingreso.insertarIngreso(getCabecera(), getDetalles());
+                int nroTicket = DB_Ingreso.insertarIngreso(getCabecera(), getDetalles());
+                getCabecera().setIdFacturaCabecera(nroTicket);
+                int opcion = JOptionPane.showConfirmDialog(null, "¿Desea imprimir el ticket?", "Atención", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+                if (opcion == JOptionPane.YES_OPTION) {
+                    Impresora.imprimirVenta(DatosUsuario.getRol_usuario(), getCabecera(), getDetalles());
+                }
                 return true;
             }
         }

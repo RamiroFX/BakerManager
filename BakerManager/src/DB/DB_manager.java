@@ -458,14 +458,14 @@ public class DB_manager {
         return enUso;
     }
 
-    public static Integer obtenerIdImpuesto(String impuesto) {
+    public static Integer obtenerIdImpuesto(int impuesto) {
         Integer idMarca = null;
         String q = "SELECT ID_IMPUESTO "
                 + "FROM IMPUESTO "
                 + " WHERE DESCRIPCION = ? ;";
         try {
             pst = con.prepareStatement(q, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-            pst.setString(1, impuesto);
+            pst.setInt(1, impuesto);
             rs = pst.executeQuery();
             while (rs.next()) {
                 idMarca = (rs.getInt("ID_IMPUESTO"));

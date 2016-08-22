@@ -10,6 +10,7 @@ import Entities.M_facturaDetalle;
 import Entities.M_funcionario;
 import Entities.M_mesa;
 import Entities.M_mesa_detalle;
+import Entities.M_producto;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -76,7 +77,7 @@ public class DB_Ingreso {
      * INSERT
      */
 
-    public static void insertarIngreso(M_facturaCabecera cabecera, ArrayList<M_facturaDetalle> detalle) {
+    public static int insertarIngreso(M_facturaCabecera cabecera, ArrayList<M_facturaDetalle> detalle) {
         String INSERT_DETALLE = "INSERT INTO FACTURA_DETALLE(ID_FACTURA_CABECERA, ID_PRODUCTO, CANTIDAD, PRECIO, DESCUENTO, OBSERVACION)VALUES (?, ?, ?, ?, ?, ?);";
         //LA SGBD SE ENCARGA DE INSERTAR EL TIMESTAMP.
         String INSERT_CABECERA = "INSERT INTO FACTURA_CABECERA(ID_FUNCIONARIO, ID_CLIENTE, ID_COND_VENTA)VALUES (?, ?, ?);";
@@ -139,6 +140,7 @@ public class DB_Ingreso {
                 lgr.log(Level.WARNING, ex.getMessage(), ex);
             }
         }
+        return (int) sq_cabecera;
     }
 
     public static M_facturaCabecera obtenerIngresoCabeceraID(Integer idIngresoCabecera) {
@@ -689,5 +691,45 @@ public class DB_Ingreso {
                 lgr.log(Level.WARNING, ex.getMessage(), ex);
             }
         }
+    }
+
+    public static ArrayList<M_facturaDetalle> obtenerVentaDetalles(Integer idFacturaCabecera) {
+        ArrayList<M_facturaDetalle> detalles = null;
+        String query = "SELECT ID_FACTURA_DETALLE, ID_FACTURA_CABECERA, ID_PRODUCTO,(SELECT P.DESCRIPCION FROM PRODUCTO P WHERE P.ID_PRODUCTO = FD.ID_PRODUCTO)\"PRODUCTO\", CANTIDAD, PRECIO, DESCUENTO, OBSERVACION FROM FACTURA_DETALLE FD WHERE FD.ID_FACTURA_CABECERA = " + idFacturaCabecera;
+        try {
+            st = DB_manager.getConection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            rs = st.executeQuery(query);
+            detalles = new ArrayList();
+            while (rs.next()) {
+                M_facturaDetalle detalle = new M_facturaDetalle();
+                detalle.setCantidad(rs.getDouble("CANTIDAD"));
+                detalle.setDescuento(rs.getDouble("DESCUENTO"));
+                detalle.setIdFacturaCabecera(rs.getInt("ID_FACTURA_CABECERA"));
+                detalle.setIdFacturaDetalle(rs.getInt("ID_FACTURA_DETALLE"));
+                detalle.setObservacion(rs.getString("OBSERVACION"));
+                detalle.setPrecio(rs.getInt("PRECIO"));
+                M_producto producto = new M_producto();
+                producto.setId(rs.getInt("ID_PRODUCTO"));
+                producto.setDescripcion(rs.getString("PRODUCTO"));
+                detalle.setProducto(producto);
+                detalles.add(detalle);
+            }
+        } catch (SQLException ex) {
+            Logger lgr = Logger.getLogger(DB_Egreso.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (st != null) {
+                    st.close();
+                }
+            } catch (SQLException ex) {
+                Logger lgr = Logger.getLogger(DB_Egreso.class.getName());
+                lgr.log(Level.WARNING, ex.getMessage(), ex);
+            }
+        }
+        return detalles;
     }
 }

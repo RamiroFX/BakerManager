@@ -85,7 +85,6 @@ public class V_crear_producto extends JDialog {
             //TextFields
             jtfProducto = new JTextField();
             jtfCodigo = new JTextField();
-            jtfCodigo.setEditable(false);
             jtfPrecioVta = new JTextField("1");
             jtfPrecioMayorista = new JTextField("1");
             jtfPrecioCosto = new JTextField("1");

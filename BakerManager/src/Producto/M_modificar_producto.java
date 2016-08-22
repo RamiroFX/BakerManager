@@ -9,6 +9,7 @@ import DB.DB_Producto;
 import DB.DB_manager;
 import Entities.M_producto;
 import java.util.Vector;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -40,10 +41,18 @@ public class M_modificar_producto {
     }
 
     public boolean actualizarProducto(M_producto producto) {
-        int id_categoria = DB_manager.obtenerIdProductoCategoria(producto.getCategoria());
-        int id_marca = DB_manager.obtenerIdMarca(producto.getMarca());
-        int id_impuesto = DB_manager.obtenerIdImpuesto(producto.getImpuesto().toString());
-        int id_estado = DB_manager.obtenerIdEstado(producto.getEstado());
+        if (producto.getCodBarra() != null) {
+            if (DB_Producto.existeCodigo(producto.getCodBarra())) {
+                if (!this.producto.getCodBarra().equals(producto.getCodBarra())) {
+                    JOptionPane.showMessageDialog(null, "El código seleccionado se encuentra en uso. Escoga otro.", "Error", JOptionPane.ERROR_MESSAGE);
+                    return false;
+                }
+            }
+        }
+        int id_categoria = DB_manager.obtenerIdProductoCategoria(producto.getCategoria().toLowerCase());
+        int id_marca = DB_manager.obtenerIdMarca(producto.getMarca().toLowerCase());
+        int id_impuesto = DB_manager.obtenerIdImpuesto(producto.getImpuesto());
+        int id_estado = DB_manager.obtenerIdEstado(producto.getEstado().toLowerCase());
         producto.setIdCategoria(id_categoria);
         producto.setIdEstado(id_estado);
         producto.setIdImpuesto(id_impuesto);

@@ -49,6 +49,11 @@ class M_crear_producto {
                     javax.swing.JOptionPane.OK_OPTION);
             return false;
         }
+        if (DB_Producto.existeCodigo(producto.getCodBarra())) {
+            javax.swing.JOptionPane.showMessageDialog(null, "El codigo del producto se encuentra en uso. Verifique el codigo del producto", "Parametros incorrectos",
+                    javax.swing.JOptionPane.OK_OPTION);
+            return false;
+        }
         if (tieneProveedor) {
             try {
                 if (null == proveedor) {
@@ -63,22 +68,22 @@ class M_crear_producto {
                 return false;
             }
         }
-        int idCategoria = DB_manager.obtenerIdProductoCategoria(producto.getCategoria());
-        int idMarca = DB_manager.obtenerIdMarca(producto.getMarca());
-        int idImpuesto = DB_manager.obtenerIdImpuesto(producto.getImpuesto().toString());
+        int idCategoria = DB_manager.obtenerIdProductoCategoria(producto.getCategoria().toLowerCase());
+        int idMarca = DB_manager.obtenerIdMarca(producto.getMarca().toLowerCase());
+        int idImpuesto = DB_manager.obtenerIdImpuesto(producto.getImpuesto());
         producto.setIdCategoria(idCategoria);
         producto.setIdEstado(1);//Activo
         producto.setIdImpuesto(idImpuesto);
         producto.setIdMarca(idMarca);
         long id_producto = -1;
         if (!tieneProveedor) {
-            id_producto = DB_Producto.insertarProducto(producto);
-            DB_Producto.insertarCodigoProducto(id_producto);
+            DB_Producto.insertarProducto(producto);
+            //DB_Producto.insertarCodigoProducto(id_producto);
             return true;
         }
         if (tieneProveedor) {
             id_producto = DB_Producto.insertarProducto(producto);
-            DB_Producto.insertarCodigoProducto(id_producto);
+            //DB_Producto.insertarCodigoProducto(id_producto);
             DB_Proveedor.insertarProveedorProducto(proveedor.getId(), (int) id_producto);
             return true;
         }
