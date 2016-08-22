@@ -142,8 +142,10 @@ public class V_gestion_cliente extends JInternalFrame {
         jspTelefono = new JScrollPane(jtTelefono);
         jlTelefono.setText("Telefono");
 
-        jbCrearCliente = new javax.swing.JButton();
-        jbModificarCliente = new javax.swing.JButton();
+        jbCrearCliente = new javax.swing.JButton("Crear cliente");
+        jbCrearCliente.setName("crear cliente");
+        jbModificarCliente = new javax.swing.JButton("Modificar cliente");
+        jbModificarCliente.setName("modificar cliente");
 
         jpDatosEmp = new javax.swing.JPanel(new MigLayout());
         jpDatosEmp.add(jlEntidad);
@@ -196,11 +198,9 @@ public class V_gestion_cliente extends JInternalFrame {
         //JP SOUTH
         jpSouth = new javax.swing.JPanel();
         jpSouth.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
-        jbCrearCliente.setText("Crear cliente");
         
         Insets inset = new Insets(10, 10, 10, 10);
         jbCrearCliente.setMargin(inset);
-        jbModificarCliente.setText("Modificar cliente");
         jbModificarCliente.setMargin(inset);
         jpSouth.add(jbCrearCliente);
         jpSouth.add(jbModificarCliente);
@@ -295,6 +295,7 @@ public class V_gestion_cliente extends JInternalFrame {
 
     private void initFilter() {
         jtfBuscar = new JTextField();
+        jtfBuscar.setName("buscar cliente");
         jckbEntidadNombre = new JCheckBox("Entidad/Nombre");
         jckbEntidadNombre.setSelected(true);
         jckbRuc = new JCheckBox("R.U.C.");

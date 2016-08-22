@@ -20,7 +20,7 @@ public class gestionAlgo implements Gestion{
     }
 
     @Override
-    public void agregarListeners() {
+    public void concederPermisos() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

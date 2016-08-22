@@ -13,6 +13,7 @@ import java.text.SimpleDateFormat;
 import java.util.Vector;
 import GestionRol.Gestion_rol;
 import Interface.Gestion;
+import MenuPrincipal.DatosUsuario;
 import bakermanager.C_inicio;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
@@ -33,7 +34,7 @@ public class C_gestion_usuario implements Gestion {
         this.modelo = modelo;
         this.vista = vista;
         inicializarVista();
-        agregarListeners();
+        concederPermisos();
     }
 
     @Override
@@ -43,8 +44,8 @@ public class C_gestion_usuario implements Gestion {
         this.vista.jbEliminarUsuario.setEnabled(false);
         this.vista.jftCedulaIdentidad.setFormatterFactory(
                 new javax.swing.text.DefaultFormatterFactory(
-                new javax.swing.text.NumberFormatter(
-                new java.text.DecimalFormat("#,##0"))));
+                        new javax.swing.text.NumberFormatter(
+                                new java.text.DecimalFormat("#,##0"))));
         this.vista.jtfBuscar.setEnabled(false);
         this.vista.jckbCedula.setEnabled(false);
         this.vista.jckbNombreApellido.setEnabled(false);
@@ -56,7 +57,7 @@ public class C_gestion_usuario implements Gestion {
         this.vista.jbGestionRol.setEnabled(false);
         this.vista.jbCambiarPassword.setEnabled(false);
         this.vista.jbUsuarioParametros.setEnabled(false);
-        ArrayList<M_menu_item> accesos = c_inicio.modelo.getRol_usuario().getAccesos();
+        ArrayList<M_menu_item> accesos = DatosUsuario.getRol_usuario().getAccesos();
         for (int i = 0; i < accesos.size(); i++) {
             if (this.vista.jbCrearUsuario.getName().equals(accesos.get(i).getItemDescripcion())) {
                 this.vista.jbCrearUsuario.setEnabled(true);
@@ -108,7 +109,7 @@ public class C_gestion_usuario implements Gestion {
      * Agrega ActionListeners los controles.
      */
     @Override
-    public final void agregarListeners() {
+    public final void concederPermisos() {
         this.vista.jbCrearUsuario.addActionListener(this);
         this.vista.jbModificarUsuario.addActionListener(this);
         this.vista.jbEliminarUsuario.addActionListener(this);
@@ -156,6 +157,18 @@ public class C_gestion_usuario implements Gestion {
         });
     }
 
+    private void verificarAcceso() {
+        ArrayList<M_menu_item> accesos = DatosUsuario.getRol_usuario().getAccesos();
+        for (int i = 0; i < accesos.size(); i++) {
+            if (this.vista.jbModificarUsuario.getName().equals(accesos.get(i).getItemDescripcion())) {
+                this.vista.jbModificarUsuario.setEnabled(true);
+            }
+            if (this.vista.jbEliminarUsuario.getName().equals(accesos.get(i).getItemDescripcion())) {
+                this.vista.jbEliminarUsuario.setEnabled(true);
+            }
+        }
+    }
+
     private void cambiarContraseña() {
         CambiarPassword cp = new CambiarPassword(this.c_inicio.vista, c_inicio);
         cp.setVisible(true);
@@ -186,9 +199,15 @@ public class C_gestion_usuario implements Gestion {
             }
         } else if (e.getSource() == this.vista.jbEliminarUsuario) {
             int row = this.vista.jtUsuario.getSelectedRow();
-            int idEmpleado = Integer.valueOf(String.valueOf(this.vista.jtUsuario.getValueAt(row, 0)));
-            modelo.eliminarUsuario(idEmpleado);
-            this.vista.jtUsuario.setModel(modelo.consultarFuncionario("", false, false, false));
+            if (row > 0) {
+                int idEmpleado = Integer.valueOf(String.valueOf(this.vista.jtUsuario.getValueAt(row, 0)));
+                if (idEmpleado == 1) {
+                    JOptionPane.showMessageDialog(null, "El usuario admin no puede ser eliminado.", "Atención", JOptionPane.INFORMATION_MESSAGE);
+                } else {
+                    modelo.eliminarUsuario(idEmpleado);
+                    this.vista.jtUsuario.setModel(modelo.consultarFuncionario("", false, false, false));
+                }
+            }
         } else if (e.getSource() == this.vista.jbCambiarPassword) {
             cambiarContraseña();
         } else if (e.getSource() == this.vista.jbUsuarioParametros) {
@@ -215,8 +234,7 @@ public class C_gestion_usuario implements Gestion {
         //modelo.setFuncionario(DB_Funcionario.obtenerDatosFuncionarioID(idFuncionario));
         modelo.setFuncionario(modelo.obtenerDatosFuncionarioID(idFuncionario));
         if ((fila > -1) && (columna > -1)) {
-            this.vista.jbModificarUsuario.setEnabled(true);
-            this.vista.jbEliminarUsuario.setEnabled(true);
+            verificarAcceso();
             this.vista.jtfAlias.setText(modelo.getFuncionario().getAlias());
             this.vista.jtfDireccion.setText(modelo.getFuncionario().getDireccion());
             this.vista.jtfCorreoElectronico.setText(modelo.getFuncionario().getEmail());

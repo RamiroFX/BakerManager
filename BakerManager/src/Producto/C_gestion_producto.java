@@ -6,8 +6,10 @@ package Producto;
 
 import DB.DB_Producto;
 import DB.DB_manager;
+import Entities.M_menu_item;
 import Entities.M_producto;
 import Entities.M_proveedor;
+import MenuPrincipal.DatosUsuario;
 import Proveedor.Seleccionar_proveedor;
 import bakermanager.C_inicio;
 import java.awt.EventQueue;
@@ -17,6 +19,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 import java.util.Vector;
 import javax.swing.JOptionPane;
 
@@ -38,7 +41,7 @@ public class C_gestion_producto extends MouseAdapter implements ActionListener, 
         this.c_inicio = c_inicio;
         this.vista.setLocation(c_inicio.centrarPantalla(this.vista));
         inicializarVista();
-        agregarListeners();
+        concederPermisos();
     }
 
     /**
@@ -75,25 +78,39 @@ public class C_gestion_producto extends MouseAdapter implements ActionListener, 
         this.vista.jcbEstado.addItem("Todos");
         for (int i = 0; i < estado.size(); i++) {
             this.vista.jcbEstado.addItem(estado.get(i));
-        }        
+        }
     }
 
     public void mostrarVista() {
         this.c_inicio.agregarVentana(vista);
     }
 
-    private void agregarListeners() {
-        this.vista.jtfBuscar.addKeyListener(this);
-        this.vista.jbBuscar.addActionListener(this);
-        this.vista.jbBorrar.addActionListener(this);
-        this.vista.jbModificar.addActionListener(this);
-        this.vista.jbAgregar.addActionListener(this);
-        this.vista.jbEliminar.addActionListener(this);
-        this.vista.jbAsigProdProv.addActionListener(this);
-        this.vista.jbProveedor.addActionListener(this);
-        this.vista.jbParametros.addActionListener(this);
+    private void concederPermisos() {
         this.vista.jtProducto.table.addMouseListener(this);
         this.vista.jtProducto.table.addKeyListener(this);
+        ArrayList<M_menu_item> accesos = DatosUsuario.getRol_usuario().getAccesos();
+        for (M_menu_item acceso : accesos) {
+            if (this.vista.jbAgregar.getName().equals(acceso.getItemDescripcion())) {
+                this.vista.jbAgregar.setEnabled(true);
+                this.vista.jbAgregar.addActionListener(this);
+            }
+            if (this.vista.jbModificar.getName().equals(acceso.getItemDescripcion())) {
+                this.vista.jbModificar.addActionListener(this);
+                this.vista.jbAsigProdProv.addActionListener(this);
+            }
+            if (this.vista.jtfBuscar.getName().equals(acceso.getItemDescripcion())) {
+                this.vista.jtfBuscar.addKeyListener(this);
+                this.vista.jbBuscar.addActionListener(this);
+                this.vista.jbProveedor.addActionListener(this);
+                this.vista.jbBorrar.addActionListener(this);
+            }
+            if (this.vista.jbParametros.getName().equals(acceso.getItemDescripcion())) {
+                this.vista.jbParametros.addActionListener(this);
+            }
+//            if (this.vista.jbEliminar.getName().equals(acceso.getItemDescripcion())) {
+//                this.vista.jbEliminar.addActionListener(this);
+//            }
+        }
     }
 
     public void displayQueryResults() {

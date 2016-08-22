@@ -9,7 +9,9 @@ import Cliente.Seleccionar_cliente;
 import DB.ResultSetTableModel;
 import Entities.M_cliente;
 import Entities.M_funcionario;
+import Entities.M_menu_item;
 import Interface.Gestion;
+import MenuPrincipal.DatosUsuario;
 import Resumen.Resumen;
 import bakermanager.C_inicio;
 import empleado.Seleccionar_funcionario;
@@ -18,6 +20,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Vector;
@@ -38,7 +41,7 @@ public class C_gestionPedido implements Gestion {
         this.vista = vista;
         this.c_inicio = c_inicio;
         inicializarVista();
-        agregarListeners();
+        concederPermisos();
     }
 
     @Override
@@ -58,26 +61,79 @@ public class C_gestionPedido implements Gestion {
         Date today = Calendar.getInstance().getTime();
         this.vista.jddInicio.setDate(today);
         this.vista.jddFinal.setDate(today);
+        this.vista.jbAgregar.setEnabled(false);
+        this.vista.jbBuscar.setEnabled(false);
+        this.vista.jbPedidosPendientes.setEnabled(false);
+        this.vista.jbCliente.setEnabled(false);
+        this.vista.jbEmpleado.setEnabled(false);
+        this.vista.jbBorrar.setEnabled(false);
+        this.vista.jbResumen.setEnabled(false);
+        this.vista.jbCharts.setEnabled(false);
         this.vista.jbCancelarPedido.setEnabled(false);
         this.vista.jbPagoPedido.setEnabled(false);
         this.vista.jbDetalle.setEnabled(false);
     }
 
     @Override
-    public final void agregarListeners() {
-        this.vista.jbAgregar.addActionListener(this);
-        this.vista.jbPagoPedido.addActionListener(this);
-        this.vista.jbCancelarPedido.addActionListener(this);
-        this.vista.jbBuscar.addActionListener(this);
-        this.vista.jbPedidosPendientes.addActionListener(this);
-        this.vista.jbCliente.addActionListener(this);
-        this.vista.jbEmpleado.addActionListener(this);
-        this.vista.jbBorrar.addActionListener(this);
-        this.vista.jbResumen.addActionListener(this);
-        this.vista.jbCharts.addActionListener(this);
-        this.vista.jbDetalle.addActionListener(this);
+    public final void concederPermisos() {
+        ArrayList<M_menu_item> accesos = DatosUsuario.getRol_usuario().getAccesos();
+        for (M_menu_item acceso : accesos) {
+            if (this.vista.jbAgregar.getName().equals(acceso.getItemDescripcion())) {
+                this.vista.jbAgregar.setEnabled(true);
+                this.vista.jbAgregar.addActionListener(this);
+            }
+            if (this.vista.jbPagoPedido.getName().equals(acceso.getItemDescripcion())) {
+                this.vista.jbPagoPedido.addActionListener(this);
+            }
+            if (this.vista.jbCancelarPedido.getName().equals(acceso.getItemDescripcion())) {
+                this.vista.jbCancelarPedido.addActionListener(this);
+            }
+            if (this.vista.jbBuscar.getName().equals(acceso.getItemDescripcion())) {
+                this.vista.jbBuscar.addActionListener(this);
+                this.vista.jbPedidosPendientes.addActionListener(this);
+                this.vista.jbCliente.addActionListener(this);
+                this.vista.jbEmpleado.addActionListener(this);
+                this.vista.jbBorrar.addActionListener(this);
+                this.vista.jbPedidosPendientes.setEnabled(true);
+                this.vista.jbCliente.setEnabled(true);
+                this.vista.jbEmpleado.setEnabled(true);
+                this.vista.jbBorrar.setEnabled(true);
+                this.vista.jbBuscar.setEnabled(true);
+            }
+            if (this.vista.jbResumen.getName().equals(acceso.getItemDescripcion())) {
+                this.vista.jbResumen.addActionListener(this);
+            }
+            if (this.vista.jbCharts.getName().equals(acceso.getItemDescripcion())) {
+                this.vista.jbCharts.setEnabled(true);
+                this.vista.jbCharts.addActionListener(this);
+            }
+            if (this.vista.jbDetalle.getName().equals(acceso.getItemDescripcion())) {
+                this.vista.jbDetalle.addActionListener(this);
+            }
+        }
         this.vista.jtPedido.addMouseListener(this);
         this.vista.jtPedido.addKeyListener(this);
+    }
+
+    private void verificarPermiso() {
+        ArrayList<M_menu_item> accesos = DatosUsuario.getRol_usuario().getAccesos();
+        for (M_menu_item acceso : accesos) {
+            if (this.vista.jbDetalle.getName().equals(acceso.getItemDescripcion())) {
+                this.vista.jbDetalle.setEnabled(true);
+            }
+            if (this.vista.jbPagoPedido.getName().equals(acceso.getItemDescripcion())) {
+                this.vista.jbPagoPedido.setEnabled(true);
+            }
+            if (this.vista.jbCancelarPedido.getName().equals(acceso.getItemDescripcion())) {
+                this.vista.jbCancelarPedido.setEnabled(true);
+            }
+            if (this.vista.jbResumen.getName().equals(acceso.getItemDescripcion())) {
+                this.vista.jbResumen.setEnabled(true);
+            }
+            if (this.vista.jbCharts.getName().equals(acceso.getItemDescripcion())) {
+                this.vista.jbCharts.setEnabled(true);
+            }
+        }
     }
 
     @Override
@@ -163,7 +219,9 @@ public class C_gestionPedido implements Gestion {
             Utilities.c_packColumn.packColumns(this.vista.jtPedidoDetalle, 1);
         }
         if (e.getClickCount() == 2) {
-            verDetalle();
+            if (vista.jbDetalle.isEnabled()) {
+                verDetalle();
+            }
         }
     }
 
@@ -201,6 +259,7 @@ public class C_gestionPedido implements Gestion {
             this.vista.jbPagoPedido.setEnabled(false);
             this.vista.jbCancelarPedido.setEnabled(false);
         }
+        verificarPermiso();
     }
 
     private void pagarPedido() {

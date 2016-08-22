@@ -81,6 +81,7 @@ public class V_gestion_egresos extends JInternalFrame {
         jpBotonesTop = new JPanel(new MigLayout());
         jpBotonesTop.setBorder(new EtchedBorder(EtchedBorder.RAISED));
         jbBuscar = new JButton("Buscar");
+        jbBuscar.setName("buscar compra");
         jbBorrar = new JButton("Borrar");
         jbBuscarDetalle = new JButton("Buscar por detalle");
         jpBotonesTop.add(jbBuscar);
@@ -108,10 +109,13 @@ public class V_gestion_egresos extends JInternalFrame {
         jpBot = new JPanel();
         Insets insets = new Insets(10, 10, 10, 10);
         jbAgregar = new JButton("Crear egreso");
+        jbAgregar.setName("crear compra");
         jbAgregar.setMargin(insets);
         jbDetalle = new JButton("Ver detalle");
+        jbDetalle.setName("detalle compra");
         jbDetalle.setMargin(insets);
         jbResumen = new JButton("Ver resumen");
+        jbResumen.setName("resumen compra");
         jbResumen.setMargin(insets);
         jbGraficos = new JButton("Ver gráficos");
         jbGraficos.setMargin(insets);

@@ -15,7 +15,7 @@ import java.awt.event.MouseListener;
 public interface Gestion extends ActionListener, MouseListener, KeyListener {
 
     void inicializarVista();
-    void agregarListeners();
+    void concederPermisos();
     void mostrarVista();
     void cerrar();
 }

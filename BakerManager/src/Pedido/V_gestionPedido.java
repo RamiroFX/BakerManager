@@ -96,6 +96,7 @@ public class V_gestionPedido extends JInternalFrame {
          jtfBuscar.setFont(new java.awt.Font("Times New Roman", 0, 16));
          jpJtextFieldTop.add(jtfBuscar);*/
         jbBuscar = new JButton("Buscar");
+        jbBuscar.setName("buscar pedido");
         jbBorrar = new JButton("Borrar");
         jbBuscarDetalle = new JButton("Buscar por detalle");
         jbPedidosPendientes = new JButton("Buscar pedidos pendientes");
@@ -127,16 +128,22 @@ public class V_gestionPedido extends JInternalFrame {
         jpBot = new JPanel();
         Insets inset = new Insets(10, 10, 10, 10);
         jbAgregar = new JButton("Crear pedido");
+        jbAgregar.setName("crear pedido");
         jbAgregar.setMargin(inset);
         jbPagoPedido = new JButton("Pago de pedido");
+        jbPagoPedido.setName("entregar pedido");
         jbPagoPedido.setMargin(inset);
         jbCancelarPedido = new JButton("Cancelar pedido");
+        jbCancelarPedido.setName("cancelar pedido");
         jbCancelarPedido.setMargin(inset);
         jbDetalle = new JButton("Ver detalle");
+        jbDetalle.setName("modificar pedido");
         jbDetalle.setMargin(inset);
         jbResumen = new JButton("Ver resumen");
+        jbResumen.setName("resumen pedido");
         jbResumen.setMargin(inset);
         jbCharts = new JButton("Diagramas");
+        jbCharts.setName("grafico pedido");
         jbCharts.setMargin(inset);
         jpBot.add(jbAgregar);
         jpBot.add(jbPagoPedido);

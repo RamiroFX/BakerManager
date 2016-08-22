@@ -133,8 +133,10 @@ class V_gestion_proveedores extends JInternalFrame {
 
         Insets inset = new Insets(10, 10, 10, 10);
         jbCrearProveedor = new javax.swing.JButton("Crear proveedor");
+        jbCrearProveedor.setName("crear proveedor");
         jbCrearProveedor.setMargin(inset);
         jbModificarProveedor = new javax.swing.JButton("Modificar proveedor");
+        jbModificarProveedor.setName("Modificar proveedor");
         jbModificarProveedor.setMargin(inset);
 
         jpDatosEmp = new javax.swing.JPanel(new MigLayout());
@@ -204,6 +206,7 @@ class V_gestion_proveedores extends JInternalFrame {
 
     private void initFilter() {
         jtfBuscar = new JTextField();
+        jtfBuscar.setName("buscar proveedor");
         jckbEntidad = new JCheckBox("Entidad/Nombre");
         jckbEntidad.setSelected(true);
         jckbRUC = new JCheckBox("R.U.C");

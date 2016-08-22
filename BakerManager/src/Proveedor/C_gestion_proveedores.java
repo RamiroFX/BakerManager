@@ -6,7 +6,9 @@ package Proveedor;
 
 import DB.DB_Proveedor;
 import Entities.M_contacto;
+import Entities.M_menu_item;
 import Entities.M_proveedor;
+import MenuPrincipal.DatosUsuario;
 import bakermanager.C_inicio;
 import java.awt.AlphaComposite;
 import java.awt.EventQueue;
@@ -21,8 +23,8 @@ import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
 
 /**
  *
@@ -41,7 +43,7 @@ class C_gestion_proveedores extends MouseAdapter implements ActionListener, KeyL
         this.m_proveedor = new M_proveedor();
         this.vista = new V_gestion_proveedores();
         inicializarVista();
-        agregarListeners();
+        concederPermisos();
     }
 
     /**
@@ -61,7 +63,13 @@ class C_gestion_proveedores extends MouseAdapter implements ActionListener, KeyL
     private void inicializarVista() {
         this.vista.jtProveedor.setModel(DB_Proveedor.consultarProveedor("", true, true, false));
         Utilities.c_packColumn.packColumns(this.vista.jtProveedor, 2);
+        this.vista.jbCrearProveedor.setEnabled(false);
         this.vista.jbModificarProveedor.setEnabled(false);
+        this.vista.jtfBuscar.setEnabled(false);
+        this.vista.jckbEntidad.setEnabled(false);
+        this.vista.jckbRUC.setEnabled(false);
+        this.vista.jrbExclusivo.setEnabled(false);
+        this.vista.jrbInclusivo.setEnabled(false);
     }
 
     /**
@@ -84,20 +92,41 @@ class C_gestion_proveedores extends MouseAdapter implements ActionListener, KeyL
     /**
      * Agrega ActionListeners los controles.
      */
-    private void agregarListeners() {
-        //this.v_jifGesUsu.jbBorrar.addActionListener(this);
-        //this.v_jifGesUsu.jtfBuscar.addActionListener(this);
-        this.vista.jbCrearProveedor.addActionListener(this);
-        this.vista.jbModificarProveedor.addActionListener(this);
+    private void concederPermisos() {
         this.vista.jtProveedor.addMouseListener(this);
         this.vista.jtContacto.addMouseListener(this);
         this.vista.jtProveedor.addKeyListener(this);
-        this.vista.jckbEntidad.addActionListener(this);
-        this.vista.jckbRUC.addActionListener(this);
-        this.vista.jrbExclusivo.addActionListener(this);
-        this.vista.jrbInclusivo.addActionListener(this);
-        this.vista.jtfBuscar.addKeyListener(this);
+        ArrayList<M_menu_item> accesos = DatosUsuario.getRol_usuario().getAccesos();
+        for (M_menu_item acceso : accesos) {
+            if (this.vista.jbCrearProveedor.getName().equals(acceso.getItemDescripcion())) {
+                this.vista.jbCrearProveedor.setEnabled(true);
+                this.vista.jbCrearProveedor.addActionListener(this);
+            }
+            if (this.vista.jbModificarProveedor.getName().equals(acceso.getItemDescripcion())) {
+                this.vista.jbModificarProveedor.addActionListener(this);
+            }
+            if (this.vista.jtfBuscar.getName().equals(acceso.getItemDescripcion())) {
+                this.vista.jtfBuscar.addKeyListener(this);
+                this.vista.jckbEntidad.addActionListener(this);
+                this.vista.jckbRUC.addActionListener(this);
+                this.vista.jrbExclusivo.addActionListener(this);
+                this.vista.jrbInclusivo.addActionListener(this);
+                this.vista.jtfBuscar.setEnabled(true);
+                this.vista.jckbEntidad.setEnabled(true);
+                this.vista.jckbRUC.setEnabled(true);
+                this.vista.jrbExclusivo.setEnabled(true);
+                this.vista.jrbInclusivo.setEnabled(true);
+            }
+        }
+    }
 
+    private void verificarPermisos() {
+        ArrayList<M_menu_item> accesos = DatosUsuario.getRol_usuario().getAccesos();
+        for (M_menu_item acceso : accesos) {
+            if (this.vista.jbModificarProveedor.getName().equals(acceso.getItemDescripcion())) {
+                this.vista.jbCrearProveedor.setEnabled(true);
+            }
+        }
     }
 
     private void displayQueryResults() {

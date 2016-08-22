@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import javax.swing.Box;
 import javax.swing.ButtonGroup;
 import javax.swing.ButtonModel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
@@ -65,7 +66,7 @@ public class JTablePagination extends JPanel {
             table.setModel(model);
             showPages(100, 1);
         } catch (Exception e) {
-            
+            JOptionPane.showMessageDialog(this, "Problema al establecer modelo de tabla", "Error interno", JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -86,7 +87,7 @@ public class JTablePagination extends JPanel {
         if (currentPageIndex > 1) {
             l
                     .add(createRadioButtons(itemsPerPage, currentPageIndex - 1,
-                    "Prev "));
+                                    "Prev "));
         }
         for (int i = startPageIndex; i <= endPageIndex; i++) {
             l.add(createLinks(itemsPerPage, currentPageIndex, i - 1));
@@ -94,7 +95,7 @@ public class JTablePagination extends JPanel {
         if (currentPageIndex < maxPageIndex) {
             l
                     .add(createRadioButtons(itemsPerPage, currentPageIndex + 1,
-                    " Next"));
+                                    " Next"));
         }
 
         box.removeAll();

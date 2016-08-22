@@ -30,7 +30,7 @@ public class C_crearVentaRapida implements Gestion {
         this.vista = vista;
         this.gestionVentas = gestionVentas;
         inicializarVista();
-        agregarListeners();
+        concederPermisos();
     }
 
     @Override
@@ -63,7 +63,7 @@ public class C_crearVentaRapida implements Gestion {
     }
 
     @Override
-    public final void agregarListeners() {
+    public final void concederPermisos() {
         this.vista.jbSalir.addActionListener(this);
         this.vista.jbAceptar.addActionListener(this);
         this.vista.jbAgregarProducto.addActionListener(this);

@@ -7,7 +7,9 @@ package Cliente;
 import DB.DB_Cliente;
 import Entities.M_cliente;
 import Entities.M_cliente_contacto;
+import Entities.M_menu_item;
 import Interface.Gestion;
+import MenuPrincipal.DatosUsuario;
 import bakermanager.C_inicio;
 import java.awt.AlphaComposite;
 import java.awt.EventQueue;
@@ -18,7 +20,9 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.util.ArrayList;
 import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -41,7 +45,7 @@ public class C_gestion_cliente implements Gestion {
         this.vista = new V_gestion_cliente();
         this.vista.setLocation(c_inicio.centrarPantalla(this.vista));
         inicializarVista();
-        agregarListeners();
+        concederPermisos();
     }
 
     /**
@@ -62,15 +66,12 @@ public class C_gestion_cliente implements Gestion {
     public final void inicializarVista() {
         this.vista.jtCliente.setModel(DB_Cliente.consultarCliente("", false, true, true));
         Utilities.c_packColumn.packColumns(this.vista.jtCliente, 2);
+        this.vista.jbCrearCliente.setEnabled(false);
         this.vista.jbModificarCliente.setEnabled(false);
-        /*this.v_jifGesUsu.jftDescripcion.setFormatterFactory(
-         new javax.swing.text.DefaultFormatterFactory(
-         new javax.swing.text.NumberFormatter(
-         new java.text.DecimalFormat("#,##0"))));
-         this.v_jifGesProv.jftSalario.setFormatterFactory(
-         new javax.swing.text.DefaultFormatterFactory(
-         new javax.swing.text.NumberFormatter(
-         new java.text.DecimalFormat("#,##0"))));*/
+        this.vista.jckbEntidadNombre.setEnabled(false);
+        this.vista.jckbRuc.setEnabled(false);
+        this.vista.jrbExclusivo.setEnabled(false);
+        this.vista.jrbInclusivo.setEnabled(false);
     }
 
     /**
@@ -95,17 +96,32 @@ public class C_gestion_cliente implements Gestion {
      * Agrega ActionListeners los controles.
      */
     @Override
-    public final void agregarListeners() {
-        this.vista.jbCrearCliente.addActionListener(this);
-        this.vista.jbModificarCliente.addActionListener(this);
+    public final void concederPermisos() {
+        ArrayList<M_menu_item> accesos = DatosUsuario.getRol_usuario().getAccesos();
+        for (int i = 0; i < accesos.size(); i++) {
+            if (this.vista.jbCrearCliente.getName().equals(accesos.get(i).getItemDescripcion())) {
+                this.vista.jbCrearCliente.setEnabled(true);
+                this.vista.jbCrearCliente.addActionListener(this);
+            }
+            if (this.vista.jbModificarCliente.getName().equals(accesos.get(i).getItemDescripcion())) {
+                this.vista.jbModificarCliente.addActionListener(this);
+            }
+            if (this.vista.jtfBuscar.getName().equals(accesos.get(i).getItemDescripcion())) {
+                this.vista.jtfBuscar.setEnabled(true);
+                this.vista.jckbEntidadNombre.setEnabled(true);
+                this.vista.jckbRuc.setEnabled(true);
+                this.vista.jrbExclusivo.setEnabled(true);
+                this.vista.jrbInclusivo.setEnabled(true);
+                this.vista.jtfBuscar.addKeyListener(this);
+                this.vista.jrbExclusivo.addActionListener(this);
+                this.vista.jrbInclusivo.addActionListener(this);
+                this.vista.jckbEntidadNombre.addActionListener(this);
+                this.vista.jckbRuc.addActionListener(this);
+            }
+        }
         this.vista.jtCliente.addMouseListener(this);
         this.vista.jtCliente.addKeyListener(this);
         this.vista.jtContacto.addMouseListener(this);
-        this.vista.jtfBuscar.addKeyListener(this);
-        this.vista.jrbExclusivo.addActionListener(this);
-        this.vista.jrbInclusivo.addActionListener(this);
-        this.vista.jckbEntidadNombre.addActionListener(this);
-        this.vista.jckbRuc.addActionListener(this);
     }
 
     public void displayQueryResults() {
@@ -214,7 +230,28 @@ public class C_gestion_cliente implements Gestion {
         this.vista.jtContacto.setModel(DB_Cliente.obtenerClienteContacto(idClie));
         Utilities.c_packColumn.packColumns(this.vista.jtSucursal, 1);
 
-        this.vista.jbModificarCliente.setEnabled(true);
+        verificarAcceso();
+    }
+
+    private void verificarAcceso() {
+        ArrayList<M_menu_item> accesos = DatosUsuario.getRol_usuario().getAccesos();
+        for (int i = 0; i < accesos.size(); i++) {
+            if (this.vista.jbModificarCliente.getName().equals(accesos.get(i).getItemDescripcion())) {
+                this.vista.jbModificarCliente.setEnabled(true);
+            }
+        }
+    }
+
+    private void modificarCliente() {
+        int row = this.vista.jtCliente.getSelectedRow();
+        if (row > 0) {
+            int id = (Integer.valueOf((String) this.vista.jtCliente.getValueAt(row, 0)));
+            Modificar_cliente modificarCliente = new Modificar_cliente(this, id);
+            modificarCliente.mostrarVista();
+            this.vista.jbModificarCliente.setEnabled(false);
+        } else {
+            JOptionPane.showMessageDialog(vista, "Seleccione un cliente", "Atención", JOptionPane.INFORMATION_MESSAGE);
+        }
     }
 
     public void actionPerformed(ActionEvent e) {
@@ -223,8 +260,7 @@ public class C_gestion_cliente implements Gestion {
             crear_cliente.mostrarVista();
         }
         if (e.getSource().equals(this.vista.jbModificarCliente)) {
-            Modificar_cliente modificarCliente = new Modificar_cliente(this, idCliente);
-            modificarCliente.mostrarVista();
+            modificarCliente();
         }
         if (e.getSource().equals(this.vista.jrbExclusivo)) {
             displayQueryResults();
@@ -275,7 +311,7 @@ public class C_gestion_cliente implements Gestion {
                 this.vista.jtContacto.setModel(DB_Cliente.obtenerClienteContacto(idCliente));
                 Utilities.c_packColumn.packColumns(this.vista.jtSucursal, 1);
 
-                this.vista.jbModificarCliente.setEnabled(true);
+                verificarAcceso();
             } else {
                 this.vista.jbModificarCliente.setEnabled(false);
             }

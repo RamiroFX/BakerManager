@@ -8,7 +8,9 @@ import Charts.MenuDiagramas;
 import DB.DB_Egreso;
 import Entities.M_egreso_cabecera;
 import Entities.M_funcionario;
+import Entities.M_menu_item;
 import Entities.M_proveedor;
+import MenuPrincipal.DatosUsuario;
 import Proveedor.Seleccionar_proveedor;
 import bakermanager.C_inicio;
 import empleado.Seleccionar_funcionario;
@@ -20,6 +22,7 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Vector;
@@ -41,7 +44,7 @@ public class C_gestionEgresos extends MouseAdapter implements ActionListener, Ke
         this.c_inicio = c_inicio;
         this.vista.setLocation(c_inicio.centrarPantalla(this.vista));
         inicializarVista();
-        agregarListeners();
+        concederPermisos();
     }
 
     /**
@@ -75,18 +78,57 @@ public class C_gestionEgresos extends MouseAdapter implements ActionListener, Ke
         this.c_inicio.agregarVentana(vista);
     }
 
-    private void agregarListeners() {
-        this.vista.jbProveedor.addActionListener(this);
-        this.vista.jbFuncionario.addActionListener(this);
-        this.vista.jbBuscar.addActionListener(this);
-        this.vista.jbBorrar.addActionListener(this);
-        this.vista.jbAgregar.addActionListener(this);
-        this.vista.jbDetalle.addActionListener(this);
-        this.vista.jbBuscarDetalle.addActionListener(this);
+    private void concederPermisos() {
+        ArrayList<M_menu_item> accesos = DatosUsuario.getRol_usuario().getAccesos();
+        for (M_menu_item acceso : accesos) {
+            if (this.vista.jbAgregar.getName().equals(acceso.getItemDescripcion())) {
+                this.vista.jbAgregar.setEnabled(true);
+                this.vista.jbAgregar.addActionListener(this);
+            }
+            if (this.vista.jbResumen.getName().equals(acceso.getItemDescripcion())) {
+                this.vista.jbResumen.addActionListener(this);
+            }
+            if (this.vista.jbDetalle.getName().equals(acceso.getItemDescripcion())) {
+                this.vista.jbDetalle.addActionListener(this);
+            }
+            if (this.vista.jbBuscar.getName().equals(acceso.getItemDescripcion())) {
+                this.vista.jbBuscar.setEnabled(true);
+                this.vista.jcbCondCompra.setEnabled(true);
+                this.vista.jtfNroFactura.setEnabled(true);
+                this.vista.jddFinal.setEnabled(true);
+                this.vista.jddInicio.setEnabled(true);
+                this.vista.jbBuscar.addActionListener(this);
+                this.vista.jbProveedor.addActionListener(this);
+                this.vista.jbFuncionario.addActionListener(this);
+                this.vista.jbBorrar.addActionListener(this);
+                this.vista.jbBuscarDetalle.addActionListener(this);
+            }
+        }
         this.vista.jtEgresoCabecera.table.addMouseListener(this);
-        this.vista.jbResumen.addActionListener(this);
-        this.vista.jbGraficos.addActionListener(this);
+        //this.vista.jbGraficos.addActionListener(this);
         this.vista.jtEgresoCabecera.table.addKeyListener(this);
+    }
+
+    private void verificarPermiso() {
+        ArrayList<M_menu_item> accesos = DatosUsuario.getRol_usuario().getAccesos();
+        for (M_menu_item acceso : accesos) {
+            if (this.vista.jbDetalle.getName().equals(acceso.getItemDescripcion())) {
+                this.vista.jbDetalle.setEnabled(true);
+            }
+            if (this.vista.jbResumen.getName().equals(acceso.getItemDescripcion())) {
+                this.vista.jbResumen.setEnabled(true);
+            }
+        }
+    }
+
+    private void verDetalle() {
+        int row = this.vista.jtEgresoCabecera.table.getSelectedRow();
+        if (row > 0) {
+            Integer idEgresoCabecera = Integer.valueOf(String.valueOf(this.vista.jtEgresoCabecera.table.getValueAt(row, 0)));
+            Ver_Egresos ver_egreso = new Ver_Egresos(c_inicio, idEgresoCabecera);
+            ver_egreso.mostrarVista();
+            this.vista.jbDetalle.setEnabled(false);
+        }
     }
 
     private String empleado() {
@@ -242,10 +284,7 @@ public class C_gestionEgresos extends MouseAdapter implements ActionListener, Ke
         } else if (e.getSource().equals(this.vista.jbGraficos)) {
             verGraficos();
         } else if (e.getSource() == this.vista.jbDetalle) {
-            Integer idEgresoCabecera = Integer.valueOf(String.valueOf(this.vista.jtEgresoCabecera.table.getValueAt(this.vista.jtEgresoCabecera.table.getSelectedRow(), 0)));
-            Ver_Egresos ver_egreso = new Ver_Egresos(c_inicio, idEgresoCabecera);
-            ver_egreso.mostrarVista();
-            this.vista.jbDetalle.setEnabled(false);
+            verDetalle();
         }
     }
 
@@ -258,16 +297,16 @@ public class C_gestionEgresos extends MouseAdapter implements ActionListener, Ke
             //setProducto(DBmanagerProducto.mostrarProducto(idProducto));
             setEgreso_cabecera(DB_Egreso.obtenerEgresoCabeceraID(idEgresoCabecera));
             if ((fila > -1) && (columna > -1)) {
-                this.vista.jbDetalle.setEnabled(true);
+                verificarPermiso();
                 this.vista.jtEgresoDetalle.setModel(DB_Egreso.obtenerEgresoDetalle(idEgresoCabecera));
                 Utilities.c_packColumn.packColumns(vista.jtEgresoDetalle, 1);
             } else {
                 this.vista.jbDetalle.setEnabled(false);
             }
             if (e.getClickCount() == 2) {
-                Ver_Egresos ver_egreso = new Ver_Egresos(c_inicio, idEgresoCabecera);
-                ver_egreso.mostrarVista();
-                this.vista.jbDetalle.setEnabled(false);
+                if (this.vista.jbDetalle.isEnabled()) {
+                    verDetalle();
+                }
             }
         }
     }
