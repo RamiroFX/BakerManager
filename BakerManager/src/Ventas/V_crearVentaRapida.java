@@ -5,6 +5,7 @@
 package Ventas;
 
 import java.awt.BorderLayout;
+import java.awt.Insets;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFormattedTextField;
@@ -136,9 +137,13 @@ public class V_crearVentaRapida extends JDialog {
 
     private void initSouth() {
         jpSouth = new JPanel();
+        Insets insets = new Insets(10, 10, 10, 10);
         jbAceptar = new JButton("Confirmar venta");
+        jbAceptar.setMargin(insets);
         jbImprimir = new JButton("Imprimir");
+        jbImprimir.setMargin(insets);
         jbSalir = new JButton("Salir");
+        jbSalir.setMargin(insets);
         jpSouth.add(jbAceptar);
         jpSouth.add(jbImprimir);
         jpSouth.add(jbSalir);

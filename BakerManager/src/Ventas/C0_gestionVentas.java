@@ -180,11 +180,11 @@ public class C0_gestionVentas implements Gestion {
         return modelo.cabecera.getFuncionario().getId_funcionario().toString();
     }
 
-    private String cliente() {
+    private M_cliente cliente() {
         if (vista.jtfCliente.getText().isEmpty()) {
-            return "Todos";
+            return null;
         }
-        return modelo.cabecera.getCliente().getEntidad();
+        return modelo.cabecera.getCliente();
     }
 
     private String tipoOperacion() {
@@ -218,7 +218,7 @@ public class C0_gestionVentas implements Gestion {
             return;
         }
         String empleado = empleado();
-        String cliente = cliente();
+        M_cliente cliente = cliente();
         String tiop = tipoOperacion();
         Resumen_ingreso re = new Resumen_ingreso(c_inicio, this.vista.jtEgresoCabecera.table.getModel(), cliente, nro_factura, empleado, vista.jddInicio.getDate(), vista.jddFinal.getDate(), tiop);
         re.setVisible(true);

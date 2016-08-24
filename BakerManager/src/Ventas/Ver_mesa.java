@@ -15,13 +15,6 @@ public class Ver_mesa {
     public C_verMesa controlador;
     public C_crearVentas crearVentas;
 
-    public Ver_mesa(C_crearVentas crearVentas, Integer idMesa) {
-        this.crearVentas = crearVentas;
-        this.modelo = new M_verMesa(idMesa);
-        this.vista = new V_crearVentaRapida(crearVentas.gestionVentas.c_inicio.vista);
-        this.controlador = new C_verMesa(this.modelo, this.vista, this.crearVentas);
-    }
-
     public Ver_mesa(C_crearVentas crearVentas, int idMesa) {
         this.crearVentas = crearVentas;
         this.modelo = new M_verMesa(idMesa);

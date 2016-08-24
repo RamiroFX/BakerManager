@@ -15,6 +15,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Timestamp;
 import java.sql.Types;
 import java.util.ArrayList;
 import java.util.logging.Level;
@@ -62,7 +63,6 @@ public class DB_Ingreso {
             }
         }
         try {
-            System.out.println("64: " + Query);
             st = DB_manager.getConection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             // se ejecuta el query y se obtienen los resultados en un ResultSet
             rs = st.executeQuery(Query);
@@ -182,6 +182,44 @@ public class DB_Ingreso {
         return ingreso_cabecera;
     }
 
+    public static ResultSetTableModel consultarIngresoDetalleAgrupado(Timestamp inicio, Timestamp fin, M_cliente cliente) {
+        String QUERY = "SELECT PROD.DESCRIPCION \"Producto\", SUM(FADE.CANTIDAD) \"Cantidad\", FADE.PRECIO \"Precio\", FADE.DESCUENTO \"Descuento\", "
+                + "CASE WHEN PROD.ID_IMPUESTO = 1 THEN SUM(ROUND(FADE.CANTIDAD*(FADE.PRECIO-(FADE.PRECIO*FADE.DESCUENTO)/100))) ELSE '0' END AS \"Exenta\", "
+                + "CASE WHEN PROD.ID_IMPUESTO = 2 THEN SUM(ROUND(FADE.CANTIDAD*(FADE.PRECIO-(FADE.PRECIO*FADE.DESCUENTO)/100))) ELSE '0' END AS \"IVA 5%\", "
+                + "CASE WHEN PROD.ID_IMPUESTO = 3 THEN SUM(ROUND(FADE.CANTIDAD*(FADE.PRECIO-(FADE.PRECIO*FADE.DESCUENTO)/100))) ELSE '0' END AS \"IVA 10%\" "
+                + "FROM FACTURA_DETALLE FADE, FACTURA_CABECERA FACA, PRODUCTO PROD "
+                + "WHERE FADE.ID_FACTURA_CABECERA = FACA.ID_FACTURA_CABECERA "
+                + "AND FADE.ID_PRODUCTO = PROD.ID_PRODUCTO "
+                + "AND FACA.TIEMPO BETWEEN ? AND ? ";
+
+        String PIE = "GROUP BY PROD.DESCRIPCION, FADE.PRECIO, FADE.DESCUENTO,PROD.ID_IMPUESTO ";
+        if (cliente != null) {
+            if (cliente.getIdCliente() != null) {
+                QUERY = QUERY + "AND FACA.ID_CLIENTE = ? " + PIE;
+            }
+        } else {
+            QUERY = QUERY + PIE;
+        }
+        ResultSetTableModel rstm = null;
+        try {
+            System.out.println("206: " + QUERY);
+            pst = DB_manager.getConection().prepareStatement(QUERY, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            pst.setTimestamp(1, inicio);
+            pst.setTimestamp(2, fin);
+            if (cliente != null) {
+                if (cliente.getIdCliente() != null) {
+                    pst.setInt(3, cliente.getIdCliente());
+                }
+            }
+            rs = pst.executeQuery();
+            rstm = new ResultSetTableModel(rs);
+        } catch (SQLException ex) {
+            Logger lgr = Logger.getLogger(DB_Egreso.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        }
+        return rstm;
+    }
+
     public static ResultSetTableModel obtenerIngresoDetalle(Integer idIngresoCabecera) {
         String Query = "SELECT "
                 + "FD.ID_PRODUCTO \"ID art.\", "
@@ -244,7 +282,6 @@ public class DB_Ingreso {
             q = q + tiempo;
         }
         try {
-            System.out.println("239: " + q);
             st = DB_manager.getConection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             // se ejecuta el query y se obtienen los resultados en un ResultSet
             rs = st.executeQuery(q);
@@ -278,7 +315,6 @@ public class DB_Ingreso {
                 + "WHERE  P.ID_PRODUCTO = MD.ID_PRODUCTO "
                 + "AND MD.ID_MESA = " + idMesa;
         ResultSetTableModel rstm = null;
-        System.out.println("273-ingreso: " + Query);
         try {
             st = DB_manager.getConection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             // se ejecuta el query y se obtienen los resultados en un ResultSet
@@ -329,7 +365,6 @@ public class DB_Ingreso {
                 pst.executeUpdate();
                 pst.close();
             }
-            System.out.println("Se inserto exitosamente");
             DB_manager.establecerTransaccion();
         } catch (SQLException ex) {
             System.out.println(ex.getNextException());
@@ -371,12 +406,12 @@ public class DB_Ingreso {
 
         String q = "SELECT M.ID_MESA, M.ID_FUNCIONARIO, M.ID_CLIENTE, M.TIEMPO,M.MESA_NUMERO, "
                 + "       M.ID_COND_VENTA, "
-                + "C.ID_CLIENTE, C.NOMBRE, C.ENTIDAD, C.RUC, C.RUC_IDENTIFICADOR, " + categoria + "," + tipo + ","
-                + "       C.DIRECCION, C.EMAIL, C.PAG_WEB, C.ID_TIPO, C.ID_CATEGORIA, "
-                + "       C.OBSERVACION, "
+                + "C.ID_CLIENTE, C.NOMBRE \"CNOMBRE\", C.ENTIDAD, C.RUC, C.RUC_IDENTIFICADOR, " + categoria + "," + tipo + ","
+                + "       C.DIRECCION \"CDIRECCION\", C.EMAIL \"CEMAIL\", C.PAG_WEB, C.ID_TIPO, C.ID_CATEGORIA, "
+                + "       C.OBSERVACION \"COBSERVACION\", "
                 + "F.ID_FUNCIONARIO, F.ID_PERSONA, F.ALIAS, F.FECHA_INGRESO, " + genero + "," + pais + "," + ciudad + "," + estadoCivil + ","
                 + "      F.NRO_CELULAR, "
-                + "       F.NRO_TELEFONO, F.EMAIL, F.DIRECCION, F.OBSERVACION,P.ID_PERSONA, P.CI, P.NOMBRE, P.APELLIDO, P.ID_SEXO, "
+                + "       F.NRO_TELEFONO\"FNRO_TELEFONO\", F.EMAIL \"FEMAIL\", F.DIRECCION \"FDIRECCION\", F.OBSERVACION \"FOBSERVACION\",P.ID_PERSONA, P.CI, P.NOMBRE \"FNOMBRE\", P.APELLIDO, P.ID_SEXO, "
                 + "       P.FECHA_NACIMIENTO, P.ID_ESTADO_CIVIL, P.ID_PAIS, P.ID_CIUDAD "
                 + "  FROM MESA M,FUNCIONARIO F,CLIENTE C,PERSONA P "
                 + "  WHERE M.ID_FUNCIONARIO = F.ID_FUNCIONARIO "
@@ -393,29 +428,29 @@ public class DB_Ingreso {
                 f.setFecha_nacimiento(rs.getDate("FECHA_NACIMIENTO"));
                 f.setSexo(rs.getString("sexo"));
                 f.setNro_celular(rs.getString("nro_celular"));
-                f.setNro_telefono(rs.getString("nro_telefono"));
-                f.setEmail(rs.getString("email"));
-                f.setDireccion(rs.getString("DIRECCION"));
+                f.setNro_telefono(rs.getString("FNRO_TELEFONO"));
+                f.setEmail(rs.getString("FEMAIL"));
+                f.setDireccion(rs.getString("FDIRECCION"));
                 f.setAlias(rs.getString("alias"));
-                f.setNombre(rs.getString("nombre"));
+                f.setNombre(rs.getString("FNOMBRE"));
                 f.setApellido(rs.getString("apellido"));
                 f.setFecha_ingreso(rs.getDate("FECHA_INGRESO"));
                 f.setId_persona(rs.getInt("id_persona"));
                 f.setCedula(rs.getInt("ci"));
                 f.setEstado_civil(rs.getString("estado_civil"));
                 f.setId_funcionario(rs.getInt("id_funcionario"));
-                f.setObservacion(rs.getString("OBSERVACION"));
+                f.setObservacion(rs.getString("FOBSERVACION"));
 
                 M_cliente cliente = new M_cliente();
                 cliente.setCategoria(rs.getString("CATEGORIA"));
-                cliente.setDireccion(rs.getString("DIRECCION"));
-                cliente.setEmail(rs.getString("EMAIL"));
+                cliente.setDireccion(rs.getString("CDIRECCION"));
+                cliente.setEmail(rs.getString("CEMAIL"));
                 cliente.setEntidad(rs.getString("ENTIDAD"));
                 cliente.setIdCategoria(rs.getInt("ID_CATEGORIA"));
                 cliente.setIdCliente(rs.getInt("ID_CLIENTE"));
                 cliente.setIdTipo(rs.getInt("ID_TIPO"));
-                cliente.setNombre(rs.getString("NOMBRE"));
-                cliente.setObservacion(rs.getString("OBSERVACION"));
+                cliente.setNombre(rs.getString("CNOMBRE"));
+                cliente.setObservacion(rs.getString("COBSERVACION"));
                 cliente.setPaginaWeb(rs.getString("PAG_WEB"));
                 cliente.setRuc(rs.getString("RUC"));
                 cliente.setRucId(rs.getString("RUC_IDENTIFICADOR"));
@@ -480,16 +515,25 @@ public class DB_Ingreso {
 
     public static void actualizarMesaDetalle(M_mesa_detalle mesaDetalle) {
         String UPDATE_MESA = "UPDATE MESA_DETALLE SET "
-                + "CANTIDAD= " + mesaDetalle.getCantidad() + ", "
-                + "PRECIO=" + mesaDetalle.getPrecio() + ", "
-                + "DESCUENTO=" + mesaDetalle.getDescuento() + ", "
-                + "OBSERVACION= '" + mesaDetalle.getObservacion() + "' "
-                + "WHERE ID_MESA_DETALLE = " + mesaDetalle.getIdMesaDetalle();
+                + "CANTIDAD= ?, "
+                + "PRECIO= ?, "
+                + "DESCUENTO= ?, "
+                + "OBSERVACION= ? "
+                + "WHERE ID_MESA_DETALLE = ?";
         try {
             DB_manager.habilitarTransaccionManual();
-            st = DB_manager.getConection().createStatement();
-            st.executeUpdate(UPDATE_MESA);
-            st.close();
+            pst = DB_manager.getConection().prepareStatement(UPDATE_MESA);
+            pst.setDouble(1, mesaDetalle.getCantidad());
+            pst.setInt(2, mesaDetalle.getPrecio());
+            pst.setDouble(3, mesaDetalle.getDescuento());
+            if (mesaDetalle.getObservacion() == null) {
+                pst.setNull(4, Types.NULL);
+            } else {
+                pst.setString(4, mesaDetalle.getObservacion());
+            }
+            pst.setInt(5, mesaDetalle.getIdMesaDetalle());
+            pst.executeUpdate();
+            pst.close();
             DB_manager.establecerTransaccion();
         } catch (SQLException ex) {
             System.out.println(ex.getNextException());
@@ -622,7 +666,7 @@ public class DB_Ingreso {
         }
     }
 
-    public static void transferirMesaAVenta(M_mesa mesa, ArrayList<M_mesa_detalle> detalle) {
+    public static int transferirMesaAVenta(M_mesa mesa, ArrayList<M_mesa_detalle> detalle) {
         String INSERT_DETALLE = "INSERT INTO FACTURA_DETALLE(ID_FACTURA_CABECERA, ID_PRODUCTO, CANTIDAD, PRECIO, DESCUENTO, OBSERVACION)VALUES (?, ?, ?, ?, ?, ?);";
         //LA SGBD SE ENCARGA DE INSERTAR EL TIMESTAMP.
         String INSERT_CABECERA = "INSERT INTO FACTURA_CABECERA(ID_FUNCIONARIO, ID_CLIENTE, ID_COND_VENTA)VALUES (?, ?, ?);";
@@ -691,6 +735,7 @@ public class DB_Ingreso {
                 lgr.log(Level.WARNING, ex.getMessage(), ex);
             }
         }
+        return (int) sq_cabecera;
     }
 
     public static ArrayList<M_facturaDetalle> obtenerVentaDetalles(Integer idFacturaCabecera) {

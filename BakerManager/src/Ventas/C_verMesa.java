@@ -230,7 +230,11 @@ public class C_verMesa extends MouseAdapter implements ActionListener {
         detalle.setExenta(impExenta);
         detalle.setIva10(imp10);
         detalle.setIva5(imp5);
-        detalle.setObservacion(observacion);
+        if (observacion != null) {
+            detalle.setObservacion(observacion);
+        } else {
+            detalle.setObservacion("");
+        }
         detalle.setPrecio(precio);
         this.modelo.setMesaDetalle(detalle);
         this.modelo.modificarMesaDetalle();

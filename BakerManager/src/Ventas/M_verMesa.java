@@ -7,12 +7,13 @@ package Ventas;
 import DB.DB_Ingreso;
 import DB.ResultSetTableModel;
 import Entities.M_cliente;
-import Entities.M_facturaDetalle;
 import Entities.M_funcionario;
 import Entities.M_mesa;
 import Entities.M_mesa_detalle;
 import Entities.M_producto;
+import Utilities.Impresora;
 import java.util.ArrayList;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -80,7 +81,12 @@ public class M_verMesa {
 
     public void guardarVenta() {
         preparaVenta();
-        DB_Ingreso.transferirMesaAVenta(getMesa(), getDetalles());
+        int nroTicket = DB_Ingreso.transferirMesaAVenta(getMesa(), getDetalles());
+        getMesa().setIdMesa(nroTicket);
+        int opcion = JOptionPane.showConfirmDialog(null, "¿Desea imprimir el ticket?", "Atención", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+        if (opcion == JOptionPane.YES_OPTION) {
+            Impresora.imprimirVentaMesa(getMesa(), getDetalles());
+        }
     }
 
     public void guardarVentaDetalle() {
@@ -115,18 +121,19 @@ public class M_verMesa {
         int row = getRstm().getRowCount();
         for (int i = 0; i < row; i++) {
             M_mesa_detalle fd = new M_mesa_detalle();
-            fd.setCantidad(Double.valueOf(getRstm().getValueAt(i, 3).toString()));
-            fd.setDescuento(Double.valueOf(getRstm().getValueAt(i, 5).toString()));
-            fd.setExenta(Integer.valueOf(getRstm().getValueAt(i, 6).toString()));
             fd.setProducto(new M_producto());
             fd.getProducto().setId(Integer.valueOf(getRstm().getValueAt(i, 1).toString()));
-            fd.setIva10(Integer.valueOf(getRstm().getValueAt(i, 8).toString()));
-            fd.setIva5(Integer.valueOf(getRstm().getValueAt(i, 7).toString()));
-            fd.setObservacion(String.valueOf(getRstm().getValueAt(i, 9).toString()));
+            fd.getProducto().setDescripcion(String.valueOf(getRstm().getValueAt(i, 2).toString()));
+            fd.setCantidad(Double.valueOf(getRstm().getValueAt(i, 3).toString()));
             fd.setPrecio(Integer.valueOf(getRstm().getValueAt(i, 4).toString()));
-//            System.out.println(fd.getIdProducto() + "-" + "producto" + "-" + fd.getCantidad()
-//                    + "-" + fd.getPrecio() + "-" + fd.getDescuento() + "-" + fd.getExenta() + "-"
-//                    + fd.getIva5() + "-" + fd.getIva10() + "-" + fd.getObservacion());
+            fd.setDescuento(Double.valueOf(getRstm().getValueAt(i, 5).toString()));
+            fd.setExenta(Integer.valueOf(getRstm().getValueAt(i, 6).toString()));
+            Object obs = getRstm().getValueAt(i, 9);
+            if (obs != null) {
+                fd.setObservacion(String.valueOf(obs.toString()));
+            } else {
+                fd.setObservacion(null);
+            }
             getDetalles().add(fd);
         }
     }

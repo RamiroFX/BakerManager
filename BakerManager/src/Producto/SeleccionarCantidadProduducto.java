@@ -448,6 +448,9 @@ public class SeleccionarCantidadProduducto extends javax.swing.JDialog implement
             if (ke.getKeyChar() == '\n') {
                 enviarCantidad();
             }
+            if (ke.getKeyChar() == KeyEvent.VK_ESCAPE) {
+                this.dispose();
+            }
         }
         if (ke.getSource().equals(jtfTotal)) {
             checkearTotal();

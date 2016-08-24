@@ -220,7 +220,7 @@ public class DB_Producto {
                     + fromQuery
                     + "WHERE "
                     + prov
-                    + "LOWER(PROD.DESCRIPCION) LIKE '" + descripcion + "%' "
+                    + "LOWER(PROD.DESCRIPCION) LIKE ? "
                     + marc
                     + imp
                     + rubr
@@ -228,9 +228,10 @@ public class DB_Producto {
                     + finalQuery;
             //SELECT PROD.id_producto   "ID producto"  ,  PROD.descripcion  "Descripcion"   FROM producto
             //se crea una sentencia
-            st = DB_manager.getConection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            pst = DB_manager.getConection().prepareStatement(Query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            pst.setString(1, descripcion + "%");
             // se ejecuta el query y se obtienen los resultados en un ResultSet
-            rs = st.executeQuery(Query);
+            rs = pst.executeQuery();
             rstm = new ResultSetTableModel(rs);
         } catch (SQLException ex) {
             Logger lgr = Logger.getLogger(DB_Producto.class.getName());

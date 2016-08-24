@@ -14,6 +14,8 @@ import DB.DB_Pedido;
 import DB.DB_manager;
 import Entities.M_facturaCabecera;
 import Entities.M_facturaDetalle;
+import Entities.M_mesa;
+import Entities.M_mesa_detalle;
 import Entities.M_pedido;
 import Entities.M_pedidoDetalle;
 import Entities.M_rol_usuario;
@@ -21,7 +23,6 @@ import MenuPrincipal.DatosUsuario;
 import java.awt.print.PageFormat;
 import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
-import java.io.ByteArrayInputStream;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -29,7 +30,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.activation.MimeType;
 import javax.print.Doc;
 import javax.print.DocFlavor;
 import javax.print.DocPrintJob;
@@ -37,9 +37,6 @@ import javax.print.PrintException;
 import javax.print.PrintService;
 import javax.print.PrintServiceLookup;
 import javax.print.SimpleDoc;
-import javax.print.attribute.Attribute;
-import javax.print.attribute.AttributeSet;
-import javax.print.attribute.DocAttributeSet;
 import javax.swing.JOptionPane;
 
 /**
@@ -147,7 +144,7 @@ public class Impresora {
         PrintService service = PrintServiceLookup.lookupDefaultPrintService();
         Date today = Calendar.getInstance().getTime();
         String fechaEntrega = sdfs.format(today);
-        String CABECERA = "Fecha y hora:" + fechaEntrega + "\n"
+        String CABECERA = "Fecha y hora: " + fechaEntrega + "\n"
                 + "Cajero: " + pedidoCabecera.getFuncionario().getNombre() + "\n"
                 + "Cliente: " + pedidoCabecera.getCliente().getEntidad() + "\n"
                 + "Fecha pedido: " + sdfs.format(pedidoCabecera.getTiempoRecepcion()) + "\n"
@@ -183,7 +180,7 @@ public class Impresora {
         PrintService service = PrintServiceLookup.lookupDefaultPrintService();
         Date today = Calendar.getInstance().getTime();
         String fechaEntrega = sdfs.format(today);
-        String CABECERA = "Fecha y hora:" + fechaEntrega + "\n"
+        String CABECERA = "Fecha y hora: " + fechaEntrega + "\n"
                 + "Cajero: " + pedidoCabecera.getFuncionario().getNombre() + "\n"
                 + "Cliente: " + pedidoCabecera.getCliente().getEntidad() + "\n"
                 + "Fecha pedido: " + sdfs.format(pedidoCabecera.getTiempoRecepcion()) + "\n"
@@ -218,7 +215,7 @@ public class Impresora {
         PrintService service = PrintServiceLookup.lookupDefaultPrintService();
         Date today = Calendar.getInstance().getTime();
         String fechaEntrega = sdfs.format(today);
-        String CABECERA = "Fecha y hora:" + fechaEntrega + "\n"
+        String CABECERA = "Fecha y hora: " + fechaEntrega + "\n"
                 + "Ticket nro.: " + facturaCabecera.getIdFacturaCabecera() + "\n"
                 + "Cajero: " + facturaCabecera.getFuncionario().getNombre() + "\n"
                 + "Cliente: " + facturaCabecera.getCliente().getEntidad() + "\n" + "---------------------------------\n";
@@ -253,7 +250,7 @@ public class Impresora {
         PrintService service = PrintServiceLookup.lookupDefaultPrintService();
         Date today = Calendar.getInstance().getTime();
         String fechaEntrega = sdfs.format(today);
-        String CABECERA = "Fecha y hora:" + fechaEntrega + "\n"
+        String CABECERA = "Fecha y hora: " + fechaEntrega + "\n"
                 + "Ticket nro.: " + facturaCabecera.getIdFacturaCabecera() + "\n"
                 + "Cajero: " + facturaCabecera.getFuncionario().getNombre() + "\n"
                 + "Cliente: " + facturaCabecera.getCliente().getEntidad() + "\n"
@@ -265,6 +262,41 @@ public class Impresora {
             int subtotal = Math.round(Math.round(pedidoDetalle1.getCantidad() * pedidoDetalle1.getPrecio()));
             total = total + subtotal;
             DETALLE = DETALLE + "-> " + pedidoDetalle1.getProducto().getDescripcion() + "\n" + pedidoDetalle1.getCantidad() + " " + pedidoDetalle1.getPrecio() + "  " + subtotal + "\n";
+        }
+        String SUMATOTAL = "---------------------------------\n"
+                + "Total= " + total + "\n";
+        String ticket = TICKET_CABECERA + CABECERA + COLUMNAS + DETALLE + SUMATOTAL + TICKET_PIE_SIN_GRACIAS;
+        byte[] bytes = ticket.getBytes();
+        DocFlavor flavor = DocFlavor.BYTE_ARRAY.AUTOSENSE;
+        Doc doc = new SimpleDoc(bytes, flavor, null);
+        DocPrintJob job = service.createPrintJob();
+        try {
+            if (job != null) {
+                job.print(doc, null);
+            } else {
+                JOptionPane.showMessageDialog(null, "No se pudo imprimir", "Error", JOptionPane.INFORMATION_MESSAGE);
+            }
+        } catch (PrintException ex) {
+            System.out.println(ex);
+        }
+    }
+
+    public static void imprimirVentaMesa(M_mesa mesaCabecera, ArrayList<M_mesa_detalle> detalles) {
+        PrintService service = PrintServiceLookup.lookupDefaultPrintService();
+        Date today = Calendar.getInstance().getTime();
+        String fechaEntrega = sdfs.format(today);
+        String CABECERA = "Fecha y hora: " + fechaEntrega + "\n"
+                + "Ticket nro.: " + mesaCabecera.getIdMesa() + "\n"
+                + "Cajero: " + mesaCabecera.getFuncionario().getNombre() + "\n"
+                + "Cliente: " + mesaCabecera.getCliente().getEntidad() + "\n"
+                + "---------------------------------\n";
+        String COLUMNAS = "producto   cant  precio  subtotal\n";
+        String DETALLE = "";
+        int total = 0;
+        for (M_mesa_detalle mesaDetalle : detalles) {
+            int subtotal = Math.round(Math.round(mesaDetalle.getCantidad() * mesaDetalle.getPrecio()));
+            total = total + subtotal;
+            DETALLE = DETALLE + "-> " + mesaDetalle.getProducto().getDescripcion() + "\n" + mesaDetalle.getCantidad() + " " + mesaDetalle.getPrecio() + "  " + subtotal + "\n";
         }
         String SUMATOTAL = "---------------------------------\n"
                 + "Total= " + total + "\n";

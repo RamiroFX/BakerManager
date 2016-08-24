@@ -5,11 +5,9 @@
 package Ventas;
 
 import DB.DB_Cliente;
-import DB.DB_Funcionario;
 import DB.DB_Ingreso;
 import Entities.M_facturaCabecera;
 import Entities.M_facturaDetalle;
-import Entities.M_funcionario;
 import Entities.M_telefono;
 import MenuPrincipal.DatosUsuario;
 import Utilities.Impresora;

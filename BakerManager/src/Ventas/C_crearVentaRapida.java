@@ -223,7 +223,6 @@ public class C_crearVentaRapida implements Gestion {
         this.vista.jbEliminarDetalle.setEnabled(false);
         this.vista.jbModificarDetalle.setEnabled(false);
         sumarTotal();
-        imprimirDetalle();
     }
 
     public void modificarDetalle(Double cantidad, Integer precio, Double descuento, String observacion, int row) {
@@ -267,7 +266,6 @@ public class C_crearVentaRapida implements Gestion {
         this.vista.jtFacturaDetalle.updateUI();
         this.vista.jbEliminarDetalle.setEnabled(false);
         this.vista.jbModificarDetalle.setEnabled(false);
-        imprimirDetalle();
         sumarTotal();
     }
 
@@ -293,27 +291,6 @@ public class C_crearVentaRapida implements Gestion {
         String nombre = this.modelo.getCabecera().getCliente().getNombre();
         String entidad = this.modelo.getCabecera().getCliente().getEntidad();
         this.vista.jtfCliente.setText(nombre + " (" + entidad + ")");
-    }
-
-    protected void imprimirDetalle() {
-        System.out.println("*---------------------------------------------------------*");
-        for (int i = 0; i < this.modelo.getDtm().getRowCount(); i++) {
-            String id0 = "" + this.modelo.getDtm().getValueAt(i, 0);
-            String id1 = "" + this.modelo.getDtm().getValueAt(i, 1);
-            String id2 = "" + this.modelo.getDtm().getValueAt(i, 2);
-            String id3 = "" + this.modelo.getDtm().getValueAt(i, 3);
-            String id4 = "" + this.modelo.getDtm().getValueAt(i, 4);
-            String id5 = "" + this.modelo.getDtm().getValueAt(i, 5);
-            String id6 = "" + this.modelo.getDtm().getValueAt(i, 6);
-            String id7 = "" + this.modelo.getDtm().getValueAt(i, 7);
-            System.out.println(id0 + " - " + id1 + " - " + id2 + " - " + id3 + " - " + id4 + " - " + id5 + " - " + id6 + " - " + id7);
-        }
-        System.out.println("---------------------------------------------------------");
-        for (Object object : this.modelo.getDetalles()) {
-            M_facturaDetalle m = (M_facturaDetalle) object;
-            System.out.println(m.getProducto().getId() + " - " + m.getCantidad() + " - " + m.getProducto().getDescripcion() + " - " + m.getObservacion() + " - " + m.getPrecio() + " - " + m.getDescuento() + " - " + m.getExenta() + " - " + m.getIva5() + " - " + m.getIva10());
-        }
-        System.out.println("/---------------------------------------------------------/");
     }
 
     private void guardarVenta() {
