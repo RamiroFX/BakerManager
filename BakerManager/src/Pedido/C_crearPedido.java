@@ -9,6 +9,8 @@ import Entities.M_cliente;
 import Entities.M_pedidoDetalle;
 import Entities.M_producto;
 import MenuPrincipal.DatosUsuario;
+import Parametros.PedidoEstado;
+import Parametros.TipoOperacion;
 import Producto.SeleccionarCantidadProduducto;
 import Producto.SeleccionarProducto;
 import Utilities.Impresora;
@@ -51,9 +53,9 @@ public class C_crearPedido extends MouseAdapter implements ActionListener {
 
     private void inicializarVista() {
         this.vista.jrbContado.setSelected(true);
-        this.modelo.getPedido().setIdCondVenta(1);
-        this.modelo.getPedido().setEstado("Pendiente");
-        this.modelo.getPedido().setIdEstado(1);
+        this.modelo.getPedido().setIdCondVenta(TipoOperacion.CONTADO);
+        this.modelo.getPedido().setEstado(PedidoEstado.PENDIENTE.getDescripcion());
+        this.modelo.getPedido().setIdEstado(PedidoEstado.PENDIENTE.getId());
         String func_alias = this.modelo.getPedido().getFuncionario().getAlias();
         this.vista.jtfFuncionario.setText(func_alias);
         this.vista.jtPedidoDetalle.setModel(this.modelo.getDtm());
@@ -98,9 +100,9 @@ public class C_crearPedido extends MouseAdapter implements ActionListener {
 
     private void establecerCondicionVenta() {
         if (this.vista.jrbContado.isSelected()) {
-            this.modelo.getPedido().setIdCondVenta(1);
+            this.modelo.getPedido().setIdCondVenta(TipoOperacion.CONTADO);
         } else {
-            this.modelo.getPedido().setIdCondVenta(2);
+            this.modelo.getPedido().setIdCondVenta(TipoOperacion.CREDITO);
         }
     }
 

@@ -63,7 +63,7 @@ public class V_crearVentaRapida extends JDialog {
 
     private void initNorth() {
         jpNorth = new JPanel(new MigLayout());
-        jbCliente = new JButton("Agregar cliente");
+        jbCliente = new JButton("Agregar cliente [F5]");
         jtfCliente = new JTextField(30);
         jtfCliente.setEditable(false);
         jlFuncionario = new JLabel("Funcionario");
@@ -100,7 +100,7 @@ public class V_crearVentaRapida extends JDialog {
         jtFacturaDetalle = new JTable();
         jtFacturaDetalle.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         jspFacturaDetalle = new JScrollPane(jtFacturaDetalle);
-        jbAgregarProducto = new JButton("Agregar producto");
+        jbAgregarProducto = new JButton("Agregar producto [F4]");
         jbModificarDetalle = new JButton("Modificar detalle");
         jbEliminarDetalle = new JButton("Eliminar detalle");
         JPanel jpSouthAux = new JPanel(new MigLayout());
@@ -138,11 +138,11 @@ public class V_crearVentaRapida extends JDialog {
     private void initSouth() {
         jpSouth = new JPanel();
         Insets insets = new Insets(10, 10, 10, 10);
-        jbAceptar = new JButton("Confirmar venta");
+        jbAceptar = new JButton("Confirmar venta [F1]");
         jbAceptar.setMargin(insets);
-        jbImprimir = new JButton("Imprimir");
+        jbImprimir = new JButton("Imprimir [F2]");
         jbImprimir.setMargin(insets);
-        jbSalir = new JButton("Salir");
+        jbSalir = new JButton("Salir [F3]");
         jbSalir.setMargin(insets);
         jpSouth.add(jbAceptar);
         jpSouth.add(jbImprimir);

@@ -179,6 +179,9 @@ public class C_seleccionar_funcionario extends MouseAdapter implements ActionLis
 
     @Override
     public void keyPressed(KeyEvent e) {
+        if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+            cerrar();
+        }
     }
 
     @Override

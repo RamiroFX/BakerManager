@@ -225,6 +225,9 @@ public class C_seleccionar_cliente extends MouseAdapter implements ActionListene
 
     @Override
     public void keyPressed(KeyEvent e) {
+        if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+            cerrar();
+        }
     }
 
     @Override

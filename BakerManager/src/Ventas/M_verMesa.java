@@ -11,6 +11,7 @@ import Entities.M_funcionario;
 import Entities.M_mesa;
 import Entities.M_mesa_detalle;
 import Entities.M_producto;
+import Parametros.TipoOperacion;
 import Utilities.Impresora;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
@@ -31,7 +32,7 @@ public class M_verMesa {
         this.mesa.setNumeroMesa(nroMesa);
         this.mesa.setFuncionario(f);
         this.mesa.setCliente(c);
-        this.mesa.setIdCondVenta(1);//contado
+        this.mesa.setIdCondVenta(TipoOperacion.CONTADO);
         this.detalle = new M_mesa_detalle();
         this.detalles = new ArrayList<>();
     }

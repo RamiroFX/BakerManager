@@ -10,6 +10,7 @@ import Entities.M_facturaCabecera;
 import Entities.M_facturaDetalle;
 import Entities.M_telefono;
 import MenuPrincipal.DatosUsuario;
+import Parametros.TipoOperacion;
 import Utilities.Impresora;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
@@ -30,7 +31,7 @@ public class M_crearVentaRapida {
     public M_crearVentaRapida() {
         this.cabecera = new M_facturaCabecera();
         this.cabecera.setCliente(DB_Cliente.obtenerDatosClienteID(1));//mostrador
-        this.cabecera.setIdCondVenta(1);//contado
+        this.cabecera.setIdCondVenta(TipoOperacion.CONTADO);
         try {
             this.telefono = DB_Cliente.obtenerTelefonoCliente(this.cabecera.getCliente().getIdCliente()).get(1);
         } catch (Exception e) {

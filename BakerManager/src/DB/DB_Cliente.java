@@ -40,20 +40,36 @@ public class DB_Cliente {
             busqueda = "%" + busqueda + "%";
         }
         if (entidad && ruc) {
-            WHERE = WHERE + "LOWER(CLIE.NOMBRE) LIKE '" + busqueda + "' OR LOWER(CLIE.ENTIDAD) LIKE '" + busqueda + "' OR LOWER(CLIE.RUC) LIKE '" + busqueda + "'";
+            WHERE = WHERE + "LOWER(CLIE.NOMBRE) LIKE ? OR LOWER(CLIE.ENTIDAD) LIKE ? OR LOWER(CLIE.RUC) LIKE ? ";
         } else if (entidad) {
-            WHERE = WHERE + "LOWER(CLIE.NOMBRE) LIKE '" + busqueda + "' OR LOWER(CLIE.ENTIDAD) LIKE '" + busqueda + "'";
+            WHERE = WHERE + "LOWER(CLIE.NOMBRE) LIKE ? OR LOWER(CLIE.ENTIDAD) LIKE ? ";
         } else if (ruc) {
-            WHERE = WHERE + "LOWER(CLIE.RUC) LIKE '" + busqueda + "'";
+            WHERE = WHERE + "LOWER(CLIE.RUC) LIKE ? ";
         } else if (!entidad && !ruc) {
-            WHERE = WHERE + "LOWER(CLIE.NOMBRE) LIKE '" + busqueda + "' OR LOWER(CLIE.ENTIDAD) LIKE '" + busqueda + "' OR LOWER(CLIE.RUC) LIKE '" + busqueda + "'";
+            WHERE = WHERE + "LOWER(CLIE.NOMBRE) LIKE ? OR LOWER(CLIE.ENTIDAD) LIKE ? OR LOWER(CLIE.RUC) LIKE ? ";
         }
 
         String QUERY = SELECT + FROM + WHERE + ORDER_BY;
         try {
+            DB_manager.habilitarTransaccionManual();
             pst = DB_manager.getConection().prepareStatement(QUERY, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            if (entidad && ruc) {
+                pst.setString(1, busqueda);
+                pst.setString(2, busqueda);
+                pst.setString(3, busqueda);
+            } else if (entidad) {
+                pst.setString(1, busqueda);
+                pst.setString(2, busqueda);
+            } else if (ruc) {
+                pst.setString(1, busqueda);
+            } else if (!entidad && !ruc) {
+                pst.setString(1, busqueda);
+                pst.setString(2, busqueda);
+                pst.setString(3, busqueda);
+            }
             rs = pst.executeQuery();
             rstm = new ResultSetTableModel(rs);
+            DB_manager.establecerTransaccion();
         } catch (SQLException ex) {
             Logger lgr = Logger.getLogger(DB_Cliente.class.getName());
             lgr.log(Level.SEVERE, ex.getMessage(), ex);

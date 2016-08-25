@@ -10,10 +10,13 @@ import Entities.M_facturaDetalle;
 import Entities.M_funcionario;
 import Entities.M_mesa_detalle;
 import Entities.M_producto;
+import Parametros.TipoOperacion;
 import Producto.SeleccionarCantidadProduducto;
 import Producto.SeleccionarProducto;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.JOptionPane;
@@ -22,7 +25,7 @@ import javax.swing.JOptionPane;
  *
  * @author Ramiro Ferreira
  */
-public class C_verMesa extends MouseAdapter implements ActionListener {
+public class C_verMesa extends MouseAdapter implements ActionListener, KeyListener {
 
     public M_verMesa modelo;
     public V_crearVentaRapida vista;
@@ -51,13 +54,13 @@ public class C_verMesa extends MouseAdapter implements ActionListener {
         this.vista.jtfClieTelefono.setText("");
         this.vista.jtfFuncionario.setText(f.getAlias());
         switch (this.modelo.getMesa().getIdCondVenta()) {
-            case (1): {
+            case (TipoOperacion.CONTADO): {
                 //contado
                 this.vista.jrbContado.setSelected(true);
                 this.vista.jrbCredito.setSelected(false);
                 break;
             }
-            case (2): {
+            case (TipoOperacion.CREDITO): {
                 //credito
                 this.vista.jrbContado.setSelected(false);
                 this.vista.jrbCredito.setSelected(true);
@@ -87,48 +90,6 @@ public class C_verMesa extends MouseAdapter implements ActionListener {
 
     public void cerrar() {
         this.vista.dispose();
-    }
-
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        if (e.getSource().equals(this.vista.jbSalir)) {
-            cerrar();
-        }
-        if (e.getSource().equals(this.vista.jbAceptar)) {
-            guardarVenta();
-        }
-        if (e.getSource().equals(this.vista.jbAgregarProducto)) {
-            SeleccionarProducto sp = new SeleccionarProducto(this);
-            sp.mostrarVista();
-        }
-        if (e.getSource().equals(this.vista.jbCliente)) {
-            Seleccionar_cliente sp = new Seleccionar_cliente(this);
-            sp.mostrarVista();
-        }
-        if (e.getSource().equals(this.vista.jbEliminarDetalle)) {
-            eliminarDetalle();
-        }
-        if (e.getSource().equals(this.vista.jrbContado)) {
-            establecerCondicionVenta();
-        }
-        if (e.getSource().equals(this.vista.jrbCredito)) {
-            establecerCondicionVenta();
-        }
-        if (e.getSource().equals(this.vista.jbModificarDetalle)) {
-            int row = this.vista.jtFacturaDetalle.getSelectedRow();
-            int idProducto = Integer.valueOf(this.vista.jtFacturaDetalle.getValueAt(row, 1).toString());
-            int idMesaDetalle = Integer.valueOf(this.vista.jtFacturaDetalle.getValueAt(row, 0).toString());
-            SeleccionarCantidadProduducto scp = new SeleccionarCantidadProduducto(this, idProducto, idMesaDetalle);
-            scp.setVisible(true);
-        }
-    }
-
-    @Override
-    public void mouseClicked(MouseEvent e) {
-        if (e.getSource().equals(this.vista.jtFacturaDetalle)) {
-            this.vista.jbModificarDetalle.setEnabled(true);
-            this.vista.jbEliminarDetalle.setEnabled(true);
-        }
     }
 
     public void recibirDetalle(M_facturaDetalle detalle) {
@@ -287,13 +248,103 @@ public class C_verMesa extends MouseAdapter implements ActionListener {
 
     private void establecerCondicionVenta() {
         if (this.vista.jrbContado.isSelected()) {
-            this.modelo.getMesa().setIdCondVenta(1);
+            this.modelo.getMesa().setIdCondVenta(TipoOperacion.CONTADO);
         } else {
-            this.modelo.getMesa().setIdCondVenta(2);
+            this.modelo.getMesa().setIdCondVenta(TipoOperacion.CREDITO);
         }
     }
 
     private void actualizarMesas() {
         this.crearVentas.actualizarTablaMesa();
+    }
+
+    private void imprimirTicket() {
+//        EventQueue.invokeLater(new Runnable() {
+//            @Override
+//            public void run() {
+//                if (modelo.getDetalles().isEmpty()) {
+//                    JOptionPane.showMessageDialog(vista, "No hay productos cargados", "Atención", JOptionPane.INFORMATION_MESSAGE);
+//                } else {
+//                    int opcion = JOptionPane.showConfirmDialog(vista, "¿Desea imprimir el ticket?", "Atención", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+//                    if (opcion == JOptionPane.YES_OPTION) {
+//                        Impresora.imprimirVenta(DatosUsuario.getRol_usuario(), modelo.getMesa(), modelo.getDetalles());
+//                    }
+//                }
+//            }
+//        });
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if (e.getSource().equals(this.vista.jbSalir)) {
+            cerrar();
+        }
+        if (e.getSource().equals(this.vista.jbAceptar)) {
+            guardarVenta();
+        }
+        if (e.getSource().equals(this.vista.jbAgregarProducto)) {
+            SeleccionarProducto sp = new SeleccionarProducto(this);
+            sp.mostrarVista();
+        }
+        if (e.getSource().equals(this.vista.jbCliente)) {
+            Seleccionar_cliente sp = new Seleccionar_cliente(this);
+            sp.mostrarVista();
+        }
+        if (e.getSource().equals(this.vista.jbEliminarDetalle)) {
+            eliminarDetalle();
+        }
+        if (e.getSource().equals(this.vista.jbImprimir)) {
+            imprimirTicket();
+        }
+        if (e.getSource().equals(this.vista.jrbContado)) {
+            establecerCondicionVenta();
+        }
+        if (e.getSource().equals(this.vista.jrbCredito)) {
+            establecerCondicionVenta();
+        }
+        if (e.getSource().equals(this.vista.jbModificarDetalle)) {
+            int row = this.vista.jtFacturaDetalle.getSelectedRow();
+            int idProducto = Integer.valueOf(this.vista.jtFacturaDetalle.getValueAt(row, 1).toString());
+            int idMesaDetalle = Integer.valueOf(this.vista.jtFacturaDetalle.getValueAt(row, 0).toString());
+            SeleccionarCantidadProduducto scp = new SeleccionarCantidadProduducto(this, idProducto, idMesaDetalle);
+            scp.setVisible(true);
+        }
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+        if (e.getSource().equals(this.vista.jtFacturaDetalle)) {
+            this.vista.jbModificarDetalle.setEnabled(true);
+            this.vista.jbEliminarDetalle.setEnabled(true);
+        }
+    }
+
+    @Override
+    public void keyTyped(KeyEvent e) {
+    }
+
+    @Override
+    public void keyPressed(KeyEvent e) {
+        if (e.getKeyCode() == KeyEvent.VK_F1) {
+            guardarVenta();
+        }
+        if (e.getKeyCode() == KeyEvent.VK_F2) {
+            imprimirTicket();
+        }
+        if (e.getKeyCode() == KeyEvent.VK_F3) {
+            cerrar();
+        }
+        if (e.getKeyCode() == KeyEvent.VK_F4) {
+            SeleccionarProducto sp = new SeleccionarProducto(this);
+            sp.mostrarVista();
+        }
+        if (e.getKeyCode() == KeyEvent.VK_F5) {
+            Seleccionar_cliente sp = new Seleccionar_cliente(this);
+            sp.mostrarVista();
+        }
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
     }
 }

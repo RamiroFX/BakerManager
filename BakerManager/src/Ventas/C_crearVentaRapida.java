@@ -10,6 +10,7 @@ import Entities.M_facturaDetalle;
 import Entities.M_producto;
 import Interface.Gestion;
 import MenuPrincipal.DatosUsuario;
+import Parametros.TipoOperacion;
 import Producto.SeleccionarCantidadProduducto;
 import Producto.SeleccionarProducto;
 import Utilities.Impresora;
@@ -78,6 +79,13 @@ public class C_crearVentaRapida implements Gestion {
         this.vista.jbModificarDetalle.addActionListener(this);
         this.vista.jrbContado.addActionListener(this);
         this.vista.jrbCredito.addActionListener(this);
+        this.vista.jbAgregarProducto.addKeyListener(this);
+        this.vista.jbCliente.addKeyListener(this);
+        this.vista.jbAceptar.addKeyListener(this);
+        this.vista.jbImprimir.addKeyListener(this);
+        this.vista.jbSalir.addKeyListener(this);
+        this.vista.jbModificarDetalle.addKeyListener(this);
+        this.vista.jbEliminarDetalle.addKeyListener(this);
     }
 
     @Override
@@ -88,79 +96,6 @@ public class C_crearVentaRapida implements Gestion {
     @Override
     public final void cerrar() {
         this.vista.dispose();
-    }
-
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        if (e.getSource().equals(this.vista.jbSalir)) {
-            cerrar();
-        }
-        if (e.getSource().equals(this.vista.jbAceptar)) {
-            guardarVenta();
-        }
-        if (e.getSource().equals(this.vista.jbAgregarProducto)) {
-            SeleccionarProducto sp = new SeleccionarProducto(this);
-            sp.mostrarVista();
-        }
-        if (e.getSource().equals(this.vista.jbImprimir)) {
-            imprimirTicket();
-        }
-        if (e.getSource().equals(this.vista.jbCliente)) {
-            Seleccionar_cliente sp = new Seleccionar_cliente(this);
-            sp.mostrarVista();
-        }
-        if (e.getSource().equals(this.vista.jbEliminarDetalle)) {
-            eliminarDetalle();
-        }
-        if (e.getSource().equals(this.vista.jrbContado)) {
-            establecerCondicionVenta();
-        }
-        if (e.getSource().equals(this.vista.jrbCredito)) {
-            establecerCondicionVenta();
-        }
-        if (e.getSource().equals(this.vista.jbModificarDetalle)) {
-            SeleccionarCantidadProduducto scp = new SeleccionarCantidadProduducto(this, this.vista.jtFacturaDetalle.getSelectedRow());
-            scp.setVisible(true);
-        }
-    }
-
-    @Override
-    public void mouseClicked(MouseEvent e) {
-        if (e.getSource().equals(this.vista.jtFacturaDetalle)) {
-            this.vista.jbModificarDetalle.setEnabled(true);
-            this.vista.jbEliminarDetalle.setEnabled(true);
-        }
-    }
-
-    @Override
-    public void mousePressed(MouseEvent e) {
-    }
-
-    @Override
-    public void mouseReleased(MouseEvent e) {
-    }
-
-    @Override
-    public void mouseEntered(MouseEvent e) {
-    }
-
-    @Override
-    public void mouseExited(MouseEvent e) {
-    }
-
-    @Override
-    public void keyTyped(KeyEvent e) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void keyPressed(KeyEvent e) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void keyReleased(KeyEvent e) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     private void imprimirTicket() {
@@ -301,9 +236,97 @@ public class C_crearVentaRapida implements Gestion {
 
     private void establecerCondicionVenta() {
         if (this.vista.jrbContado.isSelected()) {
-            this.modelo.getCabecera().setIdCondVenta(1);
+            this.modelo.getCabecera().setIdCondVenta(TipoOperacion.CONTADO);
         } else {
-            this.modelo.getCabecera().setIdCondVenta(2);
+            this.modelo.getCabecera().setIdCondVenta(TipoOperacion.CREDITO);
         }
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if (e.getSource().equals(this.vista.jbSalir)) {
+            cerrar();
+        }
+        if (e.getSource().equals(this.vista.jbAceptar)) {
+            guardarVenta();
+        }
+        if (e.getSource().equals(this.vista.jbAgregarProducto)) {
+            SeleccionarProducto sp = new SeleccionarProducto(this);
+            sp.mostrarVista();
+        }
+        if (e.getSource().equals(this.vista.jbImprimir)) {
+            imprimirTicket();
+        }
+        if (e.getSource().equals(this.vista.jbCliente)) {
+            Seleccionar_cliente sp = new Seleccionar_cliente(this);
+            sp.mostrarVista();
+        }
+        if (e.getSource().equals(this.vista.jbEliminarDetalle)) {
+            eliminarDetalle();
+        }
+        if (e.getSource().equals(this.vista.jrbContado)) {
+            establecerCondicionVenta();
+        }
+        if (e.getSource().equals(this.vista.jrbCredito)) {
+            establecerCondicionVenta();
+        }
+        if (e.getSource().equals(this.vista.jbModificarDetalle)) {
+            SeleccionarCantidadProduducto scp = new SeleccionarCantidadProduducto(this, this.vista.jtFacturaDetalle.getSelectedRow());
+            scp.setVisible(true);
+        }
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+        if (e.getSource().equals(this.vista.jtFacturaDetalle)) {
+            this.vista.jbModificarDetalle.setEnabled(true);
+            this.vista.jbEliminarDetalle.setEnabled(true);
+        }
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+    }
+
+    @Override
+    public void keyTyped(KeyEvent e) {
+    }
+
+    @Override
+    public void keyPressed(KeyEvent e) {
+        if (e.getKeyCode() == KeyEvent.VK_F1) {
+            guardarVenta();
+        }
+        if (e.getKeyCode() == KeyEvent.VK_F2) {
+            imprimirTicket();
+        }
+        if (e.getKeyCode() == KeyEvent.VK_F3) {
+            cerrar();
+        }
+        if (e.getKeyCode() == KeyEvent.VK_F4) {
+            SeleccionarProducto sp = new SeleccionarProducto(this);
+            sp.mostrarVista();
+        }
+        if (e.getKeyCode() == KeyEvent.VK_F5) {
+            Seleccionar_cliente sp = new Seleccionar_cliente(this);
+            sp.mostrarVista();
+        }
+
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
     }
 }

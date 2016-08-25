@@ -618,19 +618,32 @@ public class DB_Funcionario {
                 busqueda = "%" + busqueda + "%";
             }
             if (entidad && ci) {
-                WHERE = WHERE + "(LOWER(nombre) LIKE '" + busqueda + "' OR LOWER(APELLIDO) LIKE '" + busqueda + "' OR CAST(CI AS TEXT) LIKE '" + busqueda + "')";
+                WHERE = WHERE + "(LOWER(nombre) LIKE ? OR LOWER(APELLIDO) LIKE ? OR CAST(CI AS TEXT) LIKE ? )";
             } else if (entidad) {
-                WHERE = WHERE + "(LOWER(nombre) LIKE '" + busqueda + "' OR LOWER(APELLIDO) LIKE '" + busqueda + "')";
+                WHERE = WHERE + "(LOWER(nombre) LIKE ? OR LOWER(APELLIDO) LIKE ? )";
             } else if (ci) {
-                WHERE = WHERE + "CAST(CI AS TEXT) LIKE  LIKE '" + busqueda + "'";
+                WHERE = WHERE + "CAST(CI AS TEXT) LIKE ? ";
             } else if (!entidad && !ci) {
-                WHERE = WHERE + "(LOWER(nombre) LIKE '" + busqueda + "' OR LOWER(APELLIDO) LIKE '" + busqueda + "' OR CAST(CI AS TEXT) LIKE '" + busqueda + "')";
+                WHERE = WHERE + "(LOWER(nombre) LIKE ? OR LOWER(APELLIDO) LIKE ? OR CAST(CI AS TEXT) LIKE ? )";
             }
             String query = SELECT + FROM + WHERE + ORDER_BY;
-            st = DB_manager.getConection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            pst = DB_manager.getConection().prepareStatement(query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            if (entidad && ci) {
+                pst.setString(1, busqueda);
+                pst.setString(2, busqueda);
+                pst.setString(3, busqueda);
+            } else if (entidad) {
+                pst.setString(1, busqueda);
+                pst.setString(2, busqueda);
+            } else if (ci) {
+                pst.setString(1, busqueda);
+            } else if (!entidad && !ci) {
+                pst.setString(1, busqueda);
+                pst.setString(2, busqueda);
+                pst.setString(3, busqueda);
+            }
             // se ejecuta el query y se obtienen los resultados en un ResultSet
-            System.out.println("632-DB_funcionario: "+query);
-            rs = st.executeQuery(query);
+            rs = pst.executeQuery();
             rstm = new ResultSetTableModel(rs);
         } catch (SQLException ex) {
             Logger lgr = Logger.getLogger(DB_Funcionario.class.getName());

@@ -10,6 +10,7 @@ import DB.DB_Ingreso;
 import Entities.M_cliente;
 import Entities.M_mesa;
 import Entities.M_mesa_detalle;
+import Parametros.TipoOperacion;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.EventQueue;
@@ -117,7 +118,7 @@ public class ConfigurarMesa extends JDialog implements ActionListener, KeyListen
                     M_mesa m = new M_mesa();
                     m.setCliente(cliente);
                     m.setFuncionario(crearVentas.gestionVentas.c_inicio.modelo.getRol_usuario().getFuncionario());
-                    m.setIdCondVenta(1);//contado
+                    m.setIdCondVenta(TipoOperacion.CONTADO);
                     m.setNumeroMesa(numeroMesa);
                     ArrayList<M_mesa_detalle> d = new ArrayList<>();
                     idMesa = DB_Ingreso.insertarMesa(m, d);

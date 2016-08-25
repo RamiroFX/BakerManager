@@ -8,6 +8,8 @@ import Cliente.Seleccionar_cliente;
 import Entities.M_cliente;
 import Entities.M_pedidoDetalle;
 import MenuPrincipal.DatosUsuario;
+import Parametros.PedidoEstado;
+import Parametros.TipoOperacion;
 import Producto.SeleccionarCantidadProduducto;
 import Producto.SeleccionarProducto;
 import Utilities.Impresora;
@@ -80,7 +82,7 @@ public class C_verPedido extends MouseAdapter implements ActionListener {
         }
         this.vista.jbEliminarDetalle.setEnabled(false);
         this.vista.jbModificarDetalle.setEnabled(false);
-        if (!this.modelo.getPedido().getEstado().equals("Pendiente")) {
+        if (!this.modelo.getPedido().getEstado().equals(PedidoEstado.PENDIENTE.getDescripcion())) {
             this.vista.jbAceptar.setEnabled(false);
             this.vista.jbCliente.setEnabled(false);
             this.vista.jbSeleccionarProducto.setEnabled(false);
@@ -112,9 +114,9 @@ public class C_verPedido extends MouseAdapter implements ActionListener {
 
     private void establecerCondicionVenta() {
         if (this.vista.jrbContado.isSelected()) {
-            this.modelo.getPedido().setIdCondVenta(1);
+            this.modelo.getPedido().setIdCondVenta(TipoOperacion.CONTADO);
         } else {
-            this.modelo.getPedido().setIdCondVenta(2);
+            this.modelo.getPedido().setIdCondVenta(TipoOperacion.CREDITO);
         }
     }
 
