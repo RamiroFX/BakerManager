@@ -62,6 +62,7 @@ public class Resumen_egreso extends JDialog implements ActionListener {
 
     private void inicializarComponentes() {
         jtEgreso = new JTable();
+        this.jtEgreso.getTableHeader().setReorderingAllowed(false);
         jspEgreso = new JScrollPane(jtEgreso);
         JPanel jpTotalEgreso = new JPanel(new GridLayout(3, 2));
         jftTotalEgreso = new JFormattedTextField();

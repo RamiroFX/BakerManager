@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package empleado;
+package Empleado;
 
 import Egresos.C_buscar_detalle;
 import Egresos.C_gestionEgresos;

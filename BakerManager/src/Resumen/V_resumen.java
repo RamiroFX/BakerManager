@@ -55,6 +55,7 @@ public class V_resumen extends JDialog {
 
     private void inicializarComponentes(int tipo) {
         jtResumen = new JTable();
+        jtResumen.getTableHeader().setReorderingAllowed(false);
         jspEgreso = new JScrollPane(jtResumen);
         JPanel jpTotalEgreso = new JPanel(new GridLayout(3, 2));
         jftTotalEgreso = new JFormattedTextField();
@@ -86,6 +87,7 @@ public class V_resumen extends JDialog {
         switch (tipo) {
             case PEDIDO: {
                 jtDetalle = new JTable();
+                jtDetalle.getTableHeader().setReorderingAllowed(false);
                 jspDetalle = new JScrollPane(jtDetalle);
                 JTabbedPane jtp = new JTabbedPane();
                 jtp.add("Cabecera", jpCenter);

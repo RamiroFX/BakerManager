@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package empleado;
+package Empleado;
 
 import Entities.M_menu_item;
 import Utilities.c_packColumn;

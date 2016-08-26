@@ -43,6 +43,7 @@ public class V_seleccionar_cliente extends JDialog {
     
     private void initComp() {
         jtCliente = new JTable();
+        this.jtCliente.getTableHeader().setReorderingAllowed(false);
         jspCliente = new JScrollPane(jtCliente);
         jbAceptar = new  JButton("Aceptar");
         jbCancelar = new  JButton("Cancelar");

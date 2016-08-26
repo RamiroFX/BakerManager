@@ -53,6 +53,7 @@ public class V_seleccionar_proveedor extends JDialog {
     
     private void initComp() {
         jtProveedor = new JTable();
+        jtProveedor.getTableHeader().setReorderingAllowed(false);
         jspUsuarios = new JScrollPane(jtProveedor);
         jbAceptar = new  JButton("Aceptar");
         jbCancelar = new  JButton("Cancelar");

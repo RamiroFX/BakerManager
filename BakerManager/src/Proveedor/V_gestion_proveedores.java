@@ -129,6 +129,7 @@ class V_gestion_proveedores extends JInternalFrame {
 
         jlTelefono = new javax.swing.JLabel("Telefono");
         jtTelefono = new JTable();
+        jtTelefono.getTableHeader().setReorderingAllowed(false);
         jspTelefono = new JScrollPane(jtTelefono);
 
         Insets inset = new Insets(10, 10, 10, 10);
@@ -174,11 +175,13 @@ class V_gestion_proveedores extends JInternalFrame {
 
         jpDatosSucursal = new javax.swing.JPanel(new java.awt.BorderLayout());
         jtSucursal = new JTable();
+        jtSucursal.getTableHeader().setReorderingAllowed(false);
         jspSucursal = new JScrollPane(jtSucursal);
         jpDatosSucursal.add(jspSucursal, java.awt.BorderLayout.CENTER);
 
         jpDatosContacto = new javax.swing.JPanel(new java.awt.BorderLayout());
         jtContacto = new JTable();
+        jtContacto.getTableHeader().setReorderingAllowed(false);
         jspContacto = new JScrollPane(jtContacto);
         jpDatosContacto.add(jspContacto, java.awt.BorderLayout.CENTER);
         jpDatosContacto.add(jpDatosContactoSouth, java.awt.BorderLayout.SOUTH);

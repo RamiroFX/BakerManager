@@ -5,9 +5,11 @@
 package Ventas;
 
 import Cliente.Seleccionar_cliente;
+import DB.DB_Cliente;
 import Entities.M_cliente;
 import Entities.M_facturaDetalle;
 import Entities.M_producto;
+import Entities.M_telefono;
 import Interface.Gestion;
 import MenuPrincipal.DatosUsuario;
 import Parametros.TipoOperacion;
@@ -18,6 +20,7 @@ import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 import javax.swing.JOptionPane;
 
 /**
@@ -225,7 +228,13 @@ public class C_crearVentaRapida implements Gestion {
         this.modelo.getCabecera().setCliente(cliente);
         String nombre = this.modelo.getCabecera().getCliente().getNombre();
         String entidad = this.modelo.getCabecera().getCliente().getEntidad();
+        String ruc = this.modelo.getCabecera().getCliente().getRuc() + "-" + this.modelo.getCabecera().getCliente().getRucId();
+        String direccion = this.modelo.getCabecera().getCliente().getDireccion();
+        ArrayList<M_telefono> telefono = DB_Cliente.obtenerTelefonoCliente(this.modelo.getCabecera().getIdCliente());
         this.vista.jtfCliente.setText(nombre + " (" + entidad + ")");
+        this.vista.jtfClieRuc.setText(ruc);
+        this.vista.jtfClieDireccion.setText(direccion);
+        this.vista.jtfClieTelefono.setText(telefono.get(0).getNumero());
     }
 
     private void guardarVenta() {

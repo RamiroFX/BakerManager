@@ -62,8 +62,10 @@ public class Resumen_ingreso extends JDialog implements ActionListener {
 
     private void inicializarComponentes() {
         jtEgreso = new JTable();
+        jtEgreso.getTableHeader().setReorderingAllowed(false);
         jspEgreso = new JScrollPane(jtEgreso);
         jtDetalle = new JTable();
+        jtDetalle.getTableHeader().setReorderingAllowed(false);
         jspDetalle = new JScrollPane(jtDetalle);
         JPanel jpTotalEgreso = new JPanel(new GridLayout(3, 2));
         jftTotalEgreso = new JFormattedTextField();

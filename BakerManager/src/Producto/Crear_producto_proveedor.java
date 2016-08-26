@@ -105,6 +105,7 @@ public class Crear_producto_proveedor extends JDialog implements ActionListener,
         jpBotones = new JPanel();
         jpBotones.add(jbSalir);
         jtProducto = new JTable();
+        this.jtProducto.getTableHeader().setReorderingAllowed(false);
         dtmProdAgreg = new DefaultTableModel();
         dtmProdAgreg.addColumn("ID");
         dtmProdAgreg.addColumn("Descripción");

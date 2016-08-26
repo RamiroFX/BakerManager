@@ -107,6 +107,7 @@ public class V0_gestionVentas extends JInternalFrame {
 
         //panel medio derecha
         jtEgresoDetalle = new JTable();
+        jtEgresoDetalle.getTableHeader().setReorderingAllowed(false);
         jspEgresoDetalle = new JScrollPane(jtEgresoDetalle);
         //creamos nuestro splitpane y agregamos los dos paneles del medio
         jspMid = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, jtEgresoCabecera, jspEgresoDetalle);

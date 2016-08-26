@@ -61,12 +61,14 @@ public class ProductoParametros extends javax.swing.JDialog implements ActionLis
 
     private void initMarcas() {
         jtMarcas = new JTable();
+        jtMarcas.getTableHeader().setReorderingAllowed(false);
         jspMarcas = new JScrollPane(jtMarcas);
 
     }
 
     private void initCategorias() {
         jtCategorias = new JTable();
+        jtCategorias.getTableHeader().setReorderingAllowed(false);
         jspCategorias = new JScrollPane(jtCategorias);
     }
 

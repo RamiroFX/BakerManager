@@ -144,6 +144,7 @@ public class V_crearPedido extends JDialog {
         jpCenter = new JPanel(new BorderLayout());
         jpCenter.setBorder(new EtchedBorder(EtchedBorder.RAISED));
         jtPedidoDetalle = new JTable();
+        this.jtPedidoDetalle.getTableHeader().setReorderingAllowed(false);
         jtPedidoDetalle.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         jspFacturaDetalle = new JScrollPane(jtPedidoDetalle);
         jbSeleccionarProducto = new JButton("Agregar producto");

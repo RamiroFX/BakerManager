@@ -113,10 +113,12 @@ public class V_gestionPedido extends JInternalFrame {
     private void initMid() {
         //Panel medio izquierda
         jtPedido = new JTable();
+        this.jtPedido.getTableHeader().setReorderingAllowed(false);
         jspEgresoCabecera = new JScrollPane(jtPedido);
 
         //panel medio derecha
         jtPedidoDetalle = new JTable();
+        this.jtPedidoDetalle.getTableHeader().setReorderingAllowed(false);
         jspEgresoDetalle = new JScrollPane(jtPedidoDetalle);
         //creamos nuestro splitpane y agregamos los dos paneles del medio
         jspMid = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, jspEgresoCabecera, jspEgresoDetalle);

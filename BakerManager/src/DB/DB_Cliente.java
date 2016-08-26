@@ -1111,15 +1111,16 @@ public class DB_Cliente {
         String query = "SELECT TELE.ID_TELEFONO, TELE.NUMERO, TELE.ID_CATEGORIA, TELE.OBSERVACION  FROM TELEFONO TELE, CLIENTE CLIE, CLIENTE_TELEFONO CLTE WHERE CLIE.ID_CLIENTE = CLTE.ID_CLIENTE  AND CLTE.ID_TELEFONO = TELE.ID_TELEFONO"
                 + " AND CLIE.ID_CLIENTE = " + idCliente + ";";
         try {
+            System.out.println("1114: " + query);
             st = DB_manager.getConection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             rs = st.executeQuery(query);
             telefonos = new ArrayList();
             while (rs.next()) {
                 M_telefono telefono = new M_telefono();
-                telefono.setId_telefono(rs.getInt("CLIE.ID_CLIENTE"));
-                telefono.setCategoria(rs.getString("TELE.ID_CATEGORIA"));
-                telefono.setNumero(rs.getString("TELE.NUMERO"));
-                telefono.setObservacion(rs.getString("TELE.OBSERVACION"));
+                telefono.setId_telefono(rs.getInt("ID_TELEFONO"));
+                telefono.setCategoria(rs.getString("ID_CATEGORIA"));
+                telefono.setNumero(rs.getString("NUMERO"));
+                telefono.setObservacion(rs.getString("OBSERVACION"));
                 telefonos.add(telefono);
             }
         } catch (SQLException ex) {

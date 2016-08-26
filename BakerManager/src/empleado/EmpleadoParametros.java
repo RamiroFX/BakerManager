@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package empleado;
+package Empleado;
 
 import DB.DB_manager;
 import bakermanager.C_inicio;
@@ -49,12 +49,14 @@ public class EmpleadoParametros extends javax.swing.JDialog implements ActionLis
 
     private void initMarcas() {
         jtPais = new JTable();
+        jtPais.getTableHeader().setReorderingAllowed(false);
         jspPais = new JScrollPane(jtPais);
 
     }
 
     private void initCategorias() {
         jtCiudad = new JTable();
+        jtCiudad.getTableHeader().setReorderingAllowed(false);
         jspCiudad = new JScrollPane(jtCiudad);
     }
 

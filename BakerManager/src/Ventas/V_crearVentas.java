@@ -69,8 +69,10 @@ public class V_crearVentas extends JDialog {
 
         jpCenter = new JPanel(new BorderLayout());
         jtMesa = new JTable();
+        jtMesa.getTableHeader().setReorderingAllowed(false);
         jspFactutraCabecera = new JScrollPane(jtMesa);
         jtMesaDetalle = new JTable();
+        jtMesaDetalle.getTableHeader().setReorderingAllowed(false);
         jspFacturaDetalle = new JScrollPane(jtMesaDetalle);
         JPanel jpFacturaCabecera = new JPanel(new MigLayout());
         jbVerMesa = new JButton("Ver mesa");

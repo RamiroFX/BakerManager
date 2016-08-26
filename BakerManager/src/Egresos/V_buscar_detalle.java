@@ -120,6 +120,7 @@ public class V_buscar_detalle extends JDialog {
 
         //panel medio derecha
         jtCabecera = new JTable();
+        this.jtCabecera.getTableHeader().setReorderingAllowed(false);
         jspEgresoCabecera = new JScrollPane(jtCabecera);
         //creamos nuestro splitpane y agregamos los dos paneles del medio
         jspMid = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, jtDetalle, jspEgresoCabecera);

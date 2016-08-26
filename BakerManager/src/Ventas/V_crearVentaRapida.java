@@ -98,6 +98,7 @@ public class V_crearVentaRapida extends JDialog {
         jpCenter = new JPanel(new BorderLayout());
         jpCenter.setBorder(new EtchedBorder(EtchedBorder.RAISED));
         jtFacturaDetalle = new JTable();
+        jtFacturaDetalle.getTableHeader().setReorderingAllowed(false);
         jtFacturaDetalle.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         jspFacturaDetalle = new JScrollPane(jtFacturaDetalle);
         jbAgregarProducto = new JButton("Agregar producto [F4]");

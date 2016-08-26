@@ -85,6 +85,7 @@ public class V_seleccionarProducto extends JDialog {
     private void initComp() {
         initTop();
         jtProducto = new JTable();
+        jtProducto.getTableHeader().setReorderingAllowed(false);
         jspProducto = new JScrollPane(jtProducto);
         jbCrearProducto = new JButton("Crear producto");
         jbCrearProducto.setName("crear producto");

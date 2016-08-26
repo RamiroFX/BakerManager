@@ -4,7 +4,6 @@
  */
 package bakermanager;
 
-import Entities.M_funcionario;
 import Entities.M_rol_usuario;
 import Login.Login;
 import java.awt.Dimension;

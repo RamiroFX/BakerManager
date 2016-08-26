@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package empleado;
+package Empleado;
 
 import DB.DB_Funcionario;
 import DB.DB_manager;

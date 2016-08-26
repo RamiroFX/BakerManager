@@ -139,6 +139,7 @@ public class V_gestion_cliente extends JInternalFrame {
         jtfEmailCliente.setEditable(false);
         jlTelefono = new javax.swing.JLabel();
         jtTelefono = new JTable();
+        this.jtTelefono.getTableHeader().setReorderingAllowed(false);
         jspTelefono = new JScrollPane(jtTelefono);
         jlTelefono.setText("Telefono");
 
@@ -175,11 +176,13 @@ public class V_gestion_cliente extends JInternalFrame {
 
         jpDatosSucursal = new javax.swing.JPanel(new java.awt.BorderLayout());
         jtSucursal = new JTable();
+        this.jtSucursal.getTableHeader().setReorderingAllowed(false);
         jspSucursal = new JScrollPane(jtSucursal);
         jpDatosSucursal.add(jspSucursal, java.awt.BorderLayout.CENTER);
 
         jpDatosContacto = new javax.swing.JPanel(new java.awt.BorderLayout());
         jtContacto = new JTable();
+        this.jtContacto.getTableHeader().setReorderingAllowed(false);
         jspContacto = new JScrollPane(jtContacto);
         jpDatosContacto.add(jspContacto, java.awt.BorderLayout.CENTER);
         jpDatosContacto.add(jpDatosContactoSouth, java.awt.BorderLayout.SOUTH);

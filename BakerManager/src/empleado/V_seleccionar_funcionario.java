@@ -2,11 +2,9 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package empleado;
+package Empleado;
 
 import java.awt.BorderLayout;
-import java.awt.Dialog;
-import java.awt.Window;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JDialog;
