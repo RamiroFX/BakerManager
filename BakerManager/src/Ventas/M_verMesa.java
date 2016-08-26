@@ -40,6 +40,7 @@ public class M_verMesa {
     public M_verMesa(int idMesa) {
         this.mesa = DB_Ingreso.obtenerMesaID(idMesa);
         this.detalle = new M_mesa_detalle();
+        //this.detalles = DB_Ingreso.obtenerMesaDetalles(idMesa);
         this.detalles = new ArrayList<>();
         rstm = DB_Ingreso.obtenerMesaDetalle(idMesa);
     }
@@ -120,6 +121,7 @@ public class M_verMesa {
 
     private void preparaVenta() {
         int row = getRstm().getRowCount();
+        getDetalles().clear();
         for (int i = 0; i < row; i++) {
             M_mesa_detalle fd = new M_mesa_detalle();
             fd.setProducto(new M_producto());
@@ -137,5 +139,11 @@ public class M_verMesa {
             }
             getDetalles().add(fd);
         }
+    }
+
+    public void imprimir() {
+        getDetalles().clear();
+        preparaVenta();
+        Impresora.imprimirMesa(mesa, detalles);
     }
 }

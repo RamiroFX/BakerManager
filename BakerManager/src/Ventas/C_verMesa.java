@@ -13,6 +13,8 @@ import Entities.M_producto;
 import Parametros.TipoOperacion;
 import Producto.SeleccionarCantidadProduducto;
 import Producto.SeleccionarProducto;
+import Utilities.Impresora;
+import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -80,12 +82,18 @@ public class C_verMesa extends MouseAdapter implements ActionListener, KeyListen
         this.vista.jbSalir.addActionListener(this);
         this.vista.jbAceptar.addActionListener(this);
         this.vista.jbAgregarProducto.addActionListener(this);
+        this.vista.jbImprimir.addActionListener(this);
         this.vista.jbCliente.addActionListener(this);
         this.vista.jtFacturaDetalle.addMouseListener(this);
         this.vista.jbEliminarDetalle.addActionListener(this);
         this.vista.jbModificarDetalle.addActionListener(this);
         this.vista.jrbContado.addActionListener(this);
         this.vista.jrbCredito.addActionListener(this);
+        this.vista.jbAceptar.addKeyListener(this);
+        this.vista.jbImprimir.addKeyListener(this);
+        this.vista.jbAgregarProducto.addKeyListener(this);
+        this.vista.jbCliente.addKeyListener(this);
+        this.vista.jbSalir.addKeyListener(this);
     }
 
     public void cerrar() {
@@ -259,19 +267,19 @@ public class C_verMesa extends MouseAdapter implements ActionListener, KeyListen
     }
 
     private void imprimirTicket() {
-//        EventQueue.invokeLater(new Runnable() {
-//            @Override
-//            public void run() {
-//                if (modelo.getDetalles().isEmpty()) {
-//                    JOptionPane.showMessageDialog(vista, "No hay productos cargados", "Atención", JOptionPane.INFORMATION_MESSAGE);
-//                } else {
-//                    int opcion = JOptionPane.showConfirmDialog(vista, "¿Desea imprimir el ticket?", "Atención", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
-//                    if (opcion == JOptionPane.YES_OPTION) {
-//                        Impresora.imprimirVenta(DatosUsuario.getRol_usuario(), modelo.getMesa(), modelo.getDetalles());
-//                    }
-//                }
-//            }
-//        });
+        EventQueue.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                if (modelo.getRstm().getColumnCount() < 1) {
+                    JOptionPane.showMessageDialog(vista, "No hay productos cargados", "Atención", JOptionPane.INFORMATION_MESSAGE);
+                } else {
+                    int opcion = JOptionPane.showConfirmDialog(vista, "¿Desea imprimir el ticket?", "Atención", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+                    if (opcion == JOptionPane.YES_OPTION) {
+                        modelo.imprimir();
+                    }
+                }
+            }
+        });
     }
 
     @Override

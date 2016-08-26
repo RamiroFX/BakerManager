@@ -13,7 +13,7 @@ import Entities.M_menu_item;
 import Interface.Gestion;
 import MenuPrincipal.DatosUsuario;
 import bakermanager.C_inicio;
-import empleado.Seleccionar_funcionario;
+import Empleado.Seleccionar_funcionario;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;

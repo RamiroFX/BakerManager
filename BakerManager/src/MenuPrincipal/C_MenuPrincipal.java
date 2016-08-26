@@ -12,7 +12,7 @@ import Producto.Gestion_Producto;
 import Proveedor.Gestion_proveedores;
 import Ventas.Gestion_Ventas;
 import bakermanager.C_inicio;
-import empleado.Gestion_empleado;
+import Empleado.Gestion_empleado;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.event.ActionEvent;

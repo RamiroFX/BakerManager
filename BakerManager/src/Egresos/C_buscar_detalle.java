@@ -10,7 +10,7 @@ import Entities.M_funcionario;
 import Entities.M_proveedor;
 import Proveedor.Seleccionar_proveedor;
 import bakermanager.C_inicio;
-import empleado.Seleccionar_funcionario;
+import Empleado.Seleccionar_funcionario;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

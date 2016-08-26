@@ -281,6 +281,41 @@ public class Impresora {
         }
     }
 
+    public static void imprimirMesa(M_mesa mesaCabecera, ArrayList<M_mesa_detalle> detalles) {
+        PrintService service = PrintServiceLookup.lookupDefaultPrintService();
+        Date today = Calendar.getInstance().getTime();
+        String fechaEntrega = sdfs.format(today);
+        String CABECERA = "Fecha y hora: " + fechaEntrega + "\n"
+                + "Mesa nro.: " + mesaCabecera.getNumeroMesa() + "\n"
+                + "Cajero: " + mesaCabecera.getFuncionario().getNombre() + "\n"
+                + "Cliente: " + mesaCabecera.getCliente().getEntidad() + "\n"
+                + "---------------------------------\n";
+        String COLUMNAS = "producto   cant  precio  subtotal\n";
+        String DETALLE = "";
+        int total = 0;
+        for (M_mesa_detalle mesaDetalle : detalles) {
+            int subtotal = Math.round(Math.round(mesaDetalle.getCantidad() * mesaDetalle.getPrecio()));
+            total = total + subtotal;
+            DETALLE = DETALLE + "-> " + mesaDetalle.getProducto().getDescripcion() + "\n" + mesaDetalle.getCantidad() + " " + mesaDetalle.getPrecio() + "  " + subtotal + "\n";
+        }
+        String SUMATOTAL = "---------------------------------\n"
+                + "Total= " + total + "\n";
+        String ticket = TICKET_CABECERA + CABECERA + COLUMNAS + DETALLE + SUMATOTAL + TICKET_PIE_SIN_GRACIAS;
+        byte[] bytes = ticket.getBytes();
+        DocFlavor flavor = DocFlavor.BYTE_ARRAY.AUTOSENSE;
+        Doc doc = new SimpleDoc(bytes, flavor, null);
+        DocPrintJob job = service.createPrintJob();
+        try {
+            if (job != null) {
+                job.print(doc, null);
+            } else {
+                JOptionPane.showMessageDialog(null, "No se pudo imprimir", "Error", JOptionPane.INFORMATION_MESSAGE);
+            }
+        } catch (PrintException ex) {
+            System.out.println(ex);
+        }
+    }
+
     public static void imprimirVentaMesa(M_mesa mesaCabecera, ArrayList<M_mesa_detalle> detalles) {
         PrintService service = PrintServiceLookup.lookupDefaultPrintService();
         Date today = Calendar.getInstance().getTime();
