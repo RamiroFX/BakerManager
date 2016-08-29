@@ -202,7 +202,6 @@ public class DB_Ingreso {
         }
         ResultSetTableModel rstm = null;
         try {
-            System.out.println("206: " + QUERY);
             pst = DB_manager.getConection().prepareStatement(QUERY, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             pst.setTimestamp(1, inicio);
             pst.setTimestamp(2, fin);
