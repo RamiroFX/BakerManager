@@ -5,20 +5,32 @@
 package Ventas;
 
 import DB.DB_Cliente;
+import DB.DB_Funcionario;
 import DB.DB_Ingreso;
 import Entities.M_cliente;
 import Entities.M_facturaCabecera;
+import Entities.M_funcionario;
+import Entities.M_telefono;
+import MenuPrincipal.DatosUsuario;
+import Utilities.Impresora;
+import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.util.ArrayList;
+import javax.swing.JOptionPane;
 
 /**
  *
  * @author Ramiro Ferreira
  */
-public class C_ver_ingreso implements ActionListener {
+public class C_ver_ingreso implements ActionListener, KeyListener {
 
     public V_ver_ingreso vista;
     int idEgresoCabecera;
+    M_facturaCabecera faca;
+    M_cliente cliente;
 
     public C_ver_ingreso(int idEgresoCabecera, V_ver_ingreso vista) {
         this.idEgresoCabecera = idEgresoCabecera;
@@ -33,6 +45,9 @@ public class C_ver_ingreso implements ActionListener {
 
     private void agregarListeners() {
         this.vista.jbSalir.addActionListener(this);
+        this.vista.jbImprimir.addActionListener(this);
+        //this.vista.getContentPane().addKeyListener(this);
+        //this.vista.jbImprimir.addKeyListener(this);
     }
 
     private void cerrar() {
@@ -41,26 +56,64 @@ public class C_ver_ingreso implements ActionListener {
     }
 
     private void sumarTotal() {
-        int cantFilas = this.vista.jtProductos.getRowCount();
-        Integer totalExenta = 0, total5 = 0, total10 = 0, total = 0;
-        for (int i = 0; i < cantFilas; i++) {
-            Integer ivaExenta = Integer.valueOf(String.valueOf(this.vista.jtProductos.getValueAt(i, 5)));
-            totalExenta = totalExenta + ivaExenta;
-            Integer iva5 = Integer.valueOf(String.valueOf(this.vista.jtProductos.getValueAt(i, 6)));
-            total5 = total5 + iva5;
-            Integer iva10 = Integer.valueOf(String.valueOf(this.vista.jtProductos.getValueAt(i, 7)));
-            total10 = total10 + iva10;
+        Integer exenta = 0;
+        Integer iva5 = 0;
+        Integer iva10 = 0;
+        Integer total = 0;
+        int cantRow = this.vista.jtFacturaDetalle.getRowCount();
+        for (int i = 0; i < cantRow; i++) {
+            exenta = exenta + Integer.valueOf(String.valueOf(this.vista.jtFacturaDetalle.getValueAt(i, 5)));
+            iva5 = iva5 + Integer.valueOf(String.valueOf(this.vista.jtFacturaDetalle.getValueAt(i, 6)));
+            iva10 = iva10 + Integer.valueOf(String.valueOf(this.vista.jtFacturaDetalle.getValueAt(i, 7)));
         }
-        total = totalExenta + total5 + total10;
+        total = exenta + iva5 + iva10;
+        this.vista.jftExenta.setValue(exenta);
+        this.vista.jftIva5.setValue(iva5);
+        this.vista.jftIva10.setValue(iva10);
         this.vista.jftTotal.setValue(total);
     }
 
     private void inicializarVista() {
-        M_facturaCabecera faca = DB_Ingreso.obtenerIngresoCabeceraID(idEgresoCabecera);
-        M_cliente cliente = DB_Cliente.obtenerDatosClienteID(faca.getIdCliente());
+        faca = DB_Ingreso.obtenerIngresoCabeceraID(idEgresoCabecera);
+        cliente = DB_Cliente.obtenerDatosClienteID(faca.getIdCliente());
+        M_funcionario funcionario = DB_Funcionario.obtenerDatosFuncionarioID(faca.getIdFuncionario());
+        faca.setCliente(cliente);
+        faca.setFuncionario(funcionario);
         this.vista.jtfCliente.setText(cliente.getNombre() + " - " + cliente.getEntidad());
-        this.vista.jtProductos.setModel(DB_Ingreso.obtenerIngresoDetalle(idEgresoCabecera));
-        Utilities.c_packColumn.packColumns(this.vista.jtProductos, 1);
+        this.vista.jtFacturaDetalle.setModel(DB_Ingreso.obtenerIngresoDetalle(idEgresoCabecera));
+        Utilities.c_packColumn.packColumns(this.vista.jtFacturaDetalle, 1);
+        java.awt.Font fuente = new java.awt.Font("Times New Roman", 0, 18);
+        javax.swing.text.DefaultFormatterFactory dff = new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(java.text.NumberFormat.getCurrencyInstance()));
+        this.vista.jftExenta.setFormatterFactory(dff);
+        this.vista.jftExenta.setFont(fuente); // NOI18N
+        this.vista.jftIva5.setFormatterFactory(dff);
+        this.vista.jftIva5.setFont(fuente); // NOI18N
+        this.vista.jftIva10.setFormatterFactory(dff);
+        this.vista.jftIva10.setFont(fuente); // NOI18N
+        this.vista.jftTotal.setFormatterFactory(dff);
+        this.vista.jftTotal.setFont(fuente); // NOI18N
+        switch (faca.getIdCondVenta()) {
+            case Parametros.TipoOperacion.CONTADO: {
+                this.vista.jrbContado.setSelected(true);
+                break;
+            }
+            case Parametros.TipoOperacion.CREDITO: {
+                this.vista.jrbCredito.setSelected(true);
+                break;
+            }
+        }
+        String nombre = cliente.getNombre();
+        String entidad = cliente.getEntidad();
+        String ruc = cliente.getRuc() + "-" + cliente.getRucId();
+        String direccion = cliente.getDireccion();
+        ArrayList<M_telefono> telefono = DB_Cliente.obtenerTelefonoCliente(cliente.getIdCliente());
+        this.vista.jtfCliente.setText(nombre + " (" + entidad + ")");
+        this.vista.jtfClieRuc.setText(ruc);
+        this.vista.jtfClieDireccion.setText(direccion);
+        if (!telefono.isEmpty()) {
+            this.vista.jtfClieTelefono.setText(telefono.get(0).getNumero());
+        }
+        this.vista.jtfFuncionario.setText(funcionario.getNombre() + " " + funcionario.getApellido());
         sumarTotal();
     }
 
@@ -69,5 +122,38 @@ public class C_ver_ingreso implements ActionListener {
         if (e.getSource().equals(this.vista.jbSalir)) {
             cerrar();
         }
+        if (e.getSource().equals(this.vista.jbImprimir)) {
+            imprimirTicket();
+        }
+    }
+
+    private void imprimirTicket() {
+        EventQueue.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                int opcion = JOptionPane.showConfirmDialog(vista, "¿Desea imprimir el ticket?", "Atención", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+                if (opcion == JOptionPane.YES_OPTION) {
+                    Impresora.imprimirVentaGuardada(DatosUsuario.getRol_usuario(), faca);
+                }
+            }
+        });
+    }
+
+    @Override
+    public void keyTyped(KeyEvent e) {
+    }
+
+    @Override
+    public void keyPressed(KeyEvent e) {
+        if (e.getKeyCode() == KeyEvent.VK_F2) {
+            imprimirTicket();
+        }
+        if (e.getKeyCode() == KeyEvent.VK_F3) {
+            cerrar();
+        }
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
     }
 }

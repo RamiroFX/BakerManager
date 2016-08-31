@@ -214,7 +214,7 @@ public class Impresora {
     public static void imprimirVentaGuardada(M_rol_usuario rol_usuario, M_facturaCabecera facturaCabecera) {
         PrintService service = PrintServiceLookup.lookupDefaultPrintService();
         Date today = Calendar.getInstance().getTime();
-        String fechaEntrega = sdfs.format(today);
+        String fechaEntrega = sdfs.format(facturaCabecera.getTiempo());
         String CABECERA = "Fecha y hora: " + fechaEntrega + "\n"
                 + "Ticket nro.: " + facturaCabecera.getIdFacturaCabecera() + "\n"
                 + "Cajero: " + facturaCabecera.getFuncionario().getNombre() + "\n"

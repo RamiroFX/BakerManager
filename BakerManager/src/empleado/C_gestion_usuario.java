@@ -44,8 +44,8 @@ public class C_gestion_usuario implements Gestion {
         this.vista.jbEliminarUsuario.setEnabled(false);
         this.vista.jftCedulaIdentidad.setFormatterFactory(
                 new javax.swing.text.DefaultFormatterFactory(
-                        new javax.swing.text.NumberFormatter(
-                                new java.text.DecimalFormat("#,##0"))));
+                new javax.swing.text.NumberFormatter(
+                new java.text.DecimalFormat("#,##0"))));
         this.vista.jtfBuscar.setEnabled(false);
         this.vista.jckbCedula.setEnabled(false);
         this.vista.jckbNombreApellido.setEnabled(false);
@@ -170,8 +170,14 @@ public class C_gestion_usuario implements Gestion {
     }
 
     private void cambiarContraseña() {
-        CambiarPassword cp = new CambiarPassword(this.c_inicio.vista, c_inicio);
-        cp.setVisible(true);
+        int row = this.vista.jtUsuario.getSelectedRow();
+        if (row > 0) {
+            int id = (Integer.valueOf((String) this.vista.jtUsuario.getValueAt(row, 0)));
+            CambiarPassword cp = new CambiarPassword(this.c_inicio.vista, c_inicio, id);
+            cp.setVisible(true);
+        } else {
+            JOptionPane.showMessageDialog(vista, "Seleccione un cliente", "Atención", JOptionPane.INFORMATION_MESSAGE);
+        }
     }
 
     private void empleadoParametros() {

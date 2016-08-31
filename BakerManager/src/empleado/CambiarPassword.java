@@ -30,7 +30,7 @@ public class CambiarPassword extends JDialog implements ActionListener {
     JButton jbAceptar, jbCancelar;
     C_inicio c_inicio;
 
-    public CambiarPassword(JFrame frame, C_inicio c_inicio) {
+    public CambiarPassword(JFrame frame, C_inicio c_inicio, int idFuncionario) {
         super(frame, "Cambiar contraseña", DEFAULT_MODALITY_TYPE);
         setName("Cambiar contraseña");
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
