@@ -17,7 +17,7 @@ public class Ver_Egresos {
 
     public Ver_Egresos(C_inicio c_inicio, int IdEgresoCabecera) {
         modelo = new M_Egresos();
-        vista = new V_Ver_Egresos(c_inicio.vista, true);
+        vista = new V_Ver_Egresos(c_inicio.vista);
         controlador = new C_ver_egreso(IdEgresoCabecera,vista, modelo);
     }
     

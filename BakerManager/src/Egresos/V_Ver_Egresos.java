@@ -4,62 +4,140 @@
  */
 package Egresos;
 
+import java.awt.BorderLayout;
+import java.awt.Insets;
+import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
+import javax.swing.border.EtchedBorder;
+import net.miginfocom.swing.MigLayout;
 
 /**
  *
  * @author Ramiro Ferreira
  */
-class V_Ver_Egresos extends JDialog{
+class V_Ver_Egresos extends JDialog {
+    //NORTE
 
-    public javax.swing.JButton jbSalir;
-    private javax.swing.JLabel jlProveedor;
-    private javax.swing.JPanel jpNorth;
-    public javax.swing.JPanel jpSouth;
-    private javax.swing.JScrollPane jspProductos;
-    public javax.swing.JTable jtProductos;
-    public javax.swing.JTextField jtfProveedor;
-    public javax.swing.JFormattedTextField jftTotal;
+    JPanel jpNorth;
+    public JTextField jtfProveedor, jtfFuncionario, jtfProvDireccion, jtfProvTelefono,
+            jtfProvRuc, jtfNroFactura;
+    public JRadioButton jrbContado, jrbCredito;
+    //CENTRO
+    JPanel jpCenter;
+    public JTable jtEgresoDetalle;
+    public JScrollPane jspEgresoDetalle;
+    public JLabel jlIva5, jlIva10, jlExenta, jlTotal;
+    public JFormattedTextField jftIva5, jftIva10, jftExenta, jftTotal;
+    //SUR
+    JPanel jpSouth;
+    public JButton jbImprimir, jbSalir;
 
-    public V_Ver_Egresos(java.awt.Frame parent, boolean modal) {
-        super(parent, modal);
+    public V_Ver_Egresos(java.awt.Frame parent) {
+        super(parent, true);
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Egresos");
         setModalityType(java.awt.Dialog.ModalityType.APPLICATION_MODAL);
         setSize(new java.awt.Dimension(800, 600));
-        
         initComponents();
         setLocationRelativeTo(parent);
+        getContentPane().setLayout(new BorderLayout());
+        getContentPane().add(jpNorth, BorderLayout.NORTH);
+        getContentPane().add(jpCenter, BorderLayout.CENTER);
+        getContentPane().add(jpSouth, BorderLayout.SOUTH);
+    }
+
+    private void initNorth() {
+        jpNorth = new JPanel(new MigLayout());
+        jtfProveedor = new JTextField(30);
+        jtfProveedor.setEditable(false);
+        jtfFuncionario = new JTextField(30);
+        jtfFuncionario.setEditable(false);
+        jtfNroFactura = new JTextField(30);
+        jtfNroFactura.setEditable(false);
+        jrbContado = new JRadioButton("Contado");
+        jrbCredito = new JRadioButton("Crédito");
+        jrbContado.setEnabled(false);
+        jrbCredito.setEnabled(false);
+        jtfProvRuc = new JTextField(30);
+        jtfProvRuc.setEditable(false);
+        jtfProvDireccion = new JTextField(30);
+        jtfProvDireccion.setEditable(false);
+        jtfProvTelefono = new JTextField(30);
+        jtfProvTelefono.setEditable(false);
+        javax.swing.ButtonGroup bg1 = new javax.swing.ButtonGroup();
+        bg1.add(jrbContado);
+        bg1.add(jrbCredito);
+        jpNorth.add(new JLabel("Proveedor:"));
+        jpNorth.add(jtfProveedor);
+        jpNorth.add(new JLabel("Nro. factura:"));
+        jpNorth.add(jtfNroFactura);
+        jpNorth.add(jrbContado);
+        jpNorth.add(jrbCredito, "wrap");
+        jpNorth.add(new JLabel("R.U.C.:"));
+        jpNorth.add(jtfProvRuc);
+        jpNorth.add(new JLabel("Direccion:"));
+        jpNorth.add(jtfProvDireccion);
+        jpNorth.add(new JLabel("Telefono:"));
+        jpNorth.add(jtfProvTelefono, "wrap");
+        jpNorth.add(new JLabel("Funcionario:"));
+        jpNorth.add(jtfFuncionario);
+    }
+
+    private void initCenter() {
+        jpCenter = new JPanel(new BorderLayout());
+        jpCenter.setBorder(new EtchedBorder(EtchedBorder.RAISED));
+        jtEgresoDetalle = new JTable();
+        jtEgresoDetalle.getTableHeader().setReorderingAllowed(false);
+        jtEgresoDetalle.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        jspEgresoDetalle = new JScrollPane(jtEgresoDetalle);
+
+        jlIva5 = new JLabel("I.V.A. 5%");
+        jlIva10 = new JLabel("I.V.A. 10%");
+        jlExenta = new JLabel("Exentas");
+        jlTotal = new JLabel("Total");
+        jftExenta = new JFormattedTextField();
+        jftExenta.setEditable(false);
+        jftIva5 = new JFormattedTextField();
+        jftIva5.setEditable(false);
+        jftIva10 = new JFormattedTextField();
+        jftIva10.setEditable(false);
+        jftTotal = new JFormattedTextField();
+        jftTotal.setEditable(false);
+        JPanel jpDetalleAux = new JPanel(new MigLayout());
+        jpDetalleAux.add(jlExenta, "wrap");
+        jpDetalleAux.add(jftExenta, "growx, wrap");
+        jpDetalleAux.add(jlIva5, "wrap");
+        jpDetalleAux.add(jftIva5, "growx, wrap");
+        jpDetalleAux.add(jlIva10, "wrap");
+        jpDetalleAux.add(jftIva10, "growx, wrap");
+        jpDetalleAux.add(jlTotal, "wrap");
+        jpDetalleAux.add(jftTotal, "growx, wrap");
+        jpCenter.add(jspEgresoDetalle, BorderLayout.CENTER);
+        jpCenter.add(jpDetalleAux, BorderLayout.EAST);
+    }
+
+    private void initSouth() {
+        jpSouth = new JPanel();
+        Insets insets = new Insets(10, 10, 10, 10);
+        jbImprimir = new JButton("Imprimir [F2]");
+        jbImprimir.setMargin(insets);
+        jbSalir = new JButton("Salir [F3]");
+        jbSalir.setMargin(insets);
+        jpSouth.add(jbImprimir);
+        jpSouth.add(jbSalir);
     }
 
     private void initComponents() {
-        jpNorth = new javax.swing.JPanel();
-        jlProveedor = new javax.swing.JLabel();
-        jtfProveedor = new javax.swing.JTextField();
-        jspProductos = new javax.swing.JScrollPane();
-        jtProductos = new javax.swing.JTable();
-        jpSouth = new javax.swing.JPanel();
-        jbSalir = new javax.swing.JButton();
-        jftTotal = new javax.swing.JFormattedTextField();
-        jftTotal.setColumns(20);
-        jlProveedor.setText("Proveedor");
-        jpNorth.add(jlProveedor);
-
-        jtfProveedor.setEditable(false);
-        jtfProveedor.setColumns(20);
-        jpNorth.add(jtfProveedor);
-
-        jspProductos.setViewportView(jtProductos);
-
-        jpSouth.add(new JLabel("Total"));
-        jpSouth.add(jftTotal);
-
-        jbSalir.setText("Salir");
-        jpSouth.add(jbSalir);
-
-        getContentPane().add(jpNorth, java.awt.BorderLayout.NORTH);
-        getContentPane().add(jspProductos, java.awt.BorderLayout.CENTER);
-        getContentPane().add(jpSouth, java.awt.BorderLayout.SOUTH);
+        initNorth();
+        initCenter();
+        initSouth();
     }
 }
