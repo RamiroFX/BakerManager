@@ -20,6 +20,7 @@ public class M_login {
 
     Config configuracion;
     M_funcionario funcionario;
+    int contador;
 
     public M_login() {
         funcionario = new M_funcionario();

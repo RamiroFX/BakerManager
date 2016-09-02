@@ -63,7 +63,7 @@ public class V_crearVentaRapida extends JDialog {
 
     private void initNorth() {
         jpNorth = new JPanel(new MigLayout());
-        jbCliente = new JButton("Agregar cliente [F5]");
+        jbCliente = new JButton("Agregar cliente [F3]");
         jtfCliente = new JTextField(30);
         jtfCliente.setEditable(false);
         jlFuncionario = new JLabel("Funcionario");
@@ -143,7 +143,7 @@ public class V_crearVentaRapida extends JDialog {
         jbAceptar.setMargin(insets);
         jbImprimir = new JButton("Imprimir [F2]");
         jbImprimir.setMargin(insets);
-        jbSalir = new JButton("Salir [F3]");
+        jbSalir = new JButton("Salir [ESC]");
         jbSalir.setMargin(insets);
         jpSouth.add(jbAceptar);
         jpSouth.add(jbImprimir);

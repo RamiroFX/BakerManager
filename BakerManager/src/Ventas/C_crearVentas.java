@@ -39,6 +39,7 @@ public class C_crearVentas extends MouseAdapter implements ActionListener {
         this.vista.jbVerMesa.setEnabled(false);
         this.vista.jbEliminarMesa.setEnabled(false);
         this.vista.jtMesa.setModel(this.modelo.getRstmMesa());
+        this.vista.jbVentaRapida.requestFocusInWindow();
         Utilities.c_packColumn.packColumns(this.vista.jtMesa, 1);
     }
 

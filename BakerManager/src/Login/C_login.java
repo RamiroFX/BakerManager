@@ -90,6 +90,7 @@ public class C_login implements ActionListener, KeyListener {
                 }
                 //se conecta contra la base de datos
                 if (modelo.conectar("postgres", "postgres")) {
+                    modelo.contador++;
                     if (modelo.verificarUsuario(user, password)) {
                         Config.setUser(user);
                         c_inicio.modelo.getRol_usuario().setFuncionario(modelo.funcionario);
@@ -104,6 +105,13 @@ public class C_login implements ActionListener, KeyListener {
                         //c_main.vista.getJMbarraMenu().jmiLogOut.setEnabled(true);
                         //se coloca en la barra de menu el nombre de usuario
                         c_inicio.vista.setJtfUsuario(c_inicio.modelo.getRol_usuario().getFuncionario().getAlias());
+                    } else {
+                        if (modelo.contador >= 5) {
+                            JOptionPane.showMessageDialog(vista, "Ah intentado ingresar demasiadas veces", "Atención", JOptionPane.INFORMATION_MESSAGE);
+                            System.exit(0);
+                        }
+                        mostrarMensaje("Atencion\n"
+                                + "Usuario y/o contraseña incorrectos");
                     }
                 } else {
                     mostrarMensaje("Atencion\n"

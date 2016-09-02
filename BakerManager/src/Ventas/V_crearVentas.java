@@ -53,10 +53,12 @@ public class V_crearVentas extends JDialog {
         jtfFuncionario = new JTextField();
         jtfFuncionario.setPreferredSize(new Dimension(250, 30));
         jtfFuncionario.setEditable(false);
+        jtfFuncionario.setFocusable(false);
         jftTiempo = new JFormattedTextField(
                 new DefaultFormatterFactory(
                 new DateFormatter(new SimpleDateFormat("dd/MM/yyyy hh:mm:ss"))));
         jftTiempo.setFont(new java.awt.Font("Monospaced", 1, 14));
+        jftTiempo.setFocusable(false);
         // setFecha(new Date());
         //jftFecha.setText("00/00/00");
         //jftFecha.setText(DateFormat.getDateInstance().format(getFecha()));

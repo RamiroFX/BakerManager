@@ -228,13 +228,25 @@ public class C_crearVentaRapida implements Gestion {
         this.modelo.getCabecera().setCliente(cliente);
         String nombre = this.modelo.getCabecera().getCliente().getNombre();
         String entidad = this.modelo.getCabecera().getCliente().getEntidad();
-        String ruc = this.modelo.getCabecera().getCliente().getRuc() + "-" + this.modelo.getCabecera().getCliente().getRucId();
+        String client = entidad;
+        if (this.modelo.getCabecera().getCliente().getNombre() != null) {
+            client = client + " (" + nombre + ")";
+        }
+        String ruc = "";
+        if (this.modelo.getCabecera().getCliente().getRuc() != null) {
+            ruc = this.modelo.getCabecera().getCliente().getRuc();
+            if (this.modelo.getCabecera().getCliente().getRucId() != null) {
+                ruc = ruc + "-" + this.modelo.getCabecera().getCliente().getRucId();
+            }
+        }
         String direccion = this.modelo.getCabecera().getCliente().getDireccion();
         ArrayList<M_telefono> telefono = DB_Cliente.obtenerTelefonoCliente(this.modelo.getCabecera().getIdCliente());
-        this.vista.jtfCliente.setText(nombre + " (" + entidad + ")");
+        this.vista.jtfCliente.setText(client);
         this.vista.jtfClieRuc.setText(ruc);
         this.vista.jtfClieDireccion.setText(direccion);
-        this.vista.jtfClieTelefono.setText(telefono.get(0).getNumero());
+        if (!telefono.isEmpty()) {
+            this.vista.jtfClieTelefono.setText(telefono.get(0).getNumero());
+        }
     }
 
     private void guardarVenta() {
@@ -321,14 +333,14 @@ public class C_crearVentaRapida implements Gestion {
         if (e.getKeyCode() == KeyEvent.VK_F2) {
             imprimirTicket();
         }
-        if (e.getKeyCode() == KeyEvent.VK_F3) {
+        if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
             cerrar();
         }
         if (e.getKeyCode() == KeyEvent.VK_F4) {
             SeleccionarProducto sp = new SeleccionarProducto(this);
             sp.mostrarVista();
         }
-        if (e.getKeyCode() == KeyEvent.VK_F5) {
+        if (e.getKeyCode() == KeyEvent.VK_F3) {
             Seleccionar_cliente sp = new Seleccionar_cliente(this);
             sp.mostrarVista();
         }
