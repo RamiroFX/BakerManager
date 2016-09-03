@@ -90,6 +90,7 @@ class V_gestion_proveedores extends JInternalFrame {
         jpCenter = new javax.swing.JPanel();
         jpCenter.setLayout(new java.awt.GridLayout(1, 0));
         jtProveedor = new javax.swing.JTable();
+        jtProveedor.getTableHeader().setReorderingAllowed(false);
         jspProveedor = new javax.swing.JScrollPane();
         jspProveedor.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
         jspProveedor.setViewportView(jtProveedor);

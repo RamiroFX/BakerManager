@@ -270,7 +270,7 @@ public class C_verMesa extends MouseAdapter implements ActionListener, KeyListen
         EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
-                if (modelo.getRstm().getColumnCount() < 1) {
+                if (modelo.getRstm().getRowCount() < 1) {
                     JOptionPane.showMessageDialog(vista, "No hay productos cargados", "Atención", JOptionPane.INFORMATION_MESSAGE);
                 } else {
                     int opcion = JOptionPane.showConfirmDialog(vista, "¿Desea imprimir el ticket?", "Atención", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
@@ -339,10 +339,10 @@ public class C_verMesa extends MouseAdapter implements ActionListener, KeyListen
         if (e.getKeyCode() == KeyEvent.VK_F2) {
             imprimirTicket();
         }
-        if (e.getKeyCode() == KeyEvent.VK_F3) {
+        if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
             cerrar();
         }
-        if (e.getKeyCode() == KeyEvent.VK_F4) {
+        if (e.getKeyCode() == KeyEvent.VK_F3) {
             SeleccionarProducto sp = new SeleccionarProducto(this);
             sp.mostrarVista();
         }

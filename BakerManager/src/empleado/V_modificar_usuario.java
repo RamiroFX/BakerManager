@@ -261,7 +261,7 @@ public class V_modificar_usuario extends javax.swing.JDialog {
 
     private void initPaneNorth() {
         jpNorth = new javax.swing.JPanel(new MigLayout("center"));
-        jpNorth.add(new JLabel("Los campos marcados con un asterisco(*) son obligatorios."),"wrap");
+        jpNorth.add(new JLabel("Los campos marcados con un asterisco(*) son obligatorios."), "wrap");
         jpNorth.add(new JLabel("Los campos marcados con dos asteriscos(**) son únicos."));
     }
 
@@ -272,7 +272,9 @@ public class V_modificar_usuario extends javax.swing.JDialog {
         jbQuitarRol = new javax.swing.JButton("Quitar");
 
         jtRolesSeleccionados = new JTable();
+        jtRolesSeleccionados.getTableHeader().setReorderingAllowed(false);
         jtRolesDisponibles = new JTable();
+        jtRolesDisponibles.getTableHeader().setReorderingAllowed(false);
         JScrollPane jspRolesSeleccionados = new JScrollPane(jtRolesSeleccionados);
         jspRolesSeleccionados.setBorder(javax.swing.BorderFactory.createTitledBorder("Roles seleccionados(*)"));
         JScrollPane jspRolesDisponibles = new JScrollPane(jtRolesDisponibles);
@@ -280,10 +282,10 @@ public class V_modificar_usuario extends javax.swing.JDialog {
 
         javax.swing.JPanel left = new javax.swing.JPanel(new java.awt.BorderLayout());
         javax.swing.JPanel right = new javax.swing.JPanel(new java.awt.BorderLayout());
-        left.add(jspRolesSeleccionados,BorderLayout.CENTER);
-        left.add(jbQuitarRol,BorderLayout.SOUTH);
-        right.add(jspRolesDisponibles,BorderLayout.CENTER);
-        right.add(jbAgregarRol,BorderLayout.SOUTH);
+        left.add(jspRolesSeleccionados, BorderLayout.CENTER);
+        left.add(jbQuitarRol, BorderLayout.SOUTH);
+        right.add(jspRolesDisponibles, BorderLayout.CENTER);
+        right.add(jbAgregarRol, BorderLayout.SOUTH);
 
         jpRol.add(left);
         jpRol.add(right);

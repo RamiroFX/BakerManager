@@ -135,7 +135,9 @@ public class Impresora {
             Logger.getLogger(Impresora.class.getName()).log(Level.SEVERE, null, ex);
         }
         M_pedido pedido = DB_Pedido.obtenerPedido(1552);
-        Impresora.imprimirPedidoGuardado(DatosUsuario.getRol_usuario(), pedido);
+        ArrayList<M_pedidoDetalle> pedidoDetalle = DB_Pedido.obtenerPedidoDetalles(1552);
+        System.out.println("op");
+        Impresora.imprimirPedido(DatosUsuario.getRol_usuario(), pedido, pedidoDetalle);
         //Impresora.imprimirGenerico(TICKET_CABECERA + TICKET_PIE);
 
     }
@@ -179,11 +181,12 @@ public class Impresora {
     public static void imprimirPedido(M_rol_usuario rol_usuario, M_pedido pedidoCabecera, ArrayList<M_pedidoDetalle> pedidoDetalle) {
         PrintService service = PrintServiceLookup.lookupDefaultPrintService();
         Date today = Calendar.getInstance().getTime();
+        System.out.println("today:" + today);
         String fechaEntrega = sdfs.format(today);
+        System.out.println("fechaEntrega:" + fechaEntrega);
         String CABECERA = "Fecha y hora: " + fechaEntrega + "\n"
                 + "Cajero: " + pedidoCabecera.getFuncionario().getNombre() + "\n"
                 + "Cliente: " + pedidoCabecera.getCliente().getEntidad() + "\n"
-                + "Fecha pedido: " + sdfs.format(pedidoCabecera.getTiempoRecepcion()) + "\n"
                 + "---------------------------------\n";
         String COLUMNAS = "producto   cant  precio  subtotal\n";
         String DETALLE = "";
@@ -197,6 +200,7 @@ public class Impresora {
                 + "Total= " + total + "\n";
         String ticket = TICKET_CABECERA + CABECERA + COLUMNAS + DETALLE + SUMATOTAL + TICKET_PIE_SIN_GRACIAS;
         byte[] bytes = ticket.getBytes();
+        System.out.println(ticket);
         DocFlavor flavor = DocFlavor.BYTE_ARRAY.AUTOSENSE;
         Doc doc = new SimpleDoc(bytes, flavor, null);
         DocPrintJob job = service.createPrintJob();

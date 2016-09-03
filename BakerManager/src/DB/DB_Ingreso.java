@@ -241,9 +241,9 @@ public class DB_Ingreso {
                 + "AND ID_FACTURA_CABECERA = " + idIngresoCabecera;
         ResultSetTableModel rstm = null;
         try {
-            st = DB_manager.getConection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            pst = DB_manager.getConection().prepareStatement(Query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             // se ejecuta el query y se obtienen los resultados en un ResultSet
-            rs = st.executeQuery(Query);
+            rs = pst.executeQuery();
             rstm = new ResultSetTableModel(rs);
         } catch (SQLException ex) {
             Logger lgr = Logger.getLogger(DB_Ingreso.class.getName());

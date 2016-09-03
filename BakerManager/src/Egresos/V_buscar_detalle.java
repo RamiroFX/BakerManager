@@ -114,8 +114,6 @@ public class V_buscar_detalle extends JDialog {
 
     private void initMid() {
         //Panel medio izquierda
-        /*jtDetalle = new JTable();
-         jspEgresoDetalle = new JScrollPane(jtDetalle);*/
         jtDetalle = new JTablePagination(100);
 
         //panel medio derecha

@@ -215,10 +215,17 @@ public class C_gestionEgresos extends MouseAdapter implements ActionListener, Ke
     }
 
     private void completarCampos() {
-        int fila = vista.jtEgresoCabecera.table.getSelectedRow();
-        int idEgrsoCabecera = Integer.valueOf(String.valueOf(vista.jtEgresoCabecera.table.getValueAt(fila, 0).toString()));
-        this.vista.jtEgresoDetalle.setModel(DB_Egreso.obtenerEgresoDetalle(idEgrsoCabecera));
-        Utilities.c_packColumn.packColumns(vista.jtEgresoDetalle, 1);
+        EventQueue.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                int fila = vista.jtEgresoCabecera.table.getSelectedRow();
+                if (fila > -1) {
+                    int idEgrsoCabecera = Integer.valueOf(String.valueOf(vista.jtEgresoCabecera.table.getValueAt(fila, 0).toString()));
+                    vista.jtEgresoDetalle.setModel(DB_Egreso.obtenerEgresoDetalle(idEgrsoCabecera));
+                    Utilities.c_packColumn.packColumns(vista.jtEgresoDetalle, 1);
+                }
+            }
+        });
     }
 
     private void borrarParametros() {
