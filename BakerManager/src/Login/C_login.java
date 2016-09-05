@@ -72,6 +72,11 @@ public class C_login implements ActionListener, KeyListener {
     public void logIn() {
         EventQueue.invokeLater(new Runnable() {
             public void run() {
+                if (modelo.contador > 5) {
+                    JOptionPane.showMessageDialog(vista, "Ha superado el limite de intentos para entrar al sistema.", "Alerta", JOptionPane.ERROR_MESSAGE);
+                    System.exit(0);
+                }
+                modelo.contador++;
                 //alias de usuario
                 String user = vista.txtNombre.getText();
                 if (user.isEmpty() || user.length() > 15) {
@@ -90,7 +95,6 @@ public class C_login implements ActionListener, KeyListener {
                 }
                 //se conecta contra la base de datos
                 if (modelo.conectar("postgres", "postgres")) {
-                    modelo.contador++;
                     if (modelo.verificarUsuario(user, password)) {
                         Config.setUser(user);
                         c_inicio.modelo.getRol_usuario().setFuncionario(modelo.funcionario);
@@ -106,10 +110,6 @@ public class C_login implements ActionListener, KeyListener {
                         //se coloca en la barra de menu el nombre de usuario
                         c_inicio.vista.setJtfUsuario(c_inicio.modelo.getRol_usuario().getFuncionario().getAlias());
                     } else {
-                        if (modelo.contador >= 5) {
-                            JOptionPane.showMessageDialog(vista, "Ah intentado ingresar demasiadas veces", "Atención", JOptionPane.INFORMATION_MESSAGE);
-                            System.exit(0);
-                        }
                         mostrarMensaje("Atencion\n"
                                 + "Usuario y/o contraseña incorrectos");
                     }
