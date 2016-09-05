@@ -199,20 +199,20 @@ public class DB_Producto {
             if ("Todos".equals(marca)) {
                 marc = "";
             } else {
-                marc = "AND PROD.ID_MARCA LIKE '" + marca + "' ";
+                marc = "AND PROD.ID_MARCA = (SELECT MARC.ID_MARCA FROM MARCA MARC WHERE MARC.DESCRIPCION LIKE '" + marca + "' )";
             }
 
             String rubr;
             if ("Todos".equals(rubro)) {
                 rubr = "";
             } else {
-                rubr = "AND PROD.ID_CATEGORIA LIKE '" + rubro + "'  ";
+                rubr = "AND PROD.ID_CATEGORIA = (SELECT PRCA.ID_PRODUCTO_CATEGORIA FROM PRODUCTO_CATEGORIA PRCA WHERE PRCA.DESCRIPCION LIKE '" + rubro + "' )";
             }
             String estad;
             if ("Todos".equals(estado)) {
                 estad = "";
             } else {
-                estad = "AND PROD.ESTADO = (SELECT ESTA.ID_ESTADO FROM ESTADO ESTA WHERE ESTA.DESCRIPCION LIKE '" + estado + "') ";
+                estad = "AND PROD.ID_ESTADO = (SELECT ESTA.ID_ESTADO FROM ESTADO ESTA WHERE ESTA.DESCRIPCION LIKE '" + estado + "') ";
             }
 
             String Query = "SELECT PROD.ID_PRODUCTO \"ID\", "
@@ -228,6 +228,7 @@ public class DB_Producto {
                     + finalQuery;
             //SELECT PROD.id_producto   "ID producto"  ,  PROD.descripcion  "Descripcion"   FROM producto
             //se crea una sentencia
+            System.out.println("231: " + Query);
             pst = DB_manager.getConection().prepareStatement(Query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             pst.setString(1, descripcion + "%");
             // se ejecuta el query y se obtienen los resultados en un ResultSet
