@@ -342,11 +342,11 @@ public class C_verMesa extends MouseAdapter implements ActionListener, KeyListen
         if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
             cerrar();
         }
-        if (e.getKeyCode() == KeyEvent.VK_F3) {
+        if (e.getKeyCode() == KeyEvent.VK_F4) {
             SeleccionarProducto sp = new SeleccionarProducto(this);
             sp.mostrarVista();
         }
-        if (e.getKeyCode() == KeyEvent.VK_F5) {
+        if (e.getKeyCode() == KeyEvent.VK_F3) {
             Seleccionar_cliente sp = new Seleccionar_cliente(this);
             sp.mostrarVista();
         }
