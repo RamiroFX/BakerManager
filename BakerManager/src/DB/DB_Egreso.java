@@ -729,7 +729,6 @@ public class DB_Egreso {
             }
         }
         return idTipoOperacion;
-
     }
     /*
      * CREATE

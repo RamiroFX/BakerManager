@@ -20,6 +20,7 @@ import java.sql.Types;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.table.TableModel;
 
 /**
  *
@@ -71,6 +72,54 @@ public class DB_Ingreso {
             Logger lgr = Logger.getLogger(DB_Ingreso.class.getName());
             lgr.log(Level.SEVERE, ex.getMessage(), ex);
         }
+        return rstm;
+    }
+
+    public static ResultSetTableModel obtenerIngresoCabecera(Integer idIngresoDetalle) {
+        ResultSetTableModel rstm = null;
+        String Query = "SELECT FACA.ID_FACTURA_CABECERA \"ID ingreso\", "
+                + "(SELECT CLIE.ENTIDAD FROM CLIENTE CLIE WHERE CLIE.ID_CLIENTE = FACA.ID_CLIENTE)\"Cliente\", "
+                + "(SELECT PERS.NOMBRE || ' '|| PERS.APELLIDO WHERE PERS.ID_PERSONA = FUNC.ID_PERSONA)\"Empleado\", "
+                + "FACA.TIEMPO \"Tiempo\", "
+                + "(SELECT TIOP.DESCRIPCION FROM TIPO_OPERACION TIOP WHERE TIOP.ID_TIPO_OPERACION = FACA.ID_COND_VENTA) \"Cond. venta\" "
+                + "FROM FACTURA_CABECERA FACA, FACTURA_DETALLE FADE, FUNCIONARIO FUNC, PERSONA PERS "
+                + "WHERE FACA.ID_FUNCIONARIO = FUNC.ID_FUNCIONARIO "
+                + "AND PERS.ID_PERSONA = FUNC.ID_PERSONA "
+                + "AND FACA.ID_FACTURA_CABECERA = FADE.ID_FACTURA_CABECERA "
+                + "AND FADE.ID_FACTURA_DETALLE = " + idIngresoDetalle;
+        try {
+            st = DB_manager.getConection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            // se ejecuta el query y se obtienen los resultados en un ResultSet
+            rs = st.executeQuery(Query);
+            rstm = new ResultSetTableModel(rs);
+        } catch (SQLException ex) {
+            Logger lgr = Logger.getLogger(DB_Egreso.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        } /*finally {
+         try {
+         if (rs != null) {
+         rs.close();
+         }
+         if (st != null) {
+         st.close();
+         }
+         } catch (SQLException ex) {
+         Logger lgr = Logger.getLogger(DB_Egreso.class.getName());
+         lgr.log(Level.WARNING, ex.getMessage(), ex);
+         } /*finally {
+         try {
+         if (rs != null) {
+         rs.close();
+         }
+         if (st != null) {
+         st.close();
+         }
+         } catch (SQLException ex) {
+         Logger lgr = Logger.getLogger(DB_Egreso.class.getName());
+         lgr.log(Level.WARNING, ex.getMessage(), ex);
+         }
+         }*/
+
         return rstm;
     }
     /*
@@ -816,5 +865,111 @@ public class DB_Ingreso {
             }
         }
         return detalles;
+    }
+
+    public static ResultSetTableModel obtenerIngresoDetalleAvanzado(String producto, String cliente, String marca, String impuesto, String categoria, String estado, String fechaInicio, String fechaFinal, String tipo_operacion, String idEmpleado, boolean busqDescripcion) {
+        ResultSetTableModel rstm = null;
+        String fromQuery = "FROM FACTURA_DETALLE FADE, PRODUCTO PROD, FACTURA_CABECERA FACA ";
+        String whereQuery = "WHERE FADE.ID_PRODUCTO = PROD.ID_PRODUCTO AND FACA.ID_FACTURA_CABECERA = FADE.ID_FACTURA_CABECERA ";
+        String fInicio = "";
+        String fFinal;
+        if ("Todos".equals(fechaInicio)) {
+            fInicio = "";
+            if ("Todos".equals(fechaFinal)) {
+                fFinal = "";
+            } else {
+                fFinal = " AND FACA.TIEMPO <'" + fechaFinal + "'::timestamp ";
+            }
+        } else {
+            fInicio = "AND FACA.TIEMPO BETWEEN '" + fechaInicio + "'::timestamp  ";
+            fFinal = "AND '" + fechaFinal + "'::timestamp ";
+            if ("Todos".equals(fechaFinal)) {
+                fInicio = "AND FACA.TIEMPO > '" + fechaInicio + "'::timestamp ";
+                fFinal = "";
+            }
+        }
+        String prov;
+        if ("Todos".equals(cliente)) {
+            prov = "";
+        } else {
+            fromQuery = fromQuery + ", CLIENTE CLIE ";
+            whereQuery = whereQuery + " AND CLIE.ID_CLIENTE = FACA.ID_CLIENTE ";
+            prov = " AND CLIE.ENTIDAD LIKE '" + cliente + "' ";
+        }
+
+        String marc;
+        if ("Todos".equals(marca)) {
+            marc = "";
+        } else {
+            marc = "AND PROD.ID_MARCA = (SELECT MARC.ID_MARCA FROM MARCA MARC WHERE MARC.DESCRIPCION = '" + marca + "') ";
+        }
+        String imp;
+        if ("Todos".equals(impuesto)) {
+            imp = "";
+        } else {
+            imp = "AND PROD.ID_IMPUESTO =(SELECT IMPU.ID_IMPUESTO FROM IMPUESTO IMPU WHERE IMPU.DESCRIPCION = " + impuesto + ") ";
+        }
+
+        String rubr;
+        if ("Todos".equals(categoria)) {
+            rubr = "";
+        } else {
+            rubr = "AND PROD.ID_CATEGORIA = (SELECT PRCA.ID_PRODUCTO_CATEGORIA FROM PRODUCTO_CATEGORIA PRCA WHERE PRCA.DESCRIPCION = '" + categoria + "') ";
+        }
+        String estad;
+        if ("Todos".equals(estado)) {
+            estad = "";
+        } else {
+            estad = "AND PROD.ID_ESTADO = (SELECT ESTA.ID_ESTADO FROM ESTADO ESTA WHERE ESTA.DESCRIPCION LIKE '" + estado + "') ";
+        }
+
+        String empleado;
+        if ("Todos".equals(idEmpleado)) {
+            empleado = "";
+        } else {
+            fromQuery = fromQuery + ", FUNCIONARIO FUNC, PERSONA PERS ";
+            whereQuery = whereQuery + " AND PERS.ID_PERSONA = FUNC.ID_PERSONA AND FACA.ID_FUNCIONARIO = FUNC.ID_FUNCIONARIO ";
+            empleado = " AND FUNC.ID_FUNCIONARIO = " + idEmpleado;
+        }
+
+        String tiop;
+        if ("Todos".equals(tipo_operacion)) {
+            tiop = "";
+        } else {
+            tiop = " AND FACA.ID_COND_VENTA = " + tipo_operacion;
+        }
+
+        String busqueda;
+        if (busqDescripcion) {
+            busqueda = "AND LOWER(PROD.DESCRIPCION) LIKE LOWER (?) ESCAPE '!' ";
+        } else {
+            busqueda = "AND LOWER(FADE.OBSERVACION) LIKE LOWER (?) ESCAPE '!' ";
+        }
+
+        String Query = "SELECT FADE.ID_FACTURA_DETALLE\"ID det.\", "
+                + "(SELECT PROD.DESCRIPCION FROM PRODUCTO PROD WHERE PROD.ID_PRODUCTO = FADE.ID_PRODUCTO) \"Producto\", "
+                + "FADE.OBSERVACION \"Obs.\",FADE.CANTIDAD \"Cantidad\", FADE.PRECIO \"Precio\", (FADE.PRECIO*FADE.CANTIDAD)\"Total\", FACA.TIEMPO \"Tiempo\" "
+                + fromQuery
+                + whereQuery
+                + busqueda
+                + prov
+                + marc
+                + imp
+                + rubr
+                + estad
+                + fInicio
+                + fFinal
+                + tiop
+                + empleado;
+        try {
+            pst = DB_manager.getConection().prepareStatement(Query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            pst.setString(1, producto + "%");
+            rs = pst.executeQuery();
+            rstm = new ResultSetTableModel(rs);
+        } catch (SQLException ex) {
+            Logger lgr = Logger.getLogger(DB_Egreso.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        }
+        return rstm;
     }
 }

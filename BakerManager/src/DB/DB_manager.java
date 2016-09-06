@@ -898,4 +898,64 @@ public class DB_manager {
             lgr.log(Level.SEVERE, ex.getMessage(), ex);
         }
     }
+
+    public static Integer obtenerTipoOperacion(String tipoOperacion) {
+        Integer idTipoOperacion = 0;
+        String query = "SELECT ID_TIPO_OPERACION \"ID_TIPO_OPERACION\" "
+                + "FROM TIPO_OPERACION "
+                + "WHERE descripcion LIKE '" + tipoOperacion + "'";
+        try {
+            pst = DB_manager.getConection().prepareStatement(query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            rs = pst.executeQuery();
+            while (rs.next()) {
+                idTipoOperacion = rs.getInt("ID_TIPO_OPERACION");
+            }
+        } catch (SQLException ex) {
+            Logger lgr = Logger.getLogger(DB_Egreso.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (pst != null) {
+                    pst.close();
+                }
+            } catch (SQLException ex) {
+                Logger lgr = Logger.getLogger(DB_Egreso.class.getName());
+                lgr.log(Level.WARNING, ex.getMessage(), ex);
+            }
+        }
+        return idTipoOperacion;
+    }
+
+    public static Vector obtenerTipoOperacion() {
+        Vector tiop = null;
+        String q = "SELECT descripcion  "
+                + "FROM TIPO_OPERACION ";
+        try {
+            st = DB_manager.getConection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            rs = st.executeQuery(q);
+            tiop = new Vector();
+            while (rs.next()) {
+                tiop.add(rs.getString("descripcion"));
+            }
+        } catch (SQLException ex) {
+            Logger lgr = Logger.getLogger(DB_Egreso.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (st != null) {
+                    st.close();
+                }
+            } catch (SQLException ex) {
+                Logger lgr = Logger.getLogger(DB_Egreso.class.getName());
+                lgr.log(Level.WARNING, ex.getMessage(), ex);
+            }
+        }
+        return tiop;
+    }
 }

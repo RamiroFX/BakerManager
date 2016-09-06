@@ -80,6 +80,8 @@ public class C0_gestionVentas implements Gestion {
                 this.vista.jbEmpleado.addActionListener(this);
                 this.vista.jcbCondCompra.setEnabled(true);
                 this.vista.jbBorrar.addActionListener(this);
+                this.vista.jbBuscarDetalle.setEnabled(true);
+                this.vista.jbBuscarDetalle.addActionListener(this);
             }
             if (this.vista.jbDetalle.getName().equals(accesos.get(i).getItemDescripcion())) {
                 this.vista.jbDetalle.addActionListener(this);
@@ -248,6 +250,9 @@ public class C0_gestionVentas implements Gestion {
         if (e.getSource().equals(this.vista.jbBuscar)) {
             displayQueryResults();
         }
+        if (e.getSource().equals(this.vista.jbBuscarDetalle)) {
+            buscarVentaDetalle();
+        }
         if (e.getSource().equals(this.vista.jbCliente)) {
             Seleccionar_cliente sc = new Seleccionar_cliente(this);
             sc.mostrarVista();
@@ -309,5 +314,10 @@ public class C0_gestionVentas implements Gestion {
         if (this.vista.jtIngresoCabecera.table.hasFocus()) {
             completarCampos();
         }
+    }
+
+    private void buscarVentaDetalle() {
+        C_buscar_venta_detalle bvd = new C_buscar_venta_detalle(c_inicio);
+        bvd.mostrarVista();
     }
 }

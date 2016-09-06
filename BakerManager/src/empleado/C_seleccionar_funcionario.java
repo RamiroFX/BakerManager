@@ -11,6 +11,7 @@ import Egresos.C_gestionEgresos;
 import Entities.M_funcionario;
 import Pedido.C_gestionPedido;
 import Ventas.C0_gestionVentas;
+import Ventas.C_buscar_venta_detalle;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -29,6 +30,7 @@ public class C_seleccionar_funcionario extends MouseAdapter implements ActionLis
     public static final int GESTION_COMPRA = 2;
     public static final int BUSCAR_DETALLE_EGRESO = 3;
     public static final int GESTION_PEDIDO = 4;
+    public static final int BUSCAR_VENTA_DETALLE = 5;
     int idCliente, tipo;
     M_funcionario funcionario;
     V_seleccionar_funcionario vista;
@@ -37,6 +39,7 @@ public class C_seleccionar_funcionario extends MouseAdapter implements ActionLis
     private C_gestionEgresos gestion_compra;
     private C_buscar_detalle buscarDetalleEgreso;
     private C_gestionPedido gestionPedido;
+    private C_buscar_venta_detalle buscarVentaDetalle;
 
     public C_seleccionar_funcionario(V_seleccionar_funcionario vista, C0_gestionVentas gestion_venta) {
         this.gestion_venta = gestion_venta;
@@ -66,6 +69,14 @@ public class C_seleccionar_funcionario extends MouseAdapter implements ActionLis
         this.gestionPedido = gestionPedido;
         this.vista = vista;
         this.tipo = GESTION_PEDIDO;
+        inicializarVista();
+        agregarListeners();
+    }
+
+    public C_seleccionar_funcionario(V_seleccionar_funcionario vista, C_buscar_venta_detalle buscarVentaDetalle) {
+        this.buscarVentaDetalle = buscarVentaDetalle;
+        this.vista = vista;
+        this.tipo = BUSCAR_VENTA_DETALLE;
         inicializarVista();
         agregarListeners();
     }
@@ -116,6 +127,11 @@ public class C_seleccionar_funcionario extends MouseAdapter implements ActionLis
             }
             case GESTION_PEDIDO: {
                 this.gestionPedido.recibirFuncionario(funcionario);
+                cerrar();
+                break;
+            }
+            case BUSCAR_VENTA_DETALLE: {
+                this.buscarVentaDetalle.recibirFuncionario(funcionario);
                 cerrar();
                 break;
             }

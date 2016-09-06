@@ -8,6 +8,7 @@ import Egresos.C_buscar_detalle;
 import Egresos.C_gestionEgresos;
 import Pedido.C_gestionPedido;
 import Ventas.C0_gestionVentas;
+import Ventas.C_buscar_venta_detalle;
 
 /**
  *
@@ -36,6 +37,11 @@ public class Seleccionar_funcionario {
     public Seleccionar_funcionario(C_gestionPedido gestionPedido) {
         this.vista = new V_seleccionar_funcionario(gestionPedido.c_inicio.vista);
         this.controlador = new C_seleccionar_funcionario(vista, gestionPedido);
+    }
+    
+    public Seleccionar_funcionario(C_buscar_venta_detalle buscarVentaDetalle) {
+        this.vista = new V_seleccionar_funcionario(buscarVentaDetalle.c_inicio.vista);
+        this.controlador = new C_seleccionar_funcionario(vista, buscarVentaDetalle);
     }
 
     public void mostrarVista() {

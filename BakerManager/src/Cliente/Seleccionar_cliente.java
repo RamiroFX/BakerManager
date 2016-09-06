@@ -9,6 +9,7 @@ import Pedido.C_gestionPedido;
 import Pedido.C_verPedido;
 import Ventas.C_crearVentaRapida;
 import Ventas.C0_gestionVentas;
+import Ventas.C_buscar_venta_detalle;
 import Ventas.C_verMesa;
 import Ventas.ConfigurarMesa;
 
@@ -54,6 +55,11 @@ public class Seleccionar_cliente {
     public Seleccionar_cliente(C_verPedido verPedido) {
         vista = new V_seleccionar_cliente(verPedido.vista);
         controlador = new C_seleccionar_cliente(vista, verPedido);
+    }
+
+    public Seleccionar_cliente(C_buscar_venta_detalle venta_detalle) {
+        vista = new V_seleccionar_cliente(venta_detalle.vista);
+        controlador = new C_seleccionar_cliente(vista, venta_detalle);
     }
 
     public void mostrarVista() {

@@ -11,6 +11,7 @@ import Pedido.C_gestionPedido;
 import Pedido.C_verPedido;
 import Ventas.C_crearVentaRapida;
 import Ventas.C0_gestionVentas;
+import Ventas.C_buscar_venta_detalle;
 import Ventas.C_verMesa;
 import Ventas.ConfigurarMesa;
 import java.awt.EventQueue;
@@ -34,6 +35,7 @@ public class C_seleccionar_cliente extends MouseAdapter implements ActionListene
     public static final int GESTION_PEDIDO = 6;
     public static final int CREAR_PEDIDO = 7;
     public static final int VER_PEDIDO = 8;
+    public static final int BUSCAR_VENTA_DETALLE = 9;
     int idCliente, tipo;
     M_cliente cliente;
     V_seleccionar_cliente vista;
@@ -44,6 +46,7 @@ public class C_seleccionar_cliente extends MouseAdapter implements ActionListene
     C_gestionPedido gestionPedido;
     C_crearPedido crearPedido;
     C_verPedido verPedido;
+    C_buscar_venta_detalle ventaDetalle;
 
     public C_seleccionar_cliente(V_seleccionar_cliente vista, C_crearVentaRapida c_ingreso) {
         this.c_ingreso = c_ingreso;
@@ -97,6 +100,14 @@ public class C_seleccionar_cliente extends MouseAdapter implements ActionListene
         this.verPedido = verPedido;
         this.vista = vista;
         this.tipo = VER_PEDIDO;
+        inicializarVista();
+        agregarListeners();
+    }
+
+    public C_seleccionar_cliente(V_seleccionar_cliente vista, C_buscar_venta_detalle ventaDetalle) {
+        this.ventaDetalle = ventaDetalle;
+        this.vista = vista;
+        this.tipo = BUSCAR_VENTA_DETALLE;
         inicializarVista();
         agregarListeners();
     }
@@ -162,6 +173,12 @@ public class C_seleccionar_cliente extends MouseAdapter implements ActionListene
             }
             case VER_PEDIDO: {
                 this.verPedido.recibirCliente(cliente);
+                cerrar();
+                break;
+            }
+                
+            case BUSCAR_VENTA_DETALLE: {
+                this.ventaDetalle.recibirCliente(cliente);
                 cerrar();
                 break;
             }
