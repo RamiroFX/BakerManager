@@ -232,8 +232,8 @@ public class C_buscar_venta_detalle extends MouseAdapter implements ActionListen
         if (e.getSource().equals(this.vista.jtDetalle.table)) {
             int fila = this.vista.jtDetalle.table.rowAtPoint(e.getPoint());
             int columna = this.vista.jtDetalle.table.columnAtPoint(e.getPoint());
-            Integer idEgresoDetalle = Integer.valueOf(String.valueOf(this.vista.jtDetalle.table.getValueAt(fila, 0)));
             if ((fila > -1) && (columna > -1)) {
+                Integer idEgresoDetalle = Integer.valueOf(String.valueOf(this.vista.jtDetalle.table.getValueAt(fila, 0)));
                 this.vista.jtCabecera.setModel(DB_Ingreso.obtenerIngresoCabecera(idEgresoDetalle));
                 this.vista.jbDetalle.setEnabled(false);
             }
@@ -241,15 +241,15 @@ public class C_buscar_venta_detalle extends MouseAdapter implements ActionListen
         if (e.getSource().equals(this.vista.jtCabecera)) {
             int fila = this.vista.jtDetalle.table.rowAtPoint(e.getPoint());
             int columna = this.vista.jtDetalle.table.columnAtPoint(e.getPoint());
-            Integer idEgresoCabecera = Integer.valueOf(String.valueOf(this.vista.jtCabecera.getValueAt(fila, 0)));
             if ((fila > -1) && (columna > -1)) {
+                Integer idEgresoCabecera = Integer.valueOf(String.valueOf(this.vista.jtCabecera.getValueAt(fila, 0)));
                 this.vista.jbDetalle.setEnabled(true);
+                if (e.getClickCount() == 2) {
+                    Ver_ingreso ver_egreso = new Ver_ingreso(c_inicio, idEgresoCabecera);
+                    ver_egreso.mostrarVista();
+                    this.vista.jbDetalle.setEnabled(false);
+                }
             } else {
-                this.vista.jbDetalle.setEnabled(false);
-            }
-            if (e.getClickCount() == 2) {
-                Ver_ingreso ver_egreso = new Ver_ingreso(c_inicio, idEgresoCabecera);
-                ver_egreso.mostrarVista();
                 this.vista.jbDetalle.setEnabled(false);
             }
         }

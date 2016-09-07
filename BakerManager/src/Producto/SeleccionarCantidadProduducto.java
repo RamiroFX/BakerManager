@@ -148,6 +148,10 @@ public class SeleccionarCantidadProduducto extends javax.swing.JDialog implement
                 }
                 break;
             }
+            case (C_seleccionarProducto.CREAR_EGRESO): {
+                jtfPrecio.setText(producto.getPrecioCosto().toString());
+                break;
+            }
             default: {
                 jtfPrecio.setText(producto.getPrecioVenta().toString());
                 break;

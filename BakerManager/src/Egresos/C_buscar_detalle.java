@@ -239,17 +239,17 @@ public class C_buscar_detalle extends MouseAdapter implements ActionListener, Ke
             }
         }
         if (e.getSource().equals(this.vista.jtCabecera)) {
-            int fila = this.vista.jtDetalle.table.rowAtPoint(e.getPoint());
-            int columna = this.vista.jtDetalle.table.columnAtPoint(e.getPoint());
-            Integer idEgresoCabecera = Integer.valueOf(String.valueOf(this.vista.jtDetalle.table.getValueAt(fila, 0)));
+            int fila = this.vista.jtCabecera.rowAtPoint(e.getPoint());
+            int columna = this.vista.jtCabecera.columnAtPoint(e.getPoint());
             if ((fila > -1) && (columna > -1)) {
+                Integer idEgresoCabecera = Integer.valueOf(String.valueOf(this.vista.jtCabecera.getValueAt(fila, 0)));
+                if (e.getClickCount() == 2) {
+                    Ver_Egresos ver_egreso = new Ver_Egresos(c_inicio, idEgresoCabecera);
+                    ver_egreso.mostrarVista();
+                    this.vista.jbDetalle.setEnabled(false);
+                }
                 this.vista.jbDetalle.setEnabled(true);
             } else {
-                this.vista.jbDetalle.setEnabled(false);
-            }
-            if (e.getClickCount() == 2) {
-                Ver_Egresos ver_egreso = new Ver_Egresos(c_inicio, idEgresoCabecera);
-                ver_egreso.mostrarVista();
                 this.vista.jbDetalle.setEnabled(false);
             }
         }
