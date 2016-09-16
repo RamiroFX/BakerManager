@@ -7,8 +7,10 @@ package Producto;
 import DB.DB_Producto;
 import Egresos.C_crear_egreso;
 import Entities.M_facturaDetalle;
+import Entities.M_menu_item;
 import Entities.M_pedidoDetalle;
 import Entities.M_producto;
+import MenuPrincipal.DatosUsuario;
 import Pedido.C_crearPedido;
 import Pedido.C_verPedido;
 import Ventas.C_crearVentaRapida;
@@ -20,6 +22,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import javax.swing.JOptionPane;
 import net.miginfocom.swing.MigLayout;
 
@@ -246,7 +249,7 @@ public class SeleccionarCantidadProduducto extends javax.swing.JDialog implement
                     break;
                 }
                 case (C_seleccionarProducto.CREAR_EGRESO): {
-                    selecProd.c_egresos.recibirProducto(cantidad, precio, descuento, observacion, selecProd.producto);
+                    EnviarProductoConVerificacionPermisoModificacionPrecio();
                     break;
                 }
                 case (SeleccionarCantidadProduducto.MODIFICAR_EGRESO): {
@@ -467,5 +470,22 @@ public class SeleccionarCantidadProduducto extends javax.swing.JDialog implement
 
     @Override
     public void keyReleased(KeyEvent ke) {
+    }
+
+    private void EnviarProductoConVerificacionPermisoModificacionPrecio() {
+        ArrayList<M_menu_item> accesos = DatosUsuario.getRol_usuario().getAccesos();
+        for (M_menu_item acceso : accesos) {
+            if (Parametros.MenuItem.MODIFICAR_PRODUCTO.getDescripcion().equals(acceso.getItemDescripcion())) {
+                int precioActual = selecProd.producto.getPrecioCosto();
+                int precioNuevo = precio;
+                if (precioActual != precioNuevo) {
+                    int option = JOptionPane.showConfirmDialog(this, "El precio de costo es diferente \n ¿Desea modificar el precio?", "Atención", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+                    if (option == JOptionPane.YES_OPTION) {
+                        DB_Producto.modificarPrecioCostoProducto(producto.getId(), precioNuevo);
+                    }
+                }
+            }
+        }
+        selecProd.c_egresos.recibirProducto(cantidad, precio, descuento, observacion, selecProd.producto);
     }
 }
