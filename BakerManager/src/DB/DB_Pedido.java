@@ -672,6 +672,17 @@ public class DB_Pedido {
                 pst.executeUpdate();
                 pst.close();
             }
+            
+            //se resta del stock lo que se vende
+            for (int i = 0; i < detalle.size(); i++) {
+                String query = "UPDATE PRODUCTO SET "
+                        + "CANT_ACTUAL = "
+                        + "((SELECT CANT_ACTUAL FROM PRODUCTO WHERE ID_PRODUCTO = " + detalle.get(i).getProducto().getId() + ")-" + detalle.get(i).getCantidad() + ") "
+                        + "WHERE ID_PRODUCTO =" + detalle.get(i).getProducto().getId();
+                st = DB_manager.getConection().createStatement();
+                st.executeUpdate(query);
+            }
+            
             String UPDATE_PEDIDO = "UPDATE PEDIDO_CABECERA SET ID_FACTURA_CABECERA = " + sq_cabecera + ", id_pedido_estado = 2 WHERE ID_PEDIDO_CABECERA = " + pedido.getIdPedido();
             st = DB_manager.getConection().createStatement();
             st.executeUpdate(UPDATE_PEDIDO);

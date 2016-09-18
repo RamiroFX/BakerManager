@@ -146,9 +146,16 @@ public class Impresora {
         PrintService service = PrintServiceLookup.lookupDefaultPrintService();
         Date today = Calendar.getInstance().getTime();
         String fechaEntrega = sdfs.format(today);
+        String ruc = "-";
+        if (pedidoCabecera.getCliente().getRuc() != null) {
+            if (pedidoCabecera.getCliente().getRucId() != null) {
+                ruc = pedidoCabecera.getCliente().getRuc() + "-" + pedidoCabecera.getCliente().getRucId();
+            }
+        }
         String CABECERA = "Fecha y hora: " + fechaEntrega + "\n"
                 + "Cajero: " + pedidoCabecera.getFuncionario().getNombre() + "\n"
                 + "Cliente: " + pedidoCabecera.getCliente().getEntidad() + "\n"
+                + "R.U.C.: " + ruc + "\n"
                 + "Fecha pedido: " + sdfs.format(pedidoCabecera.getTiempoRecepcion()) + "\n"
                 + "---------------------------------\n";
         ArrayList<M_pedidoDetalle> pedidoDetalle = DB_Pedido.obtenerPedidoDetalles(pedidoCabecera.getIdPedido());
@@ -181,12 +188,17 @@ public class Impresora {
     public static void imprimirPedido(M_rol_usuario rol_usuario, M_pedido pedidoCabecera, ArrayList<M_pedidoDetalle> pedidoDetalle) {
         PrintService service = PrintServiceLookup.lookupDefaultPrintService();
         Date today = Calendar.getInstance().getTime();
-        System.out.println("today:" + today);
         String fechaEntrega = sdfs.format(today);
-        System.out.println("fechaEntrega:" + fechaEntrega);
+        String ruc = "-";
+        if (pedidoCabecera.getCliente().getRuc() != null) {
+            if (pedidoCabecera.getCliente().getRucId() != null) {
+                ruc = pedidoCabecera.getCliente().getRuc() + "-" + pedidoCabecera.getCliente().getRucId();
+            }
+        }
         String CABECERA = "Fecha y hora: " + fechaEntrega + "\n"
                 + "Cajero: " + pedidoCabecera.getFuncionario().getNombre() + "\n"
                 + "Cliente: " + pedidoCabecera.getCliente().getEntidad() + "\n"
+                + "R.U.C.: " + ruc + "\n"
                 + "---------------------------------\n";
         String COLUMNAS = "producto   cant  precio  subtotal\n";
         String DETALLE = "";
@@ -217,12 +229,19 @@ public class Impresora {
 
     public static void imprimirVentaGuardada(M_rol_usuario rol_usuario, M_facturaCabecera facturaCabecera) {
         PrintService service = PrintServiceLookup.lookupDefaultPrintService();
-        Date today = Calendar.getInstance().getTime();
         String fechaEntrega = sdfs.format(facturaCabecera.getTiempo());
+        String ruc = "-";
+        if (facturaCabecera.getCliente().getRuc() != null) {
+            if (facturaCabecera.getCliente().getRucId() != null) {
+                ruc = facturaCabecera.getCliente().getRuc() + "-" + facturaCabecera.getCliente().getRucId();
+            }
+        }
         String CABECERA = "Fecha y hora: " + fechaEntrega + "\n"
                 + "Ticket nro.: " + facturaCabecera.getIdFacturaCabecera() + "\n"
                 + "Cajero: " + facturaCabecera.getFuncionario().getNombre() + "\n"
-                + "Cliente: " + facturaCabecera.getCliente().getEntidad() + "\n" + "---------------------------------\n";
+                + "Cliente: " + facturaCabecera.getCliente().getEntidad() + "\n"
+                + "R.U.C.: " + ruc + "\n"
+                + "---------------------------------\n";
         ArrayList<M_facturaDetalle> facturaDetalle = DB_Ingreso.obtenerVentaDetalles(facturaCabecera.getIdFacturaCabecera());
         String COLUMNAS = "producto   cant  precio  subtotal\n";
         String DETALLE = "";
@@ -254,10 +273,17 @@ public class Impresora {
         PrintService service = PrintServiceLookup.lookupDefaultPrintService();
         Date today = Calendar.getInstance().getTime();
         String fechaEntrega = sdfs.format(today);
+        String ruc = "-";
+        if (facturaCabecera.getCliente().getRuc() != null) {
+            if (facturaCabecera.getCliente().getRucId() != null) {
+                ruc = facturaCabecera.getCliente().getRuc() + "-" + facturaCabecera.getCliente().getRucId();
+            }
+        }
         String CABECERA = "Fecha y hora: " + fechaEntrega + "\n"
                 + "Ticket nro.: " + facturaCabecera.getIdFacturaCabecera() + "\n"
                 + "Cajero: " + facturaCabecera.getFuncionario().getNombre() + "\n"
                 + "Cliente: " + facturaCabecera.getCliente().getEntidad() + "\n"
+                + "R.U.C.: " + ruc + "\n"
                 + "---------------------------------\n";
         String COLUMNAS = "producto   cant  precio  subtotal\n";
         String DETALLE = "";
@@ -289,10 +315,17 @@ public class Impresora {
         PrintService service = PrintServiceLookup.lookupDefaultPrintService();
         Date today = Calendar.getInstance().getTime();
         String fechaEntrega = sdfs.format(today);
+        String ruc = "-";
+        if (mesaCabecera.getCliente().getRuc() != null) {
+            if (mesaCabecera.getCliente().getRucId() != null) {
+                ruc = mesaCabecera.getCliente().getRuc() + "-" + mesaCabecera.getCliente().getRucId();
+            }
+        }
         String CABECERA = "Fecha y hora: " + fechaEntrega + "\n"
                 + "Mesa nro.: " + mesaCabecera.getNumeroMesa() + "\n"
                 + "Cajero: " + mesaCabecera.getFuncionario().getNombre() + "\n"
                 + "Cliente: " + mesaCabecera.getCliente().getEntidad() + "\n"
+                + "R.U.C.: " + ruc + "\n"
                 + "---------------------------------\n";
         String COLUMNAS = "producto   cant  precio  subtotal\n";
         String DETALLE = "";
@@ -324,10 +357,17 @@ public class Impresora {
         PrintService service = PrintServiceLookup.lookupDefaultPrintService();
         Date today = Calendar.getInstance().getTime();
         String fechaEntrega = sdfs.format(today);
+        String ruc = "-";
+        if (mesaCabecera.getCliente().getRuc() != null) {
+            if (mesaCabecera.getCliente().getRucId() != null) {
+                ruc = mesaCabecera.getCliente().getRuc() + "-" + mesaCabecera.getCliente().getRucId();
+            }
+        }
         String CABECERA = "Fecha y hora: " + fechaEntrega + "\n"
                 + "Ticket nro.: " + mesaCabecera.getIdMesa() + "\n"
                 + "Cajero: " + mesaCabecera.getFuncionario().getNombre() + "\n"
                 + "Cliente: " + mesaCabecera.getCliente().getEntidad() + "\n"
+                + "R.U.C.: " + ruc + "\n"
                 + "---------------------------------\n";
         String COLUMNAS = "producto   cant  precio  subtotal\n";
         String DETALLE = "";

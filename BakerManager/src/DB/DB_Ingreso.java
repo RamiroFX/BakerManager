@@ -163,6 +163,15 @@ public class DB_Ingreso {
                 pst.executeUpdate();
                 pst.close();
             }
+            //se resta del stock lo que se vende
+            for (int i = 0; i < detalle.size(); i++) {
+                String query = "UPDATE PRODUCTO SET "
+                        + "CANT_ACTUAL = "
+                        + "((SELECT CANT_ACTUAL FROM PRODUCTO WHERE ID_PRODUCTO = " + detalle.get(i).getProducto().getId() + ")-" + detalle.get(i).getCantidad() + ") "
+                        + "WHERE ID_PRODUCTO =" + detalle.get(i).getProducto().getId();
+                st = DB_manager.getConection().createStatement();
+                st.executeUpdate(query);
+            }
             DB_manager.establecerTransaccion();
         } catch (SQLException ex) {
             System.out.println(ex.getNextException());
