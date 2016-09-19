@@ -13,6 +13,7 @@ import Proveedor.Gestion_proveedores;
 import Ventas.Gestion_Ventas;
 import bakermanager.C_inicio;
 import Empleado.Gestion_empleado;
+import Ventas.POSTTS;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
@@ -85,6 +86,7 @@ public class C_MenuPrincipal implements ActionListener {
         this.vista.jbVentas.addActionListener(this);
         this.vista.jbSalir.addActionListener(this);
         this.vista.jbEmpleados.addActionListener(this);
+        this.vista.jbReportes.addActionListener(this);
     }
 
     void mostrarVista() {
@@ -118,6 +120,11 @@ public class C_MenuPrincipal implements ActionListener {
         } else if (src.equals(this.vista.jbPedidos)) {
             GestionPedidos gestionPedidos = new GestionPedidos(c_inicio);
             gestionPedidos.mostrarVista();
+        } else if (src.equals(this.vista.jbReportes)) {
+            POSTTS POS = new POSTTS();
+            POS.setVisible(true);
+            c_inicio.agregarVentana(POS);
+        POS.setLocation(this.c_inicio.centrarPantalla(this.vista));
         } else if (src.equals(this.vista.jbSalir)) {
             System.exit(0);
         }
