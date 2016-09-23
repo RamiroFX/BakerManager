@@ -98,7 +98,19 @@ public class C_crearVentaRapida implements Gestion {
 
     @Override
     public final void cerrar() {
-        this.vista.dispose();
+        EventQueue.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                if (modelo.getDetalles().isEmpty()) {
+                    vista.dispose();
+                } else {
+                    int opcion = JOptionPane.showConfirmDialog(vista, "¿Cancelar venta?", "Atención", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+                    if (opcion == JOptionPane.YES_OPTION) {
+                        vista.dispose();
+                    }
+                }
+            }
+        });
     }
 
     private void imprimirTicket() {
@@ -251,7 +263,7 @@ public class C_crearVentaRapida implements Gestion {
 
     private void guardarVenta() {
         if (this.modelo.guardarVenta()) {
-            cerrar();
+            this.vista.dispose();
         }
     }
 
