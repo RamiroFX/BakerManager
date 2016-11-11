@@ -244,7 +244,7 @@ public class C_gestion_cliente implements Gestion {
 
     private void modificarCliente() {
         int row = this.vista.jtCliente.getSelectedRow();
-        if (row > 0) {
+        if (row > -1) {
             int id = (Integer.valueOf((String) this.vista.jtCliente.getValueAt(row, 0)));
             Modificar_cliente modificarCliente = new Modificar_cliente(this, id);
             modificarCliente.mostrarVista();

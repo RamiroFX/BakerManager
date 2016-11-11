@@ -263,7 +263,11 @@ public class C_crearVentaRapida implements Gestion {
 
     private void guardarVenta() {
         if (this.modelo.guardarVenta()) {
-            this.vista.dispose();
+            this.modelo.limpiarCampos();
+            this.vista.jtFacturaDetalle.setModel(this.modelo.getDtm());
+            recibirCliente(this.modelo.getCabecera().getCliente());
+            establecerCondicionVenta();
+            sumarTotal();
         }
     }
 
