@@ -78,7 +78,7 @@ public class V_crearVentas extends JDialog {
         jspFacturaDetalle = new JScrollPane(jtMesaDetalle);
         JPanel jpFacturaCabecera = new JPanel(new MigLayout());
         jbVerMesa = new JButton("Ver mesa");
-        jbAñadirMesa = new JButton("Añadir mesa");
+        jbAñadirMesa = new JButton("Añadir mesa [F2]");
         jbEliminarMesa = new JButton("Eliminar mesa");
         JPanel jpFacturaCabeceraBotones = new JPanel();
         jpFacturaCabeceraBotones.add(jbVerMesa);
@@ -92,8 +92,8 @@ public class V_crearVentas extends JDialog {
 
         jpSouth = new JPanel();
         jpSouth.setBorder(new EtchedBorder());
-        jbVentaRapida = new JButton("Venta rápida");
-        jbSalir = new JButton("Salir");
+        jbVentaRapida = new JButton("Venta rápida [F1]");
+        jbSalir = new JButton("Salir [ESC]");
         jpSouth.add(jbVentaRapida);
         jpSouth.add(jbSalir);
     }

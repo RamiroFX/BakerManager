@@ -193,6 +193,9 @@ public class ConfigurarMesa extends JDialog implements ActionListener, KeyListen
             if (e.getKeyCode() == KeyEvent.VK_ENTER) {
                 crearMesa();
             }
+            if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+                cerrar();
+            }
         }
     }
 

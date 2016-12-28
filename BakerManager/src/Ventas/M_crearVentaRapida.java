@@ -74,12 +74,6 @@ public class M_crearVentaRapida {
         this.detalles = detalles;
     }
 
-    public void validarDatos() {
-    }
-
-    public void insertarVenta() {
-    }
-
     /**
      * @return the dtm
      */
@@ -92,6 +86,26 @@ public class M_crearVentaRapida {
      */
     public void setDtm(DefaultTableModel dtm) {
         this.dtm = dtm;
+    }
+
+    /**
+     * @return the telefono
+     */
+    public M_telefono getTelefono() {
+        return telefono;
+    }
+
+    /**
+     * @param telefono the telefono to set
+     */
+    public void setTelefono(M_telefono telefono) {
+        this.telefono = telefono;
+    }
+
+    public void validarDatos() {
+    }
+
+    public void insertarVenta() {
     }
 
     public boolean guardarVenta() {
@@ -112,17 +126,19 @@ public class M_crearVentaRapida {
         return false;
     }
 
-    /**
-     * @return the telefono
-     */
-    public M_telefono getTelefono() {
-        return telefono;
-    }
-
-    /**
-     * @param telefono the telefono to set
-     */
-    public void setTelefono(M_telefono telefono) {
-        this.telefono = telefono;
+    public void limpiarCampos() {
+        this.cabecera.setCliente(DB_Cliente.obtenerDatosClienteID(1));//mostrador
+        this.cabecera.setIdCondVenta(TipoOperacion.CONTADO);
+        try {
+            this.telefono = DB_Cliente.obtenerTelefonoCliente(this.cabecera.getCliente().getIdCliente()).get(1);
+        } catch (Exception e) {
+            this.telefono = null;
+        }
+        this.detalle = new M_facturaDetalle();
+        this.detalles.clear();
+        int rowCount = dtm.getRowCount();
+        for (int i = 0; i < rowCount; i++) {
+            dtm.removeRow(0);
+        }
     }
 }

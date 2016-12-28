@@ -123,7 +123,7 @@ public class C_gestionEgresos extends MouseAdapter implements ActionListener, Ke
 
     private void verDetalle() {
         int row = this.vista.jtEgresoCabecera.table.getSelectedRow();
-        if (row > 0) {
+        if (row > -1) {
             Integer idEgresoCabecera = Integer.valueOf(String.valueOf(this.vista.jtEgresoCabecera.table.getValueAt(row, 0)));
             Ver_Egresos ver_egreso = new Ver_Egresos(c_inicio, idEgresoCabecera);
             ver_egreso.mostrarVista();
