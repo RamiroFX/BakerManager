@@ -6,6 +6,8 @@ package Ventas;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Calendar;
@@ -15,7 +17,7 @@ import javax.swing.JOptionPane;
  *
  * @author Ramiro Ferreira
  */
-public class C_crearVentas extends MouseAdapter implements ActionListener {
+public class C_crearVentas extends MouseAdapter implements ActionListener, KeyListener {
 
     V_crearVentas vista;
     M_crearVentas modelo;
@@ -45,42 +47,22 @@ public class C_crearVentas extends MouseAdapter implements ActionListener {
 
     private void agregarListeners() {
         this.vista.jbAñadirMesa.addActionListener(this);
+        this.vista.jbAñadirMesa.addKeyListener(this);
         this.vista.jbEliminarMesa.addActionListener(this);
+        this.vista.jbEliminarMesa.addKeyListener(this);
         this.vista.jbSalir.addActionListener(this);
+        this.vista.jbSalir.addKeyListener(this);
         this.vista.jbVentaRapida.addActionListener(this);
+        this.vista.jbVentaRapida.addKeyListener(this);
         this.vista.jbVerMesa.addActionListener(this);
+        this.vista.jbVerMesa.addKeyListener(this);
         this.vista.jtMesa.addMouseListener(this);
+        this.vista.jtMesa.addKeyListener(this);
     }
 
     public void cerrar() {
         this.vista.dispose();
         System.runFinalization();
-    }
-
-    @Override
-    public void mouseClicked(MouseEvent e) {
-        if (e.getSource().equals(this.vista.jtMesa)) {
-            facturaCabeceraHandler(e);
-        }
-    }
-
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        if (e.getSource().equals(this.vista.jbAñadirMesa)) {
-            añadirMesa();
-        }
-        if (e.getSource().equals(this.vista.jbEliminarMesa)) {
-            eliminarMesa();
-        }
-        if (e.getSource().equals(this.vista.jbSalir)) {
-            cerrar();
-        }
-        if (e.getSource().equals(this.vista.jbVentaRapida)) {
-            crearVentaRapida();
-        }
-        if (e.getSource().equals(this.vista.jbVerMesa)) {
-            verMesa();
-        }
     }
 
     private void facturaCabeceraHandler(MouseEvent e) {
@@ -154,5 +136,52 @@ public class C_crearVentas extends MouseAdapter implements ActionListener {
         this.modelo.actualizarTablaMesa();
         this.vista.jtMesa.setModel(this.modelo.getRstmMesa());
         Utilities.c_packColumn.packColumns(this.vista.jtMesa, 1);
+    }
+
+    @Override
+    public void keyTyped(KeyEvent e) {
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+        if (e.getSource().equals(this.vista.jtMesa)) {
+            facturaCabeceraHandler(e);
+        }
+    }
+
+    @Override
+    public void keyPressed(KeyEvent e) {
+        if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+            cerrar();
+        }
+        if (e.getKeyCode() == KeyEvent.VK_F1) {
+            crearVentaRapida();
+        }
+        if (e.getKeyCode() == KeyEvent.VK_F2) {
+            añadirMesa();
+        }
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if (e.getSource().equals(this.vista.jbAñadirMesa)) {
+            añadirMesa();
+        }
+        if (e.getSource().equals(this.vista.jbEliminarMesa)) {
+            eliminarMesa();
+        }
+        if (e.getSource().equals(this.vista.jbSalir)) {
+            cerrar();
+        }
+        if (e.getSource().equals(this.vista.jbVentaRapida)) {
+            crearVentaRapida();
+        }
+        if (e.getSource().equals(this.vista.jbVerMesa)) {
+            verMesa();
+        }
     }
 }
