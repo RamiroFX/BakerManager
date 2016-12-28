@@ -52,6 +52,8 @@ public class C_resumen implements ActionListener {
             case (M_resumen.RESUMEN_PEDIDO): {
                 int cantFilas = this.vista.jtResumen.getRowCount();
                 for (int i = 0; i < cantFilas; i++) {
+                    System.err.println("total: "+this.vista.jtResumen.getValueAt(i, 5));
+                    System.err.println("fecha: "+this.vista.jtResumen.getValueAt(i, 3));
                     total = total + Integer.valueOf(String.valueOf(this.vista.jtResumen.getValueAt(i, 5)));
                     if (this.vista.jtResumen.getValueAt(i, 7).equals("Contado")) {
                         totalContado = totalContado + Integer.valueOf(String.valueOf(this.vista.jtResumen.getValueAt(i, 5)));

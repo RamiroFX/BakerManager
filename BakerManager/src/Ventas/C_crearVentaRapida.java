@@ -258,6 +258,8 @@ public class C_crearVentaRapida implements Gestion {
         this.vista.jtfClieDireccion.setText(direccion);
         if (!telefono.isEmpty()) {
             this.vista.jtfClieTelefono.setText(telefono.get(0).getNumero());
+        }else{
+            this.vista.jtfClieTelefono.setText("");
         }
     }
 

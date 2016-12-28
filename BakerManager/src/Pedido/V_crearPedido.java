@@ -73,7 +73,7 @@ public class V_crearPedido extends JDialog {
     private void initNorth() {
         jpNorth1 = new JPanel(new MigLayout());
         jpNorth1.setBorder(new javax.swing.border.TitledBorder(new EtchedBorder(EtchedBorder.RAISED), "Datos de cliente", TitledBorder.CENTER, TitledBorder.ABOVE_TOP));
-        jbCliente = new JButton("Agregar cliente");
+        jbCliente = new JButton("Agregar cliente[F3]");
         jtfCliente = new JTextField(30);
         jtfCliente.setEditable(false);
         jlFuncionario = new JLabel("Funcionario");
@@ -147,7 +147,7 @@ public class V_crearPedido extends JDialog {
         this.jtPedidoDetalle.getTableHeader().setReorderingAllowed(false);
         jtPedidoDetalle.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         jspFacturaDetalle = new JScrollPane(jtPedidoDetalle);
-        jbSeleccionarProducto = new JButton("Agregar producto");
+        jbSeleccionarProducto = new JButton("Agregar producto[F4]");
         jbModificarDetalle = new JButton("Modificar detalle");
         jbEliminarDetalle = new JButton("Eliminar detalle");
         JPanel jpSouthAux = new JPanel(new MigLayout());
@@ -184,9 +184,9 @@ public class V_crearPedido extends JDialog {
 
     private void initSouth() {
         jpSouth = new JPanel();
-        jbAceptar = new JButton("Guardar cambios");
-        jbImprimir= new JButton("Imprimir");
-        jbSalir = new JButton("Salir");
+        jbAceptar = new JButton("Guardar cambios[F1]");
+        jbImprimir= new JButton("Imprimir[F2]");
+        jbSalir = new JButton("Salir[ESC]");
         jpSouth.add(jbAceptar);
         jpSouth.add(jbImprimir);
         jpSouth.add(jbSalir);

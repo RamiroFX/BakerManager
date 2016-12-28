@@ -17,6 +17,8 @@ import Utilities.Impresora;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.sql.Timestamp;
@@ -29,7 +31,7 @@ import javax.swing.JOptionPane;
  *
  * @author Ramiro Ferreira
  */
-public class C_crearPedido extends MouseAdapter implements ActionListener {
+public class C_crearPedido extends MouseAdapter implements ActionListener, KeyListener {
 
     public M_crearPedido modelo;
     public V_crearPedido vista;
@@ -96,6 +98,11 @@ public class C_crearPedido extends MouseAdapter implements ActionListener {
         this.vista.jbModificarDetalle.addActionListener(this);
         this.vista.jbImprimir.addActionListener(this);
         this.vista.jbSalir.addActionListener(this);
+        this.vista.jbSeleccionarProducto.addKeyListener(this);
+        this.vista.jbCliente.addKeyListener(this);
+        this.vista.jbAceptar.addKeyListener(this);
+        this.vista.jbImprimir.addKeyListener(this);
+        this.vista.jbSalir.addKeyListener(this);
     }
 
     private void establecerCondicionVenta() {
@@ -322,5 +329,34 @@ public class C_crearPedido extends MouseAdapter implements ActionListener {
             this.vista.jbModificarDetalle.setEnabled(true);
             this.vista.jbEliminarDetalle.setEnabled(true);
         }
+    }
+
+    @Override
+    public void keyTyped(KeyEvent e) {
+    }
+
+    @Override
+    public void keyPressed(KeyEvent e) {
+        if (e.getKeyCode() == KeyEvent.VK_F1) {
+            guardarVenta();
+        }
+        if (e.getKeyCode() == KeyEvent.VK_F2) {
+            imprimir();
+        }
+        if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+            cerrar();
+        }
+        if (e.getKeyCode() == KeyEvent.VK_F4) {
+            SeleccionarProducto sp = new SeleccionarProducto(this);
+            sp.mostrarVista();
+        }
+        if (e.getKeyCode() == KeyEvent.VK_F3) {
+            Seleccionar_cliente sp = new Seleccionar_cliente(this);
+            sp.mostrarVista();
+        }
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
     }
 }
