@@ -16,6 +16,8 @@ import Utilities.Impresora;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.sql.Timestamp;
@@ -28,7 +30,7 @@ import javax.swing.JOptionPane;
  *
  * @author Ramiro Ferreira
  */
-public class C_verPedido extends MouseAdapter implements ActionListener {
+public class C_verPedido extends MouseAdapter implements ActionListener, KeyListener {
 
     public V_crearPedido vista;
     public M_verPedido modelo;
@@ -36,6 +38,7 @@ public class C_verPedido extends MouseAdapter implements ActionListener {
 
     public C_verPedido(V_crearPedido vista, M_verPedido modelo, C_gestionPedido gestionPedido) {
         this.vista = vista;
+        this.vista.setTitle("Ver pedido");
         this.modelo = modelo;
         this.gestionPedido = gestionPedido;
         inicializarVista();
@@ -107,9 +110,14 @@ public class C_verPedido extends MouseAdapter implements ActionListener {
             this.vista.jbCliente.addActionListener(this);
             this.vista.jbEliminarDetalle.addActionListener(this);
             this.vista.jbModificarDetalle.addActionListener(this);
+            this.vista.jbSeleccionarProducto.addKeyListener(this);
+            this.vista.jbCliente.addKeyListener(this);
+            this.vista.jbAceptar.addKeyListener(this);
         }
         this.vista.jbSalir.addActionListener(this);
         this.vista.jbImprimir.addActionListener(this);
+        this.vista.jbImprimir.addKeyListener(this);
+        this.vista.jbSalir.addKeyListener(this);
     }
 
     private void establecerCondicionVenta() {
@@ -310,5 +318,34 @@ public class C_verPedido extends MouseAdapter implements ActionListener {
             this.vista.jbModificarDetalle.setEnabled(true);
             this.vista.jbEliminarDetalle.setEnabled(true);
         }
+    }
+
+    @Override
+    public void keyTyped(KeyEvent e) {
+    }
+
+    @Override
+    public void keyPressed(KeyEvent e) {
+        if (e.getKeyCode() == KeyEvent.VK_F1) {
+            guardarVenta();
+        }
+        if (e.getKeyCode() == KeyEvent.VK_F2) {
+            imprimir();
+        }
+        if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+            cerrar();
+        }
+        if (e.getKeyCode() == KeyEvent.VK_F4) {
+            SeleccionarProducto sp = new SeleccionarProducto(this);
+            sp.mostrarVista();
+        }
+        if (e.getKeyCode() == KeyEvent.VK_F3) {
+            Seleccionar_cliente sp = new Seleccionar_cliente(this);
+            sp.mostrarVista();
+        }
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
     }
 }

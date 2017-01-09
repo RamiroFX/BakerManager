@@ -65,16 +65,17 @@ public class SeleccionarCantidadProduducto extends javax.swing.JDialog implement
         setLocationRelativeTo(selecProd.vista);
         this.selecProd = selecProd;
         this.producto = selecProd.producto;
-        tipo = selecProd.tipo;
+        tipo = selecProd.tipo;//CREAR EGRESO
         initComponents();
         inicializarVista(producto);
     }
 
-    public SeleccionarCantidadProduducto(C_crear_egreso crear_egreso, int row) {
+    public SeleccionarCantidadProduducto(C_crear_egreso crear_egreso, int row, M_producto producto) {
         super(crear_egreso.vista, true);
         setTitle("Seleccione una cantidad");
         setSize(new java.awt.Dimension(300, 250));
         setLocationRelativeTo(crear_egreso.vista);
+        this.producto = producto;
         tipo = MODIFICAR_EGRESO;
         this.crear_egreso = crear_egreso;
         this.row = row;
@@ -253,7 +254,7 @@ public class SeleccionarCantidadProduducto extends javax.swing.JDialog implement
                     break;
                 }
                 case (SeleccionarCantidadProduducto.MODIFICAR_EGRESO): {
-                    this.crear_egreso.modificarCelda(cantidad, precio, descuento, observacion, row);
+                    EnviarProductoConVerificacionPermisoModificacionPrecio();
                     break;
                 }
                 case (SeleccionarCantidadProduducto.MODIFICAR_INGRESO): {
@@ -476,7 +477,7 @@ public class SeleccionarCantidadProduducto extends javax.swing.JDialog implement
         ArrayList<M_menu_item> accesos = DatosUsuario.getRol_usuario().getAccesos();
         for (M_menu_item acceso : accesos) {
             if (Parametros.MenuItem.MODIFICAR_PRODUCTO.getDescripcion().equals(acceso.getItemDescripcion())) {
-                int precioActual = selecProd.producto.getPrecioCosto();
+                int precioActual = producto.getPrecioCosto();
                 int precioNuevo = precio;
                 if (precioActual != precioNuevo) {
                     int option = JOptionPane.showConfirmDialog(this, "El precio de costo es diferente \n ¿Desea modificar el precio?", "Atención", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
@@ -486,6 +487,15 @@ public class SeleccionarCantidadProduducto extends javax.swing.JDialog implement
                 }
             }
         }
-        selecProd.c_egresos.recibirProducto(cantidad, precio, descuento, observacion, selecProd.producto);
+        switch (tipo) {
+            case (C_seleccionarProducto.CREAR_EGRESO): {
+                selecProd.c_egresos.recibirProducto(cantidad, precio, descuento, observacion, selecProd.producto);
+                break;
+            }
+            case (SeleccionarCantidadProduducto.MODIFICAR_EGRESO): {
+                this.crear_egreso.modificarCelda(cantidad, precio, descuento, observacion, row);
+                break;
+            }
+        }
     }
 }

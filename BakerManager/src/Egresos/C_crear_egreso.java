@@ -297,7 +297,11 @@ public class C_crear_egreso extends MouseAdapter implements ActionListener {
             insertarEgreso();
             System.runFinalization();
         } else if (e.getSource().equals(this.vista.jbModificarDetalle)) {
-            SeleccionarCantidadProduducto scp = new SeleccionarCantidadProduducto(this, this.vista.jtProductos.getSelectedRow());
+            int row = this.vista.jtProductos.getSelectedRow();
+            M_producto prod = new M_producto();
+            prod.setId(Integer.valueOf(String.valueOf(this.vista.jtProductos.getValueAt(row, 0))));
+            prod.setPrecioCosto(Integer.valueOf(String.valueOf(this.vista.jtProductos.getValueAt(row, 3))));
+            SeleccionarCantidadProduducto scp = new SeleccionarCantidadProduducto(this, row, prod);
             scp.setVisible(true);
         } else if (e.getSource().equals(this.vista.jbEliminarDetalle)) {
             eliminarCompra(this.vista.jtProductos.getSelectedRow());
