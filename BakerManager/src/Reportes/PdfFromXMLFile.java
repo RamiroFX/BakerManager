@@ -5,8 +5,10 @@
  */
 package Reportes;
 
+import DB.DB_manager;
 import java.io.File;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -21,28 +23,28 @@ import net.sf.jasperreports.engine.JasperReport;
 
 public class PdfFromXMLFile {
 
-    public static void main(String[] args) throws JRException, IOException {
-
-        String path = System.getProperty("user.dir") + "\\src\\Assets\\Reportes\\PedidoCliente2.jrxml";
+    public static void main(String[] args) throws JRException, IOException, SQLException {
+        DB_manager.conectarBD("postgres", "postgres");
+        String path = System.getProperty("user.dir") + "\\src\\Assets\\Reportes\\ResumenPedidos.jrxml";
+        //String path = System.getProperty("user.dir") + "\\src\\Assets\\Reportes\\PedidoCliente2.jrxml";
         // Compile jrxml file.
         JasperReport jasperReport = JasperCompileManager
                 .compileReport(path);
 
 
-        String fecha_inicio = "01/01/15 00:00:00.00";
+        String fecha_inicio = "01/01/16 00:00:00.00";
         String fecha_fin = "30/12/16 23:59:59.00";
         // Parameters for report
         Map<String, Object> parameters = new HashMap<String, Object>();
-        parameters.put("fecha_inicio", fecha_inicio);
-        parameters.put("fecha_fin", fecha_fin);
+        parameters.put("fecha inicio", fecha_inicio);
+        parameters.put("fecha fin", fecha_fin);
 
         // DataSource
         // This is simple example, no database.
         // then using empty datasource.
-        JRDataSource dataSource = new JREmptyDataSource();
 
         JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport,
-                parameters, dataSource);
+                parameters, DB_manager.getConection());
 
 
         // Make sure the output directory exists.
