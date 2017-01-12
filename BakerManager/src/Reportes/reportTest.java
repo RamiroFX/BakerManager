@@ -12,6 +12,7 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -50,7 +51,7 @@ public class reportTest {
         Class.forName("org.postgresql.Driver");
         String url = "jdbc:postgresql://localhost:5432/bakermanager";
         Connection conexion = DriverManager.getConnection(url, "postgres", "postgres");
-        File file = new File(System.getProperty("user.dir") + "\\src\\Assets\\Reportes\\ResumenPedidos.jasper");
+        File file = new File(System.getProperty("user.dir") + "\\src\\Assets\\Reportes\\ResumenComprasSimpleCategoria.jasper");
         JasperReport reporte = (JasperReport) JRLoader.loadObject(file);
 
         Calendar calendarStart = Calendar.getInstance();
@@ -72,8 +73,9 @@ public class reportTest {
         calendarEnd.set(Calendar.MILLISECOND, 250);
         try {
             Map<String, Object> map = new HashMap<String, Object>();
-            map.put("FechaInicio", new Timestamp(calendarStart.getTime().getTime()));
-            map.put("FechaFin", new Timestamp(calendarEnd.getTime().getTime()));
+            map.put("sDate", new Timestamp(calendarStart.getTime().getTime()));
+            map.put("eDate", new Timestamp(calendarEnd.getTime().getTime()));
+            map.put("categorias", Arrays.asList(6,1));
             JasperPrint jp = JasperFillManager.fillReport(reporte, map, conexion);
             JRViewer jv = new JRViewer(jp);
             JFrame jf = new JFrame();
