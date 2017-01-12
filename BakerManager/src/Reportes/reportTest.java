@@ -50,7 +50,7 @@ public class reportTest {
         Class.forName("org.postgresql.Driver");
         String url = "jdbc:postgresql://localhost:5432/bakermanager";
         Connection conexion = DriverManager.getConnection(url, "postgres", "postgres");
-        File file = new File("C:\\Users\\Usuario\\Documents\\GitHub\\BakerManager\\BakerManager\\src\\Assets\\Reportes\\ResumenPedidos.jasper");
+        File file = new File(System.getProperty("user.dir") + "\\src\\Assets\\Reportes\\ResumenPedidos.jasper");
         JasperReport reporte = (JasperReport) JRLoader.loadObject(file);
 
         Calendar calendarStart = Calendar.getInstance();
@@ -59,7 +59,7 @@ public class reportTest {
         calendarStart.set(Calendar.SECOND, 0);
         calendarStart.set(Calendar.DAY_OF_MONTH, 11);
         calendarStart.set(Calendar.MONTH, 0);//AGOSTO
-        calendarStart.set(Calendar.YEAR, 2017);
+        calendarStart.set(Calendar.YEAR, 2015);
         calendarStart.set(Calendar.MILLISECOND, 250);
 
         Calendar calendarEnd = Calendar.getInstance();
@@ -68,7 +68,7 @@ public class reportTest {
         calendarEnd.set(Calendar.SECOND, 59);
         calendarEnd.set(Calendar.DAY_OF_MONTH, 11);
         calendarEnd.set(Calendar.MONTH, 0);//AGOSTO
-        calendarEnd.set(Calendar.YEAR, 2017);
+        calendarEnd.set(Calendar.YEAR, 2016);
         calendarEnd.set(Calendar.MILLISECOND, 250);
         try {
             Map<String, Object> map = new HashMap<String, Object>();
