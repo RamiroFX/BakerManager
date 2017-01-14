@@ -16,7 +16,7 @@ import javax.swing.event.*;
  * Esta tabla toma un objeto JDBC ResultSet e implementa la interfaz TableModel
  * de modo que se puedan desplegar los resultados.
  **/
-public class ResultSetTableModel implements TableModel {
+public class ResultSetTableModel extends DefaultTableModel {
 
     ResultSet results;             // El ResultSet a interpretar.
     ResultSetMetaData metadata;    // Información adicional sobre los resultados.

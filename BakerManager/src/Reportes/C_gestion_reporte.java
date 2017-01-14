@@ -39,7 +39,7 @@ public class C_gestion_reporte implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         Object src = e.getSource();
         if (src.equals(this.vista.jbRCSC)) {
-            FiltroReporte_Prov p = new FiltroReporte_Prov(c_inicio);
+            FiltroReporte_Cate p = new FiltroReporte_Cate(c_inicio);
             p.setVisible(true);
         }
     }

@@ -4,26 +4,23 @@
  */
 package Reportes;
 
-import DB.DB_Producto;
-import DB.DB_Proveedor;
 import DB.DB_manager;
+import Utilities.ArrayListTableModel;
 import bakermanager.C_inicio;
 import com.toedter.calendar.JDateChooser;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.io.File;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -31,6 +28,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
+import net.miginfocom.swing.MigLayout;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
@@ -42,14 +41,14 @@ import net.sf.jasperreports.swing.JRViewer;
  *
  * @author Ramiro Ferreira
  */
-public class FiltroReporte_Prov extends JDialog implements ActionListener {
+public class FiltroReporte_Cate extends JDialog implements ActionListener, MouseListener {
 
     JPanel jpProveedor, jpFecha, jpSouth;
     JDateChooser jdcFechaInicio, jdcFechaFin;
     JTable jtProdCategorias;
     JButton jbQuitar, jbAgregar, jbGenerar, jbCancelar;
 
-    public FiltroReporte_Prov(C_inicio c_inicio) {
+    public FiltroReporte_Cate(C_inicio c_inicio) {
         super(c_inicio.vista, "Filtro", false);
         setSize(400, 600);
         setLocationRelativeTo(c_inicio.vista);
@@ -69,10 +68,10 @@ public class FiltroReporte_Prov extends JDialog implements ActionListener {
         this.jdcFechaInicio = new JDateChooser();
         this.jdcFechaFin = new JDateChooser();
         this.jdcFechaFin.setDate(Calendar.getInstance().getTime());
-        this.jpFecha = new JPanel();
+        this.jpFecha = new JPanel(new MigLayout());
         this.jpFecha.setBorder(javax.swing.BorderFactory.createTitledBorder("Rango de fechas"));
-        this.jpFecha.add(jdcFechaInicio);
-        this.jpFecha.add(jdcFechaFin);
+        this.jpFecha.add(jdcFechaInicio, "pushx,growx");
+        this.jpFecha.add(jdcFechaFin, "pushx,growx");
         /*
          * PROVEEDORES
          */
@@ -107,6 +106,7 @@ public class FiltroReporte_Prov extends JDialog implements ActionListener {
         this.jbCancelar.addActionListener(this);
         this.jbAgregar.addActionListener(this);
         this.jbQuitar.addActionListener(this);
+        this.jtProdCategorias.addMouseListener(this);
     }
 
     private void generarReporte() {
@@ -152,7 +152,7 @@ public class FiltroReporte_Prov extends JDialog implements ActionListener {
                 jf.setVisible(true);
                 jf.setSize(new Dimension(800, 600));
                 jf.setLocation(300, 100);
-                jf.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                jf.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
             } catch (JRException ex) {
                 ex.printStackTrace();
             }
@@ -178,6 +178,36 @@ public class FiltroReporte_Prov extends JDialog implements ActionListener {
         Object src = e.getSource();
         if (src.equals(this.jbGenerar)) {
             generarReporte();
+        } else if (src.equals(this.jbQuitar)) {
+            quitarCategoria();
         }
+
+    }
+
+    private void quitarCategoria() {
+        int row = jtProdCategorias.getSelectedRow();
+        if (row > -1) {
+            System.out.println("" + jtProdCategorias.getValueAt(row, 0));
+        }
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
     }
 }
