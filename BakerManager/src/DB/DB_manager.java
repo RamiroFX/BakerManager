@@ -15,6 +15,7 @@ import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
@@ -148,6 +149,20 @@ public class DB_manager {
 
     public static ResultSetTableModel consultarCategoria() {
         ResultSetTableModel rubro = null;
+        String q = "SELECT ID_PRODUCTO_CATEGORIA \"ID\" ,descripcion \"Descripcion\" "
+                + "FROM PRODUCTO_CATEGORIA ";
+        try {
+            st = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            rs = st.executeQuery(q);
+            rubro = new ResultSetTableModel(rs);
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return rubro;
+    }
+
+    public static DefaultTableModel consultarCategorias() {
+        DefaultTableModel rubro = null;
         String q = "SELECT ID_PRODUCTO_CATEGORIA \"ID\" ,descripcion \"Descripcion\" "
                 + "FROM PRODUCTO_CATEGORIA ";
         try {

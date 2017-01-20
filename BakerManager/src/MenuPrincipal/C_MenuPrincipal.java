@@ -13,6 +13,7 @@ import Proveedor.Gestion_proveedores;
 import Ventas.Gestion_Ventas;
 import bakermanager.C_inicio;
 import Empleado.Gestion_empleado;
+import Reportes.GestionReporte;
 import Ventas.POSTTS;
 import java.awt.Dimension;
 import java.awt.Point;
@@ -121,10 +122,12 @@ public class C_MenuPrincipal implements ActionListener {
             GestionPedidos gestionPedidos = new GestionPedidos(c_inicio);
             gestionPedidos.mostrarVista();
         } else if (src.equals(this.vista.jbReportes)) {
-            POSTTS POS = new POSTTS();
-            POS.setVisible(true);
-            c_inicio.agregarVentana(POS);
-        POS.setLocation(this.c_inicio.centrarPantalla(this.vista));
+            /*POSTTS POS = new POSTTS();
+             POS.setVisible(true);
+             c_inicio.agregarVentana(POS);
+             POS.setLocation(this.c_inicio.centrarPantalla(this.vista));*/
+            GestionReporte gestionReportes = new GestionReporte(c_inicio);
+            gestionReportes.mostrarVista();
         } else if (src.equals(this.vista.jbSalir)) {
             System.exit(0);
         }

@@ -75,7 +75,7 @@ public class reportTest {
             Map<String, Object> map = new HashMap<String, Object>();
             map.put("sDate", new Timestamp(calendarStart.getTime().getTime()));
             map.put("eDate", new Timestamp(calendarEnd.getTime().getTime()));
-            map.put("categorias", Arrays.asList(6,1));
+            map.put("categorias", Arrays.asList(8,9));
             JasperPrint jp = JasperFillManager.fillReport(reporte, map, conexion);
             JRViewer jv = new JRViewer(jp);
             JFrame jf = new JFrame();
