@@ -17,6 +17,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
+import javax.swing.border.EtchedBorder;
+import javax.swing.border.TitledBorder;
 import net.miginfocom.swing.MigLayout;
 
 /**
@@ -288,6 +290,7 @@ public class V_gestion_usuario extends JInternalFrame {
         jpSouth.add(jbCambiarPassword);
         jpSouth.add(jbUsuarioParametros);
         jpSouth.add(jbGestionRol);
+        jpSouth.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED), "Opciones"));
 
         //ADDING INTO CONTAINER
         getContentPane().add(jpCenter, java.awt.BorderLayout.CENTER);
@@ -315,5 +318,6 @@ public class V_gestion_usuario extends JInternalFrame {
         jpNorth.add(jckbCedula, width + ", cell 1 1");
         jpNorth.add(jrbExclusivo, width + ", cell 0 1, span");
         jpNorth.add(jrbInclusivo, width + ", cell 0 1");
+        jpNorth.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED), "Filtro de busqueda"));
     }
 }

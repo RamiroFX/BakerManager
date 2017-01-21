@@ -15,6 +15,7 @@ import javax.swing.JSplitPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.border.EtchedBorder;
+import javax.swing.border.TitledBorder;
 import net.miginfocom.swing.MigLayout;
 
 /**
@@ -198,6 +199,7 @@ public class V_gestion_cliente extends JInternalFrame {
         jpCenter = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, jpaux, jTabbedPane);
         jpCenter.setDividerLocation(this.getWidth() / 2);
         jpCenter.setOneTouchExpandable(true);
+        jpCenter.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED), "Filtro de busqueda"));
         //JP SOUTH
         jpSouth = new javax.swing.JPanel();
         jpSouth.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
@@ -207,6 +209,7 @@ public class V_gestion_cliente extends JInternalFrame {
         jbModificarCliente.setMargin(inset);
         jpSouth.add(jbCrearCliente);
         jpSouth.add(jbModificarCliente);
+        jpSouth.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED), "Opciones"));
         //ADDING INTO CONTAINER
         getContentPane().add(jpCenter, java.awt.BorderLayout.CENTER);
         getContentPane().add(jpSouth, java.awt.BorderLayout.SOUTH);

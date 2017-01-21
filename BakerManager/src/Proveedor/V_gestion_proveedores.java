@@ -13,6 +13,8 @@ import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.border.EtchedBorder;
+import javax.swing.border.TitledBorder;
 import net.miginfocom.swing.MigLayout;
 
 /**
@@ -199,7 +201,7 @@ class V_gestion_proveedores extends JInternalFrame {
 
         //JP SOUTH
         jpSouth = new javax.swing.JPanel();
-        jpSouth.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        jpSouth.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED), "Opciones"));
         jpSouth.add(jbCrearProveedor);
         jpSouth.add(jbModificarProveedor);
 
@@ -228,6 +230,7 @@ class V_gestion_proveedores extends JInternalFrame {
         jpNorth.add(jckbRUC, width + ", cell 1 1");
         jpNorth.add(jrbExclusivo, width + ", cell 0 1, span");
         jpNorth.add(jrbInclusivo, width + ", cell 0 1");
+        jpNorth.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED), "Filtro de busqueda"));
     }
 
     private void inicializarVariablesContacto() {

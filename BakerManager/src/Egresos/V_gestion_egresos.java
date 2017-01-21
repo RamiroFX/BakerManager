@@ -18,6 +18,7 @@ import javax.swing.JSplitPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.border.EtchedBorder;
+import javax.swing.border.TitledBorder;
 import net.miginfocom.swing.MigLayout;
 
 /**
@@ -89,7 +90,7 @@ public class V_gestion_egresos extends JInternalFrame {
         jpBotonesTop.add(jbBuscarDetalle, "span, growx");
         jpTop.add(jpFiltros);
         jpTop.add(jpBotonesTop);
-        jpTop.setBorder(new EtchedBorder(EtchedBorder.RAISED));
+        jpTop.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED), "Filtro de busqueda"));
     }
 
     private void initMid() {
@@ -123,6 +124,6 @@ public class V_gestion_egresos extends JInternalFrame {
         jpBot.add(jbAgregar);
         jpBot.add(jbDetalle);
         jpBot.add(jbResumen);
-        //jpBot.add(jbGraficos);
+        jpBot.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED), "Opciones"));
     }
 }

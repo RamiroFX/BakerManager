@@ -18,6 +18,7 @@ import javax.swing.JSplitPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.border.EtchedBorder;
+import javax.swing.border.TitledBorder;
 import net.miginfocom.swing.MigLayout;
 
 /**
@@ -98,7 +99,7 @@ public class V0_gestionVentas extends JInternalFrame {
         //jpTop.add(jpJtextFieldTop, "pushx");
         jpTop.add(jpFiltros);
         jpTop.add(jpBotonesTop);
-        jpTop.setBorder(new EtchedBorder(EtchedBorder.RAISED));
+        jpTop.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED), "Filtro de busqueda"));
     }
 
     private void initMid() {
@@ -131,5 +132,6 @@ public class V0_gestionVentas extends JInternalFrame {
         jpBot.add(jbAgregar);
         jpBot.add(jbDetalle);
         jpBot.add(jbResumen);
+        jpBot.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED), "Opciones"));
     }
 }
