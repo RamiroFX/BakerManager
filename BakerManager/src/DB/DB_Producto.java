@@ -228,7 +228,6 @@ public class DB_Producto {
                     + finalQuery;
             //SELECT PROD.id_producto   "ID producto"  ,  PROD.descripcion  "Descripcion"   FROM producto
             //se crea una sentencia
-            System.out.println("231: " + Query);
             pst = DB_manager.getConection().prepareStatement(Query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             pst.setString(1, descripcion + "%");
             // se ejecuta el query y se obtienen los resultados en un ResultSet

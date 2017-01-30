@@ -4,6 +4,7 @@
  */
 package Egresos;
 
+import Interface.CommonFormat;
 import Utilities.JTablePagination;
 import com.toedter.calendar.JDateChooser;
 import java.awt.Dimension;
@@ -113,14 +114,18 @@ public class V_gestion_egresos extends JInternalFrame {
         jbAgregar = new JButton("Crear egreso");
         jbAgregar.setName("crear compra");
         jbAgregar.setMargin(insets);
+        jbAgregar.setFont(CommonFormat.fuente);
         jbDetalle = new JButton("Ver detalle");
         jbDetalle.setName("detalle compra");
         jbDetalle.setMargin(insets);
+        jbDetalle.setFont(CommonFormat.fuente);
         jbResumen = new JButton("Ver resumen");
         jbResumen.setName("resumen compra");
         jbResumen.setMargin(insets);
+        jbResumen.setFont(CommonFormat.fuente);
         jbGraficos = new JButton("Ver gráficos");
         jbGraficos.setMargin(insets);
+        jbGraficos.setFont(CommonFormat.fuente);
         jpBot.add(jbAgregar);
         jpBot.add(jbDetalle);
         jpBot.add(jbResumen);

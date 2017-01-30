@@ -8,6 +8,7 @@ package Empleado;
  * and open the template in the editor.
  */
 
+import Interface.CommonFormat;
 import java.awt.BorderLayout;
 import java.awt.Insets;
 import javax.swing.JButton;
@@ -149,8 +150,8 @@ public class V_gestion_usuario extends JInternalFrame {
         jtfCorreoElectronico.setEditable(false);
         jlRol = new javax.swing.JLabel();
         jcbRol = new javax.swing.JComboBox();
-        jbCrearUsuario = new javax.swing.JButton();
-        jbModificarUsuario = new javax.swing.JButton();
+        jbCrearUsuario = new javax.swing.JButton("Crear usuario");
+        jbModificarUsuario = new javax.swing.JButton("Actualizar usuario");
         jbEliminarUsuario = new javax.swing.JButton("Eliminar usuario");
         jbCambiarPassword = new javax.swing.JButton("Cambiar contraseña");
         jbCambiarPassword.setName("modificar contrasenha");
@@ -164,6 +165,12 @@ public class V_gestion_usuario extends JInternalFrame {
         jbEliminarUsuario.setMargin(insets);
         jbCambiarPassword.setMargin(insets);
         jbUsuarioParametros.setMargin(insets);
+
+        jbCrearUsuario.setFont(CommonFormat.fuente);
+        jbModificarUsuario.setFont(CommonFormat.fuente);
+        jbEliminarUsuario.setFont(CommonFormat.fuente);
+        jbCambiarPassword.setFont(CommonFormat.fuente);
+        jbUsuarioParametros.setFont(CommonFormat.fuente);
 
         jbModificarUsuario.setName("modificar empleado");
         jbEliminarUsuario.setName("borrar empleado");
@@ -279,10 +286,9 @@ public class V_gestion_usuario extends JInternalFrame {
         //JP SOUTH
         jpSouth = new javax.swing.JPanel();
         jpSouth.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
-        jbCrearUsuario.setText("Crear usuario");
-        jbModificarUsuario.setText("Actualizar usuario");
         jbGestionRol = new JButton("Gestión de roles");
         jbGestionRol.setName("roles");
+        jbGestionRol.setFont(CommonFormat.fuente);
         jbGestionRol.setMargin(insets);
         jpSouth.add(jbCrearUsuario);
         jpSouth.add(jbModificarUsuario);

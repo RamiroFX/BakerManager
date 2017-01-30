@@ -4,6 +4,7 @@
  */
 package Proveedor;
 
+import Interface.CommonFormat;
 import java.awt.BorderLayout;
 import java.awt.Insets;
 import javax.swing.JCheckBox;
@@ -138,9 +139,11 @@ class V_gestion_proveedores extends JInternalFrame {
         Insets inset = new Insets(10, 10, 10, 10);
         jbCrearProveedor = new javax.swing.JButton("Crear proveedor");
         jbCrearProveedor.setName("crear proveedor");
+        jbCrearProveedor.setFont(CommonFormat.fuente);
         jbCrearProveedor.setMargin(inset);
         jbModificarProveedor = new javax.swing.JButton("Modificar proveedor");
         jbModificarProveedor.setName("Modificar proveedor");
+        jbModificarProveedor.setFont(CommonFormat.fuente);
         jbModificarProveedor.setMargin(inset);
 
         jpDatosEmp = new javax.swing.JPanel(new MigLayout());

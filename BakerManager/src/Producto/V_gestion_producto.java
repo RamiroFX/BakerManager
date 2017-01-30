@@ -4,6 +4,7 @@
  */
 package Producto;
 
+import Interface.CommonFormat;
 import Utilities.JTablePagination;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -170,19 +171,24 @@ public class V_gestion_producto extends JInternalFrame {
         jbParametros = new JButton("Parametros");
         jbParametros.setName("parametros producto");
         jbParametros.setMargin(insets);
+        jbParametros.setFont(CommonFormat.fuente);
         jbModificar = new JButton("Modificar");
         jbModificar.setName("modificar producto");
         jbModificar.setMargin(insets);
+        jbModificar.setFont(CommonFormat.fuente);
         jbModificar.setEnabled(false);
         jbAgregar = new JButton("Agregar");
         jbAgregar.setName("crear producto");
+        jbAgregar.setFont(CommonFormat.fuente);
         jbAgregar.setMargin(insets);
         jbEliminar = new JButton("Eliminar");
         jbEliminar.setName("eliminar producto");
         jbEliminar.setMargin(insets);
+        jbEliminar.setFont(CommonFormat.fuente);
         jbEliminar.setEnabled(false);
         jbAsigProdProv = new JButton("Prod-Proveedor");
         jbAsigProdProv.setName("producto proveedor");
+        jbAsigProdProv.setFont(CommonFormat.fuente);
         jbAsigProdProv.setMargin(insets);
         //jpBot.add(jbParametros);
         jpBot.add(jbModificar);

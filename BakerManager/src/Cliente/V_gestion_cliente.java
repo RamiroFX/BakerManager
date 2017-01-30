@@ -4,6 +4,7 @@
  */
 package Cliente;
 
+import Interface.CommonFormat;
 import java.awt.BorderLayout;
 import java.awt.Insets;
 import javax.swing.JCheckBox;
@@ -146,8 +147,10 @@ public class V_gestion_cliente extends JInternalFrame {
 
         jbCrearCliente = new javax.swing.JButton("Crear cliente");
         jbCrearCliente.setName("crear cliente");
+        jbCrearCliente.setFont(CommonFormat.fuente);
         jbModificarCliente = new javax.swing.JButton("Modificar cliente");
         jbModificarCliente.setName("modificar cliente");
+        jbModificarCliente.setFont(CommonFormat.fuente);
 
         jpDatosEmp = new javax.swing.JPanel(new MigLayout());
         jpDatosEmp.add(jlEntidad);
@@ -203,7 +206,7 @@ public class V_gestion_cliente extends JInternalFrame {
         //JP SOUTH
         jpSouth = new javax.swing.JPanel();
         jpSouth.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
-        
+
         Insets inset = new Insets(10, 10, 10, 10);
         jbCrearCliente.setMargin(inset);
         jbModificarCliente.setMargin(inset);

@@ -4,6 +4,7 @@
  */
 package Pedido;
 
+import Interface.CommonFormat;
 import com.toedter.calendar.JDateChooser;
 import java.awt.Dimension;
 import java.awt.Insets;
@@ -133,21 +134,27 @@ public class V_gestionPedido extends JInternalFrame {
         jbAgregar = new JButton("Crear pedido");
         jbAgregar.setName("crear pedido");
         jbAgregar.setMargin(inset);
+        jbAgregar.setFont(CommonFormat.fuente);
         jbPagoPedido = new JButton("Pago de pedido");
         jbPagoPedido.setName("entregar pedido");
         jbPagoPedido.setMargin(inset);
+        jbPagoPedido.setFont(CommonFormat.fuente);
         jbCancelarPedido = new JButton("Cancelar pedido");
         jbCancelarPedido.setName("cancelar pedido");
         jbCancelarPedido.setMargin(inset);
+        jbCancelarPedido.setFont(CommonFormat.fuente);
         jbDetalle = new JButton("Ver detalle");
         jbDetalle.setName("modificar pedido");
         jbDetalle.setMargin(inset);
+        jbDetalle.setFont(CommonFormat.fuente);
         jbResumen = new JButton("Ver resumen");
         jbResumen.setName("resumen pedido");
         jbResumen.setMargin(inset);
+        jbResumen.setFont(CommonFormat.fuente);
         jbCharts = new JButton("Diagramas");
         jbCharts.setName("grafico pedido");
         jbCharts.setMargin(inset);
+        jbCharts.setFont(CommonFormat.fuente);
         jpBot.add(jbAgregar);
         jpBot.add(jbPagoPedido);
         jpBot.add(jbCancelarPedido);

@@ -5,7 +5,6 @@
 package Resumen;
 
 import java.awt.BorderLayout;
-import static java.awt.Dialog.DEFAULT_MODALITY_TYPE;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.util.Date;
@@ -64,11 +63,11 @@ public class V_resumen extends JDialog {
         jftTotalEgCont.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("¤#,##0"))));
         jftTotalEgCred = new JFormattedTextField();
         jftTotalEgCred.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("¤#,##0"))));
-        jlContado = new JLabel("Egresos al contado");
+        jlContado = new JLabel("Contado");
         jlContado.setHorizontalAlignment(SwingConstants.CENTER);
-        jlCredito = new JLabel("Egresos a crédito");
+        jlCredito = new JLabel("Crédito");
         jlCredito.setHorizontalAlignment(SwingConstants.CENTER);
-        jlTotal = new JLabel("Total egresos");
+        jlTotal = new JLabel("Total");
         jlTotal.setHorizontalAlignment(SwingConstants.CENTER);
         jpTotalEgreso.add(jlContado);
         jpTotalEgreso.add(jftTotalEgCont);

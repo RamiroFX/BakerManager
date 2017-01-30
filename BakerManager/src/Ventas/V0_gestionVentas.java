@@ -4,6 +4,7 @@
  */
 package Ventas;
 
+import Interface.CommonFormat;
 import Utilities.JTablePagination;
 import com.toedter.calendar.JDateChooser;
 import java.awt.Dimension;
@@ -121,13 +122,16 @@ public class V0_gestionVentas extends JInternalFrame {
         Insets insets = new Insets(10, 10, 10, 10);
         jbAgregar = new JButton("Crear venta");
         jbAgregar.setName("crear venta");
+        jbAgregar.setFont(CommonFormat.fuente);
         jbAgregar.setMargin(insets);
         jbDetalle = new JButton("Ver detalle");
         jbDetalle.setName("detalle venta");
+        jbDetalle.setFont(CommonFormat.fuente);
         jbDetalle.setMargin(insets);
         jbResumen = new JButton("Ver resumen");
         jbResumen.setName("resumen venta");
         jbResumen.setMargin(insets);
+        jbResumen.setFont(CommonFormat.fuente);
         jbResumen.setEnabled(false);
         jpBot.add(jbAgregar);
         jpBot.add(jbDetalle);
