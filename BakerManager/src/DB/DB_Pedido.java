@@ -36,7 +36,7 @@ public class DB_Pedido {
         ResultSetTableModel rstm = null;
         String total = "";
         if (conTotal) {
-            total = "ROUND((SELECT SUM(PEDE.CANTIDAD*(PEDE.PRECIO-(PEDE.PRECIO*PEDE.DESCUENTO)/100)) FROM PEDIDO_DETALLE PEDE WHERE PEDE.ID_PEDIDO_CABECERA = PEDI.ID_PEDIDO_CABECERA))\"Total\", ";
+            total = " COALESCE( ROUND((SELECT SUM(PEDE.CANTIDAD*(PEDE.PRECIO-(PEDE.PRECIO*PEDE.DESCUENTO)/100)) FROM PEDIDO_DETALLE PEDE WHERE PEDE.ID_PEDIDO_CABECERA = PEDI.ID_PEDIDO_CABECERA)), 0 )  \"Total\", ";
         }
         String Query = "SELECT PEDI.ID_PEDIDO_CABECERA \"ID\", "
                 + "(SELECT PERS.NOMBRE || ' '|| PERS.APELLIDO WHERE PERS.ID_PERSONA = FUNC.ID_PERSONA)\"Empleado\", "
@@ -96,7 +96,7 @@ public class DB_Pedido {
         ResultSetTableModel rstm = null;
         String total = "";
         if (conTotal) {
-            total = "ROUND((SELECT SUM(PEDE.CANTIDAD*(PEDE.PRECIO-(PEDE.PRECIO*PEDE.DESCUENTO)/100)) FROM PEDIDO_DETALLE PEDE WHERE PEDE.ID_PEDIDO_CABECERA = PEDI.ID_PEDIDO_CABECERA))\"Total\", ";
+            total = " COALESCE( ROUND((SELECT SUM(PEDE.CANTIDAD*(PEDE.PRECIO-(PEDE.PRECIO*PEDE.DESCUENTO)/100)) FROM PEDIDO_DETALLE PEDE WHERE PEDE.ID_PEDIDO_CABECERA = PEDI.ID_PEDIDO_CABECERA)), 0 )  \"Total\", ";
         }
         String Query = "SELECT PEDI.ID_PEDIDO_CABECERA \"ID\", "
                 + "(SELECT PERS.NOMBRE || ' '|| PERS.APELLIDO WHERE PERS.ID_PERSONA = FUNC.ID_PERSONA)\"Empleado\", "
@@ -672,7 +672,7 @@ public class DB_Pedido {
                 pst.executeUpdate();
                 pst.close();
             }
-            
+
             //se resta del stock lo que se vende
             for (int i = 0; i < detalle.size(); i++) {
                 String query = "UPDATE PRODUCTO SET "
@@ -682,7 +682,7 @@ public class DB_Pedido {
                 st = DB_manager.getConection().createStatement();
                 st.executeUpdate(query);
             }
-            
+
             String UPDATE_PEDIDO = "UPDATE PEDIDO_CABECERA SET ID_FACTURA_CABECERA = " + sq_cabecera + ", id_pedido_estado = 2 WHERE ID_PEDIDO_CABECERA = " + pedido.getIdPedido();
             st = DB_manager.getConection().createStatement();
             st.executeUpdate(UPDATE_PEDIDO);
