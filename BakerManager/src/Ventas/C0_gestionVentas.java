@@ -82,6 +82,13 @@ public class C0_gestionVentas implements Gestion {
                 this.vista.jbBorrar.addActionListener(this);
                 this.vista.jbBuscarDetalle.setEnabled(true);
                 this.vista.jbBuscarDetalle.addActionListener(this);
+
+                this.vista.jbBuscar.addActionListener(this);
+                this.vista.jbCliente.addActionListener(this);
+                this.vista.jbEmpleado.addActionListener(this);
+                this.vista.jcbCondCompra.setEnabled(true);
+                this.vista.jbBorrar.addActionListener(this);
+                this.vista.jbBuscarDetalle.addActionListener(this);
             }
             if (this.vista.jbDetalle.getName().equals(accesos.get(i).getItemDescripcion())) {
                 this.vista.jbDetalle.addActionListener(this);
@@ -93,6 +100,18 @@ public class C0_gestionVentas implements Gestion {
         }
         this.vista.jtIngresoCabecera.table.addMouseListener(this);
         this.vista.jtIngresoCabecera.table.addKeyListener(this);
+        /**
+         * **ESCAPE HOTKEY/
+         */
+        this.vista.jbAgregar.addKeyListener(this);
+        this.vista.jbResumen.addKeyListener(this);
+        this.vista.jbDetalle.addKeyListener(this);
+        this.vista.jbBuscar.addKeyListener(this);
+        this.vista.jbCliente.addKeyListener(this);
+        this.vista.jbEmpleado.addKeyListener(this);
+        this.vista.jcbCondCompra.addKeyListener(this);
+        this.vista.jbBorrar.addKeyListener(this);
+        this.vista.jbBuscarDetalle.addKeyListener(this);
     }
 
     private void verificarPermiso() {
@@ -307,6 +326,9 @@ public class C0_gestionVentas implements Gestion {
 
     @Override
     public void keyPressed(KeyEvent e) {
+        if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+            cerrar();
+        }
     }
 
     @Override

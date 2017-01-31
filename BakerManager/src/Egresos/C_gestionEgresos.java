@@ -107,6 +107,18 @@ public class C_gestionEgresos extends MouseAdapter implements ActionListener, Ke
         this.vista.jtEgresoCabecera.table.addMouseListener(this);
         //this.vista.jbGraficos.addActionListener(this);
         this.vista.jtEgresoCabecera.table.addKeyListener(this);
+        /**
+         * **ESCAPE HOTKEY/
+         */
+        this.vista.jbAgregar.addKeyListener(this);
+        this.vista.jbResumen.addKeyListener(this);
+        this.vista.jbDetalle.addKeyListener(this);
+        this.vista.jbBuscar.addKeyListener(this);
+        this.vista.jbProveedor.addKeyListener(this);
+        this.vista.jbFuncionario.addKeyListener(this);
+        this.vista.jcbCondCompra.addKeyListener(this);
+        this.vista.jbBorrar.addKeyListener(this);
+        this.vista.jbBuscarDetalle.addKeyListener(this);
     }
 
     private void verificarPermiso() {
@@ -228,6 +240,10 @@ public class C_gestionEgresos extends MouseAdapter implements ActionListener, Ke
         });
     }
 
+    public final void cerrar() {
+        this.vista.dispose();
+    }
+
     private void borrarParametros() {
         this.m_egreso_cabecera.setId_empleado(null);
         this.m_egreso_cabecera.setFuncionario(null);
@@ -323,6 +339,9 @@ public class C_gestionEgresos extends MouseAdapter implements ActionListener, Ke
     }
 
     public void keyPressed(KeyEvent e) {
+        if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+            cerrar();
+        }
     }
 
     public void keyReleased(KeyEvent e) {
