@@ -76,6 +76,7 @@ public class C_crearPedido extends MouseAdapter implements ActionListener, KeyLi
         Date today = Calendar.getInstance().getTime();
         this.vista.jdcFechaEntrega.setDate(today);
         int hora = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
+        System.out.println("Hora: " + hora);
         hora = hora + 1;
         String hora_temp = "0";
         if (hora >= 0 && hora < 10) {
@@ -244,7 +245,7 @@ public class C_crearPedido extends MouseAdapter implements ActionListener, KeyLi
             JOptionPane.showMessageDialog(vista, "Seleccione por lo menos un producto.", "Atención", JOptionPane.WARNING_MESSAGE);
             return;
         }
-        Date today = Calendar.getInstance().getTime();
+        Date now = Calendar.getInstance().getTime();
         Date entrega = null;
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
         SimpleDateFormat sdfs = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss");
@@ -253,10 +254,12 @@ public class C_crearPedido extends MouseAdapter implements ActionListener, KeyLi
             entrega = sdfs.parse(fechaEntrega);
         } catch (Exception ex) {
             ex.printStackTrace();
-            JOptionPane.showMessageDialog(vista, "La fecha de entrega debe ser mayor que la fecha fecha actual (" + sdfs.format(today) + ").", "Fecha inválida", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(vista, "La fecha de entrega debe ser mayor que la fecha fecha actual (" + sdfs.format(now) + ").", "Fecha inválida", JOptionPane.WARNING_MESSAGE);
             return;
         }
-        if (today.before(entrega)) {
+        System.out.println("now: " + now);
+        System.out.println("entrega: " + entrega);
+        if (now.before(entrega)) {
             this.modelo.getPedido().setTiempoEntrega(new Timestamp(entrega.getTime()));
             String direccion = this.vista.jtfDireccionPedido.getText().trim();
             String referencia = this.vista.jtfReferencia.getText().trim();
@@ -276,9 +279,9 @@ public class C_crearPedido extends MouseAdapter implements ActionListener, KeyLi
             this.modelo.getPedido().setReferencia(referencia);
             this.modelo.insertarPedido();
         } else {
-            vista.jdcFechaEntrega.setDate(today);
+            vista.jdcFechaEntrega.setDate(now);
             vista.jdcFechaEntrega.updateUI();
-            JOptionPane.showMessageDialog(vista, "La fecha de entrega debe ser mayor que la fecha fecha actual (" + sdfs.format(today) + ").", "Atención", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(vista, "La fecha de entrega debe ser mayor que la fecha fecha actual (" + sdfs.format(now) + ").", "Atención", JOptionPane.WARNING_MESSAGE);
             return;
         }
         cerrar();

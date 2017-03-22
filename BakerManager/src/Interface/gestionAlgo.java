@@ -12,7 +12,7 @@ import java.awt.event.MouseEvent;
  *
  * @author Ramiro Ferreira
  */
-public class gestionAlgo implements Gestion{
+public class gestionAlgo implements GestionInterface{
 
     @Override
     public void inicializarVista() {

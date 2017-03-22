@@ -10,7 +10,7 @@ import DB.DB_Ingreso;
 import Entities.M_cliente;
 import Entities.M_funcionario;
 import Entities.M_menu_item;
-import Interface.Gestion;
+import Interface.GestionInterface;
 import MenuPrincipal.DatosUsuario;
 import bakermanager.C_inicio;
 import Empleado.Seleccionar_funcionario;
@@ -28,7 +28,7 @@ import javax.swing.JOptionPane;
  *
  * @author Ramiro Ferreira
  */
-public class C0_gestionVentas implements Gestion {
+public class C0_gestionVentas implements GestionInterface {
 
     public M0_gestionVentas modelo;
     public V0_gestionVentas vista;

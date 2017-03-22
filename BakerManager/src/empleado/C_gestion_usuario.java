@@ -12,7 +12,7 @@ import java.awt.event.MouseEvent;
 import java.text.SimpleDateFormat;
 import java.util.Vector;
 import GestionRol.Gestion_rol;
-import Interface.Gestion;
+import Interface.GestionInterface;
 import MenuPrincipal.DatosUsuario;
 import bakermanager.C_inicio;
 import java.awt.event.KeyEvent;
@@ -23,7 +23,7 @@ import javax.swing.JOptionPane;
  *
  * @author Ramiro Ferreira
  */
-public class C_gestion_usuario implements Gestion {
+public class C_gestion_usuario implements GestionInterface {
 
     public C_inicio c_inicio;
     M_gestion_usuario modelo;

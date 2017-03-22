@@ -10,7 +10,7 @@ import Entities.M_cliente;
 import Entities.M_facturaDetalle;
 import Entities.M_producto;
 import Entities.M_telefono;
-import Interface.Gestion;
+import Interface.GestionInterface;
 import MenuPrincipal.DatosUsuario;
 import Parametros.TipoOperacion;
 import Producto.SeleccionarCantidadProduducto;
@@ -27,7 +27,7 @@ import javax.swing.JOptionPane;
  *
  * @author Ramiro Ferreira
  */
-public class C_crearVentaRapida implements Gestion {
+public class C_crearVentaRapida implements GestionInterface {
 
     public M_crearVentaRapida modelo;
     public V_crearVentaRapida vista;

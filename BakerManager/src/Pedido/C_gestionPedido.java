@@ -10,7 +10,7 @@ import DB.ResultSetTableModel;
 import Entities.M_cliente;
 import Entities.M_funcionario;
 import Entities.M_menu_item;
-import Interface.Gestion;
+import Interface.GestionInterface;
 import MenuPrincipal.DatosUsuario;
 import Resumen.Resumen;
 import bakermanager.C_inicio;
@@ -30,7 +30,7 @@ import javax.swing.JOptionPane;
  *
  * @author Ramiro Ferreira
  */
-public class C_gestionPedido implements Gestion {
+public class C_gestionPedido implements GestionInterface {
 
     public M_gestionPedido modelo;
     public V_gestionPedido vista;

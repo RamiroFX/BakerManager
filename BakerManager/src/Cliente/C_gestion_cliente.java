@@ -8,7 +8,7 @@ import DB.DB_Cliente;
 import Entities.M_cliente;
 import Entities.M_cliente_contacto;
 import Entities.M_menu_item;
-import Interface.Gestion;
+import Interface.GestionInterface;
 import MenuPrincipal.DatosUsuario;
 import bakermanager.C_inicio;
 import java.awt.AlphaComposite;
@@ -28,7 +28,7 @@ import javax.swing.JOptionPane;
  *
  * @author Ramiro Ferreira
  */
-public class C_gestion_cliente implements Gestion {
+public class C_gestion_cliente implements GestionInterface {
 
     public C_inicio c_inicio;
     private M_cliente m_cliente;
