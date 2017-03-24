@@ -12,19 +12,25 @@ import java.util.Date;
  */
 public class Caja {
 
-    private int idCaja, idEmpleadoApertura, idEmpleadoCierre, montoInicial, totalEgreso, totalIngreso;
+    private int idCaja, idEmpleadoApertura, idEmpleadoCierre, montoInicial, montoFinal, totalEgreso, totalIngreso;
     private Date fechaApertura, fechaCierre;
+    private Date horaApertura, horaCierre;
 
     public Caja() {
     }
 
-    public Caja(int idCaja, int montoInicial, int totalEgreso, int totalIngreso, Date fechaApertura, Date fechaCierre) {
+    public Caja(int idCaja, int idEmpleadoApertura, int idEmpleadoCierre, int montoInicial, int montoFinal, int totalEgreso, int totalIngreso, Date fechaApertura, Date fechaCierre, Date horaApertura, Date horaCierre) {
         this.idCaja = idCaja;
+        this.idEmpleadoApertura = idEmpleadoApertura;
+        this.idEmpleadoCierre = idEmpleadoCierre;
         this.montoInicial = montoInicial;
+        this.montoFinal = montoFinal;
         this.totalEgreso = totalEgreso;
         this.totalIngreso = totalIngreso;
         this.fechaApertura = fechaApertura;
         this.fechaCierre = fechaCierre;
+        this.horaApertura = horaApertura;
+        this.horaCierre = horaCierre;
     }
 
     public int getIdCaja() {
@@ -71,16 +77,24 @@ public class Caja {
         return montoInicial;
     }
 
+    public void setMontoInicial(int montoInicial) {
+        this.montoInicial = montoInicial;
+    }
+
+    public int getMontoFinal() {
+        return montoFinal;
+    }
+
+    public void setMontoFinal(int montoFinal) {
+        this.montoFinal = montoFinal;
+    }
+
     public int getTotalEgreso() {
         return totalEgreso;
     }
 
     public int getTotalIngreso() {
         return totalIngreso;
-    }
-
-    public void setMontoInicial(int montoInicial) {
-        this.montoInicial = montoInicial;
     }
 
     public void setTotalEgreso(int totalEgreso) {
@@ -93,5 +107,21 @@ public class Caja {
 
     public int totalEgresoIngreso() {
         return getTotalEgreso() + getTotalIngreso();
+    }
+
+    public Date getHoraApertura() {
+        return horaApertura;
+    }
+
+    public void setHoraApertura(Date horaApertura) {
+        this.horaApertura = horaApertura;
+    }
+
+    public Date getHoraCierre() {
+        return horaCierre;
+    }
+
+    public void setHoraCierre(Date horaCierre) {
+        this.horaCierre = horaCierre;
     }
 }
