@@ -1,12 +1,4 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package Empleado;
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 
 import Interface.CommonFormat;
 import java.awt.BorderLayout;
@@ -178,7 +170,6 @@ public class V_gestion_usuario extends JInternalFrame {
         jpDatosPersonales1 = new javax.swing.JPanel();
         jpDatosPersonales1.setLayout(new java.awt.BorderLayout());
 
-
         jpDatos = new javax.swing.JPanel();
         jlNombre.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jlNombre.setText("Nombre");
@@ -216,7 +207,6 @@ public class V_gestion_usuario extends JInternalFrame {
 
         jpDatosPersonales1.add(jpDatos, java.awt.BorderLayout.CENTER);
 
-
         jpDatosPersonales2.setLayout(new java.awt.BorderLayout());
 
         jpDatosPersonalesVarios1 = new javax.swing.JPanel(new java.awt.GridLayout(3, 2));
@@ -245,7 +235,6 @@ public class V_gestion_usuario extends JInternalFrame {
         jpDatosPersonalesVarios2.add(jspObservacion, java.awt.BorderLayout.CENTER);
 
         jpDatosPersonales2.add(jpDatosPersonalesVarios2, java.awt.BorderLayout.CENTER);
-
 
         jpDatosEmpresariales = new javax.swing.JPanel();
         jpDatosEmpresariales.setLayout(new java.awt.GridLayout(12, 2));

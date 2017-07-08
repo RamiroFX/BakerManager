@@ -41,7 +41,6 @@ public class V0_gestionVentas extends JInternalFrame {
 
     public V0_gestionVentas() {
         super("Ventas", true, true, true, true);
-        //setPreferredSize(new Dimension(950, 600));
         setSize(950, 600);
         setName("jifGestionVentas");
         initTop();
