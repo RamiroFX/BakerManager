@@ -1,5 +1,6 @@
 package Empleado;
 
+import Caja.C_gestionCaja;
 import DB.DB_Cliente;
 import DB.DB_Funcionario;
 import Egresos.C_buscar_detalle;
@@ -27,6 +28,7 @@ public class C_seleccionar_funcionario extends MouseAdapter implements ActionLis
     public static final int BUSCAR_DETALLE_EGRESO = 3;
     public static final int GESTION_PEDIDO = 4;
     public static final int BUSCAR_VENTA_DETALLE = 5;
+    public static final int GESTION_CAJA = 6;
     int idCliente, tipo;
     M_funcionario funcionario;
     V_seleccionar_funcionario vista;
@@ -36,6 +38,7 @@ public class C_seleccionar_funcionario extends MouseAdapter implements ActionLis
     private C_buscar_detalle buscarDetalleEgreso;
     private C_gestionPedido gestionPedido;
     private C_buscar_venta_detalle buscarVentaDetalle;
+    private C_gestionCaja gestionCaja;
 
     public C_seleccionar_funcionario(V_seleccionar_funcionario vista, C0_gestionVentas gestion_venta) {
         this.gestion_venta = gestion_venta;
@@ -73,6 +76,14 @@ public class C_seleccionar_funcionario extends MouseAdapter implements ActionLis
         this.buscarVentaDetalle = buscarVentaDetalle;
         this.vista = vista;
         this.tipo = BUSCAR_VENTA_DETALLE;
+        inicializarVista();
+        agregarListeners();
+    }
+
+    C_seleccionar_funcionario(V_seleccionar_funcionario vista, C_gestionCaja gestionCaja) {
+        this.gestionCaja = gestionCaja;
+        this.vista = vista;
+        this.tipo = GESTION_CAJA;
         inicializarVista();
         agregarListeners();
     }
@@ -128,6 +139,11 @@ public class C_seleccionar_funcionario extends MouseAdapter implements ActionLis
             }
             case BUSCAR_VENTA_DETALLE: {
                 this.buscarVentaDetalle.recibirFuncionario(funcionario);
+                cerrar();
+                break;
+            }
+            case GESTION_CAJA: {
+                this.gestionCaja.recibirFuncionario(funcionario);
                 cerrar();
                 break;
             }

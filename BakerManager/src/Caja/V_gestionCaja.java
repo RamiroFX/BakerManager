@@ -2,7 +2,6 @@ package Caja;
 
 import Interface.CommonFormat;
 import Utilities.JTablePagination;
-import bakermanager.C_inicio;
 import com.toedter.calendar.JDateChooser;
 import java.awt.Dimension;
 import java.awt.Insets;
@@ -25,15 +24,12 @@ import net.miginfocom.swing.MigLayout;
  */
 public class V_gestionCaja extends JInternalFrame {
 
-    public JButton jbBuscar, jbBuscarDetalle, jbBorrar, jbAgregar, jbDetalle,
-            jbResumen, jbCliente, jbEmpleado;
-    public JTextField jtfNroFactura, jtfCliente, jtfEmpleado;
-    public JComboBox jcbEmpleado, jcbCondCompra;
+    public JButton jbBuscar, jbBorrar, jbAgregar, jbDetalle,
+            jbResumen, jbEmpleado;
+    public JTextField jtfEmpleado;
     private JPanel jpTop, jpBotonesTop, jpBot;
-    public JTable jtIngresoDetalle;
-    public JTablePagination jtIngresoCabecera;
-    private JScrollPane jspEgresoDetalle;
-    private JSplitPane jspMid;
+    public JScrollPane jspCaja;
+    public JTable jtCaja;
     public JDateChooser jddInicio, jddFinal;
 
     public V_gestionCaja() {
@@ -45,7 +41,7 @@ public class V_gestionCaja extends JInternalFrame {
         initMid();
         initBot();
         getContentPane().add(jpTop, "North");
-        getContentPane().add(jspMid, "Center");
+        getContentPane().add(jspCaja, "Center");
         getContentPane().add(jpBot, "South");
     }
 
@@ -55,32 +51,20 @@ public class V_gestionCaja extends JInternalFrame {
                 "", // Layout Constraints
                 "[grow][][grow]", // Column constraints
                 "[][shrink 0]"));    // Row constraints);
-        jbCliente = new JButton("Cliente");
-        jtfCliente = new JTextField();
-        jtfCliente.setPreferredSize(new Dimension(250, 10));
-        jtfCliente.setEditable(false);
         jbEmpleado = new JButton("Funcionario");
         jtfEmpleado = new JTextField();
         jtfEmpleado.setPreferredSize(new Dimension(250, 10));
         jtfEmpleado.setEditable(false);
-        jcbCondCompra = new JComboBox();
-        jtfNroFactura = new JTextField();
         jddInicio = new JDateChooser();
         jddInicio.setPreferredSize(new Dimension(150, 10));
         jddFinal = new JDateChooser();
         jddFinal.setPreferredSize(new Dimension(150, 10));
-        jpFiltros.add(jbCliente, "growx");
-        jpFiltros.add(jtfCliente, "growx");
+        jpFiltros.add(jbEmpleado, "growx");
+        jpFiltros.add(jtfEmpleado, "growx");
         jpFiltros.add(new JLabel("Fecha inicio:"));
         jpFiltros.add(jddInicio, "growx");
-        jpFiltros.add(new JLabel("Cond. compra:"));
-        jpFiltros.add(jcbCondCompra, "wrap");
-        jpFiltros.add(jbEmpleado);
-        jpFiltros.add(jtfEmpleado, "growx");
         jpFiltros.add(new JLabel("Fecha final:"));
         jpFiltros.add(jddFinal, "growx");
-        jpFiltros.add(new JLabel("Nro. factura:"));
-        jpFiltros.add(jtfNroFactura, "growx");
         jpBotonesTop = new JPanel(new MigLayout());
         jpBotonesTop.setBorder(new EtchedBorder(EtchedBorder.RAISED));
         /*jtfBuscar = new JTextField();
@@ -90,10 +74,8 @@ public class V_gestionCaja extends JInternalFrame {
         jbBuscar = new JButton("Buscar");
         jbBuscar.setName("buscar venta");
         jbBorrar = new JButton("Borrar");
-        jbBuscarDetalle = new JButton("Buscar por detalle");
         jpBotonesTop.add(jbBuscar);
-        jpBotonesTop.add(jbBorrar, "wrap");
-        jpBotonesTop.add(jbBuscarDetalle, "span, growx");
+        jpBotonesTop.add(jbBorrar);
         //jpTop.add(jpJtextFieldTop, "pushx");
         jpTop.add(jpFiltros);
         jpTop.add(jpBotonesTop);
@@ -101,17 +83,8 @@ public class V_gestionCaja extends JInternalFrame {
     }
 
     private void initMid() {
-        //Panel medio izquierda
-        jtIngresoCabecera = new JTablePagination(100);
-
-        //panel medio derecha
-        jtIngresoDetalle = new JTable();
-        jtIngresoDetalle.getTableHeader().setReorderingAllowed(false);
-        jspEgresoDetalle = new JScrollPane(jtIngresoDetalle);
-        //creamos nuestro splitpane y agregamos los dos paneles del medio
-        jspMid = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, jtIngresoCabecera, jspEgresoDetalle);
-        jspMid.setDividerLocation(0.5);
-        jspMid.setOneTouchExpandable(true);
+        jtCaja = new JTable();
+        jspCaja = new JScrollPane(jtCaja);
     }
 
     private void initBot() {

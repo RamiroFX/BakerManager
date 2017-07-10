@@ -4,6 +4,7 @@
  */
 package Empleado;
 
+import Caja.C_gestionCaja;
 import Egresos.C_buscar_detalle;
 import Egresos.C_gestionEgresos;
 import Pedido.C_gestionPedido;
@@ -42,6 +43,11 @@ public class Seleccionar_funcionario {
     public Seleccionar_funcionario(C_buscar_venta_detalle buscarVentaDetalle) {
         this.vista = new V_seleccionar_funcionario(buscarVentaDetalle.c_inicio.vista);
         this.controlador = new C_seleccionar_funcionario(vista, buscarVentaDetalle);
+    }
+
+    public Seleccionar_funcionario(C_gestionCaja aThis) {
+        this.vista = new V_seleccionar_funcionario(aThis.c_inicio.vista);
+        this.controlador = new C_seleccionar_funcionario(vista, aThis);
     }
 
     public void mostrarVista() {

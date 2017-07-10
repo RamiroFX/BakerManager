@@ -5,10 +5,12 @@
  */
 package Caja;
 
+import DB.DB_Caja;
 import Interface.CommonFormat;
 import DB.DB_Egreso;
 import DB.DB_Ingreso;
 import Entities.Caja;
+import MenuPrincipal.DatosUsuario;
 import bakermanager.C_inicio;
 import com.toedter.calendar.JDateChooser;
 import java.awt.BorderLayout;
@@ -52,14 +54,13 @@ public class SaldarCaja extends JDialog implements ActionListener, KeyListener {
     public JDateChooser jddInicio, jddFinal;
     public JComboBox jcbHoraInicio, jcbMinutoInicio;
     public JComboBox jcbHoraFin, jcbMinutoFin;
-    private JButton saveButton;
-    private JButton cancelButton;
-    private JLabel jlDineroTotal;
+    private JButton saveButton, cancelButton, jbFondoAnterior;
+    private JLabel jlFondoInicial;
     private JLabel jlCajaChica;
     private JLabel jlEgresoTotal, jlEgresoCredito, jlEgresoContado;
     private JLabel jlIngresoTotal, jlIngresoCredito, jlIngresoContado;
     private JLabel jlTotalEgrIng;
-    private JFormattedTextField jtfDineroTotal;
+    private JFormattedTextField jtfFondoInicial;
     private JFormattedTextField jtfCajaChica;
     private JFormattedTextField jtfEgresoTotal, jtfEgresoCredito, jtfEgresoContado;
     private JFormattedTextField jtfIngresoTotal, jtfIngresoCredito, jtfIngresoContado;
@@ -69,6 +70,7 @@ public class SaldarCaja extends JDialog implements ActionListener, KeyListener {
         super(inicio.vista, "Saldar caja", true);
         initializeVariables();
         constructLayout();
+        addListeners();
         initializeLogic();
         setWindows(inicio.vista);
     }
@@ -82,10 +84,9 @@ public class SaldarCaja extends JDialog implements ActionListener, KeyListener {
         jddFinal.setPreferredSize(new Dimension(150, 10));
         this.saveButton = new JButton("Guardar");
         this.cancelButton = new JButton("Cancelar");
-        this.saveButton.addActionListener(this);
-        this.cancelButton.addActionListener(this);
-        this.jlDineroTotal = new JLabel("Dinero total");
-        this.jlDineroTotal.setFont(CommonFormat.fuenteTitulo);
+        this.jbFondoAnterior = new JButton("F. anterior");
+        this.jlFondoInicial = new JLabel("Fondo inicial");
+        this.jlFondoInicial.setFont(CommonFormat.fuenteTitulo);
         this.jlCajaChica = new JLabel("Caja chica");
         this.jlCajaChica.setFont(CommonFormat.fuenteTitulo);
         this.jlEgresoTotal = new JLabel("Egreso total");
@@ -102,9 +103,9 @@ public class SaldarCaja extends JDialog implements ActionListener, KeyListener {
         this.jlIngresoContado.setFont(CommonFormat.fuenteSubTitulo);
         this.jlTotalEgrIng = new JLabel("Egreso+Ingreso");
         this.jlTotalEgrIng.setFont(CommonFormat.fuenteTitulo);
-        this.jtfDineroTotal = new JFormattedTextField();
-        this.jtfDineroTotal.setColumns(prefCols);
-        this.jtfDineroTotal.addKeyListener(this);
+        this.jtfFondoInicial = new JFormattedTextField();
+        this.jtfFondoInicial.setColumns(11);
+        this.jtfFondoInicial.addKeyListener(this);
         this.jtfCajaChica = new JFormattedTextField();
         this.jtfCajaChica.setColumns(prefCols);
         this.jtfCajaChica.addKeyListener(this);
@@ -160,6 +161,9 @@ public class SaldarCaja extends JDialog implements ActionListener, KeyListener {
     }
 
     private void constructLayout() {
+        JPanel jpFondoInicial = new JPanel();
+        jpFondoInicial.add(jtfFondoInicial);
+        jpFondoInicial.add(jbFondoAnterior);
         JPanel jpHoraInicio = new JPanel(new GridLayout(1, 2));
         jpHoraInicio.add(jcbHoraInicio);
         jpHoraInicio.add(jcbMinutoInicio);
@@ -215,12 +219,12 @@ public class SaldarCaja extends JDialog implements ActionListener, KeyListener {
         gc.gridx = 0;
         gc.anchor = GridBagConstraints.EAST;
         gc.insets = rightPadding;
-        studentInfoPanel.add(jlDineroTotal, gc);
+        studentInfoPanel.add(jlFondoInicial, gc);
 
         gc.gridx++;
         gc.anchor = GridBagConstraints.WEST;
         gc.insets = noPadding;
-        studentInfoPanel.add(jtfDineroTotal, gc);
+        studentInfoPanel.add(jpFondoInicial, gc);
 
         // ////// Next row ////////////////////////////
         gc.gridy++;
@@ -408,12 +412,12 @@ public class SaldarCaja extends JDialog implements ActionListener, KeyListener {
         /*
          * VALIDAR dineroTotal
          */
-        Integer dineroTotal;
+        Integer fondoInicial;
         try {
-            String LongToString = String.valueOf(this.jtfDineroTotal.getValue());
-            dineroTotal = Integer.valueOf(LongToString.replace(".", ""));
+            String LongToString = String.valueOf(this.jtfFondoInicial.getValue());
+            fondoInicial = Integer.valueOf(LongToString.replace(".", ""));
         } catch (Exception e) {
-            this.jtfDineroTotal.setBackground(Color.red);
+            this.jtfFondoInicial.setBackground(Color.red);
             javax.swing.JOptionPane.showMessageDialog(this, "Coloque un dinero total válido",
                     "Parametros incorrectos",
                     javax.swing.JOptionPane.OK_OPTION);
@@ -450,7 +454,6 @@ public class SaldarCaja extends JDialog implements ActionListener, KeyListener {
                     javax.swing.JOptionPane.OK_OPTION);
             return;
         }
-
         /*
          * VALIDAR TIEMPO INICIO
          */
@@ -470,17 +473,35 @@ public class SaldarCaja extends JDialog implements ActionListener, KeyListener {
         int egresoCredito = (int) jtfEgresoCredito.getValue();
         int ingresoContado = (int) jtfIngresoContado.getValue();
         int ingresoCredito = (int) jtfIngresoCredito.getValue();
-        //CONTINUAR
+        int idFuncionario = DatosUsuario.getRol_usuario().getFuncionario().getId_funcionario();
         Caja caja = new Caja();
-        caja.setMontoFinal(cajaChica);
-        caja.setMontoFinal(cajaChica);
+        try {
+            caja.setIdEmpleadoApertura(idFuncionario);
+            caja.setIdEmpleadoCierre(idFuncionario);
+            caja.setMontoInicial(fondoInicial);
+            caja.setMontoFinal(cajaChica);
+            caja.setIngresoContado(ingresoContado);
+            caja.setIngresoCredito(ingresoCredito);
+            caja.setEgresoContado(egresoContado);
+            caja.setEgresoCredito(egresoCredito);
+            caja.setTiempoApertura(apertura);
+            caja.setTiempoCierre(cierre);
+        } catch (Exception e) {
+            javax.swing.JOptionPane.showMessageDialog(this,
+                    "Hubo un problema creando la caja",
+                    "Verifique los datos",
+                    javax.swing.JOptionPane.OK_OPTION);
+            return;
+        }
+        DB_Caja.insertarCaja(caja);
+        this.dispose();
     }
 
-    private void checkJFTDineroTotal() {
+    private void checkJFTFondoInicial() {
         EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
-                String valorIngresado = jtfDineroTotal.getText().replace(".", "");
+                String valorIngresado = jtfFondoInicial.getText().replace(".", "");
                 valorIngresado = valorIngresado.replace(",", "");
                 Long StringToLong = null;
                 try {
@@ -489,10 +510,11 @@ public class SaldarCaja extends JDialog implements ActionListener, KeyListener {
                     javax.swing.JOptionPane.showMessageDialog(null, "Ingrese solo numeros",
                             "Parametros incorrectos",
                             javax.swing.JOptionPane.OK_OPTION);
+                    jtfFondoInicial.setValue(0);
                 }
-                jtfDineroTotal.setValue(StringToLong);
-                String valorJFT = jtfDineroTotal.getText();
-                jtfDineroTotal.select(valorJFT.length(), valorJFT.length());
+                jtfFondoInicial.setValue(StringToLong);
+                String valorJFT = jtfFondoInicial.getText();
+                jtfFondoInicial.select(valorJFT.length(), valorJFT.length());
             }
         });
     }
@@ -510,6 +532,7 @@ public class SaldarCaja extends JDialog implements ActionListener, KeyListener {
                     javax.swing.JOptionPane.showMessageDialog(null, "Ingrese solo numeros",
                             "Parametros incorrectos",
                             javax.swing.JOptionPane.OK_OPTION);
+                    jtfCajaChica.setValue(0);
                 }
                 jtfCajaChica.setValue(StringToLong);
                 String valorJFT = jtfCajaChica.getText();
@@ -523,14 +546,18 @@ public class SaldarCaja extends JDialog implements ActionListener, KeyListener {
         Object src = e.getSource();
         if (src == this.cancelButton) {
             this.dispose();
+        } else if (src.equals(this.saveButton)) {
+            crearCaja();
+        } else if (src.equals(this.jbFondoAnterior)) {
+            consultarUltimoFondo();
         }
     }
 
     @Override
     public void keyTyped(KeyEvent e) {
         Object src = e.getSource();
-        if (src == this.jtfDineroTotal) {
-            checkJFTDineroTotal();
+        if (src == this.jtfFondoInicial) {
+            checkJFTFondoInicial();
         } else if (src == this.jtfCajaChica) {
             checkJFTCajaChica();
         } else if (src == this.jtfEgresoTotal) {
@@ -551,7 +578,9 @@ public class SaldarCaja extends JDialog implements ActionListener, KeyListener {
     }
 
     private void addListeners() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        this.saveButton.addActionListener(this);
+        this.cancelButton.addActionListener(this);
+        this.jbFondoAnterior.addActionListener(this);
     }
 
     private void checkJFTEgresoTotal() {
@@ -615,5 +644,10 @@ public class SaldarCaja extends JDialog implements ActionListener, KeyListener {
                 jtfTotalEgrIng.select(valorJFT.length(), valorJFT.length());
             }
         });
+    }
+
+    private void consultarUltimoFondo() {
+        int ultimoFondo = DB_Caja.ultimoFondo();
+        this.jtfFondoInicial.setValue(ultimoFondo);
     }
 }

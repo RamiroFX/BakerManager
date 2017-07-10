@@ -80,4 +80,59 @@ public class DB_Caja {
         }
         return id_caja;
     }
+
+    public static ResultSetTableModel consultarCajas(Integer idFuncionario, String fechaInicio, String fechaFin) {
+        String Query = "SELECT ID_CAJA \"ID\", (SELECT NOMBRE ||' '|| APELLIDO \"Func. Apertura\" WHERE PERSONA.ID_PERSONA = FUNCIONARIO.ID_PERSONA AND FUNCIONARIO.ID_FUNCIONARIO = ID_FUNCIONARIO_APERTURA),\n"
+                + "	(SELECT NOMBRE ||' '|| APELLIDO \"Func. Cierre\" WHERE PERSONA.ID_PERSONA = FUNCIONARIO.ID_PERSONA AND FUNCIONARIO.ID_FUNCIONARIO = ID_FUNCIONARIO_APERTURA), \n"
+                + "	MONTO_INICIAL \"Monto inicial\", 	MONTO_FINAL \"Monto final\", INGRESO_CONTADO \"Ingreso contado\", INGRESO_CREDITO \"Ingreso crédito\", EGRESO_CONTADO \"Egreso contado\", \n"
+                + "	EGRESO_CREDITO \"Egreso crédito\", TIEMPO_APERTURA \"Tiempo apertura\", TIEMPO_CIERRE \"Tiempo cierre\"\n"
+                + "  FROM CAJA, FUNCIONARIO , PERSONA\n"
+                + "  WHERE CAJA.ID_FUNCIONARIO_APERTURA = FUNCIONARIO.ID_FUNCIONARIO\n"
+                + "  AND  CAJA.ID_FUNCIONARIO_CIERRE = FUNCIONARIO.ID_FUNCIONARIO\n"
+                + "  AND FUNCIONARIO.ID_PERSONA = PERSONA.ID_PERSONA"
+                + "  AND CAJA.TIEMPO_CIERRE BETWEEN '" + fechaInicio + " 00:00:00.00'::timestamp  AND '" + fechaFin + " 23:59:59.00'::timestamp  ";
+        String func = "AND CAJA.ID_FUNCIONARIO_CIERRE = " + idFuncionario;
+        if (idFuncionario > -1) {
+            Query = Query + func;
+        }
+        ResultSetTableModel rstm = null;
+        try {
+            st = DB_manager.getConection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            // se ejecuta el query y se obtienen los resultados en un ResultSet
+            rs = st.executeQuery(Query);
+            rstm = new ResultSetTableModel(rs);
+        } catch (SQLException ex) {
+            Logger lgr = Logger.getLogger(DB_Egreso.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        }
+        return rstm;
+    }
+
+    public static Integer ultimoFondo() {
+        int ultimoFondo = 0;
+        String QUERY = "SELECT MONTO_FINAL FROM CAJA ORDER BY ID_CAJA DESC LIMIT 1";
+        try {
+            pst = DB_manager.getConection().prepareStatement(QUERY, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            rs = pst.executeQuery();
+            while (rs.next()) {
+                ultimoFondo = rs.getInt("MONTO_FINAL");
+            }
+        } catch (SQLException ex) {
+            Logger lgr = Logger.getLogger(DB_Caja.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (pst != null) {
+                    pst.close();
+                }
+            } catch (SQLException ex) {
+                Logger lgr = Logger.getLogger(DB_Caja.class.getName());
+                lgr.log(Level.WARNING, ex.getMessage(), ex);
+            }
+        }
+        return ultimoFondo;
+    }
 }
