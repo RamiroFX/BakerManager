@@ -2,6 +2,7 @@ package Caja;
 
 import Interface.CommonFormat;
 import Utilities.JTablePagination;
+import bakermanager.C_inicio;
 import com.toedter.calendar.JDateChooser;
 import java.awt.Dimension;
 import java.awt.Insets;
@@ -109,14 +110,14 @@ public class V_gestionCaja extends JInternalFrame {
         jspEgresoDetalle = new JScrollPane(jtIngresoDetalle);
         //creamos nuestro splitpane y agregamos los dos paneles del medio
         jspMid = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, jtIngresoCabecera, jspEgresoDetalle);
-        jspMid.setDividerLocation(this.getWidth() * 0.5);
+        jspMid.setDividerLocation(0.5);
         jspMid.setOneTouchExpandable(true);
     }
 
     private void initBot() {
         jpBot = new JPanel();
         Insets insets = new Insets(10, 10, 10, 10);
-        jbAgregar = new JButton("Crear venta");
+        jbAgregar = new JButton("Saldar caja");
         jbAgregar.setName("crear venta");
         jbAgregar.setFont(CommonFormat.fuente);
         jbAgregar.setMargin(insets);

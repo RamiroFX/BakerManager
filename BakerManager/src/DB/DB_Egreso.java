@@ -589,7 +589,7 @@ public class DB_Egreso {
 
     public static Integer obtenerTotalEgreso(Timestamp inicio, Timestamp fin, int tipo_operacion) {
         Integer totalEgreso = 0;
-        String query = "SELECT SUM(EGDE.TOTAL)\"Total\" "
+        String query = "SELECT SUM(ROUND(EGDE.CANTIDAD*(EGDE.PRECIO-(EGDE.PRECIO*EGDE.DESCUENTO)/100)))\"Total\" "
                 + "FROM EGRESO_DETALLE EGDE, EGRESO_CABECERA EGCA "
                 + "WHERE EGCA.ID_EGRESO_CABECERA = EGDE.ID_EGRESO_CABECERA "
                 + "AND EGCA.TIEMPO BETWEEN '" + inicio + "'::timestamp  "

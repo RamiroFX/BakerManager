@@ -4,6 +4,7 @@
  */
 package MenuPrincipal;
 
+import Caja.GestionCaja;
 import Cliente.Gestion_cliente;
 import Egresos.Gestion_Egreso;
 import Entities.M_menu_item;
@@ -14,7 +15,6 @@ import Ventas.Gestion_Ventas;
 import bakermanager.C_inicio;
 import Empleado.Gestion_empleado;
 import Reportes.GestionReporte;
-import Ventas.POSTTS;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
@@ -48,6 +48,7 @@ public class C_MenuPrincipal implements ActionListener {
         this.vista.jbClientes.setEnabled(false);
         this.vista.jbCompras.setEnabled(false);
         this.vista.jbPedidos.setEnabled(false);
+        //this.vista.jbCaja.setEnabled(false);
         this.vista.jbReportes.setEnabled(false);
         ArrayList<M_menu_item> accesos = c_inicio.modelo.getRol_usuario().getAccesos();
         for (int i = 0; i < accesos.size(); i++) {
@@ -72,6 +73,9 @@ public class C_MenuPrincipal implements ActionListener {
             if (this.vista.jbPedidos.getName().equals(accesos.get(i).getMenuDescripcion())) {
                 this.vista.jbPedidos.setEnabled(true);
             }
+            /*if (this.vista.jbCaja.getName().equals(accesos.get(i).getMenuDescripcion())) {
+                this.vista.jbCaja.setEnabled(true);
+            }*/
             if (this.vista.jbReportes.getName().equals(accesos.get(i).getMenuDescripcion())) {
                 this.vista.jbReportes.setEnabled(true);
             }
@@ -87,6 +91,7 @@ public class C_MenuPrincipal implements ActionListener {
         this.vista.jbVentas.addActionListener(this);
         this.vista.jbSalir.addActionListener(this);
         this.vista.jbEmpleados.addActionListener(this);
+        this.vista.jbCaja.addActionListener(this);
         this.vista.jbReportes.addActionListener(this);
     }
 
@@ -120,6 +125,9 @@ public class C_MenuPrincipal implements ActionListener {
             gestionEgreso.mostrarVista();
         } else if (src.equals(this.vista.jbPedidos)) {
             GestionPedidos gestionPedidos = new GestionPedidos(c_inicio);
+            gestionPedidos.mostrarVista();
+        } else if (src.equals(this.vista.jbCaja)) {
+            GestionCaja gestionPedidos = new GestionCaja(c_inicio);
             gestionPedidos.mostrarVista();
         } else if (src.equals(this.vista.jbReportes)) {
             /*POSTTS POS = new POSTTS();

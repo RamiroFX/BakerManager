@@ -324,6 +324,39 @@ public class DB_Ingreso {
         return rstm;
     }
 
+    public static Integer obtenerTotalIngreso(Timestamp inicio, Timestamp fin, int tipo_operacion) {
+        Integer totalEgreso = 0;
+        String query = "SELECT SUM(ROUND(FADE.CANTIDAD*(FADE.PRECIO-(FADE.PRECIO*FADE.DESCUENTO)/100)))\"Total\" "
+                + "FROM FACTURA_DETALLE FADE, FACTURA_CABECERA FACA "
+                + "WHERE FACA.ID_FACTURA_CABECERA = FADE.ID_FACTURA_CABECERA "
+                + "AND FACA.TIEMPO BETWEEN '" + inicio + "'::timestamp  "
+                + "AND '" + fin + "'::timestamp "
+                + "AND FACA.ID_COND_VENTA = " + tipo_operacion;
+        try {
+            pst = DB_manager.getConection().prepareStatement(query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            rs = pst.executeQuery();
+            while (rs.next()) {
+                totalEgreso = rs.getInt("Total");
+            }
+        } catch (SQLException ex) {
+            Logger lgr = Logger.getLogger(DB_Egreso.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (pst != null) {
+                    pst.close();
+                }
+            } catch (SQLException ex) {
+                Logger lgr = Logger.getLogger(DB_Egreso.class.getName());
+                lgr.log(Level.WARNING, ex.getMessage(), ex);
+            }
+        }
+        return totalEgreso;
+    }
+    
     public static ResultSetTableModel obtenerMesa(String inicio, String fin, String tipo_operacion) {
         ResultSetTableModel rstm = null;
         String q = "SELECT M.ID_MESA \"ID\", (SELECT NOMBRE || ' '|| APELLIDO WHERE F.ID_PERSONA = P.ID_PERSONA)\"Empleado\", "

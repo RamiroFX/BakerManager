@@ -1,5 +1,7 @@
 package Caja;
 
+import bakermanager.C_inicio;
+
 /**
  *
  * @author Ramiro Ferreira
@@ -10,13 +12,13 @@ public class GestionCaja {
     M_gestionCaja modelo;
     V_gestionCaja vista;
 
-    public GestionCaja() {
+    public GestionCaja(C_inicio inicio) {
         this.modelo = new M_gestionCaja();
         this.vista = new V_gestionCaja();
-        this.controlador = new C_gestionCaja(vista, modelo);
+        this.controlador = new C_gestionCaja(vista, modelo, inicio);
     }
 
     public void mostrarVista() {
-        this.vista.setVisible(true);
+        this.controlador.mostrarVista();
     }
 }
