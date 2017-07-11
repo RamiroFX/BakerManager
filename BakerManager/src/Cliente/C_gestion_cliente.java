@@ -19,6 +19,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
+import java.beans.PropertyVetoException;
 import java.io.File;
 import java.util.ArrayList;
 import javax.swing.ImageIcon;
@@ -88,8 +89,11 @@ public class C_gestion_cliente implements GestionInterface {
      */
     @Override
     public final void cerrar() {
-        this.vista.dispose();
-        System.runFinalization();
+        try {
+            this.vista.setClosed(true);
+            System.runFinalization();
+        } catch (PropertyVetoException ex) {
+        }
     }
 
     /**

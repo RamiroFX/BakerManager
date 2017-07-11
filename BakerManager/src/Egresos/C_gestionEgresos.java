@@ -21,11 +21,14 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.beans.PropertyVetoException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
 /**
@@ -241,7 +244,10 @@ public class C_gestionEgresos extends MouseAdapter implements ActionListener, Ke
     }
 
     public final void cerrar() {
-        this.vista.dispose();
+        try {
+            this.vista.setClosed(true);
+        } catch (PropertyVetoException ex) {
+        }
     }
 
     private void borrarParametros() {

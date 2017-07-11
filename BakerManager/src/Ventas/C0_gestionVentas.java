@@ -18,6 +18,7 @@ import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+import java.beans.PropertyVetoException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -132,7 +133,10 @@ public class C0_gestionVentas implements GestionInterface {
 
     @Override
     public final void cerrar() {
-        this.vista.dispose();
+        try {
+            this.vista.setClosed(true);
+        } catch (PropertyVetoException ex) {
+        }
     }
 
     private void displayQueryResults() {
@@ -326,8 +330,20 @@ public class C0_gestionVentas implements GestionInterface {
 
     @Override
     public void keyPressed(KeyEvent e) {
-        if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
-            cerrar();
+        switch (e.getKeyCode()) {
+            case KeyEvent.VK_F1: {
+                CrearVentas cv = new CrearVentas(this);
+                cv.mostrarVista();
+                break;
+            }
+            case KeyEvent.VK_F2: {
+                crearResumen();
+                break;
+            }
+            case KeyEvent.VK_ESCAPE: {
+                cerrar();
+                break;
+            }
         }
     }
 

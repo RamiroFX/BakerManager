@@ -119,7 +119,7 @@ public class V0_gestionVentas extends JInternalFrame {
     private void initBot() {
         jpBot = new JPanel();
         Insets insets = new Insets(10, 10, 10, 10);
-        jbAgregar = new JButton("Crear venta");
+        jbAgregar = new JButton("Crear venta [F1]");
         jbAgregar.setName("crear venta");
         jbAgregar.setFont(CommonFormat.fuente);
         jbAgregar.setMargin(insets);
@@ -127,7 +127,7 @@ public class V0_gestionVentas extends JInternalFrame {
         jbDetalle.setName("detalle venta");
         jbDetalle.setFont(CommonFormat.fuente);
         jbDetalle.setMargin(insets);
-        jbResumen = new JButton("Ver resumen");
+        jbResumen = new JButton("Ver resumen [F2]");
         jbResumen.setName("resumen venta");
         jbResumen.setMargin(insets);
         jbResumen.setFont(CommonFormat.fuente);

@@ -9,10 +9,13 @@ import DB.DB_Ingreso;
 import Entities.M_cliente;
 import bakermanager.C_inicio;
 import java.awt.BorderLayout;
+import java.awt.EventQueue;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -20,6 +23,7 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
@@ -29,9 +33,9 @@ import javax.swing.table.TableModel;
 
 /**
  *
- * @author Ramiro
+ * @author Ramiro Ferreira
  */
-public class Resumen_ingreso extends JDialog implements ActionListener {
+public class Resumen_ingreso extends JDialog implements ActionListener, KeyListener {
 
     JScrollPane jspEgreso, jspDetalle;
     JTable jtEgreso, jtDetalle;
@@ -41,6 +45,7 @@ public class Resumen_ingreso extends JDialog implements ActionListener {
     Date inicio, fin;
     String idEmpleado, tipo_operacion;
     Integer nro_factura;
+    JTabbedPane jtpPanel;
     M_cliente cliente_entidad;
 
     public Resumen_ingreso(C_inicio c_inicio, TableModel tm, M_cliente cliente_entidad, Integer nro_factura, String idEmpleado, Date inicio, Date fin, String tipo_operacion) {
@@ -88,7 +93,8 @@ public class Resumen_ingreso extends JDialog implements ActionListener {
         jpTotalEgreso.add(jftTotalEgreso);
         jbSalir = new JButton("Salir");
         jbImportarXLS = new JButton("Importar a excel");
-        JTabbedPane jtpPanel = new JTabbedPane();
+        jtpPanel = new JTabbedPane();
+        jtpPanel.addKeyListener(this);
 
         JPanel jpCenter = new JPanel(new BorderLayout());
         JPanel jpSouth = new JPanel(new FlowLayout(FlowLayout.CENTER));
@@ -146,6 +152,19 @@ public class Resumen_ingreso extends JDialog implements ActionListener {
     private void importarExcel(String proveedor_entidad, Integer nro_factura, String idEmpleado, String tipo_operacion) {
     }
 
+    private void keyPressedHandler(final KeyEvent e) {
+        EventQueue.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                switch (e.getKeyCode()) {
+                    case KeyEvent.VK_ESCAPE: {
+                        cerrar();
+                    }
+                }
+            }
+        });
+    }
+
     @Override
     public void actionPerformed(ActionEvent ae) {
         if (ae.getSource().equals(jbSalir)) {
@@ -153,5 +172,22 @@ public class Resumen_ingreso extends JDialog implements ActionListener {
         } else if (ae.getSource().equals(jbImportarXLS)) {
             //importarExcel(cliente_entidad, nro_factura, idEmpleado, tipo_operacion);
         }
+    }
+
+    @Override
+    public void keyTyped(KeyEvent e) {
+    }
+
+    @Override
+    public void keyPressed(KeyEvent e) {
+        keyPressedHandler(e);
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
+    }
+
+    private void cerrar() {
+        this.dispose();
     }
 }

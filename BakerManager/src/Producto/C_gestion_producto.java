@@ -19,8 +19,10 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.beans.PropertyVetoException;
 import java.util.ArrayList;
 import java.util.Vector;
+import javafx.scene.input.KeyCode;
 import javax.swing.JOptionPane;
 
 /**
@@ -83,6 +85,14 @@ public class C_gestion_producto extends MouseAdapter implements ActionListener, 
 
     public void mostrarVista() {
         this.c_inicio.agregarVentana(vista);
+    }
+
+    private void cerrar() {
+        try {
+            this.vista.setClosed(true);
+            System.runFinalization();
+        } catch (PropertyVetoException ex) {
+        }
     }
 
     private void concederPermisos() {
@@ -222,6 +232,9 @@ public class C_gestion_producto extends MouseAdapter implements ActionListener, 
     }
 
     public void keyPressed(KeyEvent e) {
+        if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+            cerrar();
+        }
     }
 
     public void keyReleased(KeyEvent e) {

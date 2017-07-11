@@ -19,15 +19,18 @@ import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.util.ArrayList;
 import java.util.Calendar;
 import javax.swing.JInternalFrame;
+import javax.swing.JOptionPane;
 
 /**
  *
  * @author Usuario
  */
-public class C_MenuPrincipal implements ActionListener {
+public class C_MenuPrincipal implements ActionListener, KeyListener {
 
     public V_MenuPrincipal vista;
     public C_inicio c_inicio;
@@ -93,6 +96,18 @@ public class C_MenuPrincipal implements ActionListener {
         this.vista.jbEmpleados.addActionListener(this);
         this.vista.jbCaja.addActionListener(this);
         this.vista.jbReportes.addActionListener(this);
+        //////
+
+        this.vista.jbClientes.addKeyListener(this);
+        this.vista.jbProveedores.addKeyListener(this);
+        this.vista.jbCompras.addKeyListener(this);
+        this.vista.jbPedidos.addKeyListener(this);
+        this.vista.jbProductos.addKeyListener(this);
+        this.vista.jbVentas.addKeyListener(this);
+        this.vista.jbSalir.addKeyListener(this);
+        this.vista.jbEmpleados.addKeyListener(this);
+        this.vista.jbCaja.addKeyListener(this);
+        this.vista.jbReportes.addKeyListener(this);
     }
 
     void mostrarVista() {
@@ -100,6 +115,14 @@ public class C_MenuPrincipal implements ActionListener {
         this.c_inicio.agregarVentana(vista);
         this.vista.setLocation(this.c_inicio.centrarPantalla(this.vista));
         //this.c_inicio.centrarPantalla(vista);
+    }
+
+    private void shutdown() {
+        int op = JOptionPane.showConfirmDialog(vista, "¿Está seguro que desea salir?",
+                "Atención", JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
+        if (op == JOptionPane.OK_OPTION) {
+            System.exit(0);
+        }
     }
 
     @Override
@@ -127,8 +150,8 @@ public class C_MenuPrincipal implements ActionListener {
             GestionPedidos gestionPedidos = new GestionPedidos(c_inicio);
             gestionPedidos.mostrarVista();
         } else if (src.equals(this.vista.jbCaja)) {
-            GestionCaja gestionPedidos = new GestionCaja(c_inicio);
-            gestionPedidos.mostrarVista();
+            GestionCaja gestionCaja = new GestionCaja(c_inicio);
+            gestionCaja.mostrarVista();
         } else if (src.equals(this.vista.jbReportes)) {
             /*POSTTS POS = new POSTTS();
              POS.setVisible(true);
@@ -137,7 +160,7 @@ public class C_MenuPrincipal implements ActionListener {
             GestionReporte gestionReportes = new GestionReporte(c_inicio);
             gestionReportes.mostrarVista();
         } else if (src.equals(this.vista.jbSalir)) {
-            System.exit(0);
+            shutdown();
         }
     }
 
@@ -150,5 +173,73 @@ public class C_MenuPrincipal implements ActionListener {
 
     public Dimension establecerTamañoPanel() {
         return new Dimension((int) (this.vista.getWidth() * 0.8), (int) (this.vista.getHeight() * 0.8));
+    }
+
+    @Override
+    public void keyTyped(KeyEvent e) {
+    }
+
+    @Override
+    public void keyPressed(KeyEvent e) {
+        switch (e.getKeyCode()) {
+            case (KeyEvent.VK_F1): {
+                Gestion_Ventas gestionVenta = new Gestion_Ventas(c_inicio);
+                gestionVenta.mostrarVista();
+                break;
+            }
+            case (KeyEvent.VK_F2): {
+                Gestion_Egreso gestionEgreso = new Gestion_Egreso(c_inicio);
+                gestionEgreso.mostrarVista();
+                break;
+            }
+            case (KeyEvent.VK_F3): {
+                GestionPedidos gestionPedidos = new GestionPedidos(c_inicio);
+                gestionPedidos.mostrarVista();
+                break;
+            }
+            case (KeyEvent.VK_F4): {
+                Gestion_Producto gestionProducto = new Gestion_Producto(c_inicio);
+                gestionProducto.mostrarVista();
+                break;
+            }
+            case (KeyEvent.VK_F5): {
+                GestionCaja gestionCaja = new GestionCaja(c_inicio);
+                gestionCaja.mostrarVista();
+                break;
+            }
+            case (KeyEvent.VK_F6): {
+                Gestion_proveedores gestionProveedor = new Gestion_proveedores(c_inicio);
+                gestionProveedor.mostrarVista();
+                break;
+            }
+            case (KeyEvent.VK_F7): {
+                Gestion_cliente gestionCliente = new Gestion_cliente(c_inicio);
+                gestionCliente.mostrarVista();
+                break;
+            }
+            case (KeyEvent.VK_F8): {
+                Gestion_empleado ges_usuario = new Gestion_empleado(c_inicio);
+                ges_usuario.mostrarVista();
+                break;
+            }
+            case (KeyEvent.VK_F9): {
+                GestionReporte gestionReportes = new GestionReporte(c_inicio);
+                gestionReportes.mostrarVista();
+                break;
+            }
+            case (KeyEvent.VK_F10): {
+                //TODO GESTION CobroPago
+                break;
+            }
+            case (KeyEvent.VK_ESCAPE): {
+                shutdown();
+                break;
+            }
+
+        }
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
     }
 }

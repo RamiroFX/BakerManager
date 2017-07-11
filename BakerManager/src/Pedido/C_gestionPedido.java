@@ -19,6 +19,7 @@ import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+import java.beans.PropertyVetoException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -144,7 +145,11 @@ public class C_gestionPedido implements GestionInterface {
 
     @Override
     public void cerrar() {
-        this.vista.dispose();
+        try {
+            this.vista.setClosed(true);
+            System.runFinalization();
+        } catch (PropertyVetoException ex) {
+        }
     }
 
     private void displayQueryResults() {
