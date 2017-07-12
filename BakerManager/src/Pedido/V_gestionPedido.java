@@ -131,7 +131,7 @@ public class V_gestionPedido extends JInternalFrame {
     private void initBot() {
         jpBot = new JPanel();
         Insets inset = new Insets(10, 10, 10, 10);
-        jbAgregar = new JButton("Crear pedido");
+        jbAgregar = new JButton("Crear pedido [F1]");
         jbAgregar.setName("crear pedido");
         jbAgregar.setMargin(inset);
         jbAgregar.setFont(CommonFormat.fuente);
@@ -147,11 +147,11 @@ public class V_gestionPedido extends JInternalFrame {
         jbDetalle.setName("modificar pedido");
         jbDetalle.setMargin(inset);
         jbDetalle.setFont(CommonFormat.fuente);
-        jbResumen = new JButton("Ver resumen");
+        jbResumen = new JButton("Ver resumen [F2]");
         jbResumen.setName("resumen pedido");
         jbResumen.setMargin(inset);
         jbResumen.setFont(CommonFormat.fuente);
-        jbCharts = new JButton("Diagramas");
+        jbCharts = new JButton("Diagramas [F3]");
         jbCharts.setName("grafico pedido");
         jbCharts.setMargin(inset);
         jbCharts.setFont(CommonFormat.fuente);

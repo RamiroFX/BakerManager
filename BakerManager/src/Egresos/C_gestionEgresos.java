@@ -66,7 +66,6 @@ public class C_gestionEgresos extends MouseAdapter implements ActionListener, Ke
 
     private void inicializarVista() {
         this.vista.jbDetalle.setEnabled(false);
-        this.vista.jbResumen.setEnabled(false);
         Vector condCompra = DB_Egreso.obtenerTipoOperacion();
         this.vista.jcbCondCompra.addItem("Todos");
         for (int i = 0; i < condCompra.size(); i++) {
@@ -289,6 +288,36 @@ public class C_gestionEgresos extends MouseAdapter implements ActionListener, Ke
 
     }
 
+    public void recibirProveedor(M_proveedor proveedor) {
+        this.m_egreso_cabecera.setProveedor(proveedor);
+        this.m_egreso_cabecera.setId_proveedor(proveedor.getId());
+        String entidad = this.m_egreso_cabecera.getProveedor().getEntidad();
+        String nombre = this.m_egreso_cabecera.getProveedor().getNombre();
+        this.vista.jtfProveedor.setText(nombre + " - " + entidad);
+    }
+
+    public void recibirFuncionario(M_funcionario funcionario) {
+        this.m_egreso_cabecera.setFuncionario(funcionario);
+        this.m_egreso_cabecera.setId_empleado(funcionario.getId_funcionario());
+        String alias = this.m_egreso_cabecera.getFuncionario().getAlias();
+        String apellido = this.m_egreso_cabecera.getFuncionario().getApellido();
+        String nombre = this.m_egreso_cabecera.getFuncionario().getNombre();
+        this.vista.jtfFuncionario.setText(nombre + " " + apellido + " (" + alias + ")");
+    }
+
+    private void controlarTablaEgreso() {
+        if (this.vista.jtEgresoCabecera.table.getRowCount() > 0) {
+            this.vista.jbResumen.setEnabled(true);
+        } else {
+            this.vista.jbResumen.setEnabled(false);
+        }
+    }
+
+    private void verGraficos() {
+        MenuDiagramas ge = new MenuDiagramas(this);
+        ge.setVisible(true);
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == this.vista.jbBuscar) {
@@ -306,7 +335,7 @@ public class C_gestionEgresos extends MouseAdapter implements ActionListener, Ke
         } else if (e.getSource() == this.vista.jbBorrar) {
             borrarParametros();
         } else if (e.getSource() == this.vista.jbAgregar) {
-            Egresos crearEgreso = new Egresos(c_inicio);
+            CrearEgresos crearEgreso = new CrearEgresos(c_inicio);
             crearEgreso.mostrarVista();
         } else if (e.getSource().equals(this.vista.jbResumen)) {
             crearResumen();
@@ -345,8 +374,31 @@ public class C_gestionEgresos extends MouseAdapter implements ActionListener, Ke
     }
 
     public void keyPressed(KeyEvent e) {
-        if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
-            cerrar();
+        ArrayList<M_menu_item> accesos = DatosUsuario.getRol_usuario().getAccesos();
+        switch (e.getKeyCode()) {
+            case KeyEvent.VK_F1: {
+                for (M_menu_item acceso : accesos) {
+                    if (this.vista.jbAgregar.getName().equals(acceso.getItemDescripcion())) {
+                        CrearEgresos crearEgreso = new CrearEgresos(c_inicio);
+                        crearEgreso.mostrarVista();
+                        break;
+                    }
+                }
+                break;
+            }
+            case KeyEvent.VK_F2: {
+                for (M_menu_item acceso : accesos) {
+                    if (this.vista.jbResumen.getName().equals(acceso.getItemDescripcion())) {
+                        crearResumen();
+                        break;
+                    }
+                }
+                break;
+            }
+            case KeyEvent.VK_ESCAPE: {
+                cerrar();
+                break;
+            }
         }
     }
 
@@ -354,35 +406,5 @@ public class C_gestionEgresos extends MouseAdapter implements ActionListener, Ke
         if (this.vista.jtEgresoCabecera.table.hasFocus()) {
             completarCampos();
         }
-    }
-
-    public void recibirProveedor(M_proveedor proveedor) {
-        this.m_egreso_cabecera.setProveedor(proveedor);
-        this.m_egreso_cabecera.setId_proveedor(proveedor.getId());
-        String entidad = this.m_egreso_cabecera.getProveedor().getEntidad();
-        String nombre = this.m_egreso_cabecera.getProveedor().getNombre();
-        this.vista.jtfProveedor.setText(nombre + " - " + entidad);
-    }
-
-    public void recibirFuncionario(M_funcionario funcionario) {
-        this.m_egreso_cabecera.setFuncionario(funcionario);
-        this.m_egreso_cabecera.setId_empleado(funcionario.getId_funcionario());
-        String alias = this.m_egreso_cabecera.getFuncionario().getAlias();
-        String apellido = this.m_egreso_cabecera.getFuncionario().getApellido();
-        String nombre = this.m_egreso_cabecera.getFuncionario().getNombre();
-        this.vista.jtfFuncionario.setText(nombre + " " + apellido + " (" + alias + ")");
-    }
-
-    private void controlarTablaEgreso() {
-        if (this.vista.jtEgresoCabecera.table.getRowCount() > 0) {
-            this.vista.jbResumen.setEnabled(true);
-        } else {
-            this.vista.jbResumen.setEnabled(false);
-        }
-    }
-
-    private void verGraficos() {
-        MenuDiagramas ge = new MenuDiagramas(this);
-        ge.setVisible(true);
     }
 }

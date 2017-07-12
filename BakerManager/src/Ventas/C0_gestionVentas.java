@@ -83,13 +83,6 @@ public class C0_gestionVentas implements GestionInterface {
                 this.vista.jbBorrar.addActionListener(this);
                 this.vista.jbBuscarDetalle.setEnabled(true);
                 this.vista.jbBuscarDetalle.addActionListener(this);
-
-                this.vista.jbBuscar.addActionListener(this);
-                this.vista.jbCliente.addActionListener(this);
-                this.vista.jbEmpleado.addActionListener(this);
-                this.vista.jcbCondCompra.setEnabled(true);
-                this.vista.jbBorrar.addActionListener(this);
-                this.vista.jbBuscarDetalle.addActionListener(this);
             }
             if (this.vista.jbDetalle.getName().equals(accesos.get(i).getItemDescripcion())) {
                 this.vista.jbDetalle.addActionListener(this);

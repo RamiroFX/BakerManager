@@ -26,7 +26,7 @@ public class V_crear_producto extends JDialog {
 
     private JLabel jlProducto, jlCodigo, jlImpuesto, jlRubro, jlPrecioCosto, jlMarca,
             jlPrecioVta, jlPrecioMayorista;
-    public JTextField jtfBuscar, jtfProducto, jtfCodigo, jtfPrecioCosto,
+    public JTextField jtfProducto, jtfCodigo, jtfPrecioCosto,
             jtfPrecioVta, jtfPrecioMayorista, jtfProveedor;
     public JTextArea jtaIngredientes;
     public JComboBox jcbImpuesto, jcbMarca, jcbCategoria;

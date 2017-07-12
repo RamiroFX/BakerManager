@@ -7,17 +7,20 @@ package Producto;
 import Entities.M_producto;
 import Entities.M_proveedor;
 import Proveedor.Seleccionar_proveedor;
+import com.nitido.utils.toaster.Toaster;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.util.Vector;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 
 /**
  *
- * @author Administrador
+ * @author Ramiro Ferreira
  */
-public class C_crear_producto implements ActionListener {
+public class C_crear_producto implements ActionListener, KeyListener {
 
     public C_gestion_producto c_producto;
     private M_crear_producto modelo;
@@ -66,6 +69,19 @@ public class C_crear_producto implements ActionListener {
         this.vista.jbCancelar.addActionListener(this);
         this.vista.jckBProveedor.addActionListener(this);
         this.vista.jbProveedor.addActionListener(this);
+        /*
+        KEYLISTENER
+         */
+        this.vista.jbAceptar.addKeyListener(this);
+        this.vista.jbCancelar.addKeyListener(this);
+        this.vista.jckBProveedor.addKeyListener(this);
+        this.vista.jbProveedor.addKeyListener(this);
+        this.vista.jtfCodigo.addKeyListener(this);
+        this.vista.jtfPrecioCosto.addKeyListener(this);
+        this.vista.jtfPrecioMayorista.addKeyListener(this);
+        this.vista.jtfPrecioVta.addKeyListener(this);
+        this.vista.jtfProducto.addKeyListener(this);
+        this.vista.jtfProveedor.addKeyListener(this);
     }
 
     private void creaProducto() {
@@ -133,7 +149,7 @@ public class C_crear_producto implements ActionListener {
             producto.setCategoria((String) this.vista.jcbCategoria.getSelectedItem());
             producto.setEstado("Activo");
             if (modelo.crearProducto(producto, this.vista.jckBProveedor.isSelected())) {
-                JOptionPane.showMessageDialog(vista, "Producto creado", "Exito", JOptionPane.PLAIN_MESSAGE);
+                mostrarMensaje("El Producto se registró con éxito");
                 cerrar();
             }
         } catch (Exception e) {
@@ -147,6 +163,11 @@ public class C_crear_producto implements ActionListener {
     private void cerrar() {
         this.vista.dispose();
         System.runFinalization();
+    }
+
+    private void mostrarMensaje(String message) {
+        Toaster popUp = new Toaster();
+        popUp.showToaster(message);
     }
 
     public void actionPerformed(ActionEvent e) {
@@ -177,5 +198,23 @@ public class C_crear_producto implements ActionListener {
         String nombre = this.modelo.proveedor.getNombre();
         String entidad = this.modelo.proveedor.getEntidad();
         this.vista.jtfProveedor.setText(nombre + " (" + entidad + ")");
+    }
+
+    @Override
+    public void keyTyped(KeyEvent e) {
+    }
+
+    @Override
+    public void keyPressed(KeyEvent e) {
+        switch (e.getKeyCode()) {
+            case KeyEvent.VK_ESCAPE: {
+                cerrar();
+                break;
+            }
+        }
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
     }
 }

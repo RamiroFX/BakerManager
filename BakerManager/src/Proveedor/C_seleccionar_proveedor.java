@@ -213,12 +213,15 @@ public class C_seleccionar_proveedor extends MouseAdapter implements ActionListe
     }
 
     @Override
-    public void keyTyped(KeyEvent e) {
+    public void keyTyped(KeyEvent e) {        
         displayQueryResults();
     }
 
     @Override
     public void keyPressed(KeyEvent e) {
+        if(e.getKeyCode()== KeyEvent.VK_ESCAPE){
+            cerrar();
+        }
     }
 
     @Override

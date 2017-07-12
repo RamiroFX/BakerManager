@@ -14,6 +14,7 @@ import Parametros.TipoOperacion;
 import Producto.SeleccionarCantidadProduducto;
 import Producto.SeleccionarProducto;
 import Utilities.Impresora;
+import com.nitido.utils.toaster.Toaster;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -236,7 +237,7 @@ public class C_crearPedido extends MouseAdapter implements ActionListener, KeyLi
         this.vista.jtfClieTelefono.setText("");
     }
 
-    private void guardarVenta() {
+    private void guardarPedido() {
         if (null == this.modelo.getPedido().getCliente().getIdCliente()) {
             JOptionPane.showMessageDialog(vista, "Seleccione un Cliente.", "Atención", JOptionPane.WARNING_MESSAGE);
             return;
@@ -257,8 +258,6 @@ public class C_crearPedido extends MouseAdapter implements ActionListener, KeyLi
             JOptionPane.showMessageDialog(vista, "La fecha de entrega debe ser mayor que la fecha fecha actual (" + sdfs.format(now) + ").", "Fecha inválida", JOptionPane.WARNING_MESSAGE);
             return;
         }
-        System.out.println("now: " + now);
-        System.out.println("entrega: " + entrega);
         if (now.before(entrega)) {
             this.modelo.getPedido().setTiempoEntrega(new Timestamp(entrega.getTime()));
             String direccion = this.vista.jtfDireccionPedido.getText().trim();
@@ -278,6 +277,7 @@ public class C_crearPedido extends MouseAdapter implements ActionListener, KeyLi
             this.modelo.getPedido().setDireccion(direccion);
             this.modelo.getPedido().setReferencia(referencia);
             this.modelo.insertarPedido();
+            mostrarMensaje("El pedido se registró con éxito.");
         } else {
             vista.jdcFechaEntrega.setDate(now);
             vista.jdcFechaEntrega.updateUI();
@@ -287,10 +287,23 @@ public class C_crearPedido extends MouseAdapter implements ActionListener, KeyLi
         cerrar();
     }
 
+    private void mostrarMensaje(String message) {
+        Toaster popUp = new Toaster();
+        popUp.showToaster(message);
+    }
+
     private void imprimir() {
         EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
+                if (null == modelo.getPedido().getCliente().getIdCliente()) {
+                    JOptionPane.showMessageDialog(vista, "Seleccione un Cliente.", "Atención", JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
+                if (modelo.getDetalles().isEmpty()) {
+                    JOptionPane.showMessageDialog(vista, "Seleccione por lo menos un producto.", "Atención", JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
                 int opcion = JOptionPane.showConfirmDialog(vista, "¿Desea imprimir el pedido?", "Atención", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
                 if (opcion == JOptionPane.YES_OPTION) {
                     Impresora.imprimirPedido(DatosUsuario.getRol_usuario(), modelo.getPedido(), modelo.getDetalles());
@@ -303,7 +316,7 @@ public class C_crearPedido extends MouseAdapter implements ActionListener, KeyLi
     public void actionPerformed(ActionEvent e) {
         Object source = e.getSource();
         if (source.equals(this.vista.jbAceptar)) {
-            guardarVenta();
+            guardarPedido();
         } else if (source.equals(this.vista.jrbContado)) {
             establecerCondicionVenta();
         } else if (source.equals(this.vista.jrbCredito)) {
@@ -341,7 +354,7 @@ public class C_crearPedido extends MouseAdapter implements ActionListener, KeyLi
     @Override
     public void keyPressed(KeyEvent e) {
         if (e.getKeyCode() == KeyEvent.VK_F1) {
-            guardarVenta();
+            guardarPedido();
         }
         if (e.getKeyCode() == KeyEvent.VK_F2) {
             imprimir();

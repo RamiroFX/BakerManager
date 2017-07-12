@@ -9,23 +9,23 @@ import bakermanager.C_inicio;
 
 /**
  *
- * @author Usuario
+ * @author Ramiro Ferreira
  */
-public class Egresos {
+public class CrearEgresos {
 
     M_Egresos modelo;
     V_crear_egreso vista;
     C_crear_egreso controlador;
 
-    public Egresos(C_inicio c_inicio) {
+    public CrearEgresos(C_inicio c_inicio) {
         modelo = new M_Egresos();
-        vista = new V_crear_egreso(c_inicio.vista, true);
+        vista = new V_crear_egreso(c_inicio.vista);
         controlador = new C_crear_egreso(vista, modelo);
     }
 
-    public Egresos(C_MenuPrincipal menuPrincipal) {
+    public CrearEgresos(C_MenuPrincipal menuPrincipal) {
         modelo = new M_Egresos();
-        vista = new V_crear_egreso(null, true);
+        vista = new V_crear_egreso(null);
         controlador = new C_crear_egreso(menuPrincipal, vista, modelo);
     }
 

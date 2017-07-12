@@ -6,16 +6,22 @@ package Egresos;
 
 import DB.DB_Egreso;
 import DB.DB_Producto;
+import DB.DB_Proveedor;
 import Entities.M_egreso_detalle;
 import Entities.M_producto;
 import Entities.M_proveedor;
+import Entities.M_telefono;
 import MenuPrincipal.C_MenuPrincipal;
 import Producto.SeleccionarCantidadProduducto;
 import Producto.SeleccionarProducto;
 import Proveedor.Seleccionar_proveedor;
 import Utilities.MyDefaultTableModel;
+import com.nitido.utils.toaster.Toaster;
+import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -27,7 +33,7 @@ import javax.swing.table.DefaultTableModel;
  *
  * @author Ramiro Ferreira
  */
-public class C_crear_egreso extends MouseAdapter implements ActionListener {
+public class C_crear_egreso extends MouseAdapter implements ActionListener, KeyListener {
 
     public V_crear_egreso vista;
     M_Egresos modelo;
@@ -55,13 +61,26 @@ public class C_crear_egreso extends MouseAdapter implements ActionListener {
     }
 
     private void agregarListeners() {
-        this.vista.jbAgregarProd.addActionListener(this);
+        this.vista.jbAgregarProducto.addActionListener(this);
         this.vista.jbAgregarProv.addActionListener(this);
         this.vista.jbAceptar.addActionListener(this);
         this.vista.jtProductos.addMouseListener(this);
         this.vista.jbModificarDetalle.addActionListener(this);
         this.vista.jbEliminarDetalle.addActionListener(this);
         this.vista.jbSalir.addActionListener(this);
+        /*
+        KEYLISTENERS
+         */
+        this.vista.jbAgregarProducto.addKeyListener(this);
+        this.vista.jbAgregarProv.addKeyListener(this);
+        this.vista.jbAceptar.addKeyListener(this);
+        this.vista.jtProductos.addKeyListener(this);
+        this.vista.jbModificarDetalle.addKeyListener(this);
+        this.vista.jbEliminarDetalle.addKeyListener(this);
+        this.vista.jbSalir.addKeyListener(this);
+        this.vista.jtfNroFactura.addKeyListener(this);
+        this.vista.jrbContado.addKeyListener(this);
+        this.vista.jrbCredito.addKeyListener(this);
     }
 
     private void initComp() {
@@ -77,6 +96,7 @@ public class C_crear_egreso extends MouseAdapter implements ActionListener {
         this.vista.jtProductos.setModel(dtm);
         this.vista.jbModificarDetalle.setEnabled(false);
         this.vista.jbEliminarDetalle.setEnabled(false);
+        this.vista.jrbContado.setSelected(true);
     }
 
     private void insertarEgreso() {
@@ -107,18 +127,17 @@ public class C_crear_egreso extends MouseAdapter implements ActionListener {
                 JOptionPane.showMessageDialog(vista, "La compra con el proveedor y el número de factura seleccionado ya existe", "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
+            int cantFilas = this.dtm.getRowCount();
+            if (cantFilas <= 0) {
+                JOptionPane.showMessageDialog(vista, "Seleccione un producto", "Atención", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
             int option = JOptionPane.showConfirmDialog(vista, "¿Desea confirmar la compra?", "Atención", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
             if (option == JOptionPane.YES_OPTION) {
                 this.modelo.egreso_cabecera.setId_cabecera(null);
                 this.modelo.egreso_cabecera.setId_empleado(1);
                 this.modelo.egreso_cabecera.setId_proveedor(this.modelo.proveedor.getId());
                 this.modelo.egreso_cabecera.setTiempo(new java.sql.Timestamp(System.currentTimeMillis()));
-
-                int cantFilas = this.dtm.getRowCount();
-                if (cantFilas <= 0) {
-                    JOptionPane.showMessageDialog(vista, "Seleccione un producto", "Atención", JOptionPane.WARNING_MESSAGE);
-                    return;
-                }
                 this.modelo.egreso_detalle = new M_egreso_detalle[cantFilas];
                 //Col0=ID Col1=Cant. Col2=Desc. Col3=P.U. Col4=Ex Col5=5% Col6=10%
                 for (int i = 0; i < cantFilas; i++) {
@@ -155,6 +174,7 @@ public class C_crear_egreso extends MouseAdapter implements ActionListener {
                 }
                 DB_Egreso.insertarEgresoTEMPORAL(this.modelo.egreso_cabecera, this.modelo.egreso_detalle);
                 actualizarStock();
+                mostrarMensaje("La compra se registró con éxito.");
                 this.vista.dispose();
             }
         } catch (Exception e) {
@@ -183,7 +203,23 @@ public class C_crear_egreso extends MouseAdapter implements ActionListener {
 
     public void recibirProveedor(M_proveedor proveedor) {
         this.modelo.proveedor = proveedor;
-        this.vista.jtfProveedor.setText(this.modelo.proveedor.getEntidad() + " | " + proveedor.getRuc() + "-" + proveedor.getRuc_id());
+        this.vista.jtfProveedor.setText(this.modelo.proveedor.getEntidad() + " ( " + this.modelo.proveedor.getNombre() + ")");
+        String ruc = "";
+        if (proveedor.getRuc() != null) {
+            ruc = proveedor.getRuc();
+            if (proveedor.getRuc_id() != null) {
+                ruc = ruc + "-" + proveedor.getRuc_id();
+            }
+        }
+        String direccion = proveedor.getDireccion();
+        ArrayList<M_telefono> telefono = DB_Proveedor.obtenerTelefonos(proveedor.getId());
+        this.vista.jtfProvRuc.setText(ruc);
+        this.vista.jtfProvDireccion.setText(direccion);
+        if (!telefono.isEmpty()) {
+            this.vista.jtfProvTelefono.setText(telefono.get(0).getNumero());
+        } else {
+            this.vista.jtfProvTelefono.setText("");
+        }
     }
 
     private void sumarTotal() {
@@ -276,7 +312,24 @@ public class C_crear_egreso extends MouseAdapter implements ActionListener {
     }
 
     private void cerrar() {
-        this.vista.dispose();
+        EventQueue.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                int cantFilas = dtm.getRowCount();
+                if (cantFilas <= 0) {
+                    vista.dispose();
+                } else {
+                    int opcion = JOptionPane.showConfirmDialog(vista, "¿Cancelar compra?", "Atención", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+                    if (opcion == JOptionPane.YES_OPTION) {
+                        vista.dispose();
+                    }
+                }
+            }
+        });
+    }
+    private void mostrarMensaje(String message) {
+        Toaster popUp = new Toaster();
+        popUp.showToaster(message);
     }
 
     @Override
@@ -290,7 +343,7 @@ public class C_crear_egreso extends MouseAdapter implements ActionListener {
         if (e.getSource().equals(this.vista.jbAgregarProv)) {
             Seleccionar_proveedor sp = new Seleccionar_proveedor(vista, this);
             sp.mostrarVista();
-        } else if (e.getSource().equals(this.vista.jbAgregarProd)) {
+        } else if (e.getSource().equals(this.vista.jbAgregarProducto)) {
             SeleccionarProducto sp = new SeleccionarProducto(vista, this);
             sp.mostrarVista();
         } else if (e.getSource().equals(this.vista.jbAceptar)) {
@@ -308,5 +361,38 @@ public class C_crear_egreso extends MouseAdapter implements ActionListener {
         } else if (e.getSource().equals(this.vista.jbSalir)) {
             cerrar();
         }
+    }
+
+    @Override
+    public void keyTyped(KeyEvent e) {
+    }
+
+    @Override
+    public void keyPressed(KeyEvent e) {
+        switch (e.getKeyCode()) {
+            case KeyEvent.VK_F1: {
+                insertarEgreso();
+                System.runFinalization();
+                break;
+            }
+            case KeyEvent.VK_F3: {
+                Seleccionar_proveedor sp = new Seleccionar_proveedor(vista, this);
+                sp.mostrarVista();
+                break;
+            }
+            case KeyEvent.VK_F4: {
+                SeleccionarProducto sp = new SeleccionarProducto(vista, this);
+                sp.mostrarVista();
+                break;
+            }
+            case KeyEvent.VK_ESCAPE: {
+                cerrar();
+                break;
+            }
+        }
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
     }
 }

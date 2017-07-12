@@ -114,6 +114,16 @@ public class C_gestionPedido implements GestionInterface {
         }
         this.vista.jtPedido.addMouseListener(this);
         this.vista.jtPedido.addKeyListener(this);
+        this.vista.jbCliente.addKeyListener(this);
+        this.vista.jbEmpleado.addKeyListener(this);
+        this.vista.jbBuscar.addKeyListener(this);
+        this.vista.jbBorrar.addKeyListener(this);
+        this.vista.jbBuscarDetalle.addKeyListener(this);
+        this.vista.jbAgregar.addKeyListener(this);
+        this.vista.jbPagoPedido.addKeyListener(this);
+        this.vista.jbCancelarPedido.addKeyListener(this);
+        this.vista.jbResumen.addKeyListener(this);
+        this.vista.jbCharts.addKeyListener(this);
     }
 
     private void verificarPermiso() {
@@ -393,6 +403,30 @@ public class C_gestionPedido implements GestionInterface {
 
     @Override
     public void keyPressed(KeyEvent e) {
+        switch (e.getKeyCode()) {
+            case KeyEvent.VK_F1: {
+                if (vista.jbAgregar.isEnabled()) {
+                    crearPedido();
+                }
+                break;
+            }
+            case KeyEvent.VK_F2: {
+                if (vista.jbResumen.isEnabled()) {
+                    verResumen();
+                }
+                break;
+            }
+            case KeyEvent.VK_F3: {
+                if (vista.jbCharts.isEnabled()) {
+                    verDiagramas();
+                }
+                break;
+            }
+            case KeyEvent.VK_ESCAPE: {
+                cerrar();
+                break;
+            }
+        }
     }
 
     @Override

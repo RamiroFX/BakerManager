@@ -22,7 +22,6 @@ import java.awt.event.MouseEvent;
 import java.beans.PropertyVetoException;
 import java.util.ArrayList;
 import java.util.Vector;
-import javafx.scene.input.KeyCode;
 import javax.swing.JOptionPane;
 
 /**
@@ -107,20 +106,38 @@ public class C_gestion_producto extends MouseAdapter implements ActionListener, 
             if (this.vista.jbModificar.getName().equals(acceso.getItemDescripcion())) {
                 this.vista.jbModificar.addActionListener(this);
                 this.vista.jbAsigProdProv.addActionListener(this);
+                this.vista.jbModificar.setEnabled(true);
             }
             if (this.vista.jtfBuscar.getName().equals(acceso.getItemDescripcion())) {
-                this.vista.jtfBuscar.addKeyListener(this);
+                //this.vista.jtfBuscar.addKeyListener(this);
                 this.vista.jbBuscar.addActionListener(this);
                 this.vista.jbProveedor.addActionListener(this);
                 this.vista.jbBorrar.addActionListener(this);
+                this.vista.jtfBuscar.setEditable(true);
+                this.vista.jtfBuscar.setEnabled(true);
+                this.vista.jbBuscar.setEnabled(true);
             }
             if (this.vista.jbParametros.getName().equals(acceso.getItemDescripcion())) {
                 this.vista.jbParametros.addActionListener(this);
+                this.vista.jbParametros.setEnabled(true);
             }
+            if (this.vista.jbAsigProdProv.getName().equals(acceso.getItemDescripcion())) {
+                this.vista.jbAsigProdProv.addActionListener(this);
+                this.vista.jbAsigProdProv.setEnabled(true);
+            }
+
 //            if (this.vista.jbEliminar.getName().equals(acceso.getItemDescripcion())) {
 //                this.vista.jbEliminar.addActionListener(this);
 //            }
         }
+        this.vista.jtfBuscar.addKeyListener(this);
+        this.vista.jbBuscar.addKeyListener(this);
+        this.vista.jbBorrar.addKeyListener(this);
+        this.vista.jbProveedor.addKeyListener(this);
+        this.vista.jbAgregar.addKeyListener(this);
+        this.vista.jbModificar.addKeyListener(this);
+        this.vista.jbParametros.addKeyListener(this);
+        this.vista.jbAsigProdProv.addKeyListener(this);
     }
 
     public void displayQueryResults() {
@@ -165,6 +182,54 @@ public class C_gestion_producto extends MouseAdapter implements ActionListener, 
         this.vista.jtfMarca.setText(getProducto().getMarca());
         this.vista.jtfSuspendido.setText(getProducto().getEstado());
         this.vista.jtfCantActual.setText(String.valueOf(getProducto().getCantActual()));
+    }
+
+    public void actualizarVista() {
+        Vector marca = DB_manager.obtenerMarca();
+        this.vista.jcbMarca.removeAllItems();
+        this.vista.jcbMarca.addItem("Todos");
+        for (int i = 0; i < marca.size(); i++) {
+            this.vista.jcbMarca.addItem(marca.get(i));
+        }
+        Vector rubro = DB_manager.obtenerCategoria();
+        this.vista.jcbRubro.removeAllItems();
+        this.vista.jcbRubro.addItem("Todos");
+        for (int i = 0; i < rubro.size(); i++) {
+            this.vista.jcbRubro.addItem(rubro.get(i));
+        }
+        Vector impuesto = DB_manager.obtenerImpuesto();
+        this.vista.jcbImpuesto.removeAllItems();
+        this.vista.jcbImpuesto.addItem("Todos");
+        for (int i = 0; i < impuesto.size(); i++) {
+            this.vista.jcbImpuesto.addItem(impuesto.get(i));
+        }
+        Vector estado = DB_manager.obtenerEstado();
+        this.vista.jcbEstado.removeAllItems();
+        this.vista.jcbEstado.addItem("Todos");
+        for (int i = 0; i < estado.size(); i++) {
+            this.vista.jcbEstado.addItem(estado.get(i));
+        }
+    }
+
+    private String proveedor() {
+        if (this.vista.jtfProveedor.getText().isEmpty()) {
+            return "Todos";
+        }
+        return this.proveedor.getEntidad();
+    }
+
+    public void recibirProveedor(M_proveedor proveedor) {
+        this.proveedor = proveedor;
+        String nombre = this.proveedor.getNombre();
+        String entidad = this.proveedor.getEntidad();
+        this.vista.jtfProveedor.setText(nombre + " (" + entidad + ")");
+    }
+
+    private void borrarParametros() {
+        this.proveedor = new M_proveedor();
+        this.vista.jtfBuscar.setText("");
+        this.vista.jtfBuscar.requestFocusInWindow();
+        this.vista.jtfProveedor.setText("");
     }
 
     @Override
@@ -232,8 +297,32 @@ public class C_gestion_producto extends MouseAdapter implements ActionListener, 
     }
 
     public void keyPressed(KeyEvent e) {
-        if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
-            cerrar();
+        switch (e.getKeyCode()) {
+            case KeyEvent.VK_F1: {
+                if (vista.jbAgregar.isEnabled()) {
+                    Crear_producto crearProd = new Crear_producto(this);
+                    crearProd.mostrarVista();
+                }
+                break;
+            }
+            case KeyEvent.VK_F2: {
+                if (vista.jbParametros.isEnabled()) {
+                    ProductoParametros param = new ProductoParametros(c_inicio, this);
+                    param.setVisible(true);
+                }
+                break;
+            }
+            case KeyEvent.VK_F3: {
+                if (vista.jbAsigProdProv.isEnabled()) {
+                    Crear_producto_proveedor cpp = new Crear_producto_proveedor(this);
+                    cpp.setVisible(true);
+                }
+                break;
+            }
+            case KeyEvent.VK_ESCAPE: {
+                cerrar();
+                break;
+            }
         }
     }
 
@@ -241,53 +330,5 @@ public class C_gestion_producto extends MouseAdapter implements ActionListener, 
         if (this.vista.jtProducto.hasFocus()) {
             completarCampos();
         }
-    }
-
-    public void actualizarVista() {
-        Vector marca = DB_manager.obtenerMarca();
-        this.vista.jcbMarca.removeAllItems();
-        this.vista.jcbMarca.addItem("Todos");
-        for (int i = 0; i < marca.size(); i++) {
-            this.vista.jcbMarca.addItem(marca.get(i));
-        }
-        Vector rubro = DB_manager.obtenerCategoria();
-        this.vista.jcbRubro.removeAllItems();
-        this.vista.jcbRubro.addItem("Todos");
-        for (int i = 0; i < rubro.size(); i++) {
-            this.vista.jcbRubro.addItem(rubro.get(i));
-        }
-        Vector impuesto = DB_manager.obtenerImpuesto();
-        this.vista.jcbImpuesto.removeAllItems();
-        this.vista.jcbImpuesto.addItem("Todos");
-        for (int i = 0; i < impuesto.size(); i++) {
-            this.vista.jcbImpuesto.addItem(impuesto.get(i));
-        }
-        Vector estado = DB_manager.obtenerEstado();
-        this.vista.jcbEstado.removeAllItems();
-        this.vista.jcbEstado.addItem("Todos");
-        for (int i = 0; i < estado.size(); i++) {
-            this.vista.jcbEstado.addItem(estado.get(i));
-        }
-    }
-
-    private String proveedor() {
-        if (this.vista.jtfProveedor.getText().isEmpty()) {
-            return "Todos";
-        }
-        return this.proveedor.getEntidad();
-    }
-
-    public void recibirProveedor(M_proveedor proveedor) {
-        this.proveedor = proveedor;
-        String nombre = this.proveedor.getNombre();
-        String entidad = this.proveedor.getEntidad();
-        this.vista.jtfProveedor.setText(nombre + " (" + entidad + ")");
-    }
-
-    private void borrarParametros() {
-        this.proveedor = new M_proveedor();
-        this.vista.jtfBuscar.setText("");
-        this.vista.jtfBuscar.requestFocusInWindow();
-        this.vista.jtfProveedor.setText("");
     }
 }

@@ -111,7 +111,7 @@ public class V_gestion_egresos extends JInternalFrame {
     private void initBot() {
         jpBot = new JPanel();
         Insets insets = new Insets(10, 10, 10, 10);
-        jbAgregar = new JButton("Crear egreso");
+        jbAgregar = new JButton("Crear egreso [F1]");
         jbAgregar.setName("crear compra");
         jbAgregar.setMargin(insets);
         jbAgregar.setFont(CommonFormat.fuente);
@@ -119,7 +119,7 @@ public class V_gestion_egresos extends JInternalFrame {
         jbDetalle.setName("detalle compra");
         jbDetalle.setMargin(insets);
         jbDetalle.setFont(CommonFormat.fuente);
-        jbResumen = new JButton("Ver resumen");
+        jbResumen = new JButton("Ver resumen [F2]");
         jbResumen.setName("resumen compra");
         jbResumen.setMargin(insets);
         jbResumen.setFont(CommonFormat.fuente);

@@ -9,6 +9,8 @@ import DB.DB_manager;
 import bakermanager.C_inicio;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import javax.swing.JOptionPane;
@@ -20,9 +22,9 @@ import net.miginfocom.swing.MigLayout;
 
 /**
  *
- * @author Usuario
+ * @author Ramiro Ferreira
  */
-public class ProductoParametros extends javax.swing.JDialog implements ActionListener, MouseListener {
+public class ProductoParametros extends javax.swing.JDialog implements ActionListener, MouseListener, KeyListener {
 
     private javax.swing.JButton jbCrear, jbModificar, jbEliminar;
     private JTabbedPane jtpCenter;
@@ -97,6 +99,15 @@ public class ProductoParametros extends javax.swing.JDialog implements ActionLis
         jbCrear.addActionListener(this);
         jbModificar.addActionListener(this);
         jbEliminar.addActionListener(this);
+        /*
+        KEYLISTENERS
+        */
+        jtpCenter.addKeyListener(this);
+        jtCategorias.addKeyListener(this);
+        jtMarcas.addKeyListener(this);
+        jbCrear.addKeyListener(this);
+        jbModificar.addKeyListener(this);
+        jbEliminar.addKeyListener(this);
     }
 
     private void agregarMarca(String marca) {
@@ -226,6 +237,7 @@ public class ProductoParametros extends javax.swing.JDialog implements ActionLis
             JOptionPane.showMessageDialog(this, "Existe productos que se encuentran utilizando la categoría seleccionada.", "Alerta", JOptionPane.ERROR_MESSAGE);
         }
     }
+
     /*
      private void agregarImpuesto(String impuesto) {
      DB_Proveedor.insertarImpuesto(impuesto);
@@ -256,7 +268,6 @@ public class ProductoParametros extends javax.swing.JDialog implements ActionLis
      }
      }
      */
-
     private void createButtonHandler() {
         if (this.jtpCenter.getSelectedComponent().equals(this.jspMarcas)) {
             String marca = JOptionPane.showInputDialog(this, "Inserte el nombre de la marca", "Insertar marca", JOptionPane.PLAIN_MESSAGE);
@@ -302,6 +313,11 @@ public class ProductoParametros extends javax.swing.JDialog implements ActionLis
             eliminarCategoria();
         }
         gestion_producto.actualizarVista();
+    }
+
+    private void cerrar() {
+        System.runFinalization();
+        this.dispose();
     }
 
     @Override
@@ -361,5 +377,23 @@ public class ProductoParametros extends javax.swing.JDialog implements ActionLis
 
     @Override
     public void mouseExited(MouseEvent e) {
+    }
+
+    @Override
+    public void keyTyped(KeyEvent e) {
+    }
+
+    @Override
+    public void keyPressed(KeyEvent e) {
+        switch (e.getKeyCode()) {
+            case KeyEvent.VK_ESCAPE: {
+                cerrar();
+                break;
+            }
+        }
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
     }
 }

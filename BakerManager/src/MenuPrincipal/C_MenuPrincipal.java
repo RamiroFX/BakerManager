@@ -51,7 +51,7 @@ public class C_MenuPrincipal implements ActionListener, KeyListener {
         this.vista.jbClientes.setEnabled(false);
         this.vista.jbCompras.setEnabled(false);
         this.vista.jbPedidos.setEnabled(false);
-        //this.vista.jbCaja.setEnabled(false);
+        this.vista.jbCaja.setEnabled(false);
         this.vista.jbReportes.setEnabled(false);
         ArrayList<M_menu_item> accesos = c_inicio.modelo.getRol_usuario().getAccesos();
         for (int i = 0; i < accesos.size(); i++) {
@@ -183,48 +183,67 @@ public class C_MenuPrincipal implements ActionListener, KeyListener {
     public void keyPressed(KeyEvent e) {
         switch (e.getKeyCode()) {
             case (KeyEvent.VK_F1): {
-                Gestion_Ventas gestionVenta = new Gestion_Ventas(c_inicio);
-                gestionVenta.mostrarVista();
+                if (vista.jbVentas.isEnabled()) {
+                    Gestion_Ventas gestionVenta = new Gestion_Ventas(c_inicio);
+                    gestionVenta.mostrarVista();
+                }
                 break;
             }
             case (KeyEvent.VK_F2): {
-                Gestion_Egreso gestionEgreso = new Gestion_Egreso(c_inicio);
-                gestionEgreso.mostrarVista();
+                if (vista.jbCompras.isEnabled()) {
+                    Gestion_Egreso gestionEgreso = new Gestion_Egreso(c_inicio);
+                    gestionEgreso.mostrarVista();
+                }
                 break;
             }
             case (KeyEvent.VK_F3): {
-                GestionPedidos gestionPedidos = new GestionPedidos(c_inicio);
-                gestionPedidos.mostrarVista();
+                if (vista.jbPedidos.isEnabled()) {
+                    GestionPedidos gestionPedidos = new GestionPedidos(c_inicio);
+                    gestionPedidos.mostrarVista();
+
+                }
                 break;
             }
             case (KeyEvent.VK_F4): {
-                Gestion_Producto gestionProducto = new Gestion_Producto(c_inicio);
-                gestionProducto.mostrarVista();
+                if (vista.jbProductos.isEnabled()) {
+                    Gestion_Producto gestionProducto = new Gestion_Producto(c_inicio);
+                    gestionProducto.mostrarVista();
+                }
                 break;
             }
             case (KeyEvent.VK_F5): {
-                GestionCaja gestionCaja = new GestionCaja(c_inicio);
-                gestionCaja.mostrarVista();
+                if (vista.jbCaja.isEnabled()) {
+                    GestionCaja gestionCaja = new GestionCaja(c_inicio);
+                    gestionCaja.mostrarVista();
+                }
                 break;
             }
             case (KeyEvent.VK_F6): {
-                Gestion_proveedores gestionProveedor = new Gestion_proveedores(c_inicio);
-                gestionProveedor.mostrarVista();
+                if (vista.jbProveedores.isEnabled()) {
+                    Gestion_proveedores gestionProveedor = new Gestion_proveedores(c_inicio);
+                    gestionProveedor.mostrarVista();
+                }
                 break;
             }
             case (KeyEvent.VK_F7): {
-                Gestion_cliente gestionCliente = new Gestion_cliente(c_inicio);
-                gestionCliente.mostrarVista();
+                if (vista.jbClientes.isEnabled()) {
+                    Gestion_cliente gestionCliente = new Gestion_cliente(c_inicio);
+                    gestionCliente.mostrarVista();
+                }
                 break;
             }
             case (KeyEvent.VK_F8): {
-                Gestion_empleado ges_usuario = new Gestion_empleado(c_inicio);
-                ges_usuario.mostrarVista();
+                if (vista.jbEmpleados.isEnabled()) {
+                    Gestion_empleado ges_usuario = new Gestion_empleado(c_inicio);
+                    ges_usuario.mostrarVista();
+                }
                 break;
             }
             case (KeyEvent.VK_F9): {
-                GestionReporte gestionReportes = new GestionReporte(c_inicio);
-                gestionReportes.mostrarVista();
+                if (vista.jbReportes.isEnabled()) {
+                    GestionReporte gestionReportes = new GestionReporte(c_inicio);
+                    gestionReportes.mostrarVista();
+                }
                 break;
             }
             case (KeyEvent.VK_F10): {
