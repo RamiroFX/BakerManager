@@ -55,7 +55,7 @@ public class SaldarCaja extends JDialog implements ActionListener, KeyListener {
     public JComboBox jcbHoraInicio, jcbMinutoInicio;
     public JComboBox jcbHoraFin, jcbMinutoFin;
     private JButton saveButton, cancelButton, jbFondoAnterior;
-    private JLabel jlFondoInicial;
+    private JButton jbFondoInicial;
     private JLabel jlCajaChica;
     private JLabel jlEgresoTotal, jlEgresoCredito, jlEgresoContado;
     private JLabel jlIngresoTotal, jlIngresoCredito, jlIngresoContado;
@@ -85,8 +85,8 @@ public class SaldarCaja extends JDialog implements ActionListener, KeyListener {
         this.saveButton = new JButton("Guardar");
         this.cancelButton = new JButton("Cancelar");
         this.jbFondoAnterior = new JButton("F. anterior");
-        this.jlFondoInicial = new JLabel("Fondo inicial");
-        this.jlFondoInicial.setFont(CommonFormat.fuenteTitulo);
+        this.jbFondoInicial = new JButton("Fondo inicial");
+        this.jbFondoInicial.setFont(CommonFormat.fuenteTitulo);
         this.jlCajaChica = new JLabel("Caja chica");
         this.jlCajaChica.setFont(CommonFormat.fuenteTitulo);
         this.jlEgresoTotal = new JLabel("Egreso total");
@@ -219,7 +219,7 @@ public class SaldarCaja extends JDialog implements ActionListener, KeyListener {
         gc.gridx = 0;
         gc.anchor = GridBagConstraints.EAST;
         gc.insets = rightPadding;
-        studentInfoPanel.add(jlFondoInicial, gc);
+        studentInfoPanel.add(jbFondoInicial, gc);
 
         gc.gridx++;
         gc.anchor = GridBagConstraints.WEST;
@@ -550,6 +550,9 @@ public class SaldarCaja extends JDialog implements ActionListener, KeyListener {
             crearCaja();
         } else if (src.equals(this.jbFondoAnterior)) {
             consultarUltimoFondo();
+        } else if (src.equals(this.jbFondoInicial)) {
+            ArqueoCaja arqueoCaja = new ArqueoCaja(this);
+            arqueoCaja.setVisible(true);
         }
     }
 
@@ -581,6 +584,7 @@ public class SaldarCaja extends JDialog implements ActionListener, KeyListener {
         this.saveButton.addActionListener(this);
         this.cancelButton.addActionListener(this);
         this.jbFondoAnterior.addActionListener(this);
+        this.jbFondoInicial.addActionListener(this);
     }
 
     private void checkJFTEgresoTotal() {

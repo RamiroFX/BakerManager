@@ -6,7 +6,6 @@
 package Caja;
 
 import Entities.ArqueoCajaDetalle;
-import Entities.Moneda;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridLayout;
@@ -16,6 +15,9 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFormattedTextField;
@@ -24,6 +26,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.SwingConstants;
 import javax.swing.border.EtchedBorder;
 
 /**
@@ -37,14 +40,15 @@ public class ArqueoCaja extends JDialog implements ActionListener, MouseListener
     private JFormattedTextField jftTotalEfectivo;
     private JTable jtEfectivo;
     private JScrollPane jspEfectivo;
+    private ArqueoCajaTableModel tableModel;
 
-    public ArqueoCaja(JFrame jframe) {
-        super(jframe, "Arqueo de caja", true);
+    public ArqueoCaja(JDialog jdialog) {
+        super(jdialog, "Arqueo de caja", true);
         initializeVariables();
         constructLayout();
         addListeners();
+        setWindows(jdialog);
         initializeLogic();
-        constructWindows(jframe);
     }
 
     private void initializeVariables() {
@@ -53,8 +57,11 @@ public class ArqueoCaja extends JDialog implements ActionListener, MouseListener
         jbAgregar = new JButton("Agregar moneda");
         jbQuitar = new JButton("Quitar moneda");
         jlTotalEfectivo = new JLabel("Total efectivo");
+        jlTotalEfectivo.setHorizontalAlignment(SwingConstants.CENTER);
         jftTotalEfectivo = new JFormattedTextField();
-        jtEfectivo = new JTable();
+        jftTotalEfectivo.setEditable(false);
+        tableModel = new ArqueoCajaTableModel();
+        jtEfectivo = new JTable(tableModel);
         jspEfectivo = new JScrollPane(jtEfectivo);
     }
 
@@ -67,7 +74,7 @@ public class ArqueoCaja extends JDialog implements ActionListener, MouseListener
         jpEastComponents.setBorder(new EtchedBorder());
         jpEastComponents.add(jlTotalEfectivo);
         jpEastComponents.add(jftTotalEfectivo);
-        JPanel jpEast = new JPanel();
+        JPanel jpEast = new JPanel(new GridLayout(2, 1));
         jpEast.add(jpEastButtons);
         jpEast.add(jpEastComponents);
         JPanel jpSouth = new JPanel();
@@ -100,23 +107,63 @@ public class ArqueoCaja extends JDialog implements ActionListener, MouseListener
 
     }
 
-    private void constructWindows(JFrame frame) {
-        this.setPreferredSize(new Dimension(500, 360));
+    private void setWindows(JDialog jdialog) {
         this.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-        this.setLocationRelativeTo(frame);
+        setSize(500, 360);
+        setLocationRelativeTo(jdialog);
     }
 
-    
     public void recibirMoneda(ArqueoCajaDetalle arqueoDetalle) {
-
+        int cantRow = this.tableModel.arqueoCajaDetalleList.size();
+        for (int i = 0; i < cantRow; i++) {
+            if (this.tableModel.arqueoCajaDetalleList.get(i).getMoneda().getIdMoneda() == arqueoDetalle.getMoneda().getIdMoneda()) {
+                int cant = this.tableModel.arqueoCajaDetalleList.get(i).getCantidad();
+                this.tableModel.arqueoCajaDetalleList.get(i).setCantidad(cant + arqueoDetalle.getCantidad());
+                ordernarTabla();
+                this.tableModel.updateTable();
+                return;
+            }
+        }
+        this.tableModel.arqueoCajaDetalleList.add(arqueoDetalle);
+        this.tableModel.updateTable();
+        Utilities.c_packColumn.packColumns(jtEfectivo, 1);
+        sumarTotal();
     }
 
     private void quitarMoneda() {
+        int row = this.jtEfectivo.getSelectedRow();
+        int col = this.jtEfectivo.getSelectedColumn();
+        if (row > -1 && col > -1) {
+            this.tableModel.arqueoCajaDetalleList.remove(row);
+            ordernarTabla();
+            this.tableModel.updateTable();
+            sumarTotal();
+        }
+        Utilities.c_packColumn.packColumns(jtEfectivo, 1);
+    }
 
+    private void ordernarTabla() {
+        Collections.sort(this.tableModel.arqueoCajaDetalleList, new Comparator<ArqueoCajaDetalle>() {
+            @Override
+            public int compare(ArqueoCajaDetalle o1, ArqueoCajaDetalle o2) {
+                if (o1.getMoneda().getIdMoneda() < o2.getMoneda().getIdMoneda()) {
+                    return o1.getMoneda().getIdMoneda();
+                }
+                return o2.getMoneda().getIdMoneda();
+            }
+        });
+    }
+
+    private void sumarTotal() {
+        int total = 0;
+        for (ArqueoCajaDetalle arquDeta : this.tableModel.arqueoCajaDetalleList) {
+            total = total + (arquDeta.getCantidad() * arquDeta.getMoneda().getValor());
+        }
+        this.jftTotalEfectivo.setValue(total);
     }
 
     private void guardarArqueoCaja() {
-
+        System.err.println("FALTA IMPLEMENTAR");
     }
 
     private void cerrar() {

@@ -11,15 +11,17 @@ package Entities;
  */
 public class ArqueoCajaDetalle {
 
-    int idArqueoCajaDetalle, idCaja, idMoneda, cantidad;
+    private int idArqueoCajaDetalle, idCaja, cantidad;
+    private Moneda moneda;
 
     public ArqueoCajaDetalle() {
+        this.moneda = new Moneda();
     }
 
-    public ArqueoCajaDetalle(int idArqueoCajaDetalle, int idCaja, int idMoneda, int cantidad) {
+    public ArqueoCajaDetalle(int idArqueoCajaDetalle, int idCaja, Moneda moneda, int cantidad) {
         this.idArqueoCajaDetalle = idArqueoCajaDetalle;
         this.idCaja = idCaja;
-        this.idMoneda = idMoneda;
+        this.moneda = moneda;
         this.cantidad = cantidad;
     }
 
@@ -47,12 +49,12 @@ public class ArqueoCajaDetalle {
         return idCaja;
     }
 
-    public void setIdMoneda(int idMoneda) {
-        this.idMoneda = idMoneda;
+    public void setMoneda(Moneda moneda) {
+        this.moneda = moneda;
     }
 
-    public int getIdMoneda() {
-        return idMoneda;
+    public Moneda getMoneda() {
+        return moneda;
     }
 
 }
