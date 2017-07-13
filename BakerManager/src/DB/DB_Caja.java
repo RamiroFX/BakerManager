@@ -6,15 +6,14 @@
 package DB;
 
 import Entities.Caja;
-import Entities.M_producto;
+import Entities.Moneda;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
-import java.sql.Types;
-import java.util.Calendar;
-import java.util.Date;
+import java.util.ArrayList;
+import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -134,5 +133,25 @@ public class DB_Caja {
             }
         }
         return ultimoFondo;
+    }
+
+    public static ArrayList<Moneda> obtenerMonedas() {
+        ArrayList<Moneda> monedas = null;
+        String q = "SELECT ID_MONEDA, VALOR, DESCRIPCION FROM MONEDA";
+        try {
+            st = DB_manager.getConection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            rs = st.executeQuery(q);
+            monedas = new ArrayList();
+            while (rs.next()) {
+                Moneda moneda = new Moneda();
+                moneda.setIdMoneda(rs.getInt("ID_MONEDA"));
+                moneda.setValor(rs.getInt("VALOR"));
+                moneda.setDescripcion(rs.getString("DESCRIPCION"));
+                monedas.add(moneda);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return monedas;
     }
 }

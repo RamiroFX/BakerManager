@@ -46,7 +46,7 @@ public class Conexiones {
         String url;
         switch (db) {
             case SGBD_POSTGRES:
-                url = "jdbc:postgresql://localhost:5432/bakermanager";
+                url = "jdbc:postgresql://localhost:5432/bakermanagerdev";
                 con = DriverManager.getConnection(url, user, password);
                 break;
             case SGBD_ORACLE:
