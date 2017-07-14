@@ -1,6 +1,5 @@
 package Caja;
 
-import DB.ResultSetTableModel;
 import Empleado.Seleccionar_funcionario;
 import Entities.M_funcionario;
 import Entities.M_menu_item;
@@ -56,9 +55,9 @@ public class C_gestionCaja implements GestionInterface {
                 this.vista.jbAgregar.setEnabled(true);
                 this.vista.jbAgregar.addActionListener(this);
             }
-            if (this.vista.jbResumen.getName().equals(acceso.getItemDescripcion())) {
+            /*if (this.vista.jbResumen.getName().equals(acceso.getItemDescripcion())) {
                 this.vista.jbResumen.addActionListener(this);
-            }
+            }*/
             if (this.vista.jbDetalle.getName().equals(acceso.getItemDescripcion())) {
                 this.vista.jbDetalle.addActionListener(this);
             }
@@ -72,13 +71,12 @@ public class C_gestionCaja implements GestionInterface {
             }
         }
         this.vista.jtCaja.addMouseListener(this);
-        //this.vista.jbGraficos.addActionListener(this);
         this.vista.jtCaja.addKeyListener(this);
         /**
          * **ESCAPE HOTKEY/
          */
         this.vista.jbAgregar.addKeyListener(this);
-        this.vista.jbResumen.addKeyListener(this);
+        //this.vista.jbResumen.addKeyListener(this);
         this.vista.jbDetalle.addKeyListener(this);
         this.vista.jbBuscar.addKeyListener(this);
         this.vista.jbEmpleado.addKeyListener(this);
@@ -110,12 +108,25 @@ public class C_gestionCaja implements GestionInterface {
             sf.mostrarVista();
         } else if (src.equals(this.vista.jbBorrar)) {
             borrarDatos();
+        } else if (src.equals(this.vista.jbDetalle)) {
+            invocarVistaVerCaja();
         }
     }
 
     private void invocarVistaSaldarCaja() {
         SaldarCaja sc = new SaldarCaja(c_inicio);
         sc.setVisible(true);
+    }
+
+    private void invocarVistaVerCaja() {
+        int fila = this.vista.jtCaja.getSelectedRow();
+        int columna = this.vista.jtCaja.getSelectedColumn();
+        if ((fila > -1) && (columna > -1)) {
+            int idCaja = Integer.valueOf(String.valueOf(this.vista.jtCaja.getValueAt(fila, 0)));
+            VerDetalleCaja detalleCaja = new VerDetalleCaja(c_inicio, idCaja);
+            detalleCaja.setVisible(true);
+        }
+        this.vista.jbDetalle.setEnabled(false);
     }
 
     private void consultarCajas() {
@@ -172,6 +183,14 @@ public class C_gestionCaja implements GestionInterface {
 
     @Override
     public void mouseClicked(MouseEvent e) {
+        int fila = this.vista.jtCaja.rowAtPoint(e.getPoint());
+        int columna = this.vista.jtCaja.columnAtPoint(e.getPoint());
+        if ((fila > -1) && (columna > -1)) {
+            this.vista.jbDetalle.setEnabled(true);
+            if (e.getClickCount() == 2) {
+                invocarVistaVerCaja();
+            }
+        }
     }
 
     @Override

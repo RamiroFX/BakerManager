@@ -11,7 +11,7 @@ package Entities;
  */
 public class ArqueoCajaDetalle {
 
-    private int idArqueoCajaDetalle, idCaja, cantidad;
+    private int idArqueoCajaDetalle, idCaja, cantidad,idTipo;
     private Moneda moneda;
 
     public ArqueoCajaDetalle() {
@@ -55,6 +55,14 @@ public class ArqueoCajaDetalle {
 
     public Moneda getMoneda() {
         return moneda;
+    }
+
+    public int getIdTipo() {
+        return idTipo;
+    }
+
+    public void setIdTipo(int idTipo) {
+        this.idTipo = idTipo;
     }
 
 }

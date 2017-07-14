@@ -9,9 +9,11 @@ package Utilities;
  *
  * @author Ramiro
  */
+import DB.DB_Funcionario;
 import DB.DB_Ingreso;
 import DB.DB_Pedido;
 import DB.DB_manager;
+import Entities.Caja;
 import Entities.M_facturaCabecera;
 import Entities.M_facturaDetalle;
 import Entities.M_mesa;
@@ -380,6 +382,40 @@ public class Impresora {
         String SUMATOTAL = "---------------------------------\n"
                 + "Total= " + total + "\n";
         String ticket = TICKET_CABECERA + CABECERA + COLUMNAS + DETALLE + SUMATOTAL + TICKET_PIE_SIN_GRACIAS;
+        byte[] bytes = ticket.getBytes();
+        DocFlavor flavor = DocFlavor.BYTE_ARRAY.AUTOSENSE;
+        Doc doc = new SimpleDoc(bytes, flavor, null);
+        DocPrintJob job = service.createPrintJob();
+        try {
+            if (job != null) {
+                job.print(doc, null);
+            } else {
+                JOptionPane.showMessageDialog(null, "No se pudo imprimir", "Error", JOptionPane.INFORMATION_MESSAGE);
+            }
+        } catch (PrintException ex) {
+            System.out.println(ex);
+        }
+    }
+
+    public static void imprimirCaja(Caja caja) {
+        PrintService service = PrintServiceLookup.lookupDefaultPrintService();
+        Date today = Calendar.getInstance().getTime();
+        String fechaEntrega = sdfs.format(today);
+        String CABECERA = "Fecha y hora: " + fechaEntrega + "\n"
+                + "Funcionario: " + DB_Funcionario.obtenerDatosFuncionarioID(caja.getIdEmpleadoCierre()).getNombre() + "\n"
+                + "Hora cierre: " + sdfs.format(caja.getTiempoCierre()) + "\n"
+                + "---------------------------------\n";
+
+        int Ingresos = caja.getIngresoCredito() + caja.getIngresoContado();
+        int Egresos = caja.getEgresoContado() + caja.getIngresoCredito();
+        String CUERPO = "Ingreso: " + Ingresos + "\n"
+                + "Egreso: " + Egresos + "\n"
+                + "Caja chica: " + caja.getMontoFinal() + "\n"
+                + "Ingreso-Egreso: " + (Ingresos - Egresos) + "\n"
+                + "Ingreso+Egreso: " + (Ingresos + Egresos) + "\n";
+
+        String PIE = "---------------------------------\n";
+        String ticket = TICKET_CABECERA + CABECERA + CUERPO + PIE + TICKET_PIE_SIN_GRACIAS;
         byte[] bytes = ticket.getBytes();
         DocFlavor flavor = DocFlavor.BYTE_ARRAY.AUTOSENSE;
         Doc doc = new SimpleDoc(bytes, flavor, null);

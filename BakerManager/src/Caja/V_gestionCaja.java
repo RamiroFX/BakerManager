@@ -1,17 +1,14 @@
 package Caja;
 
 import Interface.CommonFormat;
-import Utilities.JTablePagination;
 import com.toedter.calendar.JDateChooser;
 import java.awt.Dimension;
 import java.awt.Insets;
 import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JInternalFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.border.EtchedBorder;
@@ -25,7 +22,7 @@ import net.miginfocom.swing.MigLayout;
 public class V_gestionCaja extends JInternalFrame {
 
     public JButton jbBuscar, jbBorrar, jbAgregar, jbDetalle,
-            jbResumen, jbEmpleado;
+            jbEmpleado;
     public JTextField jtfEmpleado;
     private JPanel jpTop, jpBotonesTop, jpBot;
     public JScrollPane jspCaja;
@@ -98,14 +95,8 @@ public class V_gestionCaja extends JInternalFrame {
         jbDetalle.setName("detalle venta");
         jbDetalle.setFont(CommonFormat.fuente);
         jbDetalle.setMargin(insets);
-        jbResumen = new JButton("Ver resumen");
-        jbResumen.setName("resumen venta");
-        jbResumen.setMargin(insets);
-        jbResumen.setFont(CommonFormat.fuente);
-        jbResumen.setEnabled(false);
         jpBot.add(jbAgregar);
         jpBot.add(jbDetalle);
-        jpBot.add(jbResumen);
         jpBot.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED), "Opciones"));
     }
 }
