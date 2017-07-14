@@ -6,9 +6,9 @@
 package Caja;
 
 import Entities.ArqueoCajaDetalle;
-import Entities.Moneda;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.JOptionPane;
 import javax.swing.table.AbstractTableModel;
 
 /**
@@ -18,7 +18,7 @@ import javax.swing.table.AbstractTableModel;
 public class ArqueoCajaTableModel extends AbstractTableModel {
 
     List<ArqueoCajaDetalle> arqueoCajaDetalleList;
-    private String[] colNames = {"Id", "Cantidad", "Denominación", "Importe"};
+    private String[] colNames = {"Id", "Cantidad", "Denominación", "Tipo", "Importe"};
 
     public ArqueoCajaTableModel() {
         arqueoCajaDetalleList = new ArrayList<ArqueoCajaDetalle>();
@@ -50,15 +50,41 @@ public class ArqueoCajaTableModel extends AbstractTableModel {
                 return arqueoCaja.getCantidad();
             }
             case 2: {
-                return arqueoCaja.getMoneda().getValor() + " - " + arqueoCaja.getMoneda().getDescripcion();
+                return arqueoCaja.getMoneda().getValor();
             }
             case 3: {
+                return arqueoCaja.getMoneda().getDescripcion();
+            }
+            case 4: {
                 return arqueoCaja.getCantidad() * arqueoCaja.getMoneda().getValor();
             }
             default: {
                 return null;
             }
         }
+    }
+
+    public boolean isCellEditable(int row, int col) {
+        if (col == 1) {
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public void setValueAt(Object value, int row, int col) {
+        switch (col) {
+            case 1: {
+                try {
+                    arqueoCajaDetalleList.get(row).setCantidad((Integer.valueOf(value.toString())));
+                } catch (Exception e) {
+                    arqueoCajaDetalleList.get(row).setCantidad(0);
+                    JOptionPane.showMessageDialog(null, "Ingrese solo números enteros", "Atención", JOptionPane.WARNING_MESSAGE);
+                }
+                break;
+            }
+        }
+        fireTableCellUpdated(row, col);
     }
 
     public void setArqueoCajaList(List<ArqueoCajaDetalle> arqueoCajaDetalle) {

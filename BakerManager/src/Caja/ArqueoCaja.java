@@ -7,7 +7,6 @@ package Caja;
 
 import Entities.ArqueoCajaDetalle;
 import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -15,13 +14,11 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFormattedTextField;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -178,8 +175,8 @@ public class ArqueoCaja extends JDialog implements ActionListener, MouseListener
         } else if (src.equals(jbCancelar)) {
             cerrar();
         } else if (src.equals(jbAgregar)) {
-            SeleccionarMoneda seleccionarMoneda = new SeleccionarMoneda(this);
-            seleccionarMoneda.setVisible(true);
+            //SeleccionarMoneda seleccionarMoneda = new SeleccionarMoneda(this);
+            //seleccionarMoneda.setVisible(true);
         } else if (src.equals(jbQuitar)) {
             quitarMoneda();
         }

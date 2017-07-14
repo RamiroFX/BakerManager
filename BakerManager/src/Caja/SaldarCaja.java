@@ -9,7 +9,9 @@ import DB.DB_Caja;
 import Interface.CommonFormat;
 import DB.DB_Egreso;
 import DB.DB_Ingreso;
+import Entities.ArqueoCajaDetalle;
 import Entities.Caja;
+import Entities.Moneda;
 import MenuPrincipal.DatosUsuario;
 import bakermanager.C_inicio;
 import com.toedter.calendar.JDateChooser;
@@ -18,7 +20,6 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.FlowLayout;
-import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
@@ -27,9 +28,14 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -38,11 +44,15 @@ import javax.swing.JDialog;
 import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
+import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
+import javax.swing.JTable;
+import javax.swing.SwingConstants;
 import javax.swing.border.Border;
 import javax.swing.border.EtchedBorder;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import net.miginfocom.swing.MigLayout;
 
 /**
@@ -52,19 +62,17 @@ import net.miginfocom.swing.MigLayout;
 public class SaldarCaja extends JDialog implements ActionListener, KeyListener {
 
     public JDateChooser jddInicio, jddFinal;
-    public JComboBox jcbHoraInicio, jcbMinutoInicio;
-    public JComboBox jcbHoraFin, jcbMinutoFin;
+    public JComboBox jcbHoraInicio, jcbMinutoInicio, jcbHoraFin, jcbMinutoFin;
     private JButton saveButton, cancelButton, jbFondoAnterior;
-    private JButton jbFondoInicial;
-    private JLabel jlCajaChica;
-    private JLabel jlEgresoTotal, jlEgresoCredito, jlEgresoContado;
-    private JLabel jlIngresoTotal, jlIngresoCredito, jlIngresoContado;
-    private JLabel jlTotalEgrIng;
-    private JFormattedTextField jtfFondoInicial;
-    private JFormattedTextField jtfCajaChica;
-    private JFormattedTextField jtfEgresoTotal, jtfEgresoCredito, jtfEgresoContado;
-    private JFormattedTextField jtfIngresoTotal, jtfIngresoCredito, jtfIngresoContado;
-    private JFormattedTextField jtfTotalEgrIng;
+    private JLabel jlFondoInicial, jlCajaChica, jlEgresoTotal, jlEgresoCredito, jlEgresoContado,
+            jlIngresoTotal, jlIngresoCredito, jlIngresoContado, jlTotalEgrIng;
+    private JFormattedTextField jtfFondoInicial, jtfCajaChica, jtfEgresoTotal,
+            jtfEgresoCredito, jtfEgresoContado, jtfIngresoTotal,
+            jtfIngresoCredito, jtfIngresoContado, jtfTotalEgrIng;
+    //ARQUEO CAJA VARIABLES
+    private JTable jtInicio, jtFin;
+    private JScrollPane jspInicio, jspFin;
+    private ArqueoCajaTableModel tbmInicio, tbmFin;
 
     public SaldarCaja(C_inicio inicio) {
         super(inicio.vista, "Saldar caja", true);
@@ -84,9 +92,9 @@ public class SaldarCaja extends JDialog implements ActionListener, KeyListener {
         jddFinal.setPreferredSize(new Dimension(150, 10));
         this.saveButton = new JButton("Guardar");
         this.cancelButton = new JButton("Cancelar");
-        this.jbFondoAnterior = new JButton("F. anterior");
-        this.jbFondoInicial = new JButton("Fondo inicial");
-        this.jbFondoInicial.setFont(CommonFormat.fuenteTitulo);
+        this.jbFondoAnterior = new JButton("Caja chica anterior");
+        this.jlFondoInicial = new JLabel("Fondo inicial");
+        this.jlFondoInicial.setFont(CommonFormat.fuenteTitulo);
         this.jlCajaChica = new JLabel("Caja chica");
         this.jlCajaChica.setFont(CommonFormat.fuenteTitulo);
         this.jlEgresoTotal = new JLabel("Egreso total");
@@ -104,7 +112,7 @@ public class SaldarCaja extends JDialog implements ActionListener, KeyListener {
         this.jlTotalEgrIng = new JLabel("Egreso+Ingreso");
         this.jlTotalEgrIng.setFont(CommonFormat.fuenteTitulo);
         this.jtfFondoInicial = new JFormattedTextField();
-        this.jtfFondoInicial.setColumns(11);
+        this.jtfFondoInicial.setColumns(prefCols);
         this.jtfFondoInicial.addKeyListener(this);
         this.jtfCajaChica = new JFormattedTextField();
         this.jtfCajaChica.setColumns(prefCols);
@@ -127,6 +135,8 @@ public class SaldarCaja extends JDialog implements ActionListener, KeyListener {
         this.jtfTotalEgrIng.setColumns(prefCols);
         this.jtfTotalEgrIng.addKeyListener(this);
 
+        this.jtfFondoInicial.setEditable(false);
+        this.jtfCajaChica.setEditable(false);
         this.jtfTotalEgrIng.setEditable(false);
         this.jtfEgresoTotal.setEditable(false);
         this.jtfEgresoContado.setEditable(false);
@@ -158,12 +168,17 @@ public class SaldarCaja extends JDialog implements ActionListener, KeyListener {
         int minutoFin = Calendar.getInstance().get(Calendar.MINUTE);
         jcbHoraFin.setSelectedItem(horaFin);
         jcbMinutoFin.setSelectedItem(minutoFin);
+
+        //ARQUEO CAJA 
+        tbmInicio = new ArqueoCajaTableModel();
+        jtInicio = new JTable(tbmInicio);
+        jspInicio = new JScrollPane(jtInicio);
+        tbmFin = new ArqueoCajaTableModel();
+        jtFin = new JTable(tbmFin);
+        jspFin = new JScrollPane(jtFin);
     }
 
     private void constructLayout() {
-        JPanel jpFondoInicial = new JPanel();
-        jpFondoInicial.add(jtfFondoInicial);
-        jpFondoInicial.add(jbFondoAnterior);
         JPanel jpHoraInicio = new JPanel(new GridLayout(1, 2));
         jpHoraInicio.add(jcbHoraInicio);
         jpHoraInicio.add(jcbMinutoInicio);
@@ -219,12 +234,12 @@ public class SaldarCaja extends JDialog implements ActionListener, KeyListener {
         gc.gridx = 0;
         gc.anchor = GridBagConstraints.EAST;
         gc.insets = rightPadding;
-        studentInfoPanel.add(jbFondoInicial, gc);
+        studentInfoPanel.add(jlFondoInicial, gc);
 
         gc.gridx++;
         gc.anchor = GridBagConstraints.WEST;
         gc.insets = noPadding;
-        studentInfoPanel.add(jpFondoInicial, gc);
+        studentInfoPanel.add(jtfFondoInicial, gc);
 
         // ////// Next row ////////////////////////////
         gc.gridy++;
@@ -370,10 +385,45 @@ public class SaldarCaja extends JDialog implements ActionListener, KeyListener {
         saveButton.setPreferredSize(btnSize);
 
         // Add sub panels to dialog
-        setLayout(new BorderLayout());
-        add(jpFiltros, BorderLayout.NORTH);
-        add(studentInfoPanel, BorderLayout.CENTER);
-        add(buttonsPanel, BorderLayout.SOUTH);
+        JPanel jpSaldarCaja = new JPanel(new BorderLayout());
+        jpSaldarCaja.add(jpFiltros, BorderLayout.NORTH);
+        jpSaldarCaja.add(studentInfoPanel, BorderLayout.CENTER);
+        jpSaldarCaja.add(buttonsPanel, BorderLayout.SOUTH);
+
+        //ARQUEO CAJA
+        JTabbedPane jpArqueoCaja = new JTabbedPane();
+        JPanel jpCajaInicial = new JPanel(new BorderLayout());
+        JPanel jpCajaInicialSouth = new JPanel();
+        jpCajaInicialSouth.add(jbFondoAnterior);
+        jpCajaInicial.add(jspFin, BorderLayout.CENTER);
+        jpCajaInicial.add(jpCajaInicialSouth, BorderLayout.SOUTH);
+        jpArqueoCaja.addTab("Caja chica", jspInicio);
+        jpArqueoCaja.addTab("Fondo inicial", jpCajaInicial);
+        setLayout(new GridLayout(1, 2));
+        add(jpArqueoCaja);
+        add(jpSaldarCaja);
+    }
+
+    private void addListeners() {
+        this.saveButton.addActionListener(this);
+        this.cancelButton.addActionListener(this);
+        this.jbFondoAnterior.addActionListener(this);
+        this.tbmInicio.addTableModelListener(new TableModelListener() {
+            @Override
+            public void tableChanged(TableModelEvent e) {
+                sumarCajaChica();
+            }
+        });
+        this.tbmFin.addTableModelListener(new TableModelListener() {
+            @Override
+            public void tableChanged(TableModelEvent e) {
+                sumarCajaChicaAnterior();
+            }
+        });
+        /*
+        KEYLISTENER
+         */
+        this.jtInicio.addKeyListener(this);
     }
 
     private void initializeLogic() {
@@ -400,11 +450,36 @@ public class SaldarCaja extends JDialog implements ActionListener, KeyListener {
         this.jtfIngresoTotal.setValue(totalIngreso);
         this.jtfIngresoContado.setValue(ingresoContado);
         this.jtfIngresoCredito.setValue(ingresoCretdito);
+
+        ArrayList<ArqueoCajaDetalle> arqueCajaDeta = new ArrayList<>();
+        ArrayList<Moneda> monedas = DB_Caja.obtenerMonedas();
+        for (int i = 0; i < monedas.size(); i++) {
+            ArqueoCajaDetalle acd = new ArqueoCajaDetalle();
+            acd.setCantidad(0);
+            acd.setMoneda(monedas.get(i));
+            arqueCajaDeta.add(acd);
+        }
+        this.tbmInicio.setArqueoCajaList(arqueCajaDeta);
+        this.tbmInicio.updateTable();
+        Utilities.c_packColumn.packColumns(jtInicio, 1);
+
+        //Fondo fijo
+        ArrayList<ArqueoCajaDetalle> arqueCajaDetaFondoAnterior = new ArrayList<>();
+        for (int i = 0; i < monedas.size(); i++) {
+            ArqueoCajaDetalle acd = new ArqueoCajaDetalle();
+            acd.setCantidad(0);
+            acd.setMoneda(monedas.get(i));
+            arqueCajaDetaFondoAnterior.add(acd);
+        }
+        this.tbmFin.setArqueoCajaList(arqueCajaDetaFondoAnterior);
+        this.tbmFin.updateTable();
+        Utilities.c_packColumn.packColumns(jtFin, 1);
+
     }
 
     private void setWindows(JFrame parentFrame) {
         setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-        setSize(500, 500);
+        setSize(900, 500);
         setLocationRelativeTo(parentFrame);
     }
 
@@ -497,6 +572,10 @@ public class SaldarCaja extends JDialog implements ActionListener, KeyListener {
         this.dispose();
     }
 
+    private void cerrar() {
+        this.dispose();
+    }
+
     private void checkJFTFondoInicial() {
         EventQueue.invokeLater(new Runnable() {
             @Override
@@ -539,52 +618,6 @@ public class SaldarCaja extends JDialog implements ActionListener, KeyListener {
                 jtfCajaChica.select(valorJFT.length(), valorJFT.length());
             }
         });
-    }
-
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        Object src = e.getSource();
-        if (src == this.cancelButton) {
-            this.dispose();
-        } else if (src.equals(this.saveButton)) {
-            crearCaja();
-        } else if (src.equals(this.jbFondoAnterior)) {
-            consultarUltimoFondo();
-        } else if (src.equals(this.jbFondoInicial)) {
-            ArqueoCaja arqueoCaja = new ArqueoCaja(this);
-            arqueoCaja.setVisible(true);
-        }
-    }
-
-    @Override
-    public void keyTyped(KeyEvent e) {
-        Object src = e.getSource();
-        if (src == this.jtfFondoInicial) {
-            checkJFTFondoInicial();
-        } else if (src == this.jtfCajaChica) {
-            checkJFTCajaChica();
-        } else if (src == this.jtfEgresoTotal) {
-            checkJFTEgresoTotal();
-        } else if (src == this.jtfIngresoTotal) {
-            checkJFTIngresoTotal();
-        } else if (src == this.jtfTotalEgrIng) {
-            checkJFTItotalEgrIng();
-        }
-    }
-
-    @Override
-    public void keyPressed(KeyEvent e) {
-    }
-
-    @Override
-    public void keyReleased(KeyEvent e) {
-    }
-
-    private void addListeners() {
-        this.saveButton.addActionListener(this);
-        this.cancelButton.addActionListener(this);
-        this.jbFondoAnterior.addActionListener(this);
-        this.jbFondoInicial.addActionListener(this);
     }
 
     private void checkJFTEgresoTotal() {
@@ -651,7 +684,55 @@ public class SaldarCaja extends JDialog implements ActionListener, KeyListener {
     }
 
     private void consultarUltimoFondo() {
-        int ultimoFondo = DB_Caja.ultimoFondo();
-        this.jtfFondoInicial.setValue(ultimoFondo);
+        ArrayList<ArqueoCajaDetalle> acda = DB_Caja.consultarUltimoArqueoCaja();
+        if (!acda.isEmpty()) {
+            this.tbmFin.setArqueoCajaList(acda);
+        }
+    }
+
+    private void sumarCajaChica() {
+        int total = 0;
+        for (ArqueoCajaDetalle arquDeta : this.tbmInicio.arqueoCajaDetalleList) {
+            total = total + (arquDeta.getCantidad() * arquDeta.getMoneda().getValor());
+        }
+        this.jtfCajaChica.setValue(total);
+    }
+
+    private void sumarCajaChicaAnterior() {
+        int total = 0;
+        for (ArqueoCajaDetalle arquDeta : this.tbmFin.arqueoCajaDetalleList) {
+            total = total + (arquDeta.getCantidad() * arquDeta.getMoneda().getValor());
+        }
+        this.jtfFondoInicial.setValue(total);
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        Object src = e.getSource();
+        if (src == this.cancelButton) {
+            this.dispose();
+        } else if (src.equals(this.saveButton)) {
+            crearCaja();
+        } else if (src.equals(this.jbFondoAnterior)) {
+            consultarUltimoFondo();
+        }
+    }
+
+    @Override
+    public void keyTyped(KeyEvent e) {
+    }
+
+    @Override
+    public void keyPressed(KeyEvent e) {
+        switch (e.getKeyCode()) {
+            case KeyEvent.VK_ESCAPE: {
+                cerrar();
+                break;
+            }
+        }
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
     }
 }

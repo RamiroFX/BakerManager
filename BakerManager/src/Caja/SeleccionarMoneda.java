@@ -9,7 +9,6 @@ import DB.DB_Caja;
 import Entities.ArqueoCajaDetalle;
 import Entities.Moneda;
 import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -36,14 +35,14 @@ public class SeleccionarMoneda extends JDialog implements ActionListener, KeyLis
     private JLabel jlMoneda, jlCantidad;
     private JTextField jtfCantidad;
     private JComboBox<Moneda> jcbMonedas;
-    private ArqueoCaja arqueoCaja;
+    private SaldarCaja saldarCaja;
 
-    public SeleccionarMoneda(ArqueoCaja arqueoCaja) {
-        super(arqueoCaja, "Agregar moneda", true);
-        this.arqueoCaja = arqueoCaja;
+    public SeleccionarMoneda(SaldarCaja saldarCaja) {
+        super(saldarCaja, "Agregar moneda", true);
+        this.saldarCaja = saldarCaja;
         initializeVariables();
         constructLayout();
-        constructWindows(arqueoCaja);
+        constructWindows(saldarCaja);
         initializeLogic();
         addListeners();
     }
@@ -74,7 +73,7 @@ public class SeleccionarMoneda extends JDialog implements ActionListener, KeyLis
         getContentPane().add(jpSouth, BorderLayout.SOUTH);
     }
 
-    private void constructWindows(ArqueoCaja arqueoCaja) {
+    private void constructWindows(SaldarCaja arqueoCaja) {
         setSize(280, 180);
         setLocationRelativeTo(arqueoCaja);
         setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
@@ -100,7 +99,7 @@ public class SeleccionarMoneda extends JDialog implements ActionListener, KeyLis
             acd.getMoneda().setIdMoneda(moneda.getIdMoneda());
             acd.getMoneda().setDescripcion(moneda.getDescripcion());
             acd.getMoneda().setValor(moneda.getValor());
-            arqueoCaja.recibirMoneda(acd);
+            //saldarCaja.recibirMonedaCC(acd);
             this.jtfCantidad.setText("");
             this.jcbMonedas.requestFocusInWindow();
         }

@@ -5,6 +5,7 @@
  */
 package DB;
 
+import Entities.ArqueoCajaDetalle;
 import Entities.Caja;
 import Entities.Moneda;
 import java.sql.PreparedStatement;
@@ -153,5 +154,44 @@ public class DB_Caja {
             ex.printStackTrace();
         }
         return monedas;
+    }
+
+    public static Moneda obtenerMoneda(int idMoneda) {
+        Moneda moneda = null;
+        String q = "SELECT ID_MONEDA, VALOR, DESCRIPCION FROM MONEDA";
+        try {
+            st = DB_manager.getConection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            rs = st.executeQuery(q);
+            while (rs.next()) {
+                moneda = new Moneda();
+                moneda.setIdMoneda(rs.getInt("ID_MONEDA"));
+                moneda.setValor(rs.getInt("VALOR"));
+                moneda.setDescripcion(rs.getString("DESCRIPCION"));
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return moneda;
+    }
+
+    public static ArrayList<ArqueoCajaDetalle> consultarUltimoArqueoCaja() {
+        ArrayList<ArqueoCajaDetalle> acda = null;
+        String q = "SELECT ID_ARQUEO_CAJA, ID_CAJA, ID_MONEDA, CANTIDAD FROM ARQUEO_CAJA";
+        try {
+            st = DB_manager.getConection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            rs = st.executeQuery(q);
+            acda = new ArrayList();
+            while (rs.next()) {
+                ArqueoCajaDetalle acd = new ArqueoCajaDetalle();
+                acd.setIdArqueoCajaDetalle(rs.getInt("ID_ARQUEO_CAJA"));
+                acd.setCantidad(rs.getInt("CANTIDAD"));
+                acd.setIdCaja(rs.getInt("ID_CAJA"));
+                acd.setMoneda(obtenerMoneda(rs.getInt("ID_MONEDA")));
+                acda.add(acd);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return acda;
     }
 }
