@@ -87,13 +87,15 @@ public class V_gestionCaja extends JInternalFrame {
     private void initBot() {
         jpBot = new JPanel();
         Insets insets = new Insets(10, 10, 10, 10);
-        jbAgregar = new JButton("Saldar caja");
+        jbAgregar = new JButton("Saldar caja [F1]");
         jbAgregar.setName("crear venta");
         jbAgregar.setFont(CommonFormat.fuente);
+        jbAgregar.setEnabled(false);
         jbAgregar.setMargin(insets);
         jbDetalle = new JButton("Ver detalle");
         jbDetalle.setName("detalle venta");
         jbDetalle.setFont(CommonFormat.fuente);
+        jbDetalle.setEnabled(false);
         jbDetalle.setMargin(insets);
         jpBot.add(jbAgregar);
         jpBot.add(jbDetalle);

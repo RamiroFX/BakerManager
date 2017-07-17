@@ -11,7 +11,7 @@ package Entities;
  */
 public class ArqueoCajaDetalle {
 
-    private int idArqueoCajaDetalle, idCaja, cantidad,idTipo;
+    private int idArqueoCajaDetalle, idCaja, cantidad, idTipo;
     private Moneda moneda;
 
     public ArqueoCajaDetalle() {
@@ -63,6 +63,11 @@ public class ArqueoCajaDetalle {
 
     public void setIdTipo(int idTipo) {
         this.idTipo = idTipo;
+    }
+
+    @Override
+    public String toString() {
+        return getCantidad() + " - " + getMoneda().toString();
     }
 
 }

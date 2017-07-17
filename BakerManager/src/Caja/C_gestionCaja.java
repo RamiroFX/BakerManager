@@ -96,23 +96,6 @@ public class C_gestionCaja implements GestionInterface {
         }
     }
 
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        Object src = e.getSource();
-        if (src.equals(this.vista.jbAgregar)) {
-            invocarVistaSaldarCaja();
-        } else if (src.equals(this.vista.jbBuscar)) {
-            consultarCajas();
-        } else if (src.equals(this.vista.jbEmpleado)) {
-            Seleccionar_funcionario sf = new Seleccionar_funcionario(this);
-            sf.mostrarVista();
-        } else if (src.equals(this.vista.jbBorrar)) {
-            borrarDatos();
-        } else if (src.equals(this.vista.jbDetalle)) {
-            invocarVistaVerCaja();
-        }
-    }
-
     private void invocarVistaSaldarCaja() {
         SaldarCaja sc = new SaldarCaja(c_inicio);
         sc.setVisible(true);
@@ -171,7 +154,7 @@ public class C_gestionCaja implements GestionInterface {
         this.vista.jddFinal.setDate(date);
     }
 
-    boolean validarFechas(Date f_inicio, Date f_final) {
+    private boolean validarFechas(Date f_inicio, Date f_final) {
         if (f_inicio != null && f_final != null) {
             int dateValue = f_inicio.compareTo(f_final);
             if (dateValue <= 0) {
@@ -179,6 +162,23 @@ public class C_gestionCaja implements GestionInterface {
             }
         }
         return false;
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        Object src = e.getSource();
+        if (src.equals(this.vista.jbAgregar)) {
+            invocarVistaSaldarCaja();
+        } else if (src.equals(this.vista.jbBuscar)) {
+            consultarCajas();
+        } else if (src.equals(this.vista.jbEmpleado)) {
+            Seleccionar_funcionario sf = new Seleccionar_funcionario(this);
+            sf.mostrarVista();
+        } else if (src.equals(this.vista.jbBorrar)) {
+            borrarDatos();
+        } else if (src.equals(this.vista.jbDetalle)) {
+            invocarVistaVerCaja();
+        }
     }
 
     @Override
@@ -215,6 +215,18 @@ public class C_gestionCaja implements GestionInterface {
 
     @Override
     public void keyPressed(KeyEvent e) {
+        switch (e.getKeyCode()) {
+            case KeyEvent.VK_ESCAPE: {
+                cerrar();
+                break;
+            }
+            case KeyEvent.VK_F1: {
+                if (vista.jbAgregar.isEnabled()) {
+                    invocarVistaSaldarCaja();
+                }
+                break;
+            }
+        }
     }
 
     @Override

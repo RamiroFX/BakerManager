@@ -134,34 +134,6 @@ public class DB_Caja {
         return rstm;
     }
 
-    public static Integer ultimoFondo() {
-        int ultimoFondo = 0;
-        String QUERY = "SELECT MONTO_FINAL FROM CAJA ORDER BY ID_CAJA DESC LIMIT 1";
-        try {
-            pst = DB_manager.getConection().prepareStatement(QUERY, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-            rs = pst.executeQuery();
-            while (rs.next()) {
-                ultimoFondo = rs.getInt("MONTO_FINAL");
-            }
-        } catch (SQLException ex) {
-            Logger lgr = Logger.getLogger(DB_Caja.class.getName());
-            lgr.log(Level.SEVERE, ex.getMessage(), ex);
-        } finally {
-            try {
-                if (rs != null) {
-                    rs.close();
-                }
-                if (pst != null) {
-                    pst.close();
-                }
-            } catch (SQLException ex) {
-                Logger lgr = Logger.getLogger(DB_Caja.class.getName());
-                lgr.log(Level.WARNING, ex.getMessage(), ex);
-            }
-        }
-        return ultimoFondo;
-    }
-
     public static ArrayList<Moneda> obtenerMonedas() {
         ArrayList<Moneda> monedas = null;
         String q = "SELECT ID_MONEDA, VALOR, DESCRIPCION FROM MONEDA";
@@ -202,24 +174,34 @@ public class DB_Caja {
     }
 
     public static ArrayList<ArqueoCajaDetalle> consultarUltimoArqueoCaja() {
-        ArrayList<ArqueoCajaDetalle> acda = null;
-        String q = "SELECT ID_ARQUEO_CAJA, ID_CAJA, ID_MONEDA, CANTIDAD FROM ARQUEO_CAJA";
+        ArrayList<ArqueoCajaDetalle> arqueo = null;
+        String QUERY = "SELECT ID_ARQUEO_CAJA, ID_CAJA, ARQUEO_CAJA.ID_MONEDA \"ID_MONEDA\", "
+                + "ID_ARQUEO_CAJA_TIPO, CANTIDAD, VALOR, DESCRIPCION FROM ARQUEO_CAJA, MONEDA "
+                + "WHERE MONEDA.ID_MONEDA = ARQUEO_CAJA.ID_MONEDA "
+                + "AND ID_CAJA = (SELECT ID_CAJA FROM CAJA ORDER BY ID_CAJA DESC LIMIT 1) "
+                + "AND ID_ARQUEO_CAJA_TIPO = 2";
         try {
             st = DB_manager.getConection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-            rs = st.executeQuery(q);
-            acda = new ArrayList();
+            rs = st.executeQuery(QUERY);
+            arqueo = new ArrayList();
             while (rs.next()) {
                 ArqueoCajaDetalle acd = new ArqueoCajaDetalle();
                 acd.setIdArqueoCajaDetalle(rs.getInt("ID_ARQUEO_CAJA"));
-                acd.setCantidad(rs.getInt("CANTIDAD"));
                 acd.setIdCaja(rs.getInt("ID_CAJA"));
-                acd.setMoneda(obtenerMoneda(rs.getInt("ID_MONEDA")));
-                acda.add(acd);
+                acd.setCantidad(rs.getInt("CANTIDAD"));
+                acd.setIdTipo(rs.getInt("ID_ARQUEO_CAJA_TIPO"));
+
+                Moneda moneda = new Moneda();
+                moneda.setIdMoneda(rs.getInt("ID_MONEDA"));
+                moneda.setValor(rs.getInt("VALOR"));
+                moneda.setDescripcion(rs.getString("DESCRIPCION"));
+                acd.setMoneda(moneda);
+                arqueo.add(acd);
             }
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
-        return acda;
+        return arqueo;
     }
 
     public static ArrayList<ArqueoCajaDetalle> obtenerArqueoCaja(int idCaja, int idTipo) {
@@ -227,7 +209,7 @@ public class DB_Caja {
                 + "ID_ARQUEO_CAJA_TIPO, CANTIDAD, VALOR, DESCRIPCION FROM ARQUEO_CAJA, MONEDA "
                 + "WHERE MONEDA.ID_MONEDA = ARQUEO_CAJA.ID_MONEDA "
                 + "AND ID_CAJA = ? AND ID_ARQUEO_CAJA_TIPO = ?";
-        
+
         ArrayList<ArqueoCajaDetalle> arqueo = null;
         try {
             pst = DB_manager.getConection().prepareStatement(QUERY, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
@@ -241,7 +223,7 @@ public class DB_Caja {
                 acd.setIdCaja(rs.getInt("ID_CAJA"));
                 acd.setCantidad(rs.getInt("CANTIDAD"));
                 acd.setIdTipo(rs.getInt("ID_ARQUEO_CAJA_TIPO"));
-                
+
                 Moneda moneda = new Moneda();
                 moneda.setIdMoneda(rs.getInt("ID_MONEDA"));
                 moneda.setValor(rs.getInt("VALOR"));

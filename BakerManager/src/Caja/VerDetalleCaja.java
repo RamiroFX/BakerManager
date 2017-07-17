@@ -7,17 +7,12 @@ package Caja;
 
 import DB.DB_Caja;
 import Interface.CommonFormat;
-import DB.DB_Egreso;
-import DB.DB_Ingreso;
 import Entities.ArqueoCajaDetalle;
 import Entities.Caja;
-import Entities.Moneda;
-import MenuPrincipal.DatosUsuario;
 import Utilities.Impresora;
 import bakermanager.C_inicio;
 import com.toedter.calendar.JDateChooser;
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.FlowLayout;
@@ -29,8 +24,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -61,9 +54,9 @@ public class VerDetalleCaja extends JDialog implements ActionListener, KeyListen
     public JDateChooser jddInicio, jddFinal;
     public JComboBox jcbHoraInicio, jcbMinutoInicio, jcbHoraFin, jcbMinutoFin;
     private JButton printButton, cancelButton;
-    private JLabel jlFondoInicial, jlCajaChica, jlEgresoTotal, jlEgresoCredito, jlEgresoContado,
+    private JLabel jlFondoInicial, jlCajaChica, jlEgresoTotal, jlDifCaja, jlEgresoCredito, jlEgresoContado,
             jlIngresoTotal, jlIngresoCredito, jlIngresoContado, jlTotalEgrIng1, jlTotalEgrIng2;
-    private JFormattedTextField jtfFondoInicial, jtfCajaChica, jtfEgresoTotal,
+    private JFormattedTextField jtfFondoInicial, jtfCajaChica, jtfDifCaja, jtfEgresoTotal,
             jtfEgresoCredito, jtfEgresoContado, jtfIngresoTotal,
             jtfIngresoCredito, jtfIngresoContado, jtfTotalEgrIng1, jtfTotalEgrIng2;
     //ARQUEO CAJA VARIABLES
@@ -97,6 +90,8 @@ public class VerDetalleCaja extends JDialog implements ActionListener, KeyListen
         this.jlFondoInicial.setFont(CommonFormat.fuenteTitulo);
         this.jlCajaChica = new JLabel("Caja chica");
         this.jlCajaChica.setFont(CommonFormat.fuenteTitulo);
+        this.jlDifCaja = new JLabel("Dif. de Caja");
+        this.jlDifCaja.setFont(CommonFormat.fuenteSubTitulo);
         this.jlEgresoTotal = new JLabel("Egreso total");
         this.jlEgresoTotal.setFont(CommonFormat.fuenteTitulo);
         this.jlEgresoCredito = new JLabel("Egreso credito");
@@ -119,6 +114,9 @@ public class VerDetalleCaja extends JDialog implements ActionListener, KeyListen
         this.jtfCajaChica = new JFormattedTextField();
         this.jtfCajaChica.setColumns(prefCols);
         this.jtfCajaChica.addKeyListener(this);
+        this.jtfDifCaja = new JFormattedTextField();
+        this.jtfDifCaja.setColumns(prefCols);
+        this.jtfDifCaja.addKeyListener(this);
         this.jtfEgresoTotal = new JFormattedTextField();
         this.jtfEgresoTotal.setColumns(prefCols);
         this.jtfEgresoTotal.addKeyListener(this);
@@ -263,6 +261,23 @@ public class VerDetalleCaja extends JDialog implements ActionListener, KeyListen
         gc.anchor = GridBagConstraints.WEST;
         gc.insets = noPadding;
         studentInfoPanel.add(jtfCajaChica, gc);
+
+        // ////// Next row ////////////////////////////
+        gc.gridy++;
+
+        gc.weightx = 1;
+        gc.weighty = 1;
+        gc.fill = GridBagConstraints.NONE;
+
+        gc.gridx = 0;
+        gc.anchor = GridBagConstraints.EAST;
+        gc.insets = rightPadding;
+        studentInfoPanel.add(jlDifCaja, gc);
+
+        gc.gridx++;
+        gc.anchor = GridBagConstraints.WEST;
+        gc.insets = noPadding;
+        studentInfoPanel.add(jtfDifCaja, gc);
 
         // ////// Next row ////////////////////////////
         gc.gridy++;
@@ -502,6 +517,7 @@ public class VerDetalleCaja extends JDialog implements ActionListener, KeyListen
             total = total + (arquDeta.getCantidad() * arquDeta.getMoneda().getValor());
         }
         this.jtfCajaChica.setValue(total);
+        calcularDiferenciaCaja();
     }
 
     private void sumarCajaChicaAnterior() {
@@ -510,6 +526,27 @@ public class VerDetalleCaja extends JDialog implements ActionListener, KeyListen
             total = total + (arquDeta.getCantidad() * arquDeta.getMoneda().getValor());
         }
         this.jtfFondoInicial.setValue(total);
+        calcularDiferenciaCaja();
+    }
+
+    private void calcularDiferenciaCaja() {
+        int fondoInicial = 0;
+        int fondoFinal = 0;
+        if (null != this.jtfFondoInicial.getValue()) {
+            try {
+                fondoInicial = Integer.valueOf(String.valueOf(this.jtfFondoInicial.getValue()));
+            } catch (Exception e) {
+                fondoInicial = 0;
+            }
+        }
+        if (null != this.jtfCajaChica.getValue()) {
+            try {
+                fondoFinal = Integer.valueOf(String.valueOf(this.jtfCajaChica.getValue()));
+            } catch (Exception e) {
+                fondoFinal = 0;
+            }
+        }
+        this.jtfDifCaja.setValue(fondoInicial - fondoFinal);
     }
 
     @Override

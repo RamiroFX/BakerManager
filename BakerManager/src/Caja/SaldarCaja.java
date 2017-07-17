@@ -58,9 +58,9 @@ public class SaldarCaja extends JDialog implements ActionListener, KeyListener {
     public JDateChooser jddInicio, jddFinal;
     public JComboBox jcbHoraInicio, jcbMinutoInicio, jcbHoraFin, jcbMinutoFin;
     private JButton saveButton, cancelButton, jbFondoAnterior;
-    private JLabel jlFondoInicial, jlCajaChica, jlEgresoTotal, jlEgresoCredito, jlEgresoContado,
+    private JLabel jlFondoInicial, jlCajaChica, jlEgresoTotal, jlDifCaja, jlEgresoCredito, jlEgresoContado,
             jlIngresoTotal, jlIngresoCredito, jlIngresoContado, jlTotalEgrIng1, jlTotalEgrIng2;
-    private JFormattedTextField jtfFondoInicial, jtfCajaChica, jtfEgresoTotal,
+    private JFormattedTextField jtfFondoInicial, jtfCajaChica, jtfDifCaja, jtfEgresoTotal,
             jtfEgresoCredito, jtfEgresoContado, jtfIngresoTotal,
             jtfIngresoCredito, jtfIngresoContado, jtfTotalEgrIng1, jtfTotalEgrIng2;
     //ARQUEO CAJA VARIABLES
@@ -91,6 +91,8 @@ public class SaldarCaja extends JDialog implements ActionListener, KeyListener {
         this.jlFondoInicial.setFont(CommonFormat.fuenteTitulo);
         this.jlCajaChica = new JLabel("Caja chica");
         this.jlCajaChica.setFont(CommonFormat.fuenteTitulo);
+        this.jlDifCaja = new JLabel("Dif. de Caja");
+        this.jlDifCaja.setFont(CommonFormat.fuenteSubTitulo);
         this.jlEgresoTotal = new JLabel("Egreso total");
         this.jlEgresoTotal.setFont(CommonFormat.fuenteTitulo);
         this.jlEgresoCredito = new JLabel("Egreso credito");
@@ -113,6 +115,9 @@ public class SaldarCaja extends JDialog implements ActionListener, KeyListener {
         this.jtfCajaChica = new JFormattedTextField();
         this.jtfCajaChica.setColumns(prefCols);
         this.jtfCajaChica.addKeyListener(this);
+        this.jtfDifCaja = new JFormattedTextField();
+        this.jtfDifCaja.setColumns(prefCols);
+        this.jtfDifCaja.addKeyListener(this);
         this.jtfEgresoTotal = new JFormattedTextField();
         this.jtfEgresoTotal.setColumns(prefCols);
         this.jtfEgresoTotal.addKeyListener(this);
@@ -257,6 +262,23 @@ public class SaldarCaja extends JDialog implements ActionListener, KeyListener {
         gc.anchor = GridBagConstraints.WEST;
         gc.insets = noPadding;
         studentInfoPanel.add(jtfCajaChica, gc);
+
+        // ////// Next row ////////////////////////////
+        gc.gridy++;
+
+        gc.weightx = 1;
+        gc.weighty = 1;
+        gc.fill = GridBagConstraints.NONE;
+
+        gc.gridx = 0;
+        gc.anchor = GridBagConstraints.EAST;
+        gc.insets = rightPadding;
+        studentInfoPanel.add(jlDifCaja, gc);
+
+        gc.gridx++;
+        gc.anchor = GridBagConstraints.WEST;
+        gc.insets = noPadding;
+        studentInfoPanel.add(jtfDifCaja, gc);
 
         // ////// Next row ////////////////////////////
         gc.gridy++;
@@ -595,7 +617,9 @@ public class SaldarCaja extends JDialog implements ActionListener, KeyListener {
     private ArrayList<ArqueoCajaDetalle> arqueoCajaInicio() {
         ArrayList<ArqueoCajaDetalle> arqueoCajaInicio = new ArrayList<>();
         for (ArqueoCajaDetalle arqueoCajaDetalle : tbmInicio.arqueoCajaDetalleList) {
-            arqueoCajaInicio.add(arqueoCajaDetalle);
+            if (arqueoCajaDetalle.getCantidad() != 0) {
+                arqueoCajaInicio.add(arqueoCajaDetalle);
+            }
         }
         return arqueoCajaInicio;
     }
@@ -603,6 +627,9 @@ public class SaldarCaja extends JDialog implements ActionListener, KeyListener {
     private ArrayList<ArqueoCajaDetalle> arqueoCajaFin() {
         ArrayList<ArqueoCajaDetalle> arqueoCajaFin = new ArrayList<>();
         for (ArqueoCajaDetalle arqueoCajaDetalle : tbmFin.arqueoCajaDetalleList) {
+            if (arqueoCajaDetalle.getCantidad() != 0) {
+                arqueoCajaFin.add(arqueoCajaDetalle);
+            }
             arqueoCajaFin.add(arqueoCajaDetalle);
         }
         return arqueoCajaFin;
@@ -616,6 +643,7 @@ public class SaldarCaja extends JDialog implements ActionListener, KeyListener {
         ArrayList<ArqueoCajaDetalle> acda = DB_Caja.consultarUltimoArqueoCaja();
         if (!acda.isEmpty()) {
             this.tbmFin.setArqueoCajaList(acda);
+            this.tbmFin.updateTable();
         }
     }
 
@@ -625,6 +653,7 @@ public class SaldarCaja extends JDialog implements ActionListener, KeyListener {
             total = total + (arquDeta.getCantidad() * arquDeta.getMoneda().getValor());
         }
         this.jtfCajaChica.setValue(total);
+        calcularDiferenciaCaja();
     }
 
     private void sumarCajaChicaAnterior() {
@@ -633,6 +662,27 @@ public class SaldarCaja extends JDialog implements ActionListener, KeyListener {
             total = total + (arquDeta.getCantidad() * arquDeta.getMoneda().getValor());
         }
         this.jtfFondoInicial.setValue(total);
+        calcularDiferenciaCaja();
+    }
+
+    private void calcularDiferenciaCaja() {
+        int fondoInicial = 0;
+        int fondoFinal = 0;
+        if (null != this.jtfFondoInicial.getValue()) {
+            try {
+                fondoInicial = Integer.valueOf(String.valueOf(this.jtfFondoInicial.getValue()));
+            } catch (Exception e) {
+                fondoInicial = 0;
+            }
+        }
+        if (null != this.jtfCajaChica.getValue()) {
+            try {
+                fondoFinal = Integer.valueOf(String.valueOf(this.jtfCajaChica.getValue()));
+            } catch (Exception e) {
+                fondoFinal = 0;
+            }
+        }
+        this.jtfDifCaja.setValue(fondoInicial - fondoFinal);
     }
 
     @Override

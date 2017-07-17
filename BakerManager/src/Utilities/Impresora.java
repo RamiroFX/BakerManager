@@ -415,7 +415,7 @@ public class Impresora {
                 + "Ingreso+Egreso: " + (Ingresos + Egresos) + "\n";
 
         String PIE = "---------------------------------\n";
-        String ticket = TICKET_CABECERA + CABECERA + CUERPO + PIE + TICKET_PIE_SIN_GRACIAS;
+        String ticket = CABECERA + CUERPO + PIE + TICKET_PIE_SIN_GRACIAS;
         byte[] bytes = ticket.getBytes();
         DocFlavor flavor = DocFlavor.BYTE_ARRAY.AUTOSENSE;
         Doc doc = new SimpleDoc(bytes, flavor, null);
