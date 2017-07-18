@@ -183,22 +183,19 @@ public class C_crear_egreso extends MouseAdapter implements ActionListener, KeyL
     }
 
     private void actualizarStock() {
-        int option = JOptionPane.showConfirmDialog(vista, "¿Desea agregar estos productos al stock?", "Atención", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-        if (option == JOptionPane.YES_OPTION) {
-            try {
-                ArrayList<Integer> id = new ArrayList();
-                ArrayList<Double> cantidad = new ArrayList();
-                int cantFilas = this.dtm.getRowCount();
-                for (int i = 0; i < cantFilas; i++) {
-                    id.add(this.modelo.egreso_detalle[i].getId_producto());
-                    cantidad.add(this.modelo.egreso_detalle[i].getCantidad());
-                }
-                DB_Producto.sumarStock(id, cantidad);
-            } catch (Exception e) {
-                e.printStackTrace();
-                return;
+        try {
+            ArrayList<Integer> id = new ArrayList();
+            ArrayList<Double> cantidad = new ArrayList();
+            int cantFilas = this.dtm.getRowCount();
+            for (int i = 0; i < cantFilas; i++) {
+                id.add(this.modelo.egreso_detalle[i].getId_producto());
+                cantidad.add(this.modelo.egreso_detalle[i].getCantidad());
             }
+            DB_Producto.sumarStock(id, cantidad);
+        } catch (Exception e) {
+            JOptionPane.showInternalMessageDialog(vista, "Hubo un problema al agregar los productos al stock", "Atención", JOptionPane.ERROR_MESSAGE);
         }
+
     }
 
     public void recibirProveedor(M_proveedor proveedor) {
@@ -327,6 +324,7 @@ public class C_crear_egreso extends MouseAdapter implements ActionListener, KeyL
             }
         });
     }
+
     private void mostrarMensaje(String message) {
         Toaster popUp = new Toaster();
         popUp.showToaster(message);

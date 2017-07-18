@@ -31,10 +31,10 @@ public class DB_Ingreso {
     private static Statement st = null;
     private static PreparedStatement pst = null;
     private static ResultSet rs = null;
+
     /*
      * READ
      */
-
     public static ResultSetTableModel obtenerIngreso(String inicio, String fin, String tipo_operacion, String nroFactura, M_facturaCabecera factura_cabecera) {
         ResultSetTableModel rstm = null;
 
@@ -63,7 +63,7 @@ public class DB_Ingreso {
                 Query = Query + " AND FC.ID_FUNCIONARIO = " + factura_cabecera.getFuncionario().getId_funcionario();
             }
         }
-        Query=Query+" ORDER BY \"ID\"";
+        Query = Query + " ORDER BY \"ID\"";
         try {
             st = DB_manager.getConection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             // se ejecuta el query y se obtienen los resultados en un ResultSet
@@ -96,7 +96,8 @@ public class DB_Ingreso {
         } catch (SQLException ex) {
             Logger lgr = Logger.getLogger(DB_Egreso.class.getName());
             lgr.log(Level.SEVERE, ex.getMessage(), ex);
-        } /*finally {
+        }
+        /*finally {
          try {
          if (rs != null) {
          rs.close();
@@ -123,10 +124,10 @@ public class DB_Ingreso {
 
         return rstm;
     }
+
     /*
      * INSERT
      */
-
     public static int insertarIngreso(M_facturaCabecera cabecera, ArrayList<M_facturaDetalle> detalle) {
         String INSERT_DETALLE = "INSERT INTO FACTURA_DETALLE(ID_FACTURA_CABECERA, ID_PRODUCTO, CANTIDAD, PRECIO, DESCUENTO, OBSERVACION)VALUES (?, ?, ?, ?, ?, ?);";
         //LA SGBD SE ENCARGA DE INSERTAR EL TIMESTAMP.
@@ -307,7 +308,8 @@ public class DB_Ingreso {
         } catch (SQLException ex) {
             Logger lgr = Logger.getLogger(DB_Ingreso.class.getName());
             lgr.log(Level.SEVERE, ex.getMessage(), ex);
-        } /*finally {
+        }
+        /*finally {
          try {
          if (rs != null) {
          rs.close();
@@ -356,7 +358,7 @@ public class DB_Ingreso {
         }
         return totalEgreso;
     }
-    
+
     public static ResultSetTableModel obtenerMesa(String inicio, String fin, String tipo_operacion) {
         ResultSetTableModel rstm = null;
         String q = "SELECT M.ID_MESA \"ID\", (SELECT NOMBRE || ' '|| APELLIDO WHERE F.ID_PERSONA = P.ID_PERSONA)\"Empleado\", "
@@ -575,17 +577,17 @@ public class DB_Ingreso {
     }
 
     public static void actualizarMesa(M_mesa mesa) {
-        String UPDATE_MESA = "UPDATE MESA SET "
-                + "ID_FUNCIONARIO= " + mesa.getFuncionario().getId_funcionario() + ", "
-                + "ID_CLIENTE=" + mesa.getCliente().getIdCliente() + ", "
-                + "NUMERO=" + mesa.getNumeroMesa() + ", "
-                + "ID_COND_VENTA = " + mesa.getIdCondVenta()
-                + " WHERE ID_MESA = " + mesa.getIdMesa();
+        String UPDATE_MESA = "UPDATE MESA SET ID_FUNCIONARIO = ?, ID_CLIENTE = ?, MESA_NUMERO = ?, ID_COND_VENTA = ? WHERE ID_MESA = ?";
         try {
             DB_manager.habilitarTransaccionManual();
-            st = DB_manager.getConection().createStatement();
-            st.executeUpdate(UPDATE_MESA);
-            st.close();
+            pst = DB_manager.getConection().prepareStatement(UPDATE_MESA);
+            pst.setInt(1, mesa.getFuncionario().getId_funcionario());
+            pst.setInt(2, mesa.getCliente().getIdCliente());
+            pst.setInt(3, mesa.getNumeroMesa());
+            pst.setInt(4, mesa.getIdCondVenta());
+            pst.setInt(5, mesa.getIdMesa());
+            pst.executeUpdate();
+            pst.close();
             DB_manager.establecerTransaccion();
         } catch (SQLException ex) {
             System.out.println(ex.getNextException());

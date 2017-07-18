@@ -64,6 +64,7 @@ public class SaldarCaja extends JDialog implements ActionListener, KeyListener {
             jtfEgresoCredito, jtfEgresoContado, jtfIngresoTotal,
             jtfIngresoCredito, jtfIngresoContado, jtfTotalEgrIng1, jtfTotalEgrIng2;
     //ARQUEO CAJA VARIABLES
+    private JTabbedPane jpArqueoCaja;
     private JTable jtInicio, jtFin;
     private JScrollPane jspInicio, jspFin;
     private ArqueoCajaTableModel tbmInicio, tbmFin;
@@ -429,7 +430,7 @@ public class SaldarCaja extends JDialog implements ActionListener, KeyListener {
         jpSaldarCaja.add(buttonsPanel, BorderLayout.SOUTH);
 
         //ARQUEO CAJA
-        JTabbedPane jpArqueoCaja = new JTabbedPane();
+        jpArqueoCaja = new JTabbedPane();
         JPanel jpCajaInicial = new JPanel(new BorderLayout());
         JPanel jpCajaInicialSouth = new JPanel();
         jpCajaInicialSouth.add(jbFondoAnterior);
@@ -462,6 +463,8 @@ public class SaldarCaja extends JDialog implements ActionListener, KeyListener {
         KEYLISTENER
          */
         this.jtInicio.addKeyListener(this);
+        this.jtFin.addKeyListener(this);
+        this.jpArqueoCaja.addKeyListener(this);
     }
 
     private void initializeLogic() {

@@ -5,11 +5,13 @@
 package Ventas;
 
 import Cliente.Seleccionar_cliente;
+import DB.DB_Cliente;
 import Entities.M_cliente;
 import Entities.M_facturaDetalle;
 import Entities.M_funcionario;
 import Entities.M_mesa_detalle;
 import Entities.M_producto;
+import Entities.M_telefono;
 import Parametros.TipoOperacion;
 import Producto.SeleccionarCantidadProduducto;
 import Producto.SeleccionarProducto;
@@ -21,6 +23,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 import javax.swing.JOptionPane;
 
 /**
@@ -235,10 +238,31 @@ public class C_verMesa extends MouseAdapter implements ActionListener, KeyListen
     }
 
     public void recibirCliente(M_cliente cliente) {
-        this.modelo.getMesa().setCliente(cliente);
+        this.modelo.actualizarDatosMesa(cliente);
         String nombre = this.modelo.getMesa().getCliente().getNombre();
         String entidad = this.modelo.getMesa().getCliente().getEntidad();
-        this.vista.jtfCliente.setText(nombre + " (" + entidad + ")");
+        String client = entidad;
+        if (this.modelo.getMesa().getCliente().getNombre() != null) {
+            client = client + " (" + nombre + ")";
+        }
+        String ruc = "";
+        if (this.modelo.getMesa().getCliente().getRuc() != null) {
+            ruc = this.modelo.getMesa().getCliente().getRuc();
+            if (this.modelo.getMesa().getCliente().getRucId() != null) {
+                ruc = ruc + "-" + this.modelo.getMesa().getCliente().getRucId();
+            }
+        }
+        String direccion = this.modelo.getMesa().getCliente().getDireccion();
+        ArrayList<M_telefono> telefono = DB_Cliente.obtenerTelefonoCliente(this.modelo.getMesa().getCliente().getIdCliente());
+        this.vista.jtfCliente.setText(client);
+        this.vista.jtfClieRuc.setText(ruc);
+        this.vista.jtfClieDireccion.setText(direccion);
+        if (!telefono.isEmpty()) {
+            this.vista.jtfClieTelefono.setText(telefono.get(0).getNumero());
+        } else {
+            this.vista.jtfClieTelefono.setText("");
+        }
+        crearVentas.actualizarTablaMesa();
     }
 
     private void guardarVenta() {

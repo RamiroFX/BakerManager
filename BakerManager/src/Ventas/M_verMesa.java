@@ -146,4 +146,9 @@ public class M_verMesa {
         preparaVenta();
         Impresora.imprimirMesa(mesa, detalles);
     }
+
+    public void actualizarDatosMesa(M_cliente cliente) {
+        getMesa().setCliente(cliente);
+        DB_Ingreso.actualizarMesa(mesa);
+    }
 }
