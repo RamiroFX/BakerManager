@@ -93,7 +93,6 @@ class V_MenuPrincipal extends JInternalFrame {
         jbCobroPago = new JButton("Cobros/Pagos [F10]");
         jbCobroPago.setName("Gestión CobroPago");
         jbCobroPago.setPreferredSize(dim);
-        jbCobroPago.setEnabled(false);
         jbSalir = new JButton("Salir [ESC]");
         jftFecha = new JFormattedTextField(
                 new DefaultFormatterFactory(

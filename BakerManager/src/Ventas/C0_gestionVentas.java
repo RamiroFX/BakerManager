@@ -136,8 +136,19 @@ public class C0_gestionVentas implements GestionInterface {
         EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
+                try {
+                    if (!vista.jtfNroFactura.getText().trim().isEmpty()) {
+                        int nroFac = Integer.valueOf(vista.jtfNroFactura.getText());
+                        modelo.getCabecera().setIdFacturaCabecera(nroFac);
+                    } else {
+                        modelo.getCabecera().setIdFacturaCabecera(null);
+                    }
+                } catch (Exception e) {
+                    JOptionPane.showMessageDialog(vista, "Ingrese un número entero válido para Nro. factura", "Atención", JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
                 if (modelo.validarFechas(vista.jddInicio.getDate(), vista.jddFinal.getDate())) {
-                    vista.jtIngresoCabecera.establecerModelo(modelo.obtenerVentas(vista.jddInicio.getDate(), vista.jddFinal.getDate(), vista.jtfNroFactura.getText(), vista.jcbCondCompra.getSelectedItem().toString()));
+                    vista.jtIngresoCabecera.establecerModelo(modelo.obtenerVentas(vista.jddInicio.getDate(), vista.jddFinal.getDate(), vista.jcbCondCompra.getSelectedItem().toString()));
                     Utilities.c_packColumn.packColumns(vista.jtIngresoCabecera.table, 1);
                 } else {
                     vista.jddFinal.setDate(vista.jddInicio.getDate());

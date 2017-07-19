@@ -4,7 +4,6 @@ import DB.DB_Caja;
 import DB.ResultSetTableModel;
 import Entities.Caja;
 import Entities.M_funcionario;
-import javax.swing.table.TableModel;
 
 /**
  *

@@ -6,6 +6,7 @@ package MenuPrincipal;
 
 import Caja.GestionCaja;
 import Cliente.Gestion_cliente;
+import Cobros_Pagos.GestionCobroPago;
 import Egresos.Gestion_Egreso;
 import Entities.M_menu_item;
 import Pedido.GestionPedidos;
@@ -95,6 +96,7 @@ public class C_MenuPrincipal implements ActionListener, KeyListener {
         this.vista.jbSalir.addActionListener(this);
         this.vista.jbEmpleados.addActionListener(this);
         this.vista.jbCaja.addActionListener(this);
+        this.vista.jbCobroPago.addActionListener(this);
         this.vista.jbReportes.addActionListener(this);
         //////
 
@@ -107,6 +109,7 @@ public class C_MenuPrincipal implements ActionListener, KeyListener {
         this.vista.jbSalir.addKeyListener(this);
         this.vista.jbEmpleados.addKeyListener(this);
         this.vista.jbCaja.addKeyListener(this);
+        this.vista.jbCobroPago.addKeyListener(this);
         this.vista.jbReportes.addKeyListener(this);
     }
 
@@ -152,6 +155,9 @@ public class C_MenuPrincipal implements ActionListener, KeyListener {
         } else if (src.equals(this.vista.jbCaja)) {
             GestionCaja gestionCaja = new GestionCaja(c_inicio);
             gestionCaja.mostrarVista();
+        } else if (src.equals(this.vista.jbCobroPago)) {
+            GestionCobroPago gestionCobroPago = new GestionCobroPago(c_inicio);
+            gestionCobroPago.mostrarVista();
         } else if (src.equals(this.vista.jbReportes)) {
             /*POSTTS POS = new POSTTS();
              POS.setVisible(true);
@@ -247,7 +253,10 @@ public class C_MenuPrincipal implements ActionListener, KeyListener {
                 break;
             }
             case (KeyEvent.VK_F10): {
-                //TODO GESTION CobroPago
+                if (vista.jbCobroPago.isEnabled()) {
+                    GestionCobroPago gestionCobroPago = new GestionCobroPago(c_inicio);
+                    gestionCobroPago.mostrarVista();
+                }
                 break;
             }
             case (KeyEvent.VK_ESCAPE): {

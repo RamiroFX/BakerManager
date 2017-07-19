@@ -35,7 +35,7 @@ public class DB_Ingreso {
     /*
      * READ
      */
-    public static ResultSetTableModel obtenerIngreso(String inicio, String fin, String tipo_operacion, String nroFactura, M_facturaCabecera factura_cabecera) {
+    public static ResultSetTableModel obtenerIngreso(String inicio, String fin, String tipo_operacion, M_facturaCabecera factura_cabecera) {
         ResultSetTableModel rstm = null;
 
         String Query = "SELECT ID_FACTURA_CABECERA \"ID\", "
@@ -49,8 +49,10 @@ public class DB_Ingreso {
                 + "AND '" + fin + "'::timestamp "
                 + "AND FC.ID_FUNCIONARIO = F.ID_FUNCIONARIO "
                 + "AND F.ID_PERSONA = P.ID_PERSONA ";
-        if (!nroFactura.isEmpty()) {
-            Query = Query + " AND FC.ID_FACTURA_CABECERA = " + nroFactura;
+        if (null != factura_cabecera) {
+            if (null != factura_cabecera.getIdFacturaCabecera()) {
+                Query = Query + " AND FC.ID_FACTURA_CABECERA = " + factura_cabecera.getIdFacturaCabecera();
+            }
         }
         if (!"Todos".equals(tipo_operacion)) {
             Query = Query + " AND FC.ID_COND_VENTA = (SELECT TIOP.ID_TIPO_OPERACION FROM TIPO_OPERACION TIOP WHERE TIOP.DESCRIPCION LIKE'" + tipo_operacion + "')";

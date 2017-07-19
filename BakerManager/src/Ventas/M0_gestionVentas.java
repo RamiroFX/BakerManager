@@ -62,10 +62,9 @@ public class M0_gestionVentas {
         return false;
     }
 
-    public ResultSetTableModel obtenerVentas(final Date f_inicio, final Date f_final, final String nroFactura, final String condVenta) {
+    public ResultSetTableModel obtenerVentas(final Date f_inicio, final Date f_final, final String condVenta) {
         String fechaInicio = "";
         String fechaFinal = "";
-        String nro_factura = nroFactura;
         try {
             java.util.Date dateInicio = f_inicio;
             fechaInicio = new Timestamp(dateInicio.getTime()).toString().substring(0, 11);
@@ -80,7 +79,7 @@ public class M0_gestionVentas {
         } catch (Exception e) {
             fechaFinal = "Todos";
         }
-        return DB_Ingreso.obtenerIngreso(fechaInicio, fechaFinal, condVenta, nro_factura, getCabecera());
+        return DB_Ingreso.obtenerIngreso(fechaInicio, fechaFinal, condVenta, getCabecera());
     }
 
     public void borrarDatos() {

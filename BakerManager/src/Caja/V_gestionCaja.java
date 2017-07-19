@@ -33,7 +33,7 @@ public class V_gestionCaja extends JInternalFrame {
         super("Caja", true, true, true, true);
         //setPreferredSize(new Dimension(950, 600));
         setSize(950, 600);
-        setName("jifGestionVentas");
+        setName("jifGestionCaja");
         initTop();
         initMid();
         initBot();
