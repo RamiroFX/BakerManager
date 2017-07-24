@@ -111,14 +111,14 @@ public class V_crearPedido extends JDialog {
             jcbHora.addItem("0" + i);
         }
         for (int i = 10; i < 24; i++) {
-            jcbHora.addItem(i);
+            jcbHora.addItem(""+i);
         }
         jcbMinuto = new JComboBox();
         for (int i = 0; i < 10; i++) {
             jcbMinuto.addItem("0" + i);
         }
         for (int i = 10; i < 60; i++) {
-            jcbMinuto.addItem(i);
+            jcbMinuto.addItem(""+i);
         }
         JPanel jpHora = new JPanel(new GridLayout(1, 2));
         jpHora.add(jcbHora);

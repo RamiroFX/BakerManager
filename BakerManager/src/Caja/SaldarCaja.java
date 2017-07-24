@@ -159,22 +159,34 @@ public class SaldarCaja extends JDialog implements ActionListener, KeyListener {
             jcbHoraFin.addItem("0" + i);
         }
         for (int i = 10; i < 24; i++) {
-            jcbHoraInicio.addItem(i);
-            jcbHoraFin.addItem(i);
+            jcbHoraInicio.addItem("" + i);
+            jcbHoraFin.addItem("" + i);
         }
         for (int i = 0; i < 10; i++) {
             jcbMinutoInicio.addItem("0" + i);
             jcbMinutoFin.addItem("0" + i);
         }
         for (int i = 10; i < 60; i++) {
-            jcbMinutoInicio.addItem(i);
-            jcbMinutoFin.addItem(i);
+            jcbMinutoInicio.addItem("" + i);
+            jcbMinutoFin.addItem("" + i);
         }
-        int horaFin = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
+        ///INICIO FU
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+        Calendar calendar = Calendar.getInstance();
+        Date currentTime = calendar.getTime();
+        String horaT = sdf.format(currentTime).substring(0, 2);
+        int horas = Integer.valueOf(horaT);
+        if (horas >= 0 && horas < 10) {
+            this.jcbHoraFin.setSelectedItem("" + horas);
+        } else {
+            this.jcbHoraFin.setSelectedItem("" + horas);
+        }
         int minutoFin = Calendar.getInstance().get(Calendar.MINUTE);
-        jcbHoraFin.setSelectedItem(horaFin);
-        jcbMinutoFin.setSelectedItem(minutoFin);
-
+        if (minutoFin < 10) {
+            jcbMinutoFin.setSelectedItem("0" + minutoFin);
+        } else {
+            jcbMinutoFin.setSelectedItem("" + minutoFin);
+        }
         //ARQUEO CAJA 
         tbmInicio = new ArqueoCajaTableModel();
         jtInicio = new JTable(tbmInicio);
@@ -589,6 +601,13 @@ public class SaldarCaja extends JDialog implements ActionListener, KeyListener {
                     javax.swing.JOptionPane.OK_OPTION);
             return;
         }
+        if (apertura.after(cierre)) {
+            javax.swing.JOptionPane.showMessageDialog(this,
+                    "La fecha de apertura debe ser menor a la de cierre.",
+                    "Parametros incorrectos",
+                    javax.swing.JOptionPane.OK_OPTION);
+            return;
+        }
         int egresoContado = (int) jtfEgresoContado.getValue();
         int egresoCredito = (int) jtfEgresoCredito.getValue();
         int ingresoContado = (int) jtfIngresoContado.getValue();
@@ -613,7 +632,9 @@ public class SaldarCaja extends JDialog implements ActionListener, KeyListener {
                     javax.swing.JOptionPane.OK_OPTION);
             return;
         }
-        DB_Caja.insertarArqueoCaja(caja, arqueoCajaInicio(), arqueoCajaFin());
+        ArrayList<ArqueoCajaDetalle> arqueoCajaInicio = arqueoCajaInicio();
+        ArrayList<ArqueoCajaDetalle> arqueoCajaFin = arqueoCajaFin();
+        DB_Caja.insertarArqueoCaja(caja, arqueoCajaInicio, arqueoCajaFin);
         this.dispose();
     }
 
@@ -633,7 +654,6 @@ public class SaldarCaja extends JDialog implements ActionListener, KeyListener {
             if (arqueoCajaDetalle.getCantidad() != 0) {
                 arqueoCajaFin.add(arqueoCajaDetalle);
             }
-            arqueoCajaFin.add(arqueoCajaDetalle);
         }
         return arqueoCajaFin;
     }

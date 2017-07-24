@@ -74,17 +74,18 @@ public class C_crearPedido extends MouseAdapter implements ActionListener, KeyLi
         this.vista.jftIva10.setFont(fuente); // NOI18N
         this.vista.jftTotal.setFormatterFactory(dff);
         this.vista.jftTotal.setFont(fuente); // NOI18N
-        Date today = Calendar.getInstance().getTime();
-        this.vista.jdcFechaEntrega.setDate(today);
-        int hora = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
-        System.out.println("Hora: " + hora);
-        hora = hora + 1;
-        String hora_temp = "0";
-        if (hora >= 0 && hora < 10) {
-            hora_temp = hora_temp + hora;
-            this.vista.jcbHora.setSelectedItem(hora_temp);
+        //////////////////////
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+        Calendar calendar = Calendar.getInstance();
+        this.vista.jdcFechaEntrega.setDate(calendar.getTime());
+        Date currentTime = calendar.getTime();
+        String horaT = sdf.format(currentTime).substring(0, 2);
+        int horas= Integer.valueOf(horaT);
+        if (horas >= 0 && horas < 10) {
+            this.vista.jcbHora.setSelectedItem(""+(horas+1));
+            
         } else {
-            this.vista.jcbHora.setSelectedItem(hora);
+            this.vista.jcbHora.setSelectedItem(""+(horas+1));
         }
         establecerCondicionVenta();
     }

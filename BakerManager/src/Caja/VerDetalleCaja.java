@@ -82,8 +82,10 @@ public class VerDetalleCaja extends JDialog implements ActionListener, KeyListen
         Date today = Calendar.getInstance().getTime();
         jddInicio = new JDateChooser(today);
         jddInicio.setPreferredSize(new Dimension(150, 10));
+        jddInicio.setEnabled(false);
         jddFinal = new JDateChooser(today);
         jddFinal.setPreferredSize(new Dimension(150, 10));
+        jddFinal.setEnabled(false);
         this.printButton = new JButton("Imprimir");
         this.cancelButton = new JButton("Cancelar");
         this.jlFondoInicial = new JLabel("Fondo inicial");
@@ -140,6 +142,7 @@ public class VerDetalleCaja extends JDialog implements ActionListener, KeyListen
 
         this.jtfFondoInicial.setEditable(false);
         this.jtfCajaChica.setEditable(false);
+        this.jtfDifCaja.setEditable(false);
         this.jtfTotalEgrIng1.setEditable(false);
         this.jtfTotalEgrIng2.setEditable(false);
         this.jtfEgresoTotal.setEditable(false);
@@ -152,6 +155,10 @@ public class VerDetalleCaja extends JDialog implements ActionListener, KeyListen
         jcbMinutoInicio = new JComboBox();
         jcbHoraFin = new JComboBox();
         jcbMinutoFin = new JComboBox();
+        jcbHoraInicio.setEnabled(false);
+        jcbMinutoInicio.setEnabled(false);
+        jcbHoraFin.setEnabled(false);
+        jcbMinutoFin.setEnabled(false);
         for (int i = 0; i < 10; i++) {
             jcbHoraInicio.addItem("0" + i);
             jcbHoraFin.addItem("0" + i);
@@ -168,10 +175,6 @@ public class VerDetalleCaja extends JDialog implements ActionListener, KeyListen
             jcbMinutoInicio.addItem(i);
             jcbMinutoFin.addItem(i);
         }
-        int horaFin = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
-        int minutoFin = Calendar.getInstance().get(Calendar.MINUTE);
-        jcbHoraFin.setSelectedItem(horaFin);
-        jcbMinutoFin.setSelectedItem(minutoFin);
 
         //ARQUEO CAJA 
         tbmInicio = new ArqueoCajaTableModel();
@@ -492,7 +495,33 @@ public class VerDetalleCaja extends JDialog implements ActionListener, KeyListen
         this.tbmFin.setArqueoCajaList(acdFin);
         this.tbmFin.updateTable();
         Utilities.c_packColumn.packColumns(jtFin, 1);
-
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(caja.getTiempoCierre());
+        int horaFin = Calendar.getInstance().get(cal.get(Calendar.HOUR_OF_DAY));
+        int minutoFin = Calendar.getInstance().get(cal.get(Calendar.MINUTE));
+        if (horaFin < 10) {
+            jcbHoraFin.setSelectedItem("0" + horaFin);
+        } else {
+            jcbHoraFin.setSelectedItem(horaFin);
+        }
+        if (minutoFin < 10) {
+            jcbMinutoFin.setSelectedItem("0" + minutoFin);
+        } else {
+            jcbMinutoFin.setSelectedItem(minutoFin);
+        }
+        cal.setTime(caja.getTiempoApertura());
+        int horaInicio = Calendar.getInstance().get(cal.get(Calendar.HOUR_OF_DAY));
+        int minutoInicio = Calendar.getInstance().get(cal.get(Calendar.MINUTE));
+        if (horaInicio < 10) {
+            jcbHoraInicio.setSelectedItem("0" + horaInicio);
+        } else {
+            jcbHoraInicio.setSelectedItem(horaInicio);
+        }
+        if (minutoInicio < 10) {
+            jcbMinutoInicio.setSelectedItem("0" + minutoInicio);
+        } else {
+            jcbMinutoInicio.setSelectedItem(minutoInicio);
+        }
     }
 
     private void imprimirCaja() {
