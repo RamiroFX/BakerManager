@@ -52,8 +52,8 @@ public class C_MenuPrincipal implements ActionListener, KeyListener {
         this.vista.jbClientes.setEnabled(false);
         this.vista.jbCompras.setEnabled(false);
         this.vista.jbPedidos.setEnabled(false);
-        this.vista.jbCaja.setEnabled(false);
-        this.vista.jbCobroPago.setEnabled(false);
+//        this.vista.jbCaja.setEnabled(false);
+//        this.vista.jbCobroPago.setEnabled(false);
         this.vista.jbReportes.setEnabled(false);
         ArrayList<M_menu_item> accesos = c_inicio.modelo.getRol_usuario().getAccesos();
         for (int i = 0; i < accesos.size(); i++) {

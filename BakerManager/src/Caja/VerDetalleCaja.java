@@ -24,6 +24,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -54,18 +55,22 @@ public class VerDetalleCaja extends JDialog implements ActionListener, KeyListen
     public JDateChooser jddInicio, jddFinal;
     public JComboBox jcbHoraInicio, jcbMinutoInicio, jcbHoraFin, jcbMinutoFin;
     private JButton printButton, cancelButton;
-    private JLabel jlFondoInicial, jlCajaChica, jlEgresoTotal, jlDifCaja, jlEgresoCredito, jlEgresoContado,
-            jlIngresoTotal, jlIngresoCredito, jlIngresoContado, jlTotalEgrIng1, jlTotalEgrIng2;
-    private JFormattedTextField jtfFondoInicial, jtfCajaChica, jtfDifCaja, jtfEgresoTotal,
-            jtfEgresoCredito, jtfEgresoContado, jtfIngresoTotal,
-            jtfIngresoCredito, jtfIngresoContado, jtfTotalEgrIng1, jtfTotalEgrIng2;
+    private JLabel jlFondoInicial, jlCajaChica, jlEgresoTotal, jlDepositar,
+            jlDifCaja, jlEgresoCredito, jlEgresoContado,
+            jlIngresoTotal, jlIngresoCredito, jlIngresoContado, jlTotalEgrIng1,
+            jlTotalEgrIng2;
+    private JFormattedTextField jtfFondoInicial, jtfCajaChica, jtfDifCaja,
+            jtfDepositar, jtfEgresoTotal, jtfEgresoCredito, jtfEgresoContado,
+            jtfIngresoTotal, jtfIngresoCredito, jtfIngresoContado,
+            jtfTotalEgrIng1, jtfTotalEgrIng2;
     //ARQUEO CAJA VARIABLES
-    private JTable jtInicio, jtFin;
-    private JScrollPane jspInicio, jspFin;
-    private ArqueoCajaTableModel tbmInicio, tbmFin;
+    private JTable jtInicio, jtFin, jtDepositar;
+    private JScrollPane jspInicio, jspFin, jspDepositar;
+    private ArqueoCajaTableModel tbmInicio, tbmFin, tbmDepositar;
     //LOGIC VARIABLES
     private ArrayList<ArqueoCajaDetalle> acdInicio;
     private ArrayList<ArqueoCajaDetalle> acdFin;
+    private ArrayList<ArqueoCajaDetalle> acdDepositar;
     private Caja caja;
 
     public VerDetalleCaja(C_inicio inicio, int idCaja) {
@@ -94,6 +99,8 @@ public class VerDetalleCaja extends JDialog implements ActionListener, KeyListen
         this.jlCajaChica.setFont(CommonFormat.fuenteTitulo);
         this.jlDifCaja = new JLabel("Dif. de Caja");
         this.jlDifCaja.setFont(CommonFormat.fuenteSubTitulo);
+        this.jlDepositar = new JLabel("A depositar");
+        this.jlDepositar.setFont(CommonFormat.fuenteTitulo);
         this.jlEgresoTotal = new JLabel("Egreso total");
         this.jlEgresoTotal.setFont(CommonFormat.fuenteTitulo);
         this.jlEgresoCredito = new JLabel("Egreso credito");
@@ -119,6 +126,8 @@ public class VerDetalleCaja extends JDialog implements ActionListener, KeyListen
         this.jtfDifCaja = new JFormattedTextField();
         this.jtfDifCaja.setColumns(prefCols);
         this.jtfDifCaja.addKeyListener(this);
+        this.jtfDepositar = new JFormattedTextField();
+        this.jtfDepositar.setColumns(prefCols);
         this.jtfEgresoTotal = new JFormattedTextField();
         this.jtfEgresoTotal.setColumns(prefCols);
         this.jtfEgresoTotal.addKeyListener(this);
@@ -143,6 +152,7 @@ public class VerDetalleCaja extends JDialog implements ActionListener, KeyListen
         this.jtfFondoInicial.setEditable(false);
         this.jtfCajaChica.setEditable(false);
         this.jtfDifCaja.setEditable(false);
+        this.jtfDepositar.setEditable(false);
         this.jtfTotalEgrIng1.setEditable(false);
         this.jtfTotalEgrIng2.setEditable(false);
         this.jtfEgresoTotal.setEditable(false);
@@ -164,25 +174,31 @@ public class VerDetalleCaja extends JDialog implements ActionListener, KeyListen
             jcbHoraFin.addItem("0" + i);
         }
         for (int i = 10; i < 24; i++) {
-            jcbHoraInicio.addItem(i);
-            jcbHoraFin.addItem(i);
+            jcbHoraInicio.addItem("" + i);
+            jcbHoraFin.addItem("" + i);
         }
         for (int i = 0; i < 10; i++) {
-            jcbMinutoInicio.addItem("0" + i);
             jcbMinutoFin.addItem("0" + i);
+            jcbMinutoInicio.addItem("0" + i);
         }
         for (int i = 10; i < 60; i++) {
-            jcbMinutoInicio.addItem(i);
-            jcbMinutoFin.addItem(i);
+            jcbMinutoFin.addItem("" + i);
+            jcbMinutoInicio.addItem("" + i);
         }
 
         //ARQUEO CAJA 
         tbmInicio = new ArqueoCajaTableModel();
         jtInicio = new JTable(tbmInicio);
+        jtInicio.setEnabled(false);
         jspInicio = new JScrollPane(jtInicio);
         tbmFin = new ArqueoCajaTableModel();
         jtFin = new JTable(tbmFin);
+        jtFin.setEnabled(false);
         jspFin = new JScrollPane(jtFin);
+        tbmDepositar = new ArqueoCajaTableModel();
+        jtDepositar = new JTable(tbmDepositar);
+        jtDepositar.setEnabled(false);
+        jspDepositar = new JScrollPane(jtDepositar);
     }
 
     private void constructLayout() {
@@ -281,6 +297,22 @@ public class VerDetalleCaja extends JDialog implements ActionListener, KeyListen
         gc.anchor = GridBagConstraints.WEST;
         gc.insets = noPadding;
         studentInfoPanel.add(jtfDifCaja, gc);
+        // ////// Next row ////////////////////////////
+        gc.gridy++;
+
+        gc.weightx = 1;
+        gc.weighty = 1;
+        gc.fill = GridBagConstraints.NONE;
+
+        gc.gridx = 0;
+        gc.anchor = GridBagConstraints.EAST;
+        gc.insets = rightPadding;
+        studentInfoPanel.add(jlDepositar, gc);
+
+        gc.gridx++;
+        gc.anchor = GridBagConstraints.WEST;
+        gc.insets = noPadding;
+        studentInfoPanel.add(jtfDepositar, gc);
 
         // ////// Next row ////////////////////////////
         gc.gridy++;
@@ -434,6 +466,7 @@ public class VerDetalleCaja extends JDialog implements ActionListener, KeyListen
         JTabbedPane jpArqueoCaja = new JTabbedPane();
         jpArqueoCaja.addTab("Caja chica", jspInicio);
         jpArqueoCaja.addTab("Fondo inicial", jspFin);
+        jpArqueoCaja.addTab("Depositado", jspDepositar);
         setLayout(new GridLayout(1, 2));
         add(jpArqueoCaja);
         add(jpSaldarCaja);
@@ -454,6 +487,12 @@ public class VerDetalleCaja extends JDialog implements ActionListener, KeyListen
                 sumarCajaChicaAnterior();
             }
         });
+        this.tbmDepositar.addTableModelListener(new TableModelListener() {
+            @Override
+            public void tableChanged(TableModelEvent e) {
+                arqueoDepositar();
+            }
+        });
         /*
         KEYLISTENER
          */
@@ -462,13 +501,14 @@ public class VerDetalleCaja extends JDialog implements ActionListener, KeyListen
 
     private void setWindows(JFrame parentFrame) {
         setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-        setSize(900, 500);
+        setSize(900, 550);
         setLocationRelativeTo(parentFrame);
     }
 
     private void initializeLogic(int idCaja) {
         acdInicio = DB_Caja.obtenerArqueoCaja(idCaja, 1);
         acdFin = DB_Caja.obtenerArqueoCaja(idCaja, 2);
+        acdDepositar = DB_Caja.obtenerArqueoCaja(idCaja, 3);
         caja = DB_Caja.obtenerCaja(idCaja);
         int egresoContado = caja.getEgresoContado();
         int egresoCretdito = caja.getEgresoCredito();
@@ -495,32 +535,42 @@ public class VerDetalleCaja extends JDialog implements ActionListener, KeyListen
         this.tbmFin.setArqueoCajaList(acdFin);
         this.tbmFin.updateTable();
         Utilities.c_packColumn.packColumns(jtFin, 1);
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(caja.getTiempoCierre());
-        int horaFin = Calendar.getInstance().get(cal.get(Calendar.HOUR_OF_DAY));
-        int minutoFin = Calendar.getInstance().get(cal.get(Calendar.MINUTE));
-        if (horaFin < 10) {
-            jcbHoraFin.setSelectedItem("0" + horaFin);
+
+        this.tbmDepositar.setArqueoCajaList(acdDepositar);
+        this.tbmDepositar.updateTable();
+        Utilities.c_packColumn.packColumns(jtDepositar, 1);
+
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(caja.getTiempoCierre());
+        Date currentTime = calendar.getTime();
+        String horaFin = sdf.format(currentTime).substring(0, 2);
+        int horasFin = Integer.valueOf(horaFin);
+        if (horasFin >= 0 && horasFin < 10) {
+            this.jcbHoraFin.setSelectedItem("" + horasFin);
         } else {
-            jcbHoraFin.setSelectedItem(horaFin);
+            this.jcbHoraFin.setSelectedItem("" + horasFin);
         }
+        int minutoFin = calendar.get(Calendar.MINUTE);
         if (minutoFin < 10) {
             jcbMinutoFin.setSelectedItem("0" + minutoFin);
         } else {
-            jcbMinutoFin.setSelectedItem(minutoFin);
+            jcbMinutoFin.setSelectedItem("" + minutoFin);
         }
-        cal.setTime(caja.getTiempoApertura());
-        int horaInicio = Calendar.getInstance().get(cal.get(Calendar.HOUR_OF_DAY));
-        int minutoInicio = Calendar.getInstance().get(cal.get(Calendar.MINUTE));
-        if (horaInicio < 10) {
-            jcbHoraInicio.setSelectedItem("0" + horaInicio);
+        calendar.setTime(caja.getTiempoApertura());
+        currentTime = calendar.getTime();
+        String horaInicio = sdf.format(currentTime).substring(0, 2);
+        int horasInicio = Integer.valueOf(horaInicio);
+        if (horasInicio >= 0 && horasFin < 10) {
+            this.jcbHoraInicio.setSelectedItem("" + horasInicio);
         } else {
-            jcbHoraInicio.setSelectedItem(horaInicio);
+            this.jcbHoraInicio.setSelectedItem("" + horasInicio);
         }
+        int minutoInicio = calendar.get(Calendar.MINUTE);
         if (minutoInicio < 10) {
             jcbMinutoInicio.setSelectedItem("0" + minutoInicio);
         } else {
-            jcbMinutoInicio.setSelectedItem(minutoInicio);
+            jcbMinutoInicio.setSelectedItem("" + minutoInicio);
         }
     }
 
@@ -576,6 +626,14 @@ public class VerDetalleCaja extends JDialog implements ActionListener, KeyListen
             }
         }
         this.jtfDifCaja.setValue(fondoInicial - fondoFinal);
+    }
+
+    private void arqueoDepositar() {
+        int total = 0;
+        for (ArqueoCajaDetalle arquDeta : this.tbmDepositar.arqueoCajaDetalleList) {
+            total = total + (arquDeta.getCantidad() * arquDeta.getMoneda().getValor());
+        }
+        this.jtfDepositar.setValue(total);
     }
 
     @Override

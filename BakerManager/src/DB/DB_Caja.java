@@ -13,9 +13,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
-import java.sql.Types;
 import java.util.ArrayList;
-import java.util.Vector;
+import java.util.Calendar;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -30,7 +29,9 @@ public class DB_Caja {
     private static ResultSet rs = null;
 
     public static long insertarArqueoCaja(Caja caja,
-            ArrayList<ArqueoCajaDetalle> arqueoInicio, ArrayList<ArqueoCajaDetalle> arqueoFin) {
+            ArrayList<ArqueoCajaDetalle> arqueoInicio,
+            ArrayList<ArqueoCajaDetalle> arqueoFin,
+            ArrayList<ArqueoCajaDetalle> arqueoDeposito) {
         String INSERT_ARQUEO = "INSERT INTO ARQUEO_CAJA( ID_CAJA, "
                 + "ID_MONEDA, CANTIDAD, ID_ARQUEO_CAJA_TIPO)VALUES (?, ?, ?, ?)";
         String INSERT_CAJA = "INSERT INTO CAJA"
@@ -75,6 +76,15 @@ public class DB_Caja {
                 pst.setInt(2, arqueoFin.get(i).getMoneda().getIdMoneda());
                 pst.setInt(3, arqueoFin.get(i).getCantidad());
                 pst.setInt(4, arqueoFin.get(i).getIdTipo());
+                pst.executeUpdate();
+                pst.close();
+            }
+            for (int i = 0; i < arqueoDeposito.size(); i++) {
+                pst = DB_manager.getConection().prepareStatement(INSERT_ARQUEO);
+                pst.setInt(1, (int) sq_cabecera);
+                pst.setInt(2, arqueoDeposito.get(i).getMoneda().getIdMoneda());
+                pst.setInt(3, arqueoDeposito.get(i).getCantidad());
+                pst.setInt(4, arqueoDeposito.get(i).getIdTipo());
                 pst.executeUpdate();
                 pst.close();
             }
@@ -259,8 +269,8 @@ public class DB_Caja {
                 caja.setIngresoCredito(rs.getInt("INGRESO_CREDITO"));
                 caja.setMontoFinal(rs.getInt("MONTO_FINAL"));
                 caja.setMontoInicial(rs.getInt("MONTO_INICIAL"));
-                caja.setTiempoApertura(rs.getDate("TIEMPO_APERTURA"));
-                caja.setTiempoCierre(rs.getDate("TIEMPO_CIERRE"));
+                caja.setTiempoApertura(rs.getTimestamp("TIEMPO_APERTURA"));
+                caja.setTiempoCierre(rs.getTimestamp("TIEMPO_CIERRE"));
             }
         } catch (SQLException ex) {
         }
