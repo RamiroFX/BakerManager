@@ -681,9 +681,13 @@ public class SaldarCaja extends JDialog implements ActionListener, KeyListener {
         ArrayList<ArqueoCajaDetalle> arqueoCajaInicio = arqueoCajaInicio();
         ArrayList<ArqueoCajaDetalle> arqueoCajaFin = arqueoCajaFin();
         ArrayList<ArqueoCajaDetalle> arqueoDeposito = arqueoDepositar();
-        DB_Caja.insertarArqueoCaja(caja, arqueoCajaInicio, arqueoCajaFin, arqueoDeposito);
-        this.dispose();
-        mostrarMensaje("La caja se guardo con éxito.");
+        try {
+            DB_Caja.insertarArqueoCaja(caja, arqueoCajaInicio, arqueoCajaFin, arqueoDeposito);
+        } catch (Exception e) {
+            this.dispose();
+            return;
+        }
+        mostrarMensaje("La caja se registró con éxito.");
     }
 
     private ArrayList<ArqueoCajaDetalle> arqueoCajaInicio() {

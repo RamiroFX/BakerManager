@@ -580,7 +580,12 @@ public class VerDetalleCaja extends JDialog implements ActionListener, KeyListen
             public void run() {
                 int opcion = JOptionPane.showConfirmDialog(null, "¿Desea imprimir el pedido?", "Atención", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
                 if (opcion == JOptionPane.YES_OPTION) {
-                    Impresora.imprimirCaja(caja);
+                    int depositado = 0;
+                    for (ArqueoCajaDetalle arquDeta : tbmDepositar.arqueoCajaDetalleList) {
+                        depositado = depositado + (arquDeta.getCantidad() * arquDeta.getMoneda().getValor());
+                    }
+                    //se agrego la cantidad de efectivo depositado como ultimo
+                    Impresora.imprimirCaja(caja, depositado);
                 }
             }
         });

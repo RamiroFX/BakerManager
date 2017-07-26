@@ -13,6 +13,7 @@ import DB.DB_Funcionario;
 import DB.DB_Ingreso;
 import DB.DB_Pedido;
 import DB.DB_manager;
+import Entities.ArqueoCajaDetalle;
 import Entities.Caja;
 import Entities.M_facturaCabecera;
 import Entities.M_facturaDetalle;
@@ -397,7 +398,7 @@ public class Impresora {
         }
     }
 
-    public static void imprimirCaja(Caja caja) {
+    public static void imprimirCaja(Caja caja, int efectivoDepositado) {
         PrintService service = PrintServiceLookup.lookupDefaultPrintService();
         Date today = Calendar.getInstance().getTime();
         String fechaEntrega = sdfs.format(today);
@@ -411,6 +412,7 @@ public class Impresora {
         String CUERPO = "Ingreso: " + Ingresos + "\n"
                 + "Egreso: " + Egresos + "\n"
                 + "Caja chica: " + caja.getMontoFinal() + "\n"
+                + "Efectivo depositado: " + efectivoDepositado + "\n"
                 + "Ingreso-Egreso: " + (Ingresos - Egresos) + "\n"
                 + "Ingreso+Egreso: " + (Ingresos + Egresos) + "\n";
 
