@@ -3,7 +3,15 @@ package Caja;
 import DB.DB_Caja;
 import DB.ResultSetTableModel;
 import Entities.Caja;
+import Entities.CierreCaja;
 import Entities.M_funcionario;
+import Excel.ExportarCaja;
+import Utilities.Impresora;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -50,4 +58,33 @@ public class M_gestionCaja {
         return DB_Caja.consultarCajas(idFuncionario, fecha_inicio, fecha_fin);
     }
 
+    public void exportarExcel(int idFuncionario, Date fecha_inicio, Date fecha_fin) {
+        SimpleDateFormat sdfs = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Calendar calendario = Calendar.getInstance();
+        calendario.setTime(fecha_inicio);
+        calendario.set(Calendar.HOUR_OF_DAY, 0);
+        calendario.set(Calendar.MINUTE, 0);
+        calendario.set(Calendar.SECOND, 0);
+        calendario.set(Calendar.MILLISECOND, 000);
+        java.sql.Timestamp fInicio = java.sql.Timestamp.valueOf(sdfs.format(calendario.getTime()));
+        calendario.setTime(fecha_fin);
+        calendario.set(Calendar.HOUR_OF_DAY, 24);
+        calendario.set(Calendar.MINUTE, 0);
+        calendario.set(Calendar.SECOND, 0);
+        calendario.set(Calendar.MILLISECOND, 0);
+        java.sql.Timestamp fFin = java.sql.Timestamp.valueOf(sdfs.format(calendario.getTime()));
+        ArrayList<CierreCaja> acd = DB_Caja.consultarCajasExportacion(idFuncionario, fInicio, fFin);
+        ExportarCaja ec = new ExportarCaja("asd", acd);
+        ec.exportar();
+    }
+
+    public boolean validarFechas(Date f_inicio, Date f_final) {
+        if (f_inicio != null && f_final != null) {
+            int dateValue = f_inicio.compareTo(f_final);
+            if (dateValue <= 0) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

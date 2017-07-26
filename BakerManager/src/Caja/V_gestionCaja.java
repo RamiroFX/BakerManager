@@ -22,7 +22,7 @@ import net.miginfocom.swing.MigLayout;
 public class V_gestionCaja extends JInternalFrame {
 
     public JButton jbBuscar, jbBorrar, jbAgregar, jbDetalle,
-            jbEmpleado;
+            jbEmpleado, jbExportar;
     public JTextField jtfEmpleado;
     private JPanel jpTop, jpBotonesTop, jpBot;
     public JScrollPane jspCaja;
@@ -97,8 +97,13 @@ public class V_gestionCaja extends JInternalFrame {
         jbDetalle.setFont(CommonFormat.fuente);
         jbDetalle.setEnabled(false);
         jbDetalle.setMargin(insets);
+        jbExportar = new JButton("Exportar");
+        jbExportar.setName("exportar");
+        jbExportar.setFont(CommonFormat.fuente);
+        jbExportar.setMargin(insets);
         jpBot.add(jbAgregar);
         jpBot.add(jbDetalle);
+        jpBot.add(jbExportar);
         jpBot.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED), "Opciones"));
     }
 }

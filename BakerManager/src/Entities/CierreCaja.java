@@ -62,4 +62,20 @@ public class CierreCaja {
         this.deposito = deposito;
     }
 
+    public int obtenerCajaConMasMonedas() {
+        int max = 0;
+        int maxApertura = this.getApertura().size();
+        int maxCierre = this.getCierre().size();
+        int maxDeposito = this.getDeposito().size();
+        if (maxApertura > max) {
+            max = maxApertura;
+        }
+        if (maxCierre > max) {
+            max = maxCierre;
+        }
+        if (maxDeposito > max) {
+            max = maxDeposito;
+        }
+        return max;
+    }
 }

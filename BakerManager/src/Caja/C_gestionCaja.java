@@ -81,6 +81,9 @@ public class C_gestionCaja implements GestionInterface {
         this.vista.jbBuscar.addKeyListener(this);
         this.vista.jbEmpleado.addKeyListener(this);
         this.vista.jbBorrar.addKeyListener(this);
+        //exportar
+        this.vista.jbExportar.addActionListener(this);
+        this.vista.jbExportar.addKeyListener(this);
     }
 
     @Override
@@ -146,6 +149,28 @@ public class C_gestionCaja implements GestionInterface {
         this.vista.jtfEmpleado.setText(alias + "-(" + nombre + " " + apellido + ")");
     }
 
+    public void exportarExcel() {
+        EventQueue.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                Date inicio = vista.jddInicio.getDate();
+                Date fin = vista.jddFinal.getDate();
+                if (validarFechas(inicio, fin)) {
+                    int idFuncionario = -1;
+                    if (modelo.getFuncionario() != null && modelo.getFuncionario().getId_funcionario() != null) {
+                        idFuncionario = modelo.getFuncionario().getId_funcionario();
+                    }
+                    modelo.exportarExcel(idFuncionario, inicio, fin);
+                    Utilities.c_packColumn.packColumns(vista.jtCaja, 1);
+                } else {
+                    vista.jddFinal.setDate(vista.jddInicio.getDate());
+                    vista.jddFinal.updateUI();
+                    JOptionPane.showMessageDialog(vista, "La fecha inicio debe ser menor que fecha final", "Atención", JOptionPane.WARNING_MESSAGE);
+                }
+            }
+        });
+    }
+
     private void borrarDatos() {
         Date date = Calendar.getInstance().getTime();
         this.modelo.borrarDatos();
@@ -178,6 +203,8 @@ public class C_gestionCaja implements GestionInterface {
             borrarDatos();
         } else if (src.equals(this.vista.jbDetalle)) {
             invocarVistaVerCaja();
+        } else if (src.equals(this.vista.jbExportar)) {
+            exportarExcel();
         }
     }
 
