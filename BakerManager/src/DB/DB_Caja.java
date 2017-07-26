@@ -7,6 +7,7 @@ package DB;
 
 import Entities.ArqueoCajaDetalle;
 import Entities.Caja;
+import Entities.CierreCaja;
 import Entities.Moneda;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -14,7 +15,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -142,6 +142,110 @@ public class DB_Caja {
             lgr.log(Level.SEVERE, ex.getMessage(), ex);
         }
         return rstm;
+    }
+
+    public static ArrayList consultarCajasExportacion(Integer idFuncionario, Timestamp inicio, Timestamp fin) {
+        ArrayList<CierreCaja> cajas = new ArrayList<>();
+        ArrayList<ArqueoCajaDetalle> arqueoApertura = new ArrayList<>();
+        ArrayList<ArqueoCajaDetalle> arqueoCierre = new ArrayList<>();
+        ArrayList<ArqueoCajaDetalle> arqueoDeposito = new ArrayList<>();
+        String ATTACH_FUNCIONARIO = "AND CAJA.ID_FUNCIONARIO_CIERRE = " + idFuncionario;
+        String QUERY_CAJA = "SELECT ID_CAJA, ID_FUNCIONARIO_APERTURA, ID_FUNCIONARIO_CIERRE, "
+                + "MONTO_INICIAL, MONTO_FINAL, INGRESO_CONTADO, INGRESO_CREDITO, "
+                + "EGRESO_CONTADO, EGRESO_CREDITO, TIEMPO_APERTURA, TIEMPO_CIERRE "
+                + "FROM CAJA "
+                + "WHERE CAJA.TIEMPO_CIERRE BETWEEN ?  AND ? ";
+        String QUERY_ARQUEO = "SELECT ID_ARQUEO_CAJA, ID_CAJA, ARQUEO_CAJA.ID_MONEDA \"ID_MONEDA\", "
+                + "ID_ARQUEO_CAJA_TIPO, CANTIDAD, VALOR, DESCRIPCION FROM ARQUEO_CAJA, MONEDA "
+                + "WHERE MONEDA.ID_MONEDA = ARQUEO_CAJA.ID_MONEDA "
+                + "AND ID_CAJA = ? AND ID_ARQUEO_CAJA_TIPO = ?";
+        if (idFuncionario != null) {
+            QUERY_CAJA = QUERY_CAJA + ATTACH_FUNCIONARIO;
+        }
+        try {
+            pst = DB_manager.getConection().prepareStatement(QUERY_CAJA, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            pst.setTimestamp(1, inicio);
+            pst.setTimestamp(2, fin);
+            if (idFuncionario != null) {
+                pst.setInt(3, idFuncionario);
+            }
+            rs = pst.executeQuery();
+            while (rs.next()) {
+                Caja caja = new Caja();
+                caja.setIdCaja(rs.getInt("ID_CAJA"));
+                caja.setEgresoContado(rs.getInt("EGRESO_CONTADO"));
+                caja.setEgresoCredito(rs.getInt("EGRESO_CREDITO"));
+                caja.setIdEmpleadoApertura(rs.getInt("ID_FUNCIONARIO_APERTURA"));
+                caja.setIdEmpleadoCierre(rs.getInt("ID_FUNCIONARIO_CIERRE"));
+                caja.setIngresoContado(rs.getInt("INGRESO_CONTADO"));
+                caja.setIngresoCredito(rs.getInt("INGRESO_CREDITO"));
+                caja.setMontoFinal(rs.getInt("MONTO_FINAL"));
+                caja.setMontoInicial(rs.getInt("MONTO_INICIAL"));
+                caja.setTiempoApertura(rs.getTimestamp("TIEMPO_APERTURA"));
+                caja.setTiempoCierre(rs.getTimestamp("TIEMPO_CIERRE"));
+                //QUERY APERTURA
+                PreparedStatement pst1 = DB_manager.getConection().prepareStatement(QUERY_ARQUEO, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+                pst1.setInt(1, caja.getIdCaja());
+                pst1.setInt(2, 1);//APERTURA
+                ResultSet rs1 = pst1.executeQuery();
+                while (rs1.next()) {
+                    ArqueoCajaDetalle acd = new ArqueoCajaDetalle();
+                    acd.setIdArqueoCajaDetalle(rs1.getInt("ID_ARQUEO_CAJA"));
+                    acd.setIdCaja(rs1.getInt("ID_CAJA"));
+                    acd.setCantidad(rs1.getInt("CANTIDAD"));
+                    acd.setIdTipo(rs1.getInt("ID_ARQUEO_CAJA_TIPO"));
+
+                    Moneda moneda = new Moneda();
+                    moneda.setIdMoneda(rs1.getInt("ID_MONEDA"));
+                    moneda.setValor(rs1.getInt("VALOR"));
+                    moneda.setDescripcion(rs1.getString("DESCRIPCION"));
+                    acd.setMoneda(moneda);
+                    arqueoApertura.add(acd);
+                }
+                //QUERY CIERRE
+                PreparedStatement pst2 = DB_manager.getConection().prepareStatement(QUERY_ARQUEO, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+                pst2.setInt(1, caja.getIdCaja());
+                pst2.setInt(2, 2);//CIERRE
+                ResultSet rs2 = pst1.executeQuery();
+                while (rs2.next()) {
+                    ArqueoCajaDetalle acd = new ArqueoCajaDetalle();
+                    acd.setIdArqueoCajaDetalle(rs2.getInt("ID_ARQUEO_CAJA"));
+                    acd.setIdCaja(rs2.getInt("ID_CAJA"));
+                    acd.setCantidad(rs2.getInt("CANTIDAD"));
+                    acd.setIdTipo(rs2.getInt("ID_ARQUEO_CAJA_TIPO"));
+
+                    Moneda moneda = new Moneda();
+                    moneda.setIdMoneda(rs2.getInt("ID_MONEDA"));
+                    moneda.setValor(rs2.getInt("VALOR"));
+                    moneda.setDescripcion(rs2.getString("DESCRIPCION"));
+                    acd.setMoneda(moneda);
+                    arqueoCierre.add(acd);
+                }
+                //QUERY DEPOSITO
+                PreparedStatement pst3 = DB_manager.getConection().prepareStatement(QUERY_ARQUEO, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+                pst3.setInt(1, caja.getIdCaja());
+                pst3.setInt(2, 3);//DEPOSITO
+                ResultSet rs3 = pst1.executeQuery();
+                while (rs3.next()) {
+                    ArqueoCajaDetalle acd = new ArqueoCajaDetalle();
+                    acd.setIdArqueoCajaDetalle(rs3.getInt("ID_ARQUEO_CAJA"));
+                    acd.setIdCaja(rs3.getInt("ID_CAJA"));
+                    acd.setCantidad(rs3.getInt("CANTIDAD"));
+                    acd.setIdTipo(rs3.getInt("ID_ARQUEO_CAJA_TIPO"));
+
+                    Moneda moneda = new Moneda();
+                    moneda.setIdMoneda(rs3.getInt("ID_MONEDA"));
+                    moneda.setValor(rs3.getInt("VALOR"));
+                    moneda.setDescripcion(rs3.getString("DESCRIPCION"));
+                    acd.setMoneda(moneda);
+                    arqueoDeposito.add(acd);
+                }
+                CierreCaja cierreCaja = new CierreCaja(caja, arqueoApertura, arqueoCierre, arqueoDeposito);
+                cajas.add(cierreCaja);
+            }
+        } catch (SQLException ex) {
+        }
+        return cajas;
     }
 
     public static ArrayList<Moneda> obtenerMonedas() {
