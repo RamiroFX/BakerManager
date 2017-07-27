@@ -156,7 +156,7 @@ public class C_gestionCaja implements GestionInterface {
                 Date inicio = vista.jddInicio.getDate();
                 Date fin = vista.jddFinal.getDate();
                 if (validarFechas(inicio, fin)) {
-                    int idFuncionario = -1;
+                    Integer idFuncionario = null;
                     if (modelo.getFuncionario() != null && modelo.getFuncionario().getId_funcionario() != null) {
                         idFuncionario = modelo.getFuncionario().getId_funcionario();
                     }

@@ -23,6 +23,7 @@ import org.apache.poi.ss.usermodel.DataFormat;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.ss.util.CellUtil;
 
 /**
  *
@@ -32,7 +33,7 @@ public class ExportarCaja {
 
     private HSSFWorkbook workbook;
     private HSSFSheet sheet;
-    private CellStyle style1, style2, style3, style4;
+    private CellStyle style1, style2, style3, style4, style5;
     private HSSFCellStyle dateCellStyle;
     private final String NOMBRE_HOJA;
     private File directory;
@@ -78,11 +79,18 @@ public class ExportarCaja {
         style3.setDataFormat(format.getFormat("0.0"));
 
         style4 = workbook.createCellStyle();
-        style4.setDataFormat(format.getFormat("#,##0.0000"));
+        style4.setDataFormat(format.getFormat("#,##0"));
 
         dateCellStyle = workbook.createCellStyle();
         short df = workbook.createDataFormat().getFormat("dd-MM-yyyy");
         dateCellStyle.setDataFormat(df);
+
+        style5 = workbook.createCellStyle();
+        style5.setBorderBottom(HSSFCellStyle.BORDER_THIN);
+        style5.setBorderTop(HSSFCellStyle.BORDER_THIN);
+        style5.setBorderRight(HSSFCellStyle.BORDER_THIN);
+        style5.setBorderLeft(HSSFCellStyle.BORDER_THIN);
+
         //END FORMAT STYLE
     }
 
@@ -120,6 +128,7 @@ public class ExportarCaja {
     private void prepararCuerpo() {
         int fila = 1;//En preparar cuerpo empieza en cero (0).
         for (CierreCaja cierreCaja : cierreCajas) {
+            fila++;//Para dar una linea de espacio
             //CREAR FECHA DE CAJA
             Row fechaCaja = sheet.createRow(fila);
             fila++;
@@ -128,12 +137,30 @@ public class ExportarCaja {
             fechaCaja.getCell(1).setCellStyle(dateCellStyle);
             //CREAR CABECERA DE ARQUEOS (APERTURA,CIERRE,DEPOSITO)
             Row cabeceraCajas = sheet.createRow(fila);
-            cabeceraCajas.createCell(0).setCellValue(new HSSFRichTextString("Caja apertura"));
-            cabeceraCajas.createCell(3).setCellValue(new HSSFRichTextString("Caja cierre"));
-            cabeceraCajas.createCell(6).setCellValue(new HSSFRichTextString("Depositado"));
             sheet.addMergedRegion(new CellRangeAddress(fila, fila, 0, 2));
             sheet.addMergedRegion(new CellRangeAddress(fila, fila, 3, 5));
             sheet.addMergedRegion(new CellRangeAddress(fila, fila, 6, 8));
+            cabeceraCajas.createCell(0).setCellValue(new HSSFRichTextString("Caja apertura"));
+            cabeceraCajas.createCell(1).setCellValue("");
+            cabeceraCajas.createCell(2).setCellValue("");
+            cabeceraCajas.createCell(3).setCellValue(new HSSFRichTextString("Caja cierre"));
+            cabeceraCajas.createCell(4).setCellValue("");
+            cabeceraCajas.createCell(5).setCellValue("");
+            cabeceraCajas.createCell(6).setCellValue(new HSSFRichTextString("Depositado"));
+            cabeceraCajas.createCell(7).setCellValue("");
+            cabeceraCajas.createCell(8).setCellValue("");
+            cabeceraCajas.getCell(0).setCellStyle(style5);
+            cabeceraCajas.getCell(1).setCellStyle(style5);
+            cabeceraCajas.getCell(2).setCellStyle(style5);
+            cabeceraCajas.getCell(3).setCellStyle(style5);
+            cabeceraCajas.getCell(4).setCellStyle(style5);
+            cabeceraCajas.getCell(5).setCellStyle(style5);
+            cabeceraCajas.getCell(6).setCellStyle(style5);
+            cabeceraCajas.getCell(7).setCellStyle(style5);
+            cabeceraCajas.getCell(8).setCellStyle(style5);
+            CellUtil.setAlignment(cabeceraCajas.getCell(0), workbook, CellStyle.ALIGN_CENTER);
+            CellUtil.setAlignment(cabeceraCajas.getCell(3), workbook, CellStyle.ALIGN_CENTER);
+            CellUtil.setAlignment(cabeceraCajas.getCell(6), workbook, CellStyle.ALIGN_CENTER);
             fila++;
             //SUB CABECERA DE ARQUEOS
             Row subCabeceraCajas = sheet.createRow(fila);
@@ -148,58 +175,65 @@ public class ExportarCaja {
             subCabeceraCajas.createCell(8).setCellValue(new HSSFRichTextString("Importe"));
             fila++;
             //CAJA APERTURA
-            int SubCabeceraInicio = fila;
-            int totalApertura = 0;
-            for (ArqueoCajaDetalle arqueoCajaDetalle : cierreCaja.getApertura()) {
-                Row cajaApertura = sheet.createRow(fila);
-                int subtotal = arqueoCajaDetalle.getCantidad() * arqueoCajaDetalle.getMoneda().getValor();
-                totalApertura = totalApertura + subtotal;
-                cajaApertura.createCell(0).setCellValue(arqueoCajaDetalle.getCantidad());
-                cajaApertura.createCell(1).setCellValue(arqueoCajaDetalle.getMoneda().toString());
-                cajaApertura.createCell(2).setCellValue(subtotal);
-                fila++;
-            }
-            //CAJA APERTURA
-            fila = SubCabeceraInicio;
-            int totalCierre = 0;
-            for (ArqueoCajaDetalle arqueoCajaDetalle : cierreCaja.getCierre()) {
-                Row cajaCierre = sheet.createRow(fila);
-                int subtotal = arqueoCajaDetalle.getCantidad() * arqueoCajaDetalle.getMoneda().getValor();
-                totalCierre = totalCierre + subtotal;
-                cajaCierre.createCell(3).setCellValue(arqueoCajaDetalle.getCantidad());
-                cajaCierre.createCell(4).setCellValue(arqueoCajaDetalle.getMoneda().toString());
-                cajaCierre.createCell(5).setCellValue(subtotal);
-                fila++;
-            }
-            //CAJA DEPOSITO
-            fila = SubCabeceraInicio;
-            int totalDeposito = 0;
-            for (ArqueoCajaDetalle arqueoCajaDetalle : cierreCaja.getDeposito()) {
-                Row cajaDeposito = sheet.createRow(fila);
-                int subtotal = arqueoCajaDetalle.getCantidad() * arqueoCajaDetalle.getMoneda().getValor();
-                totalDeposito = totalDeposito + subtotal;
-                cajaDeposito.createCell(6).setCellValue(arqueoCajaDetalle.getCantidad());
-                cajaDeposito.createCell(7).setCellValue(arqueoCajaDetalle.getMoneda().toString());
-                cajaDeposito.createCell(8).setCellValue(subtotal);
+            int totalApertura = 0;//Para sumar el total de la caja apertura
+            int totalCierre = 0;//Para sumar el total de la caja apertura
+            int totalDeposito = 0;//Para sumar el total de la caja apertura
+
+            for (int i = 0; i < cierreCaja.obtenerCajaConMasMonedas(); i++) {
+                Row arqueoCajas = sheet.createRow(fila);
+                if (i < cierreCaja.getApertura().size()) {
+                    int subtotalApertura = cierreCaja.getApertura().get(i).getCantidad() * cierreCaja.getApertura().get(i).getMoneda().getValor();
+                    totalApertura = totalApertura + subtotalApertura;
+                    arqueoCajas.createCell(0).setCellValue(cierreCaja.getApertura().get(i).getCantidad());
+                    arqueoCajas.getCell(0).setCellStyle(style4);
+                    arqueoCajas.createCell(1).setCellValue(cierreCaja.getApertura().get(i).getMoneda().toString());
+                    arqueoCajas.createCell(2).setCellValue(subtotalApertura);
+                    arqueoCajas.getCell(2).setCellStyle(style4);
+                }
+                if (i < cierreCaja.getCierre().size()) {
+                    int subtotalCierre = cierreCaja.getCierre().get(i).getCantidad() * cierreCaja.getCierre().get(i).getMoneda().getValor();
+                    totalCierre = totalCierre + subtotalCierre;
+                    arqueoCajas.createCell(3).setCellValue(cierreCaja.getCierre().get(i).getCantidad());
+                    arqueoCajas.getCell(3).setCellStyle(style4);
+                    arqueoCajas.createCell(4).setCellValue(cierreCaja.getCierre().get(i).getMoneda().toString());
+                    arqueoCajas.createCell(5).setCellValue(subtotalCierre);
+                    arqueoCajas.getCell(5).setCellStyle(style4);
+                }
+                if (i < cierreCaja.getDeposito().size()) {
+                    int subtotalDeposito = cierreCaja.getDeposito().get(i).getCantidad() * cierreCaja.getDeposito().get(i).getMoneda().getValor();
+                    totalDeposito = totalDeposito + subtotalDeposito;
+                    arqueoCajas.createCell(6).setCellValue(cierreCaja.getDeposito().get(i).getCantidad());
+                    arqueoCajas.getCell(6).setCellStyle(style4);
+                    arqueoCajas.createCell(7).setCellValue(cierreCaja.getDeposito().get(i).getMoneda().toString());
+                    arqueoCajas.createCell(8).setCellValue(subtotalDeposito);
+                    arqueoCajas.getCell(8).setCellStyle(style4);
+                }
                 fila++;
             }
             //TOTALES
             Row totales = sheet.createRow(fila);
-            totales.createCell(0).setCellValue(new HSSFRichTextString("Total apertura"));
-            totales.createCell(2).setCellValue(totalApertura);
-            totales.createCell(3).setCellValue(new HSSFRichTextString("Total cierre"));
-            totales.createCell(5).setCellValue(totalCierre);
-            totales.createCell(6).setCellValue(new HSSFRichTextString("Total depósito"));
-            totales.createCell(8).setCellValue(totalDeposito);
             sheet.addMergedRegion(new CellRangeAddress(fila, fila, 0, 1));
             sheet.addMergedRegion(new CellRangeAddress(fila, fila, 3, 4));
             sheet.addMergedRegion(new CellRangeAddress(fila, fila, 6, 7));
+            totales.createCell(0).setCellValue(new HSSFRichTextString("Total apertura"));
+            totales.createCell(2).setCellValue(totalApertura);
+            totales.getCell(2).setCellStyle(style4);
+            totales.createCell(3).setCellValue(new HSSFRichTextString("Total cierre"));
+            totales.createCell(5).setCellValue(totalCierre);
+            totales.getCell(5).setCellStyle(style4);
+            totales.createCell(6).setCellValue(new HSSFRichTextString("Total depósito"));
+            totales.createCell(8).setCellValue(totalDeposito);
+            totales.getCell(8).setCellStyle(style4);
+            CellUtil.setAlignment(totales.getCell(0), workbook, CellStyle.ALIGN_CENTER);
+            CellUtil.setAlignment(totales.getCell(3), workbook, CellStyle.ALIGN_CENTER);
+            CellUtil.setAlignment(totales.getCell(6), workbook, CellStyle.ALIGN_CENTER);
             fila++;
             //TOTAL EGRESO
             int totalEgresos = cierreCaja.getCaja().getEgresoContado() + cierreCaja.getCaja().getEgresoCredito();
             Row totalEgreso = sheet.createRow(fila);
             totalEgreso.createCell(0).setCellValue(new HSSFRichTextString("Total egresos"));
             totalEgreso.createCell(2).setCellValue(totalEgresos);
+            totalEgreso.getCell(2).setCellStyle(style4);
             sheet.addMergedRegion(new CellRangeAddress(fila, fila, 0, 1));
             fila++;
             //TOTAL EGRESO
@@ -207,13 +241,24 @@ public class ExportarCaja {
             Row totalIngreso = sheet.createRow(fila);
             totalIngreso.createCell(0).setCellValue(new HSSFRichTextString("Total ingresos"));
             totalIngreso.createCell(2).setCellValue(totalIngresos);
+            totalIngreso.getCell(2).setCellStyle(style4);
             sheet.addMergedRegion(new CellRangeAddress(fila, fila, 0, 1));
             fila++;
             //EGRESO+DEPOSITADO
             Row egresoDeposito = sheet.createRow(fila);
             egresoDeposito.createCell(0).setCellValue(new HSSFRichTextString("Egreso+Depositado"));
             egresoDeposito.createCell(2).setCellValue(totalDeposito);
+            egresoDeposito.getCell(2).setCellStyle(style4);
             sheet.addMergedRegion(new CellRangeAddress(fila, fila, 0, 1));
+            sheet.autoSizeColumn(1);
+            sheet.autoSizeColumn(2);
+            sheet.autoSizeColumn(3);
+            sheet.autoSizeColumn(4);
+            sheet.autoSizeColumn(5);
+            sheet.autoSizeColumn(6);
+            sheet.autoSizeColumn(7);
+            sheet.autoSizeColumn(8);
+            sheet.autoSizeColumn(9);
             fila++;
         }
     }

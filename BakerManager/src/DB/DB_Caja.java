@@ -149,7 +149,7 @@ public class DB_Caja {
         ArrayList<ArqueoCajaDetalle> arqueoApertura = new ArrayList<>();
         ArrayList<ArqueoCajaDetalle> arqueoCierre = new ArrayList<>();
         ArrayList<ArqueoCajaDetalle> arqueoDeposito = new ArrayList<>();
-        String ATTACH_FUNCIONARIO = "AND CAJA.ID_FUNCIONARIO_CIERRE = " + idFuncionario;
+        String ATTACH_FUNCIONARIO = "AND CAJA.ID_FUNCIONARIO_CIERRE = ? ";
         String QUERY_CAJA = "SELECT ID_CAJA, ID_FUNCIONARIO_APERTURA, ID_FUNCIONARIO_CIERRE, "
                 + "MONTO_INICIAL, MONTO_FINAL, INGRESO_CONTADO, INGRESO_CREDITO, "
                 + "EGRESO_CONTADO, EGRESO_CREDITO, TIEMPO_APERTURA, TIEMPO_CIERRE "
@@ -206,7 +206,7 @@ public class DB_Caja {
                 PreparedStatement pst2 = DB_manager.getConection().prepareStatement(QUERY_ARQUEO, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
                 pst2.setInt(1, caja.getIdCaja());
                 pst2.setInt(2, 2);//CIERRE
-                ResultSet rs2 = pst1.executeQuery();
+                ResultSet rs2 = pst2.executeQuery();
                 while (rs2.next()) {
                     ArqueoCajaDetalle acd = new ArqueoCajaDetalle();
                     acd.setIdArqueoCajaDetalle(rs2.getInt("ID_ARQUEO_CAJA"));
@@ -225,7 +225,7 @@ public class DB_Caja {
                 PreparedStatement pst3 = DB_manager.getConection().prepareStatement(QUERY_ARQUEO, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
                 pst3.setInt(1, caja.getIdCaja());
                 pst3.setInt(2, 3);//DEPOSITO
-                ResultSet rs3 = pst1.executeQuery();
+                ResultSet rs3 = pst3.executeQuery();
                 while (rs3.next()) {
                     ArqueoCajaDetalle acd = new ArqueoCajaDetalle();
                     acd.setIdArqueoCajaDetalle(rs3.getInt("ID_ARQUEO_CAJA"));
@@ -323,8 +323,6 @@ public class DB_Caja {
                 + "ID_ARQUEO_CAJA_TIPO, CANTIDAD, VALOR, DESCRIPCION FROM ARQUEO_CAJA, MONEDA "
                 + "WHERE MONEDA.ID_MONEDA = ARQUEO_CAJA.ID_MONEDA "
                 + "AND ID_CAJA = ? AND ID_ARQUEO_CAJA_TIPO = ?";
-
-        System.out.println("DB.DB_Caja.obtenerArqueoCaja(): " + QUERY);
         ArrayList<ArqueoCajaDetalle> arqueo = null;
         try {
             pst = DB_manager.getConection().prepareStatement(QUERY, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);

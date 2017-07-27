@@ -125,4 +125,10 @@ public class Caja {
     public void setTiempoCierre(Date tiempoCierre) {
         this.tiempoCierre = tiempoCierre;
     }
+
+    @Override
+    public String toString() {
+        return "{Id: " + getIdCaja() + ", tiempoCierre:" + getIdEmpleadoCierre() + "}";
+    }
+
 }

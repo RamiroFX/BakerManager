@@ -58,7 +58,7 @@ public class M_gestionCaja {
         return DB_Caja.consultarCajas(idFuncionario, fecha_inicio, fecha_fin);
     }
 
-    public void exportarExcel(int idFuncionario, Date fecha_inicio, Date fecha_fin) {
+    public void exportarExcel(Integer idFuncionario, Date fecha_inicio, Date fecha_fin) {
         SimpleDateFormat sdfs = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Calendar calendario = Calendar.getInstance();
         calendario.setTime(fecha_inicio);

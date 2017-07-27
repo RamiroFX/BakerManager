@@ -40,6 +40,7 @@ import javax.swing.JDialog;
 import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
@@ -683,11 +684,11 @@ public class SaldarCaja extends JDialog implements ActionListener, KeyListener {
         ArrayList<ArqueoCajaDetalle> arqueoDeposito = arqueoDepositar();
         try {
             DB_Caja.insertarArqueoCaja(caja, arqueoCajaApertura, arqueoCajaCierre, arqueoDeposito);
-        } catch (Exception e) {
+            mostrarMensaje("La caja se registró con éxito.");
             this.dispose();
-            return;
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Hubo un problema creando la caja", "Error", JOptionPane.ERROR_MESSAGE);
         }
-        mostrarMensaje("La caja se registró con éxito.");
     }
 
     private ArrayList<ArqueoCajaDetalle> arqueoCajaApertura() {
