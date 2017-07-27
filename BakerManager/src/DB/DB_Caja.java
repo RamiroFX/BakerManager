@@ -324,6 +324,7 @@ public class DB_Caja {
                 + "WHERE MONEDA.ID_MONEDA = ARQUEO_CAJA.ID_MONEDA "
                 + "AND ID_CAJA = ? AND ID_ARQUEO_CAJA_TIPO = ?";
 
+        System.out.println("DB.DB_Caja.obtenerArqueoCaja(): " + QUERY);
         ArrayList<ArqueoCajaDetalle> arqueo = null;
         try {
             pst = DB_manager.getConection().prepareStatement(QUERY, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);

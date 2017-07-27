@@ -55,21 +55,21 @@ public class VerDetalleCaja extends JDialog implements ActionListener, KeyListen
     public JDateChooser jddInicio, jddFinal;
     public JComboBox jcbHoraInicio, jcbMinutoInicio, jcbHoraFin, jcbMinutoFin;
     private JButton printButton, cancelButton;
-    private JLabel jlFondoInicial, jlCajaChica, jlEgresoTotal, jlDepositar,
+    private JLabel jlFondoApertura, jlFondoCierre, jlEgresoTotal, jlDepositar,
             jlDifCaja, jlEgresoCredito, jlEgresoContado,
             jlIngresoTotal, jlIngresoCredito, jlIngresoContado, jlTotalEgrIng1,
             jlTotalEgrIng2;
-    private JFormattedTextField jtfFondoInicial, jtfCajaChica, jtfDifCaja,
+    private JFormattedTextField jtfFondoApertura, jtfFondoCierre, jtfDifCaja,
             jtfDepositar, jtfEgresoTotal, jtfEgresoCredito, jtfEgresoContado,
             jtfIngresoTotal, jtfIngresoCredito, jtfIngresoContado,
             jtfTotalEgrIng1, jtfTotalEgrIng2;
     //ARQUEO CAJA VARIABLES
-    private JTable jtInicio, jtFin, jtDepositar;
-    private JScrollPane jspInicio, jspFin, jspDepositar;
-    private ArqueoCajaTableModel tbmInicio, tbmFin, tbmDepositar;
+    private JTable jtFondoApertura, jtFondoCierre, jtDepositar;
+    private JScrollPane jspFondoApertura, jspFondoCierre, jspDepositar;
+    private ArqueoCajaTableModel tbmFondoApertura, tbmFondoCierre, tbmDepositar;
     //LOGIC VARIABLES
-    private ArrayList<ArqueoCajaDetalle> acdInicio;
-    private ArrayList<ArqueoCajaDetalle> acdFin;
+    private ArrayList<ArqueoCajaDetalle> acdApertura;
+    private ArrayList<ArqueoCajaDetalle> acdCierre;
     private ArrayList<ArqueoCajaDetalle> acdDepositar;
     private Caja caja;
 
@@ -93,10 +93,10 @@ public class VerDetalleCaja extends JDialog implements ActionListener, KeyListen
         jddFinal.setEnabled(false);
         this.printButton = new JButton("Imprimir");
         this.cancelButton = new JButton("Cancelar");
-        this.jlFondoInicial = new JLabel("Fondo inicial");
-        this.jlFondoInicial.setFont(CommonFormat.fuenteTitulo);
-        this.jlCajaChica = new JLabel("Caja chica");
-        this.jlCajaChica.setFont(CommonFormat.fuenteTitulo);
+        this.jlFondoApertura = new JLabel("Fondo apertura");
+        this.jlFondoApertura.setFont(CommonFormat.fuenteTitulo);
+        this.jlFondoCierre = new JLabel("Fondo cierre");
+        this.jlFondoCierre.setFont(CommonFormat.fuenteTitulo);
         this.jlDifCaja = new JLabel("Dif. de Caja");
         this.jlDifCaja.setFont(CommonFormat.fuenteSubTitulo);
         this.jlDepositar = new JLabel("A depositar");
@@ -117,12 +117,12 @@ public class VerDetalleCaja extends JDialog implements ActionListener, KeyListen
         this.jlTotalEgrIng1.setFont(CommonFormat.fuenteTitulo);
         this.jlTotalEgrIng2 = new JLabel("Egreso-Ingreso");
         this.jlTotalEgrIng2.setFont(CommonFormat.fuenteTitulo);
-        this.jtfFondoInicial = new JFormattedTextField();
-        this.jtfFondoInicial.setColumns(prefCols);
-        this.jtfFondoInicial.addKeyListener(this);
-        this.jtfCajaChica = new JFormattedTextField();
-        this.jtfCajaChica.setColumns(prefCols);
-        this.jtfCajaChica.addKeyListener(this);
+        this.jtfFondoApertura = new JFormattedTextField();
+        this.jtfFondoApertura.setColumns(prefCols);
+        this.jtfFondoApertura.addKeyListener(this);
+        this.jtfFondoCierre = new JFormattedTextField();
+        this.jtfFondoCierre.setColumns(prefCols);
+        this.jtfFondoCierre.addKeyListener(this);
         this.jtfDifCaja = new JFormattedTextField();
         this.jtfDifCaja.setColumns(prefCols);
         this.jtfDifCaja.addKeyListener(this);
@@ -149,8 +149,8 @@ public class VerDetalleCaja extends JDialog implements ActionListener, KeyListen
         this.jtfTotalEgrIng2.setColumns(prefCols);
         this.jtfTotalEgrIng2.addKeyListener(this);
 
-        this.jtfFondoInicial.setEditable(false);
-        this.jtfCajaChica.setEditable(false);
+        this.jtfFondoApertura.setEditable(false);
+        this.jtfFondoCierre.setEditable(false);
         this.jtfDifCaja.setEditable(false);
         this.jtfDepositar.setEditable(false);
         this.jtfTotalEgrIng1.setEditable(false);
@@ -187,14 +187,14 @@ public class VerDetalleCaja extends JDialog implements ActionListener, KeyListen
         }
 
         //ARQUEO CAJA 
-        tbmInicio = new ArqueoCajaTableModel();
-        jtInicio = new JTable(tbmInicio);
-        jtInicio.setEnabled(false);
-        jspInicio = new JScrollPane(jtInicio);
-        tbmFin = new ArqueoCajaTableModel();
-        jtFin = new JTable(tbmFin);
-        jtFin.setEnabled(false);
-        jspFin = new JScrollPane(jtFin);
+        tbmFondoApertura = new ArqueoCajaTableModel();
+        jtFondoApertura = new JTable(tbmFondoApertura);
+        jtFondoApertura.setEnabled(false);
+        jspFondoApertura = new JScrollPane(jtFondoApertura);
+        tbmFondoCierre = new ArqueoCajaTableModel();
+        jtFondoCierre = new JTable(tbmFondoCierre);
+        jtFondoCierre.setEnabled(false);
+        jspFondoCierre = new JScrollPane(jtFondoCierre);
         tbmDepositar = new ArqueoCajaTableModel();
         jtDepositar = new JTable(tbmDepositar);
         jtDepositar.setEnabled(false);
@@ -257,12 +257,12 @@ public class VerDetalleCaja extends JDialog implements ActionListener, KeyListen
         gc.gridx = 0;
         gc.anchor = GridBagConstraints.EAST;
         gc.insets = rightPadding;
-        studentInfoPanel.add(jlFondoInicial, gc);
+        studentInfoPanel.add(jlFondoApertura, gc);
 
         gc.gridx++;
         gc.anchor = GridBagConstraints.WEST;
         gc.insets = noPadding;
-        studentInfoPanel.add(jtfFondoInicial, gc);
+        studentInfoPanel.add(jtfFondoApertura, gc);
 
         // ////// Next row ////////////////////////////
         gc.gridy++;
@@ -274,12 +274,12 @@ public class VerDetalleCaja extends JDialog implements ActionListener, KeyListen
         gc.gridx = 0;
         gc.anchor = GridBagConstraints.EAST;
         gc.insets = rightPadding;
-        studentInfoPanel.add(jlCajaChica, gc);
+        studentInfoPanel.add(jlFondoCierre, gc);
 
         gc.gridx++;
         gc.anchor = GridBagConstraints.WEST;
         gc.insets = noPadding;
-        studentInfoPanel.add(jtfCajaChica, gc);
+        studentInfoPanel.add(jtfFondoCierre, gc);
 
         // ////// Next row ////////////////////////////
         gc.gridy++;
@@ -464,8 +464,8 @@ public class VerDetalleCaja extends JDialog implements ActionListener, KeyListen
 
         //ARQUEO CAJA
         JTabbedPane jpArqueoCaja = new JTabbedPane();
-        jpArqueoCaja.addTab("Caja chica", jspInicio);
-        jpArqueoCaja.addTab("Fondo inicial", jspFin);
+        jpArqueoCaja.addTab("Fondo cierre", jspFondoCierre);
+        jpArqueoCaja.addTab("Fondo apertura", jspFondoApertura);
         jpArqueoCaja.addTab("Depositado", jspDepositar);
         setLayout(new GridLayout(1, 2));
         add(jpArqueoCaja);
@@ -475,16 +475,16 @@ public class VerDetalleCaja extends JDialog implements ActionListener, KeyListen
     private void addListeners() {
         this.printButton.addActionListener(this);
         this.cancelButton.addActionListener(this);
-        this.tbmInicio.addTableModelListener(new TableModelListener() {
+        this.tbmFondoApertura.addTableModelListener(new TableModelListener() {
             @Override
             public void tableChanged(TableModelEvent e) {
-                sumarCajaChica();
+                sumarFondoApertura();
             }
         });
-        this.tbmFin.addTableModelListener(new TableModelListener() {
+        this.tbmFondoCierre.addTableModelListener(new TableModelListener() {
             @Override
             public void tableChanged(TableModelEvent e) {
-                sumarCajaChicaAnterior();
+                sumarFondoCierre();
             }
         });
         this.tbmDepositar.addTableModelListener(new TableModelListener() {
@@ -496,7 +496,7 @@ public class VerDetalleCaja extends JDialog implements ActionListener, KeyListen
         /*
         KEYLISTENER
          */
-        this.jtInicio.addKeyListener(this);
+        this.jtFondoApertura.addKeyListener(this);
     }
 
     private void setWindows(JFrame parentFrame) {
@@ -506,8 +506,8 @@ public class VerDetalleCaja extends JDialog implements ActionListener, KeyListen
     }
 
     private void initializeLogic(int idCaja) {
-        acdInicio = DB_Caja.obtenerArqueoCaja(idCaja, 1);
-        acdFin = DB_Caja.obtenerArqueoCaja(idCaja, 2);
+        acdApertura = DB_Caja.obtenerArqueoCaja(idCaja, 1);
+        acdCierre = DB_Caja.obtenerArqueoCaja(idCaja, 2);
         acdDepositar = DB_Caja.obtenerArqueoCaja(idCaja, 3);
         caja = DB_Caja.obtenerCaja(idCaja);
         int egresoContado = caja.getEgresoContado();
@@ -528,13 +528,13 @@ public class VerDetalleCaja extends JDialog implements ActionListener, KeyListen
         this.jtfIngresoContado.setValue(ingresoContado);
         this.jtfIngresoCredito.setValue(ingresoCretdito);
 
-        this.tbmInicio.setArqueoCajaList(acdInicio);
-        this.tbmInicio.updateTable();
-        Utilities.c_packColumn.packColumns(jtInicio, 1);
+        this.tbmFondoApertura.setArqueoCajaList(acdApertura);
+        this.tbmFondoApertura.updateTable();
+        Utilities.c_packColumn.packColumns(jtFondoApertura, 1);
 
-        this.tbmFin.setArqueoCajaList(acdFin);
-        this.tbmFin.updateTable();
-        Utilities.c_packColumn.packColumns(jtFin, 1);
+        this.tbmFondoCierre.setArqueoCajaList(acdCierre);
+        this.tbmFondoCierre.updateTable();
+        Utilities.c_packColumn.packColumns(jtFondoCierre, 1);
 
         this.tbmDepositar.setArqueoCajaList(acdDepositar);
         this.tbmDepositar.updateTable();
@@ -595,42 +595,42 @@ public class VerDetalleCaja extends JDialog implements ActionListener, KeyListen
         this.dispose();
     }
 
-    private void sumarCajaChica() {
+    private void sumarFondoApertura() {
         int total = 0;
-        for (ArqueoCajaDetalle arquDeta : this.tbmInicio.arqueoCajaDetalleList) {
+        for (ArqueoCajaDetalle arquDeta : this.tbmFondoApertura.arqueoCajaDetalleList) {
             total = total + (arquDeta.getCantidad() * arquDeta.getMoneda().getValor());
         }
-        this.jtfCajaChica.setValue(total);
+        this.jtfFondoApertura.setValue(total);
         calcularDiferenciaCaja();
     }
 
-    private void sumarCajaChicaAnterior() {
+    private void sumarFondoCierre() {
         int total = 0;
-        for (ArqueoCajaDetalle arquDeta : this.tbmFin.arqueoCajaDetalleList) {
+        for (ArqueoCajaDetalle arquDeta : this.tbmFondoCierre.arqueoCajaDetalleList) {
             total = total + (arquDeta.getCantidad() * arquDeta.getMoneda().getValor());
         }
-        this.jtfFondoInicial.setValue(total);
+        this.jtfFondoCierre.setValue(total);
         calcularDiferenciaCaja();
     }
 
     private void calcularDiferenciaCaja() {
-        int fondoInicial = 0;
-        int fondoFinal = 0;
-        if (null != this.jtfFondoInicial.getValue()) {
+        int fondoApertura = 0;
+        int fondoCierre = 0;
+        if (null != this.jtfFondoApertura.getValue()) {
             try {
-                fondoInicial = Integer.valueOf(String.valueOf(this.jtfFondoInicial.getValue()));
+                fondoApertura = Integer.valueOf(String.valueOf(this.jtfFondoApertura.getValue()));
             } catch (Exception e) {
-                fondoInicial = 0;
+                fondoApertura = 0;
             }
         }
-        if (null != this.jtfCajaChica.getValue()) {
+        if (null != this.jtfFondoCierre.getValue()) {
             try {
-                fondoFinal = Integer.valueOf(String.valueOf(this.jtfCajaChica.getValue()));
+                fondoCierre = Integer.valueOf(String.valueOf(this.jtfFondoCierre.getValue()));
             } catch (Exception e) {
-                fondoFinal = 0;
+                fondoCierre = 0;
             }
         }
-        this.jtfDifCaja.setValue(fondoInicial - fondoFinal);
+        this.jtfDifCaja.setValue(fondoApertura - fondoCierre);
     }
 
     private void arqueoDepositar() {
