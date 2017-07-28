@@ -74,7 +74,7 @@ public class M_gestionCaja {
         calendario.set(Calendar.MILLISECOND, 0);
         java.sql.Timestamp fFin = java.sql.Timestamp.valueOf(sdfs.format(calendario.getTime()));
         ArrayList<CierreCaja> acd = DB_Caja.consultarCajasExportacion(idFuncionario, fInicio, fFin);
-        ExportarCaja ec = new ExportarCaja("asd", acd);
+        ExportarCaja ec = new ExportarCaja("Cierre de caja", acd);
         ec.exportar();
     }
 
