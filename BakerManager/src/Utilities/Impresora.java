@@ -13,7 +13,6 @@ import DB.DB_Funcionario;
 import DB.DB_Ingreso;
 import DB.DB_Pedido;
 import DB.DB_manager;
-import Entities.ArqueoCajaDetalle;
 import Entities.Caja;
 import Entities.M_facturaCabecera;
 import Entities.M_facturaDetalle;

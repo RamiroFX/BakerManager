@@ -128,7 +128,7 @@ public class Caja {
 
     @Override
     public String toString() {
-        return "{Id: " + getIdCaja() + ", tiempoCierre:" + getIdEmpleadoCierre() + "}";
+        return "Caja:{Id: " + getIdCaja() + ", tiempoCierre:" + getTiempoCierre() + "}";
     }
 
 }

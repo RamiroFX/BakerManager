@@ -12,10 +12,12 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFRichTextString;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -34,27 +36,31 @@ import org.apache.poi.ss.util.CellUtil;
  */
 public class ExportarCaja {
 
+    private static final String RESUMEN = "Resumen";
+    private static final String MENSAJE_ERROR = "No hay cajas para exportar";
+    private static final String TITULO_ERROR = "Atención";
+
     private HSSFWorkbook workbook;
     private HSSFSheet sheet;
-    //private ArrayList<HSSFSheet> sheets;
-    private CellStyle style1, style2, style3, style4, style5, style6,style7;
+    private ArrayList<HSSFSheet> sheets;
+    private CellStyle style1, style2, style3, style4, style5, style6, style7;
     private HSSFCellStyle dateCellStyle;
-    private final String NOMBRE_HOJA;
     private File directory;
     private ArrayList<CierreCaja> cierreCajas;
+    private SimpleDateFormat sdfs;
 
     /**
      *
      * @param nombreHoja Especifíca el nombre del archivo excel a crear.
      */
-    public ExportarCaja(String nombreHoja) {
-        this.NOMBRE_HOJA = nombreHoja;
+    public ExportarCaja() {
+        this.sdfs = new SimpleDateFormat("MM-yyyy");
         createWorkBook();
         createCellStyles();
     }
 
-    public ExportarCaja(String nombreHoja, ArrayList<CierreCaja> cierreCajas) {
-        this.NOMBRE_HOJA = nombreHoja;
+    public ExportarCaja(ArrayList<CierreCaja> cierreCajas) {
+        this.sdfs = new SimpleDateFormat("MM-yyyy");
         this.cierreCajas = cierreCajas;
         createWorkBook();
         createCellStyles();
@@ -62,8 +68,7 @@ public class ExportarCaja {
 
     private void createWorkBook() {
         workbook = new HSSFWorkbook();
-        //sheets = new ArrayList<>();
-        sheet = workbook.createSheet(NOMBRE_HOJA);
+        sheets = new ArrayList<>();
     }
 
     private void createCellStyles() {
@@ -100,7 +105,7 @@ public class ExportarCaja {
         style6.setBorderRight(HSSFCellStyle.BORDER_THIN);
         style6.setBorderLeft(HSSFCellStyle.BORDER_THIN);
         style6.setDataFormat(format.getFormat("#,##0"));
-        
+
         style7 = workbook.createCellStyle();
         style7.setBorderRight(HSSFCellStyle.BORDER_THIN);
         style7.setBorderLeft(HSSFCellStyle.BORDER_THIN);
@@ -111,7 +116,29 @@ public class ExportarCaja {
         //END FORMAT STYLE
     }
 
-    private void prepararCabeza() {
+    public void exportar() {
+        //PREPARAR CONTENIDO
+        int fila = 0;//En preparar cuerpo empieza en cero (0).
+        Date fechaActual = null;
+        Calendar calendar = Calendar.getInstance();
+        int monthCursor = 0;
+        int currentMonth = 0;
+        int newMonth = 0;
+        int resumenTotalEgreso = 0;
+        int resumenTotalIngreso = 0;
+        int resumenTotalDepositado = 0;
+        Date resumenFechaInicio = null;
+        Date resumenFechaFin = null;
+        if (cierreCajas != null && !cierreCajas.isEmpty()) {
+            fechaActual = cierreCajas.get(0).getCaja().getTiempoCierre();
+            resumenFechaInicio = fechaActual;
+            calendar.setTime(fechaActual);
+            currentMonth = calendar.get(Calendar.MONTH);
+            sheets.add(workbook.createSheet(sdfs.format(calendar.getTime())));
+        } else {
+            JOptionPane.showMessageDialog(null, MENSAJE_ERROR, TITULO_ERROR, JOptionPane.ERROR_MESSAGE);
+            return;
+        }
         String desktop = System.getProperty("user.home") + "\\Desktop";
         JFileChooser chooser = new JFileChooser(desktop);
         if (chooser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
@@ -122,41 +149,28 @@ public class ExportarCaja {
         } else {
             return;
         }
-//        Date fecha = Calendar.getInstance().getTime();
-//        int fila = 0;
-//        Row fechaActual = sheet.createRow(fila);
-//        fechaActual.createCell(0).setCellValue(new HSSFRichTextString("Fecha creación:"));
-//        fechaActual.createCell(1).setCellValue(fecha);
-//        fechaActual.getCell(1).setCellStyle(dateCellStyle);
-    }
-
-    private void prepararPie() {
-        try {
-            FileOutputStream out = new FileOutputStream(directory.getPath() + ".xls");
-            workbook.write(out);
-            out.close();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void prepararCuerpo() {
-        int fila = 0;//En preparar cuerpo empieza en cero (0).
+        ArrayList<Moneda> monedas = DB_Caja.obtenerMonedas();
         for (CierreCaja cierreCaja : cierreCajas) {
-            fila++;//Para dar una linea de espacio
+            fechaActual = cierreCaja.getCaja().getTiempoCierre();
+            calendar.setTime(fechaActual);
+            newMonth = calendar.get(Calendar.MONTH);
+            if (currentMonth != newMonth) {
+                resumenFechaFin = cierreCaja.getCaja().getTiempoCierre();
+                sheets.add(workbook.createSheet(sdfs.format(calendar.getTime())));
+                monthCursor++;
+                fila = 0;
+            }
             //CREAR FECHA DE CAJA
-            Row fechaCaja = sheet.createRow(fila);
+            Row fechaCaja = sheets.get(monthCursor).createRow(fila);
             fila++;
             fechaCaja.createCell(0).setCellValue(new HSSFRichTextString("Fecha:"));
             fechaCaja.createCell(1).setCellValue(cierreCaja.getCaja().getTiempoCierre());
             fechaCaja.getCell(1).setCellStyle(dateCellStyle);
             //CREAR CABECERA DE ARQUEOS (APERTURA,CIERRE,DEPOSITO)
-            Row cabeceraCajas = sheet.createRow(fila);
-            sheet.addMergedRegion(new CellRangeAddress(fila, fila, 0, 2));
-            sheet.addMergedRegion(new CellRangeAddress(fila, fila, 3, 5));
-            sheet.addMergedRegion(new CellRangeAddress(fila, fila, 6, 8));
+            Row cabeceraCajas = sheets.get(monthCursor).createRow(fila);
+            sheets.get(monthCursor).addMergedRegion(new CellRangeAddress(fila, fila, 0, 2));
+            sheets.get(monthCursor).addMergedRegion(new CellRangeAddress(fila, fila, 3, 5));
+            sheets.get(monthCursor).addMergedRegion(new CellRangeAddress(fila, fila, 6, 8));
             cabeceraCajas.createCell(0).setCellValue(new HSSFRichTextString("Caja apertura"));
             cabeceraCajas.createCell(1).setCellValue("");
             cabeceraCajas.createCell(2).setCellValue("");
@@ -180,7 +194,7 @@ public class ExportarCaja {
             CellUtil.setAlignment(cabeceraCajas.getCell(6), workbook, CellStyle.ALIGN_CENTER);
             fila++;
             //SUB CABECERA DE ARQUEOS
-            Row subCabeceraCajas = sheet.createRow(fila);
+            Row subCabeceraCajas = sheets.get(monthCursor).createRow(fila);
             subCabeceraCajas.createCell(0).setCellValue(new HSSFRichTextString("Cantidad"));
             subCabeceraCajas.createCell(1).setCellValue(new HSSFRichTextString("Denominación"));
             subCabeceraCajas.createCell(2).setCellValue(new HSSFRichTextString("Importe"));
@@ -204,9 +218,9 @@ public class ExportarCaja {
             int totalApertura = 0;//Para sumar el total de la caja apertura
             int totalCierre = 0;//Para sumar el total de la caja apertura
             int totalDeposito = 0;//Para sumar el total de la caja apertura
-            ArrayList<Moneda> monedas = DB_Caja.obtenerMonedas();
+
             for (Moneda moneda : monedas) {
-                Row arqueoCajas = sheet.createRow(fila);
+                Row arqueoCajas = sheets.get(monthCursor).createRow(fila);
                 fila++;
                 arqueoCajas.createCell(0);
                 arqueoCajas.createCell(1).setCellValue(moneda.toString());
@@ -232,7 +246,6 @@ public class ExportarCaja {
                 if (b) {
                     arqueoCajas.getCell(0).setCellValue(0);
                     arqueoCajas.getCell(2).setCellValue(0);
-                    //b = false;
                 }
                 b = true;
                 //CIERRE CAJA
@@ -278,13 +291,13 @@ public class ExportarCaja {
                 arqueoCajas.getCell(8).setCellStyle(style6);
             }
             //TOTALES
-            Row totales = sheet.createRow(fila);
+            Row totales = sheets.get(monthCursor).createRow(fila);
             CellRangeAddress cellRangeAddress1 = new CellRangeAddress(fila, fila, 0, 1);
             CellRangeAddress cellRangeAddress2 = new CellRangeAddress(fila, fila, 3, 4);
             CellRangeAddress cellRangeAddress3 = new CellRangeAddress(fila, fila, 6, 7);
-            sheet.addMergedRegion(cellRangeAddress1);
-            sheet.addMergedRegion(cellRangeAddress2);
-            sheet.addMergedRegion(cellRangeAddress3);
+            sheets.get(monthCursor).addMergedRegion(cellRangeAddress1);
+            sheets.get(monthCursor).addMergedRegion(cellRangeAddress2);
+            sheets.get(monthCursor).addMergedRegion(cellRangeAddress3);
             totales.createCell(0).setCellValue(new HSSFRichTextString("Total apertura"));
             totales.createCell(2).setCellValue(totalApertura);
             totales.createCell(3).setCellValue(new HSSFRichTextString("Total cierre"));
@@ -292,20 +305,20 @@ public class ExportarCaja {
             totales.createCell(6).setCellValue(new HSSFRichTextString("Total depósito"));
             totales.createCell(8).setCellValue(totalDeposito);
             //BORDE para totales
-            HSSFRegionUtil.setBorderTop(CellStyle.BORDER_THIN, cellRangeAddress1, sheet, workbook);
-            HSSFRegionUtil.setBorderLeft(CellStyle.BORDER_THIN, cellRangeAddress1, sheet, workbook);
-            HSSFRegionUtil.setBorderRight(CellStyle.BORDER_THIN, cellRangeAddress1, sheet, workbook);
-            HSSFRegionUtil.setBorderBottom(CellStyle.BORDER_THIN, cellRangeAddress1, sheet, workbook);
+            HSSFRegionUtil.setBorderTop(CellStyle.BORDER_THIN, cellRangeAddress1, sheets.get(monthCursor), workbook);
+            HSSFRegionUtil.setBorderLeft(CellStyle.BORDER_THIN, cellRangeAddress1, sheets.get(monthCursor), workbook);
+            HSSFRegionUtil.setBorderRight(CellStyle.BORDER_THIN, cellRangeAddress1, sheets.get(monthCursor), workbook);
+            HSSFRegionUtil.setBorderBottom(CellStyle.BORDER_THIN, cellRangeAddress1, sheets.get(monthCursor), workbook);
             totales.getCell(2).setCellStyle(style7);
-            HSSFRegionUtil.setBorderTop(CellStyle.BORDER_THIN, cellRangeAddress2, sheet, workbook);
-            HSSFRegionUtil.setBorderLeft(CellStyle.BORDER_THIN, cellRangeAddress2, sheet, workbook);
-            HSSFRegionUtil.setBorderRight(CellStyle.BORDER_THIN, cellRangeAddress2, sheet, workbook);
-            HSSFRegionUtil.setBorderBottom(CellStyle.BORDER_THIN, cellRangeAddress2, sheet, workbook);
+            HSSFRegionUtil.setBorderTop(CellStyle.BORDER_THIN, cellRangeAddress2, sheets.get(monthCursor), workbook);
+            HSSFRegionUtil.setBorderLeft(CellStyle.BORDER_THIN, cellRangeAddress2, sheets.get(monthCursor), workbook);
+            HSSFRegionUtil.setBorderRight(CellStyle.BORDER_THIN, cellRangeAddress2, sheets.get(monthCursor), workbook);
+            HSSFRegionUtil.setBorderBottom(CellStyle.BORDER_THIN, cellRangeAddress2, sheets.get(monthCursor), workbook);
             totales.getCell(5).setCellStyle(style7);
-            HSSFRegionUtil.setBorderTop(CellStyle.BORDER_THIN, cellRangeAddress3, sheet, workbook);
-            HSSFRegionUtil.setBorderLeft(CellStyle.BORDER_THIN, cellRangeAddress3, sheet, workbook);
-            HSSFRegionUtil.setBorderRight(CellStyle.BORDER_THIN, cellRangeAddress3, sheet, workbook);
-            HSSFRegionUtil.setBorderBottom(CellStyle.BORDER_THIN, cellRangeAddress3, sheet, workbook);
+            HSSFRegionUtil.setBorderTop(CellStyle.BORDER_THIN, cellRangeAddress3, sheets.get(monthCursor), workbook);
+            HSSFRegionUtil.setBorderLeft(CellStyle.BORDER_THIN, cellRangeAddress3, sheets.get(monthCursor), workbook);
+            HSSFRegionUtil.setBorderRight(CellStyle.BORDER_THIN, cellRangeAddress3, sheets.get(monthCursor), workbook);
+            HSSFRegionUtil.setBorderBottom(CellStyle.BORDER_THIN, cellRangeAddress3, sheets.get(monthCursor), workbook);
             totales.getCell(8).setCellStyle(style7);
             CellUtil.setAlignment(totales.getCell(0), workbook, CellStyle.ALIGN_CENTER);
             CellUtil.setAlignment(totales.getCell(3), workbook, CellStyle.ALIGN_CENTER);
@@ -313,42 +326,102 @@ public class ExportarCaja {
             fila++;
             //TOTAL EGRESO
             int totalEgresos = cierreCaja.getCaja().getEgresoContado() + cierreCaja.getCaja().getEgresoCredito();
-            Row totalEgreso = sheet.createRow(fila);
+            Row totalEgreso = sheets.get(monthCursor).createRow(fila);
             totalEgreso.createCell(0).setCellValue(new HSSFRichTextString("Total egresos"));
             totalEgreso.createCell(2).setCellValue(totalEgresos);
             totalEgreso.getCell(2).setCellStyle(style4);
-            sheet.addMergedRegion(new CellRangeAddress(fila, fila, 0, 1));
+            sheets.get(monthCursor).addMergedRegion(new CellRangeAddress(fila, fila, 0, 1));
             fila++;
             //TOTAL EGRESO
             int totalIngresos = cierreCaja.getCaja().getIngresoContado() + cierreCaja.getCaja().getIngresoCredito();
-            Row totalIngreso = sheet.createRow(fila);
+            Row totalIngreso = sheets.get(monthCursor).createRow(fila);
             totalIngreso.createCell(0).setCellValue(new HSSFRichTextString("Total ingresos"));
             totalIngreso.createCell(2).setCellValue(totalIngresos);
             totalIngreso.getCell(2).setCellStyle(style4);
-            sheet.addMergedRegion(new CellRangeAddress(fila, fila, 0, 1));
+            sheets.get(monthCursor).addMergedRegion(new CellRangeAddress(fila, fila, 0, 1));
             fila++;
             //EGRESO+DEPOSITADO
-            Row egresoDeposito = sheet.createRow(fila);
+            Row egresoDeposito = sheets.get(monthCursor).createRow(fila);
             egresoDeposito.createCell(0).setCellValue(new HSSFRichTextString("Egreso+Depositado"));
-            egresoDeposito.createCell(2).setCellValue(totalDeposito);
+            egresoDeposito.createCell(2).setCellValue(totalDeposito + totalEgresos);
             egresoDeposito.getCell(2).setCellStyle(style4);
-            sheet.addMergedRegion(new CellRangeAddress(fila, fila, 0, 1));
-            sheet.autoSizeColumn(1);
-            sheet.autoSizeColumn(2);
-            sheet.autoSizeColumn(3);
-            sheet.autoSizeColumn(4);
-            sheet.autoSizeColumn(5);
-            sheet.autoSizeColumn(6);
-            sheet.autoSizeColumn(7);
-            sheet.autoSizeColumn(8);
-            sheet.autoSizeColumn(9);
+            sheets.get(monthCursor).addMergedRegion(new CellRangeAddress(fila, fila, 0, 1));
+            sheets.get(monthCursor).autoSizeColumn(1);
+            sheets.get(monthCursor).autoSizeColumn(2);
+            sheets.get(monthCursor).autoSizeColumn(3);
+            sheets.get(monthCursor).autoSizeColumn(4);
+            sheets.get(monthCursor).autoSizeColumn(5);
+            sheets.get(monthCursor).autoSizeColumn(6);
+            sheets.get(monthCursor).autoSizeColumn(7);
+            sheets.get(monthCursor).autoSizeColumn(8);
+            sheets.get(monthCursor).autoSizeColumn(9);
+
+            resumenTotalEgreso = resumenTotalEgreso + totalEgresos;
+            resumenTotalIngreso = resumenTotalIngreso + totalIngresos;
+            resumenTotalDepositado = resumenTotalDepositado + totalDeposito;
             fila++;
         }
-    }
+        fila = 0;
+        sheets.add(workbook.createSheet(RESUMEN));
+        monthCursor++;
 
-    public void exportar() {
-        prepararCabeza();
-        prepararCuerpo();
-        prepararPie();
+        CellRangeAddress cellRangeAddress1 = new CellRangeAddress(2, 2, 0, 1);
+        CellRangeAddress cellRangeAddress2 = new CellRangeAddress(3, 3, 0, 1);
+        CellRangeAddress cellRangeAddress3 = new CellRangeAddress(4, 4, 0, 1);
+
+        Row fechaInicio = sheets.get(monthCursor).createRow(fila);
+        fechaInicio.createCell(0).setCellValue(new HSSFRichTextString("Fecha inicio"));
+        fechaInicio.createCell(1).setCellValue(resumenFechaInicio);
+        fechaInicio.getCell(1).setCellStyle(dateCellStyle);
+        fila++;
+        Row fechaFin = sheets.get(monthCursor).createRow(fila);
+        fechaFin.createCell(0).setCellValue(new HSSFRichTextString("Fecha fin"));
+        fechaFin.createCell(1).setCellValue(resumenFechaFin);
+        fechaFin.getCell(1).setCellStyle(dateCellStyle);
+        fila++;
+
+        Row resumenTotalEgresos = sheets.get(monthCursor).createRow(fila);
+        resumenTotalEgresos.createCell(0).setCellValue(new HSSFRichTextString("Total egresos"));
+        resumenTotalEgresos.createCell(1).setCellValue(resumenTotalEgreso);
+        HSSFRegionUtil.setBorderTop(CellStyle.BORDER_THIN, cellRangeAddress1, sheets.get(monthCursor), workbook);
+        HSSFRegionUtil.setBorderLeft(CellStyle.BORDER_THIN, cellRangeAddress1, sheets.get(monthCursor), workbook);
+        HSSFRegionUtil.setBorderRight(CellStyle.BORDER_THIN, cellRangeAddress1, sheets.get(monthCursor), workbook);
+        HSSFRegionUtil.setBorderBottom(CellStyle.BORDER_THIN, cellRangeAddress1, sheets.get(monthCursor), workbook);
+        resumenTotalEgresos.getCell(1).setCellStyle(style7);
+        fila++;
+
+        Row resumenTotalIngresos = sheets.get(monthCursor).createRow(fila);
+        resumenTotalIngresos.createCell(0).setCellValue(new HSSFRichTextString("Total ingresos"));
+        resumenTotalIngresos.createCell(1).setCellValue(resumenTotalIngreso);
+        HSSFRegionUtil.setBorderTop(CellStyle.BORDER_THIN, cellRangeAddress2, sheets.get(monthCursor), workbook);
+        HSSFRegionUtil.setBorderLeft(CellStyle.BORDER_THIN, cellRangeAddress2, sheets.get(monthCursor), workbook);
+        HSSFRegionUtil.setBorderRight(CellStyle.BORDER_THIN, cellRangeAddress2, sheets.get(monthCursor), workbook);
+        HSSFRegionUtil.setBorderBottom(CellStyle.BORDER_THIN, cellRangeAddress2, sheets.get(monthCursor), workbook);
+        resumenTotalIngresos.getCell(1).setCellStyle(style7);
+        fila++;
+
+        Row resumenTotalDepo = sheets.get(monthCursor).createRow(fila);
+        resumenTotalDepo.createCell(0).setCellValue(new HSSFRichTextString("Total depositado"));
+        resumenTotalDepo.createCell(1).setCellValue(resumenTotalDepositado);
+        HSSFRegionUtil.setBorderTop(CellStyle.BORDER_THIN, cellRangeAddress3, sheets.get(monthCursor), workbook);
+        HSSFRegionUtil.setBorderLeft(CellStyle.BORDER_THIN, cellRangeAddress3, sheets.get(monthCursor), workbook);
+        HSSFRegionUtil.setBorderRight(CellStyle.BORDER_THIN, cellRangeAddress3, sheets.get(monthCursor), workbook);
+        HSSFRegionUtil.setBorderBottom(CellStyle.BORDER_THIN, cellRangeAddress3, sheets.get(monthCursor), workbook);
+        resumenTotalDepo.getCell(1).setCellStyle(style7);
+        fila++;
+
+        sheets.get(monthCursor).autoSizeColumn(0);
+        sheets.get(monthCursor).autoSizeColumn(1);
+
+        //PREPARAR DOCUMENTO
+        try {
+            FileOutputStream out = new FileOutputStream(directory.getPath() + ".xls");
+            workbook.write(out);
+            out.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
