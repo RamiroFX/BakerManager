@@ -9,6 +9,8 @@ package Utilities;
  *
  * @author Ramiro
  */
+import DB.DB_Caja;
+import DB.DB_Egreso;
 import DB.DB_Funcionario;
 import DB.DB_Ingreso;
 import DB.DB_Pedido;
@@ -26,6 +28,7 @@ import java.awt.print.PageFormat;
 import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -401,16 +404,32 @@ public class Impresora {
         PrintService service = PrintServiceLookup.lookupDefaultPrintService();
         Date today = Calendar.getInstance().getTime();
         String fechaEntrega = sdfs.format(today);
+        Calendar inicio = Calendar.getInstance();
+        inicio.setTime(caja.getTiempoApertura());
+        inicio.set(Calendar.HOUR_OF_DAY, 0);
+        inicio.set(Calendar.MINUTE, 0);
+        Calendar fin = Calendar.getInstance();
+        fin.setTime(caja.getTiempoApertura());
+        fin.set(Calendar.HOUR_OF_DAY, 23);
+        fin.set(Calendar.MINUTE, 59);
+        Timestamp ini = new Timestamp(inicio.getTimeInMillis());
+        Timestamp fi = new Timestamp(fin.getTimeInMillis());
+        int egresoContado = DB_Egreso.obtenerTotalEgreso(ini, fi, 1);
+        int egresoCretdito = DB_Egreso.obtenerTotalEgreso(ini, fi, 2);
+        int ingresoContado = DB_Ingreso.obtenerTotalIngreso(ini, fi, 1);
+        int ingresoCretdito = DB_Ingreso.obtenerTotalIngreso(ini, fi, 2);
+        int cajaCierre = DB_Caja.obtenerTotalArqueoCaja(caja.getIdCaja(), 2);
+
         String CABECERA = "Fecha y hora: " + fechaEntrega + "\n"
                 + "Funcionario: " + DB_Funcionario.obtenerDatosFuncionarioID(caja.getIdEmpleadoCierre()).getNombre() + "\n"
                 + "Hora cierre: " + sdfs.format(caja.getTiempoCierre()) + "\n"
                 + "---------------------------------\n";
 
-        int Ingresos = caja.getIngresoCredito() + caja.getIngresoContado();
-        int Egresos = caja.getEgresoContado() + caja.getIngresoCredito();
+        int Ingresos = ingresoContado + ingresoCretdito;
+        int Egresos = egresoContado + egresoCretdito;
         String CUERPO = "Ingreso: " + Ingresos + "\n"
                 + "Egreso: " + Egresos + "\n"
-                + "Caja chica: " + caja.getMontoFinal() + "\n"
+                + "Caja chica: " + cajaCierre + "\n"
                 + "Efectivo depositado: " + efectivoDepositado + "\n"
                 + "Ingreso-Egreso: " + (Ingresos - Egresos) + "\n"
                 + "Ingreso+Egreso: " + (Ingresos + Egresos) + "\n";

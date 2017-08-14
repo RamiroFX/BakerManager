@@ -12,24 +12,16 @@ import java.util.Date;
  */
 public class Caja {
 
-    private int idCaja, idEmpleadoApertura, idEmpleadoCierre, montoInicial,
-            montoFinal, ingresoContado, ingresoCredito,
-            egresoContado, egresoCredito;
+    private int idCaja, idEmpleadoApertura, idEmpleadoCierre;
     private Date tiempoApertura, tiempoCierre;
 
     public Caja() {
     }
 
-    public Caja(int idCaja, int idEmpleadoApertura, int idEmpleadoCierre, int montoInicial, int montoFinal, int ingresoContado, int ingresoCredito, int egresoContado, int egresoCredito, Date tiempoApertura, Date tiempoCierre) {
+    public Caja(int idCaja, int idEmpleadoApertura, int idEmpleadoCierre, Date tiempoApertura, Date tiempoCierre) {
         this.idCaja = idCaja;
         this.idEmpleadoApertura = idEmpleadoApertura;
         this.idEmpleadoCierre = idEmpleadoCierre;
-        this.montoInicial = montoInicial;
-        this.montoFinal = montoFinal;
-        this.ingresoContado = ingresoContado;
-        this.ingresoCredito = ingresoCredito;
-        this.egresoContado = egresoContado;
-        this.egresoCredito = egresoCredito;
         this.tiempoApertura = tiempoApertura;
         this.tiempoCierre = tiempoCierre;
     }
@@ -56,58 +48,6 @@ public class Caja {
 
     public void setIdEmpleadoCierre(int idEmpleadoCierre) {
         this.idEmpleadoCierre = idEmpleadoCierre;
-    }
-
-    public int getMontoInicial() {
-        return montoInicial;
-    }
-
-    public void setMontoInicial(int montoInicial) {
-        this.montoInicial = montoInicial;
-    }
-
-    public int getMontoFinal() {
-        return montoFinal;
-    }
-
-    public void setMontoFinal(int montoFinal) {
-        this.montoFinal = montoFinal;
-    }
-
-    public int totalEgresoIngreso() {
-        return getEgresoContado() + getEgresoCredito() + getIngresoContado() + getIngresoCredito();
-    }
-
-    public int getIngresoContado() {
-        return ingresoContado;
-    }
-
-    public void setIngresoContado(int ingresoContado) {
-        this.ingresoContado = ingresoContado;
-    }
-
-    public int getIngresoCredito() {
-        return ingresoCredito;
-    }
-
-    public void setIngresoCredito(int ingresoCredito) {
-        this.ingresoCredito = ingresoCredito;
-    }
-
-    public int getEgresoContado() {
-        return egresoContado;
-    }
-
-    public void setEgresoContado(int egresoContado) {
-        this.egresoContado = egresoContado;
-    }
-
-    public int getEgresoCredito() {
-        return egresoCredito;
-    }
-
-    public void setEgresoCredito(int egresoCredito) {
-        this.egresoCredito = egresoCredito;
     }
 
     public Date getTiempoApertura() {

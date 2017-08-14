@@ -11,6 +11,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.beans.PropertyVetoException;
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -122,14 +123,21 @@ public class C_gestionCaja implements GestionInterface {
                 Date inicio = vista.jddInicio.getDate();
                 Date fin = vista.jddFinal.getDate();
                 if (validarFechas(inicio, fin)) {
-                    SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-                    String fecha_inicio = sdf.format(vista.jddInicio.getDate());
-                    String fecha_fin = sdf.format(vista.jddFinal.getDate());
+                    Calendar calendarioInicio = Calendar.getInstance();
+                    calendarioInicio.setTime(inicio);
+                    calendarioInicio.set(Calendar.HOUR_OF_DAY, 0);
+                    calendarioInicio.set(Calendar.MINUTE, 0);
+                    Calendar calendarioFin = Calendar.getInstance();
+                    calendarioFin.setTime(fin);
+                    calendarioFin.set(Calendar.HOUR_OF_DAY, 23);
+                    calendarioFin.set(Calendar.MINUTE, 59);
+                    Timestamp ini = new Timestamp(calendarioInicio.getTimeInMillis());
+                    Timestamp fi = new Timestamp(calendarioFin.getTimeInMillis());
                     int idFuncionario = -1;
                     if (modelo.getFuncionario() != null && modelo.getFuncionario().getId_funcionario() != null) {
                         idFuncionario = modelo.getFuncionario().getId_funcionario();
                     }
-                    vista.jtCaja.setModel(modelo.consultarCajas(idFuncionario, fecha_inicio, fecha_fin));
+                    vista.jtCaja.setModel(modelo.consultarCajas(idFuncionario, ini, fi));
                     Utilities.c_packColumn.packColumns(vista.jtCaja, 1);
                     vista.jbDetalle.setEnabled(false);
                 } else {
@@ -182,7 +190,7 @@ public class C_gestionCaja implements GestionInterface {
     private boolean validarFechas(Date f_inicio, Date f_final) {
         if (f_inicio != null && f_final != null) {
             int dateValue = f_inicio.compareTo(f_final);
-            if (dateValue <= 0) {
+            if (dateValue < 0) {
                 return true;
             }
         }

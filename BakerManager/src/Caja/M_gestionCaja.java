@@ -7,6 +7,7 @@ import Entities.CierreCaja;
 import Entities.M_funcionario;
 import Excel.ExportarCaja;
 import Utilities.Impresora;
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -54,7 +55,7 @@ public class M_gestionCaja {
         this.funcionario = funcionario;
     }
 
-    public ResultSetTableModel consultarCajas(int idFuncionario, String fecha_inicio, String fecha_fin) {
+    public ResultSetTableModel consultarCajas(int idFuncionario, Timestamp fecha_inicio, Timestamp fecha_fin) {
         return DB_Caja.consultarCajas(idFuncionario, fecha_inicio, fecha_fin);
     }
 

@@ -80,12 +80,13 @@ public class C_crearPedido extends MouseAdapter implements ActionListener, KeyLi
         this.vista.jdcFechaEntrega.setDate(calendar.getTime());
         Date currentTime = calendar.getTime();
         String horaT = sdf.format(currentTime).substring(0, 2);
-        int horas= Integer.valueOf(horaT);
+        int horas = Integer.valueOf(horaT);
+        //Se suma una hora para que la hora de entrega tenga una hora mas que la hora actual
+        int horaAux = horas + 1;
         if (horas >= 0 && horas < 10) {
-            this.vista.jcbHora.setSelectedItem(""+(horas+1));
-            
+            this.vista.jcbHora.setSelectedItem("0" + horaAux);
         } else {
-            this.vista.jcbHora.setSelectedItem(""+(horas+1));
+            this.vista.jcbHora.setSelectedItem("" + horaAux);
         }
         establecerCondicionVenta();
     }
@@ -106,6 +107,10 @@ public class C_crearPedido extends MouseAdapter implements ActionListener, KeyLi
         this.vista.jbAceptar.addKeyListener(this);
         this.vista.jbImprimir.addKeyListener(this);
         this.vista.jbSalir.addKeyListener(this);
+        this.vista.jrbContado.addKeyListener(this);
+        this.vista.jrbCredito.addKeyListener(this);
+        this.vista.jcbHora.addKeyListener(this);
+        this.vista.jcbMinuto.addKeyListener(this);
     }
 
     private void establecerCondicionVenta() {
@@ -354,22 +359,30 @@ public class C_crearPedido extends MouseAdapter implements ActionListener, KeyLi
 
     @Override
     public void keyPressed(KeyEvent e) {
-        if (e.getKeyCode() == KeyEvent.VK_F1) {
-            guardarPedido();
-        }
-        if (e.getKeyCode() == KeyEvent.VK_F2) {
-            imprimir();
-        }
-        if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
-            cerrar();
-        }
-        if (e.getKeyCode() == KeyEvent.VK_F4) {
-            SeleccionarProducto sp = new SeleccionarProducto(this);
-            sp.mostrarVista();
-        }
-        if (e.getKeyCode() == KeyEvent.VK_F3) {
-            Seleccionar_cliente sp = new Seleccionar_cliente(this);
-            sp.mostrarVista();
+        System.out.println("Pedido.C_crearPedido.keyPressed(): " + e.getSource());
+        switch (e.getKeyCode()) {
+            case KeyEvent.VK_F1: {
+                guardarPedido();
+                break;
+            }
+            case KeyEvent.VK_F2: {
+                imprimir();
+                break;
+            }
+            case KeyEvent.VK_F3: {
+                Seleccionar_cliente sp = new Seleccionar_cliente(this);
+                sp.mostrarVista();
+                break;
+            }
+            case KeyEvent.VK_F4: {
+                SeleccionarProducto sp = new SeleccionarProducto(this);
+                sp.mostrarVista();
+                break;
+            }
+            case KeyEvent.VK_ESCAPE: {
+                cerrar();
+                break;
+            }
         }
     }
 

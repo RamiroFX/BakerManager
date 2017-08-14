@@ -6,6 +6,8 @@
 package Caja;
 
 import DB.DB_Caja;
+import DB.DB_Egreso;
+import DB.DB_Ingreso;
 import Interface.CommonFormat;
 import Entities.ArqueoCajaDetalle;
 import Entities.Caja;
@@ -24,6 +26,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -510,11 +513,21 @@ public class VerDetalleCaja extends JDialog implements ActionListener, KeyListen
         acdCierre = DB_Caja.obtenerArqueoCaja(idCaja, 2);
         acdDepositar = DB_Caja.obtenerArqueoCaja(idCaja, 3);
         caja = DB_Caja.obtenerCaja(idCaja);
-        int egresoContado = caja.getEgresoContado();
-        int egresoCretdito = caja.getEgresoCredito();
+        Calendar inicio = Calendar.getInstance();
+        inicio.setTime(caja.getTiempoApertura());
+        inicio.set(Calendar.HOUR_OF_DAY, 0);
+        inicio.set(Calendar.MINUTE, 0);
+        Calendar fin = Calendar.getInstance();
+        fin.setTime(caja.getTiempoApertura());
+        fin.set(Calendar.HOUR_OF_DAY, 23);
+        fin.set(Calendar.MINUTE, 59);
+        Timestamp ini = new Timestamp(inicio.getTimeInMillis());
+        Timestamp fi = new Timestamp(fin.getTimeInMillis());
+        int egresoContado = DB_Egreso.obtenerTotalEgreso(ini, fi, 1);
+        int egresoCretdito = DB_Egreso.obtenerTotalEgreso(ini, fi, 2);
         int totalEgreso = egresoContado + egresoCretdito;
-        int ingresoContado = caja.getIngresoContado();
-        int ingresoCretdito = caja.getIngresoCredito();
+        int ingresoContado = DB_Ingreso.obtenerTotalIngreso(ini, fi, 1);
+        int ingresoCretdito = DB_Ingreso.obtenerTotalIngreso(ini, fi, 2);
         int totalIngreso = ingresoContado + ingresoCretdito;
 
         int totalEgrMasIng = totalEgreso + totalIngreso;

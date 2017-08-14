@@ -28,6 +28,7 @@ public class DB_Egreso {
     private static Statement st = null;
     private static PreparedStatement pst = null;
     private static ResultSet rs = null;
+
     /*
      * READ
      */
@@ -53,7 +54,8 @@ public class DB_Egreso {
         } catch (SQLException ex) {
             Logger lgr = Logger.getLogger(DB_Egreso.class.getName());
             lgr.log(Level.SEVERE, ex.getMessage(), ex);
-        } /*finally {
+        }
+        /*finally {
          try {
          if (rs != null) {
          rs.close();
@@ -157,7 +159,8 @@ public class DB_Egreso {
         } catch (SQLException ex) {
             Logger lgr = Logger.getLogger(DB_Egreso.class.getName());
             lgr.log(Level.SEVERE, ex.getMessage(), ex);
-        } /*finally {
+        }
+        /*finally {
          try {
          if (rs != null) {
          rs.close();
@@ -214,7 +217,8 @@ public class DB_Egreso {
         } catch (SQLException ex) {
             Logger lgr = Logger.getLogger(DB_Egreso.class.getName());
             lgr.log(Level.SEVERE, ex.getMessage(), ex);
-        } /*finally {
+        }
+        /*finally {
          try {
          if (rs != null) {
          rs.close();
@@ -345,7 +349,8 @@ public class DB_Egreso {
         } catch (SQLException ex) {
             Logger lgr = Logger.getLogger(DB_Egreso.class.getName());
             lgr.log(Level.SEVERE, ex.getMessage(), ex);
-        } /*finally {
+        }
+        /*finally {
          try {
          if (rs != null) {
          rs.close();
@@ -559,7 +564,8 @@ public class DB_Egreso {
         } catch (SQLException ex) {
             Logger lgr = Logger.getLogger(DB_Egreso.class.getName());
             lgr.log(Level.SEVERE, ex.getMessage(), ex);
-        } /*finally {
+        }
+        /*finally {
          try {
          if (rs != null) {
          rs.close();
@@ -589,14 +595,22 @@ public class DB_Egreso {
 
     public static Integer obtenerTotalEgreso(Timestamp inicio, Timestamp fin, int tipo_operacion) {
         Integer totalEgreso = 0;
+//        String query = "SELECT SUM(ROUND(EGDE.CANTIDAD*(EGDE.PRECIO-(EGDE.PRECIO*EGDE.DESCUENTO)/100)))\"Total\" "
+//                + "FROM EGRESO_DETALLE EGDE, EGRESO_CABECERA EGCA "
+//                + "WHERE EGCA.ID_EGRESO_CABECERA = EGDE.ID_EGRESO_CABECERA "
+//                + "AND EGCA.TIEMPO BETWEEN '" + inicio + "'::timestamp  "
+//                + "AND '" + fin + "'::timestamp "
+//                + "AND EGCA.ID_COND_COMPRA = " + tipo_operacion;
         String query = "SELECT SUM(ROUND(EGDE.CANTIDAD*(EGDE.PRECIO-(EGDE.PRECIO*EGDE.DESCUENTO)/100)))\"Total\" "
                 + "FROM EGRESO_DETALLE EGDE, EGRESO_CABECERA EGCA "
                 + "WHERE EGCA.ID_EGRESO_CABECERA = EGDE.ID_EGRESO_CABECERA "
-                + "AND EGCA.TIEMPO BETWEEN '" + inicio + "'::timestamp  "
-                + "AND '" + fin + "'::timestamp "
-                + "AND EGCA.ID_COND_COMPRA = " + tipo_operacion;
+                + "AND EGCA.TIEMPO BETWEEN ?  AND ? "
+                + "AND EGCA.ID_COND_COMPRA = ?";
         try {
             pst = DB_manager.getConection().prepareStatement(query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            pst.setTimestamp(1, inicio);
+            pst.setTimestamp(2, fin);
+            pst.setInt(3, tipo_operacion);
             rs = pst.executeQuery();
             while (rs.next()) {
                 totalEgreso = rs.getInt("Total");
@@ -643,7 +657,8 @@ public class DB_Egreso {
         } catch (SQLException ex) {
             Logger lgr = Logger.getLogger(DB_Egreso.class.getName());
             lgr.log(Level.SEVERE, ex.getMessage(), ex);
-        } /*finally {
+        }
+        /*finally {
          try {
          if (rs != null) {
          rs.close();
@@ -730,6 +745,7 @@ public class DB_Egreso {
         }
         return idTipoOperacion;
     }
+
     /*
      * CREATE
      */

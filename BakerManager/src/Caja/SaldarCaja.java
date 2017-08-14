@@ -185,7 +185,7 @@ public class SaldarCaja extends JDialog implements ActionListener, KeyListener {
         String horaT = sdf.format(currentTime).substring(0, 2);
         int horas = Integer.valueOf(horaT);
         if (horas >= 0 && horas < 10) {
-            this.jcbHoraFin.setSelectedItem("" + horas);
+            this.jcbHoraFin.setSelectedItem("0" + horas);
         } else {
             this.jcbHoraFin.setSelectedItem("" + horas);
         }
@@ -655,21 +655,11 @@ public class SaldarCaja extends JDialog implements ActionListener, KeyListener {
                     javax.swing.JOptionPane.OK_OPTION);
             return;
         }
-        int egresoContado = (int) jtfEgresoContado.getValue();
-        int egresoCredito = (int) jtfEgresoCredito.getValue();
-        int ingresoContado = (int) jtfIngresoContado.getValue();
-        int ingresoCredito = (int) jtfIngresoCredito.getValue();
         int idFuncionario = DatosUsuario.getRol_usuario().getFuncionario().getId_funcionario();
         Caja caja = new Caja();
         try {
             caja.setIdEmpleadoApertura(idFuncionario);
             caja.setIdEmpleadoCierre(idFuncionario);
-            caja.setMontoInicial(fondoInicial);
-            caja.setMontoFinal(cajaChica);
-            caja.setIngresoContado(ingresoContado);
-            caja.setIngresoCredito(ingresoCredito);
-            caja.setEgresoContado(egresoContado);
-            caja.setEgresoCredito(egresoCredito);
             caja.setTiempoApertura(apertura);
             caja.setTiempoCierre(cierre);
         } catch (Exception e) {
@@ -684,11 +674,12 @@ public class SaldarCaja extends JDialog implements ActionListener, KeyListener {
         ArrayList<ArqueoCajaDetalle> arqueoDeposito = arqueoDepositar();
         try {
             DB_Caja.insertarArqueoCaja(caja, arqueoCajaApertura, arqueoCajaCierre, arqueoDeposito);
-            mostrarMensaje("La caja se registró con éxito.");
-            this.dispose();
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Hubo un problema creando la caja", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
         }
+        mostrarMensaje("La caja se registró con éxito.");
+        this.dispose();
     }
 
     private ArrayList<ArqueoCajaDetalle> arqueoCajaApertura() {

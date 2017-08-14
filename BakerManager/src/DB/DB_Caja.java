@@ -35,25 +35,17 @@ public class DB_Caja {
         String INSERT_ARQUEO = "INSERT INTO ARQUEO_CAJA( ID_CAJA, "
                 + "ID_MONEDA, CANTIDAD, ID_ARQUEO_CAJA_TIPO)VALUES (?, ?, ?, ?)";
         String INSERT_CAJA = "INSERT INTO CAJA"
-                + "(ID_FUNCIONARIO_APERTURA, ID_FUNCIONARIO_CIERRE, MONTO_INICIAL, "
-                + "MONTO_FINAL, INGRESO_CONTADO, INGRESO_CREDITO, EGRESO_CONTADO, "
-                + "EGRESO_CREDITO, TIEMPO_APERTURA, TIEMPO_CIERRE)"
+                + "(ID_FUNCIONARIO_APERTURA, ID_FUNCIONARIO_CIERRE, TIEMPO_APERTURA, TIEMPO_CIERRE)"
                 + "VALUES "
-                + "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                + "(?, ?, ?, ?)";
         long sq_cabecera = -1L;
         try {
             DB_manager.getConection().setAutoCommit(false);
             pst = DB_manager.getConection().prepareStatement(INSERT_CAJA, PreparedStatement.RETURN_GENERATED_KEYS);
             pst.setInt(1, caja.getIdEmpleadoApertura());
             pst.setInt(2, caja.getIdEmpleadoCierre());
-            pst.setInt(3, caja.getMontoInicial());
-            pst.setInt(4, caja.getMontoFinal());
-            pst.setInt(5, caja.getIngresoContado());
-            pst.setInt(6, caja.getIngresoCredito());
-            pst.setInt(7, caja.getEgresoContado());
-            pst.setInt(8, caja.getEgresoCredito());
-            pst.setTimestamp(9, new Timestamp(caja.getTiempoApertura().getTime()));
-            pst.setTimestamp(10, new Timestamp(caja.getTiempoCierre().getTime()));
+            pst.setTimestamp(3, new Timestamp(caja.getTiempoApertura().getTime()));
+            pst.setTimestamp(4, new Timestamp(caja.getTiempoCierre().getTime()));
             pst.executeUpdate();
             rs = pst.getGeneratedKeys();
             if (rs != null && rs.next()) {
@@ -117,25 +109,67 @@ public class DB_Caja {
         return (int) sq_cabecera;
     }
 
-    public static ResultSetTableModel consultarCajas(Integer idFuncionario, String fechaInicio, String fechaFin) {
-        String Query = "SELECT ID_CAJA \"ID\", (SELECT NOMBRE ||' '|| APELLIDO \"Func. Apertura\" WHERE PERSONA.ID_PERSONA = FUNCIONARIO.ID_PERSONA AND FUNCIONARIO.ID_FUNCIONARIO = ID_FUNCIONARIO_APERTURA),\n"
-                + "	(SELECT NOMBRE ||' '|| APELLIDO \"Func. Cierre\" WHERE PERSONA.ID_PERSONA = FUNCIONARIO.ID_PERSONA AND FUNCIONARIO.ID_FUNCIONARIO = ID_FUNCIONARIO_APERTURA), \n"
-                + "	MONTO_INICIAL \"Monto inicial\", 	MONTO_FINAL \"Monto final\", INGRESO_CONTADO \"Ingreso contado\", INGRESO_CREDITO \"Ingreso crédito\", EGRESO_CONTADO \"Egreso contado\", \n"
-                + "	EGRESO_CREDITO \"Egreso crédito\", TIEMPO_APERTURA \"Tiempo apertura\", TIEMPO_CIERRE \"Tiempo cierre\"\n"
-                + "  FROM CAJA, FUNCIONARIO , PERSONA\n"
-                + "  WHERE CAJA.ID_FUNCIONARIO_APERTURA = FUNCIONARIO.ID_FUNCIONARIO\n"
-                + "  AND  CAJA.ID_FUNCIONARIO_CIERRE = FUNCIONARIO.ID_FUNCIONARIO\n"
+    public static ResultSetTableModel consultarCajas(Integer idFuncionario, Timestamp fechaInicio, Timestamp fechaFin) {
+        String Q_CAJA_APERTURA = "(SELECT SUM(CANTIDAD*VALOR) FROM ARQUEO_CAJA, MONEDA WHERE MONEDA.ID_MONEDA = ARQUEO_CAJA.ID_MONEDA AND ID_ARQUEO_CAJA_TIPO = 1)";
+        String Q_CAJA_CIERRE = "(SELECT SUM(CANTIDAD*VALOR) FROM ARQUEO_CAJA, MONEDA WHERE MONEDA.ID_MONEDA = ARQUEO_CAJA.ID_MONEDA AND ID_ARQUEO_CAJA_TIPO = 2)";
+        String Q_INGRESO_CONTADO = "(SELECT SUM(ROUND(EGDE.CANTIDAD*(EGDE.PRECIO-(EGDE.PRECIO*EGDE.DESCUENTO)/100)))\"Total\" "
+                + "FROM EGRESO_DETALLE EGDE, EGRESO_CABECERA EGCA "
+                + "WHERE EGCA.ID_EGRESO_CABECERA = EGDE.ID_EGRESO_CABECERA "
+                + "AND EGCA.TIEMPO BETWEEN ?  AND ? "
+                + "AND EGCA.ID_COND_COMPRA = 1)";
+        String Q_INGRESO_CREDITO = "(SELECT SUM(ROUND(EGDE.CANTIDAD*(EGDE.PRECIO-(EGDE.PRECIO*EGDE.DESCUENTO)/100)))\"Total\" "
+                + "FROM EGRESO_DETALLE EGDE, EGRESO_CABECERA EGCA "
+                + "WHERE EGCA.ID_EGRESO_CABECERA = EGDE.ID_EGRESO_CABECERA "
+                + "AND EGCA.TIEMPO BETWEEN ?  AND ? "
+                + "AND EGCA.ID_COND_COMPRA = 2)";
+        String Q_EGRESO_CONTADO = "(SELECT SUM(ROUND(FADE.CANTIDAD*(FADE.PRECIO-(FADE.PRECIO*FADE.DESCUENTO)/100)))\"Total\" "
+                + "FROM FACTURA_DETALLE FADE, FACTURA_CABECERA FACA "
+                + "WHERE FACA.ID_FACTURA_CABECERA = FADE.ID_FACTURA_CABECERA "
+                + "AND FACA.TIEMPO BETWEEN ?  "
+                + "AND ? "
+                + "AND FACA.ID_COND_VENTA = 1)";
+        String Q_EGRESO_CREDITO = "(SELECT SUM(ROUND(FADE.CANTIDAD*(FADE.PRECIO-(FADE.PRECIO*FADE.DESCUENTO)/100)))\"Total\" "
+                + "FROM FACTURA_DETALLE FADE, FACTURA_CABECERA FACA "
+                + "WHERE FACA.ID_FACTURA_CABECERA = FADE.ID_FACTURA_CABECERA "
+                + "AND FACA.TIEMPO BETWEEN ?  "
+                + "AND ? "
+                + "AND FACA.ID_COND_VENTA = 2)";
+        String Query = "SELECT ID_CAJA \"ID\", (SELECT NOMBRE ||' '|| APELLIDO \"Func. Apertura\" WHERE PERSONA.ID_PERSONA = FUNCIONARIO.ID_PERSONA AND FUNCIONARIO.ID_FUNCIONARIO = ID_FUNCIONARIO_APERTURA), "
+                + "	(SELECT NOMBRE ||' '|| APELLIDO \"Func. Cierre\" WHERE PERSONA.ID_PERSONA = FUNCIONARIO.ID_PERSONA AND FUNCIONARIO.ID_FUNCIONARIO = ID_FUNCIONARIO_APERTURA), "
+                + Q_CAJA_APERTURA + " \"Monto inicial\", "
+                + Q_CAJA_CIERRE + "\"Monto final\", "
+                + Q_INGRESO_CONTADO + "\"Ingreso contado\", "
+                + Q_INGRESO_CREDITO + "\"Ingreso crédito\", "
+                + Q_EGRESO_CONTADO + "\"Egreso contado\", "
+                + Q_EGRESO_CREDITO + "\"Egreso crédito\", "
+                + " TIEMPO_APERTURA \"Tiempo apertura\", TIEMPO_CIERRE \"Tiempo cierre\""
+                + "  FROM CAJA, FUNCIONARIO , PERSONA"
+                + "  WHERE CAJA.ID_FUNCIONARIO_APERTURA = FUNCIONARIO.ID_FUNCIONARIO"
+                + "  AND  CAJA.ID_FUNCIONARIO_CIERRE = FUNCIONARIO.ID_FUNCIONARIO"
                 + "  AND FUNCIONARIO.ID_PERSONA = PERSONA.ID_PERSONA"
-                + "  AND CAJA.TIEMPO_CIERRE BETWEEN '" + fechaInicio + " 00:00:00.00'::timestamp  AND '" + fechaFin + " 23:59:59.00'::timestamp  ";
-        String func = "AND CAJA.ID_FUNCIONARIO_CIERRE = " + idFuncionario;
+                + "  AND CAJA.TIEMPO_CIERRE BETWEEN ?  AND ?  ";
+        String func = "AND CAJA.ID_FUNCIONARIO_CIERRE = ?";
         if (idFuncionario > -1) {
             Query = Query + func;
         }
         ResultSetTableModel rstm = null;
         try {
-            st = DB_manager.getConection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            pst = DB_manager.getConection().prepareStatement(Query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            pst.setTimestamp(1, fechaInicio);
+            pst.setTimestamp(2, fechaFin);
+            pst.setTimestamp(3, fechaInicio);
+            pst.setTimestamp(4, fechaFin);
+            pst.setTimestamp(5, fechaInicio);
+            pst.setTimestamp(6, fechaFin);
+            pst.setTimestamp(7, fechaInicio);
+            pst.setTimestamp(8, fechaFin);
+            pst.setTimestamp(9, fechaInicio);
+            pst.setTimestamp(10, fechaFin);
+            if (idFuncionario > -1) {
+                pst.setInt(15, idFuncionario);
+            }
             // se ejecuta el query y se obtienen los resultados en un ResultSet
-            rs = st.executeQuery(Query);
+            rs = pst.executeQuery();
             rstm = new ResultSetTableModel(rs);
         } catch (SQLException ex) {
             Logger lgr = Logger.getLogger(DB_Egreso.class.getName());
@@ -174,14 +208,8 @@ public class DB_Caja {
             while (rs.next()) {
                 Caja caja = new Caja();
                 caja.setIdCaja(rs.getInt("ID_CAJA"));
-                caja.setEgresoContado(rs.getInt("EGRESO_CONTADO"));
-                caja.setEgresoCredito(rs.getInt("EGRESO_CREDITO"));
                 caja.setIdEmpleadoApertura(rs.getInt("ID_FUNCIONARIO_APERTURA"));
                 caja.setIdEmpleadoCierre(rs.getInt("ID_FUNCIONARIO_CIERRE"));
-                caja.setIngresoContado(rs.getInt("INGRESO_CONTADO"));
-                caja.setIngresoCredito(rs.getInt("INGRESO_CREDITO"));
-                caja.setMontoFinal(rs.getInt("MONTO_FINAL"));
-                caja.setMontoInicial(rs.getInt("MONTO_INICIAL"));
                 caja.setTiempoApertura(rs.getTimestamp("TIEMPO_APERTURA"));
                 caja.setTiempoCierre(rs.getTimestamp("TIEMPO_CIERRE"));
                 //QUERY APERTURA
@@ -353,10 +381,9 @@ public class DB_Caja {
 
     public static Caja obtenerCaja(int idCaja) {
         String QUERY = "SELECT ID_CAJA, ID_FUNCIONARIO_APERTURA, ID_FUNCIONARIO_CIERRE, "
-                + "MONTO_INICIAL, MONTO_FINAL, INGRESO_CONTADO, INGRESO_CREDITO, "
-                + "EGRESO_CONTADO, EGRESO_CREDITO, TIEMPO_APERTURA, TIEMPO_CIERRE "
-                + "FROM CAJA "
-                + "WHERE ID_CAJA = ?";
+                + " TIEMPO_APERTURA, TIEMPO_CIERRE "
+                + " FROM CAJA "
+                + " WHERE ID_CAJA = ?";
         Caja caja = null;
         try {
             pst = DB_manager.getConection().prepareStatement(QUERY, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
@@ -365,20 +392,36 @@ public class DB_Caja {
             while (rs.next()) {
                 caja = new Caja();
                 caja.setIdCaja(rs.getInt("ID_CAJA"));
-                caja.setEgresoContado(rs.getInt("EGRESO_CONTADO"));
-                caja.setEgresoCredito(rs.getInt("EGRESO_CREDITO"));
                 caja.setIdEmpleadoApertura(rs.getInt("ID_FUNCIONARIO_APERTURA"));
                 caja.setIdEmpleadoCierre(rs.getInt("ID_FUNCIONARIO_CIERRE"));
-                caja.setIngresoContado(rs.getInt("INGRESO_CONTADO"));
-                caja.setIngresoCredito(rs.getInt("INGRESO_CREDITO"));
-                caja.setMontoFinal(rs.getInt("MONTO_FINAL"));
-                caja.setMontoInicial(rs.getInt("MONTO_INICIAL"));
                 caja.setTiempoApertura(rs.getTimestamp("TIEMPO_APERTURA"));
                 caja.setTiempoCierre(rs.getTimestamp("TIEMPO_CIERRE"));
             }
         } catch (SQLException ex) {
+            ex.printStackTrace();
         }
         return caja;
+    }
+
+    public static int obtenerTotalArqueoCaja(int idCaja, int idTipo) {
+        String QUERY = "SELECT CANTIDAD, VALOR FROM ARQUEO_CAJA, MONEDA "
+                + "WHERE MONEDA.ID_MONEDA = ARQUEO_CAJA.ID_MONEDA "
+                + "AND ID_CAJA = ? AND ID_ARQUEO_CAJA_TIPO = ?";
+        int arqueo = 0;
+        try {
+            pst = DB_manager.getConection().prepareStatement(QUERY, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            pst.setInt(1, idCaja);
+            pst.setInt(2, idTipo);
+            rs = pst.executeQuery();
+            while (rs.next()) {
+                int cantidad = (rs.getInt("CANTIDAD"));
+                int valor = (rs.getInt("VALOR"));
+                arqueo = arqueo + (cantidad * valor);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return arqueo;
     }
 
 }

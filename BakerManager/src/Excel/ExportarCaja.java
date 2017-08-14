@@ -5,6 +5,8 @@
 package Excel;
 
 import DB.DB_Caja;
+import DB.DB_Egreso;
+import DB.DB_Ingreso;
 import Entities.ArqueoCajaDetalle;
 import Entities.CierreCaja;
 import Entities.Moneda;
@@ -12,6 +14,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -325,7 +328,19 @@ public class ExportarCaja {
             CellUtil.setAlignment(totales.getCell(6), workbook, CellStyle.ALIGN_CENTER);
             fila++;
             //TOTAL EGRESO
-            int totalEgresos = cierreCaja.getCaja().getEgresoContado() + cierreCaja.getCaja().getEgresoCredito();
+            Calendar inicio = Calendar.getInstance();
+            inicio.setTime(cierreCaja.getCaja().getTiempoApertura());
+            inicio.set(Calendar.HOUR_OF_DAY, 0);
+            inicio.set(Calendar.MINUTE, 0);
+            Calendar fin = Calendar.getInstance();
+            fin.setTime(cierreCaja.getCaja().getTiempoApertura());
+            fin.set(Calendar.HOUR_OF_DAY, 23);
+            fin.set(Calendar.MINUTE, 59);
+            Timestamp ini = new Timestamp(inicio.getTimeInMillis());
+            Timestamp fi = new Timestamp(fin.getTimeInMillis());
+            int egresoContado = DB_Egreso.obtenerTotalEgreso(ini, fi, 1);
+            int egresoCretdito = DB_Egreso.obtenerTotalEgreso(ini, fi, 2);
+            int totalEgresos = egresoContado + egresoCretdito;
             Row totalEgreso = sheets.get(monthCursor).createRow(fila);
             totalEgreso.createCell(0).setCellValue(new HSSFRichTextString("Total egresos"));
             totalEgreso.createCell(2).setCellValue(totalEgresos);
@@ -333,7 +348,9 @@ public class ExportarCaja {
             sheets.get(monthCursor).addMergedRegion(new CellRangeAddress(fila, fila, 0, 1));
             fila++;
             //TOTAL EGRESO
-            int totalIngresos = cierreCaja.getCaja().getIngresoContado() + cierreCaja.getCaja().getIngresoCredito();
+            int ingresoContado = DB_Ingreso.obtenerTotalIngreso(ini, fi, 1);
+            int ingresoCretdito = DB_Ingreso.obtenerTotalIngreso(ini, fi, 2);
+            int totalIngresos = ingresoContado + ingresoCretdito;
             Row totalIngreso = sheets.get(monthCursor).createRow(fila);
             totalIngreso.createCell(0).setCellValue(new HSSFRichTextString("Total ingresos"));
             totalIngreso.createCell(2).setCellValue(totalIngresos);
