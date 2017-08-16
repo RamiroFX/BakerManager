@@ -110,8 +110,8 @@ public class DB_Caja {
     }
 
     public static ResultSetTableModel consultarCajas(Integer idFuncionario, Timestamp fechaInicio, Timestamp fechaFin) {
-        String Q_CAJA_APERTURA = "(SELECT SUM(CANTIDAD*VALOR) FROM ARQUEO_CAJA, MONEDA WHERE MONEDA.ID_MONEDA = ARQUEO_CAJA.ID_MONEDA AND ID_ARQUEO_CAJA_TIPO = 1)";
-        String Q_CAJA_CIERRE = "(SELECT SUM(CANTIDAD*VALOR) FROM ARQUEO_CAJA, MONEDA WHERE MONEDA.ID_MONEDA = ARQUEO_CAJA.ID_MONEDA AND ID_ARQUEO_CAJA_TIPO = 2)";
+        String Q_CAJA_APERTURA = "(SELECT SUM(CANTIDAD*VALOR) FROM ARQUEO_CAJA, MONEDA WHERE MONEDA.ID_MONEDA = ARQUEO_CAJA.ID_MONEDA AND ARQUEO_CAJA.ID_CAJA = CAJA.ID_CAJA AND ID_ARQUEO_CAJA_TIPO = 1)";
+        String Q_CAJA_CIERRE = "(SELECT SUM(CANTIDAD*VALOR) FROM ARQUEO_CAJA, MONEDA WHERE MONEDA.ID_MONEDA = ARQUEO_CAJA.ID_MONEDA AND ARQUEO_CAJA.ID_CAJA = CAJA.ID_CAJA AND ID_ARQUEO_CAJA_TIPO = 2)";
         String Q_INGRESO_CONTADO = "(SELECT SUM(ROUND(EGDE.CANTIDAD*(EGDE.PRECIO-(EGDE.PRECIO*EGDE.DESCUENTO)/100)))\"Total\" "
                 + "FROM EGRESO_DETALLE EGDE, EGRESO_CABECERA EGCA "
                 + "WHERE EGCA.ID_EGRESO_CABECERA = EGDE.ID_EGRESO_CABECERA "
@@ -136,12 +136,12 @@ public class DB_Caja {
                 + "AND FACA.ID_COND_VENTA = 2)";
         String Query = "SELECT ID_CAJA \"ID\", (SELECT NOMBRE ||' '|| APELLIDO \"Func. Apertura\" WHERE PERSONA.ID_PERSONA = FUNCIONARIO.ID_PERSONA AND FUNCIONARIO.ID_FUNCIONARIO = ID_FUNCIONARIO_APERTURA), "
                 + "	(SELECT NOMBRE ||' '|| APELLIDO \"Func. Cierre\" WHERE PERSONA.ID_PERSONA = FUNCIONARIO.ID_PERSONA AND FUNCIONARIO.ID_FUNCIONARIO = ID_FUNCIONARIO_APERTURA), "
-                + Q_CAJA_APERTURA + " \"Monto inicial\", "
-                + Q_CAJA_CIERRE + "\"Monto final\", "
-                + Q_INGRESO_CONTADO + "\"Ingreso contado\", "
-                + Q_INGRESO_CREDITO + "\"Ingreso crédito\", "
-                + Q_EGRESO_CONTADO + "\"Egreso contado\", "
-                + Q_EGRESO_CREDITO + "\"Egreso crédito\", "
+                + "COALESCE(" + Q_CAJA_APERTURA + ",0) \"Monto inicial\", "
+                + "COALESCE(" + Q_CAJA_CIERRE + ",0) \"Monto final\", "
+                + "COALESCE(" + Q_INGRESO_CONTADO + ",0) \"Ingreso contado\", "
+                + "COALESCE(" + Q_INGRESO_CREDITO + ",0) \"Ingreso crédito\", "
+                + "COALESCE(" + Q_EGRESO_CONTADO + ",0) \"Egreso contado\", "
+                + "COALESCE(" + Q_EGRESO_CREDITO + ",0) \"Egreso crédito\", "
                 + " TIEMPO_APERTURA \"Tiempo apertura\", TIEMPO_CIERRE \"Tiempo cierre\""
                 + "  FROM CAJA, FUNCIONARIO , PERSONA"
                 + "  WHERE CAJA.ID_FUNCIONARIO_APERTURA = FUNCIONARIO.ID_FUNCIONARIO"
@@ -166,7 +166,7 @@ public class DB_Caja {
             pst.setTimestamp(9, fechaInicio);
             pst.setTimestamp(10, fechaFin);
             if (idFuncionario > -1) {
-                pst.setInt(15, idFuncionario);
+                pst.setInt(11, idFuncionario);
             }
             // se ejecuta el query y se obtienen los resultados en un ResultSet
             rs = pst.executeQuery();
@@ -185,8 +185,7 @@ public class DB_Caja {
         ArrayList<ArqueoCajaDetalle> arqueoDeposito = new ArrayList<>();
         String ATTACH_FUNCIONARIO = "AND CAJA.ID_FUNCIONARIO_CIERRE = ? ";
         String QUERY_CAJA = "SELECT ID_CAJA, ID_FUNCIONARIO_APERTURA, ID_FUNCIONARIO_CIERRE, "
-                + "MONTO_INICIAL, MONTO_FINAL, INGRESO_CONTADO, INGRESO_CREDITO, "
-                + "EGRESO_CONTADO, EGRESO_CREDITO, TIEMPO_APERTURA, TIEMPO_CIERRE "
+                + "TIEMPO_APERTURA, TIEMPO_CIERRE "
                 + "FROM CAJA "
                 + "WHERE CAJA.TIEMPO_CIERRE BETWEEN ?  AND ? "
                 + "ORDER BY ID_CAJA";
@@ -212,6 +211,7 @@ public class DB_Caja {
                 caja.setIdEmpleadoCierre(rs.getInt("ID_FUNCIONARIO_CIERRE"));
                 caja.setTiempoApertura(rs.getTimestamp("TIEMPO_APERTURA"));
                 caja.setTiempoCierre(rs.getTimestamp("TIEMPO_CIERRE"));
+
                 //QUERY APERTURA
                 PreparedStatement pst1 = DB_manager.getConection().prepareStatement(QUERY_ARQUEO, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
                 pst1.setInt(1, caja.getIdCaja());
@@ -273,6 +273,7 @@ public class DB_Caja {
                 cajas.add(cierreCaja);
             }
         } catch (SQLException ex) {
+            ex.printStackTrace();
         }
         return cajas;
     }

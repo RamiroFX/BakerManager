@@ -12,7 +12,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.beans.PropertyVetoException;
 import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -190,7 +189,7 @@ public class C_gestionCaja implements GestionInterface {
     private boolean validarFechas(Date f_inicio, Date f_final) {
         if (f_inicio != null && f_final != null) {
             int dateValue = f_inicio.compareTo(f_final);
-            if (dateValue < 0) {
+            if (dateValue <= 0) {
                 return true;
             }
         }

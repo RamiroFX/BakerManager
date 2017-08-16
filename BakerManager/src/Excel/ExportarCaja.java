@@ -6,9 +6,11 @@ package Excel;
 
 import DB.DB_Caja;
 import DB.DB_Egreso;
+import DB.DB_Funcionario;
 import DB.DB_Ingreso;
 import Entities.ArqueoCajaDetalle;
 import Entities.CierreCaja;
+import Entities.M_funcionario;
 import Entities.Moneda;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -44,7 +46,6 @@ public class ExportarCaja {
     private static final String TITULO_ERROR = "Atención";
 
     private HSSFWorkbook workbook;
-    private HSSFSheet sheet;
     private ArrayList<HSSFSheet> sheets;
     private CellStyle style1, style2, style3, style4, style5, style6, style7;
     private HSSFCellStyle dateCellStyle;
@@ -132,9 +133,11 @@ public class ExportarCaja {
         int resumenTotalDepositado = 0;
         Date resumenFechaInicio = null;
         Date resumenFechaFin = null;
+        sheets.clear();
         if (cierreCajas != null && !cierreCajas.isEmpty()) {
             fechaActual = cierreCajas.get(0).getCaja().getTiempoCierre();
             resumenFechaInicio = fechaActual;
+            resumenFechaFin = fechaActual;
             calendar.setTime(fechaActual);
             currentMonth = calendar.get(Calendar.MONTH);
             sheets.add(workbook.createSheet(sdfs.format(calendar.getTime())));
@@ -158,17 +161,40 @@ public class ExportarCaja {
             calendar.setTime(fechaActual);
             newMonth = calendar.get(Calendar.MONTH);
             if (currentMonth != newMonth) {
+                currentMonth = newMonth;
                 resumenFechaFin = cierreCaja.getCaja().getTiempoCierre();
                 sheets.add(workbook.createSheet(sdfs.format(calendar.getTime())));
                 monthCursor++;
                 fila = 0;
             }
+            fila++;//PARA DAR ESPACIO
             //CREAR FECHA DE CAJA
             Row fechaCaja = sheets.get(monthCursor).createRow(fila);
-            fila++;
             fechaCaja.createCell(0).setCellValue(new HSSFRichTextString("Fecha:"));
             fechaCaja.createCell(1).setCellValue(cierreCaja.getCaja().getTiempoCierre());
             fechaCaja.getCell(1).setCellStyle(dateCellStyle);
+            fila++;
+            //FUNCIONARIOS
+            Row funcionarioApertura = sheets.get(monthCursor).createRow(fila);
+            sheets.get(monthCursor).addMergedRegion(new CellRangeAddress(fila, fila, 0, 1));
+            sheets.get(monthCursor).addMergedRegion(new CellRangeAddress(fila, fila, 2, 3));
+            funcionarioApertura.createCell(0).setCellValue(new HSSFRichTextString("Funcionario de apertura"));
+            funcionarioApertura.createCell(1).setCellValue("");
+            int idFuncApertura = cierreCaja.getCaja().getIdEmpleadoApertura();
+            M_funcionario funcApertura = DB_Funcionario.obtenerDatosFuncionarioID(idFuncApertura);
+            String nombreFuncApertura = funcApertura.getNombre() + " " + funcApertura.getApellido();
+            funcionarioApertura.createCell(2).setCellValue(idFuncApertura + "-" + nombreFuncApertura);
+            fila++;
+            Row funcionarioCierre = sheets.get(monthCursor).createRow(fila);
+            sheets.get(monthCursor).addMergedRegion(new CellRangeAddress(fila, fila, 0, 1));
+            sheets.get(monthCursor).addMergedRegion(new CellRangeAddress(fila, fila, 2, 3));
+            funcionarioCierre.createCell(0).setCellValue(new HSSFRichTextString("Funcionario de cierre"));
+            funcionarioCierre.createCell(1).setCellValue("");
+            int idFuncCierre = cierreCaja.getCaja().getIdEmpleadoCierre();
+            M_funcionario funcCierre = DB_Funcionario.obtenerDatosFuncionarioID(idFuncCierre);
+            String nombreFuncCierre = funcCierre.getNombre() + " " + funcCierre.getApellido();
+            funcionarioCierre.createCell(2).setCellValue(idFuncCierre + "-" + nombreFuncCierre);
+            fila++;
             //CREAR CABECERA DE ARQUEOS (APERTURA,CIERRE,DEPOSITO)
             Row cabeceraCajas = sheets.get(monthCursor).createRow(fila);
             sheets.get(monthCursor).addMergedRegion(new CellRangeAddress(fila, fila, 0, 2));

@@ -6,13 +6,11 @@ import Entities.Caja;
 import Entities.CierreCaja;
 import Entities.M_funcionario;
 import Excel.ExportarCaja;
-import Utilities.Impresora;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import javax.swing.JOptionPane;
 
 /**
  *
@@ -66,14 +64,14 @@ public class M_gestionCaja {
         calendario.set(Calendar.HOUR_OF_DAY, 0);
         calendario.set(Calendar.MINUTE, 0);
         calendario.set(Calendar.SECOND, 0);
-        calendario.set(Calendar.MILLISECOND, 000);
-        java.sql.Timestamp fInicio = java.sql.Timestamp.valueOf(sdfs.format(calendario.getTime()));
-        calendario.setTime(fecha_fin);
-        calendario.set(Calendar.HOUR_OF_DAY, 24);
-        calendario.set(Calendar.MINUTE, 0);
-        calendario.set(Calendar.SECOND, 0);
         calendario.set(Calendar.MILLISECOND, 0);
-        java.sql.Timestamp fFin = java.sql.Timestamp.valueOf(sdfs.format(calendario.getTime()));
+        java.sql.Timestamp fInicio = new Timestamp(calendario.getTimeInMillis());
+        calendario.setTime(fecha_fin);
+        calendario.set(Calendar.HOUR_OF_DAY, 23);
+        calendario.set(Calendar.MINUTE, 59);
+        calendario.set(Calendar.SECOND, 59);
+        calendario.set(Calendar.MILLISECOND, 59);
+        java.sql.Timestamp fFin = new Timestamp(calendario.getTimeInMillis());
         ArrayList<CierreCaja> acd = DB_Caja.consultarCajasExportacion(idFuncionario, fInicio, fFin);
         ExportarCaja ec = new ExportarCaja(acd);
         ec.exportar();
