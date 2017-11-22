@@ -255,7 +255,7 @@ public class C_crearPedido extends MouseAdapter implements ActionListener, KeyLi
         Date now = Calendar.getInstance().getTime();
         Date entrega = null;
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-        SimpleDateFormat sdfs = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss");
+        SimpleDateFormat sdfs = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
         String fechaEntrega = sdf.format(vista.jdcFechaEntrega.getDate()) + " " + vista.jcbHora.getSelectedItem() + ":" + vista.jcbMinuto.getSelectedItem() + ":00";
         try {
             entrega = sdfs.parse(fechaEntrega);
@@ -359,7 +359,6 @@ public class C_crearPedido extends MouseAdapter implements ActionListener, KeyLi
 
     @Override
     public void keyPressed(KeyEvent e) {
-        System.out.println("Pedido.C_crearPedido.keyPressed(): " + e.getSource());
         switch (e.getKeyCode()) {
             case KeyEvent.VK_F1: {
                 guardarPedido();

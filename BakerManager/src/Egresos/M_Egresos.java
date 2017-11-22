@@ -9,6 +9,7 @@ import Entities.M_egreso_cabecera;
 import Entities.M_egreso_detalle;
 import Entities.M_funcionario;
 import Entities.M_proveedor;
+import MenuPrincipal.DatosUsuario;
 import java.sql.Timestamp;
 
 /**
@@ -25,7 +26,7 @@ public class M_Egresos {
 
     public M_Egresos() {
         this.proveedor = new M_proveedor();
-        this.empleado = new M_funcionario();
+        this.empleado = DatosUsuario.getRol_usuario().getFuncionario();
         this.egreso_cabecera = new M_egreso_cabecera();
         this.tiempo = null;
     }

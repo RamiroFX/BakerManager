@@ -4,6 +4,7 @@
  */
 package DB;
 
+import Entities.ProductoCategoria;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.PreparedStatement;
@@ -11,6 +12,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -140,6 +142,26 @@ public class DB_manager {
             rubro = new Vector();
             while (rs.next()) {
                 rubro.add(rs.getString("descripcion"));
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return rubro;
+    }
+    
+    public static ArrayList<ProductoCategoria> obtenerCategorias() {
+        ArrayList<ProductoCategoria> rubro = null;
+        String q = "SELECT * "
+                + "FROM PRODUCTO_CATEGORIA ";
+        try {
+            st = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            rs = st.executeQuery(q);
+            rubro = new ArrayList();
+            while (rs.next()) {
+                ProductoCategoria pc = new ProductoCategoria();
+                pc.setId(rs.getInt("id_producto_categoria"));
+                pc.setDescripcion(rs.getString("descripcion"));
+                rubro.add(pc);
             }
         } catch (SQLException ex) {
             ex.printStackTrace();

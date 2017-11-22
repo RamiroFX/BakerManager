@@ -5,15 +5,15 @@
 package Reportes;
 
 import DB.DB_manager;
-import Utilities.ArrayListTableModel;
+import Entities.ProductoCategoria;
+import ModeloTabla.ProductoCategoriaTableModel;
+import ModeloTabla.SeleccionProductoCategoria;
 import bakermanager.C_inicio;
 import com.toedter.calendar.JDateChooser;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.io.File;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -28,7 +28,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.table.DefaultTableModel;
 import net.miginfocom.swing.MigLayout;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperFillManager;
@@ -41,9 +40,9 @@ import net.sf.jasperreports.swing.JRViewer;
  *
  * @author Ramiro Ferreira
  */
-public class FiltroReporte_Cate extends JDialog implements ActionListener, MouseListener {
+public class FiltroReporte_Cate extends JDialog implements ActionListener {
 
-    JPanel jpProveedor, jpFecha, jpSouth;
+    JPanel jpCategoria, jpFecha, jpSouth;
     JDateChooser jdcFechaInicio, jdcFechaFin;
     JTable jtProdCategorias;
     JButton jbQuitar, jbAgregar, jbGenerar, jbCancelar;
@@ -56,7 +55,7 @@ public class FiltroReporte_Cate extends JDialog implements ActionListener, Mouse
         concederPermisos();
         getContentPane().setLayout(new BorderLayout());
         getContentPane().add(jpFecha, BorderLayout.NORTH);
-        getContentPane().add(jpProveedor, BorderLayout.CENTER);
+        getContentPane().add(jpCategoria, BorderLayout.CENTER);
         getContentPane().add(jpSouth, BorderLayout.SOUTH);
         completarCampos();
     }
@@ -73,7 +72,7 @@ public class FiltroReporte_Cate extends JDialog implements ActionListener, Mouse
         this.jpFecha.add(jdcFechaInicio, "pushx,growx");
         this.jpFecha.add(jdcFechaFin, "pushx,growx");
         /*
-         * PROVEEDORES
+         * CATEGORIAS
          */
         this.jtProdCategorias = new JTable();
         JScrollPane jspProveedor = new JScrollPane(this.jtProdCategorias);
@@ -82,11 +81,11 @@ public class FiltroReporte_Cate extends JDialog implements ActionListener, Mouse
         JPanel jpBotones = new JPanel();
         jpBotones.add(jbAgregar);
         jpBotones.add(jbQuitar);
-        this.jpProveedor = new JPanel();
-        this.jpProveedor.setLayout(new BorderLayout());
-        this.jpProveedor.setBorder(javax.swing.BorderFactory.createTitledBorder("Categorías"));
-        this.jpProveedor.add(jspProveedor, BorderLayout.CENTER);
-        this.jpProveedor.add(jpBotones, BorderLayout.SOUTH);
+        this.jpCategoria = new JPanel();
+        this.jpCategoria.setLayout(new BorderLayout());
+        this.jpCategoria.setBorder(javax.swing.BorderFactory.createTitledBorder("Categorías"));
+        this.jpCategoria.add(jspProveedor, BorderLayout.CENTER);
+        this.jpCategoria.add(jpBotones, BorderLayout.SOUTH);
         /*
          * BOTONES
          */
@@ -98,7 +97,13 @@ public class FiltroReporte_Cate extends JDialog implements ActionListener, Mouse
     }
 
     private void completarCampos() {
-        this.jtProdCategorias.setModel(DB_manager.consultarCategoria());
+        ProductoCategoriaTableModel tm = new ProductoCategoriaTableModel();
+        ArrayList<SeleccionProductoCategoria> seleccionProductoCategorias = new ArrayList<>();
+        for (ProductoCategoria obtenerCategoria : DB_manager.obtenerCategorias()) {
+            seleccionProductoCategorias.add(new SeleccionProductoCategoria(obtenerCategoria, true));
+        }
+        tm.setProductoCategoriaList(seleccionProductoCategorias);
+        this.jtProdCategorias.setModel(tm);
     }
 
     private void concederPermisos() {
@@ -106,17 +111,20 @@ public class FiltroReporte_Cate extends JDialog implements ActionListener, Mouse
         this.jbCancelar.addActionListener(this);
         this.jbAgregar.addActionListener(this);
         this.jbQuitar.addActionListener(this);
-        this.jtProdCategorias.addMouseListener(this);
     }
 
     private void generarReporte() {
         if (validarFechas(jdcFechaInicio.getDate(), jdcFechaFin.getDate())) {
-            System.out.println("sDate: " + jdcFechaInicio.getDate());
-            System.out.println("eDate: " + jdcFechaFin.getDate());
             int row = this.jtProdCategorias.getModel().getRowCount();
             ArrayList categories = new ArrayList();
             for (int i = 0; i < row; i++) {
-                categories.add(Integer.valueOf(String.valueOf(this.jtProdCategorias.getModel().getValueAt(i, 0))));
+                if (Boolean.valueOf((boolean) this.jtProdCategorias.getModel().getValueAt(i, 2)) == true) {
+                    categories.add(Integer.valueOf(String.valueOf(this.jtProdCategorias.getModel().getValueAt(i, 0))));
+                }
+            }
+            if (categories.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Seleccione al menos una categoría", "Atención", JOptionPane.PLAIN_MESSAGE);
+                return;
             }
             File file = new File(System.getProperty("user.dir") + "\\src\\Assets\\Reportes\\ResumenComprasSimpleCategoria.jasper");
             JasperReport reporte = null;
@@ -154,7 +162,7 @@ public class FiltroReporte_Cate extends JDialog implements ActionListener, Mouse
                 jf.setLocation(300, 100);
                 jf.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
             } catch (JRException ex) {
-                ex.printStackTrace();
+                JOptionPane.showMessageDialog(this, "Hubo un problema al generar el reporte, intentelo nuevamente", "Alerta", JOptionPane.WARNING_MESSAGE);
             }
         } else {
             jdcFechaFin.setDate(this.jdcFechaInicio.getDate());
@@ -180,34 +188,29 @@ public class FiltroReporte_Cate extends JDialog implements ActionListener, Mouse
             generarReporte();
         } else if (src.equals(this.jbQuitar)) {
             quitarCategoria();
+        } else if (src.equals(this.jbAgregar)) {
+            agregarCategorias();
+        } else if (src.equals(this.jbCancelar)) {
+            cerrar();
         }
 
     }
 
     private void quitarCategoria() {
-        int row = jtProdCategorias.getSelectedRow();
-        if (row > -1) {
-            System.out.println("" + jtProdCategorias.getValueAt(row, 0));
+        int rows = this.jtProdCategorias.getModel().getRowCount();
+        for (int i = 0; i < rows; i++) {
+            this.jtProdCategorias.getModel().setValueAt(false, i, 2);
         }
     }
 
-    @Override
-    public void mouseClicked(MouseEvent e) {
+    private void cerrar() {
+        this.dispose();
     }
 
-    @Override
-    public void mousePressed(MouseEvent e) {
-    }
-
-    @Override
-    public void mouseReleased(MouseEvent e) {
-    }
-
-    @Override
-    public void mouseEntered(MouseEvent e) {
-    }
-
-    @Override
-    public void mouseExited(MouseEvent e) {
+    private void agregarCategorias() {
+        int rows = this.jtProdCategorias.getModel().getRowCount();
+        for (int i = 0; i < rows; i++) {
+            this.jtProdCategorias.getModel().setValueAt(true, i, 2);
+        }
     }
 }

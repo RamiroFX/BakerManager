@@ -135,7 +135,7 @@ public class C_crear_egreso extends MouseAdapter implements ActionListener, KeyL
             int option = JOptionPane.showConfirmDialog(vista, "¿Desea confirmar la compra?", "Atención", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
             if (option == JOptionPane.YES_OPTION) {
                 this.modelo.egreso_cabecera.setId_cabecera(null);
-                this.modelo.egreso_cabecera.setId_empleado(1);
+                this.modelo.egreso_cabecera.setId_empleado(this.modelo.empleado.getId_funcionario());
                 this.modelo.egreso_cabecera.setId_proveedor(this.modelo.proveedor.getId());
                 this.modelo.egreso_cabecera.setTiempo(new java.sql.Timestamp(System.currentTimeMillis()));
                 this.modelo.egreso_detalle = new M_egreso_detalle[cantFilas];

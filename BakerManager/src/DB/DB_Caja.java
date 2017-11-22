@@ -115,24 +115,22 @@ public class DB_Caja {
         String Q_INGRESO_CONTADO = "(SELECT SUM(ROUND(EGDE.CANTIDAD*(EGDE.PRECIO-(EGDE.PRECIO*EGDE.DESCUENTO)/100)))\"Total\" "
                 + "FROM EGRESO_DETALLE EGDE, EGRESO_CABECERA EGCA "
                 + "WHERE EGCA.ID_EGRESO_CABECERA = EGDE.ID_EGRESO_CABECERA "
-                + "AND EGCA.TIEMPO BETWEEN ?  AND ? "
+                + "AND EGCA.TIEMPO BETWEEN CAJA.TIEMPO_APERTURA  AND CAJA.TIEMPO_CIERRE "
                 + "AND EGCA.ID_COND_COMPRA = 1)";
         String Q_INGRESO_CREDITO = "(SELECT SUM(ROUND(EGDE.CANTIDAD*(EGDE.PRECIO-(EGDE.PRECIO*EGDE.DESCUENTO)/100)))\"Total\" "
                 + "FROM EGRESO_DETALLE EGDE, EGRESO_CABECERA EGCA "
                 + "WHERE EGCA.ID_EGRESO_CABECERA = EGDE.ID_EGRESO_CABECERA "
-                + "AND EGCA.TIEMPO BETWEEN ?  AND ? "
+                + "AND EGCA.TIEMPO BETWEEN CAJA.TIEMPO_APERTURA  AND CAJA.TIEMPO_CIERRE "
                 + "AND EGCA.ID_COND_COMPRA = 2)";
         String Q_EGRESO_CONTADO = "(SELECT SUM(ROUND(FADE.CANTIDAD*(FADE.PRECIO-(FADE.PRECIO*FADE.DESCUENTO)/100)))\"Total\" "
                 + "FROM FACTURA_DETALLE FADE, FACTURA_CABECERA FACA "
                 + "WHERE FACA.ID_FACTURA_CABECERA = FADE.ID_FACTURA_CABECERA "
-                + "AND FACA.TIEMPO BETWEEN ?  "
-                + "AND ? "
+                + "AND FACA.TIEMPO BETWEEN CAJA.TIEMPO_APERTURA AND CAJA.TIEMPO_CIERRE "
                 + "AND FACA.ID_COND_VENTA = 1)";
         String Q_EGRESO_CREDITO = "(SELECT SUM(ROUND(FADE.CANTIDAD*(FADE.PRECIO-(FADE.PRECIO*FADE.DESCUENTO)/100)))\"Total\" "
                 + "FROM FACTURA_DETALLE FADE, FACTURA_CABECERA FACA "
                 + "WHERE FACA.ID_FACTURA_CABECERA = FADE.ID_FACTURA_CABECERA "
-                + "AND FACA.TIEMPO BETWEEN ?  "
-                + "AND ? "
+                + "AND FACA.TIEMPO BETWEEN CAJA.TIEMPO_APERTURA AND CAJA.TIEMPO_CIERRE "
                 + "AND FACA.ID_COND_VENTA = 2)";
         String Query = "SELECT ID_CAJA \"ID\", (SELECT NOMBRE ||' '|| APELLIDO \"Func. Apertura\" WHERE PERSONA.ID_PERSONA = FUNCIONARIO.ID_PERSONA AND FUNCIONARIO.ID_FUNCIONARIO = ID_FUNCIONARIO_APERTURA), "
                 + "	(SELECT NOMBRE ||' '|| APELLIDO \"Func. Cierre\" WHERE PERSONA.ID_PERSONA = FUNCIONARIO.ID_PERSONA AND FUNCIONARIO.ID_FUNCIONARIO = ID_FUNCIONARIO_APERTURA), "
@@ -157,16 +155,16 @@ public class DB_Caja {
             pst = DB_manager.getConection().prepareStatement(Query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             pst.setTimestamp(1, fechaInicio);
             pst.setTimestamp(2, fechaFin);
-            pst.setTimestamp(3, fechaInicio);
-            pst.setTimestamp(4, fechaFin);
-            pst.setTimestamp(5, fechaInicio);
-            pst.setTimestamp(6, fechaFin);
-            pst.setTimestamp(7, fechaInicio);
-            pst.setTimestamp(8, fechaFin);
-            pst.setTimestamp(9, fechaInicio);
-            pst.setTimestamp(10, fechaFin);
+//            pst.setTimestamp(3, fechaInicio);
+//            pst.setTimestamp(4, fechaFin);
+//            pst.setTimestamp(5, fechaInicio);
+//            pst.setTimestamp(6, fechaFin);
+//            pst.setTimestamp(7, fechaInicio);
+//            pst.setTimestamp(8, fechaFin);
+//            pst.setTimestamp(9, fechaInicio);
+//            pst.setTimestamp(10, fechaFin);
             if (idFuncionario > -1) {
-                pst.setInt(11, idFuncionario);
+                pst.setInt(3, idFuncionario);
             }
             // se ejecuta el query y se obtienen los resultados en un ResultSet
             rs = pst.executeQuery();
