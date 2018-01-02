@@ -53,7 +53,8 @@ public class V_inicio extends JFrame {
         setLocation(0, 0);
         setExtendedState(MAXIMIZED_BOTH);
         try {
-            icono = new ImageIcon("Assets/Icono.png");
+            String path = System.getProperty("user.dir") + "\\Assets\\Icono.png";
+            icono = new ImageIcon(path);
         } catch (Exception e) {
             icono = new ImageIcon();
         }

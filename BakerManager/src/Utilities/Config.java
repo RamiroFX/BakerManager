@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
 import java.util.Properties;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -27,14 +28,13 @@ public class Config {
     private static  Reader r;
     private boolean b;
     static  {
-        path=System.getProperty("user.dir") + "\\src\\Assets\\newproperties.properties";
-        System.out.println(path);
+        path=System.getProperty("user.dir") + "\\Assets\\newproperties.properties";
         propiedades = new Properties();
         try {
             fis=new FileInputStream(path);
             propiedades.load(fis);
         } catch (Exception e) {
-            System.out.println("Ha ocurrido una excepcion al abrir el fichero, no se encuentra o está protegido " + e);
+            JOptionPane.showMessageDialog(null, "Ha ocurrido una excepcion al abrir el fichero, no se encuentra o está protegido " + e, "Atención", JOptionPane.WARNING_MESSAGE);
         }finally{
             if( null != fis ){ 
                 try { 
@@ -56,13 +56,13 @@ public class Config {
             w= new FileWriter(path);
             propiedades.store(w, user);
         } catch (IOException ex) {
-            ex.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Ha ocurrido una excepcion al abrir el fichero, no se encuentra o está protegido " + ex, "Atención", JOptionPane.WARNING_MESSAGE);
         }finally{
             if(w!=null){
                 try {
                     w.close();
                 } catch (IOException ex) {
-                    ex.printStackTrace();
+                    JOptionPane.showMessageDialog(null, "Ha ocurrido una excepcion al cerrar el fichero: " + ex, "Atención", JOptionPane.WARNING_MESSAGE);
                 }
             }
         }

@@ -8,12 +8,15 @@ package Reportes;
 import bakermanager.C_inicio;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.beans.PropertyVetoException;
 
 /**
  *
  * @author Ramiro
  */
-public class C_gestion_reporte implements ActionListener {
+public class C_gestion_reporte implements ActionListener, KeyListener {
 
     private V_gestion_reporte vista;
     public C_inicio c_inicio;
@@ -33,6 +36,21 @@ public class C_gestion_reporte implements ActionListener {
         this.vista.jbRCD.addActionListener(this);
         this.vista.jbRCS.addActionListener(this);
         this.vista.jbRCSC.addActionListener(this);
+        /*
+        KEYLISTENERS
+         */
+        this.vista.jbRCD.addKeyListener(this);
+        this.vista.jbRCS.addKeyListener(this);
+        this.vista.jbRCSC.addKeyListener(this);
+        this.vista.jtpReportes.addKeyListener(this);
+    }
+
+    private void cerrar() {
+        try {
+            this.vista.setClosed(true);
+            System.runFinalization();
+        } catch (PropertyVetoException ex) {
+        }
     }
 
     @Override
@@ -42,5 +60,23 @@ public class C_gestion_reporte implements ActionListener {
             FiltroReporte_Cate p = new FiltroReporte_Cate(c_inicio);
             p.setVisible(true);
         }
+    }
+
+    @Override
+    public void keyTyped(KeyEvent e) {
+    }
+
+    @Override
+    public void keyPressed(KeyEvent e) {
+        switch (e.getKeyCode()) {
+            case KeyEvent.VK_ESCAPE: {
+                cerrar();
+                break;
+            }
+        }
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
     }
 }

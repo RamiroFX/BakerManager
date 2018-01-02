@@ -14,6 +14,8 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.io.File;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -40,7 +42,7 @@ import net.sf.jasperreports.swing.JRViewer;
  *
  * @author Ramiro Ferreira
  */
-public class FiltroReporte_Cate extends JDialog implements ActionListener {
+public class FiltroReporte_Cate extends JDialog implements ActionListener, KeyListener {
 
     JPanel jpCategoria, jpFecha, jpSouth;
     JDateChooser jdcFechaInicio, jdcFechaFin;
@@ -65,6 +67,7 @@ public class FiltroReporte_Cate extends JDialog implements ActionListener {
          * RANGO DE FECHAS
          */
         this.jdcFechaInicio = new JDateChooser();
+        this.jdcFechaInicio.setDate(Calendar.getInstance().getTime());
         this.jdcFechaFin = new JDateChooser();
         this.jdcFechaFin.setDate(Calendar.getInstance().getTime());
         this.jpFecha = new JPanel(new MigLayout());
@@ -111,6 +114,14 @@ public class FiltroReporte_Cate extends JDialog implements ActionListener {
         this.jbCancelar.addActionListener(this);
         this.jbAgregar.addActionListener(this);
         this.jbQuitar.addActionListener(this);
+        /*
+        KEYLISTENERS
+         */
+        this.jbGenerar.addKeyListener(this);
+        this.jbCancelar.addKeyListener(this);
+        this.jbAgregar.addKeyListener(this);
+        this.jbQuitar.addKeyListener(this);
+        this.jtProdCategorias.addKeyListener(this);
     }
 
     private void generarReporte() {
@@ -126,12 +137,14 @@ public class FiltroReporte_Cate extends JDialog implements ActionListener {
                 JOptionPane.showMessageDialog(this, "Seleccione al menos una categoría", "Atención", JOptionPane.PLAIN_MESSAGE);
                 return;
             }
-            File file = new File(System.getProperty("user.dir") + "\\src\\Assets\\Reportes\\ResumenComprasSimpleCategoria.jasper");
-            JasperReport reporte = null;
+            File file;
+            JasperReport reporte;
             try {
+                file = new File(System.getProperty("user.dir") + "\\Assets\\Reportes\\ResumenComprasSimpleCategoria.jasper");
                 reporte = (JasperReport) JRLoader.loadObject(file);
             } catch (JRException ex) {
                 JOptionPane.showMessageDialog(this, "No se encontró la ubicación del reporte", "Atención", JOptionPane.WARNING_MESSAGE);
+                return;
             }
 
             Calendar calendarStart = Calendar.getInstance();
@@ -212,5 +225,23 @@ public class FiltroReporte_Cate extends JDialog implements ActionListener {
         for (int i = 0; i < rows; i++) {
             this.jtProdCategorias.getModel().setValueAt(true, i, 2);
         }
+    }
+
+    @Override
+    public void keyTyped(KeyEvent e) {
+    }
+
+    @Override
+    public void keyPressed(KeyEvent e) {
+        switch (e.getKeyCode()) {
+            case KeyEvent.VK_ESCAPE: {
+                cerrar();
+                break;
+            }
+        }
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
     }
 }
