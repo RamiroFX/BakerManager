@@ -83,7 +83,7 @@ public class C_crearPedido extends MouseAdapter implements ActionListener, KeyLi
         int horas = Integer.valueOf(horaT);
         //Se suma una hora para que la hora de entrega tenga una hora mas que la hora actual
         int horaAux = horas + 1;
-        if (horas >= 0 && horas < 10) {
+        if (horaAux >= 0 && horaAux < 10) {
             this.vista.jcbHora.setSelectedItem("0" + horaAux);
         } else {
             this.vista.jcbHora.setSelectedItem("" + horaAux);
