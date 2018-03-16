@@ -206,117 +206,123 @@ public class SeleccionarCantidadProduducto extends javax.swing.JDialog implement
     }
 
     public void enviarCantidad() {
-        if (checkearCantidad() && checkearDescuento()) {
-            try {
-                cantidad = Double.valueOf(String.valueOf(this.jtfCantidad.getText().trim()));
-                if (cantidad <= 0.0) {
-                    JOptionPane.showMessageDialog(this, "Inserte un valor mayor a 0 en Cantidad.", "Atención", JOptionPane.ERROR_MESSAGE);
-                    return;
-                }
-            } catch (Exception e) {
-                JOptionPane.showMessageDialog(this, "Inserte un valor válido para Cantidad.", "Atención", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-            try {
-                descuento = Double.valueOf(String.valueOf(this.jtfDescuento.getText().trim()));
-            } catch (Exception e) {
-                JOptionPane.showMessageDialog(this, "Inserte un valor válido para Descuento.", "Atención", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-            try {
-                precio = Integer.valueOf(String.valueOf(this.jtfPrecio.getText().trim()));
-            } catch (Exception e) {
-                JOptionPane.showMessageDialog(this, "Inserte un valor válido para Precio.", "Atención", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-            observacion = String.valueOf(this.jtfObservacion.getText().trim());
-            if (observacion.length() > 120) {
-                JOptionPane.showMessageDialog(null, "Observacion sobrepaso el máximo de 120 caracteres permitidos.", "Atención", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-            if (observacion.isEmpty()) {
-                observacion = null;
-            }
-            switch (tipo) {
-                case (C_seleccionarProducto.CREAR_INGRESO_RAPIDO): {
-                    M_facturaDetalle detalle = new M_facturaDetalle();
-                    detalle.setCantidad(cantidad);
-                    detalle.setDescuento(descuento);
-                    detalle.setPrecio(precio);
-                    detalle.setObservacion(observacion);
-                    detalle.setProducto(this.producto);
-                    detalle.setIdProducto(this.producto.getId());
-                    selecProd.crearVenta.recibirDetalle(detalle);
-                    break;
-                }
-                case (C_seleccionarProducto.CREAR_EGRESO): {
-                    EnviarProductoConVerificacionPermisoModificacionPrecio();
-                    break;
-                }
-                case (SeleccionarCantidadProduducto.MODIFICAR_EGRESO): {
-                    EnviarProductoConVerificacionPermisoModificacionPrecio();
-                    break;
-                }
-                case (SeleccionarCantidadProduducto.MODIFICAR_INGRESO): {
-                    this.crear_ingreso.modificarDetalle(cantidad, precio, descuento, observacion, row);
-                    break;
-                }
-                case (C_seleccionarProducto.VER_MESA): {
-                    EventQueue.invokeLater(new Runnable() {
-                        @Override
-                        public void run() {
+        final SeleccionarCantidadProduducto scp = this;
+        EventQueue.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                if (checkearCantidad() && checkearDescuento()) {
+                    try {
+                        cantidad = Double.valueOf(String.valueOf(jtfCantidad.getText().trim()));
+                        if (cantidad <= 0.0) {
+                            JOptionPane.showMessageDialog(scp, "Inserte un valor mayor a 0 en Cantidad.", "Atención", JOptionPane.ERROR_MESSAGE);
+                            return;
+                        }
+                    } catch (Exception e) {
+                        JOptionPane.showMessageDialog(scp, "Inserte un valor válido para Cantidad.", "Atención", JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
+                    try {
+                        descuento = Double.valueOf(String.valueOf(jtfDescuento.getText().trim()));
+                    } catch (Exception e) {
+                        JOptionPane.showMessageDialog(scp, "Inserte un valor válido para Descuento.", "Atención", JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
+                    try {
+                        precio = Integer.valueOf(String.valueOf(jtfPrecio.getText().trim()));
+                    } catch (Exception e) {
+                        JOptionPane.showMessageDialog(scp, "Inserte un valor válido para Precio.", "Atención", JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
+                    observacion = String.valueOf(jtfObservacion.getText().trim());
+                    if (observacion.length() > 120) {
+                        JOptionPane.showMessageDialog(null, "Observacion sobrepaso el máximo de 120 caracteres permitidos.", "Atención", JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
+                    if (observacion.isEmpty()) {
+                        observacion = null;
+                    }
+                    switch (tipo) {
+                        case (C_seleccionarProducto.CREAR_INGRESO_RAPIDO): {
                             M_facturaDetalle detalle = new M_facturaDetalle();
                             detalle.setCantidad(cantidad);
                             detalle.setDescuento(descuento);
                             detalle.setPrecio(precio);
                             detalle.setObservacion(observacion);
-                            detalle.setProducto(producto);
-                            detalle.setIdProducto(producto.getId());
-                            selecProd.verMesa.recibirDetalle(detalle);
+                            detalle.setProducto(scp.producto);
+                            detalle.setIdProducto(scp.producto.getId());
+                            selecProd.crearVenta.recibirDetalle(detalle);
+                            break;
                         }
-                    });
-                    break;
-                }
-                case (MODIFICAR_MESA_DETALLE): {
-                    verMesa.modificarDetalle(producto, cantidad, precio, descuento, observacion, row);
-                    break;
-                }
-                case (C_seleccionarProducto.CREAR_PEDIDO): {
-                    M_pedidoDetalle detalle = new M_pedidoDetalle();
-                    detalle.setCantidad(cantidad);
-                    detalle.setDescuento(descuento);
-                    detalle.setPrecio(precio);
-                    detalle.setObservacion(observacion);
-                    detalle.setProducto(this.producto);
-                    selecProd.crearPedido.recibirDetalle(detalle);
-                    break;
-                }
-                case (MODIFICAR_PEDIDO_DETALLE): {
-                    crearPedido.modificarDetalle(cantidad, precio, descuento, observacion, row);
-                    break;
-                }
-                case (C_seleccionarProducto.AGREGAR_PEDIDO_DETALLE): {
-                    M_pedidoDetalle detalle = new M_pedidoDetalle();
-                    detalle.setCantidad(cantidad);
-                    detalle.setDescuento(descuento);
-                    detalle.setPrecio(precio);
-                    detalle.setObservacion(observacion);
-                    detalle.setProducto(this.producto);
-                    selecProd.verPedido.recibirDetalle(detalle);
-                    break;
-                }
-                case (VER_PEDIDO_DETALLE): {
-                    verPedido.modificarDetalle(cantidad, precio, descuento, observacion, row);
-                    break;
-                }
-                default: {
-                    dispose();
-                    break;
-                }
-            }
+                        case (C_seleccionarProducto.CREAR_EGRESO): {
+                            EnviarProductoConVerificacionPermisoModificacionPrecio();
+                            break;
+                        }
+                        case (SeleccionarCantidadProduducto.MODIFICAR_EGRESO): {
+                            EnviarProductoConVerificacionPermisoModificacionPrecio();
+                            break;
+                        }
+                        case (SeleccionarCantidadProduducto.MODIFICAR_INGRESO): {
+                            crear_ingreso.modificarDetalle(cantidad, precio, descuento, observacion, row);
+                            break;
+                        }
+                        case (C_seleccionarProducto.VER_MESA): {
+                            EventQueue.invokeLater(new Runnable() {
+                                @Override
+                                public void run() {
+                                    M_facturaDetalle detalle = new M_facturaDetalle();
+                                    detalle.setCantidad(cantidad);
+                                    detalle.setDescuento(descuento);
+                                    detalle.setPrecio(precio);
+                                    detalle.setObservacion(observacion);
+                                    detalle.setProducto(producto);
+                                    detalle.setIdProducto(producto.getId());
+                                    selecProd.verMesa.recibirDetalle(detalle);
+                                }
+                            });
+                            break;
+                        }
+                        case (MODIFICAR_MESA_DETALLE): {
+                            verMesa.modificarDetalle(producto, cantidad, precio, descuento, observacion, row);
+                            break;
+                        }
+                        case (C_seleccionarProducto.CREAR_PEDIDO): {
+                            M_pedidoDetalle detalle = new M_pedidoDetalle();
+                            detalle.setCantidad(cantidad);
+                            detalle.setDescuento(descuento);
+                            detalle.setPrecio(precio);
+                            detalle.setObservacion(observacion);
+                            detalle.setProducto(producto);
+                            selecProd.crearPedido.recibirDetalle(detalle);
+                            break;
+                        }
+                        case (MODIFICAR_PEDIDO_DETALLE): {
+                            crearPedido.modificarDetalle(cantidad, precio, descuento, observacion, row);
+                            break;
+                        }
+                        case (C_seleccionarProducto.AGREGAR_PEDIDO_DETALLE): {
+                            M_pedidoDetalle detalle = new M_pedidoDetalle();
+                            detalle.setCantidad(cantidad);
+                            detalle.setDescuento(descuento);
+                            detalle.setPrecio(precio);
+                            detalle.setObservacion(observacion);
+                            detalle.setProducto(producto);
+                            selecProd.verPedido.recibirDetalle(detalle);
+                            break;
+                        }
+                        case (VER_PEDIDO_DETALLE): {
+                            verPedido.modificarDetalle(cantidad, precio, descuento, observacion, row);
+                            break;
+                        }
+                        default: {
+                            dispose();
+                            break;
+                        }
+                    }
 
-        }
-        dispose();
+                }
+                dispose();
+            }
+        });
     }
 
     private boolean checkearCantidad() {

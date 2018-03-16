@@ -21,6 +21,9 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import javax.swing.AbstractAction;
+import javax.swing.JTable;
+import javax.swing.KeyStroke;
 
 /**
  *
@@ -36,6 +39,7 @@ public class C_seleccionar_cliente extends MouseAdapter implements ActionListene
     public static final int CREAR_PEDIDO = 7;
     public static final int VER_PEDIDO = 8;
     public static final int BUSCAR_VENTA_DETALLE = 9;
+    private static final String ENTER_KEY = "Entrar";
     int idCliente, tipo;
     M_cliente cliente;
     V_seleccionar_cliente vista;
@@ -120,18 +124,36 @@ public class C_seleccionar_cliente extends MouseAdapter implements ActionListene
     private void inicializarVista() {
         this.vista.jbAceptar.setEnabled(false);
         this.vista.jtCliente.setModel(DB_Cliente.consultarCliente("", false, true, true));
+        KeyStroke enter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
+        this.vista.jtCliente.getInputMap(JTable.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(enter, ENTER_KEY);
+        this.vista.jtCliente.getActionMap().put(ENTER_KEY, new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                seleccionarCliente();
+            }
+        });
         Utilities.c_packColumn.packColumns(this.vista.jtCliente, 1);
     }
 
     private void agregarListeners() {
+        //ACTION LISTENERS
         this.vista.jbAceptar.addActionListener(this);
         this.vista.jbCancelar.addActionListener(this);
         this.vista.jckbEntidadNombre.addActionListener(this);
         this.vista.jckbRUC.addActionListener(this);
         this.vista.jrbExclusivo.addActionListener(this);
         this.vista.jrbInclusivo.addActionListener(this);
+        //MOUSE LISTENERS
         this.vista.jtCliente.addMouseListener(this);
+        //KEY LISTENERS
         this.vista.jtfBuscar.addKeyListener(this);
+        this.vista.jbAceptar.addKeyListener(this);
+        this.vista.jbCancelar.addKeyListener(this);
+        this.vista.jckbEntidadNombre.addKeyListener(this);
+        this.vista.jckbRUC.addKeyListener(this);
+        this.vista.jrbExclusivo.addKeyListener(this);
+        this.vista.jrbInclusivo.addKeyListener(this);
+        this.vista.jtCliente.addKeyListener(this);
     }
 
     private void cerrar() {
@@ -139,7 +161,7 @@ public class C_seleccionar_cliente extends MouseAdapter implements ActionListene
         System.runFinalization();
     }
 
-    private void seleccionarProveedor(M_cliente cliente) {
+    private void seleccionarCliente(M_cliente cliente) {
         switch (tipo) {
             case GESTION_VENTA: {
                 this.gestion_venta.recibirCliente(cliente);
@@ -176,7 +198,7 @@ public class C_seleccionar_cliente extends MouseAdapter implements ActionListene
                 cerrar();
                 break;
             }
-                
+
             case BUSCAR_VENTA_DETALLE: {
                 this.ventaDetalle.recibirCliente(cliente);
                 cerrar();
@@ -202,10 +224,35 @@ public class C_seleccionar_cliente extends MouseAdapter implements ActionListene
         });
     }
 
+    private void seleccionarCliente() {
+        EventQueue.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                int fila = vista.jtCliente.getSelectedRow();
+                int columna = vista.jtCliente.getSelectedColumn();
+                if ((fila > -1) && (columna > -1)) {
+                    idCliente = Integer.valueOf(String.valueOf(vista.jtCliente.getValueAt(fila, 0)));
+                    cliente = DB_Cliente.obtenerDatosClienteID(idCliente);
+                    seleccionarCliente(cliente);
+                }
+            }
+        });
+    }
+
+    private void controlarFilaSeleccionada() {
+        int fila = this.vista.jtCliente.getSelectedRow();
+        int columna = this.vista.jtCliente.getSelectedColumn();
+        if ((fila > -1) && (columna > -1)) {
+            this.vista.jbAceptar.setEnabled(true);
+        } else {
+            this.vista.jbAceptar.setEnabled(false);
+        }
+    }
+
     @Override
     public void actionPerformed(ActionEvent ae) {
         if (ae.getSource() == this.vista.jbAceptar) {
-            seleccionarProveedor(cliente);
+            seleccionarCliente(cliente);
         } else if (ae.getSource() == this.vista.jtfBuscar) {
             displayQueryResults();
         } else if (ae.getSource() == this.vista.jckbEntidadNombre) {
@@ -230,7 +277,7 @@ public class C_seleccionar_cliente extends MouseAdapter implements ActionListene
         if ((fila > -1) && (columna > -1)) {
             this.vista.jbAceptar.setEnabled(true);
             if (e.getClickCount() == 2) {
-                seleccionarProveedor(cliente);
+                seleccionarCliente(cliente);
             }
         }
     }
@@ -244,6 +291,16 @@ public class C_seleccionar_cliente extends MouseAdapter implements ActionListene
     public void keyPressed(KeyEvent e) {
         if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
             cerrar();
+        }
+        if (this.vista.jtfBuscar.hasFocus()) {
+            if (e.getKeyCode() == KeyEvent.VK_DOWN) {
+                vista.jtCliente.requestFocusInWindow();
+            }
+        }
+        if (this.vista.jtCliente.hasFocus()) {
+            if (e.getKeyCode() == KeyEvent.VK_DOWN || e.getKeyCode() == KeyEvent.VK_UP) {
+                controlarFilaSeleccionada();
+            }
         }
     }
 

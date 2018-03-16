@@ -21,12 +21,14 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.EventQueue;
-import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.ArrayList;
 import java.util.Vector;
+import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
+import javax.swing.JTable;
+import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 
 /**
@@ -40,6 +42,7 @@ public class C_seleccionarProducto extends MouseAdapter implements ActionListene
     public static final int VER_MESA = 4;
     public static final int CREAR_PEDIDO = 5;
     public static final int AGREGAR_PEDIDO_DETALLE = 6;
+    private static final String ENTER_KEY = "Entrar";
     int idProducto, tipo;
     M_producto producto;
     M_proveedor proveedor;
@@ -105,8 +108,15 @@ public class C_seleccionarProducto extends MouseAdapter implements ActionListene
             }
         }
         this.vista.jtProducto.setModel(DB_Producto.consultarProducto(""));
+        KeyStroke enter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
+        this.vista.jtProducto.getInputMap(JTable.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(enter, ENTER_KEY);
+        this.vista.jtProducto.getActionMap().put(ENTER_KEY, new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                seleccionarProducto();
+            }
+        });
         Utilities.c_packColumn.packColumns(this.vista.jtProducto, 1);
-
         Vector marca = DB_manager.obtenerMarca();
         this.vista.jcbMarca.addItem("Todos");
         for (int i = 0; i < marca.size(); i++) {
@@ -132,16 +142,20 @@ public class C_seleccionarProducto extends MouseAdapter implements ActionListene
     }
 
     private void agregarListeners() {
+        //ACTION LISTENERS
         this.vista.jbCrearProducto.addActionListener(this);
         this.vista.jbAceptar.addActionListener(this);
         this.vista.jbSalir.addActionListener(this);
-        this.vista.jtProducto.addMouseListener(this);
-        this.vista.jtfBuscar.addActionListener(this);
-        this.vista.jtfBuscar.addKeyListener(this);
         this.vista.jbBuscar.addActionListener(this);
         this.vista.jbBorrar.addActionListener(this);
-        this.vista.jcbBusqueda.addActionListener(this);
         this.vista.jbProveedor.addActionListener(this);
+        this.vista.jtfBuscar.addActionListener(this);
+        this.vista.jcbBusqueda.addActionListener(this);
+        //MOUSE LISTENERS
+        this.vista.jtProducto.addMouseListener(this);
+        //KEY LISTENERS
+        this.vista.jtfBuscar.addKeyListener(this);
+        this.vista.jtProducto.addKeyListener(this);
     }
 
     public void displayQueryResults() {
@@ -185,6 +199,43 @@ public class C_seleccionarProducto extends MouseAdapter implements ActionListene
     private void cerrar() {
         this.vista.dispose();
         System.runFinalization();
+    }
+
+    public void recibirProveedor(M_proveedor proveedor) {
+        this.proveedor = proveedor;
+        String nombre = this.proveedor.getNombre();
+        String entidad = this.proveedor.getEntidad();
+        this.vista.jtfProveedor.setText(nombre + " (" + entidad + ")");
+    }
+
+    private void borrarParametros() {
+        this.proveedor = new M_proveedor();
+        this.vista.jtfProveedor.setText("");
+        this.vista.jtfBuscar.setText("");
+        this.vista.jtfBuscar.requestFocusInWindow();
+        this.vista.jcbEstado.setSelectedIndex(0);
+        this.vista.jcbImpuesto.setSelectedIndex(0);
+        this.vista.jcbMarca.setSelectedIndex(0);
+        this.vista.jcbRubro.setSelectedIndex(0);
+    }
+
+    private void seleccionarProducto() {
+        final C_seleccionarProducto cp = this;
+        EventQueue.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                int fila = vista.jtProducto.getSelectedRow();
+                int columna = vista.jtProducto.getSelectedColumn();
+                if ((fila > -1) && (columna > -1)) {
+                    idProducto = Integer.valueOf(String.valueOf(vista.jtProducto.getValueAt(fila, 0)));
+                    producto = DB_Producto.obtenerDatosProductoID(idProducto);
+                    vista.jbAceptar.setEnabled(true);
+                    SeleccionarCantidadProduducto scp = new SeleccionarCantidadProduducto(cp, producto);
+                    scp.setVisible(true);
+                    vista.jtfBuscar.requestFocusInWindow();
+                }
+            }
+        });
     }
 
     @Override
@@ -237,42 +288,32 @@ public class C_seleccionarProducto extends MouseAdapter implements ActionListene
                 this.vista.jtfBuscar.requestFocusInWindow();
             }
         }
-
     }
 
     @Override
     public void keyTyped(KeyEvent e) {
-        displayQueryResults();
+        if (this.vista.jtfBuscar.hasFocus()) {
+            displayQueryResults();
+        }
     }
 
     @Override
     public void keyPressed(KeyEvent e) {
         if (this.vista.jtfBuscar.hasFocus()) {
-            if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
-                cerrar();
+            switch (e.getKeyCode()) {
+                case KeyEvent.VK_DOWN: {
+                    vista.jtProducto.requestFocusInWindow();
+                    break;
+                }
+                case KeyEvent.VK_ESCAPE: {
+                    cerrar();
+                    break;
+                }
             }
         }
     }
 
     @Override
     public void keyReleased(KeyEvent e) {
-    }
-
-    public void recibirProveedor(M_proveedor proveedor) {
-        this.proveedor = proveedor;
-        String nombre = this.proveedor.getNombre();
-        String entidad = this.proveedor.getEntidad();
-        this.vista.jtfProveedor.setText(nombre + " (" + entidad + ")");
-    }
-
-    private void borrarParametros() {
-        this.proveedor = new M_proveedor();
-        this.vista.jtfProveedor.setText("");
-        this.vista.jtfBuscar.setText("");
-        this.vista.jtfBuscar.requestFocusInWindow();
-        this.vista.jcbEstado.setSelectedIndex(0);
-        this.vista.jcbImpuesto.setSelectedIndex(0);
-        this.vista.jcbMarca.setSelectedIndex(0);
-        this.vista.jcbRubro.setSelectedIndex(0);
     }
 }
