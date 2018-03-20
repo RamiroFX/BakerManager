@@ -131,7 +131,7 @@ public class C_login implements ActionListener, KeyListener {
                 vista.txtPassword.requestFocus();
             }
             if (e.getSource() == vista.txtPassword) {
-                vista.btnAceptar.requestFocus();
+                logIn();
             }
         }
     }

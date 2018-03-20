@@ -9,6 +9,7 @@ import DB.DB_manager;
 import Entities.M_menu_item;
 import Entities.M_producto;
 import Entities.M_proveedor;
+import Excel.ExportarProducto;
 import MenuPrincipal.DatosUsuario;
 import Proveedor.Seleccionar_proveedor;
 import bakermanager.C_inicio;
@@ -121,6 +122,10 @@ public class C_gestion_producto extends MouseAdapter implements ActionListener, 
                 this.vista.jbParametros.addActionListener(this);
                 this.vista.jbParametros.setEnabled(true);
             }
+            if (this.vista.jbExportar.getName().equals(acceso.getItemDescripcion())) {
+                this.vista.jbExportar.addActionListener(this);
+                this.vista.jbExportar.setEnabled(true);
+            }
             if (this.vista.jbAsigProdProv.getName().equals(acceso.getItemDescripcion())) {
                 this.vista.jbAsigProdProv.addActionListener(this);
                 this.vista.jbAsigProdProv.setEnabled(true);
@@ -138,6 +143,7 @@ public class C_gestion_producto extends MouseAdapter implements ActionListener, 
         this.vista.jbModificar.addKeyListener(this);
         this.vista.jbParametros.addKeyListener(this);
         this.vista.jbAsigProdProv.addKeyListener(this);
+        this.vista.jbExportar.addKeyListener(this);
     }
 
     public void displayQueryResults() {
@@ -232,6 +238,23 @@ public class C_gestion_producto extends MouseAdapter implements ActionListener, 
         this.vista.jtfProveedor.setText("");
     }
 
+    private void exportarProductos() {
+        EventQueue.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                String desc = vista.jtfBuscar.getText();
+                String marca = vista.jcbMarca.getSelectedItem().toString();
+                String rubro = vista.jcbRubro.getSelectedItem().toString();
+                String impuesto = vista.jcbImpuesto.getSelectedItem().toString();
+                String estado = vista.jcbEstado.getSelectedItem().toString();
+                String proveedor = proveedor();
+                ArrayList<M_producto> productos = DB_Producto.consultaSimpleProductos(desc.toLowerCase(), proveedor, marca, rubro, impuesto, estado);
+                ExportarProducto ep = new ExportarProducto(productos);
+                ep.exportar();
+            }
+        });
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == this.vista.jtfBuscar) {
@@ -251,6 +274,8 @@ public class C_gestion_producto extends MouseAdapter implements ActionListener, 
         } else if (e.getSource().equals(this.vista.jbParametros)) {
             ProductoParametros param = new ProductoParametros(c_inicio, this);
             param.setVisible(true);
+        } else if (e.getSource() == this.vista.jbExportar) {
+            exportarProductos();
         } else if (e.getSource() == this.vista.jbEliminar) {
             //DBmanagerProducto.eliminarProducto(producto);
             JOptionPane.showMessageDialog(vista, "Funcion no implementada", "Atencion", JOptionPane.INFORMATION_MESSAGE, null);

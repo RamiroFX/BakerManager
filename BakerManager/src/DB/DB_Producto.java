@@ -240,6 +240,105 @@ public class DB_Producto {
         return rstm;
     }
 
+    public static ArrayList<M_producto> consultaSimpleProductos(String descripcion, String proveedor, String marca, String rubro, String impuesto, String estado) {
+        ArrayList productos = null;
+        try {
+            if (DB_manager.getConection() == null) {
+                throw new IllegalStateException("Connection already closed.");
+            }
+            String finalQuery = "ORDER BY PROD.DESCRIPCION ";
+            String fromQuery = "FROM PRODUCTO PROD ";
+            String prov;
+            if ("Todos".equals(proveedor)) {
+                prov = "";
+            } else {
+                fromQuery = "FROM PROVEEDOR PROV, PRODUCTO PROD, PROVEEDOR_PRODUCTO PRPR ";
+                prov = "PRPR.ID_PROVEEDOR = PROV.ID_PROVEEDOR AND PRPR.ID_PRODUCTO = PROD.ID_PRODUCTO "
+                        + "AND PROV.ENTIDAD LIKE'" + proveedor + "' AND ";
+            }
+
+            String imp;
+            if ("Todos".equals(impuesto)) {
+                imp = "";
+            } else {
+                imp = "AND PROD.ID_IMPUESTO =(SELECT IMPU.ID_IMPUESTO FROM IMPUESTO IMPU WHERE IMPU.DESCRIPCION = " + impuesto + ") ";
+            }
+
+            String marc;
+            if ("Todos".equals(marca)) {
+                marc = "";
+            } else {
+                marc = "AND PROD.ID_MARCA = (SELECT MARC.ID_MARCA FROM MARCA MARC WHERE MARC.DESCRIPCION LIKE '" + marca + "' )";
+            }
+
+            String rubr;
+            if ("Todos".equals(rubro)) {
+                rubr = "";
+            } else {
+                rubr = "AND PROD.ID_CATEGORIA = (SELECT PRCA.ID_PRODUCTO_CATEGORIA FROM PRODUCTO_CATEGORIA PRCA WHERE PRCA.DESCRIPCION LIKE '" + rubro + "' )";
+            }
+            String estad;
+            if ("Todos".equals(estado)) {
+                estad = "";
+            } else {
+                estad = "AND PROD.ID_ESTADO = (SELECT ESTA.ID_ESTADO FROM ESTADO ESTA WHERE ESTA.DESCRIPCION LIKE '" + estado + "') ";
+            }
+
+            String Query = "SELECT PROD.ID_PRODUCTO \"id_producto\", "
+                    + "PROD.CODIGO \"codigo\", "
+                    + "PROD.DESCRIPCION \"descripcion\", "
+                    + "PROD.PRECIO_COSTO \"precio_costo\", "
+                    + "PROD.PRECIO_MINORISTA \"precio_minorista\", "
+                    + "PROD.PRECIO_MAYORISTA \"precio_mayorista\", "
+                    + "PROD.CANT_ACTUAL \"cant_actual\", "
+                    + "PROD.ID_MARCA \"id_marca\", "
+                    + "PROD.ID_IMPUESTO \"id_impuesto\", "
+                    + "PROD.ID_ESTADO \"id_estado\", "
+                    + "PROD.ID_CATEGORIA \"id_categoria\", "
+                    + "(SELECT IMPU.DESCRIPCION FROM IMPUESTO IMPU WHERE IMPU.ID_IMPUESTO = PROD.ID_IMPUESTO) \"impuesto\", "
+                    + "(SELECT ESTA.DESCRIPCION FROM ESTADO ESTA WHERE ESTA.ID_ESTADO = PROD.ID_ESTADO) \"estado\", "
+                    + "(SELECT MARC.DESCRIPCION FROM MARCA MARC WHERE MARC.ID_MARCA = PROD.ID_MARCA) \"marca\", "
+                    + "(SELECT PRCA.DESCRIPCION FROM PRODUCTO_CATEGORIA PRCA WHERE PRCA.ID_PRODUCTO_CATEGORIA = PROD.ID_CATEGORIA) \"categoria\" "
+                    + fromQuery
+                    + "WHERE "
+                    + prov
+                    + "LOWER(PROD.DESCRIPCION) LIKE ? "
+                    + marc
+                    + imp
+                    + rubr
+                    + estad
+                    + finalQuery;
+            
+            pst = DB_manager.getConection().prepareStatement(Query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            pst.setString(1, descripcion + "%");            
+            rs = pst.executeQuery();
+            productos = new ArrayList();
+            while (rs.next()) {
+                M_producto producto = new M_producto();
+                producto.setId(rs.getInt("id_producto"));
+                producto.setCodBarra(rs.getString("codigo"));
+                producto.setDescripcion(rs.getString("descripcion"));
+                producto.setMarca(rs.getString("marca"));
+                producto.setEstado(rs.getString("estado"));
+                producto.setImpuesto(rs.getInt("impuesto"));
+                producto.setPrecioCosto(rs.getInt("precio_costo"));
+                producto.setPrecioMayorista(rs.getInt("precio_mayorista"));
+                producto.setPrecioVenta(rs.getInt("precio_minorista"));
+                producto.setCategoria(rs.getString("categoria"));
+                producto.setIdCategoria(rs.getInt("id_categoria"));
+                producto.setIdEstado(rs.getInt("id_estado"));
+                producto.setIdImpuesto(rs.getInt("id_impuesto"));
+                producto.setIdMarca(rs.getInt("id_marca"));
+                producto.setCantActual(rs.getDouble("cant_actual"));
+                productos.add(producto);
+            }
+        } catch (SQLException ex) {
+            Logger lgr = Logger.getLogger(DB_Producto.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        }
+        return productos;
+    }
+    
     public static M_producto obtenerDatosProductoID(int idProducto) {
         M_producto producto = null;
         try {
