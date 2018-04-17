@@ -18,8 +18,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.beans.PropertyVetoException;
 import java.util.ArrayList;
 import java.util.Vector;
@@ -29,7 +29,7 @@ import javax.swing.JOptionPane;
  *
  * @author Ramiro Ferreira
  */
-public class C_gestion_producto extends MouseAdapter implements ActionListener, KeyListener {
+public class C_gestion_producto implements ActionListener, KeyListener, MouseListener {
 
     private M_producto m_producto;
     private M_proveedor proveedor;
@@ -172,22 +172,27 @@ public class C_gestion_producto extends MouseAdapter implements ActionListener, 
         });
     }
 
-    private void completarCampos() {
-        Integer idProducto = Integer.valueOf(String.valueOf(this.vista.jtProducto.table.getValueAt(this.vista.jtProducto.table.getSelectedRow(), 0)));
-        //setProducto(DBmanagerProducto.mostrarProducto(idProducto));
-        setProducto(DB_Producto.obtenerDatosProductoID(idProducto));
-        this.vista.jbModificar.setEnabled(true);
-        this.vista.jbEliminar.setEnabled(true);
-        this.vista.jtfProducto.setText(getProducto().getDescripcion());
-        this.vista.jtfCodigo.setText(String.valueOf(getProducto().getId()));
-        this.vista.jtfPrecioCosto.setText(String.valueOf(getProducto().getPrecioCosto()));
-        this.vista.jtfPrecioMayorista.setText(String.valueOf(getProducto().getPrecioMayorista()));
-        this.vista.jtfPrecioVta.setText(String.valueOf(getProducto().getPrecioVenta()));
-        this.vista.jtfRubro.setText(getProducto().getCategoria());
-        this.vista.jtfImpuesto.setText(String.valueOf(getProducto().getImpuesto()));
-        this.vista.jtfMarca.setText(getProducto().getMarca());
-        this.vista.jtfSuspendido.setText(getProducto().getEstado());
-        this.vista.jtfCantActual.setText(String.valueOf(getProducto().getCantActual()));
+    private void completarCampos(KeyEvent e) {
+        if (e.getSource().equals(this.vista.jtProducto.table)) {
+            int row = this.vista.jtProducto.table.getSelectedRow();
+            int columna = this.vista.jtProducto.table.getSelectedRow();
+            int idProducto = Integer.valueOf(String.valueOf(this.vista.jtProducto.table.getValueAt(row, 0)));
+            if ((row > -1) && (columna > -1)) {
+                setProducto(DB_Producto.obtenerDatosProductoID(idProducto));
+                this.vista.jbModificar.setEnabled(true);
+                this.vista.jbEliminar.setEnabled(true);
+                this.vista.jtfProducto.setText(getProducto().getDescripcion());
+                this.vista.jtfCodigo.setText(String.valueOf(getProducto().getId()));
+                this.vista.jtfPrecioCosto.setText(String.valueOf(getProducto().getPrecioCosto()));
+                this.vista.jtfPrecioMayorista.setText(String.valueOf(getProducto().getPrecioMayorista()));
+                this.vista.jtfPrecioVta.setText(String.valueOf(getProducto().getPrecioVenta()));
+                this.vista.jtfRubro.setText(getProducto().getCategoria());
+                this.vista.jtfImpuesto.setText(String.valueOf(getProducto().getImpuesto()));
+                this.vista.jtfMarca.setText(getProducto().getMarca());
+                this.vista.jtfSuspendido.setText(getProducto().getEstado());
+                this.vista.jtfCantActual.setText(String.valueOf(getProducto().getCantActual()));
+            }
+        }
     }
 
     public void actualizarVista() {
@@ -308,13 +313,30 @@ public class C_gestion_producto extends MouseAdapter implements ActionListener, 
             this.vista.jtfMarca.setText(getProducto().getMarca());
             this.vista.jtfSuspendido.setText(getProducto().getEstado());
             this.vista.jtfCantActual.setText(String.valueOf(getProducto().getCantActual()));
+            if (e.getClickCount() == 2) {
+                Modificar_producto c_modProd = new Modificar_producto(this, getProducto().getId());
+                c_modProd.mostrarVista();
+            }
         } else {
             this.vista.jbModificar.setEnabled(false);
             this.vista.jbEliminar.setEnabled(false);
         }
-        if (e.getClickCount() == 2) {
-            //new jdModificarProducto(jif).setVisible(true);
-        }
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
     }
 
     public void keyTyped(KeyEvent e) {
@@ -352,8 +374,7 @@ public class C_gestion_producto extends MouseAdapter implements ActionListener, 
     }
 
     public void keyReleased(KeyEvent e) {
-        if (this.vista.jtProducto.hasFocus()) {
-            completarCampos();
-        }
+        completarCampos(e);
     }
+
 }

@@ -15,6 +15,7 @@ import MenuPrincipal.DatosUsuario;
 import Resumen.Resumen;
 import bakermanager.C_inicio;
 import Empleado.Seleccionar_funcionario;
+import Utilities.MyColorCellRenderer;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -73,6 +74,8 @@ public class C_gestionPedido implements GestionInterface {
         this.vista.jbCancelarPedido.setEnabled(false);
         this.vista.jbPagoPedido.setEnabled(false);
         this.vista.jbDetalle.setEnabled(false);
+        //this.vista.jtPedido.getColumnModel().getColumn(6).setCellRenderer(new MyColorCellRenderer());
+        this.vista.jtPedido.setDefaultRenderer(Object.class, new MyColorCellRenderer(6));
     }
 
     @Override
@@ -321,15 +324,7 @@ public class C_gestionPedido implements GestionInterface {
             int row = this.vista.jtPedido.getSelectedRow();
             int columna = this.vista.jtPedido.getSelectedRow();
             int idPedido = Integer.valueOf(String.valueOf(this.vista.jtPedido.getValueAt(row, 0)));
-            //this.modelo.setPedido(modelo.obtenerPedido(idPedido));
             controlarTablaPedido();
-            /*if (this.modelo.getPedido().getIdEstado() == 1) {
-             this.vista.jbPagoPedido.setEnabled(true);
-             this.vista.jbCancelarPedido.setEnabled(true);
-             } else {
-             this.vista.jbPagoPedido.setEnabled(false);
-             this.vista.jbCancelarPedido.setEnabled(false);
-             }*/
             if ((row > -1) && (columna > -1)) {
                 String estado = String.valueOf(this.vista.jtPedido.getValueAt(row, 6));
                 if (!estado.equals("Entregado")) {

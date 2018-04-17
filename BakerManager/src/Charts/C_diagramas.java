@@ -9,6 +9,8 @@ import bakermanager.C_inicio;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.sql.Timestamp;
 import java.text.NumberFormat;
 import java.util.Calendar;
@@ -20,7 +22,7 @@ import org.jfree.chart.plot.PiePlot;
  *
  * @author Ramiro Ferreira
  */
-public class C_diagramas implements ActionListener {
+public class C_diagramas implements ActionListener, KeyListener {
 
     public M_diagramas modelo;
     public V_diagramas vista;
@@ -68,9 +70,16 @@ public class C_diagramas implements ActionListener {
     }
 
     private void agregarListeners() {
+        //ACTIONLISTENERS
         this.vista.jbBorrar.addActionListener(this);
         this.vista.jbBuscar.addActionListener(this);
         this.vista.jbSalir.addActionListener(this);
+        //KEYLISTENERS
+        this.vista.jbBorrar.addKeyListener(this);
+        this.vista.jbBuscar.addKeyListener(this);
+        this.vista.jbSalir.addKeyListener(this);
+        this.vista.jddFin.addKeyListener(this);
+        this.vista.jddInicio.addKeyListener(this);
     }
 
     @Override
@@ -108,5 +117,23 @@ public class C_diagramas implements ActionListener {
         calendarFin.set(Calendar.MILLISECOND, 250);
         PiePlot plot = (PiePlot) this.vista.chart.getPlot();
         plot.setDataset(this.modelo.establecerPieDataset(new Timestamp(calendarInicio.getTime().getTime()), new Timestamp(calendarFin.getTime().getTime())));
+    }
+
+    @Override
+    public void keyTyped(KeyEvent e) {
+    }
+
+    @Override
+    public void keyPressed(KeyEvent e) {
+        switch (e.getKeyCode()) {
+            case KeyEvent.VK_ESCAPE: {
+                cerrar();
+                break;
+            }
+        }
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
     }
 }

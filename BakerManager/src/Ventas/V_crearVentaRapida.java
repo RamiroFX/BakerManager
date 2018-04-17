@@ -6,6 +6,8 @@ package Ventas;
 
 import java.awt.BorderLayout;
 import java.awt.Insets;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFormattedTextField;
@@ -18,6 +20,8 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.border.EtchedBorder;
+import javax.swing.border.TitledBorder;
+import javax.swing.plaf.basic.BasicInternalFrameTitlePane;
 import net.miginfocom.swing.MigLayout;
 
 /**
@@ -25,10 +29,14 @@ import net.miginfocom.swing.MigLayout;
  * @author Ramiro Ferreira
  */
 public class V_crearVentaRapida extends JDialog {
-    //NORTE
 
+    private static final String INGRESAR_COD_PROD = "Ingresar código de producto";
+    private static final String COD_PROD = "Código de producto";
+
+    //NORTE
     JPanel jpNorth;
-    public JTextField jtfCliente, jtfFuncionario, jtfClieDireccion, jtfClieTelefono, jtfClieRuc;
+    public JTextField jtfCliente, jtfFuncionario, jtfClieDireccion, jtfClieTelefono,
+            jtfClieRuc, jtfCodProd;
     public JButton jbCliente;
     public JLabel jlFuncionario;
     public JRadioButton jrbContado, jrbCredito;
@@ -53,6 +61,11 @@ public class V_crearVentaRapida extends JDialog {
         getContentPane().add(jpNorth, BorderLayout.NORTH);
         getContentPane().add(jpCenter, BorderLayout.CENTER);
         getContentPane().add(jpSouth, BorderLayout.SOUTH);
+        addWindowListener(new WindowAdapter() {
+            public void windowOpened(WindowEvent e) {
+                jtfCodProd.requestFocus();
+            }
+        });
     }
 
     private void initComponents() {
@@ -101,11 +114,17 @@ public class V_crearVentaRapida extends JDialog {
         jtFacturaDetalle.getTableHeader().setReorderingAllowed(false);
         jtFacturaDetalle.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         jspFacturaDetalle = new JScrollPane(jtFacturaDetalle);
+        jtfCodProd = new JTextField();
+        jtfCodProd.setToolTipText(INGRESAR_COD_PROD);
+        JPanel jpCodProd = new JPanel(new BorderLayout());
+        jpCodProd.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED), COD_PROD));
+        jpCodProd.add(jtfCodProd);
         jbAgregarProducto = new JButton("Agregar producto [F4]");
         jbModificarDetalle = new JButton("Modificar detalle");
         jbEliminarDetalle = new JButton("Eliminar detalle");
         JPanel jpSouthAux = new JPanel(new MigLayout());
         jpSouthAux.setBorder(new EtchedBorder(EtchedBorder.LOWERED));
+        jpSouthAux.add(jpCodProd, "growx, wrap");
         jpSouthAux.add(jbAgregarProducto, "wrap");
         jpSouthAux.add(jbModificarDetalle, "growx, wrap");
         jpSouthAux.add(jbEliminarDetalle, "growx");

@@ -4,6 +4,7 @@
  */
 package Ventas;
 
+import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -12,6 +13,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Calendar;
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 
 /**
  *
@@ -128,8 +130,13 @@ public class C_crearVentas extends MouseAdapter implements ActionListener, KeyLi
     }
 
     private void crearVentaRapida() {
-        CrearVentaRapida crv = new CrearVentaRapida(this.gestionVentas);
-        crv.mostrarVista();
+        SwingUtilities.invokeLater(new Runnable() {//if we remove this block it wont work also (no matter when we call requestFocusInWindow)
+            @Override
+            public void run() {
+                CrearVentaRapida crv = new CrearVentaRapida(gestionVentas);
+                crv.mostrarVista();
+            }
+        });
     }
 
     public void actualizarTablaMesa() {

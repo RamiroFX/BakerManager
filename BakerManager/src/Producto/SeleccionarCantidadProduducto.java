@@ -82,6 +82,17 @@ public class SeleccionarCantidadProduducto extends javax.swing.JDialog implement
         initComponents();
     }
 
+    public SeleccionarCantidadProduducto(C_crearVentaRapida crearVentaRapida, M_producto producto) {
+        super(crearVentaRapida.vista, true);
+        setTitle("Seleccione una cantidad");
+        setSize(new java.awt.Dimension(300, 250));
+        setLocationRelativeTo(crearVentaRapida.vista);
+        this.producto = producto;
+        tipo = C_seleccionarProducto.CREAR_INGRESO_POR_CODIGO;
+        this.crear_ingreso = crearVentaRapida;
+        initComponents();
+    }
+
     public SeleccionarCantidadProduducto(C_crearVentaRapida crear_ingreso, int row) {
         super(crear_ingreso.vista, true);
         setTitle("Seleccione una cantidad");
@@ -90,7 +101,7 @@ public class SeleccionarCantidadProduducto extends javax.swing.JDialog implement
         tipo = MODIFICAR_INGRESO;
         this.crear_ingreso = crear_ingreso;
         this.row = row;
-        this.producto = crear_ingreso.modelo.getDetalles().get(row).getProducto();
+        this.producto = crear_ingreso.modelo.getDtm().getFacturaDetalleList().get(row).getProducto();
         initComponents();
     }
 
@@ -172,9 +183,19 @@ public class SeleccionarCantidadProduducto extends javax.swing.JDialog implement
         jlPrecio = new javax.swing.JLabel("Precio");
         jlTotal = new javax.swing.JLabel("Total");
         jlObservacion = new javax.swing.JLabel("Observación");
-        jtfCantidad = new javax.swing.JTextField("0");
+        switch (tipo) {
+            case C_seleccionarProducto.CREAR_INGRESO_POR_CODIGO: {
+                jtfCantidad = new javax.swing.JTextField("1.0");
+                jtfPrecio = new javax.swing.JTextField(producto.getPrecioVenta() + "");
+                break;
+            }
+            default: {
+                jtfCantidad = new javax.swing.JTextField("0");
+                jtfPrecio = new javax.swing.JTextField();
+                break;
+            }
+        }
         jtfDescuento = new javax.swing.JTextField("0.00");
-        jtfPrecio = new javax.swing.JTextField();
         jtfTotal = new javax.swing.JTextField();
         jtfObservacion = new javax.swing.JTextField();
 
@@ -251,6 +272,17 @@ public class SeleccionarCantidadProduducto extends javax.swing.JDialog implement
                             detalle.setProducto(scp.producto);
                             detalle.setIdProducto(scp.producto.getId());
                             selecProd.crearVenta.recibirDetalle(detalle);
+                            break;
+                        }
+                        case (C_seleccionarProducto.CREAR_INGRESO_POR_CODIGO): {
+                            M_facturaDetalle detalle = new M_facturaDetalle();
+                            detalle.setCantidad(cantidad);
+                            detalle.setDescuento(descuento);
+                            detalle.setPrecio(precio);
+                            detalle.setObservacion(observacion);
+                            detalle.setProducto(producto);
+                            detalle.setIdProducto(producto.getId());
+                            crear_ingreso.recibirDetalle(detalle);
                             break;
                         }
                         case (C_seleccionarProducto.CREAR_EGRESO): {

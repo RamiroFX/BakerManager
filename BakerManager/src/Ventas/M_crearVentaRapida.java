@@ -6,15 +6,18 @@ package Ventas;
 
 import DB.DB_Cliente;
 import DB.DB_Ingreso;
+import DB.DB_Producto;
 import Entities.M_facturaCabecera;
 import Entities.M_facturaDetalle;
+import Entities.M_producto;
 import Entities.M_telefono;
 import MenuPrincipal.DatosUsuario;
+import ModeloTabla.FacturaDetalleTableModel;
+import ModeloTabla.InterfaceFacturaDetalle;
 import Parametros.TipoOperacion;
 import Utilities.Impresora;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
-import javax.swing.table.DefaultTableModel;
 
 /**
  *
@@ -22,13 +25,18 @@ import javax.swing.table.DefaultTableModel;
  */
 public class M_crearVentaRapida {
 
+    private static final String SELECCIONE_POR_LO_MENOS_UN_ARTICULO = "Seleccione por lo menos un artículo.";
+    private static final String CONFIRMAR = "Confirmar";
+    private static final String ATENCION = "Atención";
+    private static final String DESEA_IMPRIMIR_EL_TICKET = "¿Desea imprimir el ticket?";
+    private static final String ESTA_SEGURO_QUE_DESEA_CONFIRMAR_LA_VENTA = "¿Está seguro que desea confirmar la venta?";
+
     private M_facturaCabecera cabecera;
     private M_facturaDetalle detalle;
     private M_telefono telefono;
-    private ArrayList<M_facturaDetalle> detalles;
-    private DefaultTableModel dtm;
+    private FacturaDetalleTableModel dtm;
 
-    public M_crearVentaRapida() {
+    public M_crearVentaRapida(InterfaceFacturaDetalle interfaceFacturaDetalle) {
         this.cabecera = new M_facturaCabecera();
         this.cabecera.setCliente(DB_Cliente.obtenerDatosClienteID(1));//mostrador
         this.cabecera.setIdCondVenta(TipoOperacion.CONTADO);
@@ -38,16 +46,7 @@ public class M_crearVentaRapida {
             this.telefono = null;
         }
         this.detalle = new M_facturaDetalle();
-        this.detalles = new ArrayList<>();
-        dtm = new DefaultTableModel();
-        dtm.addColumn("ID");
-        dtm.addColumn("Cantidad");
-        dtm.addColumn("Descripción");
-        dtm.addColumn("Precio");
-        dtm.addColumn("Descuento");
-        dtm.addColumn("Exenta");
-        dtm.addColumn("IVA 5%");
-        dtm.addColumn("IVA 10%");
+        dtm = new FacturaDetalleTableModel(interfaceFacturaDetalle);
     }
 
     public M_facturaCabecera getCabecera() {
@@ -66,25 +65,17 @@ public class M_crearVentaRapida {
         this.detalle = detalle;
     }
 
-    public ArrayList<M_facturaDetalle> getDetalles() {
-        return detalles;
-    }
-
-    public void setDetalles(ArrayList<M_facturaDetalle> detalles) {
-        this.detalles = detalles;
-    }
-
     /**
      * @return the dtm
      */
-    public DefaultTableModel getDtm() {
+    public FacturaDetalleTableModel getDtm() {
         return dtm;
     }
 
     /**
      * @param dtm the dtm to set
      */
-    public void setDtm(DefaultTableModel dtm) {
+    public void setDtm(FacturaDetalleTableModel dtm) {
         this.dtm = dtm;
     }
 
@@ -109,16 +100,16 @@ public class M_crearVentaRapida {
     }
 
     public boolean guardarVenta() {
-        if (getDetalles().isEmpty()) {
-            JOptionPane.showConfirmDialog(null, "Seleccione por lo menos un artículo.", "Atención", JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
+        if (getDtm().getFacturaDetalleList().isEmpty()) {
+            JOptionPane.showConfirmDialog(null, SELECCIONE_POR_LO_MENOS_UN_ARTICULO, ATENCION, JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
         } else {
-            int response = JOptionPane.showConfirmDialog(null, "¿Está seguro que desea confirmar la venta?", "Confirmar", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+            int response = JOptionPane.showConfirmDialog(null, ESTA_SEGURO_QUE_DESEA_CONFIRMAR_LA_VENTA, CONFIRMAR, JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
             if (response == JOptionPane.YES_OPTION) {
-                int nroTicket = DB_Ingreso.insertarIngreso(getCabecera(), getDetalles());
+                int nroTicket = DB_Ingreso.insertarIngreso(getCabecera(), (ArrayList<M_facturaDetalle>) getDtm().getFacturaDetalleList());
                 getCabecera().setIdFacturaCabecera(nroTicket);
-                int opcion = JOptionPane.showConfirmDialog(null, "¿Desea imprimir el ticket?", "Atención", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+                int opcion = JOptionPane.showConfirmDialog(null, DESEA_IMPRIMIR_EL_TICKET, ATENCION, JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
                 if (opcion == JOptionPane.YES_OPTION) {
-                    Impresora.imprimirVenta(DatosUsuario.getRol_usuario(), getCabecera(), getDetalles());
+                    Impresora.imprimirVenta(DatosUsuario.getRol_usuario(), getCabecera(), (ArrayList<M_facturaDetalle>) getDtm().getFacturaDetalleList());
                 }
                 return true;
             }
@@ -135,10 +126,27 @@ public class M_crearVentaRapida {
             this.telefono = null;
         }
         this.detalle = new M_facturaDetalle();
-        this.detalles.clear();
-        int rowCount = dtm.getRowCount();
-        for (int i = 0; i < rowCount; i++) {
-            dtm.removeRow(0);
-        }
+        this.dtm.vaciarLista();
+    }
+
+    /*
+    public M_facturaDetalle obtenerProductoPorCodigo(String codigoProducto) {
+        M_producto unProducto = DB_Producto.obtenerProductoPorCodigo(codigoProducto);
+        M_facturaDetalle unDetalle = new M_facturaDetalle();
+        unDetalle.setCantidad(1.0);
+        unDetalle.setDescuento(0.0);
+        unDetalle.setPrecio(unProducto.getPrecioVenta());
+        unDetalle.setProducto(unProducto);
+        unDetalle.setIdProducto(unProducto.getId());
+        return unDetalle;
+    }*/
+
+    boolean existeProductoPorCodigo(String codigoProducto) {
+        return DB_Producto.existeCodigo(codigoProducto);
+    }
+
+    public M_producto obtenerProductoPorCodigo(String codigoProducto) {
+        M_producto unProducto = DB_Producto.obtenerProductoPorCodigo(codigoProducto);
+        return unProducto;
     }
 }

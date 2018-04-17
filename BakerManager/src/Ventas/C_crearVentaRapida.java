@@ -12,6 +12,8 @@ import Entities.M_producto;
 import Entities.M_telefono;
 import Interface.GestionInterface;
 import MenuPrincipal.DatosUsuario;
+import ModeloTabla.InterfaceFacturaDetalle;
+import Parametros.Impuesto;
 import Parametros.TipoOperacion;
 import Producto.SeleccionarCantidadProduducto;
 import Producto.SeleccionarProducto;
@@ -22,19 +24,23 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 
 /**
  *
  * @author Ramiro Ferreira
  */
-public class C_crearVentaRapida implements GestionInterface {
+public class C_crearVentaRapida implements GestionInterface, InterfaceFacturaDetalle {
+
+    private static final String TITULO_ERROR = "Error";
+    private static final String PRODUCTO_NO_EXISTE = "El producto no existe";
 
     public M_crearVentaRapida modelo;
     public V_crearVentaRapida vista;
     private C0_gestionVentas gestionVentas;
 
-    public C_crearVentaRapida(M_crearVentaRapida modelo, V_crearVentaRapida vista, C0_gestionVentas gestionVentas) {
-        this.modelo = modelo;
+    public C_crearVentaRapida(V_crearVentaRapida vista, C0_gestionVentas gestionVentas) {
+        this.modelo = new M_crearVentaRapida(this);
         this.vista = vista;
         this.gestionVentas = gestionVentas;
         inicializarVista();
@@ -73,6 +79,7 @@ public class C_crearVentaRapida implements GestionInterface {
     @Override
     public final void concederPermisos() {
         this.vista.jbSalir.addActionListener(this);
+        this.vista.jtfCodProd.addActionListener(this);
         this.vista.jbAceptar.addActionListener(this);
         this.vista.jbAgregarProducto.addActionListener(this);
         this.vista.jbImprimir.addActionListener(this);
@@ -82,6 +89,7 @@ public class C_crearVentaRapida implements GestionInterface {
         this.vista.jbModificarDetalle.addActionListener(this);
         this.vista.jrbContado.addActionListener(this);
         this.vista.jrbCredito.addActionListener(this);
+        this.vista.jtfCodProd.addKeyListener(this);
         this.vista.jbAgregarProducto.addKeyListener(this);
         this.vista.jbCliente.addKeyListener(this);
         this.vista.jbAceptar.addKeyListener(this);
@@ -89,11 +97,18 @@ public class C_crearVentaRapida implements GestionInterface {
         this.vista.jbSalir.addKeyListener(this);
         this.vista.jbModificarDetalle.addKeyListener(this);
         this.vista.jbEliminarDetalle.addKeyListener(this);
+        this.vista.jtFacturaDetalle.addKeyListener(this);
     }
 
     @Override
     public final void mostrarVista() {
         this.vista.setVisible(true);
+        //this.vista.jtfCodProd.requestFocus();
+        /*SwingUtilities.invokeLater(new Runnable() {//if we remove this block it wont work also (no matter when we call requestFocusInWindow)
+            @Override
+            public void run() {
+            }
+        });*/
     }
 
     @Override
@@ -101,7 +116,7 @@ public class C_crearVentaRapida implements GestionInterface {
         EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
-                if (modelo.getDetalles().isEmpty()) {
+                if (modelo.getDtm().getFacturaDetalleList().isEmpty()) {
                     vista.dispose();
                 } else {
                     int opcion = JOptionPane.showConfirmDialog(vista, "¿Cancelar venta?", "Atención", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
@@ -117,12 +132,12 @@ public class C_crearVentaRapida implements GestionInterface {
         EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
-                if (modelo.getDetalles().isEmpty()) {
+                if (modelo.getDtm().getFacturaDetalleList().isEmpty()) {
                     JOptionPane.showMessageDialog(vista, "No hay productos cargados", "Atención", JOptionPane.INFORMATION_MESSAGE);
                 } else {
                     int opcion = JOptionPane.showConfirmDialog(vista, "¿Desea imprimir el ticket?", "Atención", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
                     if (opcion == JOptionPane.YES_OPTION) {
-                        Impresora.imprimirVenta(DatosUsuario.getRol_usuario(), modelo.getCabecera(), modelo.getDetalles());
+                        Impresora.imprimirVenta(DatosUsuario.getRol_usuario(), modelo.getCabecera(), (ArrayList<M_facturaDetalle>) modelo.getDtm().getFacturaDetalleList());
                     }
                 }
             }
@@ -135,18 +150,22 @@ public class C_crearVentaRapida implements GestionInterface {
         Integer imp10 = null;
         Integer Precio = detalle.getPrecio() - Math.round(Math.round(((detalle.getPrecio() * detalle.getDescuento()) / 100)));
         Integer total = Math.round(Math.round((detalle.getCantidad() * Precio)));
-        if (detalle.getProducto().getImpuesto().equals(0)) {
-            impExenta = total;
-            imp5 = 0;
-            imp10 = 0;
-        } else if (detalle.getProducto().getImpuesto().equals(5)) {
-            impExenta = 0;
-            imp5 = total;
-            imp10 = 0;
-        } else {
-            impExenta = 0;
-            imp5 = 0;
-            imp10 = total;
+        switch (detalle.getProducto().getImpuesto()) {
+            case Impuesto.EXENTA:
+                impExenta = total;
+                imp5 = 0;
+                imp10 = 0;
+                break;
+            case Impuesto.IVA5:
+                impExenta = 0;
+                imp5 = total;
+                imp10 = 0;
+                break;
+            case Impuesto.IVA10:
+                impExenta = 0;
+                imp5 = 0;
+                imp10 = total;
+                break;
         }
         if (null != detalle.getObservacion()) {
             if (!detalle.getObservacion().isEmpty()) {
@@ -154,22 +173,21 @@ public class C_crearVentaRapida implements GestionInterface {
                 detalle.getProducto().setDescripcion(aux + "-(" + detalle.getObservacion() + ")");
             }
         }
-        Object[] rowData = {detalle.getProducto().getId(), detalle.getCantidad(), detalle.getProducto().getDescripcion(), detalle.getPrecio(), detalle.getDescuento(), impExenta, imp5, imp10};
+        //Object[] rowData = {detalle.getProducto().getId(), detalle.getCantidad(), detalle.getProducto().getDescripcion(), detalle.getPrecio(), detalle.getDescuento(), impExenta, imp5, imp10};
         detalle.setExenta(impExenta);
         detalle.setIva5(imp5);
         detalle.setIva10(imp10);
-        this.modelo.getDetalles().add(detalle);
-        this.modelo.getDtm().addRow(rowData);
-        this.vista.jtFacturaDetalle.updateUI();
+        //this.modelo.getDetalles().add(detalle);
+        this.modelo.getDtm().agregarDetalle(detalle);
+        //this.vista.jtFacturaDetalle.updateUI();
         Utilities.c_packColumn.packColumns(this.vista.jtFacturaDetalle, 1);
         sumarTotal();
     }
 
     private void eliminarDetalle() {
         int row = this.vista.jtFacturaDetalle.getSelectedRow();
-        this.modelo.getDetalles().remove(row);
-        this.modelo.getDtm().removeRow(row);
-        this.vista.jtFacturaDetalle.updateUI();
+        this.modelo.getDtm().quitarDetalle(row);
+        //this.vista.jtFacturaDetalle.updateUI();
         this.vista.jbEliminarDetalle.setEnabled(false);
         this.vista.jbModificarDetalle.setEnabled(false);
         sumarTotal();
@@ -179,7 +197,7 @@ public class C_crearVentaRapida implements GestionInterface {
         this.modelo.getDtm().setValueAt(cantidad, row, 1);
         this.modelo.getDtm().setValueAt(precio, row, 3);
         this.modelo.getDtm().setValueAt(descuento, row, 4);
-        M_producto prod = this.modelo.getDetalles().get(row).getProducto();
+        M_producto prod = this.modelo.getDtm().getFacturaDetalleList().get(row).getProducto();
         String producto = prod.getDescripcion();
         if (null != observacion) {
             if (!observacion.isEmpty()) {
@@ -208,12 +226,12 @@ public class C_crearVentaRapida implements GestionInterface {
         this.modelo.getDtm().setValueAt(impExenta, row, 5);
         this.modelo.getDtm().setValueAt(imp5, row, 6);
         this.modelo.getDtm().setValueAt(imp10, row, 7);
-        M_facturaDetalle detalle = this.modelo.getDetalles().get(row);
+        M_facturaDetalle detalle = this.modelo.getDtm().getFacturaDetalleList().get(row);
         detalle.setCantidad(cantidad);
         detalle.setPrecio(precio);
         detalle.setDescuento(descuento);
         detalle.setObservacion(observacion);
-        this.vista.jtFacturaDetalle.updateUI();
+        //this.vista.jtFacturaDetalle.updateUI();
         this.vista.jbEliminarDetalle.setEnabled(false);
         this.vista.jbModificarDetalle.setEnabled(false);
         sumarTotal();
@@ -258,7 +276,7 @@ public class C_crearVentaRapida implements GestionInterface {
         this.vista.jtfClieDireccion.setText(direccion);
         if (!telefono.isEmpty()) {
             this.vista.jtfClieTelefono.setText(telefono.get(0).getNumero());
-        }else{
+        } else {
             this.vista.jtfClieTelefono.setText("");
         }
     }
@@ -281,6 +299,28 @@ public class C_crearVentaRapida implements GestionInterface {
         }
     }
 
+    private void agregarProductoPorCodigo() {
+        final C_crearVentaRapida aThis = this;
+        EventQueue.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                //OBTENER CODIGO DESDE LA PISTOLA DE COD DE BARRAS
+                String codigoProducto = vista.jtfCodProd.getText().trim();
+                //VERIFICAR SI EXISTE EL PRODUCTO EN LA BD
+                boolean existeProd = modelo.existeProductoPorCodigo(codigoProducto);
+                if (existeProd) {
+                    //SELECCIONAR CANTIDAD DE PRODUCTO
+                    M_producto unProducto = modelo.obtenerProductoPorCodigo(codigoProducto);
+                    SeleccionarCantidadProduducto scp = new SeleccionarCantidadProduducto(aThis, unProducto);
+                    scp.setVisible(true);
+                    vista.jtfCodProd.setText("");
+                } else {
+                    JOptionPane.showMessageDialog(vista, PRODUCTO_NO_EXISTE, TITULO_ERROR, JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource().equals(this.vista.jbSalir)) {
@@ -288,6 +328,9 @@ public class C_crearVentaRapida implements GestionInterface {
         }
         if (e.getSource().equals(this.vista.jbAceptar)) {
             guardarVenta();
+        }
+        if (e.getSource().equals(this.vista.jtfCodProd)) {
+            agregarProductoPorCodigo();
         }
         if (e.getSource().equals(this.vista.jbAgregarProducto)) {
             SeleccionarProducto sp = new SeleccionarProducto(this);
@@ -345,27 +388,38 @@ public class C_crearVentaRapida implements GestionInterface {
 
     @Override
     public void keyPressed(KeyEvent e) {
-        if (e.getKeyCode() == KeyEvent.VK_F1) {
-            guardarVenta();
+        switch (e.getKeyCode()) {
+            case KeyEvent.VK_F1: {
+                guardarVenta();
+                break;
+            }
+            case KeyEvent.VK_F2: {
+                imprimirTicket();
+                break;
+            }
+            case KeyEvent.VK_F3: {
+                Seleccionar_cliente sp = new Seleccionar_cliente(this);
+                sp.mostrarVista();
+                break;
+            }
+            case KeyEvent.VK_F4: {
+                SeleccionarProducto sp = new SeleccionarProducto(this);
+                sp.mostrarVista();
+                break;
+            }
+            case KeyEvent.VK_ESCAPE: {
+                cerrar();
+                break;
+            }
         }
-        if (e.getKeyCode() == KeyEvent.VK_F2) {
-            imprimirTicket();
-        }
-        if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
-            cerrar();
-        }
-        if (e.getKeyCode() == KeyEvent.VK_F4) {
-            SeleccionarProducto sp = new SeleccionarProducto(this);
-            sp.mostrarVista();
-        }
-        if (e.getKeyCode() == KeyEvent.VK_F3) {
-            Seleccionar_cliente sp = new Seleccionar_cliente(this);
-            sp.mostrarVista();
-        }
-
     }
 
     @Override
     public void keyReleased(KeyEvent e) {
+    }
+
+    @Override
+    public void notificarCambio() {
+        sumarTotal();
     }
 }

@@ -42,6 +42,7 @@ public class C_seleccionarProducto extends MouseAdapter implements ActionListene
     public static final int VER_MESA = 4;
     public static final int CREAR_PEDIDO = 5;
     public static final int AGREGAR_PEDIDO_DETALLE = 6;
+    public static final int CREAR_INGRESO_POR_CODIGO = 12;
     private static final String ENTER_KEY = "Entrar";
     int idProducto, tipo;
     M_producto producto;
