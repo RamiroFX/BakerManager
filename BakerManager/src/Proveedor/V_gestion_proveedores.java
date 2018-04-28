@@ -142,7 +142,7 @@ class V_gestion_proveedores extends JInternalFrame {
         jbCrearProveedor.setFont(CommonFormat.fuente);
         jbCrearProveedor.setMargin(inset);
         jbModificarProveedor = new javax.swing.JButton("Modificar proveedor");
-        jbModificarProveedor.setName("Modificar proveedor");
+        jbModificarProveedor.setName("modificar proveedor");
         jbModificarProveedor.setFont(CommonFormat.fuente);
         jbModificarProveedor.setMargin(inset);
 

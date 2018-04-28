@@ -71,8 +71,20 @@ public class C_verPedido extends MouseAdapter implements ActionListener, KeyList
         calendario.setTime(this.modelo.getPedido().getTiempoEntrega());
         int hora = calendario.get(Calendar.HOUR_OF_DAY);
         int minuto = calendario.get(Calendar.MINUTE);
-        this.vista.jcbHora.setSelectedItem(hora);
-        this.vista.jcbMinuto.setSelectedItem(minuto);
+        String _hora = "";
+        String _minuto = "";
+        if (hora < 10) {
+            _hora = "0" + hora;
+        } else {
+            _hora = hora + "";
+        }
+        if (minuto < 10) {
+            _minuto = "0" + minuto;
+        } else {
+            _minuto = minuto + "";
+        }
+        this.vista.jcbHora.setSelectedItem(_hora);
+        this.vista.jcbMinuto.setSelectedItem(_minuto);
         switch (this.modelo.getPedido().getIdCondVenta()) {
             case (1): {
                 this.vista.jrbContado.setSelected(true);

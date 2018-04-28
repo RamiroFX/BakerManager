@@ -79,4 +79,11 @@ public class M_menu_item {
     public void setMenuDescripcion(String menuDescripcion) {
         this.menuDescripcion = menuDescripcion;
     }
+
+    @Override
+    public String toString() {
+        return "M_menu_item{" + "idItem=" + idItem + ", idMenu=" + idMenu + ", itemDescripcion=" + itemDescripcion + ", menuDescripcion=" + menuDescripcion + '}';
+    }
+    
+    
 }

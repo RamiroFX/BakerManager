@@ -27,8 +27,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Vector;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
 /**
@@ -285,7 +283,6 @@ public class C_gestionEgresos extends MouseAdapter implements ActionListener, Ke
         String tiop = tipoOperacion();
         Resumen_egreso re = new Resumen_egreso(c_inicio, this.vista.jtEgresoCabecera.table.getModel(), proveedor, nro_factura, empleado, vista.jddInicio.getDate(), vista.jddFinal.getDate(), tiop);
         re.setVisible(true);
-
     }
 
     public void recibirProveedor(M_proveedor proveedor) {
@@ -351,20 +348,19 @@ public class C_gestionEgresos extends MouseAdapter implements ActionListener, Ke
         if (e.getSource().equals(this.vista.jtEgresoCabecera.table)) {
             int fila = this.vista.jtEgresoCabecera.table.rowAtPoint(e.getPoint());
             int columna = this.vista.jtEgresoCabecera.table.columnAtPoint(e.getPoint());
-            Integer idEgresoCabecera = Integer.valueOf(String.valueOf(this.vista.jtEgresoCabecera.table.getValueAt(fila, 0)));
-            //setProducto(DBmanagerProducto.mostrarProducto(idProducto));
-            setEgreso_cabecera(DB_Egreso.obtenerEgresoCabeceraID(idEgresoCabecera));
             if ((fila > -1) && (columna > -1)) {
+                Integer idEgresoCabecera = Integer.valueOf(String.valueOf(this.vista.jtEgresoCabecera.table.getValueAt(fila, 0)));
+                setEgreso_cabecera(DB_Egreso.obtenerEgresoCabeceraID(idEgresoCabecera));
+                if (e.getClickCount() == 2) {
+                    if (this.vista.jbDetalle.isEnabled()) {
+                        verDetalle();
+                    }
+                }
                 verificarPermiso();
                 this.vista.jtEgresoDetalle.setModel(DB_Egreso.obtenerEgresoDetalle(idEgresoCabecera));
                 Utilities.c_packColumn.packColumns(vista.jtEgresoDetalle, 1);
             } else {
                 this.vista.jbDetalle.setEnabled(false);
-            }
-            if (e.getClickCount() == 2) {
-                if (this.vista.jbDetalle.isEnabled()) {
-                    verDetalle();
-                }
             }
         }
     }

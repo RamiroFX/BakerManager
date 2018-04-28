@@ -51,6 +51,12 @@ public class C_crearPedido extends MouseAdapter implements ActionListener, KeyLi
     }
 
     private void cerrar() {
+        if (!this.modelo.getDetalles().isEmpty()) {
+            int opcion = JOptionPane.showConfirmDialog(vista, "Hay producto cargados, ¿Desea cancelar?", "Atención", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+            if (opcion == JOptionPane.YES_OPTION) {
+                this.vista.dispose();
+            }
+        }
         this.vista.dispose();
     }
 
