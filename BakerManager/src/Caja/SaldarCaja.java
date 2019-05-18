@@ -471,13 +471,13 @@ public class SaldarCaja extends JDialog implements ActionListener, KeyListener {
 
         //ARQUEO CAJA
         jpArqueoCaja = new JTabbedPane();
-        JPanel jpFondoCierre = new JPanel(new BorderLayout());
+        JPanel jpFondoApertura = new JPanel(new BorderLayout());
         JPanel jpCajaInicialSouth = new JPanel();
         jpCajaInicialSouth.add(jbFondoAnterior);
-        jpFondoCierre.add(jspFondoCierre, BorderLayout.CENTER);
-        jpFondoCierre.add(jpCajaInicialSouth, BorderLayout.SOUTH);
-        jpArqueoCaja.addTab("Fondo cierre", jpFondoCierre);
-        jpArqueoCaja.addTab("Fondo apertura", jspFondoApertura);
+        jpFondoApertura.add(jspFondoApertura, BorderLayout.CENTER);
+        jpFondoApertura.add(jpCajaInicialSouth, BorderLayout.SOUTH);
+        jpArqueoCaja.addTab("Fondo apertura", jpFondoApertura);
+        jpArqueoCaja.addTab("Fondo cierre", jspFondoCierre);
         jpArqueoCaja.addTab("Depositar", jspDepositar);
         setLayout(new GridLayout(1, 2));
         add(jpArqueoCaja);
@@ -724,8 +724,8 @@ public class SaldarCaja extends JDialog implements ActionListener, KeyListener {
     private void consultarUltimoFondo() {
         ArrayList<ArqueoCajaDetalle> acda = DB_Caja.consultarUltimoArqueoCaja();
         if (!acda.isEmpty()) {
-            this.tbmFondoCierre.setArqueoCajaList(acda);
-            this.tbmFondoCierre.updateTable();
+            this.tbmFondoApertura.setArqueoCajaList(acda);
+            this.tbmFondoApertura.updateTable();
         }
     }
 
@@ -734,7 +734,7 @@ public class SaldarCaja extends JDialog implements ActionListener, KeyListener {
         for (ArqueoCajaDetalle arquDeta : this.tbmFondoApertura.arqueoCajaDetalleList) {
             total = total + (arquDeta.getCantidad() * arquDeta.getMoneda().getValor());
         }
-        this.jtfFondoCierre.setValue(total);
+        this.jtfFondoApertura.setValue(total);
         calcularDiferenciaCaja();
     }
 
@@ -743,7 +743,7 @@ public class SaldarCaja extends JDialog implements ActionListener, KeyListener {
         for (ArqueoCajaDetalle arquDeta : this.tbmFondoCierre.arqueoCajaDetalleList) {
             total = total + (arquDeta.getCantidad() * arquDeta.getMoneda().getValor());
         }
-        this.jtfFondoApertura.setValue(total);
+        this.jtfFondoCierre.setValue(total);
         calcularDiferenciaCaja();
     }
 

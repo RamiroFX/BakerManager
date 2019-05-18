@@ -112,7 +112,7 @@ public class DB_Caja {
     public static ResultSetTableModel consultarCajas(Integer idFuncionario, Timestamp fechaInicio, Timestamp fechaFin) {
         String Q_CAJA_APERTURA = "(SELECT SUM(CANTIDAD*VALOR) FROM ARQUEO_CAJA, MONEDA WHERE MONEDA.ID_MONEDA = ARQUEO_CAJA.ID_MONEDA AND ARQUEO_CAJA.ID_CAJA = CAJA.ID_CAJA AND ID_ARQUEO_CAJA_TIPO = 1)";
         String Q_CAJA_CIERRE = "(SELECT SUM(CANTIDAD*VALOR) FROM ARQUEO_CAJA, MONEDA WHERE MONEDA.ID_MONEDA = ARQUEO_CAJA.ID_MONEDA AND ARQUEO_CAJA.ID_CAJA = CAJA.ID_CAJA AND ID_ARQUEO_CAJA_TIPO = 2)";
-        String Q_INGRESO_CONTADO = "(SELECT SUM(ROUND(EGDE.CANTIDAD*(EGDE.PRECIO-(EGDE.PRECIO*EGDE.DESCUENTO)/100)))\"Total\" "
+        /*String Q_INGRESO_CONTADO = "(SELECT SUM(ROUND(EGDE.CANTIDAD*(EGDE.PRECIO-(EGDE.PRECIO*EGDE.DESCUENTO)/100)))\"Total\" "
                 + "FROM EGRESO_DETALLE EGDE, EGRESO_CABECERA EGCA "
                 + "WHERE EGCA.ID_EGRESO_CABECERA = EGDE.ID_EGRESO_CABECERA "
                 + "AND EGCA.TIEMPO BETWEEN CAJA.TIEMPO_APERTURA  AND CAJA.TIEMPO_CIERRE "
@@ -131,15 +131,15 @@ public class DB_Caja {
                 + "FROM FACTURA_DETALLE FADE, FACTURA_CABECERA FACA "
                 + "WHERE FACA.ID_FACTURA_CABECERA = FADE.ID_FACTURA_CABECERA "
                 + "AND FACA.TIEMPO BETWEEN CAJA.TIEMPO_APERTURA AND CAJA.TIEMPO_CIERRE "
-                + "AND FACA.ID_COND_VENTA = 2)";
+                + "AND FACA.ID_COND_VENTA = 2)";*/
         String Query = "SELECT ID_CAJA \"ID\", (SELECT NOMBRE ||' '|| APELLIDO \"Func. Apertura\" WHERE PERSONA.ID_PERSONA = FUNCIONARIO.ID_PERSONA AND FUNCIONARIO.ID_FUNCIONARIO = ID_FUNCIONARIO_APERTURA), "
                 + "	(SELECT NOMBRE ||' '|| APELLIDO \"Func. Cierre\" WHERE PERSONA.ID_PERSONA = FUNCIONARIO.ID_PERSONA AND FUNCIONARIO.ID_FUNCIONARIO = ID_FUNCIONARIO_APERTURA), "
                 + "COALESCE(" + Q_CAJA_APERTURA + ",0) \"Monto inicial\", "
                 + "COALESCE(" + Q_CAJA_CIERRE + ",0) \"Monto final\", "
-                + "COALESCE(" + Q_INGRESO_CONTADO + ",0) \"Ingreso contado\", "
-                + "COALESCE(" + Q_INGRESO_CREDITO + ",0) \"Ingreso crédito\", "
-                + "COALESCE(" + Q_EGRESO_CONTADO + ",0) \"Egreso contado\", "
-                + "COALESCE(" + Q_EGRESO_CREDITO + ",0) \"Egreso crédito\", "
+                //+ "COALESCE(" + Q_INGRESO_CONTADO + ",0) \"Ingreso contado\", "
+                //+ "COALESCE(" + Q_INGRESO_CREDITO + ",0) \"Ingreso crédito\", "
+                //+ "COALESCE(" + Q_EGRESO_CONTADO + ",0) \"Egreso contado\", "
+                //+ "COALESCE(" + Q_EGRESO_CREDITO + ",0) \"Egreso crédito\", "
                 + " TIEMPO_APERTURA \"Tiempo apertura\", TIEMPO_CIERRE \"Tiempo cierre\""
                 + "  FROM CAJA, FUNCIONARIO , PERSONA"
                 + "  WHERE CAJA.ID_FUNCIONARIO_APERTURA = FUNCIONARIO.ID_FUNCIONARIO"

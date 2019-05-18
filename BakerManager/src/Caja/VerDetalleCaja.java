@@ -591,7 +591,7 @@ public class VerDetalleCaja extends JDialog implements ActionListener, KeyListen
         EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
-                int opcion = JOptionPane.showConfirmDialog(null, "¿Desea imprimir el pedido?", "Atención", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+                int opcion = JOptionPane.showConfirmDialog(null, "¿Desea imprimir la caja?", "Atención", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
                 if (opcion == JOptionPane.YES_OPTION) {
                     int depositado = 0;
                     for (ArqueoCajaDetalle arquDeta : tbmDepositar.arqueoCajaDetalleList) {

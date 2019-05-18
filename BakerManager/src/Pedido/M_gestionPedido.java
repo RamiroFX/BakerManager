@@ -101,7 +101,7 @@ public class M_gestionPedido {
         return false;
     }
 
-    public ResultSetTableModel obtenerVentas(boolean b, String inicio, String fin, String condVenta, String nroPedido, String estado) {
+    public ResultSetTableModel obtenerPedidos(boolean b, String inicio, String fin, String condVenta, String nroPedido, String estado) {
         return DB_Pedido.obtenerPedidos(b, inicio, fin, condVenta, nroPedido, estado, getPedido(), true);
     }
 

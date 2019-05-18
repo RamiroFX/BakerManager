@@ -296,7 +296,7 @@ public class C_crearPedido extends MouseAdapter implements ActionListener, KeyLi
             JOptionPane.showMessageDialog(vista, "La fecha de entrega debe ser mayor que la fecha fecha actual (" + sdfs.format(now) + ").", "Atención", JOptionPane.WARNING_MESSAGE);
             return;
         }
-        cerrar();
+        this.vista.dispose();
     }
 
     private void mostrarMensaje(String message) {

@@ -109,7 +109,8 @@ public class DB_Pedido {
                 + "FROM PEDIDO_CABECERA PEDI,FUNCIONARIO FUNC, PERSONA PERS "
                 + "WHERE PEDI.ID_FUNCIONARIO = FUNC.ID_FUNCIONARIO "
                 + "AND PERS.ID_PERSONA = FUNC.ID_PERSONA "
-                + "AND PEDI.ID_PEDIDO_ESTADO = (SELECT PEES.ID_PEDIDO_ESTADO FROM PEDIDO_ESTADO PEES WHERE PEES.DESCRIPCION LIKE'Pendiente')";
+                + "AND PEDI.ID_PEDIDO_ESTADO = (SELECT PEES.ID_PEDIDO_ESTADO FROM PEDIDO_ESTADO PEES WHERE PEES.DESCRIPCION LIKE'Pendiente') "
+                + "ORDER BY PEDI.TIEMPO_RECEPCION";
         try {
             st = DB_manager.getConection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             // se ejecuta el query y se obtienen los resultados en un ResultSet

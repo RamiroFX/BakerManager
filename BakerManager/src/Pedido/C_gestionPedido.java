@@ -179,7 +179,7 @@ public class C_gestionPedido implements GestionInterface {
                     String nroPedido = vista.jtfNroPedido.getText();
                     String conVenta = vista.jcbCondVenta.getSelectedItem().toString();
                     String estado = vista.jcbEstadoPedido.getSelectedItem().toString();
-                    vista.jtPedido.setModel(modelo.obtenerVentas(esTiempoRecepcionOEntrega, fecha_inicio, fecha_fin, conVenta, nroPedido, estado));
+                    vista.jtPedido.setModel(modelo.obtenerPedidos(esTiempoRecepcionOEntrega, fecha_inicio, fecha_fin, conVenta, nroPedido, estado));
                     modelo.setRstmPedido((ResultSetTableModel) vista.jtPedido.getModel());
                     Utilities.c_packColumn.packColumns(vista.jtPedido, 1);
                     vista.jtPedidoDetalle.setModel(modelo.getDtm());
