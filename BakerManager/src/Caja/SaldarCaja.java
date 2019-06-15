@@ -603,7 +603,7 @@ public class SaldarCaja extends JDialog implements ActionListener, KeyListener {
             return;
         }
         /*
-         * VALIDAR dineroTotal
+         * VALIDAR caja chico
          */
         Integer cajaChica;
         try {
@@ -634,7 +634,7 @@ public class SaldarCaja extends JDialog implements ActionListener, KeyListener {
             return;
         }
         /*
-         * VALIDAR TIEMPO INICIO
+         * VALIDAR TIEMPO FIN
          */
         Date cierre = null;
         String fechaFin = sdf.format(jddFinal.getDate()) + " " + jcbHoraFin.getSelectedItem() + ":" + jcbMinutoFin.getSelectedItem() + ":00";
@@ -723,6 +723,10 @@ public class SaldarCaja extends JDialog implements ActionListener, KeyListener {
 
     private void consultarUltimoFondo() {
         ArrayList<ArqueoCajaDetalle> acda = DB_Caja.consultarUltimoArqueoCaja();
+        for (int i = 0; i < acda.size(); i++) {
+            ArqueoCajaDetalle get = acda.get(i);
+            get.setIdTipo(1);//APERTURA
+        }
         if (!acda.isEmpty()) {
             this.tbmFondoApertura.setArqueoCajaList(acda);
             this.tbmFondoApertura.updateTable();

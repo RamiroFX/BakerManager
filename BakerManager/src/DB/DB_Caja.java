@@ -177,7 +177,7 @@ public class DB_Caja {
     }
 
     public static ArrayList<CierreCaja> consultarCajas2(Integer idFuncionario, Timestamp fechaInicio, Timestamp fechaFin) {
-        ArrayList<CierreCaja> cierreCajas=null;
+        ArrayList<CierreCaja> cierreCajas = null;
         String Q_CAJA_APERTURA = "(SELECT CANTIDAD, VALOR FROM ARQUEO_CAJA, MONEDA WHERE MONEDA.ID_MONEDA = ARQUEO_CAJA.ID_MONEDA AND ARQUEO_CAJA.ID_CAJA = CAJA.ID_CAJA AND ID_ARQUEO_CAJA_TIPO = 1)";
         String Q_CAJA_CIERRE = "(SELECT CANTIDAD, VALOR FROM ARQUEO_CAJA, MONEDA WHERE MONEDA.ID_MONEDA = ARQUEO_CAJA.ID_MONEDA AND ARQUEO_CAJA.ID_CAJA = CAJA.ID_CAJA AND ID_ARQUEO_CAJA_TIPO = 2)";
         String Q_INGRESO_CONTADO = "(SELECT EGDE.CANTIDAD, EGDE.PRECIO, EGDE.DESCUENTO \"Total\" "
@@ -234,7 +234,7 @@ public class DB_Caja {
         }
         return cierreCajas;
     }
-    
+
     public static ArrayList consultarCajasExportacion(Integer idFuncionario, Timestamp inicio, Timestamp fin) {
         ArrayList<CierreCaja> cajas = new ArrayList<>();
         ArrayList<ArqueoCajaDetalle> arqueoApertura = new ArrayList<>();

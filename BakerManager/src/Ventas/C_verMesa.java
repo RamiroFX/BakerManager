@@ -92,6 +92,7 @@ public class C_verMesa extends MouseAdapter implements ActionListener, KeyListen
         this.vista.jbModificarDetalle.addActionListener(this);
         this.vista.jrbContado.addActionListener(this);
         this.vista.jrbCredito.addActionListener(this);
+        this.vista.jtfCodProd.addKeyListener(this);
         this.vista.jbAceptar.addKeyListener(this);
         this.vista.jbImprimir.addKeyListener(this);
         this.vista.jbAgregarProducto.addKeyListener(this);
