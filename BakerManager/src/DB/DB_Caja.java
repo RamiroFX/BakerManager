@@ -146,10 +146,12 @@ public class DB_Caja {
                 + "  AND  CAJA.ID_FUNCIONARIO_CIERRE = FUNCIONARIO.ID_FUNCIONARIO"
                 + "  AND FUNCIONARIO.ID_PERSONA = PERSONA.ID_PERSONA"
                 + "  AND CAJA.TIEMPO_CIERRE BETWEEN ?  AND ?  ";
-        String func = "AND CAJA.ID_FUNCIONARIO_CIERRE = ?";
+        String func = " AND CAJA.ID_FUNCIONARIO_CIERRE = ?";
+        String ORDER = " ORDER BY TIEMPO_CIERRE ";
         if (idFuncionario > -1) {
             Query = Query + func;
         }
+        Query = Query + ORDER;
         ResultSetTableModel rstm = null;
         try {
             pst = DB_manager.getConection().prepareStatement(Query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);

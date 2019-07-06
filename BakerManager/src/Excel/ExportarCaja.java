@@ -524,6 +524,7 @@ public class ExportarCaja {
                 cabecera.createCell(0).setCellValue(new HSSFRichTextString("Fecha"));
                 cabecera.createCell(1).setCellValue(new HSSFRichTextString("Total egreso"));
                 cabecera.createCell(2).setCellValue(new HSSFRichTextString("Total ingreso"));
+                cabecera.createCell(3).setCellValue(new HSSFRichTextString("Depositado"));
                 fila++;
             }
             //TOTAL EGRESO
@@ -537,6 +538,7 @@ public class ExportarCaja {
             fin.set(Calendar.MINUTE, 59);
             Timestamp ini = new Timestamp(inicio.getTimeInMillis());
             Timestamp fi = new Timestamp(fin.getTimeInMillis());
+            //TOTAL EGRESO
             int egresoContado = DB_Egreso.obtenerTotalEgreso(ini, fi, 1);
             int egresoCretdito = DB_Egreso.obtenerTotalEgreso(ini, fi, 2);
             int totalEgresos = egresoContado + egresoCretdito;
@@ -544,6 +546,17 @@ public class ExportarCaja {
             int ingresoContado = DB_Ingreso.obtenerTotalIngreso(ini, fi, 1);
             int ingresoCretdito = DB_Ingreso.obtenerTotalIngreso(ini, fi, 2);
             int totalIngresos = ingresoContado + ingresoCretdito;
+            //TOTAL DEPOSITADO
+            int totalDepositado = 0;
+            int idCaja = 0;
+            for (ArqueoCajaDetalle arqueoCajaDetalle : cierreCaja.getDeposito()) {
+                //System.out.println("arqueoCajaDetalle.toString()" + arqueoCajaDetalle.toString());
+                System.out.println("arqueoCajaDetalle.getIdArqueoCajaDetalle()" + arqueoCajaDetalle.getIdArqueoCajaDetalle());
+                idCaja = arqueoCajaDetalle.getIdCaja();
+                totalDepositado = totalDepositado + (arqueoCajaDetalle.getCantidad() * arqueoCajaDetalle.getMoneda().getValor());
+                /*System.out.println("totalDepositado: " + totalDepositado);
+                System.out.println("getCantidad*getValor: " + (arqueoCajaDetalle.getCantidad() * arqueoCajaDetalle.getMoneda().getValor()));*/
+            }
             //FILA DE CONTENIDO
             Row contenido = sheets.get(monthCursor).createRow(fila);
             contenido.createCell(0).setCellValue(cierreCaja.getCaja().getTiempoCierre());
@@ -552,6 +565,8 @@ public class ExportarCaja {
             contenido.getCell(1).setCellStyle(style4);
             contenido.createCell(2).setCellValue(totalIngresos);
             contenido.getCell(2).setCellStyle(style4);
+            contenido.createCell(3).setCellValue(totalDepositado);
+            contenido.getCell(3).setCellStyle(style4);
             fila++;
 
             //AUTO EXTENDER COLUMNAS
@@ -560,15 +575,9 @@ public class ExportarCaja {
             sheets.get(monthCursor).autoSizeColumn(2);
             sheets.get(monthCursor).autoSizeColumn(3);
             sheets.get(monthCursor).autoSizeColumn(4);
-            sheets.get(monthCursor).autoSizeColumn(5);
-            sheets.get(monthCursor).autoSizeColumn(6);
-            sheets.get(monthCursor).autoSizeColumn(7);
-            sheets.get(monthCursor).autoSizeColumn(8);
-            sheets.get(monthCursor).autoSizeColumn(9);
 
             resumenTotalEgreso = resumenTotalEgreso + totalEgresos;
             resumenTotalIngreso = resumenTotalIngreso + totalIngresos;
-            //fila++;
         }
         //RESUMEN EN OTRO PESTANHA
         fila = 0;
