@@ -76,6 +76,26 @@ public class M_gestionCaja {
         ExportarCaja ec = new ExportarCaja(acd);
         ec.exportar();
     }
+    
+    public void exportarExcelMinimalista(Integer idFuncionario, Date fecha_inicio, Date fecha_fin) {
+        SimpleDateFormat sdfs = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Calendar calendario = Calendar.getInstance();
+        calendario.setTime(fecha_inicio);
+        calendario.set(Calendar.HOUR_OF_DAY, 0);
+        calendario.set(Calendar.MINUTE, 0);
+        calendario.set(Calendar.SECOND, 0);
+        calendario.set(Calendar.MILLISECOND, 0);
+        java.sql.Timestamp fInicio = new Timestamp(calendario.getTimeInMillis());
+        calendario.setTime(fecha_fin);
+        calendario.set(Calendar.HOUR_OF_DAY, 23);
+        calendario.set(Calendar.MINUTE, 59);
+        calendario.set(Calendar.SECOND, 59);
+        calendario.set(Calendar.MILLISECOND, 59);
+        java.sql.Timestamp fFin = new Timestamp(calendario.getTimeInMillis());
+        ArrayList<CierreCaja> acd = DB_Caja.consultarCajasExportacion(idFuncionario, fInicio, fFin);
+        ExportarCaja ec = new ExportarCaja(acd);
+        ec.exportarMinimalista();
+    }
 
     public boolean validarFechas(Date f_inicio, Date f_final) {
         if (f_inicio != null && f_final != null) {

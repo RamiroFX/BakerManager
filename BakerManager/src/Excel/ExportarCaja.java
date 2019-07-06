@@ -158,11 +158,11 @@ public class ExportarCaja {
         ArrayList<Moneda> monedas = DB_Caja.obtenerMonedas();
         for (CierreCaja cierreCaja : cierreCajas) {
             fechaActual = cierreCaja.getCaja().getTiempoCierre();
+            resumenFechaFin = fechaActual;
             calendar.setTime(fechaActual);
             newMonth = calendar.get(Calendar.MONTH);
             if (currentMonth != newMonth) {
                 currentMonth = newMonth;
-                resumenFechaFin = cierreCaja.getCaja().getTiempoCierre();
                 sheets.add(workbook.createSheet(sdfs.format(calendar.getTime())));
                 monthCursor++;
                 fila = 0;
@@ -404,6 +404,173 @@ public class ExportarCaja {
             resumenTotalDepositado = resumenTotalDepositado + totalDeposito;
             fila++;
         }
+        fila = 0;
+        sheets.add(workbook.createSheet(RESUMEN));
+        monthCursor++;
+
+        CellRangeAddress cellRangeAddress1 = new CellRangeAddress(2, 2, 0, 1);
+        CellRangeAddress cellRangeAddress2 = new CellRangeAddress(3, 3, 0, 1);
+        CellRangeAddress cellRangeAddress3 = new CellRangeAddress(4, 4, 0, 1);
+
+        Row fechaInicio = sheets.get(monthCursor).createRow(fila);
+        fechaInicio.createCell(0).setCellValue(new HSSFRichTextString("Fecha inicio"));
+        fechaInicio.createCell(1).setCellValue(resumenFechaInicio);
+        fechaInicio.getCell(1).setCellStyle(dateCellStyle);
+        fila++;
+        Row fechaFin = sheets.get(monthCursor).createRow(fila);
+        fechaFin.createCell(0).setCellValue(new HSSFRichTextString("Fecha fin"));
+        fechaFin.createCell(1).setCellValue(resumenFechaFin);
+        fechaFin.getCell(1).setCellStyle(dateCellStyle);
+        fila++;
+
+        Row resumenTotalEgresos = sheets.get(monthCursor).createRow(fila);
+        resumenTotalEgresos.createCell(0).setCellValue(new HSSFRichTextString("Total egresos"));
+        resumenTotalEgresos.createCell(1).setCellValue(resumenTotalEgreso);
+        HSSFRegionUtil.setBorderTop(CellStyle.BORDER_THIN, cellRangeAddress1, sheets.get(monthCursor), workbook);
+        HSSFRegionUtil.setBorderLeft(CellStyle.BORDER_THIN, cellRangeAddress1, sheets.get(monthCursor), workbook);
+        HSSFRegionUtil.setBorderRight(CellStyle.BORDER_THIN, cellRangeAddress1, sheets.get(monthCursor), workbook);
+        HSSFRegionUtil.setBorderBottom(CellStyle.BORDER_THIN, cellRangeAddress1, sheets.get(monthCursor), workbook);
+        resumenTotalEgresos.getCell(1).setCellStyle(style7);
+        fila++;
+
+        Row resumenTotalIngresos = sheets.get(monthCursor).createRow(fila);
+        resumenTotalIngresos.createCell(0).setCellValue(new HSSFRichTextString("Total ingresos"));
+        resumenTotalIngresos.createCell(1).setCellValue(resumenTotalIngreso);
+        HSSFRegionUtil.setBorderTop(CellStyle.BORDER_THIN, cellRangeAddress2, sheets.get(monthCursor), workbook);
+        HSSFRegionUtil.setBorderLeft(CellStyle.BORDER_THIN, cellRangeAddress2, sheets.get(monthCursor), workbook);
+        HSSFRegionUtil.setBorderRight(CellStyle.BORDER_THIN, cellRangeAddress2, sheets.get(monthCursor), workbook);
+        HSSFRegionUtil.setBorderBottom(CellStyle.BORDER_THIN, cellRangeAddress2, sheets.get(monthCursor), workbook);
+        resumenTotalIngresos.getCell(1).setCellStyle(style7);
+        fila++;
+
+        Row resumenTotalDepo = sheets.get(monthCursor).createRow(fila);
+        resumenTotalDepo.createCell(0).setCellValue(new HSSFRichTextString("Total depositado"));
+        resumenTotalDepo.createCell(1).setCellValue(resumenTotalDepositado);
+        HSSFRegionUtil.setBorderTop(CellStyle.BORDER_THIN, cellRangeAddress3, sheets.get(monthCursor), workbook);
+        HSSFRegionUtil.setBorderLeft(CellStyle.BORDER_THIN, cellRangeAddress3, sheets.get(monthCursor), workbook);
+        HSSFRegionUtil.setBorderRight(CellStyle.BORDER_THIN, cellRangeAddress3, sheets.get(monthCursor), workbook);
+        HSSFRegionUtil.setBorderBottom(CellStyle.BORDER_THIN, cellRangeAddress3, sheets.get(monthCursor), workbook);
+        resumenTotalDepo.getCell(1).setCellStyle(style7);
+        fila++;
+
+        sheets.get(monthCursor).autoSizeColumn(0);
+        sheets.get(monthCursor).autoSizeColumn(1);
+
+        //PREPARAR DOCUMENTO
+        try {
+            FileOutputStream out = new FileOutputStream(directory.getPath() + ".xls");
+            workbook.write(out);
+            out.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void exportarMinimalista() {
+        //PREPARAR CONTENIDO
+        int fila = 0;//En preparar cuerpo empieza en cero (0).
+        Date fechaActual = null;
+        Calendar calendar = Calendar.getInstance();
+        int monthCursor = 0;
+        int currentMonth = 0;
+        int newMonth = 0;
+        int resumenTotalEgreso = 0;
+        int resumenTotalIngreso = 0;
+        int resumenTotalDepositado = 0;
+        Date resumenFechaInicio = null;
+        Date resumenFechaFin = null;
+        sheets.clear();
+        if (cierreCajas != null && !cierreCajas.isEmpty()) {
+            fechaActual = cierreCajas.get(0).getCaja().getTiempoCierre();
+            resumenFechaInicio = fechaActual;
+            resumenFechaFin = fechaActual;
+            calendar.setTime(fechaActual);
+            currentMonth = calendar.get(Calendar.MONTH);
+            sheets.add(workbook.createSheet(sdfs.format(calendar.getTime())));
+            //CREAR FECHA DE CAJA
+            Row cabecera = sheets.get(monthCursor).createRow(fila);
+            cabecera.createCell(0).setCellValue(new HSSFRichTextString("Fecha"));
+            cabecera.createCell(1).setCellValue(new HSSFRichTextString("Total egreso"));
+            cabecera.createCell(2).setCellValue(new HSSFRichTextString("Total ingreso"));
+            fila++;
+        } else {
+            JOptionPane.showMessageDialog(null, MENSAJE_ERROR, TITULO_ERROR, JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        String desktop = System.getProperty("user.home") + "\\Desktop";
+        JFileChooser chooser = new JFileChooser(desktop);
+        if (chooser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
+            directory = chooser.getSelectedFile();
+            directory.setWritable(true);
+            directory.setExecutable(true);
+            directory.setReadable(true);
+        } else {
+            return;
+        }
+        for (CierreCaja cierreCaja : cierreCajas) {
+            fechaActual = cierreCaja.getCaja().getTiempoCierre();
+            resumenFechaFin = fechaActual;
+            calendar.setTime(fechaActual);
+            newMonth = calendar.get(Calendar.MONTH);
+            if (currentMonth != newMonth) {
+                currentMonth = newMonth;
+                sheets.add(workbook.createSheet(sdfs.format(calendar.getTime())));
+                monthCursor++;
+                fila = 0;
+                //CREAR FECHA DE CAJA
+                Row cabecera = sheets.get(monthCursor).createRow(fila);
+                cabecera.createCell(0).setCellValue(new HSSFRichTextString("Fecha"));
+                cabecera.createCell(1).setCellValue(new HSSFRichTextString("Total egreso"));
+                cabecera.createCell(2).setCellValue(new HSSFRichTextString("Total ingreso"));
+                fila++;
+            }
+            //TOTAL EGRESO
+            Calendar inicio = Calendar.getInstance();
+            inicio.setTime(cierreCaja.getCaja().getTiempoApertura());
+            inicio.set(Calendar.HOUR_OF_DAY, 0);
+            inicio.set(Calendar.MINUTE, 0);
+            Calendar fin = Calendar.getInstance();
+            fin.setTime(cierreCaja.getCaja().getTiempoApertura());
+            fin.set(Calendar.HOUR_OF_DAY, 23);
+            fin.set(Calendar.MINUTE, 59);
+            Timestamp ini = new Timestamp(inicio.getTimeInMillis());
+            Timestamp fi = new Timestamp(fin.getTimeInMillis());
+            int egresoContado = DB_Egreso.obtenerTotalEgreso(ini, fi, 1);
+            int egresoCretdito = DB_Egreso.obtenerTotalEgreso(ini, fi, 2);
+            int totalEgresos = egresoContado + egresoCretdito;
+            //TOTAL INGRESO
+            int ingresoContado = DB_Ingreso.obtenerTotalIngreso(ini, fi, 1);
+            int ingresoCretdito = DB_Ingreso.obtenerTotalIngreso(ini, fi, 2);
+            int totalIngresos = ingresoContado + ingresoCretdito;
+            //FILA DE CONTENIDO
+            Row contenido = sheets.get(monthCursor).createRow(fila);
+            contenido.createCell(0).setCellValue(cierreCaja.getCaja().getTiempoCierre());
+            contenido.getCell(0).setCellStyle(dateCellStyle);
+            contenido.createCell(1).setCellValue(totalEgresos);
+            contenido.getCell(1).setCellStyle(style4);
+            contenido.createCell(2).setCellValue(totalIngresos);
+            contenido.getCell(2).setCellStyle(style4);
+            fila++;
+
+            //AUTO EXTENDER COLUMNAS
+            sheets.get(monthCursor).autoSizeColumn(0);
+            sheets.get(monthCursor).autoSizeColumn(1);
+            sheets.get(monthCursor).autoSizeColumn(2);
+            sheets.get(monthCursor).autoSizeColumn(3);
+            sheets.get(monthCursor).autoSizeColumn(4);
+            sheets.get(monthCursor).autoSizeColumn(5);
+            sheets.get(monthCursor).autoSizeColumn(6);
+            sheets.get(monthCursor).autoSizeColumn(7);
+            sheets.get(monthCursor).autoSizeColumn(8);
+            sheets.get(monthCursor).autoSizeColumn(9);
+
+            resumenTotalEgreso = resumenTotalEgreso + totalEgresos;
+            resumenTotalIngreso = resumenTotalIngreso + totalIngresos;
+            //fila++;
+        }
+        //RESUMEN EN OTRO PESTANHA
         fila = 0;
         sheets.add(workbook.createSheet(RESUMEN));
         monthCursor++;

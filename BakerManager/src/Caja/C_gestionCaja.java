@@ -157,25 +157,66 @@ public class C_gestionCaja implements GestionInterface {
     }
 
     public void exportarExcel() {
-        EventQueue.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                Date inicio = vista.jddInicio.getDate();
-                Date fin = vista.jddFinal.getDate();
-                if (validarFechas(inicio, fin)) {
-                    Integer idFuncionario = null;
-                    if (modelo.getFuncionario() != null && modelo.getFuncionario().getId_funcionario() != null) {
-                        idFuncionario = modelo.getFuncionario().getId_funcionario();
+        if (vista.jtCaja.getRowCount() <= 0) {
+            JOptionPane.showMessageDialog(vista, "No hay cajas para exportar", "Atención", JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+        Object[] options = {"Completo",
+            "Minimalista"};
+        int n = JOptionPane.showOptionDialog(this.vista,
+                "Eliga tipo de reporte",
+                "Atención",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                null, //do not use a custom Icon
+                options, //the titles of buttons
+                options[0]); //default button title
+        switch (n) {
+            case 0: {
+                EventQueue.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        Date inicio = vista.jddInicio.getDate();
+                        Date fin = vista.jddFinal.getDate();
+                        if (validarFechas(inicio, fin)) {
+                            Integer idFuncionario = null;
+                            if (modelo.getFuncionario() != null && modelo.getFuncionario().getId_funcionario() != null) {
+                                idFuncionario = modelo.getFuncionario().getId_funcionario();
+                            }
+                            modelo.exportarExcel(idFuncionario, inicio, fin);
+                            Utilities.c_packColumn.packColumns(vista.jtCaja, 1);
+                        } else {
+                            vista.jddFinal.setDate(vista.jddInicio.getDate());
+                            vista.jddFinal.updateUI();
+                            JOptionPane.showMessageDialog(vista, "La fecha inicio debe ser menor que fecha final", "Atención", JOptionPane.WARNING_MESSAGE);
+                        }
                     }
-                    modelo.exportarExcel(idFuncionario, inicio, fin);
-                    Utilities.c_packColumn.packColumns(vista.jtCaja, 1);
-                } else {
-                    vista.jddFinal.setDate(vista.jddInicio.getDate());
-                    vista.jddFinal.updateUI();
-                    JOptionPane.showMessageDialog(vista, "La fecha inicio debe ser menor que fecha final", "Atención", JOptionPane.WARNING_MESSAGE);
-                }
+                });
+                break;
             }
-        });
+            case 1: {
+                EventQueue.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        Date inicio = vista.jddInicio.getDate();
+                        Date fin = vista.jddFinal.getDate();
+                        if (validarFechas(inicio, fin)) {
+                            Integer idFuncionario = null;
+                            if (modelo.getFuncionario() != null && modelo.getFuncionario().getId_funcionario() != null) {
+                                idFuncionario = modelo.getFuncionario().getId_funcionario();
+                            }
+                            modelo.exportarExcelMinimalista(idFuncionario, inicio, fin);
+                            Utilities.c_packColumn.packColumns(vista.jtCaja, 1);
+                        } else {
+                            vista.jddFinal.setDate(vista.jddInicio.getDate());
+                            vista.jddFinal.updateUI();
+                            JOptionPane.showMessageDialog(vista, "La fecha inicio debe ser menor que fecha final", "Atención", JOptionPane.WARNING_MESSAGE);
+                        }
+                    }
+                });
+                break;
+            }
+        }
     }
 
     private void borrarDatos() {
