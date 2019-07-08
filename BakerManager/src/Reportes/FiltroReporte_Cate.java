@@ -48,11 +48,13 @@ public class FiltroReporte_Cate extends JDialog implements ActionListener, KeyLi
     JDateChooser jdcFechaInicio, jdcFechaFin;
     JTable jtProdCategorias;
     JButton jbQuitar, jbAgregar, jbGenerar, jbCancelar;
+    private int reportType;
 
-    public FiltroReporte_Cate(C_inicio c_inicio) {
+    public FiltroReporte_Cate(C_inicio c_inicio, int reportType) {
         super(c_inicio.vista, "Filtro", false);
         setSize(400, 600);
         setLocationRelativeTo(c_inicio.vista);
+        this.reportType = reportType;
         inicializarVista();
         concederPermisos();
         getContentPane().setLayout(new BorderLayout());
@@ -138,13 +140,28 @@ public class FiltroReporte_Cate extends JDialog implements ActionListener, KeyLi
                 return;
             }
             File file;
-            JasperReport reporte;
-            try {
-                file = new File(System.getProperty("user.dir") + "\\Assets\\Reportes\\ResumenComprasSimpleCategoria.jasper");
-                reporte = (JasperReport) JRLoader.loadObject(file);
-            } catch (JRException ex) {
-                JOptionPane.showMessageDialog(this, "No se encontró la ubicación del reporte", "Atención", JOptionPane.WARNING_MESSAGE);
-                return;
+            JasperReport reporte = null;
+            switch (reportType) {
+                case 1: {
+                    try {
+                        file = new File(System.getProperty("user.dir") + "\\Assets\\Reportes\\ResumenVentasSimpleCategoria.jasper");
+                        reporte = (JasperReport) JRLoader.loadObject(file);
+                    } catch (JRException ex) {
+                        JOptionPane.showMessageDialog(this, "No se encontró la ubicación del reporte", "Atención", JOptionPane.WARNING_MESSAGE);
+                        return;
+                    }
+                    break;
+                }
+                case 2:{
+                    try {
+                        file = new File(System.getProperty("user.dir") + "\\Assets\\Reportes\\ResumenComprasSimpleCategoria.jasper");
+                        reporte = (JasperReport) JRLoader.loadObject(file);
+                    } catch (JRException ex) {
+                        JOptionPane.showMessageDialog(this, "No se encontró la ubicación del reporte", "Atención", JOptionPane.WARNING_MESSAGE);
+                        return;
+                    }
+                    break;
+                }
             }
 
             Calendar calendarStart = Calendar.getInstance();
@@ -175,6 +192,7 @@ public class FiltroReporte_Cate extends JDialog implements ActionListener, KeyLi
                 jf.setLocation(300, 100);
                 jf.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
             } catch (JRException ex) {
+                ex.printStackTrace();
                 JOptionPane.showMessageDialog(this, "Hubo un problema al generar el reporte, intentelo nuevamente", "Alerta", JOptionPane.WARNING_MESSAGE);
             }
         } else {

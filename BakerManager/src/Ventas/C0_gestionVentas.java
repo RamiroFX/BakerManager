@@ -24,6 +24,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Vector;
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 
 /**
  *
@@ -34,11 +35,13 @@ public class C0_gestionVentas implements GestionInterface {
     public M0_gestionVentas modelo;
     public V0_gestionVentas vista;
     public C_inicio c_inicio;
+    private final C0_gestionVentas gestionVentas;
 
     public C0_gestionVentas(M0_gestionVentas modelo, V0_gestionVentas vista, C_inicio c_inicio) {
         this.modelo = modelo;
         this.vista = vista;
         this.c_inicio = c_inicio;
+        this.gestionVentas = this;
         inicializarVista();
         concederPermisos();
     }
@@ -268,11 +271,22 @@ public class C0_gestionVentas implements GestionInterface {
         });
     }
 
+    private void crearVentaRapida() {
+        CrearVentaRapida crv = new CrearVentaRapida(gestionVentas);
+        crv.mostrarVista();/*
+        SwingUtilities.invokeLater(new Runnable() {//if we remove this block it wont work also (no matter when we call requestFocusInWindow)
+            @Override
+            public void run() {
+                CrearVentaRapida crv = new CrearVentaRapida(gestionVentas);
+                crv.mostrarVista();
+            }
+        });*/
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource().equals(this.vista.jbAgregar)) {
-            CrearVentas cv = new CrearVentas(this);
-            cv.mostrarVista();
+            crearVentaRapida();
         }
         if (e.getSource().equals(this.vista.jbBuscar)) {
             displayQueryResults();

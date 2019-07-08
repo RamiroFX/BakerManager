@@ -6,6 +6,7 @@
 package Empleado;
 
 import DB.DB_Funcionario;
+import MenuPrincipal.DatosUsuario;
 import bakermanager.C_inicio;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -35,7 +36,7 @@ public class CambiarPassword extends JDialog implements ActionListener {
         setName("Cambiar contraseña");
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setSize(400, 200);
-        inicializarComponentes();
+        inicializarComponentes(idFuncionario);
         setLocationRelativeTo(frame);
         agregarListeners();
         this.c_inicio = c_inicio;
@@ -60,7 +61,7 @@ public class CambiarPassword extends JDialog implements ActionListener {
     /**
      * Agrega valores a los componentes.
      */
-    private void inicializarComponentes() {
+    private void inicializarComponentes(int idFuncionario) {
         this.jlPasswordActual = new JLabel("Contraseña actual");
         this.jlPasswordNuevo1 = new JLabel("Nueva contraseña");
         this.jlPasswordNuevo2 = new JLabel("Repetir nueva contraseña");
@@ -72,6 +73,13 @@ public class CambiarPassword extends JDialog implements ActionListener {
         this.jpfPasswordNuevo2.setEchoChar('*');
         this.jbAceptar = new JButton("Aceptar");
         this.jbCancelar = new JButton("Cancelar");
+        //El usuario con id=1 es el admin por defecto
+        int idCurrentUser = DatosUsuario.getRol_usuario().getFuncionario().getId_funcionario();
+
+        if (idFuncionario == 1) {
+            jlPasswordNuevo1.setVisible(false);
+            jpfPasswordActual.setVisible(false);
+        }
         JPanel jpBotones = new JPanel();
         jpBotones.add(jbAceptar);
         jpBotones.add(jbCancelar);

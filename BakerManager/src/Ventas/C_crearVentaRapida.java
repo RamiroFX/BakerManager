@@ -58,7 +58,15 @@ public class C_crearVentaRapida implements GestionInterface, InterfaceFacturaDet
         } catch (Exception e) {
             this.vista.jtfClieTelefono.setText("");
         }
-        this.vista.jtfClieRuc.setText(this.modelo.getCabecera().getCliente().getRuc() + "-" + this.modelo.getCabecera().getCliente().getRucId());
+        if (this.modelo.getCabecera().getCliente().getRuc() != null) {
+            if (this.modelo.getCabecera().getCliente().getRucId() != null) {
+                this.vista.jtfClieRuc.setText(this.modelo.getCabecera().getCliente().getRuc() + "-" + this.modelo.getCabecera().getCliente().getRucId());
+            } else {
+                this.vista.jtfClieRuc.setText(this.modelo.getCabecera().getCliente().getRuc());
+            }
+        } else {
+            this.vista.jtfClieRuc.setText("");
+        }
         this.vista.jrbContado.setSelected(true);
         this.vista.jtFacturaDetalle.setModel(this.modelo.getDtm());
         this.vista.jbModificarDetalle.setEnabled(false);

@@ -124,7 +124,7 @@ public class V_ver_ingreso extends JDialog {
         Insets insets = new Insets(10, 10, 10, 10);
         jbImprimir = new JButton("Imprimir [F2]");
         jbImprimir.setMargin(insets);
-        jbSalir = new JButton("Salir [F3]");
+        jbSalir = new JButton("Salir [ESC]");
         jbSalir.setMargin(insets);
         jpSouth.add(jbImprimir);
         jpSouth.add(jbSalir);

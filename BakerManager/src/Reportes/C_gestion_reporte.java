@@ -33,16 +33,16 @@ public class C_gestion_reporte implements ActionListener, KeyListener {
     }
 
     private void concederPermisos() {
-        this.vista.jbRCD.addActionListener(this);
-        this.vista.jbRCS.addActionListener(this);
+        this.vista.jbRVSC.addActionListener(this);
+        //this.vista.jbRCS.addActionListener(this);
         this.vista.jbRCSC.addActionListener(this);
         /*
         KEYLISTENERS
          */
-        this.vista.jbRCD.addKeyListener(this);
-        this.vista.jbRCS.addKeyListener(this);
+        this.vista.jbRVSC.addKeyListener(this);
+        //this.vista.jbRCS.addKeyListener(this);
         this.vista.jbRCSC.addKeyListener(this);
-        this.vista.jtpReportes.addKeyListener(this);
+        //this.vista.jtpReportes.addKeyListener(this);
     }
 
     private void cerrar() {
@@ -56,8 +56,12 @@ public class C_gestion_reporte implements ActionListener, KeyListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         Object src = e.getSource();
+        if (src.equals(this.vista.jbRVSC)) {
+            FiltroReporte_Cate p = new FiltroReporte_Cate(c_inicio, 1);
+            p.setVisible(true);
+        }
         if (src.equals(this.vista.jbRCSC)) {
-            FiltroReporte_Cate p = new FiltroReporte_Cate(c_inicio);
+            FiltroReporte_Cate p = new FiltroReporte_Cate(c_inicio, 2);
             p.setVisible(true);
         }
     }

@@ -46,7 +46,12 @@ public class C_ver_ingreso implements ActionListener, KeyListener {
     private void agregarListeners() {
         this.vista.jbSalir.addActionListener(this);
         this.vista.jbImprimir.addActionListener(this);
-        //this.vista.getContentPane().addKeyListener(this);
+        this.vista.jbSalir.addKeyListener(this);
+        this.vista.jtfClieDireccion.addKeyListener(this);
+        this.vista.jtfClieRuc.addKeyListener(this);
+        this.vista.jtfClieTelefono.addKeyListener(this);
+        this.vista.jtfCliente.addKeyListener(this);
+        this.vista.jtfFuncionario.addKeyListener(this);
         //this.vista.jbImprimir.addKeyListener(this);
     }
 
@@ -145,11 +150,15 @@ public class C_ver_ingreso implements ActionListener, KeyListener {
 
     @Override
     public void keyPressed(KeyEvent e) {
-        if (e.getKeyCode() == KeyEvent.VK_F2) {
-            imprimirTicket();
-        }
-        if (e.getKeyCode() == KeyEvent.VK_F3) {
-            cerrar();
+        switch (e.getKeyCode()) {
+            case KeyEvent.VK_F2: {
+                imprimirTicket();
+                break;
+            }
+            case KeyEvent.VK_ESCAPE: {
+                cerrar();
+                break;
+            }
         }
     }
 

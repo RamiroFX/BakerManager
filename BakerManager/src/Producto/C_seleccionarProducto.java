@@ -221,6 +221,16 @@ public class C_seleccionarProducto extends MouseAdapter implements ActionListene
     }
 
     private void seleccionarProducto() {
+        int fila = vista.jtProducto.getSelectedRow();
+        int columna = vista.jtProducto.getSelectedColumn();
+        if ((fila > -1) && (columna > -1)) {
+            idProducto = Integer.valueOf(String.valueOf(vista.jtProducto.getValueAt(fila, 0)));
+            producto = DB_Producto.obtenerDatosProductoID(idProducto);
+            vista.jbAceptar.setEnabled(true);
+            SeleccionarCantidadProduducto scp = new SeleccionarCantidadProduducto(this, producto);
+            scp.setVisible(true);
+            vista.jtfBuscar.requestFocusInWindow();
+        }/*
         final C_seleccionarProducto cp = this;
         EventQueue.invokeLater(new Runnable() {
             @Override
@@ -236,7 +246,7 @@ public class C_seleccionarProducto extends MouseAdapter implements ActionListene
                     vista.jtfBuscar.requestFocusInWindow();
                 }
             }
-        });
+        });*/
     }
 
     @Override

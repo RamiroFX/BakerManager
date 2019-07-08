@@ -18,9 +18,10 @@ import net.miginfocom.swing.MigLayout;
  */
 public class V_gestion_reporte extends JInternalFrame {
 
-    JTabbedPane jtpReportes;
+    //JTabbedPane jtpReportes;
     JPanel jpCompras;
-    JButton jbRCD, jbRCS, jbRCSC;
+    JButton jbRVSC, jbRCSC;
+    //JButton jbRCS;
 
     public V_gestion_reporte() {
         super("Reportes", true, true, true, true);;
@@ -28,18 +29,18 @@ public class V_gestion_reporte extends JInternalFrame {
         setName("jifReportes");
         inicializarVista();
         getContentPane().setLayout(new BorderLayout());
-        getContentPane().add(jtpReportes, BorderLayout.CENTER);
+        getContentPane().add(jpCompras, BorderLayout.CENTER);
     }
 
     private void inicializarVista() {
         jpCompras = new JPanel(new MigLayout());
-        jbRCD = new JButton("Resumen de compras detallado");
-        jbRCS = new JButton("Resumen de compras simple");
+        jbRVSC = new JButton("Resumen de ventas simple por categorías");
+        //jbRCS = new JButton("Resumen de compras simple");
         jbRCSC = new JButton("Resumen de compras simple por categorías");
-        jpCompras.add(jbRCD, "height 50:80:100, spanx, growx, pushx, wrap");
-        jpCompras.add(jbRCS, "height 50:80:100, growx, wrap");
+        jpCompras.add(jbRVSC, "height 50:80:100, spanx, growx, pushx, wrap");
+        //jpCompras.add(jbRCS, "height 50:80:100, growx, wrap");
         jpCompras.add(jbRCSC, "height 50:80:100, growx");
-        jtpReportes = new JTabbedPane();
-        jtpReportes.add("Compras", jpCompras);
+        /*jtpReportes = new JTabbedPane();
+        jtpReportes.add("Compras", jpCompras);*/
     }
 }

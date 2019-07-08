@@ -44,8 +44,8 @@ public class C_gestion_usuario implements GestionInterface {
         this.vista.jbEliminarUsuario.setEnabled(false);
         this.vista.jftCedulaIdentidad.setFormatterFactory(
                 new javax.swing.text.DefaultFormatterFactory(
-                new javax.swing.text.NumberFormatter(
-                new java.text.DecimalFormat("#,##0"))));
+                        new javax.swing.text.NumberFormatter(
+                                new java.text.DecimalFormat("#,##0"))));
         this.vista.jtfBuscar.setEnabled(false);
         this.vista.jckbCedula.setEnabled(false);
         this.vista.jckbNombreApellido.setEnabled(false);
@@ -169,14 +169,53 @@ public class C_gestion_usuario implements GestionInterface {
         }
     }
 
+    private void crearFuncionario() {
+        Crear_empleado crearEmpleado = new Crear_empleado(c_inicio);
+        crearEmpleado.mostrarVista();
+    }
+
+    private void modificarFuncionario() {
+        int row = this.vista.jtUsuario.getSelectedRow();
+        if (row > -1) {
+            int idEmpleado = Integer.valueOf(String.valueOf(this.vista.jtUsuario.getValueAt(row, 0)));
+            if (idEmpleado == 1) {
+                JOptionPane.showMessageDialog(null, "El usuario admin no puede ser modificado.", "Atención", JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                Modificar_empleado modEmpleado = new Modificar_empleado(c_inicio, idEmpleado);
+                modEmpleado.mostrarVista();
+            }
+        } else {
+            JOptionPane.showMessageDialog(null, "Seleccione un usuario para modificar", "Atención", JOptionPane.INFORMATION_MESSAGE);
+        }
+    }
+
+    private void eliminarFuncionario() {
+        int row = this.vista.jtUsuario.getSelectedRow();
+        if (row > -1) {
+            int idEmpleado = Integer.valueOf(String.valueOf(this.vista.jtUsuario.getValueAt(row, 0)));
+            if (idEmpleado == 1) {
+                JOptionPane.showMessageDialog(null, "El usuario admin no puede ser eliminado.", "Atención", JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                modelo.eliminarUsuario(idEmpleado);
+                this.vista.jtUsuario.setModel(modelo.consultarFuncionario("", false, false, false));
+                int idCurrentUser = DatosUsuario.getRol_usuario().getFuncionario().getId_funcionario();
+                if (idEmpleado == idCurrentUser) {
+                    System.exit(0);
+                }
+            }
+        } else {
+            JOptionPane.showMessageDialog(null, "Seleccione un usuario para eliminar", "Atención", JOptionPane.INFORMATION_MESSAGE);
+        }
+    }
+
     private void cambiarContraseña() {
         int row = this.vista.jtUsuario.getSelectedRow();
-        if (row > 0) {
+        if (row > -1) {
             int id = (Integer.valueOf((String) this.vista.jtUsuario.getValueAt(row, 0)));
             CambiarPassword cp = new CambiarPassword(this.c_inicio.vista, c_inicio, id);
             cp.setVisible(true);
         } else {
-            JOptionPane.showMessageDialog(vista, "Seleccione un cliente", "Atención", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(vista, "Seleccione un funcionario", "Atención", JOptionPane.INFORMATION_MESSAGE);
         }
     }
 
@@ -185,42 +224,24 @@ public class C_gestion_usuario implements GestionInterface {
         ep.setVisible(true);
     }
 
+    private void gestionarRoles() {
+        Gestion_rol gestion_rol = new Gestion_rol(c_inicio);
+        gestion_rol.mostrarVista();
+    }
+
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == this.vista.jbCrearUsuario) {
-            Crear_empleado crearEmpleado = new Crear_empleado(c_inicio);
-            crearEmpleado.mostrarVista();
+            crearFuncionario();
         } else if (e.getSource() == this.vista.jbModificarUsuario) {
-            int row = this.vista.jtUsuario.getSelectedRow();
-            if (row > 0) {
-                int idEmpleado = Integer.valueOf(String.valueOf(this.vista.jtUsuario.getValueAt(row, 0)));
-                if (idEmpleado == 1) {
-                    JOptionPane.showMessageDialog(null, "El usuario admin no puede ser modificado.", "Atención", JOptionPane.INFORMATION_MESSAGE);
-                } else {
-                    Modificar_empleado modEmpleado = new Modificar_empleado(c_inicio, idEmpleado);
-                    modEmpleado.mostrarVista();
-                }
-
-            } else {
-                JOptionPane.showMessageDialog(null, "Seleccione un usuario para modificar", "Atención", JOptionPane.INFORMATION_MESSAGE);
-            }
+            modificarFuncionario();
         } else if (e.getSource() == this.vista.jbEliminarUsuario) {
-            int row = this.vista.jtUsuario.getSelectedRow();
-            if (row > 0) {
-                int idEmpleado = Integer.valueOf(String.valueOf(this.vista.jtUsuario.getValueAt(row, 0)));
-                if (idEmpleado == 1) {
-                    JOptionPane.showMessageDialog(null, "El usuario admin no puede ser eliminado.", "Atención", JOptionPane.INFORMATION_MESSAGE);
-                } else {
-                    modelo.eliminarUsuario(idEmpleado);
-                    this.vista.jtUsuario.setModel(modelo.consultarFuncionario("", false, false, false));
-                }
-            }
+            eliminarFuncionario();
         } else if (e.getSource() == this.vista.jbCambiarPassword) {
             cambiarContraseña();
         } else if (e.getSource() == this.vista.jbUsuarioParametros) {
             empleadoParametros();
         } else if (e.getSource() == this.vista.jbGestionRol) {
-            Gestion_rol gestion_rol = new Gestion_rol(c_inicio);
-            gestion_rol.mostrarVista();
+            gestionarRoles();
         } else if (e.getSource() == this.vista.jrbExclusivo) {
             displayQueryResults();
         } else if (e.getSource() == this.vista.jrbInclusivo) {
