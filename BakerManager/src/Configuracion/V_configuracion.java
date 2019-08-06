@@ -20,7 +20,7 @@ public class V_configuracion extends javax.swing.JDialog {
     public javax.swing.JButton jbAceptar, jbCancelar, jbAgregarCampo, jbModificarCampo, jbQuitarCampo;
     public javax.swing.JPanel jpSouth, jpTicket, jpFactura;
     public javax.swing.JTabbedPane jtpCenter;
-    public JTable jtTicket;
+    public JTable jtTicket, jtFactura;
 
     public V_configuracion(JFrame frame) {
         super(frame, true);
@@ -47,30 +47,35 @@ public class V_configuracion extends javax.swing.JDialog {
     private void initPaneRol() {
         //Panel
         jpTicket = new javax.swing.JPanel(new java.awt.BorderLayout());
-        jpFactura = new javax.swing.JPanel();
-        jbAgregarCampo = new javax.swing.JButton("Agregar");
-        jbModificarCampo = new javax.swing.JButton("Modificar");
-        jbQuitarCampo = new javax.swing.JButton("Quitar");
+        jpFactura = new javax.swing.JPanel(new java.awt.BorderLayout());
 
         jtTicket = new JTable();
         jtTicket.getTableHeader().setReorderingAllowed(false);
+        jtFactura = new JTable();
+        jtFactura.getTableHeader().setReorderingAllowed(false);
         JScrollPane jspTicket = new JScrollPane(jtTicket);
-
-        javax.swing.JPanel jpBotones = new javax.swing.JPanel();
-        jpBotones.add(jbAgregarCampo);
-        jpBotones.add(jbModificarCampo);
-        jpBotones.add(jbQuitarCampo);
+        JScrollPane jspFactura = new JScrollPane(jtFactura);
         jpTicket.add(jspTicket, BorderLayout.CENTER);
-        jpTicket.add(jpBotones, BorderLayout.SOUTH);
-
+        jpFactura.add(jspFactura, BorderLayout.CENTER);
     }
 
     private void initPanelSouth() {
-        jpSouth = new javax.swing.JPanel();
-        jpSouth.setBorder(new javax.swing.border.EtchedBorder());
+        jpSouth = new javax.swing.JPanel(new java.awt.GridLayout(2, 1));
+        //jpSouth.setBorder(new javax.swing.border.EtchedBorder());
         jbAceptar = new javax.swing.JButton("Aceptar");
         jbCancelar = new javax.swing.JButton("Cancelar");
-        jpSouth.add(jbAceptar);
-        jpSouth.add(jbCancelar);
+        jbAgregarCampo = new javax.swing.JButton("Agregar");
+        jbModificarCampo = new javax.swing.JButton("Modificar");
+        jbQuitarCampo = new javax.swing.JButton("Quitar");
+        javax.swing.JPanel jpSouthButtons = new javax.swing.JPanel();
+        jpSouthButtons.add(jbAgregarCampo);
+        jpSouthButtons.add(jbModificarCampo);
+        jpSouthButtons.add(jbQuitarCampo);
+        javax.swing.JPanel jpBotones = new javax.swing.JPanel();
+        jpBotones.setBorder(new javax.swing.border.EtchedBorder());
+        jpBotones.add(jbAceptar);
+        jpBotones.add(jbCancelar);
+        jpSouth.add(jpSouthButtons);
+        jpSouth.add(jpBotones);
     }
 }
