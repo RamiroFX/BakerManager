@@ -18,7 +18,7 @@ import javax.swing.JMenuItem;
  */
 public class V_BarraMenu extends JMenuBar{
     public JMenu jmInicio, jmAyuda,jmHerramientas;
-    public JMenuItem jmiCerrar,jmiAcerca,jmiPersonalizar;
+    public JMenuItem jmiCerrar,jmiAcerca,jmiPersonalizar, jmiConfigImpresion;
     //public JMenuItem  jmiLogIn,jmiLogOut, jmiMenuPrincipal;
     private V_inicio frame; //referencia al frame principal.
     //private boolean loginActivo=true;
@@ -49,7 +49,9 @@ public class V_BarraMenu extends JMenuBar{
         if(jmHerramientas ==null){
             jmHerramientas = new JMenu("Herramientas");
             jmiPersonalizar = new JMenuItem("Personalizar");
+            jmiConfigImpresion = new JMenuItem("Config. impresion");
             getjmHerramientas().add(jmiPersonalizar);
+            getjmHerramientas().add(jmiConfigImpresion);
         }
         return jmHerramientas;
     }

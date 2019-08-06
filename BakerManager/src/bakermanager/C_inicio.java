@@ -4,6 +4,7 @@
  */
 package bakermanager;
 
+import Configuracion.Configuracion;
 import Entities.M_rol_usuario;
 import Login.Login;
 import java.awt.Dimension;
@@ -15,6 +16,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.beans.PropertyVetoException;
 import javax.swing.JInternalFrame;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -46,6 +48,7 @@ public class C_inicio implements ActionListener {
         //vista.getJMenuBar().jmiLogIn.addActionListener(this);
         //vista.getJMenuBar().jmiLogOut.addActionListener(this);
         vista.getJMenuBar().jmiCerrar.addActionListener(this);
+        vista.getJMenuBar().jmiConfigImpresion.addActionListener(this);
         vista.addWindowListener(wa);
     }
 
@@ -114,6 +117,7 @@ public class C_inicio implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         Object fuente = e.getSource();
+
         //Object enter = ActionEvent.KEY_EVENT_MASK;
         /*if (fuente == vista.getJMenuBar().jmiLogIn) {
          //se verifica que el panel login no se encuentre creado.
@@ -127,8 +131,12 @@ public class C_inicio implements ActionListener {
          vista.setJtfUsuario("");
          vista.getJMenuBar().jmiLogIn.setEnabled(true);
          vista.getJMenuBar().jmiLogOut.setEnabled(false);
-         } else*/ if (fuente == vista.getJMenuBar().jmiCerrar) {
+         } else*/
+        if (fuente == vista.getJMenuBar().jmiCerrar) {
             System.exit(0);
+        } else if (fuente == vista.getJMenuBar().jmiConfigImpresion) {
+            Configuracion config = new Configuracion(vista);
+            config.mostrarVista();
         }
     }
 
