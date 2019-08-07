@@ -20,9 +20,11 @@ import javax.swing.JOptionPane;
 public class C_configuracion extends MouseAdapter implements ActionListener, KeyListener {
 
     private V_configuracion vista;
+    private M_configuracion modelo;
 
-    public C_configuracion(V_configuracion vista) {
+    public C_configuracion(V_configuracion vista, M_configuracion modelo) {
         this.vista = vista;
+        this.modelo = modelo;
         inicializarVista();
         agregarListeners();
     }
@@ -49,7 +51,6 @@ public class C_configuracion extends MouseAdapter implements ActionListener, Key
      */
     private void agregarListeners() {
         this.vista.jbCancelar.addActionListener(this);
-        this.vista.jbAceptar.addActionListener(this);
         this.vista.jbAgregarCampo.addActionListener(this);
         this.vista.jbModificarCampo.addActionListener(this);
         this.vista.jbQuitarCampo.addActionListener(this);
@@ -62,14 +63,15 @@ public class C_configuracion extends MouseAdapter implements ActionListener, Key
         this.vista.jbAgregarCampo.setEnabled(false);
         this.vista.jbModificarCampo.setEnabled(false);
         this.vista.jbQuitarCampo.setEnabled(false);
-        //this.vista.jtCampos.setModel(modelo.obtenerRolesDisp());
+        //this.vista.jtTicket.setModel(modelo.obtenerCamposTicket());
+        //this.vista.jtFactura.setModel(modelo.obtenerCamposFactura());
     }
 
     private boolean isValidDataEntry() {
         return true;
     }
 
-    private void crearUsuario() {
+    private void crearCampo() {
         if (isValidDataEntry()) {
 
             /*if (modelo.crearUsuario(funcionario, password1, password2)) {
@@ -94,8 +96,6 @@ public class C_configuracion extends MouseAdapter implements ActionListener, Key
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == this.vista.jbCancelar) {
             cerrar();
-        } else if (e.getSource() == this.vista.jbAceptar) {
-            crearUsuario();
         } else if (e.getSource() == this.vista.jbAgregarCampo) {
             agregarCampo();
         } else if (e.getSource() == this.vista.jbModificarCampo) {

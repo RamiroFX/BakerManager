@@ -4,6 +4,7 @@
  */
 package DB;
 
+import Entities.M_campoImpresion;
 import Entities.ProductoCategoria;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
@@ -148,7 +149,7 @@ public class DB_manager {
         }
         return rubro;
     }
-    
+
     public static ArrayList<ProductoCategoria> obtenerCategorias() {
         ArrayList<ProductoCategoria> rubro = null;
         String q = "SELECT * "
@@ -167,6 +168,27 @@ public class DB_manager {
             ex.printStackTrace();
         }
         return rubro;
+    }
+
+    public static ArrayList<M_campoImpresion> obtenerCampoImpresion(int idImpresionTipo) {
+        ArrayList<M_campoImpresion> campoImpresionList = null;
+        String q = "SELECT * FROM IMPRESION_CAMPO WHERE ID_IMPRESION_TIPO = " + idImpresionTipo;
+        try {
+            st = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            rs = st.executeQuery(q);
+            campoImpresionList = new ArrayList();
+            while (rs.next()) {
+                M_campoImpresion campoImpresion = new M_campoImpresion();
+                campoImpresion.setId(rs.getInt("id_impresion_campo"));
+                campoImpresion.setCampo(rs.getString("descripcion"));
+                campoImpresion.setX(rs.getDouble("coordenada_x"));
+                campoImpresion.setY(rs.getDouble("coordenada_y"));
+                campoImpresionList.add(campoImpresion);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return campoImpresionList;
     }
 
     public static ResultSetTableModel consultarCategoria() {

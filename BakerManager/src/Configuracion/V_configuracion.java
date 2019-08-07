@@ -17,7 +17,7 @@ import javax.swing.JTable;
  */
 public class V_configuracion extends javax.swing.JDialog {
 
-    public javax.swing.JButton jbAceptar, jbCancelar, jbAgregarCampo, jbModificarCampo, jbQuitarCampo;
+    public javax.swing.JButton jbCancelar, jbAgregarCampo, jbModificarCampo, jbQuitarCampo;
     public javax.swing.JPanel jpSouth, jpTicket, jpFactura;
     public javax.swing.JTabbedPane jtpCenter;
     public JTable jtTicket, jtFactura;
@@ -62,8 +62,7 @@ public class V_configuracion extends javax.swing.JDialog {
     private void initPanelSouth() {
         jpSouth = new javax.swing.JPanel(new java.awt.GridLayout(2, 1));
         //jpSouth.setBorder(new javax.swing.border.EtchedBorder());
-        jbAceptar = new javax.swing.JButton("Aceptar");
-        jbCancelar = new javax.swing.JButton("Cancelar");
+        jbCancelar = new javax.swing.JButton("Salir");
         jbAgregarCampo = new javax.swing.JButton("Agregar");
         jbModificarCampo = new javax.swing.JButton("Modificar");
         jbQuitarCampo = new javax.swing.JButton("Quitar");
@@ -73,7 +72,6 @@ public class V_configuracion extends javax.swing.JDialog {
         jpSouthButtons.add(jbQuitarCampo);
         javax.swing.JPanel jpBotones = new javax.swing.JPanel();
         jpBotones.setBorder(new javax.swing.border.EtchedBorder());
-        jpBotones.add(jbAceptar);
         jpBotones.add(jbCancelar);
         jpSouth.add(jpSouthButtons);
         jpSouth.add(jpBotones);

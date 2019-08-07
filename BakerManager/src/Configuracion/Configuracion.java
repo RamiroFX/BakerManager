@@ -15,10 +15,12 @@ public class Configuracion {
 
     private V_configuracion vista;
     private C_configuracion controlador;
+    private M_configuracion modelo;
 
     public Configuracion(JFrame frame) {
+        this.modelo = new M_configuracion();
         this.vista = new V_configuracion(frame);
-        this.controlador = new C_configuracion(vista);
+        this.controlador = new C_configuracion(vista, modelo);
     }
 
     public void mostrarVista() {
