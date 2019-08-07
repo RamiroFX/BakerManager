@@ -7,7 +7,9 @@ package Configuracion;
 
 import DB.DB_manager;
 import DB.ResultSetTableModel;
+import Entities.M_campoImpresion;
 import ModeloTabla.ImpresionTableModel;
+import java.util.ArrayList;
 
 /**
  *
@@ -15,13 +17,18 @@ import ModeloTabla.ImpresionTableModel;
  */
 public class M_configuracion {
 
-    private ImpresionTableModel tm;
-    
+    private ImpresionTableModel impresionFacturaTM;
+
     public M_configuracion() {
-        tm = new ImpresionTableModel();
+        impresionFacturaTM = new ImpresionTableModel();
+        inicializarDatos();
     }
 
-    
+    private void inicializarDatos() {
+        ArrayList<M_campoImpresion> campoImpresionLista = DB_manager.obtenerCampoImpresion(2);
+        impresionFacturaTM.setCampoImpresionList(campoImpresionLista);
+    }
+
     public ResultSetTableModel obtenerCamposTicket() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
@@ -29,4 +36,9 @@ public class M_configuracion {
     public ResultSetTableModel obtenerCamposFactura() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+
+    public ImpresionTableModel getImpresionFacturaTM() {
+        return impresionFacturaTM;
+    }
+
 }

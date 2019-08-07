@@ -60,11 +60,11 @@ public class C_configuracion extends MouseAdapter implements ActionListener, Key
      * Agrega valores a los componentes.
      */
     private void inicializarVista() {
-        this.vista.jbAgregarCampo.setEnabled(false);
+        //this.vista.jbAgregarCampo.setEnabled(false);
         this.vista.jbModificarCampo.setEnabled(false);
         this.vista.jbQuitarCampo.setEnabled(false);
         //this.vista.jtTicket.setModel(modelo.obtenerCamposTicket());
-        //this.vista.jtFactura.setModel(modelo.obtenerCamposFactura());
+        this.vista.jtFactura.setModel(modelo.getImpresionFacturaTM());
     }
 
     private boolean isValidDataEntry() {
