@@ -191,6 +191,33 @@ public class DB_manager {
         return campoImpresionList;
     }
 
+    public static boolean existeCampoParametro(String campoParametroDescripcion) {
+        String Query = "SELECT DESCRIPCION FROM IMPRESION_CAMPO WHERE DESCRIPCION LIKE ?";
+        try {
+            pst = DB_manager.getConection().prepareStatement(Query);
+            pst.setString(1, campoParametroDescripcion);
+            rs = pst.executeQuery();
+            return rs.next();
+        } catch (SQLException ex) {
+            Logger lgr = Logger.getLogger(DB_Producto.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (st != null) {
+                    st.close();
+                }
+            } catch (SQLException ex) {
+                Logger lgr = Logger.getLogger(DB_Producto.class.getName());
+                lgr.log(Level.WARNING, ex.getMessage(), ex);
+            }
+        }
+        return false;
+    }
+    
     public static void insertarCampoImpresion(int idImpresionTipo, M_campoImpresion campoImpresion) {
         String insert = "INSERT INTO IMPRESION_CAMPO("
                 + "ID_IMPRESION_TIPO, DESCRIPCION, COORDENADA_X, COORDENADA_Y"

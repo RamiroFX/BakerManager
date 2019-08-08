@@ -5,38 +5,59 @@
  */
 package Configuracion;
 
-import Egresos.C_crear_egreso;
-import Entities.M_producto;
-import Producto.C_seleccionarProducto;
+import Entities.M_campoImpresion;
+import Interface.crearModificarParametroCallback;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import javax.swing.JFrame;
+import javax.swing.JDialog;
+import javax.swing.JOptionPane;
 import net.miginfocom.swing.MigLayout;
 
 /**
  *
  * @author Ramiro Ferreira
  */
-public class V_crearModificarCampoImpresion extends javax.swing.JDialog implements ActionListener, KeyListener {
+public class V_crearModificarCampoImpresion extends javax.swing.JDialog implements ActionListener {
 
+    private static final int CREAR_PARAMETRO = 1, MODIFICAR_PARAMETRO = 2;
+    private static final String ERROR_TITLE = "Parametros incorrectos",
+            ERROR_MESSAGE = "Verifique en uno de los campos el parametro:" + "\n"
+            + "Asegurese de colocar un numero válido\n"
+            + "en el campo coordenada X o Y.",
+            ERROR_MESSAGE_2 = "Verifique el nombre del parametro: mínimo 1 caracter, máximo 30 caracteres.";
     private javax.swing.JButton jbCancel;
     private javax.swing.JButton jbOK;
     private javax.swing.JLabel jlCoordenadaX, jlCoordenadaY, jlCampo;
     private javax.swing.JTextField jtfCoordenadaX, jtfCoordenadaY, jtfCampo;
     int row;
     int tipo;
+    private crearModificarParametroCallback callback;
 
-    public V_crearModificarCampoImpresion(JFrame parent) {
+    public V_crearModificarCampoImpresion(int tipo, JDialog parent) {
         super(parent, true);
-        inicializarVista(parent);
+        inicializarVista(parent, tipo);
         initComponents();
     }
 
-    private void inicializarVista(JFrame parent) {
-        setTitle("Crear parametro");
-        setSize(new java.awt.Dimension(300, 250));
+    public V_crearModificarCampoImpresion(int tipo, JDialog parent, M_campoImpresion ci) {
+        super(parent, true);
+        inicializarVista(parent, tipo);
+        initComponents();
+    }
+
+    private void inicializarVista(JDialog parent, int tipo) {
+        this.tipo = tipo;
+        switch (tipo) {
+            case CREAR_PARAMETRO: {
+                setTitle("Crear parametro");
+                break;
+            }
+            case MODIFICAR_PARAMETRO: {
+                setTitle("Modificar parametro");
+                break;
+            }
+        }
+        setSize(new java.awt.Dimension(300, 200));
         setLocationRelativeTo(parent);
     }
 
@@ -57,27 +78,79 @@ public class V_crearModificarCampoImpresion extends javax.swing.JDialog implemen
 
         jbCancel.setText("Cancel");
         jbCancel.addActionListener(this);
-        jtfCoordenadaX.addKeyListener(this);
-        jtfCoordenadaY.addKeyListener(this);
-        jtfCampo.addKeyListener(this);
+        getContentPane().add(jlCampo);
+        getContentPane().add(jtfCampo, "width :200:,grow,wrap");
         getContentPane().add(jlCoordenadaX);
         getContentPane().add(jtfCoordenadaX, "width :200:,grow,wrap");
         getContentPane().add(jlCoordenadaY);
         getContentPane().add(jtfCoordenadaY, "width :200:,grow,wrap");
-        getContentPane().add(jlCampo);
-        getContentPane().add(jtfCampo, "width :200:,grow,wrap");
         getContentPane().add(jbOK);
         getContentPane().add(jbCancel);
-
-        jtfCoordenadaX.selectAll();
     }
 
     public void enviarCantidad() {
-
+        if (checkearCampos()) {
+            M_campoImpresion ci = new M_campoImpresion();
+            ci.setCampo(jtfCampo.getText().trim());
+            ci.setX(Double.valueOf(String.valueOf(this.jtfCoordenadaX.getText().trim())));
+            ci.setY(Double.valueOf(String.valueOf(this.jtfCoordenadaY.getText().trim())));
+            switch (tipo) {
+                case CREAR_PARAMETRO: {
+                    this.callback.recibirParametroImpresion(ci);
+                    break;
+                }
+                case MODIFICAR_PARAMETRO: {
+                    this.callback.modificarParametroImpresion(ci);
+                    break;
+                }
+            }
+            this.dispose();
+        }
     }
 
-    private boolean checkearCantidad() {
-
+    private boolean checkearCampos() {
+        String parametro = String.valueOf(jtfCampo.getText().trim());
+        if (parametro.length() > 30 || parametro.length() < 1) {
+            javax.swing.JOptionPane.showMessageDialog(null, ERROR_MESSAGE_2,
+                    ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+        Double d = null;
+        if (this.jtfCoordenadaX.getText().isEmpty()) {
+            javax.swing.JOptionPane.showMessageDialog(this, ERROR_MESSAGE,
+                    ERROR_TITLE,
+                    javax.swing.JOptionPane.OK_OPTION);
+            this.jtfCoordenadaX.requestFocusInWindow();
+            return false;
+        }
+        try {
+            d = Double.valueOf(String.valueOf(this.jtfCoordenadaX.getText()));
+        } catch (Exception e) {
+            javax.swing.JOptionPane.showMessageDialog(this, ERROR_MESSAGE,
+                    ERROR_TITLE,
+                    javax.swing.JOptionPane.OK_OPTION);
+            this.jtfCoordenadaX.setText("");
+            this.jtfCoordenadaX.requestFocusInWindow();
+            return false;
+        }
+        Double cy = null;
+        if (this.jtfCoordenadaY.getText().isEmpty()) {
+            javax.swing.JOptionPane.showMessageDialog(this, ERROR_MESSAGE,
+                    ERROR_TITLE,
+                    javax.swing.JOptionPane.OK_OPTION);
+            this.jtfCoordenadaY.requestFocusInWindow();
+            return false;
+        }
+        try {
+            cy = Double.valueOf(String.valueOf(this.jtfCoordenadaY.getText()));
+        } catch (Exception e) {
+            javax.swing.JOptionPane.showMessageDialog(this, ERROR_MESSAGE,
+                    ERROR_TITLE,
+                    javax.swing.JOptionPane.OK_OPTION);
+            this.jtfCoordenadaY.setText("");
+            this.jtfCoordenadaY.requestFocusInWindow();
+            return false;
+        }
         return true;
     }
 
@@ -90,15 +163,10 @@ public class V_crearModificarCampoImpresion extends javax.swing.JDialog implemen
         }
     }
 
-    @Override
-    public void keyTyped(KeyEvent ke) {
-    }
-
-    @Override
-    public void keyPressed(KeyEvent ke) {
-    }
-
-    @Override
-    public void keyReleased(KeyEvent ke) {
+    /**
+     * @param callback the callback to set
+     */
+    public void setCallback(crearModificarParametroCallback callback) {
+        this.callback = callback;
     }
 }

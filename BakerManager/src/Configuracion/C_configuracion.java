@@ -5,20 +5,25 @@
  */
 package Configuracion;
 
+import Entities.M_campoImpresion;
+import Interface.crearModificarParametroCallback;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.util.List;
 import javax.swing.JOptionPane;
 
 /**
  *
  * @author Ramiro
  */
-public class C_configuracion extends MouseAdapter implements ActionListener, KeyListener {
+public class C_configuracion extends MouseAdapter implements ActionListener, KeyListener, MouseListener, crearModificarParametroCallback {
 
+    private static final int CREAR_PARAMETRO = 1, MODIFICAR_PARAMETRO = 2;
     private V_configuracion vista;
     private M_configuracion modelo;
 
@@ -54,6 +59,7 @@ public class C_configuracion extends MouseAdapter implements ActionListener, Key
         this.vista.jbAgregarCampo.addActionListener(this);
         this.vista.jbModificarCampo.addActionListener(this);
         this.vista.jbQuitarCampo.addActionListener(this);
+        this.vista.jtFactura.addMouseListener(this);
     }
 
     /**
@@ -67,25 +73,22 @@ public class C_configuracion extends MouseAdapter implements ActionListener, Key
         this.vista.jtFactura.setModel(modelo.getImpresionFacturaTM());
     }
 
-    private boolean isValidDataEntry() {
-        return true;
-    }
-
-    private void crearCampo() {
-        if (isValidDataEntry()) {
-
-            /*if (modelo.crearUsuario(funcionario, password1, password2)) {
-                cerrar();
-            }*/
-        }
-    }
-
     private void agregarCampo() {
-        JOptionPane.showMessageDialog(vista, "agregarCampo");
+        V_crearModificarCampoImpresion cmci = new V_crearModificarCampoImpresion(CREAR_PARAMETRO, this.vista);
+        cmci.setCallback(this);
+        cmci.setVisible(true);
+        modelo.updateTable();
     }
 
     private void modificarCampo() {
-        JOptionPane.showMessageDialog(vista, "modificarCampo");
+        int row = vista.jtFactura.getSelectedRow();
+        if (row > -1) {
+            M_campoImpresion ci = modelo.getImpresionFacturaTM().getValueFromList(row);
+            V_crearModificarCampoImpresion cmci = new V_crearModificarCampoImpresion(MODIFICAR_PARAMETRO, this.vista, ci);
+            cmci.setCallback(this);
+            cmci.setVisible(true);
+            modelo.updateTable();
+        }
     }
 
     private void quitarCampo() {
@@ -107,6 +110,22 @@ public class C_configuracion extends MouseAdapter implements ActionListener, Key
 
     @Override
     public void mouseClicked(MouseEvent e) {
+        if (e.getSource().equals(this.vista.jtFactura)) {
+            int fila = this.vista.jtFactura.rowAtPoint(e.getPoint());
+            int columna = this.vista.jtFactura.columnAtPoint(e.getPoint());
+            if ((fila > -1) && (columna > -1)) {
+                this.vista.jbModificarCampo.setEnabled(true);
+                this.vista.jbQuitarCampo.setEnabled(true);
+                if (e.getClickCount() == 2) {
+                    int row = vista.jtFactura.getSelectedRow();
+                    M_campoImpresion ci = modelo.getImpresionFacturaTM().getValueFromList(row);
+                    modificarParametroImpresion(ci);
+                }
+            } else {
+                this.vista.jbModificarCampo.setEnabled(false);
+                this.vista.jbQuitarCampo.setEnabled(false);
+            }
+        }
     }
 
     @Override
@@ -120,5 +139,15 @@ public class C_configuracion extends MouseAdapter implements ActionListener, Key
 
     @Override
     public void keyReleased(KeyEvent e) {
+    }
+
+    @Override
+    public void recibirParametroImpresion(M_campoImpresion ci) {
+        modelo.crearParametro(ci);
+    }
+
+    @Override
+    public void modificarParametroImpresion(M_campoImpresion ci) {
+        modelo.modificarParametro(ci);
     }
 }

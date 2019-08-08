@@ -13,7 +13,7 @@ import javax.swing.JTable;
 
 /**
  *
- * @author Ramiro
+ * @author Ramiro Ferreira
  */
 public class V_configuracion extends javax.swing.JDialog {
 

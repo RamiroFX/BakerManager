@@ -84,6 +84,10 @@ public class ImpresionTableModel extends AbstractTableModel {
         this.campoImpresionList = campoImpresionList;
     }
 
+    public M_campoImpresion getValueFromList(int position) {
+        return this.campoImpresionList.get(position);
+    }
+
     public void updateTable() {
         fireTableDataChanged();
     }

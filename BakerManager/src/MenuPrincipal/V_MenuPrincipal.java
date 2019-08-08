@@ -6,6 +6,7 @@ package MenuPrincipal;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.GridLayout;
 import java.awt.Toolkit;
 import java.text.SimpleDateFormat;
 import javax.swing.JButton;
@@ -63,36 +64,37 @@ class V_MenuPrincipal extends JInternalFrame {
         jpSouth = new JPanel();
         jpSouth.setBorder(new EtchedBorder());
         jpCenter = new JPanel();
+        jpCenter.setLayout(new GridLayout(2, 4, 10, 10));
         jbVentas = new JButton("Ventas [F1]");
         jbVentas.setName("Gestión venta");
-        jbVentas.setPreferredSize(dim);
+        //jbVentas.setPreferredSize(dim);
         jbCompras = new JButton("Compras [F2]");
         jbCompras.setName("Gestión compra");
-        jbCompras.setPreferredSize(dim);
+        //jbCompras.setPreferredSize(dim);
         jbPedidos = new JButton("Pedidos [F3]");
         jbPedidos.setName("Gestión pedido");
-        jbPedidos.setPreferredSize(dim);
+        //jbPedidos.setPreferredSize(dim);
         jbProductos = new JButton("Productos [F4]");
         jbProductos.setName("Gestión producto");
-        jbProductos.setPreferredSize(dim);
+        //jbProductos.setPreferredSize(dim);
         jbCaja = new JButton("Caja [F5]");
         jbCaja.setName("Gestión caja");
-        jbCaja.setPreferredSize(dim);
+        //jbCaja.setPreferredSize(dim);
         jbProveedores = new JButton("Proveedores [F6]");
         jbProveedores.setName("Gestión proveedor");
-        jbProveedores.setPreferredSize(dim);
+        //jbProveedores.setPreferredSize(dim);
         jbClientes = new JButton("Clientes [F7]");
         jbClientes.setName("Gestión cliente");
-        jbClientes.setPreferredSize(dim);
+        //jbClientes.setPreferredSize(dim);
         jbEmpleados = new JButton("Empleados [F8]");
         jbEmpleados.setName("Gestión empleado");
-        jbEmpleados.setPreferredSize(dim);
+        //jbEmpleados.setPreferredSize(dim);
         jbReportes = new JButton("Reportes [F9]");
         jbReportes.setName("Gestión reporte");
-        jbReportes.setPreferredSize(dim);
+        //jbReportes.setPreferredSize(dim);
         jbCobroPago = new JButton("Cobros/Pagos [F10]");
         jbCobroPago.setName("Gestión CobroPago");
-        jbCobroPago.setPreferredSize(dim);
+        //jbCobroPago.setPreferredSize(dim);
         jbSalir = new JButton("Salir [ESC]");
         jftFecha = new JFormattedTextField(
                 new DefaultFormatterFactory(
@@ -103,14 +105,14 @@ class V_MenuPrincipal extends JInternalFrame {
 
         jpCenter.add(jbVentas);
         jpCenter.add(jbCompras);
-        jpCenter.add(jbPedidos);
+        //jpCenter.add(jbPedidos);
         jpCenter.add(jbProductos);
         jpCenter.add(jbCaja);
         jpCenter.add(jbProveedores);
         jpCenter.add(jbClientes);
         jpCenter.add(jbEmpleados);
         jpCenter.add(jbReportes);
-        jpCenter.add(jbCobroPago);
+        //jpCenter.add(jbCobroPago);
         jpNorth.add(jftFecha);
         jpSouth.add(jbSalir);
     }
