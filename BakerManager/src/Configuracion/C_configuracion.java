@@ -58,7 +58,7 @@ public class C_configuracion extends MouseAdapter implements ActionListener, Key
         this.vista.jbCancelar.addActionListener(this);
         this.vista.jbAgregarCampo.addActionListener(this);
         this.vista.jbModificarCampo.addActionListener(this);
-        this.vista.jbQuitarCampo.addActionListener(this);
+        this.vista.jbHabilitarDeshabilitarCampo.addActionListener(this);
         this.vista.jtFactura.addMouseListener(this);
     }
 
@@ -68,7 +68,7 @@ public class C_configuracion extends MouseAdapter implements ActionListener, Key
     private void inicializarVista() {
         //this.vista.jbAgregarCampo.setEnabled(false);
         this.vista.jbModificarCampo.setEnabled(false);
-        this.vista.jbQuitarCampo.setEnabled(false);
+        this.vista.jbHabilitarDeshabilitarCampo.setEnabled(false);
         //this.vista.jtTicket.setModel(modelo.obtenerCamposTicket());
         this.vista.jtFactura.setModel(modelo.getImpresionFacturaTM());
     }
@@ -77,7 +77,7 @@ public class C_configuracion extends MouseAdapter implements ActionListener, Key
         V_crearModificarCampoImpresion cmci = new V_crearModificarCampoImpresion(CREAR_PARAMETRO, this.vista);
         cmci.setCallback(this);
         cmci.setVisible(true);
-        modelo.updateTable();
+        this.modelo.updateTable();
     }
 
     private void modificarCampo() {
@@ -87,12 +87,20 @@ public class C_configuracion extends MouseAdapter implements ActionListener, Key
             V_crearModificarCampoImpresion cmci = new V_crearModificarCampoImpresion(MODIFICAR_PARAMETRO, this.vista, ci);
             cmci.setCallback(this);
             cmci.setVisible(true);
-            modelo.updateTable();
+            this.modelo.updateTable();
+            this.vista.jbModificarCampo.setEnabled(false);
+            this.vista.jbHabilitarDeshabilitarCampo.setEnabled(false);
         }
     }
 
     private void quitarCampo() {
-        JOptionPane.showMessageDialog(vista, "quitarCampo");
+        int row = vista.jtFactura.getSelectedRow();
+        if (row > -1) {
+            modelo.habilitarDeshabilitarCampo(row);
+            this.modelo.updateTable();
+            this.vista.jbModificarCampo.setEnabled(false);
+            this.vista.jbHabilitarDeshabilitarCampo.setEnabled(false);
+        }
     }
 
     @Override
@@ -103,7 +111,7 @@ public class C_configuracion extends MouseAdapter implements ActionListener, Key
             agregarCampo();
         } else if (e.getSource() == this.vista.jbModificarCampo) {
             modificarCampo();
-        } else if (e.getSource() == this.vista.jbQuitarCampo) {
+        } else if (e.getSource() == this.vista.jbHabilitarDeshabilitarCampo) {
             quitarCampo();
         }
     }
@@ -115,7 +123,7 @@ public class C_configuracion extends MouseAdapter implements ActionListener, Key
             int columna = this.vista.jtFactura.columnAtPoint(e.getPoint());
             if ((fila > -1) && (columna > -1)) {
                 this.vista.jbModificarCampo.setEnabled(true);
-                this.vista.jbQuitarCampo.setEnabled(true);
+                this.vista.jbHabilitarDeshabilitarCampo.setEnabled(true);
                 if (e.getClickCount() == 2) {
                     int row = vista.jtFactura.getSelectedRow();
                     M_campoImpresion ci = modelo.getImpresionFacturaTM().getValueFromList(row);
@@ -123,7 +131,7 @@ public class C_configuracion extends MouseAdapter implements ActionListener, Key
                 }
             } else {
                 this.vista.jbModificarCampo.setEnabled(false);
-                this.vista.jbQuitarCampo.setEnabled(false);
+                this.vista.jbHabilitarDeshabilitarCampo.setEnabled(false);
             }
         }
     }

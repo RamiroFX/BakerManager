@@ -173,6 +173,7 @@ public class C_gestionCaja implements GestionInterface {
                 options[0]); //default button title
         switch (n) {
             case 0: {
+                //Completo
                 EventQueue.invokeLater(new Runnable() {
                     @Override
                     public void run() {
@@ -195,6 +196,7 @@ public class C_gestionCaja implements GestionInterface {
                 break;
             }
             case 1: {
+                //Minimalista
                 EventQueue.invokeLater(new Runnable() {
                     @Override
                     public void run() {

@@ -15,15 +15,17 @@ public class M_campoImpresion {
     private Double x;
     private Double y;
     private String campo;
+    private Estado estado;
 
     public M_campoImpresion() {
     }
 
-    public M_campoImpresion(int id, Double x, Double y, String campo) {
+    public M_campoImpresion(int id, Double x, Double y, String campo, Estado estado) {
         this.id = id;
         this.x = x;
         this.y = y;
         this.campo = campo;
+        this.estado = estado;
     }
 
     /**
@@ -80,6 +82,14 @@ public class M_campoImpresion {
      */
     public void setCampo(String campo) {
         this.campo = campo;
+    }
+
+    public Estado getEstado() {
+        return estado;
+    }
+
+    public void setEstado(Estado estado) {
+        this.estado = estado;
     }
 
     @Override

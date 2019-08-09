@@ -5,6 +5,7 @@
  */
 package Configuracion;
 
+import Entities.Estado;
 import Entities.M_campoImpresion;
 import Interface.crearModificarParametroCallback;
 import java.awt.event.ActionEvent;
@@ -32,6 +33,7 @@ public class V_crearModificarCampoImpresion extends javax.swing.JDialog implemen
     int row;
     int tipo;
     private crearModificarParametroCallback callback;
+    private M_campoImpresion ci;
 
     public V_crearModificarCampoImpresion(int tipo, JDialog parent) {
         super(parent, true);
@@ -43,6 +45,7 @@ public class V_crearModificarCampoImpresion extends javax.swing.JDialog implemen
         super(parent, true);
         inicializarVista(parent, tipo);
         initComponents();
+        this.ci = ci;
     }
 
     private void inicializarVista(JDialog parent, int tipo) {
@@ -90,16 +93,20 @@ public class V_crearModificarCampoImpresion extends javax.swing.JDialog implemen
 
     public void enviarCantidad() {
         if (checkearCampos()) {
-            M_campoImpresion ci = new M_campoImpresion();
-            ci.setCampo(jtfCampo.getText().trim());
-            ci.setX(Double.valueOf(String.valueOf(this.jtfCoordenadaX.getText().trim())));
-            ci.setY(Double.valueOf(String.valueOf(this.jtfCoordenadaY.getText().trim())));
             switch (tipo) {
                 case CREAR_PARAMETRO: {
+                    M_campoImpresion ci = new M_campoImpresion();
+                    ci.setCampo(jtfCampo.getText().trim());
+                    ci.setX(Double.valueOf(String.valueOf(this.jtfCoordenadaX.getText().trim())));
+                    ci.setY(Double.valueOf(String.valueOf(this.jtfCoordenadaY.getText().trim())));
+                    ci.setEstado(new Estado(1, "Activo"));
                     this.callback.recibirParametroImpresion(ci);
                     break;
                 }
                 case MODIFICAR_PARAMETRO: {
+                    this.ci.setCampo(jtfCampo.getText().trim());
+                    this.ci.setX(Double.valueOf(String.valueOf(this.jtfCoordenadaX.getText().trim())));
+                    this.ci.setY(Double.valueOf(String.valueOf(this.jtfCoordenadaY.getText().trim())));
                     this.callback.modificarParametroImpresion(ci);
                     break;
                 }

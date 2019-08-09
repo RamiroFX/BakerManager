@@ -17,7 +17,7 @@ import javax.swing.table.AbstractTableModel;
 public class ImpresionTableModel extends AbstractTableModel {
 
     List<M_campoImpresion> campoImpresionList;
-    private String[] colNames = {"Campo", "coord. X", "coord. Y"};
+    private String[] colNames = {"Campo", "coord. X", "coord. Y", "Estado"};
 
     public ImpresionTableModel() {
         campoImpresionList = new ArrayList<>();
@@ -60,6 +60,9 @@ public class ImpresionTableModel extends AbstractTableModel {
             }
             case 2: {
                 return campoImpresion.getY();
+            }
+            case 3: {
+                return campoImpresion.getEstado().getDescripcion();
             }
             default: {
                 return null;

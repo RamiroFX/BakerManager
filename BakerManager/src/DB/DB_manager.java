@@ -4,6 +4,7 @@
  */
 package DB;
 
+import Entities.Estado;
 import Entities.M_campoImpresion;
 import Entities.ProductoCategoria;
 import java.sql.Connection;
@@ -172,18 +173,25 @@ public class DB_manager {
 
     public static ArrayList<M_campoImpresion> obtenerCampoImpresion(int idImpresionTipo) {
         ArrayList<M_campoImpresion> campoImpresionList = null;
-        String q = "SELECT * FROM IMPRESION_CAMPO WHERE ID_IMPRESION_TIPO = " + idImpresionTipo;
+        String Query = "SELECT IMPRESION_CAMPO.ID_IMPRESION_CAMPO, IMPRESION_CAMPO.DESCRIPCION, IMPRESION_CAMPO.COORDENADA_X, IMPRESION_CAMPO.COORDENADA_Y, "
+                + "ESTADO.ID_ESTADO , ESTADO.DESCRIPCION FROM IMPRESION_CAMPO, ESTADO "
+                + "WHERE IMPRESION_CAMPO.ID_IMPRESION_TIPO = ? AND IMPRESION_CAMPO.ID_ESTADO= ESTADO.ID_ESTADO ;";
         try {
-            st = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-            rs = st.executeQuery(q);
+            pst = DB_manager.getConection().prepareStatement(Query);
+            pst.setInt(1, idImpresionTipo);
+            rs = pst.executeQuery();
             campoImpresionList = new ArrayList();
             while (rs.next()) {
-                M_campoImpresion campoImpresion = new M_campoImpresion();
-                campoImpresion.setId(rs.getInt("id_impresion_campo"));
-                campoImpresion.setCampo(rs.getString("descripcion"));
-                campoImpresion.setX(rs.getDouble("coordenada_x"));
-                campoImpresion.setY(rs.getDouble("coordenada_y"));
-                campoImpresionList.add(campoImpresion);
+                Estado estado = new Estado();
+                estado.setId(rs.getInt(5));
+                estado.setDescripcion(rs.getString(6));
+                M_campoImpresion ci = new M_campoImpresion();
+                ci.setId(rs.getInt(1));
+                ci.setCampo(rs.getString(2));
+                ci.setX(rs.getDouble(3));
+                ci.setY(rs.getDouble(4));
+                ci.setEstado(estado);
+                campoImpresionList.add(ci);
             }
         } catch (SQLException ex) {
             ex.printStackTrace();
@@ -217,11 +225,51 @@ public class DB_manager {
         }
         return false;
     }
-    
+
+    public static M_campoImpresion obtenerCampoParametro(String campoParametroDescripcion) {
+        M_campoImpresion ci = null;
+        String Query = "SELECT IMPRESION_CAMPO.ID_IMPRESION_CAMPO, IMPRESION_CAMPO.DESCRIPCION, IMPRESION_CAMPO.COORDENADA_X, IMPRESION_CAMPO.COORDENADA_Y, "
+                + "ESTADO.ID_ESTADO, ESTADO.DESCRIPCION FROM IMPRESION_CAMPO, ESTADO "
+                + "WHERE IMPRESION_CAMPO.DESCRIPCION LIKE ? AND IMPRESION_CAMPO.ID_ESTADO= ESTADO.ID_ESTADO ;";
+        try {
+            pst = DB_manager.getConection().prepareStatement(Query);
+            pst.setString(1, campoParametroDescripcion);
+            rs = pst.executeQuery();
+            while (rs.next()) {
+                Estado estado = new Estado();
+                estado.setId(rs.getInt(5));
+                estado.setDescripcion(rs.getString(6));
+                ci = new M_campoImpresion();
+                ci.setId(rs.getInt(1));
+                ci.setCampo(rs.getString(2));
+                ci.setX(rs.getDouble(3));
+                ci.setY(rs.getDouble(4));
+                ci.setEstado(estado);
+            }
+        } catch (SQLException ex) {
+            Logger lgr = Logger.getLogger(DB_Producto.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (st != null) {
+                    st.close();
+                }
+            } catch (SQLException ex) {
+                Logger lgr = Logger.getLogger(DB_Producto.class.getName());
+                lgr.log(Level.WARNING, ex.getMessage(), ex);
+            }
+        }
+        return ci;
+    }
+
     public static void insertarCampoImpresion(int idImpresionTipo, M_campoImpresion campoImpresion) {
         String insert = "INSERT INTO IMPRESION_CAMPO("
-                + "ID_IMPRESION_TIPO, DESCRIPCION, COORDENADA_X, COORDENADA_Y"
-                + ")VALUES (?,?,?,?);";
+                + "ID_IMPRESION_TIPO, DESCRIPCION, COORDENADA_X, COORDENADA_Y, ID_ESTADO"
+                + ")VALUES (?,?,?,?,?);";
         try {
             DB_manager.habilitarTransaccionManual();
             pst = DB_manager.getConection().prepareStatement(insert);
@@ -229,6 +277,7 @@ public class DB_manager {
             pst.setString(2, campoImpresion.getCampo());
             pst.setDouble(3, campoImpresion.getX());
             pst.setDouble(4, campoImpresion.getY());
+            pst.setInt(5, campoImpresion.getEstado().getId());
             pst.executeUpdate();
             DB_manager.establecerTransaccion();
         } catch (SQLException ex) {
@@ -296,6 +345,44 @@ public class DB_manager {
             DB_manager.getConection().setAutoCommit(false);
             pst = DB_manager.getConection().prepareStatement(DELETE_QUERY);
             pst.setInt(1, idCampoImpresion);
+            result = pst.executeUpdate();
+            DB_manager.getConection().commit();
+        } catch (SQLException ex) {
+            System.out.println(ex.getNextException());
+            if (DB_manager.getConection() != null) {
+                try {
+                    DB_manager.getConection().rollback();
+                } catch (SQLException ex1) {
+                    Logger lgr = Logger.getLogger(DB_Producto.class.getName());
+                    lgr.log(Level.WARNING, ex1.getMessage(), ex1);
+                }
+            }
+            Logger lgr = Logger.getLogger(DB_Producto.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        } finally {
+            try {
+                if (pst != null) {
+                    pst.close();
+                }
+                if (rs != null) {
+                    rs.close();
+                }
+            } catch (SQLException ex) {
+                Logger lgr = Logger.getLogger(DB_Producto.class.getName());
+                lgr.log(Level.WARNING, ex.getMessage(), ex);
+            }
+        }
+        return result;
+    }
+
+    public static int habilitarDeshabilitarCampoImpresion(int idCampoImpresion, int idEstado) {
+        String UPDATE = "UPDATE IMPRESION_CAMPO SET ID_ESTADO = ? WHERE ID_IMPRESION_CAMPO = ? ;";
+        int result = -1;
+        try {
+            DB_manager.getConection().setAutoCommit(false);
+            pst = DB_manager.getConection().prepareStatement(UPDATE);
+            pst.setInt(1, idEstado);
+            pst.setInt(2, idCampoImpresion);
             result = pst.executeUpdate();
             DB_manager.getConection().commit();
         } catch (SQLException ex) {

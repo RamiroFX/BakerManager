@@ -54,15 +54,35 @@ public class M_configuracion {
 
     void modificarParametro(M_campoImpresion ci) {
         if (DB_manager.existeCampoParametro(ci.getCampo())) {
-            JOptionPane.showMessageDialog(null, ERROR_MESSAGE_NAME_ALREADY_EXIST, ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
+            M_campoImpresion ciAux = DB_manager.obtenerCampoParametro(ci.getCampo());
+            if (ciAux.getId() == ci.getId()) {
+                DB_manager.modificarCampoImpresion(ci);
+            } else {
+                JOptionPane.showMessageDialog(null, ERROR_MESSAGE_NAME_ALREADY_EXIST, ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
+            }
         } else {
             DB_manager.modificarCampoImpresion(ci);
         }
     }
-    
+
     public void updateTable() {
         ArrayList<M_campoImpresion> campoImpresionLista = DB_manager.obtenerCampoImpresion(2);
         impresionFacturaTM.setCampoImpresionList(campoImpresionLista);
         this.impresionFacturaTM.updateTable();
+    }
+
+    void habilitarDeshabilitarCampo(int row) {
+        M_campoImpresion ci = getImpresionFacturaTM().getValueFromList(row);
+        int estado = ci.getEstado().getId();
+        switch (estado) {
+            case 1: {
+                DB_manager.habilitarDeshabilitarCampoImpresion(ci.getId(), 2);
+                break;
+            }
+            case 2: {
+                DB_manager.habilitarDeshabilitarCampoImpresion(ci.getId(), 1);
+                break;
+            }
+        }
     }
 }
