@@ -16,6 +16,7 @@ import DB.DB_Ingreso;
 import DB.DB_Pedido;
 import DB.DB_manager;
 import Entities.Caja;
+import Entities.M_campoImpresion;
 import Entities.M_facturaCabecera;
 import Entities.M_facturaDetalle;
 import Entities.M_mesa;
@@ -33,6 +34,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.print.Doc;
@@ -61,6 +63,23 @@ public class Impresora {
             + "\n\n\n\n\n\n\n\n\n\n";
     private final static String TICKET_PIE_SIN_GRACIAS = "_________________________________\n"
             + "\n\n\n\n\n\n\n\n\n\n";
+
+    public static void main(String[] args) {
+        try {
+            //ServicioDeImpresion impresion = new ServicioDeImpresion();
+            //1552 vico c
+            DB_manager.conectarBD("postgres", "postgresql");
+        } catch (SQLException ex) {
+            Logger.getLogger(Impresora.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        M_pedido pedido = DB_Pedido.obtenerPedido(1552);
+        ArrayList<M_pedidoDetalle> pedidoDetalle = DB_Pedido.obtenerPedidoDetalles(1);
+        System.out.println("op");
+        //Impresora.imprimirPedido(DatosUsuario.getRol_usuario(), pedido, pedidoDetalle);
+        //Impresora.imprimirGenerico(TICKET_CABECERA + TICKET_PIE);
+        Impresora.imprimirPrueba(DB_manager.obtenerCampoImpresion(2));
+
+    }
 
     public static void imprimirCocina(String textoAImprimir) {
         PrintService[] services = PrintServiceLookup.lookupPrintServices(null, null); //nos da el array de los servicios de impresion
@@ -114,6 +133,16 @@ public class Impresora {
 //        }
     }
 
+    public static void imprimirPrueba(List<M_campoImpresion> textoAImprimir) {
+        PrinterJob job = PrinterJob.getPrinterJob();
+        job.setPrintable(new MyPrintable(textoAImprimir));
+        try {
+            job.print();
+        } catch (PrinterException e) {
+            e.printStackTrace();
+        }
+    }
+
     public static void imprimirGenerico(String contentTicket) {
         PrintService service = PrintServiceLookup.lookupDefaultPrintService();
         byte[] bytes = contentTicket.getBytes();
@@ -129,22 +158,6 @@ public class Impresora {
         } catch (PrintException ex) {
             System.out.println(ex);
         }
-    }
-
-    public static void main(String[] args) {
-        try {
-            //ServicioDeImpresion impresion = new ServicioDeImpresion();
-            //1552 vico c
-            DB_manager.conectarBD("postgres", "postgres");
-        } catch (SQLException ex) {
-            Logger.getLogger(Impresora.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        M_pedido pedido = DB_Pedido.obtenerPedido(1552);
-        ArrayList<M_pedidoDetalle> pedidoDetalle = DB_Pedido.obtenerPedidoDetalles(1552);
-        System.out.println("op");
-        Impresora.imprimirPedido(DatosUsuario.getRol_usuario(), pedido, pedidoDetalle);
-        //Impresora.imprimirGenerico(TICKET_CABECERA + TICKET_PIE);
-
     }
 
     public static void imprimirPedidoGuardado(M_rol_usuario rol_usuario, M_pedido pedidoCabecera) {
