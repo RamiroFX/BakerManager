@@ -365,16 +365,23 @@ public class Impresora {
         job.setPrintable(new Printable() {
             @Override
             public int print(Graphics g, PageFormat pf, int pi) throws PrinterException {
+                int total = 0;
+                Integer exenta = 0;
+                Integer iva5 = 0;
+                Integer iva10 = 0;
                 if (pi == 0) {
                     for (M_campoImpresion object : textoAImprimir) {
                         if (object.getCampo().equals(MyConstants.DATE_FULL)) {
                             g.drawString(fechaEntrega, object.getX().intValue(), object.getY().intValue());
                         }
-                        if (object.getCampo().equals(MyConstants.TIOP)) {
+                        if (object.getCampo().equals(MyConstants.TIOP_CONTADO)) {
                             if (facturaCabecera.getIdCondVenta() == TipoOperacion.CONTADO) {
                                 g.drawString("X", object.getX().intValue(), object.getY().intValue());
-                            } else {
-                                g.drawString("X", object.getX().intValue() + 10, object.getY().intValue());
+                            }
+                        }
+                        if (object.getCampo().equals(MyConstants.TIOP_CREDITO)) {
+                            if (facturaCabecera.getIdCondVenta() == TipoOperacion.CREDITO) {
+                                g.drawString("X", object.getX().intValue(), object.getY().intValue());
                             }
                         }
                         if (object.getCampo().equals(MyConstants.RS)) {
@@ -390,19 +397,42 @@ public class Impresora {
                             g.drawString(facturaCabecera.getIdNotaRemision() + "", object.getX().intValue(), object.getY().intValue());
                         }
                         if (object.getCampo().equals(MyConstants.DETAIL_SIMPLE)) {
+                            int cantidadPosX = object.getX().intValue();
+                            int descripcionPosX = cantidadPosX + 20;
+                            int precioPosX = descripcionPosX + 20;
+                            int exentaPosX = precioPosX + 10;
+                            int iva5PosX = exentaPosX + 10;
+                            int iva10PosX = iva5PosX + 10;
                             for (M_facturaDetalle pedidoDetalle1 : facturaDetalle) {
                                 int subtotal = Math.round(Math.round(pedidoDetalle1.getCantidad() * pedidoDetalle1.getPrecio()));
-                                g.drawString(pedidoDetalle1.getCantidad() + "", object.getX().intValue(), object.getY().intValue());
-                                g.drawString(pedidoDetalle1.getProductoDescripcion()+ "", object.getX().intValue(), object.getY().intValue());
-                                g.drawString(pedidoDetalle1.getPrecio()+ "", object.getX().intValue(), object.getY().intValue());
-                                //PENDIENTE
-                                switch(pedidoDetalle1.getProducto().getImpuesto()){
-                                    case 1:{
-                                        g.drawString(pedidoDetalle1.getPrecio()+ "", object.getX().intValue(), object.getY().intValue());
+                                total = total + subtotal;
+                                g.drawString(pedidoDetalle1.getCantidad() + "", cantidadPosX, object.getY().intValue());
+                                g.drawString(pedidoDetalle1.getProductoDescripcion() + "", descripcionPosX, object.getY().intValue());
+                                g.drawString(pedidoDetalle1.getPrecio() + "", precioPosX, object.getY().intValue());
+                                switch (pedidoDetalle1.getProducto().getImpuesto()) {
+                                    case 0: {
+                                        g.drawString(subtotal + "", exentaPosX, object.getY().intValue());
+                                        exenta = exenta + subtotal;
+                                        break;
+                                    }
+                                    case 1: {
+                                        g.drawString(subtotal + "", iva5PosX, object.getY().intValue());
+                                        iva5 = iva5 + subtotal;
+                                        break;
+                                    }
+                                    case 2: {
+                                        g.drawString(subtotal + "", iva10PosX, object.getY().intValue());
+                                        iva10 = iva10 + subtotal;
                                         break;
                                     }
                                 }
                             }
+                        }
+                        if (object.getCampo().equals(MyConstants.SUB_TOTAL_EXENTA)) {
+                            g.drawString(facturaCabecera.getIdNotaRemision() + "", object.getX().intValue(), object.getY().intValue());
+                        }
+                        if (object.getCampo().equals(MyConstants.SUB_TOTAL_EXENTA)) {
+                            g.drawString(facturaCabecera.getIdNotaRemision() + "", object.getX().intValue(), object.getY().intValue());
                         }
                     }
                     return PAGE_EXISTS;
