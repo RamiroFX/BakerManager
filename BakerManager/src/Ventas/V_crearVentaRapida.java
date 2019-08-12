@@ -9,6 +9,7 @@ import java.awt.Insets;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
@@ -21,7 +22,6 @@ import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
-import javax.swing.plaf.basic.BasicInternalFrameTitlePane;
 import net.miginfocom.swing.MigLayout;
 
 /**
@@ -35,11 +35,12 @@ public class V_crearVentaRapida extends JDialog {
 
     //NORTE
     JPanel jpNorth;
-    public JTextField jtfCliente, jtfFuncionario, jtfClieDireccion, jtfClieTelefono,
+    public JTextField jtfCliente, jtfNroFactura, jtfClieDireccion, jtfClieTelefono,
             jtfClieRuc, jtfCodProd;
     public JButton jbCliente;
-    public JLabel jlFuncionario;
-    public JRadioButton jrbContado, jrbCredito;
+    public JLabel jlNroFactura;
+    //public JRadioButton jrbContado, jrbCredito;
+    public JComboBox jcbCondVenta, jcbTipoVenta;
     //CENTRO
     JPanel jpCenter;
     public JTable jtFacturaDetalle;
@@ -79,26 +80,28 @@ public class V_crearVentaRapida extends JDialog {
         jbCliente = new JButton("Agregar cliente [F3]");
         jtfCliente = new JTextField(30);
         jtfCliente.setEditable(false);
-        jlFuncionario = new JLabel("Funcionario");
-        jtfFuncionario = new JTextField(30);
-        jtfFuncionario.setEditable(false);
-        jrbContado = new JRadioButton("Contado");
-        jrbCredito = new JRadioButton("Crédito");
+        jlNroFactura = new JLabel("Nro. Factura");
+        jtfNroFactura = new JTextField(30);
+        jtfNroFactura.setEditable(false);
+        jcbCondVenta = new JComboBox();
+        jcbTipoVenta = new JComboBox();
+        //jrbContado = new JRadioButton("Contado");
+        //jrbCredito = new JRadioButton("Crédito");
         jtfClieRuc = new JTextField(30);
         jtfClieRuc.setEditable(false);
         jtfClieDireccion = new JTextField(30);
         jtfClieDireccion.setEditable(false);
         jtfClieTelefono = new JTextField(30);
         jtfClieTelefono.setEditable(false);
-        javax.swing.ButtonGroup bg1 = new javax.swing.ButtonGroup();
+        /*javax.swing.ButtonGroup bg1 = new javax.swing.ButtonGroup();
         bg1.add(jrbContado);
-        bg1.add(jrbCredito);
+        bg1.add(jrbCredito);*/
         jpNorth.add(jbCliente);
         jpNorth.add(jtfCliente);
-        jpNorth.add(jlFuncionario);
-        jpNorth.add(jtfFuncionario);
-        jpNorth.add(jrbContado);
-        jpNorth.add(jrbCredito, "wrap");
+        jpNorth.add(jlNroFactura);
+        jpNorth.add(jtfNroFactura);
+        jpNorth.add(jcbCondVenta);
+        jpNorth.add(jcbTipoVenta, "wrap");
         jpNorth.add(new JLabel("R.U.C.:"));
         jpNorth.add(jtfClieRuc);
         jpNorth.add(new JLabel("Direccion:"));

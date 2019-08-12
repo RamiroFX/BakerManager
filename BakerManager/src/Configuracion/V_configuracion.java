@@ -17,7 +17,8 @@ import javax.swing.JTable;
  */
 public class V_configuracion extends javax.swing.JDialog {
 
-    public javax.swing.JButton jbCancelar, jbAgregarCampo, jbModificarCampo, jbHabilitarDeshabilitarCampo;
+    public javax.swing.JButton jbCancelar, jbAgregarCampo, jbModificarCampo,
+            jbHabilitarDeshabilitarCampo, jbImprimirPaginaPrueba, jbOcultarMostrarCampo;
     public javax.swing.JPanel jpSouth, jpTicket, jpFactura;
     public javax.swing.JTabbedPane jtpCenter;
     public JTable jtTicket, jtFactura;
@@ -37,7 +38,7 @@ public class V_configuracion extends javax.swing.JDialog {
         initPaneRol();
         initPanelSouth();
         jtpCenter = new JTabbedPane();
-        jtpCenter.add("Ticket", jpTicket);
+        //jtpCenter.add("Ticket", jpTicket);
         jtpCenter.add("Factura", jpFactura);
         getContentPane().add(jtpCenter, java.awt.BorderLayout.CENTER);
         getContentPane().add(jpSouth, java.awt.BorderLayout.SOUTH);
@@ -66,10 +67,14 @@ public class V_configuracion extends javax.swing.JDialog {
         jbAgregarCampo = new javax.swing.JButton("Agregar");
         jbModificarCampo = new javax.swing.JButton("Modificar");
         jbHabilitarDeshabilitarCampo = new javax.swing.JButton("Habilitar/Deshabilitar");
+        jbImprimirPaginaPrueba = new javax.swing.JButton("Imprimir página de prueba");
+        jbOcultarMostrarCampo = new javax.swing.JButton("Ocultar/Mostrar campos");
         javax.swing.JPanel jpSouthButtons = new javax.swing.JPanel();
         jpSouthButtons.add(jbAgregarCampo);
         jpSouthButtons.add(jbModificarCampo);
         jpSouthButtons.add(jbHabilitarDeshabilitarCampo);
+        jpSouthButtons.add(jbImprimirPaginaPrueba);
+        jpSouthButtons.add(jbOcultarMostrarCampo);
         javax.swing.JPanel jpBotones = new javax.swing.JPanel();
         jpBotones.setBorder(new javax.swing.border.EtchedBorder());
         jpBotones.add(jbCancelar);

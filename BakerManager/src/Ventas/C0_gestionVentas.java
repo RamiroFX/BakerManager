@@ -24,7 +24,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Vector;
 import javax.swing.JOptionPane;
-import javax.swing.SwingUtilities;
 
 /**
  *
@@ -350,8 +349,7 @@ public class C0_gestionVentas implements GestionInterface {
     public void keyPressed(KeyEvent e) {
         switch (e.getKeyCode()) {
             case KeyEvent.VK_F1: {
-                CrearVentas cv = new CrearVentas(this);
-                cv.mostrarVista();
+                crearVentaRapida();
                 break;
             }
             case KeyEvent.VK_F2: {

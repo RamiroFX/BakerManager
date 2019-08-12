@@ -7,6 +7,7 @@ package Configuracion;
 
 import Entities.M_campoImpresion;
 import Interface.crearModificarParametroCallback;
+import Utilities.Impresora;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -14,8 +15,6 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.util.List;
-import javax.swing.JOptionPane;
 
 /**
  *
@@ -59,6 +58,8 @@ public class C_configuracion extends MouseAdapter implements ActionListener, Key
         this.vista.jbAgregarCampo.addActionListener(this);
         this.vista.jbModificarCampo.addActionListener(this);
         this.vista.jbHabilitarDeshabilitarCampo.addActionListener(this);
+        this.vista.jbImprimirPaginaPrueba.addActionListener(this);
+        this.vista.jbOcultarMostrarCampo.addActionListener(this);
         this.vista.jtFactura.addMouseListener(this);
     }
 
@@ -66,10 +67,8 @@ public class C_configuracion extends MouseAdapter implements ActionListener, Key
      * Agrega valores a los componentes.
      */
     private void inicializarVista() {
-        //this.vista.jbAgregarCampo.setEnabled(false);
         this.vista.jbModificarCampo.setEnabled(false);
         this.vista.jbHabilitarDeshabilitarCampo.setEnabled(false);
-        //this.vista.jtTicket.setModel(modelo.obtenerCamposTicket());
         this.vista.jtFactura.setModel(modelo.getImpresionFacturaTM());
     }
 
@@ -103,6 +102,21 @@ public class C_configuracion extends MouseAdapter implements ActionListener, Key
         }
     }
 
+    private void ocultarMostrarCampo() {
+        modelo.ocultarMostrarCampo();
+        this.vista.jbModificarCampo.setEnabled(false);
+        this.vista.jbHabilitarDeshabilitarCampo.setEnabled(false);
+        if (modelo.isIsVisible()) {
+            modelo.setIsVisible(false);
+        } else {
+            modelo.setIsVisible(true);
+        }
+    }
+
+    private void imprimirPaginaPrueba() {
+        Impresora.imprimirPaginaPrueba();
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == this.vista.jbCancelar) {
@@ -113,6 +127,10 @@ public class C_configuracion extends MouseAdapter implements ActionListener, Key
             modificarCampo();
         } else if (e.getSource() == this.vista.jbHabilitarDeshabilitarCampo) {
             quitarCampo();
+        } else if (e.getSource() == this.vista.jbImprimirPaginaPrueba) {
+            imprimirPaginaPrueba();
+        } else if (e.getSource() == this.vista.jbOcultarMostrarCampo) {
+            ocultarMostrarCampo();
         }
     }
 

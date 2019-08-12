@@ -4,7 +4,9 @@
  */
 package Ventas;
 
+import DB.DB_Egreso;
 import DB.DB_Ingreso;
+import DB.DB_manager;
 import DB.ResultSetTableModel;
 import Entities.M_cliente;
 import Entities.M_funcionario;
@@ -14,6 +16,7 @@ import Entities.M_producto;
 import Parametros.TipoOperacion;
 import Utilities.Impresora;
 import java.util.ArrayList;
+import java.util.Vector;
 import javax.swing.JOptionPane;
 
 /**
@@ -150,5 +153,13 @@ public class M_verMesa {
     public void actualizarDatosMesa(M_cliente cliente) {
         getMesa().setCliente(cliente);
         DB_Ingreso.actualizarMesa(mesa);
+    }
+
+    public Vector obtenerTipoOperacion() {
+        return DB_Egreso.obtenerTipoOperacion();
+    }
+
+    public Vector obtenerTipoVenta() {
+        return DB_manager.obtenerTipoVenta();
     }
 }

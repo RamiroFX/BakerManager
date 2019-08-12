@@ -34,10 +34,52 @@ public class DB_Ingreso {
     /*
      * READ
      */
+    public static int obtenerUltimoNroFactura() {
+        String Query = "SELECT nro_factura FROM factura_cabecera WHERE nro_factura IS NOT NULL  ORDER BY id_factura_cabecera DESC LIMIT 1;";
+        long nroFactura = 0;
+        try {
+            DB_manager.getConection().setAutoCommit(false);
+            pst = DB_manager.getConection().prepareStatement(Query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            rs = pst.executeQuery();
+            while (rs.next()) {
+                nroFactura = rs.getInt(1);
+            }
+            pst.close();
+            rs.close();
+            DB_manager.establecerTransaccion();
+        } catch (SQLException ex) {
+            System.out.println(ex.getNextException());
+            if (DB_manager.getConection() != null) {
+                try {
+                    DB_manager.getConection().rollback();
+                } catch (SQLException ex1) {
+                    Logger lgr = Logger.getLogger(DB_Ingreso.class.getName());
+                    lgr.log(Level.WARNING, ex1.getMessage(), ex1);
+                }
+            }
+            Logger lgr = Logger.getLogger(DB_Ingreso.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        } finally {
+            try {
+                if (pst != null) {
+                    pst.close();
+                }
+                if (rs != null) {
+                    rs.close();
+                }
+            } catch (SQLException ex) {
+                Logger lgr = Logger.getLogger(DB_Ingreso.class.getName());
+                lgr.log(Level.WARNING, ex.getMessage(), ex);
+            }
+        }
+        return (int) nroFactura;
+    }
+
     public static ResultSetTableModel obtenerIngreso(String inicio, String fin, String tipo_operacion, M_facturaCabecera factura_cabecera) {
         ResultSetTableModel rstm = null;
 
         String Query = "SELECT ID_FACTURA_CABECERA \"ID\", "
+                + "NRO_FACTURA \"Nro. Factura\", "
                 + "(SELECT NOMBRE || ' '|| APELLIDO WHERE F.ID_PERSONA = P.ID_PERSONA)\"Empleado\", "
                 + "(SELECT ENTIDAD FROM CLIENTE C WHERE FC.ID_CLIENTE = C.ID_CLIENTE) \"Cliente\", "
                 + "to_char(TIEMPO,'DD/MM/YYYY HH24:MI:SS:MS') \"Tiempo\", "
@@ -80,6 +122,7 @@ public class DB_Ingreso {
     public static ResultSetTableModel obtenerIngresoCabecera(Integer idIngresoDetalle) {
         ResultSetTableModel rstm = null;
         String Query = "SELECT FACA.ID_FACTURA_CABECERA \"ID ingreso\", "
+                + "FACA.NRO_FACTURA \"Nro. Factura\", "
                 + "(SELECT CLIE.ENTIDAD FROM CLIENTE CLIE WHERE CLIE.ID_CLIENTE = FACA.ID_CLIENTE)\"Cliente\", "
                 + "(SELECT PERS.NOMBRE || ' '|| PERS.APELLIDO WHERE PERS.ID_PERSONA = FUNC.ID_PERSONA)\"Empleado\", "
                 + "FACA.TIEMPO \"Tiempo\", "
@@ -132,7 +175,7 @@ public class DB_Ingreso {
     public static int insertarIngreso(M_facturaCabecera cabecera, ArrayList<M_facturaDetalle> detalle) {
         String INSERT_DETALLE = "INSERT INTO FACTURA_DETALLE(ID_FACTURA_CABECERA, ID_PRODUCTO, CANTIDAD, PRECIO, DESCUENTO, OBSERVACION)VALUES (?, ?, ?, ?, ?, ?);";
         //LA SGBD SE ENCARGA DE INSERTAR EL TIMESTAMP.
-        String INSERT_CABECERA = "INSERT INTO FACTURA_CABECERA(ID_FUNCIONARIO, ID_CLIENTE, ID_COND_VENTA)VALUES (?, ?, ?);";
+        String INSERT_CABECERA = "INSERT INTO FACTURA_CABECERA(ID_FUNCIONARIO, ID_CLIENTE, ID_COND_VENTA, NRO_FACTURA)VALUES (?, ?, ?, ?);";
         long sq_cabecera = -1L;
         try {
             DB_manager.getConection().setAutoCommit(false);
@@ -140,6 +183,15 @@ public class DB_Ingreso {
             pst.setInt(1, cabecera.getIdFuncionario());
             pst.setInt(2, cabecera.getIdCliente());
             pst.setInt(3, cabecera.getIdCondVenta());
+            try {
+                if (cabecera.getNroFactura() == null) {
+                    pst.setNull(4, Types.BIGINT);
+                } else {
+                    pst.setInt(4, cabecera.getNroFactura());
+                }
+            } catch (Exception e) {
+                pst.setNull(4, Types.BIGINT);
+            }
             pst.executeUpdate();
             rs = pst.getGeneratedKeys();
             if (rs != null && rs.next()) {

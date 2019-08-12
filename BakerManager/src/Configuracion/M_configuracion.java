@@ -9,6 +9,7 @@ import DB.DB_manager;
 import DB.ResultSetTableModel;
 import Entities.M_campoImpresion;
 import ModeloTabla.ImpresionTableModel;
+import Utilities.MyConstants;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
 
@@ -21,14 +22,16 @@ public class M_configuracion {
     private static final String ERROR_MESSAGE_NAME_ALREADY_EXIST = "El parametro ya existe", ERROR_TITLE = "Atención";
 
     private ImpresionTableModel impresionFacturaTM;
+    private boolean isVisible;
 
     public M_configuracion() {
         impresionFacturaTM = new ImpresionTableModel();
         inicializarDatos();
+        isVisible = true;
     }
 
     private void inicializarDatos() {
-        ArrayList<M_campoImpresion> campoImpresionLista = DB_manager.obtenerCampoImpresion(2);
+        ArrayList<M_campoImpresion> campoImpresionLista = DB_manager.obtenerCampoImpresion(2, MyConstants.TODOS);
         impresionFacturaTM.setCampoImpresionList(campoImpresionLista);
     }
 
@@ -66,12 +69,12 @@ public class M_configuracion {
     }
 
     public void updateTable() {
-        ArrayList<M_campoImpresion> campoImpresionLista = DB_manager.obtenerCampoImpresion(2);
+        ArrayList<M_campoImpresion> campoImpresionLista = DB_manager.obtenerCampoImpresion(2, MyConstants.TODOS);
         impresionFacturaTM.setCampoImpresionList(campoImpresionLista);
         this.impresionFacturaTM.updateTable();
     }
 
-    void habilitarDeshabilitarCampo(int row) {
+    public void habilitarDeshabilitarCampo(int row) {
         M_campoImpresion ci = getImpresionFacturaTM().getValueFromList(row);
         int estado = ci.getEstado().getId();
         switch (estado) {
@@ -84,5 +87,31 @@ public class M_configuracion {
                 break;
             }
         }
+    }
+
+    public void ocultarMostrarCampo() {
+        if (isIsVisible()) {
+            ArrayList<M_campoImpresion> campoImpresionLista = DB_manager.obtenerCampoImpresion(2, MyConstants.ACTIVO);
+            impresionFacturaTM.setCampoImpresionList(campoImpresionLista);
+            this.impresionFacturaTM.updateTable();
+        } else {
+            ArrayList<M_campoImpresion> campoImpresionLista = DB_manager.obtenerCampoImpresion(2, MyConstants.TODOS);
+            impresionFacturaTM.setCampoImpresionList(campoImpresionLista);
+            this.impresionFacturaTM.updateTable();
+        }
+    }
+
+    /**
+     * @return the isVisible
+     */
+    public boolean isIsVisible() {
+        return isVisible;
+    }
+
+    /**
+     * @param isVisible the isVisible to set
+     */
+    public void setIsVisible(boolean isVisible) {
+        this.isVisible = isVisible;
     }
 }

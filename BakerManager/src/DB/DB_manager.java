@@ -7,6 +7,7 @@ package DB;
 import Entities.Estado;
 import Entities.M_campoImpresion;
 import Entities.ProductoCategoria;
+import Utilities.MyConstants;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.PreparedStatement;
@@ -171,14 +172,32 @@ public class DB_manager {
         return rubro;
     }
 
-    public static ArrayList<M_campoImpresion> obtenerCampoImpresion(int idImpresionTipo) {
+    public static ArrayList<M_campoImpresion> obtenerCampoImpresion(int idImpresionTipo, int status) {
         ArrayList<M_campoImpresion> campoImpresionList = null;
-        String Query = "SELECT IMPRESION_CAMPO.ID_IMPRESION_CAMPO, IMPRESION_CAMPO.DESCRIPCION, IMPRESION_CAMPO.COORDENADA_X, IMPRESION_CAMPO.COORDENADA_Y, "
-                + "ESTADO.ID_ESTADO , ESTADO.DESCRIPCION FROM IMPRESION_CAMPO, ESTADO "
-                + "WHERE IMPRESION_CAMPO.ID_IMPRESION_TIPO = ? AND IMPRESION_CAMPO.ID_ESTADO= ESTADO.ID_ESTADO ;";
+        String Query = "";
+
+        if (status == MyConstants.TODOS) {
+            Query = "SELECT IMPRESION_CAMPO.ID_IMPRESION_CAMPO, IMPRESION_CAMPO.DESCRIPCION, IMPRESION_CAMPO.COORDENADA_X, IMPRESION_CAMPO.COORDENADA_Y, "
+                    + "ESTADO.ID_ESTADO , ESTADO.DESCRIPCION FROM IMPRESION_CAMPO, ESTADO "
+                    + "WHERE IMPRESION_CAMPO.ID_IMPRESION_TIPO = ? AND IMPRESION_CAMPO.ID_ESTADO= ESTADO.ID_ESTADO "
+                    + "ORDER BY IMPRESION_CAMPO.ID_IMPRESION_CAMPO;";
+        } else {
+            Query = "SELECT IMPRESION_CAMPO.ID_IMPRESION_CAMPO, IMPRESION_CAMPO.DESCRIPCION, IMPRESION_CAMPO.COORDENADA_X, IMPRESION_CAMPO.COORDENADA_Y, "
+                    + "ESTADO.ID_ESTADO , ESTADO.DESCRIPCION FROM IMPRESION_CAMPO, ESTADO "
+                    + "WHERE IMPRESION_CAMPO.ID_IMPRESION_TIPO = ? "
+                    + "AND IMPRESION_CAMPO.ID_ESTADO = ? "
+                    + "AND IMPRESION_CAMPO.ID_ESTADO = ESTADO.ID_ESTADO "
+                    + "ORDER BY IMPRESION_CAMPO.ID_IMPRESION_CAMPO;";
+        }
         try {
             pst = DB_manager.getConection().prepareStatement(Query);
             pst.setInt(1, idImpresionTipo);
+            if (status == MyConstants.TODOS) {
+                pst.setInt(1, idImpresionTipo);
+            } else {
+                pst.setInt(1, idImpresionTipo);
+                pst.setInt(2, status);
+            }
             rs = pst.executeQuery();
             campoImpresionList = new ArrayList();
             while (rs.next()) {
@@ -1238,5 +1257,22 @@ public class DB_manager {
             }
         }
         return tiop;
+    }
+
+    public static Vector obtenerTipoVenta() {
+        Vector pais = null;
+        String q = "SELECT descripcion  "
+                + "FROM impresion_tipo ";
+        try {
+            st = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            rs = st.executeQuery(q);
+            pais = new Vector();
+            while (rs.next()) {
+                pais.add(rs.getString("descripcion"));
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return pais;
     }
 }

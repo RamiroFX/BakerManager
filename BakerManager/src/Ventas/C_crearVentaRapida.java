@@ -15,6 +15,7 @@ import MenuPrincipal.DatosUsuario;
 import ModeloTabla.InterfaceFacturaDetalle;
 import Parametros.Impuesto;
 import Parametros.TipoOperacion;
+import Parametros.TipoVenta;
 import Producto.SeleccionarCantidadProduducto;
 import Producto.SeleccionarProducto;
 import Utilities.Impresora;
@@ -23,8 +24,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.Vector;
 import javax.swing.JOptionPane;
-import javax.swing.SwingUtilities;
 
 /**
  *
@@ -50,7 +51,7 @@ public class C_crearVentaRapida implements GestionInterface, InterfaceFacturaDet
     @Override
     public final void inicializarVista() {
         this.modelo.getCabecera().setFuncionario(this.gestionVentas.c_inicio.modelo.getRol_usuario().getFuncionario());
-        this.vista.jtfFuncionario.setText(this.modelo.getCabecera().getFuncionario().getAlias());
+        this.vista.jtfNroFactura.setText(this.modelo.getNroFactura() + "");
         this.vista.jtfClieDireccion.setText(this.modelo.getCabecera().getCliente().getDireccion());
         this.vista.jtfCliente.setText(this.modelo.getCabecera().getCliente().getEntidad() + "(" + this.modelo.getCabecera().getCliente().getNombre() + ")");
         try {
@@ -67,7 +68,15 @@ public class C_crearVentaRapida implements GestionInterface, InterfaceFacturaDet
         } else {
             this.vista.jtfClieRuc.setText("");
         }
-        this.vista.jrbContado.setSelected(true);
+        Vector condCompra = modelo.obtenerTipoOperacion();
+        for (int i = 0; i < condCompra.size(); i++) {
+            this.vista.jcbCondVenta.addItem(condCompra.get(i));
+        }
+        Vector tipoVenta = modelo.obtenerTipoVenta();
+        for (int i = 0; i < tipoVenta.size(); i++) {
+            this.vista.jcbTipoVenta.addItem(tipoVenta.get(i));
+        }
+        //this.vista.jrbContado.setSelected(true);
         this.vista.jtFacturaDetalle.setModel(this.modelo.getDtm());
         this.vista.jbModificarDetalle.setEnabled(false);
         this.vista.jbEliminarDetalle.setEnabled(false);
@@ -82,6 +91,7 @@ public class C_crearVentaRapida implements GestionInterface, InterfaceFacturaDet
         this.vista.jftTotal.setFormatterFactory(dff);
         this.vista.jftTotal.setFont(fuente); // NOI18N
         establecerCondicionVenta();
+        establecerTipoVenta();
     }
 
     @Override
@@ -95,8 +105,10 @@ public class C_crearVentaRapida implements GestionInterface, InterfaceFacturaDet
         this.vista.jtFacturaDetalle.addMouseListener(this);
         this.vista.jbEliminarDetalle.addActionListener(this);
         this.vista.jbModificarDetalle.addActionListener(this);
-        this.vista.jrbContado.addActionListener(this);
-        this.vista.jrbCredito.addActionListener(this);
+        /*this.vista.jrbContado.addActionListener(this);
+        this.vista.jrbCredito.addActionListener(this);*/
+        this.vista.jcbCondVenta.addActionListener(this);
+        this.vista.jcbTipoVenta.addActionListener(this);
         this.vista.jtfCodProd.addKeyListener(this);
         this.vista.jbAgregarProducto.addKeyListener(this);
         this.vista.jbCliente.addKeyListener(this);
@@ -143,7 +155,7 @@ public class C_crearVentaRapida implements GestionInterface, InterfaceFacturaDet
                 if (modelo.getDtm().getFacturaDetalleList().isEmpty()) {
                     JOptionPane.showMessageDialog(vista, "No hay productos cargados", "Atención", JOptionPane.INFORMATION_MESSAGE);
                 } else {
-                    int opcion = JOptionPane.showConfirmDialog(vista, "¿Desea imprimir el ticket?", "Atención", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+                    int opcion = JOptionPane.showConfirmDialog(vista, "¿Desea imprimir la venta?", "Atención", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
                     if (opcion == JOptionPane.YES_OPTION) {
                         Impresora.imprimirVenta(DatosUsuario.getRol_usuario(), modelo.getCabecera(), (ArrayList<M_facturaDetalle>) modelo.getDtm().getFacturaDetalleList());
                     }
@@ -294,16 +306,29 @@ public class C_crearVentaRapida implements GestionInterface, InterfaceFacturaDet
             this.modelo.limpiarCampos();
             this.vista.jtFacturaDetalle.setModel(this.modelo.getDtm());
             recibirCliente(this.modelo.getCabecera().getCliente());
+            establecerNroFactura();
             establecerCondicionVenta();
+            establecerTipoVenta();
             sumarTotal();
+            this.vista.jtfCodProd.setText("");
         }
     }
 
     private void establecerCondicionVenta() {
-        if (this.vista.jrbContado.isSelected()) {
+        String currentItem = this.vista.jcbCondVenta.getSelectedItem().toString();
+        if (currentItem.equals("Contado")) {
             this.modelo.getCabecera().setIdCondVenta(TipoOperacion.CONTADO);
         } else {
             this.modelo.getCabecera().setIdCondVenta(TipoOperacion.CREDITO);
+        }
+    }
+
+    private void establecerTipoVenta() {
+        int currentItem = this.vista.jcbTipoVenta.getSelectedIndex();
+        if (currentItem == 0) {//ticket
+            this.modelo.setTipoVenta(TipoVenta.TICKET);
+        } else {
+            this.modelo.setTipoVenta(TipoVenta.FACTURA);
         }
     }
 
@@ -354,12 +379,15 @@ public class C_crearVentaRapida implements GestionInterface, InterfaceFacturaDet
         if (e.getSource().equals(this.vista.jbEliminarDetalle)) {
             eliminarDetalle();
         }
-        if (e.getSource().equals(this.vista.jrbContado)) {
+        if (e.getSource().equals(this.vista.jcbCondVenta)) {
             establecerCondicionVenta();
         }
-        if (e.getSource().equals(this.vista.jrbCredito)) {
-            establecerCondicionVenta();
+        if (e.getSource().equals(this.vista.jcbTipoVenta)) {
+            establecerTipoVenta();
         }
+        /*if (e.getSource().equals(this.vista.jrbCredito)) {
+            establecerCondicionVenta();
+        }*/
         if (e.getSource().equals(this.vista.jbModificarDetalle)) {
             SeleccionarCantidadProduducto scp = new SeleccionarCantidadProduducto(this, this.vista.jtFacturaDetalle.getSelectedRow());
             scp.setVisible(true);
@@ -429,5 +457,9 @@ public class C_crearVentaRapida implements GestionInterface, InterfaceFacturaDet
     @Override
     public void notificarCambio() {
         sumarTotal();
+    }
+
+    private void establecerNroFactura() {
+        this.vista.jtfNroFactura.setText(this.modelo.getNroFactura() + "");
     }
 }

@@ -25,7 +25,10 @@ import Entities.M_pedido;
 import Entities.M_pedidoDetalle;
 import Entities.M_rol_usuario;
 import MenuPrincipal.DatosUsuario;
+import Parametros.TipoOperacion;
+import java.awt.Graphics;
 import java.awt.print.PageFormat;
+import java.awt.print.Printable;
 import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
 import java.sql.SQLException;
@@ -77,7 +80,7 @@ public class Impresora {
         System.out.println("op");
         //Impresora.imprimirPedido(DatosUsuario.getRol_usuario(), pedido, pedidoDetalle);
         //Impresora.imprimirGenerico(TICKET_CABECERA + TICKET_PIE);
-        Impresora.imprimirPrueba(DB_manager.obtenerCampoImpresion(2));
+        Impresora.imprimirPaginaPrueba();
 
     }
 
@@ -133,7 +136,8 @@ public class Impresora {
 //        }
     }
 
-    public static void imprimirPrueba(List<M_campoImpresion> textoAImprimir) {
+    public static void imprimirPaginaPrueba() {
+        List<M_campoImpresion> textoAImprimir = DB_manager.obtenerCampoImpresion(2, MyConstants.ACTIVO);
         PrinterJob job = PrinterJob.getPrinterJob();
         job.setPrintable(new MyPrintable(textoAImprimir));
         try {
@@ -325,6 +329,95 @@ public class Impresora {
                 JOptionPane.showMessageDialog(null, "No se pudo imprimir", "Error", JOptionPane.INFORMATION_MESSAGE);
             }
         } catch (PrintException ex) {
+            System.out.println(ex);
+        }
+    }
+
+    public static void imprimirVentaFactura(M_rol_usuario rol_usuario, final M_facturaCabecera facturaCabecera, final ArrayList<M_facturaDetalle> facturaDetalle) {
+        final List<M_campoImpresion> textoAImprimir = DB_manager.obtenerCampoImpresion(2, MyConstants.ACTIVO);
+        Date today = Calendar.getInstance().getTime();
+        final String fechaEntrega = sdfs.format(today);
+        String rucAux = "-";
+        if (facturaCabecera.getCliente().getRuc() != null) {
+            if (facturaCabecera.getCliente().getRucId() != null) {
+                rucAux = facturaCabecera.getCliente().getRuc() + "-" + facturaCabecera.getCliente().getRucId();
+            }
+        }
+        final String ruc = rucAux;
+        String CABECERA = "Fecha y hora: " + fechaEntrega + "\n"
+                + "Ticket nro.: " + facturaCabecera.getIdFacturaCabecera() + "\n"
+                + "Cajero: " + facturaCabecera.getFuncionario().getNombre() + "\n"
+                + "Cliente: " + facturaCabecera.getCliente().getEntidad() + "\n"
+                + "R.U.C.: " + ruc + "\n"
+                + "---------------------------------\n";
+        String COLUMNAS = "producto   cant  precio  subtotal\n";
+        String DETALLE = "";
+        int total = 0;
+        for (M_facturaDetalle pedidoDetalle1 : facturaDetalle) {
+            int subtotal = Math.round(Math.round(pedidoDetalle1.getCantidad() * pedidoDetalle1.getPrecio()));
+            total = total + subtotal;
+            DETALLE = DETALLE + "-> " + pedidoDetalle1.getProducto().getDescripcion() + "\n" + pedidoDetalle1.getCantidad() + " " + pedidoDetalle1.getPrecio() + "  " + subtotal + "\n";
+        }
+        String SUMATOTAL = "---------------------------------\n"
+                + "Total= " + total + "\n";
+
+        PrinterJob job = PrinterJob.getPrinterJob();
+        job.setPrintable(new Printable() {
+            @Override
+            public int print(Graphics g, PageFormat pf, int pi) throws PrinterException {
+                if (pi == 0) {
+                    for (M_campoImpresion object : textoAImprimir) {
+                        if (object.getCampo().equals(MyConstants.DATE_FULL)) {
+                            g.drawString(fechaEntrega, object.getX().intValue(), object.getY().intValue());
+                        }
+                        if (object.getCampo().equals(MyConstants.TIOP)) {
+                            if (facturaCabecera.getIdCondVenta() == TipoOperacion.CONTADO) {
+                                g.drawString("X", object.getX().intValue(), object.getY().intValue());
+                            } else {
+                                g.drawString("X", object.getX().intValue() + 10, object.getY().intValue());
+                            }
+                        }
+                        if (object.getCampo().equals(MyConstants.RS)) {
+                            g.drawString(facturaCabecera.getCliente().getEntidad(), object.getX().intValue(), object.getY().intValue());
+                        }
+                        if (object.getCampo().equals(MyConstants.RUC)) {
+                            g.drawString(ruc, object.getX().intValue(), object.getY().intValue());
+                        }
+                        if (object.getCampo().equals(MyConstants.DIR)) {
+                            g.drawString(facturaCabecera.getCliente().getDireccion(), object.getX().intValue(), object.getY().intValue());
+                        }
+                        if (object.getCampo().equals(MyConstants.DIR)) {
+                            g.drawString(facturaCabecera.getIdNotaRemision() + "", object.getX().intValue(), object.getY().intValue());
+                        }
+                        if (object.getCampo().equals(MyConstants.DETAIL_SIMPLE)) {
+                            for (M_facturaDetalle pedidoDetalle1 : facturaDetalle) {
+                                int subtotal = Math.round(Math.round(pedidoDetalle1.getCantidad() * pedidoDetalle1.getPrecio()));
+                                g.drawString(pedidoDetalle1.getCantidad() + "", object.getX().intValue(), object.getY().intValue());
+                                g.drawString(pedidoDetalle1.getProductoDescripcion()+ "", object.getX().intValue(), object.getY().intValue());
+                                g.drawString(pedidoDetalle1.getPrecio()+ "", object.getX().intValue(), object.getY().intValue());
+                                //PENDIENTE
+                                switch(pedidoDetalle1.getProducto().getImpuesto()){
+                                    case 1:{
+                                        g.drawString(pedidoDetalle1.getPrecio()+ "", object.getX().intValue(), object.getY().intValue());
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    return PAGE_EXISTS;
+                } else {
+                    return NO_SUCH_PAGE;
+                }
+            }
+        });
+        try {
+            if (job != null) {
+                job.print();
+            } else {
+                JOptionPane.showMessageDialog(null, "No se pudo imprimir", "Error", JOptionPane.INFORMATION_MESSAGE);
+            }
+        } catch (PrinterException ex) {
             System.out.println(ex);
         }
     }

@@ -38,14 +38,14 @@ public class V_crearModificarCampoImpresion extends javax.swing.JDialog implemen
     public V_crearModificarCampoImpresion(int tipo, JDialog parent) {
         super(parent, true);
         inicializarVista(parent, tipo);
-        initComponents();
+        initComponents(tipo);
     }
 
     public V_crearModificarCampoImpresion(int tipo, JDialog parent, M_campoImpresion ci) {
         super(parent, true);
-        inicializarVista(parent, tipo);
-        initComponents();
         this.ci = ci;
+        inicializarVista(parent, tipo);
+        initComponents(tipo);
     }
 
     private void inicializarVista(JDialog parent, int tipo) {
@@ -64,7 +64,7 @@ public class V_crearModificarCampoImpresion extends javax.swing.JDialog implemen
         setLocationRelativeTo(parent);
     }
 
-    private void initComponents() {
+    private void initComponents(int tipo) {
         getContentPane().setLayout(new MigLayout());
         jbOK = new javax.swing.JButton();
         jbCancel = new javax.swing.JButton();
@@ -89,6 +89,11 @@ public class V_crearModificarCampoImpresion extends javax.swing.JDialog implemen
         getContentPane().add(jtfCoordenadaY, "width :200:,grow,wrap");
         getContentPane().add(jbOK);
         getContentPane().add(jbCancel);
+        if (tipo == MODIFICAR_PARAMETRO) {
+            jtfCampo.setText(this.ci.getCampo());
+            jtfCoordenadaX.setText(this.ci.getX() + "");
+            jtfCoordenadaY.setText(this.ci.getY() + "");
+        }
     }
 
     public void enviarCantidad() {

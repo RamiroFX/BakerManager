@@ -5,8 +5,10 @@
 package Ventas;
 
 import DB.DB_Cliente;
+import DB.DB_Egreso;
 import DB.DB_Ingreso;
 import DB.DB_Producto;
+import DB.DB_manager;
 import Entities.M_facturaCabecera;
 import Entities.M_facturaDetalle;
 import Entities.M_producto;
@@ -15,8 +17,10 @@ import MenuPrincipal.DatosUsuario;
 import ModeloTabla.FacturaDetalleTableModel;
 import ModeloTabla.InterfaceFacturaDetalle;
 import Parametros.TipoOperacion;
+import Parametros.TipoVenta;
 import Utilities.Impresora;
 import java.util.ArrayList;
+import java.util.Vector;
 import javax.swing.JOptionPane;
 
 /**
@@ -35,10 +39,12 @@ public class M_crearVentaRapida {
     private M_facturaDetalle detalle;
     private M_telefono telefono;
     private FacturaDetalleTableModel dtm;
+    private Integer tipoVenta;
 
     public M_crearVentaRapida(InterfaceFacturaDetalle interfaceFacturaDetalle) {
         this.cabecera = new M_facturaCabecera();
         this.cabecera.setCliente(DB_Cliente.obtenerDatosClienteID(1));//mostrador
+        this.cabecera.setNroFactura(getNroFactura());
         this.cabecera.setIdCondVenta(TipoOperacion.CONTADO);
         try {
             this.telefono = DB_Cliente.obtenerTelefonoCliente(this.cabecera.getCliente().getIdCliente()).get(1);
@@ -105,11 +111,18 @@ public class M_crearVentaRapida {
         } else {
             int response = JOptionPane.showConfirmDialog(null, ESTA_SEGURO_QUE_DESEA_CONFIRMAR_LA_VENTA, CONFIRMAR, JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
             if (response == JOptionPane.YES_OPTION) {
+                if (tipoVenta == TipoVenta.TICKET) {
+                    this.cabecera.setNroFactura(null);
+                }
                 int nroTicket = DB_Ingreso.insertarIngreso(getCabecera(), (ArrayList<M_facturaDetalle>) getDtm().getFacturaDetalleList());
                 getCabecera().setIdFacturaCabecera(nroTicket);
                 int opcion = JOptionPane.showConfirmDialog(null, DESEA_IMPRIMIR_EL_TICKET, ATENCION, JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
                 if (opcion == JOptionPane.YES_OPTION) {
-                    Impresora.imprimirVenta(DatosUsuario.getRol_usuario(), getCabecera(), (ArrayList<M_facturaDetalle>) getDtm().getFacturaDetalleList());
+                    if (tipoVenta == TipoVenta.TICKET) {
+                        Impresora.imprimirVenta(DatosUsuario.getRol_usuario(), getCabecera(), (ArrayList<M_facturaDetalle>) getDtm().getFacturaDetalleList());
+                    } else if (tipoVenta == TipoVenta.FACTURA) {
+                        Impresora.imprimirVentaFactura(DatosUsuario.getRol_usuario(), getCabecera(), (ArrayList<M_facturaDetalle>) getDtm().getFacturaDetalleList());
+                    }
                 }
                 return true;
             }
@@ -120,6 +133,7 @@ public class M_crearVentaRapida {
     public void limpiarCampos() {
         this.cabecera.setCliente(DB_Cliente.obtenerDatosClienteID(1));//mostrador
         this.cabecera.setIdCondVenta(TipoOperacion.CONTADO);
+        this.cabecera.setNroFactura(getNroFactura());
         try {
             this.telefono = DB_Cliente.obtenerTelefonoCliente(this.cabecera.getCliente().getIdCliente()).get(1);
         } catch (Exception e) {
@@ -140,7 +154,6 @@ public class M_crearVentaRapida {
         unDetalle.setIdProducto(unProducto.getId());
         return unDetalle;
     }*/
-
     boolean existeProductoPorCodigo(String codigoProducto) {
         return DB_Producto.existeCodigo(codigoProducto);
     }
@@ -149,4 +162,33 @@ public class M_crearVentaRapida {
         M_producto unProducto = DB_Producto.obtenerProductoPorCodigo(codigoProducto);
         return unProducto;
     }
+
+    public int getNroFactura() {
+        int nroFactura;
+        nroFactura = DB_Ingreso.obtenerUltimoNroFactura() + 1;
+        return nroFactura;
+    }
+
+    public Vector obtenerTipoOperacion() {
+        return DB_Egreso.obtenerTipoOperacion();
+    }
+
+    public Vector obtenerTipoVenta() {
+        return DB_manager.obtenerTipoVenta();
+    }
+
+    /**
+     * @return the tipoVenta
+     */
+    public int getTipoVenta() {
+        return tipoVenta;
+    }
+
+    /**
+     * @param tipoVenta the tipoVenta to set
+     */
+    public void setTipoVenta(int tipoVenta) {
+        this.tipoVenta = tipoVenta;
+    }
+
 }

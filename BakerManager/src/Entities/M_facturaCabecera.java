@@ -13,6 +13,7 @@ import java.sql.Timestamp;
 public class M_facturaCabecera {
 
     private Integer idFacturaCabecera, idCliente, idFuncionario, idCondVenta, idNotaRemision;
+    private Integer nroFactura;
     private Timestamp tiempo;
     private M_cliente cliente;
     private M_funcionario funcionario;
@@ -89,5 +90,13 @@ public class M_facturaCabecera {
 
     public void setTiempo(Timestamp tiempo) {
         this.tiempo = tiempo;
+    }
+    
+    public Integer getNroFactura() {
+        return nroFactura;
+    }
+    
+    public void setNroFactura(Integer nroFactura) {
+        this.nroFactura = nroFactura;
     }
 }

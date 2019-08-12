@@ -24,6 +24,7 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.Vector;
 import javax.swing.JOptionPane;
 
 /**
@@ -57,8 +58,23 @@ public class C_verMesa extends MouseAdapter implements ActionListener, KeyListen
         this.vista.jtfClieDireccion.setText(this.modelo.getMesa().getCliente().getDireccion());
         this.vista.jtfClieRuc.setText(this.modelo.getMesa().getCliente().getRuc() + "-" + this.modelo.getMesa().getCliente().getRucId());
         this.vista.jtfClieTelefono.setText("");
-        this.vista.jtfFuncionario.setText(f.getAlias());
-        switch (this.modelo.getMesa().getIdCondVenta()) {
+        this.vista.jtfNroFactura.setText(f.getAlias());
+
+        Vector condCompra = modelo.obtenerTipoOperacion();
+        for (int i = 0; i < condCompra.size(); i++) {
+            this.vista.jcbCondVenta.addItem(condCompra.get(i));
+        }
+        Vector tipoVenta = modelo.obtenerTipoVenta();
+        for (int i = 0; i < tipoVenta.size(); i++) {
+            this.vista.jcbTipoVenta.addItem(tipoVenta.get(i));
+        }
+        if (this.modelo.getMesa().getIdCondVenta() == TipoOperacion.CONTADO) {
+            this.vista.jcbCondVenta.setSelectedIndex(0);
+        } else {
+            this.vista.jcbCondVenta.setSelectedIndex(1);
+        }
+        /*switch (this.modelo.getMesa().getIdCondVenta()) {
+            
             case (TipoOperacion.CONTADO): {
                 //contado
                 this.vista.jrbContado.setSelected(true);
@@ -71,7 +87,7 @@ public class C_verMesa extends MouseAdapter implements ActionListener, KeyListen
                 this.vista.jrbCredito.setSelected(true);
                 break;
             }
-        }
+        }*/
         if (null != this.modelo.getRstm()) {
             this.vista.jtFacturaDetalle.setModel(this.modelo.getRstm());
             Utilities.c_packColumn.packColumns(this.vista.jtFacturaDetalle, 1);
@@ -90,8 +106,10 @@ public class C_verMesa extends MouseAdapter implements ActionListener, KeyListen
         this.vista.jtFacturaDetalle.addMouseListener(this);
         this.vista.jbEliminarDetalle.addActionListener(this);
         this.vista.jbModificarDetalle.addActionListener(this);
-        this.vista.jrbContado.addActionListener(this);
-        this.vista.jrbCredito.addActionListener(this);
+        this.vista.jcbCondVenta.addActionListener(this);
+        this.vista.jcbTipoVenta.addActionListener(this);
+        /*this.vista.jrbContado.addActionListener(this);
+        this.vista.jrbCredito.addActionListener(this);*/
         this.vista.jtfCodProd.addKeyListener(this);
         this.vista.jbAceptar.addKeyListener(this);
         this.vista.jbImprimir.addKeyListener(this);
@@ -280,11 +298,18 @@ public class C_verMesa extends MouseAdapter implements ActionListener, KeyListen
     }
 
     private void establecerCondicionVenta() {
-        if (this.vista.jrbContado.isSelected()) {
+        String currentItem = this.vista.jcbCondVenta.getSelectedItem().toString();
+        if (currentItem.equals("Contado")) {
             this.modelo.getMesa().setIdCondVenta(TipoOperacion.CONTADO);
         } else {
             this.modelo.getMesa().setIdCondVenta(TipoOperacion.CREDITO);
         }
+        /*
+        if (this.vista.jrbContado.isSelected()) {
+            this.modelo.getMesa().setIdCondVenta(TipoOperacion.CONTADO);
+        } else {
+            this.modelo.getMesa().setIdCondVenta(TipoOperacion.CREDITO);
+        }*/
     }
 
     private void actualizarMesas() {
@@ -329,12 +354,15 @@ public class C_verMesa extends MouseAdapter implements ActionListener, KeyListen
         if (e.getSource().equals(this.vista.jbImprimir)) {
             imprimirTicket();
         }
-        if (e.getSource().equals(this.vista.jrbContado)) {
+        if (e.getSource().equals(this.vista.jcbCondVenta)) {
+            establecerCondicionVenta();
+        }
+        /*if (e.getSource().equals(this.vista.jrbContado)) {
             establecerCondicionVenta();
         }
         if (e.getSource().equals(this.vista.jrbCredito)) {
             establecerCondicionVenta();
-        }
+        }*/
         if (e.getSource().equals(this.vista.jbModificarDetalle)) {
             int row = this.vista.jtFacturaDetalle.getSelectedRow();
             int idProducto = Integer.valueOf(this.vista.jtFacturaDetalle.getValueAt(row, 1).toString());
