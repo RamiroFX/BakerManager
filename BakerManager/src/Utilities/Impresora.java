@@ -71,16 +71,20 @@ public class Impresora {
         try {
             //ServicioDeImpresion impresion = new ServicioDeImpresion();
             //1552 vico c
-            DB_manager.conectarBD("postgres", "postgresql");
+            DB_manager.conectarBD("postgres", "postgres");
         } catch (SQLException ex) {
             Logger.getLogger(Impresora.class.getName()).log(Level.SEVERE, null, ex);
         }
-        M_pedido pedido = DB_Pedido.obtenerPedido(1552);
-        ArrayList<M_pedidoDetalle> pedidoDetalle = DB_Pedido.obtenerPedidoDetalles(1);
+        //M_pedido pedido = DB_Pedido.obtenerPedido(1552);
+        //ArrayList<M_pedidoDetalle> pedidoDetalle = DB_Pedido.obtenerPedidoDetalles(1);
         System.out.println("op");
+        M_facturaCabecera facturaCabecera = DB_Ingreso.obtenerIngresoCabeceraID(16149);
+        System.out.println("op");
+        ArrayList<M_facturaDetalle> facturaDetalle = DB_Ingreso.obtenerVentaDetalles(16149);
+        Impresora.imprimirVentaFactura(DatosUsuario.getRol_usuario(), facturaCabecera, facturaDetalle);
         //Impresora.imprimirPedido(DatosUsuario.getRol_usuario(), pedido, pedidoDetalle);
         //Impresora.imprimirGenerico(TICKET_CABECERA + TICKET_PIE);
-        Impresora.imprimirPaginaPrueba();
+        //Impresora.imprimirPaginaPrueba();
 
     }
 
@@ -338,29 +342,12 @@ public class Impresora {
         Date today = Calendar.getInstance().getTime();
         final String fechaEntrega = sdfs.format(today);
         String rucAux = "-";
-        if (facturaCabecera.getCliente().getRuc() != null) {
+        /*if (facturaCabecera.getCliente().getRuc() != null) {
             if (facturaCabecera.getCliente().getRucId() != null) {
                 rucAux = facturaCabecera.getCliente().getRuc() + "-" + facturaCabecera.getCliente().getRucId();
             }
-        }
+        }*/
         final String ruc = rucAux;
-        String CABECERA = "Fecha y hora: " + fechaEntrega + "\n"
-                + "Ticket nro.: " + facturaCabecera.getIdFacturaCabecera() + "\n"
-                + "Cajero: " + facturaCabecera.getFuncionario().getNombre() + "\n"
-                + "Cliente: " + facturaCabecera.getCliente().getEntidad() + "\n"
-                + "R.U.C.: " + ruc + "\n"
-                + "---------------------------------\n";
-        String COLUMNAS = "producto   cant  precio  subtotal\n";
-        String DETALLE = "";
-        int total = 0;
-        for (M_facturaDetalle pedidoDetalle1 : facturaDetalle) {
-            int subtotal = Math.round(Math.round(pedidoDetalle1.getCantidad() * pedidoDetalle1.getPrecio()));
-            total = total + subtotal;
-            DETALLE = DETALLE + "-> " + pedidoDetalle1.getProducto().getDescripcion() + "\n" + pedidoDetalle1.getCantidad() + " " + pedidoDetalle1.getPrecio() + "  " + subtotal + "\n";
-        }
-        String SUMATOTAL = "---------------------------------\n"
-                + "Total= " + total + "\n";
-
         PrinterJob job = PrinterJob.getPrinterJob();
         job.setPrintable(new Printable() {
             @Override
@@ -369,6 +356,8 @@ public class Impresora {
                 Integer exenta = 0;
                 Integer iva5 = 0;
                 Integer iva10 = 0;
+                Integer liquidacionIva5 = 0;
+                Integer liquidacionIva10 = 0;
                 if (pi == 0) {
                     for (M_campoImpresion object : textoAImprimir) {
                         if (object.getCampo().equals(MyConstants.DATE_FULL)) {
@@ -393,10 +382,11 @@ public class Impresora {
                         if (object.getCampo().equals(MyConstants.DIR)) {
                             g.drawString(facturaCabecera.getCliente().getDireccion(), object.getX().intValue(), object.getY().intValue());
                         }
-                        if (object.getCampo().equals(MyConstants.DIR)) {
+                        if (object.getCampo().equals(MyConstants.REMISION)) {
                             g.drawString(facturaCabecera.getIdNotaRemision() + "", object.getX().intValue(), object.getY().intValue());
                         }
-                        if (object.getCampo().equals(MyConstants.DETAIL_SIMPLE)) {
+                        //pendiente 
+                        if (object.getCampo().equals(MyConstants.DETAIL_CANT)) {
                             int cantidadPosX = object.getX().intValue();
                             int descripcionPosX = cantidadPosX + 20;
                             int precioPosX = descripcionPosX + 20;
@@ -428,11 +418,37 @@ public class Impresora {
                                 }
                             }
                         }
-                        if (object.getCampo().equals(MyConstants.SUB_TOTAL_EXENTA)) {
-                            g.drawString(facturaCabecera.getIdNotaRemision() + "", object.getX().intValue(), object.getY().intValue());
+                        //Calcular liquidacion de iva5 si es que hay productos con impuesto de 5%
+                        if (iva5 > 0) {
+                            liquidacionIva5 = iva5 / 21;
+                        }
+                        //Calcular liquidacion de iva5 si es que hay productos con impuesto de 10%
+                        if (iva10 > 0) {
+                            liquidacionIva10 = iva10 / 11;
                         }
                         if (object.getCampo().equals(MyConstants.SUB_TOTAL_EXENTA)) {
-                            g.drawString(facturaCabecera.getIdNotaRemision() + "", object.getX().intValue(), object.getY().intValue());
+                            g.drawString(exenta + "", object.getX().intValue(), object.getY().intValue());
+                        }
+                        if (object.getCampo().equals(MyConstants.SUB_TOTAL_IVA5)) {
+                            g.drawString(iva5 + "", object.getX().intValue(), object.getY().intValue());
+                        }
+                        if (object.getCampo().equals(MyConstants.SUB_TOTAL_IVA10)) {
+                            g.drawString(iva10 + "", object.getX().intValue(), object.getY().intValue());
+                        }
+                        if (object.getCampo().equals(MyConstants.TOTAL_LETRA)) {
+                            g.drawString(CombertirNumeroATexto.combertirNumero(total) + "", object.getX().intValue(), object.getY().intValue());
+                        }
+                        if (object.getCampo().equals(MyConstants.TOTAL_NUMERO)) {
+                            g.drawString(total + "", object.getX().intValue(), object.getY().intValue());
+                        }
+                        if (object.getCampo().equals(MyConstants.LIQUIDACION_IVA5)) {
+                            g.drawString(liquidacionIva5 + "", object.getX().intValue(), object.getY().intValue());
+                        }
+                        if (object.getCampo().equals(MyConstants.LIQUIDACION_IVA10)) {
+                            g.drawString(liquidacionIva10 + "", object.getX().intValue(), object.getY().intValue());
+                        }
+                        if (object.getCampo().equals(MyConstants.LIQUIDACION_TOTAL)) {
+                            g.drawString(liquidacionIva5 + liquidacionIva10 + "", object.getX().intValue(), object.getY().intValue());
                         }
                     }
                     return PAGE_EXISTS;
@@ -441,7 +457,7 @@ public class Impresora {
                 }
             }
         });
-        try {
+        /*try {
             if (job != null) {
                 job.print();
             } else {
@@ -449,6 +465,33 @@ public class Impresora {
             }
         } catch (PrinterException ex) {
             System.out.println(ex);
+        }*/
+        //----------
+        PrintService[] services = PrintServiceLookup.lookupPrintServices(null, null); //nos da el array de los servicios de impresion
+        if (services.length > 0) {
+            for (int i = 0; i < services.length; i++) {
+                System.err.println("Printer: " + services[i].getName());
+                if (services[i].getName().equals("CutePDF")) {//aqui escribimos/elegimos la impresora por la que queremos imprimir
+                    //manejar error en caso de que no esté conectada
+                    //Desktop.getDesktop().print(null);//para imprimir un archivo ya existente  
+                    try {
+                        if (job != null) {
+                            System.err.println("IMPRIMIENDO");
+                            job.setPrintService(services[i]);
+                            job.print();
+                            break;
+                        } else {
+                            JOptionPane.showMessageDialog(null, "No se pudo imprimir", "Error", JOptionPane.INFORMATION_MESSAGE);
+                        }
+                    } catch (PrinterException ex) {
+                        System.out.println(ex);
+                    }
+                    break;
+                } else {
+                    System.out.println("No se encontró la impresora CutePDF");
+                }
+            }
+
         }
     }
 
