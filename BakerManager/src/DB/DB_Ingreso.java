@@ -295,6 +295,48 @@ public class DB_Ingreso {
         return ingreso_cabecera;
     }
 
+    public static M_facturaCabecera obtenerIngresoCabeceraCompleto(Integer idIngresoCabecera) {
+        M_facturaCabecera ingreso_cabecera = null;
+        String query = "SELECT FC.ID_FACTURA_CABECERA, "
+                + "FC.ID_FUNCIONARIO, "
+                + "C.ID_CLIENTE, C.NOMBRE, C.ENTIDAD, C.RUC, C.RUC_IDENTIFICADOR, C.DIRECCION, C.EMAIL, C.PAG_WEB, C.ID_TIPO, C.ID_CATEGORIA, C.OBSERVACION, "
+                + "FC.TIEMPO, "
+                + "FC.ID_COND_VENTA "
+                + "FROM FACTURA_CABECERA FC, CLIENTE C "
+                + "WHERE ID_FACTURA_CABECERA = " + idIngresoCabecera;
+        try {
+            pst = DB_manager.getConection().prepareStatement(query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            rs = pst.executeQuery();
+            while (rs.next()) {
+                //PENDIENTE
+                M_cliente cliente = new M_cliente();
+                cliente.setCategoria(query);
+                ingreso_cabecera = new M_facturaCabecera();
+                ingreso_cabecera.setIdFacturaCabecera(rs.getInt("ID_FACTURA_CABECERA"));
+                ingreso_cabecera.setIdCliente(rs.getInt("ID_CLIENTE"));
+                ingreso_cabecera.setIdCondVenta(rs.getInt("ID_COND_VENTA"));
+                ingreso_cabecera.setIdFuncionario(rs.getInt("ID_FUNCIONARIO"));
+                ingreso_cabecera.setTiempo(rs.getTimestamp("TIEMPO"));
+            }
+        } catch (SQLException ex) {
+            Logger lgr = Logger.getLogger(DB_Ingreso.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (pst != null) {
+                    pst.close();
+                }
+            } catch (SQLException ex) {
+                Logger lgr = Logger.getLogger(DB_Ingreso.class.getName());
+                lgr.log(Level.WARNING, ex.getMessage(), ex);
+            }
+        }
+        return ingreso_cabecera;
+    }
+
     public static ResultSetTableModel consultarIngresoDetalleAgrupado(Timestamp inicio, Timestamp fin, M_cliente cliente) {
         String QUERY = "SELECT PROD.DESCRIPCION \"Producto\", SUM(FADE.CANTIDAD) \"Cantidad\", FADE.PRECIO \"Precio\", FADE.DESCUENTO \"Descuento\", "
                 + "CASE WHEN PROD.ID_IMPUESTO = 1 THEN SUM(ROUND(FADE.CANTIDAD*(FADE.PRECIO-(FADE.PRECIO*FADE.DESCUENTO)/100))) ELSE '0' END AS \"Exenta\", "

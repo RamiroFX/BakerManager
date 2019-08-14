@@ -71,16 +71,16 @@ public class Impresora {
         try {
             //ServicioDeImpresion impresion = new ServicioDeImpresion();
             //1552 vico c
-            DB_manager.conectarBD("postgres", "postgres");
+            DB_manager.conectarBD("postgres", "postgresql");
         } catch (SQLException ex) {
             Logger.getLogger(Impresora.class.getName()).log(Level.SEVERE, null, ex);
         }
         //M_pedido pedido = DB_Pedido.obtenerPedido(1552);
         //ArrayList<M_pedidoDetalle> pedidoDetalle = DB_Pedido.obtenerPedidoDetalles(1);
         System.out.println("op");
-        M_facturaCabecera facturaCabecera = DB_Ingreso.obtenerIngresoCabeceraID(16149);
+        M_facturaCabecera facturaCabecera = DB_Ingreso.obtenerIngresoCabeceraID(1);
         System.out.println("op");
-        ArrayList<M_facturaDetalle> facturaDetalle = DB_Ingreso.obtenerVentaDetalles(16149);
+        ArrayList<M_facturaDetalle> facturaDetalle = DB_Ingreso.obtenerVentaDetalles(1);
         Impresora.imprimirVentaFactura(DatosUsuario.getRol_usuario(), facturaCabecera, facturaDetalle);
         //Impresora.imprimirPedido(DatosUsuario.getRol_usuario(), pedido, pedidoDetalle);
         //Impresora.imprimirGenerico(TICKET_CABECERA + TICKET_PIE);
@@ -338,6 +338,7 @@ public class Impresora {
     }
 
     public static void imprimirVentaFactura(M_rol_usuario rol_usuario, final M_facturaCabecera facturaCabecera, final ArrayList<M_facturaDetalle> facturaDetalle) {
+        final int espaciadorY = 5;
         final List<M_campoImpresion> textoAImprimir = DB_manager.obtenerCampoImpresion(2, MyConstants.ACTIVO);
         Date today = Calendar.getInstance().getTime();
         final String fechaEntrega = sdfs.format(today);
@@ -374,49 +375,75 @@ public class Impresora {
                             }
                         }
                         if (object.getCampo().equals(MyConstants.RS)) {
-                            g.drawString(facturaCabecera.getCliente().getEntidad(), object.getX().intValue(), object.getY().intValue());
+                            g.drawString("cliente", object.getX().intValue(), object.getY().intValue());
                         }
                         if (object.getCampo().equals(MyConstants.RUC)) {
                             g.drawString(ruc, object.getX().intValue(), object.getY().intValue());
                         }
                         if (object.getCampo().equals(MyConstants.DIR)) {
-                            g.drawString(facturaCabecera.getCliente().getDireccion(), object.getX().intValue(), object.getY().intValue());
+                            g.drawString("direccion", object.getX().intValue(), object.getY().intValue());
                         }
                         if (object.getCampo().equals(MyConstants.REMISION)) {
-                            g.drawString(facturaCabecera.getIdNotaRemision() + "", object.getX().intValue(), object.getY().intValue());
+                            g.drawString("facturaCabecera.getIdNotaRemision()" + "", object.getX().intValue(), object.getY().intValue());
                         }
-                        //pendiente 
                         if (object.getCampo().equals(MyConstants.DETAIL_CANT)) {
-                            int cantidadPosX = object.getX().intValue();
-                            int descripcionPosX = cantidadPosX + 20;
-                            int precioPosX = descripcionPosX + 20;
-                            int exentaPosX = precioPosX + 10;
-                            int iva5PosX = exentaPosX + 10;
-                            int iva10PosX = iva5PosX + 10;
-                            for (M_facturaDetalle pedidoDetalle1 : facturaDetalle) {
-                                int subtotal = Math.round(Math.round(pedidoDetalle1.getCantidad() * pedidoDetalle1.getPrecio()));
-                                total = total + subtotal;
-                                g.drawString(pedidoDetalle1.getCantidad() + "", cantidadPosX, object.getY().intValue());
-                                g.drawString(pedidoDetalle1.getProductoDescripcion() + "", descripcionPosX, object.getY().intValue());
-                                g.drawString(pedidoDetalle1.getPrecio() + "", precioPosX, object.getY().intValue());
-                                switch (pedidoDetalle1.getProducto().getImpuesto()) {
-                                    case 0: {
-                                        g.drawString(subtotal + "", exentaPosX, object.getY().intValue());
-                                        exenta = exenta + subtotal;
-                                        break;
-                                    }
-                                    case 1: {
-                                        g.drawString(subtotal + "", iva5PosX, object.getY().intValue());
-                                        iva5 = iva5 + subtotal;
-                                        break;
-                                    }
-                                    case 2: {
-                                        g.drawString(subtotal + "", iva10PosX, object.getY().intValue());
-                                        iva10 = iva10 + subtotal;
-                                        break;
-                                    }
+                            int posY = object.getY().intValue();
+                            for (M_facturaDetalle fd : facturaDetalle) {
+                                g.drawString(fd.getCantidad() + "", object.getX().intValue(), posY);
+                                posY = posY + espaciadorY;
+                            }
+                        }
+                        if (object.getCampo().equals(MyConstants.DETAIL_COD)) {
+                            int posY = object.getY().intValue();
+                            for (M_facturaDetalle fd : facturaDetalle) {
+                                g.drawString(fd.getProducto().getCodBarra() + "", object.getX().intValue(), posY);
+                                posY = posY + espaciadorY;
+                            }
+                        }
+                        if (object.getCampo().equals(MyConstants.DETAIL_DESC)) {
+                            int posY = object.getY().intValue();
+                            for (M_facturaDetalle fd : facturaDetalle) {
+                                g.drawString(fd.getDescuento() + "", object.getX().intValue(), posY);
+                                posY = posY + espaciadorY;
+                            }
+                        }
+                        if (object.getCampo().equals(MyConstants.DETAIL_EXENTA)) {
+                            int posY = object.getY().intValue();
+                            for (M_facturaDetalle fd : facturaDetalle) {
+                                if (fd.getProducto().getImpuesto() == 1) {
+                                    int subtotal = Math.round(Math.round(fd.getCantidad() * fd.getPrecio()));
+                                    g.drawString(subtotal + "", object.getX().intValue(), object.getY().intValue());
+                                    posY = posY + espaciadorY;
+                                    exenta = exenta + subtotal;
                                 }
                             }
+                        }
+                        if (object.getCampo().equals(MyConstants.DETAIL_IVA5)) {
+                            int posY = object.getY().intValue();
+                            for (M_facturaDetalle fd : facturaDetalle) {
+                                if (fd.getProducto().getImpuesto() == 2) {
+                                    int subtotal = Math.round(Math.round(fd.getCantidad() * fd.getPrecio()));
+                                    g.drawString(subtotal + "", object.getX().intValue(), object.getY().intValue());
+                                    posY = posY + espaciadorY;
+                                    iva5 = iva5 + subtotal;
+                                }
+                            }
+                        }
+                        if (object.getCampo().equals(MyConstants.DETAIL_IVA10)) {
+                            int posY = object.getY().intValue();
+                            for (M_facturaDetalle fd : facturaDetalle) {
+                                if (fd.getProducto().getImpuesto() == 3) {
+                                    int subtotal = Math.round(Math.round(fd.getCantidad() * fd.getPrecio()));
+                                    g.drawString(subtotal + "", object.getX().intValue(), object.getY().intValue());
+                                    posY = posY + espaciadorY;
+                                    iva10 = iva10 + subtotal;
+                                }
+                            }
+                        }
+                        //Calcular el total
+                        for (M_facturaDetalle fd : facturaDetalle) {
+                            int subtotal = Math.round(Math.round(fd.getCantidad() * fd.getPrecio()));
+                            total = total + subtotal;
                         }
                         //Calcular liquidacion de iva5 si es que hay productos con impuesto de 5%
                         if (iva5 > 0) {
