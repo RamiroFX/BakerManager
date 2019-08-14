@@ -296,7 +296,10 @@ public class DB_Ingreso {
     }
 
     public static M_facturaCabecera obtenerIngresoCabeceraCompleto(Integer idIngresoCabecera) {
+        //PENDIENTE
         M_facturaCabecera ingreso_cabecera = null;
+        String categoria = "(SELECT CLCA.DESCRIPCION FROM CLIENTE_CATEGORIA CLCA WHERE CLCA.ID_CLIENTE_CATEGORIA = CLIE.ID_CATEGORIA) \"CATEGORIA\", ";
+        String tipo = "(SELECT CLTI.DESCRIPCION FROM CLIENTE_TIPO CLTI WHERE CLTI.ID_CLIENTE_TIPO = CLIE.ID_TIPO) \"TIPO\" ";
         String query = "SELECT FC.ID_FACTURA_CABECERA, "
                 + "FC.ID_FUNCIONARIO, "
                 + "C.ID_CLIENTE, C.NOMBRE, C.ENTIDAD, C.RUC, C.RUC_IDENTIFICADOR, C.DIRECCION, C.EMAIL, C.PAG_WEB, C.ID_TIPO, C.ID_CATEGORIA, C.OBSERVACION, "
@@ -308,9 +311,16 @@ public class DB_Ingreso {
             pst = DB_manager.getConection().prepareStatement(query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             rs = pst.executeQuery();
             while (rs.next()) {
-                //PENDIENTE
                 M_cliente cliente = new M_cliente();
-                cliente.setCategoria(query);
+                cliente.setIdCliente(rs.getInt(3));
+                cliente.setNombre(rs.getString(4));
+                cliente.setEntidad(rs.getString(5));
+                cliente.setRuc(rs.getString(5));
+                cliente.setRucId(rs.getString(5));
+                cliente.setDireccion(rs.getString(5));
+                cliente.setEmail(rs.getString(5));
+                cliente.setPaginaWeb(rs.getString(5));
+                cliente.setObservacion(rs.getString(5));
                 ingreso_cabecera = new M_facturaCabecera();
                 ingreso_cabecera.setIdFacturaCabecera(rs.getInt("ID_FACTURA_CABECERA"));
                 ingreso_cabecera.setIdCliente(rs.getInt("ID_CLIENTE"));

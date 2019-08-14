@@ -28,6 +28,7 @@ import MenuPrincipal.DatosUsuario;
 import Parametros.TipoOperacion;
 import java.awt.Graphics;
 import java.awt.print.PageFormat;
+import java.awt.print.Paper;
 import java.awt.print.Printable;
 import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
@@ -143,7 +144,24 @@ public class Impresora {
     public static void imprimirPaginaPrueba() {
         List<M_campoImpresion> textoAImprimir = DB_manager.obtenerCampoImpresion(2, MyConstants.ACTIVO);
         PrinterJob job = PrinterJob.getPrinterJob();
-        job.setPrintable(new MyPrintable(textoAImprimir));
+        Paper p = new Paper();
+        int width = 2100;
+        int height = 2700;
+        p.setSize(width, height);
+        p.setImageableArea(0.0, 0.0, width, height);
+        PageFormat pf = new PageFormat();
+        pf.setPaper(p);
+        job.setPrintable(new MyPrintable(textoAImprimir), pf);
+        PrintService[] services = PrintServiceLookup.lookupPrintServices(null, null);
+        for (int i = 0; i < services.length; i++) {
+            if (services[i].getName().equals("CutePDF")) {
+                try {
+                    job.setPrintService(services[i]);
+                } catch (PrinterException ex) {
+                    Logger.getLogger(Impresora.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        }
         try {
             job.print();
         } catch (PrinterException e) {
