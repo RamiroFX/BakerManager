@@ -5,7 +5,9 @@
  */
 package Configuracion;
 
+import Entities.Divisa;
 import Entities.M_campoImpresion;
+import Entities.M_preferenciasImpresion;
 import Interface.crearModificarParametroCallback;
 import Utilities.Impresora;
 import java.awt.event.ActionEvent;
@@ -60,6 +62,7 @@ public class C_configuracion extends MouseAdapter implements ActionListener, Key
         this.vista.jbHabilitarDeshabilitarCampo.addActionListener(this);
         this.vista.jbImprimirPaginaPrueba.addActionListener(this);
         this.vista.jbOcultarMostrarCampo.addActionListener(this);
+        this.vista.jbGuardar.addActionListener(this);
         this.vista.jtFactura.addMouseListener(this);
     }
 
@@ -70,6 +73,33 @@ public class C_configuracion extends MouseAdapter implements ActionListener, Key
         this.vista.jbModificarCampo.setEnabled(false);
         this.vista.jbHabilitarDeshabilitarCampo.setEnabled(false);
         this.vista.jtFactura.setModel(modelo.getImpresionFacturaTM());
+        //panel de preferencia
+        for (int i = 1; i < modelo.getMaxProducts(); i++) {
+            this.vista.jcbCantProd.addItem(i);
+        }
+        for (int i = 1; i < modelo.getMaxLetterSize(); i++) {
+            this.vista.jcbTamañoLetra.addItem(i);
+        }
+        this.vista.jcbMoneda.addItem(new Divisa(1, "Guaraní/es"));
+        this.vista.jtfDistanciaEntreCopias.setText(modelo.getPreferenciasImpresion().getDistanceBetweenCopies() + "");
+        this.vista.jtfTipoLetra.setText(modelo.getPreferenciasImpresion().getLetterFont());
+        this.vista.jcbCantProd.setSelectedItem(modelo.getPreferenciasImpresion().getMaxProducts());
+        this.vista.jcbTamañoLetra.setSelectedItem(modelo.getPreferenciasImpresion().getLetterSize());
+        if (modelo.getPreferenciasImpresion().getIdDuplicado() == 1) {
+            this.vista.jchkDuplicado.setSelected(true);
+        } else {
+            this.vista.jchkDuplicado.setSelected(false);
+        }
+        if (modelo.getPreferenciasImpresion().getIdTriplicado() == 1) {
+            this.vista.jchkTriplicado.setSelected(true);
+        } else {
+            this.vista.jchkTriplicado.setSelected(false);
+        }
+        if (modelo.getPreferenciasImpresion().getImprimirMoneda() == 1) {
+            this.vista.jchkMoneda.setSelected(true);
+        } else {
+            this.vista.jchkMoneda.setSelected(false);
+        }
     }
 
     private void agregarCampo() {
@@ -113,6 +143,84 @@ public class C_configuracion extends MouseAdapter implements ActionListener, Key
         }
     }
 
+    private void guardarPreferencia() {
+        M_preferenciasImpresion pi = new M_preferenciasImpresion();
+        Integer distancia;
+        if (this.vista.jtfDistanciaEntreCopias.getText().isEmpty()) {
+            javax.swing.JOptionPane.showMessageDialog(this.vista, "Verifique en uno de los campos el parametro:"
+                    + "Asegurese de colocar un numero valido\n"
+                    + "en el campo Distancia entre copias.",
+                    "Parametros incorrectos",
+                    javax.swing.JOptionPane.OK_OPTION);
+            this.vista.jtfDistanciaEntreCopias.setText("0");
+            this.vista.jtfDistanciaEntreCopias.requestFocusInWindow();
+            return;
+        }
+        try {
+            String cantidad = this.vista.jtfDistanciaEntreCopias.getText();
+            distancia = Integer.valueOf(cantidad);
+        } catch (Exception e) {
+            javax.swing.JOptionPane.showMessageDialog(this.vista, "Verifique en uno de los campos el parametro:"
+                    + e.getMessage().substring(17) + "\n"
+                    + "Asegurese de colocar un numero valido\n"
+                    + "en el campo Distancia entre copias.",
+                    "Parametros incorrectos",
+                    javax.swing.JOptionPane.OK_OPTION);
+            this.vista.jtfDistanciaEntreCopias.setText("0");
+            this.vista.jtfDistanciaEntreCopias.requestFocusInWindow();
+            return;
+        }
+        if (distancia > 10000) {
+            javax.swing.JOptionPane.showMessageDialog(this.vista, "Verifique en uno de los campos el parametro:"
+                    + "Asegurese de colocar un numero valido menos a 10.000\n"
+                    + "en el campo Distancia entre copias.",
+                    "Parametros incorrectos",
+                    javax.swing.JOptionPane.OK_OPTION);
+            this.vista.jtfDistanciaEntreCopias.setText("0");
+            this.vista.jtfDistanciaEntreCopias.requestFocusInWindow();
+            return;
+        }
+        String tipoLetra;
+        if (this.vista.jtfTipoLetra.getText().isEmpty()) {
+            javax.swing.JOptionPane.showMessageDialog(this.vista,
+                    "El campo nombre esta vacio",
+                    "Parametros incorrectos",
+                    javax.swing.JOptionPane.OK_OPTION);
+            return;
+        } else {
+            if (this.vista.jtfTipoLetra.getText().length() > 30) {
+                javax.swing.JOptionPane.showMessageDialog(this.vista,
+                        "El campo tipo letra sobrepasa el limite permitido(30) de caracteres",
+                        "Parametros incorrectos",
+                        javax.swing.JOptionPane.OK_OPTION);
+                return;
+            } else {
+                tipoLetra = this.vista.jtfTipoLetra.getText();
+            }
+        }
+        pi.setDistanceBetweenCopies(distancia);
+        pi.setDivisa(new Divisa(1, "Guaraní/es"));
+        if (this.vista.jchkDuplicado.isSelected()) {
+            pi.setIdDuplicado(1);
+        } else {
+            pi.setIdDuplicado(2);
+        }
+        if (this.vista.jchkTriplicado.isSelected()) {
+            pi.setIdTriplicado(1);
+        } else {
+            pi.setIdTriplicado(2);
+        }
+        if (this.vista.jchkMoneda.isSelected()) {
+            pi.setImprimirMoneda(1);
+        } else {
+            pi.setImprimirMoneda(2);
+        }
+        pi.setLetterFont(tipoLetra);
+        pi.setMaxProducts(this.vista.jcbCantProd.getSelectedIndex() + 1);
+        pi.setLetterSize(this.vista.jcbTamañoLetra.getSelectedIndex() + 1);
+        modelo.guardarPreferencias(pi);
+    }
+
     private void imprimirPaginaPrueba() {
         Impresora.imprimirPaginaPrueba();
     }
@@ -131,6 +239,8 @@ public class C_configuracion extends MouseAdapter implements ActionListener, Key
             imprimirPaginaPrueba();
         } else if (e.getSource() == this.vista.jbOcultarMostrarCampo) {
             ocultarMostrarCampo();
+        } else if (e.getSource() == this.vista.jbGuardar) {
+            guardarPreferencia();
         }
     }
 

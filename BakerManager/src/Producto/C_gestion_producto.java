@@ -107,7 +107,7 @@ public class C_gestion_producto implements ActionListener, KeyListener, MouseLis
             if (this.vista.jbModificar.getName().equals(acceso.getItemDescripcion())) {
                 this.vista.jbModificar.addActionListener(this);
                 this.vista.jbAsigProdProv.addActionListener(this);
-                this.vista.jbModificar.setEnabled(true);
+                //this.vista.jbModificar.setEnabled(true);
             }
             if (this.vista.jtfBuscar.getName().equals(acceso.getItemDescripcion())) {
                 //this.vista.jtfBuscar.addKeyListener(this);

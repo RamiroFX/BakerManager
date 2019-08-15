@@ -25,6 +25,47 @@ public class DB_Producto {
     private static PreparedStatement pst = null;
     private static ResultSet rs = null;
 
+    public static int obtenerUltimoIdProducto() {
+        String Query = "SELECT id_producto FROM producto WHERE id_producto IS NOT NULL  ORDER BY id_producto DESC LIMIT 1;";
+        long idProducto = 0;
+        try {
+            DB_manager.getConection().setAutoCommit(false);
+            pst = DB_manager.getConection().prepareStatement(Query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            rs = pst.executeQuery();
+            while (rs.next()) {
+                idProducto = rs.getInt(1);
+            }
+            pst.close();
+            rs.close();
+            DB_manager.establecerTransaccion();
+        } catch (SQLException ex) {
+            System.out.println(ex.getNextException());
+            if (DB_manager.getConection() != null) {
+                try {
+                    DB_manager.getConection().rollback();
+                } catch (SQLException ex1) {
+                    Logger lgr = Logger.getLogger(DB_Ingreso.class.getName());
+                    lgr.log(Level.WARNING, ex1.getMessage(), ex1);
+                }
+            }
+            Logger lgr = Logger.getLogger(DB_Ingreso.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        } finally {
+            try {
+                if (pst != null) {
+                    pst.close();
+                }
+                if (rs != null) {
+                    rs.close();
+                }
+            } catch (SQLException ex) {
+                Logger lgr = Logger.getLogger(DB_Ingreso.class.getName());
+                lgr.log(Level.WARNING, ex.getMessage(), ex);
+            }
+        }
+        return (int) idProducto;
+    }
+    
     public static ResultSetTableModel consultarProducto(String prodDescripcion) {
         ResultSetTableModel rstm = null;
         try {

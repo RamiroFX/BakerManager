@@ -5,9 +5,11 @@
  */
 package Configuracion;
 
+import DB.DB_Preferencia;
 import DB.DB_manager;
 import DB.ResultSetTableModel;
 import Entities.M_campoImpresion;
+import Entities.M_preferenciasImpresion;
 import ModeloTabla.ImpresionTableModel;
 import Utilities.MyConstants;
 import java.util.ArrayList;
@@ -20,9 +22,10 @@ import javax.swing.JOptionPane;
 public class M_configuracion {
 
     private static final String ERROR_MESSAGE_NAME_ALREADY_EXIST = "El parametro ya existe", ERROR_TITLE = "Atención";
-
+    private final int MAX_PRODUCT = 20, MAX_LETTER_SIZE = 30;
     private ImpresionTableModel impresionFacturaTM;
     private boolean isVisible;
+    private M_preferenciasImpresion preferenciasImpresion;
 
     public M_configuracion() {
         impresionFacturaTM = new ImpresionTableModel();
@@ -31,6 +34,7 @@ public class M_configuracion {
     }
 
     private void inicializarDatos() {
+        preferenciasImpresion = DB_Preferencia.obtenerPreferenciaImpresion();
         ArrayList<M_campoImpresion> campoImpresionLista = DB_manager.obtenerCampoImpresion(2, MyConstants.TODOS);
         impresionFacturaTM.setCampoImpresionList(campoImpresionLista);
     }
@@ -114,4 +118,21 @@ public class M_configuracion {
     public void setIsVisible(boolean isVisible) {
         this.isVisible = isVisible;
     }
+
+    public int getMaxProducts() {
+        return MAX_PRODUCT;
+    }
+
+    public int getMaxLetterSize() {
+        return MAX_LETTER_SIZE;
+    }
+
+    public void guardarPreferencias(M_preferenciasImpresion prefImp) {
+        DB_Preferencia.modificarPreferenciaImpresion(prefImp);
+    }
+
+    public M_preferenciasImpresion getPreferenciasImpresion() {
+        return preferenciasImpresion;
+    }
+
 }

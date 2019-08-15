@@ -89,4 +89,8 @@ class M_crear_producto {
         }
         return false;
     }
+
+    public int obtenerUltimoIdProducto() {
+        return DB_Producto.obtenerUltimoIdProducto();
+    }
 }

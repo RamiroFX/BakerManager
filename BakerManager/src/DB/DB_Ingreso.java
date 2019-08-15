@@ -297,14 +297,20 @@ public class DB_Ingreso {
 
     public static M_facturaCabecera obtenerIngresoCabeceraCompleto(Integer idIngresoCabecera) {
         //PENDIENTE
-        M_facturaCabecera ingreso_cabecera = null;
-        String categoria = "(SELECT CLCA.DESCRIPCION FROM CLIENTE_CATEGORIA CLCA WHERE CLCA.ID_CLIENTE_CATEGORIA = CLIE.ID_CATEGORIA) \"CATEGORIA\", ";
-        String tipo = "(SELECT CLTI.DESCRIPCION FROM CLIENTE_TIPO CLTI WHERE CLTI.ID_CLIENTE_TIPO = CLIE.ID_TIPO) \"TIPO\" ";
-        String query = "SELECT FC.ID_FACTURA_CABECERA, "
-                + "FC.ID_FUNCIONARIO, "
-                + "C.ID_CLIENTE, C.NOMBRE, C.ENTIDAD, C.RUC, C.RUC_IDENTIFICADOR, C.DIRECCION, C.EMAIL, C.PAG_WEB, C.ID_TIPO, C.ID_CATEGORIA, C.OBSERVACION, "
-                + "FC.TIEMPO, "
-                + "FC.ID_COND_VENTA "
+        M_facturaCabecera fc = null;
+        String q_cliente = "C.ID_CLIENTE, C.NOMBRE, C.ENTIDAD, C.RUC, C.RUC_IDENTIFICADOR, C.DIRECCION, C.EMAIL, C.PAG_WEB, C.OBSERVACION, ";
+        String q_tipo = "(SELECT CLTI.DESCRIPCION FROM CLIENTE_TIPO CLTI WHERE CLTI.ID_CLIENTE_TIPO = C.ID_TIPO) \"TIPO\", ";
+        String q_categoria = "(SELECT CLCA.DESCRIPCION FROM CLIENTE_CATEGORIA CLCA WHERE CLCA.ID_CLIENTE_CATEGORIA = C.ID_CATEGORIA) \"CATEGORIA\", ";
+        String query = "SELECT "
+                + q_cliente
+                + q_tipo
+                + q_categoria
+                + "FC.ID_FACTURA_CABECERA, "//12
+                + "FC.ID_FUNCIONARIO, "//13
+                + "FC.ID_CLIENTE, "//14
+                + "FC.TIEMPO, "//15
+                + "FC.ID_COND_VENTA, "//16
+                + "FC.NRO_FACTURA "//17
                 + "FROM FACTURA_CABECERA FC, CLIENTE C "
                 + "WHERE ID_FACTURA_CABECERA = " + idIngresoCabecera;
         try {
@@ -312,21 +318,25 @@ public class DB_Ingreso {
             rs = pst.executeQuery();
             while (rs.next()) {
                 M_cliente cliente = new M_cliente();
-                cliente.setIdCliente(rs.getInt(3));
-                cliente.setNombre(rs.getString(4));
-                cliente.setEntidad(rs.getString(5));
-                cliente.setRuc(rs.getString(5));
+                cliente.setIdCliente(rs.getInt(1));
+                cliente.setNombre(rs.getString(2));
+                cliente.setEntidad(rs.getString(3));
+                cliente.setRuc(rs.getString(4));
                 cliente.setRucId(rs.getString(5));
-                cliente.setDireccion(rs.getString(5));
-                cliente.setEmail(rs.getString(5));
-                cliente.setPaginaWeb(rs.getString(5));
-                cliente.setObservacion(rs.getString(5));
-                ingreso_cabecera = new M_facturaCabecera();
-                ingreso_cabecera.setIdFacturaCabecera(rs.getInt("ID_FACTURA_CABECERA"));
-                ingreso_cabecera.setIdCliente(rs.getInt("ID_CLIENTE"));
-                ingreso_cabecera.setIdCondVenta(rs.getInt("ID_COND_VENTA"));
-                ingreso_cabecera.setIdFuncionario(rs.getInt("ID_FUNCIONARIO"));
-                ingreso_cabecera.setTiempo(rs.getTimestamp("TIEMPO"));
+                cliente.setDireccion(rs.getString(6));
+                cliente.setEmail(rs.getString(7));
+                cliente.setPaginaWeb(rs.getString(8));
+                cliente.setObservacion(rs.getString(9));
+                cliente.setTipo(rs.getString(10));
+                cliente.setCategoria(rs.getString(11));
+                fc = new M_facturaCabecera();
+                fc.setIdFacturaCabecera(rs.getInt(12));
+                fc.setIdFuncionario(rs.getInt(13));
+                fc.setIdCliente(rs.getInt(14));
+                fc.setTiempo(rs.getTimestamp(15));
+                fc.setIdCondVenta(rs.getInt(16));
+                fc.setNroFactura(rs.getInt(17));
+                fc.setCliente(cliente);
             }
         } catch (SQLException ex) {
             Logger lgr = Logger.getLogger(DB_Ingreso.class.getName());
@@ -344,7 +354,7 @@ public class DB_Ingreso {
                 lgr.log(Level.WARNING, ex.getMessage(), ex);
             }
         }
-        return ingreso_cabecera;
+        return fc;
     }
 
     public static ResultSetTableModel consultarIngresoDetalleAgrupado(Timestamp inicio, Timestamp fin, M_cliente cliente) {
@@ -938,7 +948,16 @@ public class DB_Ingreso {
 
     public static ArrayList<M_facturaDetalle> obtenerVentaDetalles(Integer idFacturaCabecera) {
         ArrayList<M_facturaDetalle> detalles = null;
-        String query = "SELECT ID_FACTURA_DETALLE, ID_FACTURA_CABECERA, ID_PRODUCTO,(SELECT P.DESCRIPCION FROM PRODUCTO P WHERE P.ID_PRODUCTO = FD.ID_PRODUCTO)\"PRODUCTO\", CANTIDAD, PRECIO, DESCUENTO, OBSERVACION FROM FACTURA_DETALLE FD WHERE FD.ID_FACTURA_CABECERA = " + idFacturaCabecera;
+        String query = "SELECT ID_FACTURA_DETALLE, "
+                + "ID_FACTURA_CABECERA, ID_PRODUCTO,"
+                + "(SELECT P.DESCRIPCION FROM PRODUCTO P WHERE P.ID_PRODUCTO = FD.ID_PRODUCTO)\"PRODUCTO\", "
+                + "(SELECT P.ID_IMPUESTO FROM PRODUCTO P WHERE P.ID_PRODUCTO = FD.ID_PRODUCTO)\"ID_IMPUESTO\", "
+                + "CANTIDAD, "
+                + "PRECIO, "
+                + "DESCUENTO, "
+                + "OBSERVACION "
+                + "FROM FACTURA_DETALLE FD "
+                + "WHERE FD.ID_FACTURA_CABECERA = " + idFacturaCabecera;
         try {
             st = DB_manager.getConection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             rs = st.executeQuery(query);
@@ -954,6 +973,7 @@ public class DB_Ingreso {
                 M_producto producto = new M_producto();
                 producto.setId(rs.getInt("ID_PRODUCTO"));
                 producto.setDescripcion(rs.getString("PRODUCTO"));
+                producto.setIdImpuesto(rs.getInt("ID_IMPUESTO"));
                 detalle.setProducto(producto);
                 detalles.add(detalle);
             }

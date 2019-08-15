@@ -49,7 +49,7 @@ public class C_crear_producto implements ActionListener, KeyListener {
     }
 
     private void inicializarVista() {
-        this.vista.jtfCodigo.setText("");
+        this.vista.jtfCodigo.setText(this.modelo.obtenerUltimoIdProducto() + 1 + "");
         Vector impuesto = modelo.obtenerImpuesto();
         for (int i = 0; i < impuesto.size(); i++) {
             this.vista.jcbImpuesto.addItem(impuesto.get(i));

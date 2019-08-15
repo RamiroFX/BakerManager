@@ -204,7 +204,7 @@ public class V_gestion_producto extends JInternalFrame {
         jpBot.add(jbAgregar);
         jpBot.add(jbParametros);
         jpBot.add(jbModificar);
-        jpBot.add(jbAsigProdProv);
+        //jpBot.add(jbAsigProdProv);
         jpBot.add(jbExportar);
         jpBot.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED), "Opciones"));
         //jpBot.add(jbEliminar);
