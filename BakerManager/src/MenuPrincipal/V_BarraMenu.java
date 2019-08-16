@@ -50,6 +50,7 @@ public class V_BarraMenu extends JMenuBar{
             jmHerramientas = new JMenu("Herramientas");
             jmiPersonalizar = new JMenuItem("Personalizar");
             jmiConfigImpresion = new JMenuItem("Config. impresion");
+            jmiConfigImpresion.setEnabled(false);
             getjmHerramientas().add(jmiPersonalizar);
             getjmHerramientas().add(jmiConfigImpresion);
         }
