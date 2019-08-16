@@ -52,6 +52,7 @@ import javax.print.PrintService;
 import javax.print.PrintServiceLookup;
 import javax.print.SimpleDoc;
 import javax.swing.JOptionPane;
+import org.bolivia.qulqi.Qulqi;
 
 /**
  *
@@ -59,7 +60,7 @@ import javax.swing.JOptionPane;
  */
 public class Impresora {
 
-    public static M_preferenciasImpresion PREF_PRINT;
+    public static M_preferenciasImpresion PREF_PRINT = DB_Preferencia.obtenerPreferenciaImpresion();
     private final static Font FUENTE_LETRA = new Font("Arial", Font.PLAIN, 8);
     private final static SimpleDateFormat sdfs = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
     private final static SimpleDateFormat SDFS_DATE_ONLY = new SimpleDateFormat("dd/MM/yyyy");
@@ -84,12 +85,12 @@ public class Impresora {
         } catch (SQLException ex) {
             Logger.getLogger(Impresora.class.getName()).log(Level.SEVERE, null, ex);
         }
-        PREF_PRINT = DB_Preferencia.obtenerPreferenciaImpresion();
+        //PREF_PRINT = DB_Preferencia.obtenerPreferenciaImpresion();
         System.err.println("PREF_PRINT: " + PREF_PRINT);
         //M_pedido pedido = DB_Pedido.obtenerPedido(1552);
         //ArrayList<M_pedidoDetalle> pedidoDetalle = DB_Pedido.obtenerPedidoDetalles(1);
-        M_facturaCabecera facturaCabecera = DB_Ingreso.obtenerIngresoCabeceraCompleto(22);
-        ArrayList<M_facturaDetalle> facturaDetalle = DB_Ingreso.obtenerVentaDetalles(22);
+        M_facturaCabecera facturaCabecera = DB_Ingreso.obtenerIngresoCabeceraCompleto(23);
+        ArrayList<M_facturaDetalle> facturaDetalle = DB_Ingreso.obtenerVentaDetalles(23);
         Impresora.imprimirVentaFactura(DatosUsuario.getRol_usuario(), facturaCabecera, facturaDetalle);
         //Impresora.imprimirPedido(DatosUsuario.getRol_usuario(), pedido, pedidoDetalle);
         //Impresora.imprimirGenerico(TICKET_CABECERA + TICKET_PIE);
@@ -152,14 +153,14 @@ public class Impresora {
     public static void imprimirPaginaPrueba() {
         List<M_campoImpresion> textoAImprimir = DB_manager.obtenerCampoImpresion(2, MyConstants.ACTIVO);
         PrinterJob job = PrinterJob.getPrinterJob();
-        Paper p = new Paper();
-        int width = 2100;
-        int height = 2700;
-        p.setSize(width, height);
-        p.setImageableArea(0.0, 0.0, width, height);
-        PageFormat pf = new PageFormat();
-        pf.setPaper(p);
-        job.setPrintable(new MyPrintable(textoAImprimir), pf);
+//        Paper p = new Paper();
+//        int width = 595;
+//        int height = 842;
+//        p.setSize(width, height);
+//        p.setImageableArea(0.0, 0.0, width, height);
+//        PageFormat pf = new PageFormat();
+//        pf.setPaper(p);
+        job.setPrintable(new MyPrintable(textoAImprimir));
         PrintService[] services = PrintServiceLookup.lookupPrintServices(null, null);
         for (int i = 0; i < services.length; i++) {
             if (services[i].getName().equals("CutePDF")) {
@@ -404,7 +405,7 @@ public class Impresora {
                                 g.drawString("X", object.getX().intValue(), object.getY().intValue());
                                 if (PREF_PRINT.getIdDuplicado() == 1) {
                                     int duplicadoDist = object.getY().intValue() + PREF_PRINT.getDistanceBetweenCopies();
-                                    g.drawString("X", duplicadoDist, object.getY().intValue());
+                                    g.drawString("X", object.getX().intValue(), duplicadoDist);
                                 }
                                 if (PREF_PRINT.getIdTriplicado() == 1) {
                                     int triplicadoDist = object.getY().intValue() + PREF_PRINT.getDistanceBetweenCopies() + PREF_PRINT.getDistanceBetweenCopies();
@@ -417,11 +418,11 @@ public class Impresora {
                                 g.drawString("X", object.getX().intValue(), object.getY().intValue());
                                 if (PREF_PRINT.getIdDuplicado() == 1) {
                                     int duplicadoDist = object.getY().intValue() + PREF_PRINT.getDistanceBetweenCopies();
-                                    g.drawString("X", object.getY().intValue(), duplicadoDist);
+                                    g.drawString("X", object.getX().intValue(), duplicadoDist);
                                 }
                                 if (PREF_PRINT.getIdTriplicado() == 1) {
                                     int triplicadoDist = object.getY().intValue() + PREF_PRINT.getDistanceBetweenCopies() + PREF_PRINT.getDistanceBetweenCopies();
-                                    g.drawString("X", object.getY().intValue(), triplicadoDist);
+                                    g.drawString("X", object.getX().intValue(), triplicadoDist);
                                 }
                             }
                         }
@@ -429,22 +430,22 @@ public class Impresora {
                             g.drawString(facturaCabecera.getCliente().getEntidad(), object.getX().intValue(), object.getY().intValue());
                             if (PREF_PRINT.getIdDuplicado() == 1) {
                                 int duplicadoDist = object.getY().intValue() + PREF_PRINT.getDistanceBetweenCopies();
-                                g.drawString(facturaCabecera.getCliente().getEntidad(), object.getY().intValue(), duplicadoDist);
+                                g.drawString(facturaCabecera.getCliente().getEntidad(), object.getX().intValue(), duplicadoDist);
                             }
                             if (PREF_PRINT.getIdTriplicado() == 1) {
                                 int triplicadoDist = object.getY().intValue() + PREF_PRINT.getDistanceBetweenCopies() + PREF_PRINT.getDistanceBetweenCopies();
-                                g.drawString(facturaCabecera.getCliente().getEntidad(), object.getY().intValue(), triplicadoDist);
+                                g.drawString(facturaCabecera.getCliente().getEntidad(), object.getX().intValue(), triplicadoDist);
                             }
                         }
                         if (object.getCampo().equals(MyConstants.RUC)) {
                             g.drawString(ruc, object.getX().intValue(), object.getY().intValue());
                             if (PREF_PRINT.getIdDuplicado() == 1) {
                                 int duplicadoDist = object.getY().intValue() + PREF_PRINT.getDistanceBetweenCopies();
-                                g.drawString(ruc, object.getY().intValue(), duplicadoDist);
+                                g.drawString(ruc, object.getX().intValue(), duplicadoDist);
                             }
                             if (PREF_PRINT.getIdTriplicado() == 1) {
                                 int triplicadoDist = object.getY().intValue() + PREF_PRINT.getDistanceBetweenCopies() + PREF_PRINT.getDistanceBetweenCopies();
-                                g.drawString(ruc, object.getY().intValue(), triplicadoDist);
+                                g.drawString(ruc, object.getX().intValue(), triplicadoDist);
                             }
                         }
                         if (object.getCampo().equals(MyConstants.DIR)) {
@@ -455,11 +456,11 @@ public class Impresora {
                             g.drawString(dir, object.getX().intValue(), object.getY().intValue());
                             if (PREF_PRINT.getIdDuplicado() == 1) {
                                 int duplicadoDist = object.getY().intValue() + PREF_PRINT.getDistanceBetweenCopies();
-                                g.drawString(dir, object.getY().intValue(), duplicadoDist);
+                                g.drawString(dir, object.getX().intValue(), duplicadoDist);
                             }
                             if (PREF_PRINT.getIdTriplicado() == 1) {
                                 int triplicadoDist = object.getY().intValue() + PREF_PRINT.getDistanceBetweenCopies() + PREF_PRINT.getDistanceBetweenCopies();
-                                g.drawString(dir, object.getY().intValue(), triplicadoDist);
+                                g.drawString(dir, object.getX().intValue(), triplicadoDist);
                             }
                         }
                         if (object.getCampo().equals(MyConstants.REMISION)) {
@@ -470,86 +471,91 @@ public class Impresora {
                             g.drawString(remision, object.getX().intValue(), object.getY().intValue());
                             if (PREF_PRINT.getIdDuplicado() == 1) {
                                 int duplicadoDist = object.getY().intValue() + PREF_PRINT.getDistanceBetweenCopies();
-                                g.drawString(remision, object.getY().intValue(), duplicadoDist);
+                                g.drawString(remision, object.getX().intValue(), duplicadoDist);
                             }
                             if (PREF_PRINT.getIdTriplicado() == 1) {
                                 int triplicadoDist = object.getY().intValue() + PREF_PRINT.getDistanceBetweenCopies() + PREF_PRINT.getDistanceBetweenCopies();
-                                g.drawString(remision, object.getY().intValue(), triplicadoDist);
+                                g.drawString(remision, object.getX().intValue(), triplicadoDist);
                             }
                         }
                         if (object.getCampo().equals(MyConstants.DETAIL_CANT)) {
                             int posY = object.getY().intValue();
+                            int posX = object.getX().intValue();
                             for (M_facturaDetalle fd : facturaDetalle) {
-                                g.drawString(fd.getCantidad() + "", object.getX().intValue(), posY);
+                                g.drawString(fd.getCantidad() + "", posX, posY);
                                 if (PREF_PRINT.getIdDuplicado() == 1) {
-                                    int duplicadoDist = object.getY().intValue() + PREF_PRINT.getDistanceBetweenCopies();
-                                    g.drawString(fd.getCantidad() + "", object.getY().intValue(), posY + duplicadoDist);
+                                    int duplicadoDist = posY + PREF_PRINT.getDistanceBetweenCopies();
+                                    g.drawString(fd.getCantidad() + "", posX, duplicadoDist);
                                 }
                                 if (PREF_PRINT.getIdTriplicado() == 1) {
-                                    int triplicadoDist = object.getY().intValue() + PREF_PRINT.getDistanceBetweenCopies() + PREF_PRINT.getDistanceBetweenCopies();
-                                    g.drawString(fd.getCantidad() + "", object.getY().intValue(), posY + triplicadoDist);
+                                    int triplicadoDist = posY + PREF_PRINT.getDistanceBetweenCopies() + PREF_PRINT.getDistanceBetweenCopies();
+                                    g.drawString(fd.getCantidad() + "", posX, triplicadoDist);
                                 }
                                 posY = posY + espaciadorY;
                             }
                         }
                         if (object.getCampo().equals(MyConstants.DETAIL_COD)) {
                             int posY = object.getY().intValue();
+                            int posX = object.getX().intValue();
                             for (M_facturaDetalle fd : facturaDetalle) {
-                                g.drawString(fd.getProducto().getCodBarra() + "", object.getX().intValue(), posY);
+                                g.drawString(fd.getProducto().getCodBarra() + "", posX, posY);
                                 if (PREF_PRINT.getIdDuplicado() == 1) {
-                                    int duplicadoDist = object.getY().intValue() + PREF_PRINT.getDistanceBetweenCopies();
-                                    g.drawString(fd.getProducto().getCodBarra() + "", object.getY().intValue(), posY + duplicadoDist);
+                                    int duplicadoDist = posY + PREF_PRINT.getDistanceBetweenCopies();
+                                    g.drawString(fd.getProducto().getCodBarra() + "", posX, duplicadoDist);
                                 }
                                 if (PREF_PRINT.getIdTriplicado() == 1) {
-                                    int triplicadoDist = object.getY().intValue() + PREF_PRINT.getDistanceBetweenCopies() + PREF_PRINT.getDistanceBetweenCopies();
-                                    g.drawString(fd.getProducto().getCodBarra() + "", object.getY().intValue(), posY + triplicadoDist);
+                                    int triplicadoDist = posY + PREF_PRINT.getDistanceBetweenCopies() + PREF_PRINT.getDistanceBetweenCopies();
+                                    g.drawString(fd.getProducto().getCodBarra() + "", posX, triplicadoDist);
                                 }
                                 posY = posY + espaciadorY;
                             }
                         }
                         if (object.getCampo().equals(MyConstants.DETAIL_PROD)) {
                             int posY = object.getY().intValue();
+                            int posX = object.getX().intValue();
                             for (M_facturaDetalle fd : facturaDetalle) {
-                                g.drawString(fd.getProducto().getDescripcion() + "", object.getX().intValue(), posY);
+                                g.drawString(fd.getProducto().getDescripcion() + "", posX, posY);
                                 if (PREF_PRINT.getIdDuplicado() == 1) {
-                                    int duplicadoDist = object.getY().intValue() + PREF_PRINT.getDistanceBetweenCopies();
-                                    g.drawString(fd.getProducto().getDescripcion() + "", object.getY().intValue(), posY + duplicadoDist);
+                                    int duplicadoDist = posY + PREF_PRINT.getDistanceBetweenCopies();
+                                    g.drawString(fd.getProducto().getDescripcion() + "", posX, duplicadoDist);
                                 }
                                 if (PREF_PRINT.getIdTriplicado() == 1) {
-                                    int triplicadoDist = object.getY().intValue() + PREF_PRINT.getDistanceBetweenCopies() + PREF_PRINT.getDistanceBetweenCopies();
-                                    g.drawString(fd.getProducto().getDescripcion() + "", object.getY().intValue(), posY + triplicadoDist);
+                                    int triplicadoDist = posY + PREF_PRINT.getDistanceBetweenCopies() + PREF_PRINT.getDistanceBetweenCopies();
+                                    g.drawString(fd.getProducto().getDescripcion() + "", posX, triplicadoDist);
                                 }
                                 posY = posY + espaciadorY;
                             }
                         }
                         if (object.getCampo().equals(MyConstants.DETAIL_PRECIO)) {
                             int posY = object.getY().intValue();
+                            int posX = object.getX().intValue();
                             for (M_facturaDetalle fd : facturaDetalle) {
-                                g.drawString(fd.getPrecio() + "", object.getX().intValue(), posY);
+                                g.drawString(fd.getPrecio() + "", posX, posY);
                                 if (PREF_PRINT.getIdDuplicado() == 1) {
-                                    int duplicadoDist = object.getY().intValue() + PREF_PRINT.getDistanceBetweenCopies();
-                                    g.drawString(fd.getPrecio() + "", object.getY().intValue(), posY + duplicadoDist);
+                                    int duplicadoDist = posY + PREF_PRINT.getDistanceBetweenCopies();
+                                    g.drawString(fd.getPrecio() + "", posX, duplicadoDist);
                                 }
                                 if (PREF_PRINT.getIdTriplicado() == 1) {
-                                    int triplicadoDist = object.getY().intValue() + PREF_PRINT.getDistanceBetweenCopies() + PREF_PRINT.getDistanceBetweenCopies();
-                                    g.drawString(fd.getPrecio() + "", object.getY().intValue(), posY + triplicadoDist);
+                                    int triplicadoDist = posY + PREF_PRINT.getDistanceBetweenCopies() + PREF_PRINT.getDistanceBetweenCopies();
+                                    g.drawString(fd.getPrecio() + "", posX, triplicadoDist);
                                 }
                                 posY = posY + espaciadorY;
                             }
                         }
                         if (object.getCampo().equals(MyConstants.DETAIL_EXENTA)) {
                             int posY = object.getY().intValue();
+                            int posX = object.getX().intValue();
                             for (M_facturaDetalle fd : facturaDetalle) {
                                 if (fd.getProducto().getIdImpuesto() == 1) {
                                     int subtotal = Math.round(Math.round(fd.getCantidad() * fd.getPrecio()));
-                                    g.drawString(subtotal + "", object.getX().intValue(), posY);
+                                    g.drawString(subtotal + "", posX, posY);
                                     if (PREF_PRINT.getIdDuplicado() == 1) {
-                                        int duplicadoDist = object.getY().intValue() + PREF_PRINT.getDistanceBetweenCopies();
-                                        g.drawString(subtotal + "", object.getY().intValue(), posY + duplicadoDist);
+                                        int duplicadoDist = posY + PREF_PRINT.getDistanceBetweenCopies();
+                                        g.drawString(subtotal + "", posX, duplicadoDist);
                                     }
                                     if (PREF_PRINT.getIdTriplicado() == 1) {
-                                        int triplicadoDist = object.getY().intValue() + PREF_PRINT.getDistanceBetweenCopies() + PREF_PRINT.getDistanceBetweenCopies();
-                                        g.drawString(subtotal + "", object.getY().intValue(), posY + triplicadoDist);
+                                        int triplicadoDist = posY + PREF_PRINT.getDistanceBetweenCopies() + PREF_PRINT.getDistanceBetweenCopies();
+                                        g.drawString(subtotal + "", posX, triplicadoDist);
                                     }
                                     exenta = exenta + subtotal;
                                 }
@@ -558,17 +564,18 @@ public class Impresora {
                         }
                         if (object.getCampo().equals(MyConstants.DETAIL_IVA5)) {
                             int posY = object.getY().intValue();
+                            int posX = object.getX().intValue();
                             for (M_facturaDetalle fd : facturaDetalle) {
                                 if (fd.getProducto().getIdImpuesto() == 2) {
                                     int subtotal = Math.round(Math.round(fd.getCantidad() * fd.getPrecio()));
-                                    g.drawString(subtotal + "", object.getX().intValue(), posY);
+                                    g.drawString(subtotal + "", posX, posY);
                                     if (PREF_PRINT.getIdDuplicado() == 1) {
-                                        int duplicadoDist = object.getY().intValue() + PREF_PRINT.getDistanceBetweenCopies();
-                                        g.drawString(subtotal + "", object.getY().intValue(), posY + duplicadoDist);
+                                        int duplicadoDist = posY + PREF_PRINT.getDistanceBetweenCopies();
+                                        g.drawString(subtotal + "", posX, duplicadoDist);
                                     }
                                     if (PREF_PRINT.getIdTriplicado() == 1) {
-                                        int triplicadoDist = object.getY().intValue() + PREF_PRINT.getDistanceBetweenCopies() + PREF_PRINT.getDistanceBetweenCopies();
-                                        g.drawString(subtotal + "", object.getY().intValue(), posY + triplicadoDist);
+                                        int triplicadoDist = posY + PREF_PRINT.getDistanceBetweenCopies() + PREF_PRINT.getDistanceBetweenCopies();
+                                        g.drawString(subtotal + "", posX, triplicadoDist);
                                     }
                                     iva5 = iva5 + subtotal;
                                 }
@@ -577,17 +584,18 @@ public class Impresora {
                         }
                         if (object.getCampo().equals(MyConstants.DETAIL_IVA10)) {
                             int posY = object.getY().intValue();
+                            int posX = object.getX().intValue();
                             for (M_facturaDetalle fd : facturaDetalle) {
                                 if (fd.getProducto().getIdImpuesto() == 3) {
                                     int subtotal = Math.round(Math.round(fd.getCantidad() * fd.getPrecio()));
-                                    g.drawString(subtotal + "", object.getX().intValue(), posY);
+                                    g.drawString(subtotal + "", posX, posY);
                                     if (PREF_PRINT.getIdDuplicado() == 1) {
-                                        int duplicadoDist = object.getY().intValue() + PREF_PRINT.getDistanceBetweenCopies();
-                                        g.drawString(subtotal + "", object.getY().intValue(), posY + duplicadoDist);
+                                        int duplicadoDist = posY + PREF_PRINT.getDistanceBetweenCopies();
+                                        g.drawString(subtotal + "", posX, duplicadoDist);
                                     }
                                     if (PREF_PRINT.getIdTriplicado() == 1) {
-                                        int triplicadoDist = object.getY().intValue() + PREF_PRINT.getDistanceBetweenCopies() + PREF_PRINT.getDistanceBetweenCopies();
-                                        g.drawString(subtotal + "", object.getY().intValue(), posY + triplicadoDist);
+                                        int triplicadoDist = posY + PREF_PRINT.getDistanceBetweenCopies() + PREF_PRINT.getDistanceBetweenCopies();
+                                        g.drawString(subtotal + "", posX, triplicadoDist);
                                     }
                                     iva10 = iva10 + subtotal;
                                 }
@@ -595,113 +603,131 @@ public class Impresora {
                             }
                         }
                         if (object.getCampo().equals(MyConstants.SUB_TOTAL_EXENTA)) {
-                            g.drawString(exenta + "", object.getX().intValue(), object.getY().intValue());
+                            int posX = object.getX().intValue();
+                            int posY = object.getY().intValue();
+                            g.drawString(exenta + "", posX, posY);
                             if (PREF_PRINT.getIdDuplicado() == 1) {
-                                int duplicadoDist = object.getY().intValue() + PREF_PRINT.getDistanceBetweenCopies();
-                                g.drawString(exenta + "", object.getY().intValue(), duplicadoDist);
+                                int duplicadoDist = posY + PREF_PRINT.getDistanceBetweenCopies();
+                                g.drawString(exenta + "", posX, duplicadoDist);
                             }
                             if (PREF_PRINT.getIdTriplicado() == 1) {
-                                int triplicadoDist = object.getY().intValue() + PREF_PRINT.getDistanceBetweenCopies() + PREF_PRINT.getDistanceBetweenCopies();
-                                g.drawString(exenta + "", object.getY().intValue(), triplicadoDist);
+                                int triplicadoDist = posY + PREF_PRINT.getDistanceBetweenCopies() + PREF_PRINT.getDistanceBetweenCopies();
+                                g.drawString(exenta + "", posX, triplicadoDist);
                             }
                         }
                         if (object.getCampo().equals(MyConstants.SUB_TOTAL_IVA5)) {
-                            g.drawString(iva5 + "", object.getX().intValue(), object.getY().intValue());
+                            int posX = object.getX().intValue();
+                            int posY = object.getY().intValue();
+                            g.drawString(iva5 + "", posX, posY);
                             if (PREF_PRINT.getIdDuplicado() == 1) {
-                                int duplicadoDist = object.getY().intValue() + PREF_PRINT.getDistanceBetweenCopies();
-                                g.drawString(iva5 + "", object.getY().intValue(), duplicadoDist);
+                                int duplicadoDist = posY + PREF_PRINT.getDistanceBetweenCopies();
+                                g.drawString(iva5 + "", posX, duplicadoDist);
                             }
                             if (PREF_PRINT.getIdTriplicado() == 1) {
-                                int triplicadoDist = object.getY().intValue() + PREF_PRINT.getDistanceBetweenCopies() + PREF_PRINT.getDistanceBetweenCopies();
-                                g.drawString(iva5 + "", object.getY().intValue(), triplicadoDist);
+                                int triplicadoDist = posY + PREF_PRINT.getDistanceBetweenCopies() + PREF_PRINT.getDistanceBetweenCopies();
+                                g.drawString(iva5 + "", posX, triplicadoDist);
                             }
                         }
                         if (object.getCampo().equals(MyConstants.SUB_TOTAL_IVA10)) {
-                            g.drawString(iva10 + "", object.getX().intValue(), object.getY().intValue());
+                            int posX = object.getX().intValue();
+                            int posY = object.getY().intValue();
+                            g.drawString(iva10 + "", posX, posY);
                             if (PREF_PRINT.getIdDuplicado() == 1) {
-                                int duplicadoDist = object.getY().intValue() + PREF_PRINT.getDistanceBetweenCopies();
-                                g.drawString(iva10 + "", object.getY().intValue(), duplicadoDist);
+                                int duplicadoDist = posY + PREF_PRINT.getDistanceBetweenCopies();
+                                g.drawString(iva10 + "", posX, duplicadoDist);
                             }
                             if (PREF_PRINT.getIdTriplicado() == 1) {
-                                int triplicadoDist = object.getY().intValue() + PREF_PRINT.getDistanceBetweenCopies() + PREF_PRINT.getDistanceBetweenCopies();
-                                g.drawString(iva10 + "", object.getY().intValue(), triplicadoDist);
+                                int triplicadoDist = posY + PREF_PRINT.getDistanceBetweenCopies() + PREF_PRINT.getDistanceBetweenCopies();
+                                g.drawString(iva10 + "", posX, triplicadoDist);
                             }
                         }
                         if (object.getCampo().equals(MyConstants.TOTAL_LETRA)) {
+                            int posX = object.getX().intValue();
+                            int posY = object.getY().intValue();
                             //Calcular el total
                             int total_letra = 0;
                             for (M_facturaDetalle fd : facturaDetalle) {
                                 int subtotal = Math.round(Math.round(fd.getCantidad() * fd.getPrecio()));
                                 total_letra = total_letra + subtotal;
                             }
-                            String totalLetra = CombertirNumeroATexto.numberToText(total_letra);
-                            g.drawString(totalLetra + "", object.getX().intValue(), object.getY().intValue());
+                            Qulqi qulqi = new Qulqi();
+                            qulqi.setDecimalPartVisible(false);
+                            String totalLetra = qulqi.showMeTheMoney(total_letra + "");
+                            g.drawString(totalLetra + "", posX, posY);
                             if (PREF_PRINT.getIdDuplicado() == 1) {
-                                int duplicadoDist = object.getY().intValue() + PREF_PRINT.getDistanceBetweenCopies();
-                                g.drawString(totalLetra + "", object.getY().intValue(), duplicadoDist);
+                                int duplicadoDist = posY + PREF_PRINT.getDistanceBetweenCopies();
+                                g.drawString(totalLetra + "", posX, duplicadoDist);
                             }
                             if (PREF_PRINT.getIdTriplicado() == 1) {
-                                int triplicadoDist = object.getY().intValue() + PREF_PRINT.getDistanceBetweenCopies() + PREF_PRINT.getDistanceBetweenCopies();
-                                g.drawString(totalLetra + "", object.getY().intValue(), triplicadoDist);
+                                int triplicadoDist = posY + PREF_PRINT.getDistanceBetweenCopies() + PREF_PRINT.getDistanceBetweenCopies();
+                                g.drawString(totalLetra + "", posX, triplicadoDist);
                             }
                         }
                         if (object.getCampo().equals(MyConstants.TOTAL_NUMERO)) {
+                            int posX = object.getX().intValue();
+                            int posY = object.getY().intValue();
                             //Calcular el total
                             int total = 0;
                             for (M_facturaDetalle fd : facturaDetalle) {
                                 int subtotal = Math.round(Math.round(fd.getCantidad() * fd.getPrecio()));
                                 total = total + subtotal;
                             }
-                            g.drawString(total + "", object.getX().intValue(), object.getY().intValue());
+                            g.drawString(total + "", posX, posY);
                             if (PREF_PRINT.getIdDuplicado() == 1) {
-                                int duplicadoDist = object.getY().intValue() + PREF_PRINT.getDistanceBetweenCopies();
-                                g.drawString(total + "", object.getY().intValue(), duplicadoDist);
+                                int duplicadoDist = posY + PREF_PRINT.getDistanceBetweenCopies();
+                                g.drawString(total + "", posX, duplicadoDist);
                             }
                             if (PREF_PRINT.getIdTriplicado() == 1) {
-                                int triplicadoDist = object.getY().intValue() + PREF_PRINT.getDistanceBetweenCopies() + PREF_PRINT.getDistanceBetweenCopies();
-                                g.drawString(total + "", object.getY().intValue(), triplicadoDist);
+                                int triplicadoDist = posY + PREF_PRINT.getDistanceBetweenCopies() + PREF_PRINT.getDistanceBetweenCopies();
+                                g.drawString(total + "", posX, triplicadoDist);
                             }
                         }
                         if (object.getCampo().equals(MyConstants.LIQUIDACION_IVA5)) {
+                            int posX = object.getX().intValue();
+                            int posY = object.getY().intValue();
                             //Calcular liquidacion de iva5 si es que hay productos con impuesto de 5%
                             if (iva5 > 0) {
                                 liquidacionIva5 = iva5 / 21;
                             }
-                            g.drawString(liquidacionIva5 + "", object.getX().intValue(), object.getY().intValue());
+                            g.drawString(liquidacionIva5 + "", posX, posY);
                             if (PREF_PRINT.getIdDuplicado() == 1) {
-                                int duplicadoDist = object.getY().intValue() + PREF_PRINT.getDistanceBetweenCopies();
-                                g.drawString(liquidacionIva5 + "", object.getY().intValue(), duplicadoDist);
+                                int duplicadoDist = posY + PREF_PRINT.getDistanceBetweenCopies();
+                                g.drawString(liquidacionIva5 + "", posX, duplicadoDist);
                             }
                             if (PREF_PRINT.getIdTriplicado() == 1) {
-                                int triplicadoDist = object.getY().intValue() + PREF_PRINT.getDistanceBetweenCopies() + PREF_PRINT.getDistanceBetweenCopies();
-                                g.drawString(liquidacionIva5 + "", object.getY().intValue(), triplicadoDist);
+                                int triplicadoDist = posY + PREF_PRINT.getDistanceBetweenCopies() + PREF_PRINT.getDistanceBetweenCopies();
+                                g.drawString(liquidacionIva5 + "", posX, triplicadoDist);
                             }
                         }
                         if (object.getCampo().equals(MyConstants.LIQUIDACION_IVA10)) {
+                            int posX = object.getX().intValue();
+                            int posY = object.getY().intValue();
                             //Calcular liquidacion de iva5 si es que hay productos con impuesto de 10%
                             if (iva10 > 0) {
                                 liquidacionIva10 = iva10 / 11;
                             }
-                            g.drawString(liquidacionIva10 + "", object.getX().intValue(), object.getY().intValue());
+                            g.drawString(liquidacionIva10 + "", posX, posY);
                             if (PREF_PRINT.getIdDuplicado() == 1) {
-                                int duplicadoDist = object.getY().intValue() + PREF_PRINT.getDistanceBetweenCopies();
-                                g.drawString(liquidacionIva10 + "", object.getY().intValue(), duplicadoDist);
+                                int duplicadoDist = posY + PREF_PRINT.getDistanceBetweenCopies();
+                                g.drawString(liquidacionIva10 + "", posX, duplicadoDist);
                             }
                             if (PREF_PRINT.getIdTriplicado() == 1) {
-                                int triplicadoDist = object.getY().intValue() + PREF_PRINT.getDistanceBetweenCopies() + PREF_PRINT.getDistanceBetweenCopies();
-                                g.drawString(liquidacionIva10 + "", object.getY().intValue(), triplicadoDist);
+                                int triplicadoDist = posY + PREF_PRINT.getDistanceBetweenCopies() + PREF_PRINT.getDistanceBetweenCopies();
+                                g.drawString(liquidacionIva10 + "", posX, triplicadoDist);
                             }
                         }
                         if (object.getCampo().equals(MyConstants.LIQUIDACION_TOTAL)) {
+                            int posX = object.getX().intValue();
+                            int posY = object.getY().intValue();
                             int liquidTotal = liquidacionIva5 + liquidacionIva10;
-                            g.drawString(liquidTotal + "", object.getX().intValue(), object.getY().intValue());
+                            g.drawString(liquidTotal + "", posX, posY);
                             if (PREF_PRINT.getIdDuplicado() == 1) {
-                                int duplicadoDist = object.getY().intValue() + PREF_PRINT.getDistanceBetweenCopies();
-                                g.drawString(liquidTotal + "", object.getY().intValue(), duplicadoDist);
+                                int duplicadoDist = posY + PREF_PRINT.getDistanceBetweenCopies();
+                                g.drawString(liquidTotal + "", posX, duplicadoDist);
                             }
                             if (PREF_PRINT.getIdTriplicado() == 1) {
-                                int triplicadoDist = object.getY().intValue() + PREF_PRINT.getDistanceBetweenCopies() + PREF_PRINT.getDistanceBetweenCopies();
-                                g.drawString(liquidTotal + "", object.getY().intValue(), triplicadoDist);
+                                int triplicadoDist = posY + PREF_PRINT.getDistanceBetweenCopies() + PREF_PRINT.getDistanceBetweenCopies();
+                                g.drawString(liquidTotal + "", posX, triplicadoDist);
                             }
                         }
                     }
@@ -730,7 +756,6 @@ public class Impresora {
                     //Desktop.getDesktop().print(null);//para imprimir un archivo ya existente  
                     try {
                         if (job != null) {
-                            System.err.println("IMPRIMIENDO");
                             job.setPrintService(services[i]);
                             job.print();
                             break;

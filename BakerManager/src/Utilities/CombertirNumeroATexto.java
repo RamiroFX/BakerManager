@@ -83,6 +83,7 @@ public class CombertirNumeroATexto {
                 s = millon(n);
                 break;
             default:
+                System.out.println("Utilities.CombertirNumeroATexto.numberToText(): default");
                 break;
         }
         return s;

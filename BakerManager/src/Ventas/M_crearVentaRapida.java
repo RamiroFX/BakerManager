@@ -7,10 +7,12 @@ package Ventas;
 import DB.DB_Cliente;
 import DB.DB_Egreso;
 import DB.DB_Ingreso;
+import DB.DB_Preferencia;
 import DB.DB_Producto;
 import DB.DB_manager;
 import Entities.M_facturaCabecera;
 import Entities.M_facturaDetalle;
+import Entities.M_preferenciasImpresion;
 import Entities.M_producto;
 import Entities.M_telefono;
 import MenuPrincipal.DatosUsuario;
@@ -19,7 +21,9 @@ import ModeloTabla.InterfaceFacturaDetalle;
 import Parametros.TipoOperacion;
 import Parametros.TipoVenta;
 import Utilities.Impresora;
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Vector;
 import javax.swing.JOptionPane;
 
@@ -40,6 +44,8 @@ public class M_crearVentaRapida {
     private M_telefono telefono;
     private FacturaDetalleTableModel dtm;
     private Integer tipoVenta;
+    private Integer maxProdCant;
+    private M_preferenciasImpresion pi;
 
     public M_crearVentaRapida(InterfaceFacturaDetalle interfaceFacturaDetalle) {
         this.cabecera = new M_facturaCabecera();
@@ -53,6 +59,8 @@ public class M_crearVentaRapida {
         }
         this.detalle = new M_facturaDetalle();
         dtm = new FacturaDetalleTableModel(interfaceFacturaDetalle);
+        pi = DB_Preferencia.obtenerPreferenciaImpresion();
+        maxProdCant = pi.getMaxProducts();
     }
 
     public M_facturaCabecera getCabecera() {
@@ -116,6 +124,8 @@ public class M_crearVentaRapida {
                 }
                 int nroTicket = DB_Ingreso.insertarIngreso(getCabecera(), (ArrayList<M_facturaDetalle>) getDtm().getFacturaDetalleList());
                 getCabecera().setIdFacturaCabecera(nroTicket);
+                Calendar c = Calendar.getInstance();
+                getCabecera().setTiempo(new Timestamp(c.getTimeInMillis()));
                 int opcion = JOptionPane.showConfirmDialog(null, DESEA_IMPRIMIR_EL_TICKET, ATENCION, JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
                 if (opcion == JOptionPane.YES_OPTION) {
                     if (tipoVenta == TipoVenta.TICKET) {
@@ -189,6 +199,13 @@ public class M_crearVentaRapida {
      */
     public void setTipoVenta(int tipoVenta) {
         this.tipoVenta = tipoVenta;
+    }
+
+    /**
+     * @return the maxProdCant
+     */
+    public Integer getMaxProdCant() {
+        return maxProdCant;
     }
 
 }
