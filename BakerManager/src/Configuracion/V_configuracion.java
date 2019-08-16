@@ -29,6 +29,7 @@ public class V_configuracion extends javax.swing.JDialog {
     public JTable jtTicket, jtFactura;
     //Variables de preferencia
     public JComboBox jcbTamañoLetra, jcbCantProd, jcbMoneda;
+    public JComboBox<String> jcbFormatoFecha;
     public JTextField jtfTipoLetra, jtfDistanciaEntreCopias;
     public JCheckBox jchkDuplicado, jchkTriplicado, jchkMoneda;
     public javax.swing.JButton jbGuardar;
@@ -39,7 +40,7 @@ public class V_configuracion extends javax.swing.JDialog {
         setTitle("Configuración de impresiones");
         setAlwaysOnTop(false);
         setName("configuracion_impresiones");
-        setPreferredSize(new java.awt.Dimension(800, 600));
+        setPreferredSize(new java.awt.Dimension(1024, 768));
         setResizable(false);
         initComponents();
     }
@@ -74,6 +75,7 @@ public class V_configuracion extends javax.swing.JDialog {
     }
 
     private void initPreferencePanel() {
+        jcbFormatoFecha = new JComboBox();
         jcbTamañoLetra = new JComboBox();
         jcbCantProd = new JComboBox();
         jcbMoneda = new JComboBox();
@@ -83,7 +85,9 @@ public class V_configuracion extends javax.swing.JDialog {
         jchkTriplicado = new JCheckBox("Triplicado");
         jchkMoneda = new JCheckBox("Impimir moneda");
         jbGuardar = new JButton("Guardar");
-        javax.swing.JPanel jpPrefAux = new javax.swing.JPanel(new java.awt.GridLayout(8, 2));
+        javax.swing.JPanel jpPrefAux = new javax.swing.JPanel(new java.awt.GridLayout(9, 2));
+        jpPrefAux.add(new JLabel("Formato de fecha", JLabel.CENTER));
+        jpPrefAux.add(jcbFormatoFecha);
         jpPrefAux.add(new JLabel("Tamaño de letra", JLabel.CENTER));
         jpPrefAux.add(jcbTamañoLetra);
         jpPrefAux.add(new JLabel("Tipo de letra", JLabel.CENTER));

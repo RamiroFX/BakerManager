@@ -26,11 +26,13 @@ public class M_configuracion {
     private ImpresionTableModel impresionFacturaTM;
     private boolean isVisible;
     private M_preferenciasImpresion preferenciasImpresion;
+    private String[] formatoFechas;
 
     public M_configuracion() {
         impresionFacturaTM = new ImpresionTableModel();
         inicializarDatos();
         isVisible = true;
+        formatoFechas = new String[]{"dd/MMMM/yy", "dd/MMMM/yyyy", "dd/MM/yyyy"};
     }
 
     private void inicializarDatos() {
@@ -125,6 +127,10 @@ public class M_configuracion {
 
     public int getMaxLetterSize() {
         return MAX_LETTER_SIZE;
+    }
+
+    public String[] getFormatoFechas() {
+        return formatoFechas;
     }
 
     public void guardarPreferencias(M_preferenciasImpresion prefImp) {

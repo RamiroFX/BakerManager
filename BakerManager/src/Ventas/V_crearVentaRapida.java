@@ -82,7 +82,7 @@ public class V_crearVentaRapida extends JDialog {
         jtfCliente.setEditable(false);
         jlNroFactura = new JLabel("Nro. Factura");
         jtfNroFactura = new JTextField(30);
-        jtfNroFactura.setEditable(false);
+        //jtfNroFactura.setEditable(false);
         jcbCondVenta = new JComboBox();
         jcbTipoVenta = new JComboBox();
         //jrbContado = new JRadioButton("Contado");

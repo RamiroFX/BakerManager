@@ -737,7 +737,7 @@ public class Impresora {
                 }
             }
         });
-        /*try {
+        try {
             if (job != null) {
                 job.print();
             } else {
@@ -745,9 +745,9 @@ public class Impresora {
             }
         } catch (PrinterException ex) {
             System.out.println(ex);
-        }*/
+        }
         //----------
-        PrintService[] services = PrintServiceLookup.lookupPrintServices(null, null); //nos da el array de los servicios de impresion
+        /*PrintService[] services = PrintServiceLookup.lookupPrintServices(null, null); //nos da el array de los servicios de impresion
         if (services.length > 0) {
             for (int i = 0; i < services.length; i++) {
                 System.err.println("Printer: " + services[i].getName());
@@ -771,7 +771,7 @@ public class Impresora {
                 }
             }
 
-        }
+        }*/
     }
 
     public static void imprimirMesa(M_mesa mesaCabecera, ArrayList<M_mesa_detalle> detalles) {

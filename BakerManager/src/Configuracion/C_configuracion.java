@@ -74,6 +74,9 @@ public class C_configuracion extends MouseAdapter implements ActionListener, Key
         this.vista.jbHabilitarDeshabilitarCampo.setEnabled(false);
         this.vista.jtFactura.setModel(modelo.getImpresionFacturaTM());
         //panel de preferencia
+        for (int i = 0; i < modelo.getFormatoFechas().length; i++) {
+            this.vista.jcbFormatoFecha.addItem(modelo.getFormatoFechas()[i]);
+        }
         for (int i = 1; i < modelo.getMaxProducts(); i++) {
             this.vista.jcbCantProd.addItem(i);
         }
@@ -85,6 +88,7 @@ public class C_configuracion extends MouseAdapter implements ActionListener, Key
         this.vista.jtfTipoLetra.setText(modelo.getPreferenciasImpresion().getLetterFont());
         this.vista.jcbCantProd.setSelectedItem(modelo.getPreferenciasImpresion().getMaxProducts());
         this.vista.jcbTamañoLetra.setSelectedItem(modelo.getPreferenciasImpresion().getLetterSize());
+        this.vista.jcbFormatoFecha.setSelectedItem(modelo.getPreferenciasImpresion().getFormatoFecha());
         if (modelo.getPreferenciasImpresion().getIdDuplicado() == 1) {
             this.vista.jchkDuplicado.setSelected(true);
         } else {
@@ -218,6 +222,7 @@ public class C_configuracion extends MouseAdapter implements ActionListener, Key
         pi.setLetterFont(tipoLetra);
         pi.setMaxProducts(this.vista.jcbCantProd.getSelectedIndex() + 1);
         pi.setLetterSize(this.vista.jcbTamañoLetra.getSelectedIndex() + 1);
+        pi.setFormatoFecha(this.vista.jcbFormatoFecha.getSelectedItem() + "");
         modelo.guardarPreferencias(pi);
     }
 

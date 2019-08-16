@@ -29,6 +29,7 @@ public class DB_Preferencia {
         String UPDATE = "UPDATE preferencia_impresion "
                 + "SET tamanho_letra=?, "
                 + "tipo_letra=?, "
+                + "formato_fecha=?, "
                 + "max_producto=?, "
                 + "id_estado_duplicado=?, "
                 + "id_estado_triplicado=?, "
@@ -42,12 +43,13 @@ public class DB_Preferencia {
             pst = DB_manager.getConection().prepareStatement(UPDATE);
             pst.setInt(1, prefPrint.getLetterSize());
             pst.setString(2, prefPrint.getLetterFont());
-            pst.setInt(3, prefPrint.getMaxProducts());
-            pst.setInt(4, prefPrint.getIdDuplicado());
-            pst.setInt(5, prefPrint.getIdTriplicado());
-            pst.setInt(6, prefPrint.getDistanceBetweenCopies());
-            pst.setInt(7, prefPrint.getImprimirMoneda());
-            pst.setInt(8, prefPrint.getDivisa().getId());
+            pst.setString(3, prefPrint.getFormatoFecha());
+            pst.setInt(4, prefPrint.getMaxProducts());
+            pst.setInt(5, prefPrint.getIdDuplicado());
+            pst.setInt(6, prefPrint.getIdTriplicado());
+            pst.setInt(7, prefPrint.getDistanceBetweenCopies());
+            pst.setInt(8, prefPrint.getImprimirMoneda());
+            pst.setInt(9, prefPrint.getDivisa().getId());
             result = pst.executeUpdate();
             DB_manager.getConection().commit();
         } catch (SQLException ex) {
@@ -83,6 +85,7 @@ public class DB_Preferencia {
         String Query = "SELECT id_preferencia_impresion, "
                 + "tamanho_letra, "
                 + "tipo_letra, "
+                + "formato_fecha, "
                 + "max_producto, "
                 + "id_estado_duplicado, "
                 + "id_estado_triplicado, "
@@ -106,6 +109,7 @@ public class DB_Preferencia {
                 prefPrint.setIdTriplicado(rs.getInt("id_estado_triplicado"));
                 prefPrint.setImprimirMoneda(rs.getInt("id_imprimir_moneda"));
                 prefPrint.setLetterFont(rs.getString("tipo_letra"));
+                prefPrint.setFormatoFecha(rs.getString("formato_fecha"));
                 prefPrint.setLetterSize(rs.getInt("tamanho_letra"));
                 prefPrint.setMaxProducts(rs.getInt("max_producto"));
             }

@@ -19,6 +19,7 @@ public class M_preferenciasImpresion {
     private int idTriplicado;
     private int imprimirMoneda;
     private String letterFont;
+    private String formatoFecha;
     private Divisa divisa;
 
     /**
@@ -141,11 +142,20 @@ public class M_preferenciasImpresion {
         this.divisa = divisa;
     }
 
+    public String getFormatoFecha() {
+        return formatoFecha;
+    }
+
+    public void setFormatoFecha(String formatoFecha) {
+        this.formatoFecha = formatoFecha;
+    }
+
     @Override
     public String toString() {
         return "LetterFont:" + getLetterFont()
                 + " DistanceBetweenCopies " + getDistanceBetweenCopies()
                 + " getLetterSize " + getLetterSize()
+                + " getFormatoFecha " + getFormatoFecha()
                 + " getMaxProducts " + getMaxProducts()
                 + " Divisa " + getDivisa()
                 + " ImprimirMoneda " + getImprimirMoneda()

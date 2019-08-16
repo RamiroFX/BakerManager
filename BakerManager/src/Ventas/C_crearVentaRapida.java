@@ -165,43 +165,51 @@ public class C_crearVentaRapida implements GestionInterface, InterfaceFacturaDet
     }
 
     public void recibirDetalle(M_facturaDetalle detalle) {
-        Integer impExenta = null;
-        Integer imp5 = null;
-        Integer imp10 = null;
-        Integer Precio = detalle.getPrecio() - Math.round(Math.round(((detalle.getPrecio() * detalle.getDescuento()) / 100)));
-        Integer total = Math.round(Math.round((detalle.getCantidad() * Precio)));
-        switch (detalle.getProducto().getImpuesto()) {
-            case Impuesto.EXENTA:
-                impExenta = total;
-                imp5 = 0;
-                imp10 = 0;
-                break;
-            case Impuesto.IVA5:
-                impExenta = 0;
-                imp5 = total;
-                imp10 = 0;
-                break;
-            case Impuesto.IVA10:
-                impExenta = 0;
-                imp5 = 0;
-                imp10 = total;
-                break;
-        }
-        if (null != detalle.getObservacion()) {
-            if (!detalle.getObservacion().isEmpty()) {
-                String aux = detalle.getProducto().getDescripcion();
-                detalle.getProducto().setDescripcion(aux + "-(" + detalle.getObservacion() + ")");
+        System.out.println("getRowCount; " + this.vista.jtFacturaDetalle.getRowCount());
+        if (this.vista.jtFacturaDetalle.getRowCount() < modelo.getMaxProdCant()) {
+            Integer impExenta = null;
+            Integer imp5 = null;
+            Integer imp10 = null;
+            Integer Precio = detalle.getPrecio() - Math.round(Math.round(((detalle.getPrecio() * detalle.getDescuento()) / 100)));
+            Integer total = Math.round(Math.round((detalle.getCantidad() * Precio)));
+            switch (detalle.getProducto().getImpuesto()) {
+                case Impuesto.EXENTA:
+                    impExenta = total;
+                    imp5 = 0;
+                    imp10 = 0;
+                    break;
+                case Impuesto.IVA5:
+                    impExenta = 0;
+                    imp5 = total;
+                    imp10 = 0;
+                    break;
+                case Impuesto.IVA10:
+                    impExenta = 0;
+                    imp5 = 0;
+                    imp10 = total;
+                    break;
             }
+            if (null != detalle.getObservacion()) {
+                if (!detalle.getObservacion().isEmpty()) {
+                    String aux = detalle.getProducto().getDescripcion();
+                    detalle.getProducto().setDescripcion(aux + "-(" + detalle.getObservacion() + ")");
+                }
+            }
+            //Object[] rowData = {detalle.getProducto().getId(), detalle.getCantidad(), detalle.getProducto().getDescripcion(), detalle.getPrecio(), detalle.getDescuento(), impExenta, imp5, imp10};
+            detalle.setExenta(impExenta);
+            detalle.setIva5(imp5);
+            detalle.setIva10(imp10);
+            //this.modelo.getDetalles().add(detalle);
+            this.modelo.getDtm().agregarDetalle(detalle);
+            //this.vista.jtFacturaDetalle.updateUI();
+            Utilities.c_packColumn.packColumns(this.vista.jtFacturaDetalle, 1);
+            sumarTotal();
+        } else {
+            javax.swing.JOptionPane.showMessageDialog(this.vista, "Solo puede cargar un máximo de "
+                    + modelo.getMaxProdCant() + " productos por venta\n",
+                    "Atención",
+                    javax.swing.JOptionPane.OK_OPTION);
         }
-        //Object[] rowData = {detalle.getProducto().getId(), detalle.getCantidad(), detalle.getProducto().getDescripcion(), detalle.getPrecio(), detalle.getDescuento(), impExenta, imp5, imp10};
-        detalle.setExenta(impExenta);
-        detalle.setIva5(imp5);
-        detalle.setIva10(imp10);
-        //this.modelo.getDetalles().add(detalle);
-        this.modelo.getDtm().agregarDetalle(detalle);
-        //this.vista.jtFacturaDetalle.updateUI();
-        Utilities.c_packColumn.packColumns(this.vista.jtFacturaDetalle, 1);
-        sumarTotal();
     }
 
     private void eliminarDetalle() {
@@ -302,15 +310,20 @@ public class C_crearVentaRapida implements GestionInterface, InterfaceFacturaDet
     }
 
     private void guardarVenta() {
-        if (this.modelo.guardarVenta()) {
-            this.modelo.limpiarCampos();
-            this.vista.jtFacturaDetalle.setModel(this.modelo.getDtm());
-            recibirCliente(this.modelo.getCabecera().getCliente());
-            establecerNroFactura();
-            establecerCondicionVenta();
-            establecerTipoVenta();
-            sumarTotal();
-            this.vista.jtfCodProd.setText("");
+        if (checkearNroFactura()) {
+            String nroFactura = this.vista.jtfNroFactura.getText();
+            this.modelo.getCabecera().setNroFactura(Integer.valueOf(nroFactura));
+            if (this.modelo.guardarVenta()) {
+                this.modelo.limpiarCampos();
+                this.vista.jtFacturaDetalle.setModel(this.modelo.getDtm());
+                recibirCliente(this.modelo.getCabecera().getCliente());
+                establecerNroFactura();
+                establecerCondicionVenta();
+                establecerTipoVenta();
+                sumarTotal();
+                this.vista.jtfCodProd.setText("");
+            }
+
         }
     }
 
@@ -352,6 +365,41 @@ public class C_crearVentaRapida implements GestionInterface, InterfaceFacturaDet
                 }
             }
         });
+    }
+
+    private boolean checkearNroFactura() {
+        Integer nroFactura = null;
+        if (this.vista.jtfNroFactura.getText().isEmpty()) {
+            javax.swing.JOptionPane.showMessageDialog(this.vista, "Verifique en uno de los campos el parametro:"
+                    + "Asegurese de colocar un numero valido\n"
+                    + "en el campo Nro. factura.",
+                    "Parametros incorrectos",
+                    javax.swing.JOptionPane.OK_OPTION);
+            this.vista.jtfNroFactura.setText(modelo.getNroFactura() + "");
+            return false;
+        }
+        try {
+            String cantidad = this.vista.jtfNroFactura.getText();
+            nroFactura = Integer.valueOf(cantidad);
+        } catch (Exception e) {
+            javax.swing.JOptionPane.showMessageDialog(this.vista, "Verifique en uno de los campos el parametro:"
+                    + "Asegurese de colocar un numero valido\n"
+                    + "en el campo Nro. factura.",
+                    "Parametros incorrectos",
+                    javax.swing.JOptionPane.OK_OPTION);
+            this.vista.jtfNroFactura.setText(modelo.getNroFactura() + "");
+            return false;
+        }
+        if (modelo.nroFacturaEnUso(nroFactura)) {
+            javax.swing.JOptionPane.showMessageDialog(this.vista, "Verifique en uno de los campos el parametro:"
+                    + "El número de factura introducido ya\n"
+                    + "se encuentra en uso.",
+                    "Parametros incorrectos",
+                    javax.swing.JOptionPane.OK_OPTION);
+            this.vista.jtfNroFactura.setText(modelo.getNroFactura() + "");
+            return false;
+        }
+        return true;
     }
 
     @Override

@@ -179,6 +179,10 @@ public class M_crearVentaRapida {
         return nroFactura;
     }
 
+    public boolean nroFacturaEnUso(int nroFactura) {
+        return DB_Ingreso.nroFacturaEnUso(nroFactura);
+    }
+
     public Vector obtenerTipoOperacion() {
         return DB_Egreso.obtenerTipoOperacion();
     }

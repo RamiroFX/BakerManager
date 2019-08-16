@@ -296,7 +296,6 @@ public class DB_Ingreso {
     }
 
     public static M_facturaCabecera obtenerIngresoCabeceraCompleto(Integer idIngresoCabecera) {
-        //PENDIENTE
         M_facturaCabecera fc = null;
         String q_cliente = "C.ID_CLIENTE, C.NOMBRE, C.ENTIDAD, C.RUC, C.RUC_IDENTIFICADOR, C.DIRECCION, C.EMAIL, C.PAG_WEB, C.OBSERVACION, ";
         String q_tipo = "(SELECT CLTI.DESCRIPCION FROM CLIENTE_TIPO CLTI WHERE CLTI.ID_CLIENTE_TIPO = C.ID_TIPO) \"TIPO\", ";
@@ -1141,5 +1140,19 @@ public class DB_Ingreso {
             lgr.log(Level.SEVERE, ex.getMessage(), ex);
         }
         return rstm;
+    }
+
+    public static boolean nroFacturaEnUso(int nroFactura) {
+        String QUERY = "SELECT nro_factura FROM factura_cabecera WHERE nro_factura = " + nroFactura;
+        try {
+            st = DB_manager.getConection().createStatement();
+            // se ejecuta el query y se obtienen los resultados en un ResultSet
+            rs = st.executeQuery(QUERY);
+            return !rs.isBeforeFirst();
+        } catch (SQLException ex) {
+            Logger lgr = Logger.getLogger(DB_Ingreso.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        }
+        return false;
     }
 }
