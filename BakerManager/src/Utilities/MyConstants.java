@@ -17,6 +17,7 @@ public class MyConstants {
             DATE_DAY = "fecha_dia",
             DATE_YEAR_FULL = "fecha_año_completo",
             DATE_YEAR_MIN = "fecha_año_simple",
+            NRO_FACTURA = "nro_factura",
             TIOP_CONTADO = "tipo de operacion contado",
             TIOP_CREDITO = "tipo de operacion credito",
             RS = "razon social",

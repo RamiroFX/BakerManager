@@ -370,7 +370,7 @@ public class C_crearVentaRapida implements GestionInterface, InterfaceFacturaDet
     private boolean checkearNroFactura() {
         Integer nroFactura = null;
         if (this.vista.jtfNroFactura.getText().isEmpty()) {
-            javax.swing.JOptionPane.showMessageDialog(this.vista, "Verifique en uno de los campos el parametro:"
+            javax.swing.JOptionPane.showMessageDialog(this.vista, "Verifique en uno de los campos el parametro: "
                     + "Asegurese de colocar un numero valido\n"
                     + "en el campo Nro. factura.",
                     "Parametros incorrectos",
@@ -390,7 +390,7 @@ public class C_crearVentaRapida implements GestionInterface, InterfaceFacturaDet
             this.vista.jtfNroFactura.setText(modelo.getNroFactura() + "");
             return false;
         }
-        if (modelo.nroFacturaEnUso(nroFactura)) {
+        if (!modelo.nroFacturaEnUso(nroFactura)) {
             javax.swing.JOptionPane.showMessageDialog(this.vista, "Verifique en uno de los campos el parametro:"
                     + "El número de factura introducido ya\n"
                     + "se encuentra en uso.",
