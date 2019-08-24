@@ -104,6 +104,11 @@ public class C_configuracion extends MouseAdapter implements ActionListener, Key
         } else {
             this.vista.jchkMoneda.setSelected(false);
         }
+        this.vista.jtfNombreImpresora.setText(modelo.getPreferenciasImpresion().getNombreImpresora());
+        this.vista.jtfAnchoPapel.setText(modelo.getPreferenciasImpresion().getAnchoPagina() + "");
+        this.vista.jtfLargoPapel.setText(modelo.getPreferenciasImpresion().getLargoPagina() + "");
+        this.vista.jtfMargeX.setText(modelo.getPreferenciasImpresion().getMargenX() + "");
+        this.vista.jtfMargeY.setText(modelo.getPreferenciasImpresion().getMargenY() + "");
     }
 
     private void agregarCampo() {
@@ -184,6 +189,77 @@ public class C_configuracion extends MouseAdapter implements ActionListener, Key
             this.vista.jtfDistanciaEntreCopias.requestFocusInWindow();
             return;
         }
+        Integer anchoPagina;
+        if (this.vista.jtfAnchoPapel.getText().isEmpty()) {
+            javax.swing.JOptionPane.showMessageDialog(this.vista, "Verifique en uno de los campos el parametro:"
+                    + "Asegurese de colocar un numero valido\n"
+                    + "en el campo Ancho de papel.",
+                    "Parametros incorrectos",
+                    javax.swing.JOptionPane.OK_OPTION);
+            this.vista.jtfAnchoPapel.setText("0");
+            this.vista.jtfAnchoPapel.requestFocusInWindow();
+            return;
+        }
+        try {
+            String anchoPaginaTxt = this.vista.jtfAnchoPapel.getText();
+            anchoPagina = Integer.valueOf(anchoPaginaTxt);
+        } catch (Exception e) {
+            javax.swing.JOptionPane.showMessageDialog(this.vista, "Verifique en uno de los campos el parametro:"
+                    + e.getMessage().substring(17) + "\n"
+                    + "Asegurese de colocar un numero valido\n"
+                    + "en el campo Ancho de papel.",
+                    "Parametros incorrectos",
+                    javax.swing.JOptionPane.OK_OPTION);
+            this.vista.jtfAnchoPapel.setText("0");
+            this.vista.jtfAnchoPapel.requestFocusInWindow();
+            return;
+        }
+        if (anchoPagina > 10000) {
+            javax.swing.JOptionPane.showMessageDialog(this.vista, "Verifique en uno de los campos el parametro:"
+                    + "Asegurese de colocar un numero valido menos a 10.000\n"
+                    + "en el campo Ancho de papel.",
+                    "Parametros incorrectos",
+                    javax.swing.JOptionPane.OK_OPTION);
+            this.vista.jtfAnchoPapel.setText("0");
+            this.vista.jtfAnchoPapel.requestFocusInWindow();
+            return;
+        }
+        
+        Integer largoPagina;
+        if (this.vista.jtfLargoPapel.getText().isEmpty()) {
+            javax.swing.JOptionPane.showMessageDialog(this.vista, "Verifique en uno de los campos el parametro:"
+                    + "Asegurese de colocar un numero valido\n"
+                    + "en el campo Largo de papel.",
+                    "Parametros incorrectos",
+                    javax.swing.JOptionPane.OK_OPTION);
+            this.vista.jtfLargoPapel.setText("0");
+            this.vista.jtfLargoPapel.requestFocusInWindow();
+            return;
+        }
+        try {
+            String largoPaginaTxt = this.vista.jtfLargoPapel.getText();
+            largoPagina = Integer.valueOf(largoPaginaTxt);
+        } catch (Exception e) {
+            javax.swing.JOptionPane.showMessageDialog(this.vista, "Verifique en uno de los campos el parametro:"
+                    + e.getMessage().substring(17) + "\n"
+                    + "Asegurese de colocar un numero valido\n"
+                    + "en el campo Largo de papel.",
+                    "Parametros incorrectos",
+                    javax.swing.JOptionPane.OK_OPTION);
+            this.vista.jtfLargoPapel.setText("0");
+            this.vista.jtfLargoPapel.requestFocusInWindow();
+            return;
+        }
+        if (largoPagina > 10000) {
+            javax.swing.JOptionPane.showMessageDialog(this.vista, "Verifique en uno de los campos el parametro:"
+                    + "Asegurese de colocar un numero valido menos a 10.000\n"
+                    + "en el campo Largo de papel.",
+                    "Parametros incorrectos",
+                    javax.swing.JOptionPane.OK_OPTION);
+            this.vista.jtfLargoPapel.setText("0");
+            this.vista.jtfLargoPapel.requestFocusInWindow();
+            return;
+        }
         String tipoLetra;
         if (this.vista.jtfTipoLetra.getText().isEmpty()) {
             javax.swing.JOptionPane.showMessageDialog(this.vista,
@@ -203,6 +279,8 @@ public class C_configuracion extends MouseAdapter implements ActionListener, Key
             }
         }
         pi.setDistanceBetweenCopies(distancia);
+        pi.setAnchoPagina(anchoPagina);
+        pi.setLargoPagina(largoPagina);
         pi.setDivisa(new Divisa(1, "Guaraní/es"));
         if (this.vista.jchkDuplicado.isSelected()) {
             pi.setIdDuplicado(1);
