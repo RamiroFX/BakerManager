@@ -72,13 +72,15 @@ public class V_configuracionTicket extends javax.swing.JDialog {
 
     private void initPanelSouth() {
         jpSouth = new javax.swing.JPanel(new java.awt.BorderLayout());
-        jbCancelar = new javax.swing.JButton("Salir");
+        jbCancelar = new javax.swing.JButton("Salir");        
+        jbGuardar = new javax.swing.JButton("Guardar");
         jbImprimirPaginaPrueba = new javax.swing.JButton("Imprimir página de prueba");
         javax.swing.JPanel jpSouthButtons = new javax.swing.JPanel();
         jpSouthButtons.add(jbImprimirPaginaPrueba);
         javax.swing.JPanel jpBotones = new javax.swing.JPanel();
         jpBotones.setBorder(new javax.swing.border.EtchedBorder());
         jpBotones.add(jbCancelar);
+        jpBotones.add(jbGuardar);
         jpSouth.add(jpBotones);
     }
 

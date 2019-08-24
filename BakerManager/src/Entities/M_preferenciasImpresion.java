@@ -18,8 +18,13 @@ public class M_preferenciasImpresion {
     private int idDuplicado;
     private int idTriplicado;
     private int imprimirMoneda;
+    private int anchoPagina;
+    private int largoPagina;
+    private double margenX;
+    private double margenY;
     private String letterFont;
     private String formatoFecha;
+    private String nombreImpresora;
     private Divisa divisa;
 
     /**
@@ -161,5 +166,45 @@ public class M_preferenciasImpresion {
                 + " ImprimirMoneda " + getImprimirMoneda()
                 + " Triplicado " + getIdTriplicado()
                 + " Duplicado" + getIdDuplicado();
+    }
+
+    public int getAnchoPagina() {
+        return anchoPagina;
+    }
+
+    public void setAnchoPagina(int anchoPagina) {
+        this.anchoPagina = anchoPagina;
+    }
+
+    public int getLargoPagina() {
+        return largoPagina;
+    }
+
+    public void setLargoPagina(int largoPagina) {
+        this.largoPagina = largoPagina;
+    }
+
+    public double getMargenX() {
+        return margenX;
+    }
+
+    public void setMargenX(double margenX) {
+        this.margenX = margenX;
+    }
+
+    public double getMargenY() {
+        return margenY;
+    }
+
+    public void setMargenY(double margenY) {
+        this.margenY = margenY;
+    }
+
+    public String getNombreImpresora() {
+        return nombreImpresora;
+    }
+
+    public void setNombreImpresora(String nombreImpresora) {
+        this.nombreImpresora = nombreImpresora;
     }
 }

@@ -5,6 +5,7 @@
 package bakermanager;
 
 import Configuracion.Configuracion;
+import Configuracion.ConfiguracionTicket;
 import Entities.M_rol_usuario;
 import Login.Login;
 import java.awt.Dimension;
@@ -16,7 +17,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.beans.PropertyVetoException;
 import javax.swing.JInternalFrame;
-import javax.swing.JOptionPane;
 
 /**
  *
@@ -49,6 +49,7 @@ public class C_inicio implements ActionListener {
         //vista.getJMenuBar().jmiLogOut.addActionListener(this);
         vista.getJMenuBar().jmiCerrar.addActionListener(this);
         vista.getJMenuBar().jmiConfigImpresion.addActionListener(this);
+        vista.getJMenuBar().jmiConfigImpresionTicket.addActionListener(this);
         vista.addWindowListener(wa);
     }
 
@@ -136,6 +137,9 @@ public class C_inicio implements ActionListener {
             System.exit(0);
         } else if (fuente == vista.getJMenuBar().jmiConfigImpresion) {
             Configuracion config = new Configuracion(vista);
+            config.mostrarVista();
+        } else if (fuente == vista.getJMenuBar().jmiConfigImpresionTicket) {
+            ConfiguracionTicket config = new ConfiguracionTicket(vista);
             config.mostrarVista();
         }
     }
