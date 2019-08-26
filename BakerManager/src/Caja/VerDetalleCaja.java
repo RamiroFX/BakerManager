@@ -11,7 +11,7 @@ import DB.DB_Ingreso;
 import Interface.CommonFormat;
 import Entities.ArqueoCajaDetalle;
 import Entities.Caja;
-import Utilities.Impresora;
+import Impresora.Impresora;
 import bakermanager.C_inicio;
 import com.toedter.calendar.JDateChooser;
 import java.awt.BorderLayout;

@@ -12,7 +12,7 @@ import Parametros.PedidoEstado;
 import Parametros.TipoOperacion;
 import Producto.SeleccionarCantidadProduducto;
 import Producto.SeleccionarProducto;
-import Utilities.Impresora;
+import Impresora.Impresora;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

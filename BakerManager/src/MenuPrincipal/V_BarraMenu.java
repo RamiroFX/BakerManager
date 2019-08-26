@@ -19,8 +19,9 @@ import javax.swing.JMenuItem;
  */
 public class V_BarraMenu extends JMenuBar {
 
-    public JMenu jmInicio, jmAyuda, jmHerramientas;
-    public JMenuItem jmiCerrar, jmiAcerca, jmiPersonalizar, jmiConfigImpresion, jmiConfigImpresionTicket;
+    public JMenu jmInicio, jmAyuda, jmHerramientas, jmOpciones;
+    public JMenuItem jmiCerrar, jmiAcerca, jmiPersonalizar, jmiConfigImpresion, 
+            jmiConfigImpresionTicket, jmiEmpresa;
     //public JMenuItem  jmiLogIn,jmiLogOut, jmiMenuPrincipal;
     private V_inicio frame; //referencia al frame principal.
     //private boolean loginActivo=true;
@@ -29,6 +30,7 @@ public class V_BarraMenu extends JMenuBar {
         this.frame = frame;
         this.add(getjmInicio());
         this.add(getjmHerramientas());
+        this.add(getjmOpciones());
         this.add(getjmAyuda());
     }
 
@@ -56,6 +58,8 @@ public class V_BarraMenu extends JMenuBar {
             jmiPersonalizar = new JMenuItem("Personalizar");
             jmiConfigImpresion = new JMenuItem("Config. impresion");
             jmiConfigImpresion.setEnabled(false);
+            jmiConfigImpresion = new JMenuItem("Config. impresion");
+            jmiConfigImpresion.setEnabled(false);
             jmiConfigImpresionTicket= new JMenuItem("Config. ticket");
             jmiConfigImpresionTicket.setEnabled(false);
             getjmHerramientas().add(jmiPersonalizar);
@@ -72,6 +76,16 @@ public class V_BarraMenu extends JMenuBar {
             jmAyuda.add(jmiAcerca);
         }
         return jmAyuda;
+    }
+    
+    private JMenu getjmOpciones() {
+        if (jmOpciones == null) {
+            jmOpciones = new JMenu("Opciones");
+            jmiEmpresa = new JMenuItem("Empresa");
+            jmiEmpresa.setEnabled(false);
+            jmOpciones.add(jmiEmpresa);
+        }
+        return jmOpciones;
     }
 
     private JDialog getAcercade() {

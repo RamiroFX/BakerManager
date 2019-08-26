@@ -3,12 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Utilities;
+package Impresora;
 
 import Entities.M_campoImpresion;
 import Entities.M_facturaCabecera;
 import Entities.M_facturaDetalle;
 import Entities.M_rol_usuario;
+import Utilities.MyConstants;
 import java.awt.Graphics;
 import java.awt.print.PageFormat;
 import java.awt.print.Printable;
@@ -34,17 +35,20 @@ public class MyPrintable implements Printable {
         this.impresions = impresions;
     }
 
-    public MyPrintable(M_rol_usuario rol_usuario, M_facturaCabecera facturaCabecera, ArrayList<M_facturaDetalle> facturaDetalle) {
+    public MyPrintable(M_rol_usuario rol_usuario, M_facturaCabecera facturaCabecera, ArrayList<M_facturaDetalle> facturaDetalle, List<M_campoImpresion> impresions) {
         this.rol_usuario = rol_usuario;
         this.facturaCabecera = facturaCabecera;
         this.facturaDetalle = facturaDetalle;
+        this.impresions = impresions;
     }
 
     public int print(Graphics g, PageFormat f, int pageIndex) {
         if (pageIndex == 0) {
             for (M_campoImpresion object : impresions) {
                 if (object.getEstado().getId() == MyConstants.ACTIVO) {
-                    g.drawString(object.getCampo() + "(" + object.getX().intValue() + "," + object.getY().intValue() + ")", object.getX().intValue(), object.getY().intValue());
+                    int posX = object.getX().intValue();
+                    int posY = object.getY().intValue();
+                    g.drawString(object.getCampo() + "(" + posX + "," + posY + ")", posX, posY);
                 }
             }
             return PAGE_EXISTS;

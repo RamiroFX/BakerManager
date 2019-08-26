@@ -25,10 +25,10 @@ public class V_configuracion extends javax.swing.JDialog {
     private final String paperHint = "A4(595 x 842)pixels";
     public javax.swing.JButton jbCancelar, jbAgregarCampo, jbModificarCampo,
             jbHabilitarDeshabilitarCampo, jbImprimirPaginaPrueba, jbOcultarMostrarCampo;
-    public javax.swing.JPanel jpSouth, jpTicket, jpFactura, jpFacturaPreferences,
+    public javax.swing.JPanel jpSouth, jpFactura, jpFacturaPreferences,
             jpImpresoraYPapel;
     public javax.swing.JTabbedPane jtpCenter;
-    public JTable jtTicket, jtFactura;
+    public JTable jtFactura;
     //Variables de preferencia
     public JComboBox jcbTamañoLetra, jcbCantProd, jcbMoneda;
     public JComboBox<String> jcbFormatoFecha;
@@ -36,8 +36,8 @@ public class V_configuracion extends javax.swing.JDialog {
     public JCheckBox jchkDuplicado, jchkTriplicado, jchkMoneda;
     //Variables de impresora
     public JTextField jtfNombreImpresora, jtfAnchoPapel, jtfLargoPapel,
-            jtfMargeX, jtfMargeY;
-    public javax.swing.JButton jbGuardar;
+            jtfMargenX, jtfMargenY;
+    public javax.swing.JButton jbGuardarPreferencias, jbGuardarImpresora;
 
     public V_configuracion(JFrame frame) {
         super(frame, true);
@@ -66,16 +66,11 @@ public class V_configuracion extends javax.swing.JDialog {
 
     private void initPanelNorth() {
         //Panel
-        jpTicket = new javax.swing.JPanel(new java.awt.BorderLayout());
         jpFactura = new javax.swing.JPanel(new java.awt.BorderLayout());
         jpFacturaPreferences = new javax.swing.JPanel(new java.awt.BorderLayout());
-        jtTicket = new JTable();
-        jtTicket.getTableHeader().setReorderingAllowed(false);
         jtFactura = new JTable();
         jtFactura.getTableHeader().setReorderingAllowed(false);
-        JScrollPane jspTicket = new JScrollPane(jtTicket);
         JScrollPane jspFactura = new JScrollPane(jtFactura);
-        jpTicket.add(jspTicket, BorderLayout.CENTER);
         jpFactura.add(jspFactura, BorderLayout.CENTER);
     }
 
@@ -89,7 +84,7 @@ public class V_configuracion extends javax.swing.JDialog {
         jchkDuplicado = new JCheckBox("Duplicado");
         jchkTriplicado = new JCheckBox("Triplicado");
         jchkMoneda = new JCheckBox("Impimir moneda");
-        jbGuardar = new JButton("Guardar");
+        jbGuardarPreferencias = new JButton("Guardar");
         javax.swing.JPanel jpPrefAux = new javax.swing.JPanel(new java.awt.GridLayout(9, 2));
         jpPrefAux.add(new JLabel("Formato de fecha", JLabel.CENTER));
         jpPrefAux.add(jcbFormatoFecha);
@@ -110,7 +105,7 @@ public class V_configuracion extends javax.swing.JDialog {
         jpPrefAux.add(new JLabel("Monedas", JLabel.CENTER));
         jpPrefAux.add(jcbMoneda);
         javax.swing.JPanel jpPrefAux2 = new javax.swing.JPanel();
-        jpPrefAux2.add(jbGuardar);
+        jpPrefAux2.add(jbGuardarPreferencias);
         jpFacturaPreferences.add(jpPrefAux, BorderLayout.CENTER);
         jpFacturaPreferences.add(jpPrefAux2, BorderLayout.SOUTH);
     }
@@ -143,18 +138,24 @@ public class V_configuracion extends javax.swing.JDialog {
         jtfAnchoPapel.setToolTipText(paperHint);
         jtfLargoPapel = new JTextField();
         jtfLargoPapel.setToolTipText(paperHint);
-        jtfMargeX = new JTextField();
-        jtfMargeY = new JTextField();
-        jpImpresoraYPapel = new javax.swing.JPanel(new java.awt.GridLayout(5, 2));
-        jpImpresoraYPapel.add(new JLabel("Nombre de impresora", JLabel.CENTER));
-        jpImpresoraYPapel.add(jtfNombreImpresora);
-        jpImpresoraYPapel.add(new JLabel("Ancho de papel", JLabel.CENTER));
-        jpImpresoraYPapel.add(jtfAnchoPapel);
-        jpImpresoraYPapel.add(new JLabel("Largo de papel", JLabel.CENTER));
-        jpImpresoraYPapel.add(jtfLargoPapel);
-        jpImpresoraYPapel.add(new JLabel("Margen X", JLabel.CENTER));
-        jpImpresoraYPapel.add(jtfMargeX);
-        jpImpresoraYPapel.add(new JLabel("Margen Y", JLabel.CENTER));
-        jpImpresoraYPapel.add(jtfMargeY);
+        jtfMargenX = new JTextField();
+        jtfMargenY = new JTextField();
+        jbGuardarImpresora = new javax.swing.JButton("Guardar");
+        javax.swing.JPanel jpImpresoraYPapel1 = new javax.swing.JPanel(new java.awt.GridLayout(5, 2));
+        jpImpresoraYPapel1.add(new JLabel("Nombre de impresora", JLabel.CENTER));
+        jpImpresoraYPapel1.add(jtfNombreImpresora);
+        jpImpresoraYPapel1.add(new JLabel("Ancho de papel", JLabel.CENTER));
+        jpImpresoraYPapel1.add(jtfAnchoPapel);
+        jpImpresoraYPapel1.add(new JLabel("Largo de papel", JLabel.CENTER));
+        jpImpresoraYPapel1.add(jtfLargoPapel);
+        jpImpresoraYPapel1.add(new JLabel("Margen X", JLabel.CENTER));
+        jpImpresoraYPapel1.add(jtfMargenX);
+        jpImpresoraYPapel1.add(new JLabel("Margen Y", JLabel.CENTER));
+        jpImpresoraYPapel1.add(jtfMargenY);
+        javax.swing.JPanel jpImpresoraYPapel2 = new javax.swing.JPanel();
+        jpImpresoraYPapel2.add(jbGuardarImpresora);
+        jpImpresoraYPapel = new javax.swing.JPanel(new java.awt.BorderLayout());
+        jpImpresoraYPapel.add(jpImpresoraYPapel1, BorderLayout.CENTER);
+        jpImpresoraYPapel.add(jpImpresoraYPapel2, BorderLayout.SOUTH);
     }
 }

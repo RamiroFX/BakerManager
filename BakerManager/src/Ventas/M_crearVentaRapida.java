@@ -20,7 +20,7 @@ import ModeloTabla.FacturaDetalleTableModel;
 import ModeloTabla.InterfaceFacturaDetalle;
 import Parametros.TipoOperacion;
 import Parametros.TipoVenta;
-import Utilities.Impresora;
+import Impresora.Impresora;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -131,7 +131,7 @@ public class M_crearVentaRapida {
                     if (tipoVenta == TipoVenta.TICKET) {
                         Impresora.imprimirVenta(DatosUsuario.getRol_usuario(), getCabecera(), (ArrayList<M_facturaDetalle>) getDtm().getFacturaDetalleList());
                     } else if (tipoVenta == TipoVenta.FACTURA) {
-                        Impresora.imprimirVentaFactura(DatosUsuario.getRol_usuario(), getCabecera(), (ArrayList<M_facturaDetalle>) getDtm().getFacturaDetalleList());
+                        Impresora.imprimirVentaFactura(getCabecera(), (ArrayList<M_facturaDetalle>) getDtm().getFacturaDetalleList());
                     }
                 }
                 return true;

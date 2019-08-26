@@ -12,7 +12,7 @@ import Entities.M_facturaCabecera;
 import Entities.M_funcionario;
 import Entities.M_telefono;
 import MenuPrincipal.DatosUsuario;
-import Utilities.Impresora;
+import Impresora.Impresora;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

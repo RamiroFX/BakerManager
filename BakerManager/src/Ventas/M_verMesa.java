@@ -14,7 +14,7 @@ import Entities.M_mesa;
 import Entities.M_mesa_detalle;
 import Entities.M_producto;
 import Parametros.TipoOperacion;
-import Utilities.Impresora;
+import Impresora.Impresora;
 import java.util.ArrayList;
 import java.util.Vector;
 import javax.swing.JOptionPane;

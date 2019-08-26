@@ -121,6 +121,7 @@ public class C_MenuPrincipal implements ActionListener, KeyListener {
         //this.c_inicio.centrarPantalla(vista);
         this.c_inicio.vista.getJMenuBar().jmiConfigImpresion.setEnabled(true);
         this.c_inicio.vista.getJMenuBar().jmiConfigImpresionTicket.setEnabled(true);
+        this.c_inicio.vista.getJMenuBar().jmiEmpresa.setEnabled(true);
     }
 
     private void shutdown() {

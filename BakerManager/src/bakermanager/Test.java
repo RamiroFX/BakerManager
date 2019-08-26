@@ -19,7 +19,7 @@ import Pedido.C_gestionPedido;
 import Pedido.GestionPedidos;
 import Pedido.M_gestionPedido;
 import Pedido.V_gestionPedido;
-import Utilities.Impresora;
+import Impresora.Impresora;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;

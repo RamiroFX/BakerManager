@@ -6,6 +6,7 @@ package bakermanager;
 
 import Configuracion.Configuracion;
 import Configuracion.ConfiguracionTicket;
+import Empresa.Empresa;
 import Entities.M_rol_usuario;
 import Login.Login;
 import java.awt.Dimension;
@@ -50,6 +51,7 @@ public class C_inicio implements ActionListener {
         vista.getJMenuBar().jmiCerrar.addActionListener(this);
         vista.getJMenuBar().jmiConfigImpresion.addActionListener(this);
         vista.getJMenuBar().jmiConfigImpresionTicket.addActionListener(this);
+        vista.getJMenuBar().jmiEmpresa.addActionListener(this);
         vista.addWindowListener(wa);
     }
 
@@ -141,6 +143,9 @@ public class C_inicio implements ActionListener {
         } else if (fuente == vista.getJMenuBar().jmiConfigImpresionTicket) {
             ConfiguracionTicket config = new ConfiguracionTicket(vista);
             config.mostrarVista();
+        } else if (fuente == vista.getJMenuBar().jmiEmpresa) {
+            Empresa empresa = new Empresa(vista);
+            empresa.mostrarVista();
         }
     }
 

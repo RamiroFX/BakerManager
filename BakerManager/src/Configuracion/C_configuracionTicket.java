@@ -9,7 +9,7 @@ import Entities.Divisa;
 import Entities.M_campoImpresion;
 import Entities.M_preferenciasImpresion;
 import Interface.crearModificarParametroCallback;
-import Utilities.Impresora;
+import Impresora.Impresora;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
