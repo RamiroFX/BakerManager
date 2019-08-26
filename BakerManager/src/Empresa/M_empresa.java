@@ -5,10 +5,30 @@
  */
 package Empresa;
 
+import DB.DB_manager;
+import Entities.E_Empresa;
+
 /**
  *
  * @author Ramiro
  */
 public class M_empresa {
-    
+
+    private E_Empresa empresa;
+
+    public M_empresa() {
+        this.empresa = DB_manager.obtenerDatosEmpresa();
+    }
+
+    public E_Empresa getEmpresa() {
+        return empresa;
+    }
+
+    public void setEmpresa(E_Empresa empresa) {
+        this.empresa = empresa;
+    }
+
+    public int modificarDatosEmpresa(E_Empresa empresa) {
+        return DB_manager.modificarDatosEmpresa(empresa);
+    }
 }

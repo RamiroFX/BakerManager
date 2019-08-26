@@ -4,6 +4,7 @@
  */
 package DB;
 
+import Entities.E_Empresa;
 import Entities.Estado;
 import Entities.M_campoImpresion;
 import Entities.ProductoCategoria;
@@ -15,6 +16,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Vector;
 import java.util.logging.Level;
@@ -1274,5 +1276,126 @@ public class DB_manager {
             ex.printStackTrace();
         }
         return pais;
+    }
+
+    public static E_Empresa obtenerDatosEmpresa() {
+        E_Empresa e = null;
+        String Query = "SELECT id_empresa, razon_social, nombre_fantasia, "
+                + "direccion, ruc, email, pag_web, descripcion, telefono "
+                + "FROM empresa "
+                + "WHERE id_empresa = 1";
+        try {
+            pst = DB_manager.getConection().prepareStatement(Query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            rs = pst.executeQuery();
+            while (rs.next()) {
+                e = new E_Empresa();
+                e.setDescripcion(rs.getString("descripcion"));
+                e.setDireccion(rs.getString("direccion"));
+                e.setEmail(rs.getString("email"));
+                e.setEntidad(rs.getString("razon_social"));
+                e.setId(rs.getInt("id_empresa"));
+                e.setNombre(rs.getString("nombre_fantasia"));
+                e.setPagWeb(rs.getString("pag_web"));
+                e.setRuc(rs.getString("ruc"));
+                e.setTelefono(rs.getString("telefono"));
+            }
+        } catch (SQLException ex) {
+            Logger lgr = Logger.getLogger(DB_Producto.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        }
+        return e;
+    }
+
+    public static int modificarDatosEmpresa(E_Empresa empresa) {
+        String UPDATE = "UPDATE empresa SET "
+                + "razon_social=?, "
+                + "nombre_fantasia=?, "
+                + "direccion=?, "
+                + "ruc=?, "
+                + "email=?, "
+                + "pag_web=?, "
+                + "descripcion=?, "
+                + "telefono=? "
+                + "WHERE id_empresa = 1;";
+        int result = -1;
+        try {
+            DB_manager.getConection().setAutoCommit(false);
+            pst = DB_manager.getConection().prepareStatement(UPDATE);
+            pst.setString(1, empresa.getEntidad());
+            pst.setString(2, empresa.getNombre());
+            try {
+                if (empresa.getDireccion().isEmpty()) {
+                    pst.setNull(3, Types.VARCHAR);
+                } else {
+                    pst.setString(3, empresa.getDireccion());
+                }
+            } catch (Exception e) {
+                pst.setNull(3, Types.VARCHAR);
+            }
+            pst.setString(4, empresa.getRuc());
+            try {
+                if (empresa.getEmail().isEmpty()) {
+                    pst.setNull(5, Types.VARCHAR);
+                } else {
+                    pst.setString(5, empresa.getEmail());
+                }
+            } catch (Exception e) {
+                pst.setNull(5, Types.VARCHAR);
+            }
+            try {
+                if (empresa.getPagWeb().isEmpty()) {
+                    pst.setNull(6, Types.VARCHAR);
+                } else {
+                    pst.setString(6, empresa.getPagWeb());
+                }
+            } catch (Exception e) {
+                pst.setNull(6, Types.VARCHAR);
+            }
+            try {
+                if (empresa.getDescripcion().isEmpty()) {
+                    pst.setNull(7, Types.VARCHAR);
+                } else {
+                    pst.setString(7, empresa.getDescripcion());
+                }
+            } catch (Exception e) {
+                pst.setNull(7, Types.VARCHAR);
+            }
+            try {
+                if (empresa.getTelefono().isEmpty()) {
+                    pst.setNull(8, Types.VARCHAR);
+                } else {
+                    pst.setString(8, empresa.getTelefono());
+                }
+            } catch (Exception e) {
+                pst.setNull(8, Types.VARCHAR);
+            }
+            result = pst.executeUpdate();
+            DB_manager.getConection().commit();
+        } catch (SQLException ex) {
+            System.out.println(ex.getNextException());
+            if (DB_manager.getConection() != null) {
+                try {
+                    DB_manager.getConection().rollback();
+                } catch (SQLException ex1) {
+                    Logger lgr = Logger.getLogger(DB_Producto.class.getName());
+                    lgr.log(Level.WARNING, ex1.getMessage(), ex1);
+                }
+            }
+            Logger lgr = Logger.getLogger(DB_Producto.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        } finally {
+            try {
+                if (pst != null) {
+                    pst.close();
+                }
+                if (rs != null) {
+                    rs.close();
+                }
+            } catch (SQLException ex) {
+                Logger lgr = Logger.getLogger(DB_Producto.class.getName());
+                lgr.log(Level.WARNING, ex.getMessage(), ex);
+            }
+        }
+        return result;
     }
 }

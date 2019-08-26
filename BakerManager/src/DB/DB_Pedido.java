@@ -348,7 +348,7 @@ public class DB_Pedido {
                 pst.setNull(6, Types.VARCHAR);
             }
             try {
-                if (pedido.getDireccion().isEmpty()) {
+                if (pedido.getReferencia().isEmpty()) {
                     pst.setNull(7, Types.VARCHAR);
                 } else {
                     pst.setString(7, pedido.getReferencia());
