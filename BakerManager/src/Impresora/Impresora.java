@@ -69,16 +69,6 @@ public class Impresora {
     private final static SimpleDateFormat SDFS_DATE_ONLY = new SimpleDateFormat("dd/MM/yyyy");
     private final static SimpleDateFormat SDFS_DATE_ONLY_WRITED_MONTH = new SimpleDateFormat("dd/MMMM/yyyy");
     private final static SimpleDateFormat SDFS_DATE_ONLY_WRITED_MONTH_2DIGIT_YEAR = new SimpleDateFormat("dd/MMMM/yy");
-    private final static String TICKET_CABECERA = "**** Panaderia Le Croissant ****\n"
-            + "R.U.C.: 3777437-9\n"
-            + "Direccion: Av. Rodriguez de Francia esq.Brasil 1199\n"
-            + "Telefono: (021) 227247\n"
-            + "_________________________________\n";
-    private final static String TICKET_PIE = "_________________________________\n"
-            + "******Gracias por su compra******\n"
-            + "\n\n\n\n\n\n\n\n\n\n";
-    private final static String TICKET_PIE_SIN_GRACIAS = "_________________________________\n"
-            + "\n\n\n\n\n\n\n\n\n\n";
 
     public static void imprimirCocina(String textoAImprimir) {
         PrintService[] services = PrintServiceLookup.lookupPrintServices(null, null); //nos da el array de los servicios de impresion
@@ -322,19 +312,19 @@ public class Impresora {
         fd4.setDescuento(0.0);
         fd4.setPrecio(100);
         fd4.setProducto(prod4);
-        faDetalles.add(fd4);
+        //faDetalles.add(fd4);
         M_facturaDetalle fd5 = new M_facturaDetalle();
         fd5.setCantidad(1000.0);
         fd5.setDescuento(0.0);
         fd5.setPrecio(850);
         fd5.setProducto(prod5);
-        faDetalles.add(fd5);
+        //faDetalles.add(fd5);
         M_facturaDetalle fd6 = new M_facturaDetalle();
         fd6.setCantidad(400.0);
         fd6.setDescuento(0.0);
         fd6.setPrecio(430);
         fd6.setProducto(prod6);
-        faDetalles.add(fd6);
+        //faDetalles.add(fd6);
         M_facturaDetalle fd7 = new M_facturaDetalle();
         fd7.setCantidad(9.0);
         fd7.setDescuento(0.0);
@@ -346,19 +336,19 @@ public class Impresora {
         fd8.setDescuento(0.0);
         fd8.setPrecio(20000);
         fd8.setProducto(prod8);
-        faDetalles.add(fd8);
+        //faDetalles.add(fd8);
         M_facturaDetalle fd9 = new M_facturaDetalle();
         fd9.setCantidad(1.0);
         fd9.setDescuento(0.0);
         fd9.setPrecio(47000);
         fd9.setProducto(prod9);
-        faDetalles.add(fd9);
+        //faDetalles.add(fd9);
         M_facturaDetalle fd10 = new M_facturaDetalle();
         fd10.setCantidad(3.0);
         fd10.setDescuento(0.0);
         fd10.setPrecio(250000);
         fd10.setProducto(prod10);
-        faDetalles.add(fd10);
+        //faDetalles.add(fd10);
         String ruc = "-";
         if (fc.getCliente().getRuc() != null) {
             if (fc.getCliente().getRucId() != null) {
@@ -455,7 +445,9 @@ public class Impresora {
         }
         String SUMATOTAL = "---------------------------------\n"
                 + "Total= " + total + "\n";
-        String ticket = TICKET_CABECERA + CABECERA + COLUMNAS + DETALLE + SUMATOTAL + TICKET_PIE_SIN_GRACIAS;
+        String cabecera = PREF_PRINT_TICKET.getCabecera();
+        String pie = PREF_PRINT_TICKET.getPie();
+        String ticket = cabecera + CABECERA + COLUMNAS + DETALLE + SUMATOTAL + pie;
         byte[] bytes = ticket.getBytes();
         DocFlavor flavor = DocFlavor.BYTE_ARRAY.AUTOSENSE;
         Doc doc = new SimpleDoc(bytes, flavor, null);
@@ -481,7 +473,7 @@ public class Impresora {
                 ruc = pedidoCabecera.getCliente().getRuc() + "-" + pedidoCabecera.getCliente().getRucId();
             }
         }
-        String CABECERA = "Fecha y hora: " + fechaEntrega + "\n"
+        String ventaCabecera = "Fecha y hora: " + fechaEntrega + "\n"
                 + "Cajero: " + pedidoCabecera.getFuncionario().getNombre() + "\n"
                 + "Cliente: " + pedidoCabecera.getCliente().getEntidad() + "\n"
                 + "R.U.C.: " + ruc + "\n"
@@ -496,7 +488,9 @@ public class Impresora {
         }
         String SUMATOTAL = "---------------------------------\n"
                 + "Total= " + total + "\n";
-        String ticket = TICKET_CABECERA + CABECERA + COLUMNAS + DETALLE + SUMATOTAL + TICKET_PIE_SIN_GRACIAS;
+        String cabecera = PREF_PRINT_TICKET.getCabecera();
+        String pie = PREF_PRINT_TICKET.getPie();
+        String ticket = cabecera + ventaCabecera + COLUMNAS + DETALLE + SUMATOTAL + pie;
         byte[] bytes = ticket.getBytes();
         System.out.println(ticket);
         DocFlavor flavor = DocFlavor.BYTE_ARRAY.AUTOSENSE;
@@ -522,7 +516,7 @@ public class Impresora {
                 ruc = facturaCabecera.getCliente().getRuc() + "-" + facturaCabecera.getCliente().getRucId();
             }
         }
-        String CABECERA = "Fecha y hora: " + fechaEntrega + "\n"
+        String ventaCabecera = "Fecha y hora: " + fechaEntrega + "\n"
                 + "Ticket nro.: " + facturaCabecera.getIdFacturaCabecera() + "\n"
                 + "Cajero: " + facturaCabecera.getFuncionario().getNombre() + "\n"
                 + "Cliente: " + facturaCabecera.getCliente().getEntidad() + "\n"
@@ -539,7 +533,9 @@ public class Impresora {
         }
         String SUMATOTAL = "---------------------------------\n"
                 + "Total= " + total + "\n";
-        String ticket = TICKET_CABECERA + CABECERA + COLUMNAS + DETALLE + SUMATOTAL + TICKET_PIE_SIN_GRACIAS;
+        String cabecera = PREF_PRINT_TICKET.getCabecera();
+        String pie = PREF_PRINT_TICKET.getPie();
+        String ticket = cabecera + ventaCabecera + COLUMNAS + DETALLE + SUMATOTAL + pie;
         byte[] bytes = ticket.getBytes();
         DocFlavor flavor = DocFlavor.BYTE_ARRAY.AUTOSENSE;
         Doc doc = new SimpleDoc(bytes, flavor, null);
@@ -565,7 +561,7 @@ public class Impresora {
                 ruc = facturaCabecera.getCliente().getRuc() + "-" + facturaCabecera.getCliente().getRucId();
             }
         }
-        String CABECERA = "Fecha y hora: " + fechaEntrega + "\n"
+        String ventaCabecera = "Fecha y hora: " + fechaEntrega + "\n"
                 + "Ticket nro.: " + facturaCabecera.getIdFacturaCabecera() + "\n"
                 + "Cajero: " + facturaCabecera.getFuncionario().getNombre() + "\n"
                 + "Cliente: " + facturaCabecera.getCliente().getEntidad() + "\n"
@@ -581,7 +577,9 @@ public class Impresora {
         }
         String SUMATOTAL = "---------------------------------\n"
                 + "Total= " + total + "\n";
-        String ticket = TICKET_CABECERA + CABECERA + COLUMNAS + DETALLE + SUMATOTAL + TICKET_PIE_SIN_GRACIAS;
+        String cabecera = PREF_PRINT_TICKET.getCabecera();
+        String pie = PREF_PRINT_TICKET.getPie();
+        String ticket = cabecera + ventaCabecera + COLUMNAS + DETALLE + SUMATOTAL + pie;
         byte[] bytes = ticket.getBytes();
         DocFlavor flavor = DocFlavor.BYTE_ARRAY.AUTOSENSE;
         Doc doc = new SimpleDoc(bytes, flavor, null);
@@ -643,7 +641,7 @@ public class Impresora {
                 ruc = mesaCabecera.getCliente().getRuc() + "-" + mesaCabecera.getCliente().getRucId();
             }
         }
-        String CABECERA = "Fecha y hora: " + fechaEntrega + "\n"
+        String ventaCabecera = "Fecha y hora: " + fechaEntrega + "\n"
                 + "Mesa nro.: " + mesaCabecera.getNumeroMesa() + "\n"
                 + "Cajero: " + mesaCabecera.getFuncionario().getNombre() + "\n"
                 + "Cliente: " + mesaCabecera.getCliente().getEntidad() + "\n"
@@ -659,7 +657,9 @@ public class Impresora {
         }
         String SUMATOTAL = "---------------------------------\n"
                 + "Total= " + total + "\n";
-        String ticket = TICKET_CABECERA + CABECERA + COLUMNAS + DETALLE + SUMATOTAL + TICKET_PIE_SIN_GRACIAS;
+        String cabecera = PREF_PRINT_TICKET.getCabecera();
+        String pie = PREF_PRINT_TICKET.getPie();
+        String ticket = cabecera + ventaCabecera + COLUMNAS + DETALLE + SUMATOTAL + pie;
         byte[] bytes = ticket.getBytes();
         DocFlavor flavor = DocFlavor.BYTE_ARRAY.AUTOSENSE;
         Doc doc = new SimpleDoc(bytes, flavor, null);
@@ -685,7 +685,7 @@ public class Impresora {
                 ruc = mesaCabecera.getCliente().getRuc() + "-" + mesaCabecera.getCliente().getRucId();
             }
         }
-        String CABECERA = "Fecha y hora: " + fechaEntrega + "\n"
+        String ventaCabecera = "Fecha y hora: " + fechaEntrega + "\n"
                 + "Ticket nro.: " + mesaCabecera.getIdMesa() + "\n"
                 + "Cajero: " + mesaCabecera.getFuncionario().getNombre() + "\n"
                 + "Cliente: " + mesaCabecera.getCliente().getEntidad() + "\n"
@@ -701,7 +701,9 @@ public class Impresora {
         }
         String SUMATOTAL = "---------------------------------\n"
                 + "Total= " + total + "\n";
-        String ticket = TICKET_CABECERA + CABECERA + COLUMNAS + DETALLE + SUMATOTAL + TICKET_PIE_SIN_GRACIAS;
+        String cabecera = PREF_PRINT_TICKET.getCabecera();
+        String pie = PREF_PRINT_TICKET.getPie();
+        String ticket = cabecera + ventaCabecera + COLUMNAS + DETALLE + SUMATOTAL + pie;
         byte[] bytes = ticket.getBytes();
         DocFlavor flavor = DocFlavor.BYTE_ARRAY.AUTOSENSE;
         Doc doc = new SimpleDoc(bytes, flavor, null);
@@ -751,8 +753,9 @@ public class Impresora {
                 + "Ingreso-Egreso: " + (Ingresos - Egresos) + "\n"
                 + "Ingreso+Egreso: " + (Ingresos + Egresos) + "\n";
 
-        String PIE = "---------------------------------\n";
-        String ticket = CABECERA + CUERPO + PIE + TICKET_PIE_SIN_GRACIAS;
+        String cabeceraTicket = PREF_PRINT_TICKET.getCabecera();
+        String pie = PREF_PRINT_TICKET.getPie();
+        String ticket = cabeceraTicket + CABECERA + CUERPO + pie;
         byte[] bytes = ticket.getBytes();
         DocFlavor flavor = DocFlavor.BYTE_ARRAY.AUTOSENSE;
         Doc doc = new SimpleDoc(bytes, flavor, null);

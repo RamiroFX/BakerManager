@@ -102,6 +102,7 @@ public class C_configuracionTicket extends MouseAdapter implements ActionListene
         tp.setNombreImpresora(nombreImpresora);
         if (modelo.modificarTicketPreferencia(tp) > -1) {
             JOptionPane.showMessageDialog(vista, "Cambios guardados", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+            modelo.actualizarPreferenciasTicket();
         }
     }
 

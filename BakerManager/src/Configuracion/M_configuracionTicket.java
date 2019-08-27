@@ -7,6 +7,7 @@ package Configuracion;
 
 import DB.DB_Preferencia;
 import Entities.E_ticketPreferencia;
+import Impresora.Impresora;
 
 /**
  *
@@ -26,6 +27,10 @@ public class M_configuracionTicket {
 
     public E_ticketPreferencia getTicketPreferencia() {
         return ticketPreferencia;
+    }
+
+    public void actualizarPreferenciasTicket() {
+        Impresora.PREF_PRINT_TICKET = DB_Preferencia.obtenerPreferenciaImpresionTicket();
     }
 
 }
