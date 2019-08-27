@@ -5,18 +5,14 @@
  */
 package Configuracion;
 
-import Entities.Divisa;
-import Entities.M_campoImpresion;
-import Entities.M_preferenciasImpresion;
-import Interface.crearModificarParametroCallback;
+import Entities.E_ticketPreferencia;
 import Impresora.Impresora;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -64,41 +60,53 @@ public class C_configuracionTicket extends MouseAdapter implements ActionListene
      * Agrega valores a los componentes.
      */
     private void inicializarVista() {
-        this.vista.jtaCabecera.setText("");
-        this.vista.jtaPie.setText("");
-    }
-
-    private void modificarCampo() {
-    }
-
-    private void quitarCampo() {
+        this.vista.jtaCabecera.setText(modelo.getTicketPreferencia().getCabecera());
+        this.vista.jtaPie.setText(modelo.getTicketPreferencia().getPie());
+        this.vista.jtfNombreImpresora.setText(modelo.getTicketPreferencia().getNombreImpresora());
     }
 
     private void guardarPreferencia() {
-        //crear variable contenedora de preferencia de ticket
         String cabecera;
-        if (this.vista.jtaCabecera.getText().isEmpty()) {
+        if (this.vista.jtaCabecera.getText().length() > 500) {
             javax.swing.JOptionPane.showMessageDialog(this.vista,
-                    "El campo nombre esta vacio",
+                    "La cabecera sobrepasa el limite permitido(500) de caracteres",
                     "Parametros incorrectos",
                     javax.swing.JOptionPane.OK_OPTION);
             return;
         } else {
-            if (this.vista.jtaCabecera.getText().length() > 150) {
-                javax.swing.JOptionPane.showMessageDialog(this.vista,
-                        "La cabecera sobrepasa el limite permitido(150) de caracteres",
-                        "Parametros incorrectos",
-                        javax.swing.JOptionPane.OK_OPTION);
-                return;
-            } else {
-                cabecera = this.vista.jtaCabecera.getText();
-            }
+            cabecera = this.vista.jtaCabecera.getText();
         }
-        //modelo.guardarPreferencias();
+        String pie;
+        if (this.vista.jtaPie.getText().length() > 500) {
+            javax.swing.JOptionPane.showMessageDialog(this.vista,
+                    "El pié sobrepasa el limite permitido(500) de caracteres",
+                    "Parametros incorrectos",
+                    javax.swing.JOptionPane.OK_OPTION);
+            return;
+        } else {
+            pie = this.vista.jtaPie.getText();
+        }
+        String nombreImpresora;
+        if (this.vista.jtfNombreImpresora.getText().trim().length() > 30) {
+            javax.swing.JOptionPane.showMessageDialog(this.vista,
+                    "El nombre de impresora sobrepasa el limite permitido(30) de caracteres",
+                    "Parametros incorrectos",
+                    javax.swing.JOptionPane.OK_OPTION);
+            return;
+        } else {
+            nombreImpresora = this.vista.jtfNombreImpresora.getText().trim();
+        }
+        E_ticketPreferencia tp = new E_ticketPreferencia();
+        tp.setCabecera(cabecera);
+        tp.setPie(pie);
+        tp.setNombreImpresora(nombreImpresora);
+        if (modelo.modificarTicketPreferencia(tp) > -1) {
+            JOptionPane.showMessageDialog(vista, "Cambios guardados", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+        }
     }
 
     private void imprimirPaginaPrueba() {
-        Impresora.imprimirPaginaPrueba();
+        Impresora.imprimirTicketPrueba();
     }
 
     @Override

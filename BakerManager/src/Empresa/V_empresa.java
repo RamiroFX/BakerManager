@@ -41,15 +41,15 @@ public class V_empresa extends JDialog {
     private void initNorthPanel() {
         jlEntidad = new javax.swing.JLabel();
         jlEntidad.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jlEntidad.setText("Entidad");
+        jlEntidad.setText("Entidad(*)");
         jtfEntidad = new javax.swing.JTextField();
         jlNombre = new javax.swing.JLabel();
         jlNombre.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jlNombre.setText("Nombre de fantasía");
+        jlNombre.setText("Nombre de fantasía(*)");
         jtfNombre = new javax.swing.JTextField();
         jlRUC = new javax.swing.JLabel();
         jlRUC.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jlRUC.setText("R.U.C.");
+        jlRUC.setText("R.U.C.(*)");
         jtfRUC = new javax.swing.JTextField();
         jlObservacion = new javax.swing.JLabel();
         jlObservacion.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);

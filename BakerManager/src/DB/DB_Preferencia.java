@@ -6,6 +6,7 @@
 package DB;
 
 import Entities.Divisa;
+import Entities.E_ticketPreferencia;
 import Entities.M_preferenciasImpresion;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -137,5 +138,72 @@ public class DB_Preferencia {
             lgr.log(Level.SEVERE, ex.getMessage(), ex);
         }
         return prefPrint;
+    }
+
+    public static E_ticketPreferencia obtenerPreferenciaImpresionTicket() {
+        E_ticketPreferencia ticketPref = null;
+        String Query = "SELECT id_ticket_preferencia, "
+                + "cabecera, "
+                + "pie, "
+                + "nombre_impresora "
+                + "FROM ticket_preferencia WHERE id_ticket_preferencia = 1 ";
+        try {
+            pst = DB_manager.getConection().prepareStatement(Query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            rs = pst.executeQuery();
+            while (rs.next()) {
+                ticketPref = new E_ticketPreferencia();
+                ticketPref.setId(rs.getInt("id_ticket_preferencia"));
+                ticketPref.setCabecera(rs.getString("cabecera"));
+                ticketPref.setPie(rs.getString("pie"));
+                ticketPref.setNombreImpresora(rs.getString("nombre_impresora"));
+            }
+        } catch (SQLException ex) {
+            Logger lgr = Logger.getLogger(DB_Producto.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        }
+        return ticketPref;
+    }
+
+    public static int modificarPreferenciaImpresionTicket(E_ticketPreferencia ticketPreferencia) {
+        String UPDATE = "UPDATE ticket_preferencia SET "
+                + "cabecera=?, "
+                + "pie=?, "
+                + "nombre_impresora=? "
+                + "WHERE id_ticket_preferencia = 1;";
+        int result = -1;
+        try {
+            DB_manager.getConection().setAutoCommit(false);
+            pst = DB_manager.getConection().prepareStatement(UPDATE);
+            pst.setString(1, ticketPreferencia.getCabecera());
+            pst.setString(2, ticketPreferencia.getPie());
+            pst.setString(3, ticketPreferencia.getNombreImpresora());
+            result = pst.executeUpdate();
+            DB_manager.getConection().commit();
+        } catch (SQLException ex) {
+            System.out.println(ex.getNextException());
+            if (DB_manager.getConection() != null) {
+                try {
+                    DB_manager.getConection().rollback();
+                } catch (SQLException ex1) {
+                    Logger lgr = Logger.getLogger(DB_Producto.class.getName());
+                    lgr.log(Level.WARNING, ex1.getMessage(), ex1);
+                }
+            }
+            Logger lgr = Logger.getLogger(DB_Producto.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        } finally {
+            try {
+                if (pst != null) {
+                    pst.close();
+                }
+                if (rs != null) {
+                    rs.close();
+                }
+            } catch (SQLException ex) {
+                Logger lgr = Logger.getLogger(DB_Producto.class.getName());
+                lgr.log(Level.WARNING, ex.getMessage(), ex);
+            }
+        }
+        return result;
     }
 }

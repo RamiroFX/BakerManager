@@ -6,19 +6,13 @@
 package Configuracion;
 
 import java.awt.BorderLayout;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
-import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import javax.swing.plaf.basic.BasicInternalFrameTitlePane;
 
 /**
  *
@@ -66,21 +60,22 @@ public class V_configuracionTicket extends javax.swing.JDialog {
         jspCabecera.setBorder(javax.swing.BorderFactory.createTitledBorder("Cabecera"));
         JScrollPane jspPie = new JScrollPane(jtaPie);
         jspPie.setBorder(javax.swing.BorderFactory.createTitledBorder("Pie"));
-        jpTicket.add(jspCabecera, BorderLayout.CENTER);
-        jpTicket.add(jspPie, BorderLayout.CENTER);
+        jpTicket.add(jspCabecera);
+        jpTicket.add(jspPie);
     }
 
     private void initPanelSouth() {
         jpSouth = new javax.swing.JPanel(new java.awt.BorderLayout());
-        jbCancelar = new javax.swing.JButton("Salir");        
+        jbCancelar = new javax.swing.JButton("Salir");
         jbGuardar = new javax.swing.JButton("Guardar");
-        jbImprimirPaginaPrueba = new javax.swing.JButton("Imprimir página de prueba");
+        jbImprimirPaginaPrueba = new javax.swing.JButton("Imprimir ticket de prueba");
         javax.swing.JPanel jpSouthButtons = new javax.swing.JPanel();
         jpSouthButtons.add(jbImprimirPaginaPrueba);
         javax.swing.JPanel jpBotones = new javax.swing.JPanel();
         jpBotones.setBorder(new javax.swing.border.EtchedBorder());
-        jpBotones.add(jbCancelar);
         jpBotones.add(jbGuardar);
+        jpBotones.add(jbImprimirPaginaPrueba);
+        jpBotones.add(jbCancelar);
         jpSouth.add(jpBotones);
     }
 

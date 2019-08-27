@@ -17,10 +17,12 @@ import DB.DB_Pedido;
 import DB.DB_Preferencia;
 import DB.DB_manager;
 import Entities.Caja;
+import Entities.E_ticketPreferencia;
 import Entities.M_campoImpresion;
 import Entities.M_cliente;
 import Entities.M_facturaCabecera;
 import Entities.M_facturaDetalle;
+import Entities.M_funcionario;
 import Entities.M_mesa;
 import Entities.M_mesa_detalle;
 import Entities.M_pedido;
@@ -60,6 +62,7 @@ import javax.swing.JOptionPane;
 public class Impresora {
 
     public static M_preferenciasImpresion PREF_PRINT = DB_Preferencia.obtenerPreferenciaImpresion();
+    public static E_ticketPreferencia PREF_PRINT_TICKET = DB_Preferencia.obtenerPreferenciaImpresionTicket();
     //public static M_preferenciasImpresion PREF_PRINT;
     private final static Font FUENTE_LETRA = new Font("Arial", Font.PLAIN, 8);
     private final static SimpleDateFormat sdfs = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
@@ -252,6 +255,159 @@ public class Impresora {
             }
         } else {
             JOptionPane.showMessageDialog(null, "No se encontro impresoras disponibles", "Error", JOptionPane.INFORMATION_MESSAGE);
+        }
+    }
+
+    public static void imprimirTicketPrueba() {
+        PrintService[] services = PrintServiceLookup.lookupPrintServices(null, null);
+        Date today = Calendar.getInstance().getTime();
+        String fechaEntrega = sdfs.format(today);
+        String nombreImpresora = PREF_PRINT_TICKET.getNombreImpresora();
+        M_cliente cliente = new M_cliente();
+        cliente.setNombre("Xxxxxx Xxxxxxxx");
+        cliente.setRuc("12345678");
+        cliente.setRucId("0");
+        cliente.setDireccion("35XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
+        cliente.setEntidad("Xxxxxx Xxxxxxxx");
+        M_funcionario func = new M_funcionario();
+        func.setNombre("Empleado test");
+        M_facturaCabecera fc = new M_facturaCabecera();
+        fc.setFuncionario(func);
+        fc.setCliente(cliente);
+        fc.setIdCondVenta(1);
+        fc.setIdNotaRemision(1);
+        fc.setNroFactura(123456789);
+        fc.setTiempo(new Timestamp(Calendar.getInstance().getTimeInMillis()));
+        M_producto prod1 = new M_producto("XXXXXXXXXX", "XXXXXXX", "XXXX", "Activo", 1, "XXXXXXXX", 2, 1, 1, 1, 1.0);
+        prod1.setIdImpuesto(1);
+        M_producto prod2 = new M_producto("XXXXXXXXXXXXXXX", "XXXXXXX", "XXXX", "Activo", 1, "XXXXXXXX", 2, 1, 1, 1, 1.0);
+        prod2.setIdImpuesto(2);
+        M_producto prod3 = new M_producto("XXXXXXXXXXXXXXXXXXXX", "XXXXXXX", "XXXX", "Activo", 1, "XXXXXXXX", 2, 1, 1, 1, 1.0);
+        prod3.setIdImpuesto(3);
+        M_producto prod4 = new M_producto("XXXXXXXXXXXXXXXXXXXXXXXXX", "XXXXXXX", "XXXX", "Activo", 1, "XXXXXXXX", 2, 1, 1, 1, 1.0);
+        prod4.setIdImpuesto(3);
+        M_producto prod5 = new M_producto("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX", "XXXXXXX", "XXXX", "Activo", 1, "XXXXXXXX", 2, 1, 1, 1, 1.0);
+        prod5.setIdImpuesto(3);
+        M_producto prod6 = new M_producto("XXXXXXXXXX", "XXXXXXX", "XXXX", "Activo", 1, "XXXXXXXX", 2, 1, 1, 1, 1.0);
+        prod6.setIdImpuesto(3);
+        M_producto prod7 = new M_producto("XXXXXXXXXXXXXXX", "XXXXXXX", "XXXX", "Activo", 1, "XXXXXXXX", 2, 1, 1, 1, 1.0);
+        prod7.setIdImpuesto(2);
+        M_producto prod8 = new M_producto("XXXXXXXXXXXXXXXXXXXX", "XXXXXXX", "XXXX", "Activo", 1, "XXXXXXXX", 2, 1, 1, 1, 1.0);
+        prod8.setIdImpuesto(2);
+        M_producto prod9 = new M_producto("XXXXXXXXXXXXXXXXXXXXXXXXX", "XXXXXXX", "XXXX", "Activo", 1, "XXXXXXXX", 2, 1, 1, 1, 1.0);
+        prod9.setIdImpuesto(2);
+        M_producto prod10 = new M_producto("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX", "XXXXXXX", "XXXX", "Activo", 1, "XXXXXXXX", 2, 1, 1, 1, 1.0);
+        prod10.setIdImpuesto(3);
+        ArrayList<M_facturaDetalle> faDetalles = new ArrayList<>();
+        M_facturaDetalle fd1 = new M_facturaDetalle();
+        fd1.setCantidad(1.0);
+        fd1.setDescuento(0.0);
+        fd1.setPrecio(100);
+        fd1.setProducto(prod1);
+        faDetalles.add(fd1);
+        M_facturaDetalle fd2 = new M_facturaDetalle();
+        fd2.setCantidad(10.0);
+        fd2.setDescuento(10.0);
+        fd2.setPrecio(150);
+        fd2.setProducto(prod2);
+        faDetalles.add(fd2);
+        M_facturaDetalle fd3 = new M_facturaDetalle();
+        fd3.setCantidad(15.0);
+        fd3.setDescuento(0.0);
+        fd3.setPrecio(500);
+        fd3.setProducto(prod3);
+        faDetalles.add(fd3);
+        M_facturaDetalle fd4 = new M_facturaDetalle();
+        fd4.setCantidad(750.0);
+        fd4.setDescuento(0.0);
+        fd4.setPrecio(100);
+        fd4.setProducto(prod4);
+        faDetalles.add(fd4);
+        M_facturaDetalle fd5 = new M_facturaDetalle();
+        fd5.setCantidad(1000.0);
+        fd5.setDescuento(0.0);
+        fd5.setPrecio(850);
+        fd5.setProducto(prod5);
+        faDetalles.add(fd5);
+        M_facturaDetalle fd6 = new M_facturaDetalle();
+        fd6.setCantidad(400.0);
+        fd6.setDescuento(0.0);
+        fd6.setPrecio(430);
+        fd6.setProducto(prod6);
+        faDetalles.add(fd6);
+        M_facturaDetalle fd7 = new M_facturaDetalle();
+        fd7.setCantidad(9.0);
+        fd7.setDescuento(0.0);
+        fd7.setPrecio(5000);
+        fd7.setProducto(prod7);
+        faDetalles.add(fd7);
+        M_facturaDetalle fd8 = new M_facturaDetalle();
+        fd8.setCantidad(19.0);
+        fd8.setDescuento(0.0);
+        fd8.setPrecio(20000);
+        fd8.setProducto(prod8);
+        faDetalles.add(fd8);
+        M_facturaDetalle fd9 = new M_facturaDetalle();
+        fd9.setCantidad(1.0);
+        fd9.setDescuento(0.0);
+        fd9.setPrecio(47000);
+        fd9.setProducto(prod9);
+        faDetalles.add(fd9);
+        M_facturaDetalle fd10 = new M_facturaDetalle();
+        fd10.setCantidad(3.0);
+        fd10.setDescuento(0.0);
+        fd10.setPrecio(250000);
+        fd10.setProducto(prod10);
+        faDetalles.add(fd10);
+        String ruc = "-";
+        if (fc.getCliente().getRuc() != null) {
+            if (fc.getCliente().getRucId() != null) {
+                ruc = fc.getCliente().getRuc() + "-" + fc.getCliente().getRucId();
+            }
+        }
+        String cabecera = PREF_PRINT_TICKET.getCabecera();
+        String pie = PREF_PRINT_TICKET.getPie();
+        String datoVenta = "Fecha y hora: " + fechaEntrega + "\n"
+                + "Cajero: " + fc.getFuncionario().getNombre() + "\n"
+                + "Cliente: " + fc.getCliente().getEntidad() + "\n"
+                + "R.U.C.: " + ruc + "\n"
+                + "---------------------------------\n";
+        String COLUMNAS = "producto   cant  precio  subtotal\n";
+        String DETALLE = "";
+        int total = 0;
+        for (M_facturaDetalle pedidoDetalle1 : faDetalles) {
+            int subtotal = Math.round(Math.round(pedidoDetalle1.getCantidad() * pedidoDetalle1.getPrecio()));
+            total = total + subtotal;
+            DETALLE = DETALLE + "-> " + pedidoDetalle1.getProducto().getDescripcion() + "\n" + pedidoDetalle1.getCantidad() + " " + pedidoDetalle1.getPrecio() + "  " + subtotal + "\n";
+        }
+        String SUMATOTAL = "---------------------------------\n"
+                + "Total= " + total + "\n";
+        String ticket = cabecera + datoVenta + COLUMNAS + DETALLE + SUMATOTAL + pie;
+        byte[] bytes = ticket.getBytes();
+        System.out.println(ticket);
+        DocFlavor flavor = DocFlavor.BYTE_ARRAY.AUTOSENSE;
+        Doc doc = new SimpleDoc(bytes, flavor, null);
+        DocPrintJob job = null;
+        boolean existeImpresora = false;
+        if (services.length > 0) {
+            for (PrintService service : services) {
+                if (service.getName().equals(nombreImpresora)) {
+                    job = service.createPrintJob();
+                    existeImpresora = true;
+                    try {
+                        if (job != null) {
+                            job.print(doc, null);
+                        } else {
+                            JOptionPane.showMessageDialog(null, "No se pudo imprimir", "Error", JOptionPane.INFORMATION_MESSAGE);
+                        }
+                    } catch (PrintException ex) {
+                        JOptionPane.showMessageDialog(null, "Ocurrio un error al imprimir: " + ex.getMessage(), "Error", JOptionPane.INFORMATION_MESSAGE);
+                    }
+                }
+            }
+            if (!existeImpresora) {
+                JOptionPane.showMessageDialog(null, "No se encontró la impresora " + nombreImpresora, "Error", JOptionPane.INFORMATION_MESSAGE);
+            }
         }
     }
 
