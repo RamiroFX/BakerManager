@@ -318,7 +318,7 @@ public class C_crearPedido extends MouseAdapter implements ActionListener, KeyLi
                 }
                 int opcion = JOptionPane.showConfirmDialog(vista, "¿Desea imprimir el pedido?", "Atención", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
                 if (opcion == JOptionPane.YES_OPTION) {
-                    Impresora.imprimirPedido(DatosUsuario.getRol_usuario(), modelo.getPedido(), modelo.getDetalles());
+                    Impresora.imprimirTicketPedido(DatosUsuario.getRol_usuario(), modelo.getPedido(), modelo.getDetalles());
                 }
             }
         });

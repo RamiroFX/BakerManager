@@ -117,11 +117,11 @@ public class Resumen_ingreso extends JDialog implements ActionListener, KeyListe
         Integer totalCredito = 0;
         int cantFilas = jtEgreso.getRowCount();
         for (int i = 0; i < cantFilas; i++) {
-            total = total + Integer.valueOf(String.valueOf(jtEgreso.getValueAt(i, 4)));
-            if (jtEgreso.getValueAt(i, 5).equals("Contado")) {
-                totalContado = totalContado + Integer.valueOf(String.valueOf(jtEgreso.getValueAt(i, 4)));
+            total = total + Integer.valueOf(String.valueOf(jtEgreso.getValueAt(i, 5)));
+            if (jtEgreso.getValueAt(i, 6).equals("Contado")) {
+                totalContado = totalContado + Integer.valueOf(String.valueOf(jtEgreso.getValueAt(i, 5)));
             } else {
-                totalCredito = totalCredito + Integer.valueOf(String.valueOf(jtEgreso.getValueAt(i, 4)));
+                totalCredito = totalCredito + Integer.valueOf(String.valueOf(jtEgreso.getValueAt(i, 5)));
             }
         }
         SimpleDateFormat sdfs = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");

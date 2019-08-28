@@ -63,12 +63,7 @@ public class Impresora {
 
     public static M_preferenciasImpresion PREF_PRINT = DB_Preferencia.obtenerPreferenciaImpresion();
     public static E_ticketPreferencia PREF_PRINT_TICKET = DB_Preferencia.obtenerPreferenciaImpresionTicket();
-    //public static M_preferenciasImpresion PREF_PRINT;
-    private final static Font FUENTE_LETRA = new Font("Arial", Font.PLAIN, 8);
     private final static SimpleDateFormat sdfs = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-    private final static SimpleDateFormat SDFS_DATE_ONLY = new SimpleDateFormat("dd/MM/yyyy");
-    private final static SimpleDateFormat SDFS_DATE_ONLY_WRITED_MONTH = new SimpleDateFormat("dd/MMMM/yyyy");
-    private final static SimpleDateFormat SDFS_DATE_ONLY_WRITED_MONTH_2DIGIT_YEAR = new SimpleDateFormat("dd/MMMM/yy");
 
     public static void imprimirCocina(String textoAImprimir) {
         PrintService[] services = PrintServiceLookup.lookupPrintServices(null, null); //nos da el array de los servicios de impresion
@@ -101,7 +96,7 @@ public class Impresora {
             //pj.setPrintable(cp, mPageFormat);
             if (pj.printDialog()) {
                 try {
-                    //PrintService service = pj.getPrintService();//PrintServiceLookup.lookupDefaultPrintService();
+                    //PrintService service = pj.getPrintService();//PrintServiceLookup.();
                     pj.print();
                     //DocPrintJob pjb;
                     // job = service.createPrintJob();
@@ -374,7 +369,6 @@ public class Impresora {
                 + "Total= " + total + "\n";
         String ticket = cabecera + datoVenta + COLUMNAS + DETALLE + SUMATOTAL + pie;
         byte[] bytes = ticket.getBytes();
-        System.out.println(ticket);
         DocFlavor flavor = DocFlavor.BYTE_ARRAY.AUTOSENSE;
         Doc doc = new SimpleDoc(bytes, flavor, null);
         DocPrintJob job = null;
@@ -401,70 +395,9 @@ public class Impresora {
         }
     }
 
-    public static void imprimirGenerico(String contentTicket) {
-        PrintService service = PrintServiceLookup.lookupDefaultPrintService();
-        byte[] bytes = contentTicket.getBytes();
-        DocFlavor flavor = DocFlavor.BYTE_ARRAY.AUTOSENSE;
-        Doc doc = new SimpleDoc(bytes, flavor, null);
-        DocPrintJob job = service.createPrintJob();
-        try {
-            if (job != null) {
-                job.print(doc, null);
-            } else {
-                JOptionPane.showMessageDialog(null, "No se pudo imprimir", "Error", JOptionPane.INFORMATION_MESSAGE);
-            }
-        } catch (PrintException ex) {
-            System.out.println(ex);
-        }
-    }
-
-    public static void imprimirPedidoGuardado(M_rol_usuario rol_usuario, M_pedido pedidoCabecera) {
-        PrintService service = PrintServiceLookup.lookupDefaultPrintService();
-        Date today = Calendar.getInstance().getTime();
-        String fechaEntrega = sdfs.format(today);
-        String ruc = "-";
-        if (pedidoCabecera.getCliente().getRuc() != null) {
-            if (pedidoCabecera.getCliente().getRucId() != null) {
-                ruc = pedidoCabecera.getCliente().getRuc() + "-" + pedidoCabecera.getCliente().getRucId();
-            }
-        }
-        String CABECERA = "Fecha y hora: " + fechaEntrega + "\n"
-                + "Cajero: " + pedidoCabecera.getFuncionario().getNombre() + "\n"
-                + "Cliente: " + pedidoCabecera.getCliente().getEntidad() + "\n"
-                + "R.U.C.: " + ruc + "\n"
-                + "Fecha pedido: " + sdfs.format(pedidoCabecera.getTiempoRecepcion()) + "\n"
-                + "---------------------------------\n";
-        ArrayList<M_pedidoDetalle> pedidoDetalle = DB_Pedido.obtenerPedidoDetalles(pedidoCabecera.getIdPedido());
-        String COLUMNAS = "producto   cant  precio  subtotal\n";
-        String DETALLE = "";
-        int total = 0;
-        for (M_pedidoDetalle pedidoDetalle1 : pedidoDetalle) {
-            int subtotal = Math.round(Math.round(pedidoDetalle1.getCantidad() * pedidoDetalle1.getPrecio()));
-            total = total + subtotal;
-            DETALLE = DETALLE + "-> " + pedidoDetalle1.getProducto().getDescripcion() + "\n" + pedidoDetalle1.getCantidad() + " " + pedidoDetalle1.getPrecio() + "  " + subtotal + "\n";
-        }
-        String SUMATOTAL = "---------------------------------\n"
-                + "Total= " + total + "\n";
-        String cabecera = PREF_PRINT_TICKET.getCabecera();
-        String pie = PREF_PRINT_TICKET.getPie();
-        String ticket = cabecera + CABECERA + COLUMNAS + DETALLE + SUMATOTAL + pie;
-        byte[] bytes = ticket.getBytes();
-        DocFlavor flavor = DocFlavor.BYTE_ARRAY.AUTOSENSE;
-        Doc doc = new SimpleDoc(bytes, flavor, null);
-        DocPrintJob job = service.createPrintJob();
-        try {
-            if (job != null) {
-                job.print(doc, null);
-            } else {
-                JOptionPane.showMessageDialog(null, "No se pudo imprimir", "Error", JOptionPane.INFORMATION_MESSAGE);
-            }
-        } catch (PrintException ex) {
-            System.out.println(ex);
-        }
-    }
-
-    public static void imprimirPedido(M_rol_usuario rol_usuario, M_pedido pedidoCabecera, ArrayList<M_pedidoDetalle> pedidoDetalle) {
-        PrintService service = PrintServiceLookup.lookupDefaultPrintService();
+    public static void imprimirTicketPedido(M_rol_usuario rol_usuario, M_pedido pedidoCabecera, ArrayList<M_pedidoDetalle> pedidoDetalle) {
+        PrintService[] services = PrintServiceLookup.lookupPrintServices(null, null);
+        String nombreImpresora = PREF_PRINT_TICKET.getNombreImpresora();
         Date today = Calendar.getInstance().getTime();
         String fechaEntrega = sdfs.format(today);
         String ruc = "-";
@@ -477,6 +410,7 @@ public class Impresora {
                 + "Cajero: " + pedidoCabecera.getFuncionario().getNombre() + "\n"
                 + "Cliente: " + pedidoCabecera.getCliente().getEntidad() + "\n"
                 + "R.U.C.: " + ruc + "\n"
+                + "Fecha pedido: " + sdfs.format(pedidoCabecera.getTiempoRecepcion()) + "\n"
                 + "---------------------------------\n";
         String COLUMNAS = "producto   cant  precio  subtotal\n";
         String DETALLE = "";
@@ -492,23 +426,35 @@ public class Impresora {
         String pie = PREF_PRINT_TICKET.getPie();
         String ticket = cabecera + ventaCabecera + COLUMNAS + DETALLE + SUMATOTAL + pie;
         byte[] bytes = ticket.getBytes();
-        System.out.println(ticket);
         DocFlavor flavor = DocFlavor.BYTE_ARRAY.AUTOSENSE;
         Doc doc = new SimpleDoc(bytes, flavor, null);
-        DocPrintJob job = service.createPrintJob();
-        try {
-            if (job != null) {
-                job.print(doc, null);
-            } else {
-                JOptionPane.showMessageDialog(null, "No se pudo imprimir", "Error", JOptionPane.INFORMATION_MESSAGE);
+        DocPrintJob job = null;
+        boolean existeImpresora = false;
+        if (services.length > 0) {
+            for (PrintService service : services) {
+                if (service.getName().equals(nombreImpresora)) {
+                    job = service.createPrintJob();
+                    existeImpresora = true;
+                    try {
+                        if (job != null) {
+                            job.print(doc, null);
+                        } else {
+                            JOptionPane.showMessageDialog(null, "No se pudo imprimir", "Error", JOptionPane.INFORMATION_MESSAGE);
+                        }
+                    } catch (PrintException ex) {
+                        JOptionPane.showMessageDialog(null, "Ocurrio un error al imprimir: " + ex.getMessage(), "Error", JOptionPane.INFORMATION_MESSAGE);
+                    }
+                }
             }
-        } catch (PrintException ex) {
-            System.out.println(ex);
+            if (!existeImpresora) {
+                JOptionPane.showMessageDialog(null, "No se encontró la impresora " + nombreImpresora, "Error", JOptionPane.INFORMATION_MESSAGE);
+            }
         }
     }
 
-    public static void imprimirVentaGuardada(M_rol_usuario rol_usuario, M_facturaCabecera facturaCabecera) {
-        PrintService service = PrintServiceLookup.lookupDefaultPrintService();
+    public static void imprimirTicketVentaGuardada(M_rol_usuario rol_usuario, M_facturaCabecera facturaCabecera) {
+        PrintService[] services = PrintServiceLookup.lookupPrintServices(null, null);
+        String nombreImpresora = PREF_PRINT_TICKET.getNombreImpresora();
         String fechaEntrega = sdfs.format(facturaCabecera.getTiempo());
         String ruc = "-";
         if (facturaCabecera.getCliente().getRuc() != null) {
@@ -539,20 +485,33 @@ public class Impresora {
         byte[] bytes = ticket.getBytes();
         DocFlavor flavor = DocFlavor.BYTE_ARRAY.AUTOSENSE;
         Doc doc = new SimpleDoc(bytes, flavor, null);
-        DocPrintJob job = service.createPrintJob();
-        try {
-            if (job != null) {
-                job.print(doc, null);
-            } else {
-                JOptionPane.showMessageDialog(null, "No se pudo imprimir", "Error", JOptionPane.INFORMATION_MESSAGE);
+        DocPrintJob job = null;
+        boolean existeImpresora = false;
+        if (services.length > 0) {
+            for (PrintService service : services) {
+                if (service.getName().equals(nombreImpresora)) {
+                    job = service.createPrintJob();
+                    existeImpresora = true;
+                    try {
+                        if (job != null) {
+                            job.print(doc, null);
+                        } else {
+                            JOptionPane.showMessageDialog(null, "No se pudo imprimir", "Error", JOptionPane.INFORMATION_MESSAGE);
+                        }
+                    } catch (PrintException ex) {
+                        JOptionPane.showMessageDialog(null, "Ocurrio un error al imprimir: " + ex.getMessage(), "Error", JOptionPane.INFORMATION_MESSAGE);
+                    }
+                }
             }
-        } catch (PrintException ex) {
-            System.out.println(ex);
+            if (!existeImpresora) {
+                JOptionPane.showMessageDialog(null, "No se encontró la impresora " + nombreImpresora, "Error", JOptionPane.INFORMATION_MESSAGE);
+            }
         }
     }
 
-    public static void imprimirVenta(M_rol_usuario rol_usuario, M_facturaCabecera facturaCabecera, ArrayList<M_facturaDetalle> facturaDetalle) {
-        PrintService service = PrintServiceLookup.lookupDefaultPrintService();
+    public static void imprimirTicketVenta(M_rol_usuario rol_usuario, M_facturaCabecera facturaCabecera, ArrayList<M_facturaDetalle> facturaDetalle) {
+        PrintService[] services = PrintServiceLookup.lookupPrintServices(null, null);
+        String nombreImpresora = PREF_PRINT_TICKET.getNombreImpresora();
         Date today = Calendar.getInstance().getTime();
         String fechaEntrega = sdfs.format(today);
         String ruc = "-";
@@ -583,15 +542,27 @@ public class Impresora {
         byte[] bytes = ticket.getBytes();
         DocFlavor flavor = DocFlavor.BYTE_ARRAY.AUTOSENSE;
         Doc doc = new SimpleDoc(bytes, flavor, null);
-        DocPrintJob job = service.createPrintJob();
-        try {
-            if (job != null) {
-                job.print(doc, null);
-            } else {
-                JOptionPane.showMessageDialog(null, "No se pudo imprimir", "Error", JOptionPane.INFORMATION_MESSAGE);
+        DocPrintJob job = null;
+        boolean existeImpresora = false;
+        if (services.length > 0) {
+            for (PrintService service : services) {
+                if (service.getName().equals(nombreImpresora)) {
+                    job = service.createPrintJob();
+                    existeImpresora = true;
+                    try {
+                        if (job != null) {
+                            job.print(doc, null);
+                        } else {
+                            JOptionPane.showMessageDialog(null, "No se pudo imprimir", "Error", JOptionPane.INFORMATION_MESSAGE);
+                        }
+                    } catch (PrintException ex) {
+                        JOptionPane.showMessageDialog(null, "Ocurrio un error al imprimir: " + ex.getMessage(), "Error", JOptionPane.INFORMATION_MESSAGE);
+                    }
+                }
             }
-        } catch (PrintException ex) {
-            System.out.println(ex);
+            if (!existeImpresora) {
+                JOptionPane.showMessageDialog(null, "No se encontró la impresora " + nombreImpresora, "Error", JOptionPane.INFORMATION_MESSAGE);
+            }
         }
     }
 
@@ -631,8 +602,9 @@ public class Impresora {
         }
     }
 
-    public static void imprimirMesa(M_mesa mesaCabecera, ArrayList<M_mesa_detalle> detalles) {
-        PrintService service = PrintServiceLookup.lookupDefaultPrintService();
+    public static void imprimirTicketMesa(M_mesa mesaCabecera, ArrayList<M_mesa_detalle> detalles) {
+        PrintService[] services = PrintServiceLookup.lookupPrintServices(null, null);
+        String nombreImpresora = PREF_PRINT_TICKET.getNombreImpresora();
         Date today = Calendar.getInstance().getTime();
         String fechaEntrega = sdfs.format(today);
         String ruc = "-";
@@ -663,20 +635,33 @@ public class Impresora {
         byte[] bytes = ticket.getBytes();
         DocFlavor flavor = DocFlavor.BYTE_ARRAY.AUTOSENSE;
         Doc doc = new SimpleDoc(bytes, flavor, null);
-        DocPrintJob job = service.createPrintJob();
-        try {
-            if (job != null) {
-                job.print(doc, null);
-            } else {
-                JOptionPane.showMessageDialog(null, "No se pudo imprimir", "Error", JOptionPane.INFORMATION_MESSAGE);
+        DocPrintJob job = null;
+        boolean existeImpresora = false;
+        if (services.length > 0) {
+            for (PrintService service : services) {
+                if (service.getName().equals(nombreImpresora)) {
+                    job = service.createPrintJob();
+                    existeImpresora = true;
+                    try {
+                        if (job != null) {
+                            job.print(doc, null);
+                        } else {
+                            JOptionPane.showMessageDialog(null, "No se pudo imprimir", "Error", JOptionPane.INFORMATION_MESSAGE);
+                        }
+                    } catch (PrintException ex) {
+                        JOptionPane.showMessageDialog(null, "Ocurrio un error al imprimir: " + ex.getMessage(), "Error", JOptionPane.INFORMATION_MESSAGE);
+                    }
+                }
             }
-        } catch (PrintException ex) {
-            System.out.println(ex);
+            if (!existeImpresora) {
+                JOptionPane.showMessageDialog(null, "No se encontró la impresora " + nombreImpresora, "Error", JOptionPane.INFORMATION_MESSAGE);
+            }
         }
     }
 
-    public static void imprimirVentaMesa(M_mesa mesaCabecera, ArrayList<M_mesa_detalle> detalles) {
-        PrintService service = PrintServiceLookup.lookupDefaultPrintService();
+    public static void imprimirTicketVentaMesa(M_mesa mesaCabecera, ArrayList<M_mesa_detalle> detalles) {
+        PrintService[] services = PrintServiceLookup.lookupPrintServices(null, null);
+        String nombreImpresora = PREF_PRINT_TICKET.getNombreImpresora();
         Date today = Calendar.getInstance().getTime();
         String fechaEntrega = sdfs.format(today);
         String ruc = "-";
@@ -707,20 +692,33 @@ public class Impresora {
         byte[] bytes = ticket.getBytes();
         DocFlavor flavor = DocFlavor.BYTE_ARRAY.AUTOSENSE;
         Doc doc = new SimpleDoc(bytes, flavor, null);
-        DocPrintJob job = service.createPrintJob();
-        try {
-            if (job != null) {
-                job.print(doc, null);
-            } else {
-                JOptionPane.showMessageDialog(null, "No se pudo imprimir", "Error", JOptionPane.INFORMATION_MESSAGE);
+        DocPrintJob job = null;
+        boolean existeImpresora = false;
+        if (services.length > 0) {
+            for (PrintService service : services) {
+                if (service.getName().equals(nombreImpresora)) {
+                    job = service.createPrintJob();
+                    existeImpresora = true;
+                    try {
+                        if (job != null) {
+                            job.print(doc, null);
+                        } else {
+                            JOptionPane.showMessageDialog(null, "No se pudo imprimir", "Error", JOptionPane.INFORMATION_MESSAGE);
+                        }
+                    } catch (PrintException ex) {
+                        JOptionPane.showMessageDialog(null, "Ocurrio un error al imprimir: " + ex.getMessage(), "Error", JOptionPane.INFORMATION_MESSAGE);
+                    }
+                }
             }
-        } catch (PrintException ex) {
-            System.out.println(ex);
+            if (!existeImpresora) {
+                JOptionPane.showMessageDialog(null, "No se encontró la impresora " + nombreImpresora, "Error", JOptionPane.INFORMATION_MESSAGE);
+            }
         }
     }
 
-    public static void imprimirCaja(Caja caja, int efectivoDepositado) {
-        PrintService service = PrintServiceLookup.lookupDefaultPrintService();
+    public static void imprimirTicketCaja(Caja caja, int efectivoDepositado) {
+        PrintService[] services = PrintServiceLookup.lookupPrintServices(null, null);
+        String nombreImpresora = PREF_PRINT_TICKET.getNombreImpresora();
         Date today = Calendar.getInstance().getTime();
         String fechaEntrega = sdfs.format(today);
         Calendar inicio = Calendar.getInstance();
@@ -759,15 +757,27 @@ public class Impresora {
         byte[] bytes = ticket.getBytes();
         DocFlavor flavor = DocFlavor.BYTE_ARRAY.AUTOSENSE;
         Doc doc = new SimpleDoc(bytes, flavor, null);
-        DocPrintJob job = service.createPrintJob();
-        try {
-            if (job != null) {
-                job.print(doc, null);
-            } else {
-                JOptionPane.showMessageDialog(null, "No se pudo imprimir", "Error", JOptionPane.INFORMATION_MESSAGE);
+        DocPrintJob job = null;
+        boolean existeImpresora = false;
+        if (services.length > 0) {
+            for (PrintService service : services) {
+                if (service.getName().equals(nombreImpresora)) {
+                    job = service.createPrintJob();
+                    existeImpresora = true;
+                    try {
+                        if (job != null) {
+                            job.print(doc, null);
+                        } else {
+                            JOptionPane.showMessageDialog(null, "No se pudo imprimir", "Error", JOptionPane.INFORMATION_MESSAGE);
+                        }
+                    } catch (PrintException ex) {
+                        JOptionPane.showMessageDialog(null, "Ocurrio un error al imprimir: " + ex.getMessage(), "Error", JOptionPane.INFORMATION_MESSAGE);
+                    }
+                }
             }
-        } catch (PrintException ex) {
-            System.out.println(ex);
+            if (!existeImpresora) {
+                JOptionPane.showMessageDialog(null, "No se encontró la impresora " + nombreImpresora, "Error", JOptionPane.INFORMATION_MESSAGE);
+            }
         }
     }
 }

@@ -9,6 +9,7 @@ import DB.DB_Funcionario;
 import DB.DB_Ingreso;
 import Entities.M_cliente;
 import Entities.M_facturaCabecera;
+import Entities.M_facturaDetalle;
 import Entities.M_funcionario;
 import Entities.M_telefono;
 import MenuPrincipal.DatosUsuario;
@@ -128,17 +129,25 @@ public class C_ver_ingreso implements ActionListener, KeyListener {
             cerrar();
         }
         if (e.getSource().equals(this.vista.jbImprimir)) {
-            imprimirTicket();
+            imprimirVenta();
         }
     }
 
-    private void imprimirTicket() {
+    private void imprimirVenta() {
         EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
-                int opcion = JOptionPane.showConfirmDialog(vista, "¿Desea imprimir el ticket?", "Atención", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
-                if (opcion == JOptionPane.YES_OPTION) {
-                    Impresora.imprimirVentaGuardada(DatosUsuario.getRol_usuario(), faca);
+                if (faca.getNroFactura() != null) {
+                    int opcion = JOptionPane.showConfirmDialog(vista, "¿Desea imprimir la factura?", "Atención", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+                    if (opcion == JOptionPane.YES_OPTION) {
+                        ArrayList<M_facturaDetalle> fade = DB_Ingreso.obtenerVentaDetalles(idEgresoCabecera);
+                        Impresora.imprimirVentaFactura(faca, fade);
+                    }
+                } else {
+                    int opcion = JOptionPane.showConfirmDialog(vista, "¿Desea imprimir el ticket?", "Atención", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+                    if (opcion == JOptionPane.YES_OPTION) {
+                        Impresora.imprimirTicketVentaGuardada(DatosUsuario.getRol_usuario(), faca);
+                    }
                 }
             }
         });
@@ -152,7 +161,7 @@ public class C_ver_ingreso implements ActionListener, KeyListener {
     public void keyPressed(KeyEvent e) {
         switch (e.getKeyCode()) {
             case KeyEvent.VK_F2: {
-                imprimirTicket();
+                imprimirVenta();
                 break;
             }
             case KeyEvent.VK_ESCAPE: {

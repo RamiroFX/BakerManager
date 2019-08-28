@@ -157,7 +157,7 @@ public class C_crearVentaRapida implements GestionInterface, InterfaceFacturaDet
                 } else {
                     int opcion = JOptionPane.showConfirmDialog(vista, "¿Desea imprimir la venta?", "Atención", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
                     if (opcion == JOptionPane.YES_OPTION) {
-                        Impresora.imprimirVenta(DatosUsuario.getRol_usuario(), modelo.getCabecera(), (ArrayList<M_facturaDetalle>) modelo.getDtm().getFacturaDetalleList());
+                        Impresora.imprimirTicketVenta(DatosUsuario.getRol_usuario(), modelo.getCabecera(), (ArrayList<M_facturaDetalle>) modelo.getDtm().getFacturaDetalleList());
                     }
                 }
             }

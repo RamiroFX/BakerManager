@@ -90,7 +90,7 @@ public class M_verMesa {
         getMesa().setIdMesa(nroTicket);
         int opcion = JOptionPane.showConfirmDialog(null, "¿Desea imprimir el ticket?", "Atención", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
         if (opcion == JOptionPane.YES_OPTION) {
-            Impresora.imprimirVentaMesa(getMesa(), getDetalles());
+            Impresora.imprimirTicketVentaMesa(getMesa(), getDetalles());
         }
     }
 
@@ -147,7 +147,7 @@ public class M_verMesa {
     public void imprimir() {
         getDetalles().clear();
         preparaVenta();
-        Impresora.imprimirMesa(mesa, detalles);
+        Impresora.imprimirTicketMesa(mesa, detalles);
     }
 
     public void actualizarDatosMesa(M_cliente cliente) {

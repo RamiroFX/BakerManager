@@ -8,6 +8,7 @@ import DB.DB_Pedido;
 import DB.ResultSetTableModel;
 import Entities.M_pedido;
 import Entities.M_pedidoDetalle;
+import java.util.ArrayList;
 
 /**
  *
@@ -17,12 +18,14 @@ public class M_verPedido {
 
     private M_pedido pedido;
     private M_pedidoDetalle detalle;
+    private ArrayList<M_pedidoDetalle> detalles;
     private ResultSetTableModel rstm;
 
     public M_verPedido(int idPedido) {
         this.pedido = DB_Pedido.obtenerPedido(idPedido);
         this.detalle = new M_pedidoDetalle();
         this.rstm = DB_Pedido.obtenerPedidoDetalle(idPedido);
+        this.detalles = DB_Pedido.obtenerPedidoDetalles(idPedido);
     }
 
     public M_pedido getPedido() {
@@ -76,5 +79,13 @@ public class M_verPedido {
 
     public void actualizarPedido() {
         DB_Pedido.actualizarPedido(getPedido());
+    }
+
+    public ArrayList<M_pedidoDetalle> getDetalles() {
+        return detalles;
+    }
+
+    public void setDetalles(ArrayList<M_pedidoDetalle> detalles) {
+        this.detalles = detalles;
     }
 }

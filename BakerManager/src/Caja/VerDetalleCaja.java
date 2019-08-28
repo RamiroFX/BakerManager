@@ -598,7 +598,7 @@ public class VerDetalleCaja extends JDialog implements ActionListener, KeyListen
                         depositado = depositado + (arquDeta.getCantidad() * arquDeta.getMoneda().getValor());
                     }
                     //se agrego la cantidad de efectivo depositado como ultimo
-                    Impresora.imprimirCaja(caja, depositado);
+                    Impresora.imprimirTicketCaja(caja, depositado);
                 }
             }
         });
