@@ -64,7 +64,7 @@ class V_MenuPrincipal extends JInternalFrame {
         jpSouth = new JPanel();
         jpSouth.setBorder(new EtchedBorder());
         jpCenter = new JPanel();
-        jpCenter.setLayout(new GridLayout(2, 4, 10, 10));
+        jpCenter.setLayout(new GridLayout(2, 5, 10, 10));
         jbVentas = new JButton("Ventas [F1]");
         jbVentas.setName("Gestión venta");
         //jbVentas.setPreferredSize(dim);
@@ -105,14 +105,14 @@ class V_MenuPrincipal extends JInternalFrame {
 
         jpCenter.add(jbVentas);
         jpCenter.add(jbCompras);
-        //jpCenter.add(jbPedidos);
+        jpCenter.add(jbPedidos);
         jpCenter.add(jbProductos);
         jpCenter.add(jbCaja);
         jpCenter.add(jbProveedores);
         jpCenter.add(jbClientes);
         jpCenter.add(jbEmpleados);
         jpCenter.add(jbReportes);
-        //jpCenter.add(jbCobroPago);
+        jpCenter.add(jbCobroPago);
         jpNorth.add(jftFecha);
         jpSouth.add(jbSalir);
     }

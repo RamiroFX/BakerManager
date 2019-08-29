@@ -257,7 +257,8 @@ public class VentaPrintable implements Printable {
                 }
                 if (object.getCampo().equals(MyConstants.DETAIL_PRECIO)) {
                     for (M_facturaDetalle fd : facturaDetalle) {
-                        int precio = fd.getPrecio();
+                        Integer precio = fd.getPrecio() - Math.round(Math.round(((fd.getPrecio() * fd.getDescuento()) / 100)));
+                        //int precio = fd.getPrecio();
                         g.drawString(precio + "", posX, posY);
                         if (preferencia.getIdDuplicado() == 1) {
                             int duplicadoDist = posY + preferencia.getDistanceBetweenCopies();

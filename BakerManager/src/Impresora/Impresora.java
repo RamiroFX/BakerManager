@@ -13,7 +13,6 @@ import DB.DB_Caja;
 import DB.DB_Egreso;
 import DB.DB_Funcionario;
 import DB.DB_Ingreso;
-import DB.DB_Pedido;
 import DB.DB_Preferencia;
 import DB.DB_manager;
 import Entities.Caja;
@@ -30,14 +29,11 @@ import Entities.M_pedidoDetalle;
 import Entities.M_preferenciasImpresion;
 import Entities.M_producto;
 import Entities.M_rol_usuario;
-import MenuPrincipal.DatosUsuario;
 import Utilities.MyConstants;
-import java.awt.Font;
 import java.awt.print.PageFormat;
 import java.awt.print.Paper;
 import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
-import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -78,13 +74,12 @@ public class Impresora {
 //Creamos un trabajo de impresión
         DocPrintJob job = null;
         if (services.length > 0) {
-            for (int i = 0; i < services.length; i++) {
-
-                if (services[i].getName().equals("cocina")) {//aqui escribimos/elegimos la impresora por la que queremos imprimir
+            for (PrintService service : services) {
+                if (service.getName().equals("cocina")) {
+                    //aqui escribimos/elegimos la impresora por la que queremos imprimir
                     //manejar error en caso de que no esté conectada
-                    //Desktop.getDesktop().print(null);//para imprimir un archivo ya existente  
-                    job = services[i].createPrintJob();// System.out.println(i+": "+services[i].getName());
-
+                    //Desktop.getDesktop().print(null);//para imprimir un archivo ya existente
+                    job = service.createPrintJob(); // System.out.println(i+": "+services[i].getName());
                 } else {
                     System.out.println("No se encontró la impresora cocina");
                 }
@@ -218,12 +213,12 @@ public class Impresora {
         PrintService[] services = PrintServiceLookup.lookupPrintServices(null, null);
         boolean existeImpresora = false;
         if (services.length > 0) {
-            for (int i = 0; i < services.length; i++) {
-                if (services[i].getName().equals(nombreImpresora)) {
+            for (PrintService service : services) {
+                if (service.getName().equals(nombreImpresora)) {
                     existeImpresora = true;
                     try {
                         if (job != null) {
-                            job.setPrintService(services[i]);
+                            job.setPrintService(service);
                             job.print();
                             break;
                         } else {
@@ -307,7 +302,7 @@ public class Impresora {
         fd4.setDescuento(0.0);
         fd4.setPrecio(100);
         fd4.setProducto(prod4);
-        //faDetalles.add(fd4);
+        faDetalles.add(fd4);
         M_facturaDetalle fd5 = new M_facturaDetalle();
         fd5.setCantidad(1000.0);
         fd5.setDescuento(0.0);
@@ -331,19 +326,19 @@ public class Impresora {
         fd8.setDescuento(0.0);
         fd8.setPrecio(20000);
         fd8.setProducto(prod8);
-        //faDetalles.add(fd8);
+        faDetalles.add(fd8);
         M_facturaDetalle fd9 = new M_facturaDetalle();
         fd9.setCantidad(1.0);
         fd9.setDescuento(0.0);
         fd9.setPrecio(47000);
         fd9.setProducto(prod9);
-        //faDetalles.add(fd9);
+        faDetalles.add(fd9);
         M_facturaDetalle fd10 = new M_facturaDetalle();
         fd10.setCantidad(3.0);
         fd10.setDescuento(0.0);
         fd10.setPrecio(250000);
         fd10.setProducto(prod10);
-        //faDetalles.add(fd10);
+        faDetalles.add(fd10);
         String ruc = "-";
         if (fc.getCliente().getRuc() != null) {
             if (fc.getCliente().getRucId() != null) {
@@ -360,18 +355,29 @@ public class Impresora {
         String COLUMNAS = "producto   cant  precio  subtotal\n";
         String DETALLE = "";
         int total = 0;
-        for (M_facturaDetalle pedidoDetalle1 : faDetalles) {
-            int subtotal = Math.round(Math.round(pedidoDetalle1.getCantidad() * pedidoDetalle1.getPrecio()));
+        int iva5 = 0;
+        int iva10 = 0;
+        for (M_facturaDetalle fd : faDetalles) {
+            Integer precio = fd.getPrecio() - Math.round(Math.round(((fd.getPrecio() * fd.getDescuento()) / 100)));
+            int subtotal = Math.round(Math.round(fd.getCantidad() * precio));
             total = total + subtotal;
-            DETALLE = DETALLE + "-> " + pedidoDetalle1.getProducto().getDescripcion() + "\n" + pedidoDetalle1.getCantidad() + " " + pedidoDetalle1.getPrecio() + "  " + subtotal + "\n";
+            if (fd.getProducto().getIdImpuesto() == 2) {
+                iva5 = iva5 + subtotal;
+            } else if (fd.getProducto().getIdImpuesto() == 3) {
+                iva10 = iva10 + subtotal;
+            }
+            DETALLE = DETALLE + "-> " + fd.getProducto().getDescripcion() + "\n" + fd.getCantidad() + " " + precio + "  " + subtotal + "\n";
         }
         String SUMATOTAL = "---------------------------------\n"
-                + "Total= " + total + "\n";
+                + "Total= " + total + "\n"
+                + "liq. iva5% = " + iva5 + "\n"
+                + "liq. iva10% = " + iva10 + "\n"
+                + "liq. total = " + (iva5 + iva10) + "\n";
         String ticket = cabecera + datoVenta + COLUMNAS + DETALLE + SUMATOTAL + pie;
         byte[] bytes = ticket.getBytes();
         DocFlavor flavor = DocFlavor.BYTE_ARRAY.AUTOSENSE;
         Doc doc = new SimpleDoc(bytes, flavor, null);
-        DocPrintJob job = null;
+        DocPrintJob job;
         boolean existeImpresora = false;
         if (services.length > 0) {
             for (PrintService service : services) {
@@ -415,20 +421,31 @@ public class Impresora {
         String COLUMNAS = "producto   cant  precio  subtotal\n";
         String DETALLE = "";
         int total = 0;
-        for (M_pedidoDetalle pedidoDetalle1 : pedidoDetalle) {
-            int subtotal = Math.round(Math.round(pedidoDetalle1.getCantidad() * pedidoDetalle1.getPrecio()));
+        int iva5 = 0;
+        int iva10 = 0;
+        for (M_pedidoDetalle fd : pedidoDetalle) {
+            Integer precio = fd.getPrecio() - Math.round(Math.round(((fd.getPrecio() * fd.getDescuento()) / 100)));
+            int subtotal = Math.round(Math.round(fd.getCantidad() * precio));
             total = total + subtotal;
-            DETALLE = DETALLE + "-> " + pedidoDetalle1.getProducto().getDescripcion() + "\n" + pedidoDetalle1.getCantidad() + " " + pedidoDetalle1.getPrecio() + "  " + subtotal + "\n";
+            if (fd.getProducto().getIdImpuesto() == 2) {
+                iva5 = iva5 + subtotal;
+            } else if (fd.getProducto().getIdImpuesto() == 3) {
+                iva10 = iva10 + subtotal;
+            }
+            DETALLE = DETALLE + "-> " + fd.getProducto().getDescripcion() + "\n" + fd.getCantidad() + " " + precio + "  " + subtotal + "\n";
         }
         String SUMATOTAL = "---------------------------------\n"
-                + "Total= " + total + "\n";
+                + "Total= " + total + "\n"
+                + "liq. iva5% = " + iva5 + "\n"
+                + "liq. iva10% = " + iva10 + "\n"
+                + "liq. total = " + (iva5 + iva10) + "\n";
         String cabecera = PREF_PRINT_TICKET.getCabecera();
         String pie = PREF_PRINT_TICKET.getPie();
         String ticket = cabecera + ventaCabecera + COLUMNAS + DETALLE + SUMATOTAL + pie;
         byte[] bytes = ticket.getBytes();
         DocFlavor flavor = DocFlavor.BYTE_ARRAY.AUTOSENSE;
         Doc doc = new SimpleDoc(bytes, flavor, null);
-        DocPrintJob job = null;
+        DocPrintJob job;
         boolean existeImpresora = false;
         if (services.length > 0) {
             for (PrintService service : services) {
@@ -472,20 +489,31 @@ public class Impresora {
         String COLUMNAS = "producto   cant  precio  subtotal\n";
         String DETALLE = "";
         int total = 0;
-        for (M_facturaDetalle facturaDetalle1 : facturaDetalle) {
-            int subtotal = Math.round(Math.round(facturaDetalle1.getCantidad() * facturaDetalle1.getPrecio()));
+        int iva5 = 0;
+        int iva10 = 0;
+        for (M_facturaDetalle fd : facturaDetalle) {
+            Integer precio = fd.getPrecio() - Math.round(Math.round(((fd.getPrecio() * fd.getDescuento()) / 100)));
+            int subtotal = Math.round(Math.round(fd.getCantidad() * precio));
+            if (fd.getProducto().getIdImpuesto() == 2) {
+                iva5 = iva5 + subtotal;
+            } else if (fd.getProducto().getIdImpuesto() == 3) {
+                iva10 = iva10 + subtotal;
+            }
             total = total + subtotal;
-            DETALLE = DETALLE + "-> " + facturaDetalle1.getProducto().getDescripcion() + "\n" + facturaDetalle1.getCantidad() + " " + facturaDetalle1.getPrecio() + "  " + subtotal + "\n";
+            DETALLE = DETALLE + "-> " + fd.getProducto().getDescripcion() + "\n" + fd.getCantidad() + " " + precio + "  " + subtotal + "\n";
         }
         String SUMATOTAL = "---------------------------------\n"
-                + "Total= " + total + "\n";
+                + "Total= " + total + "\n"
+                + "liq. iva5% = " + iva5 + "\n"
+                + "liq. iva10% = " + iva10 + "\n"
+                + "liq. total = " + (iva5 + iva10) + "\n";
         String cabecera = PREF_PRINT_TICKET.getCabecera();
         String pie = PREF_PRINT_TICKET.getPie();
         String ticket = cabecera + ventaCabecera + COLUMNAS + DETALLE + SUMATOTAL + pie;
         byte[] bytes = ticket.getBytes();
         DocFlavor flavor = DocFlavor.BYTE_ARRAY.AUTOSENSE;
         Doc doc = new SimpleDoc(bytes, flavor, null);
-        DocPrintJob job = null;
+        DocPrintJob job;
         boolean existeImpresora = false;
         if (services.length > 0) {
             for (PrintService service : services) {
@@ -529,20 +557,31 @@ public class Impresora {
         String COLUMNAS = "producto   cant  precio  subtotal\n";
         String DETALLE = "";
         int total = 0;
-        for (M_facturaDetalle pedidoDetalle1 : facturaDetalle) {
-            int subtotal = Math.round(Math.round(pedidoDetalle1.getCantidad() * pedidoDetalle1.getPrecio()));
+        int iva5 = 0;
+        int iva10 = 0;
+        for (M_facturaDetalle fd : facturaDetalle) {
+            Integer precio = fd.getPrecio() - Math.round(Math.round(((fd.getPrecio() * fd.getDescuento()) / 100)));
+            int subtotal = Math.round(Math.round(fd.getCantidad() * precio));
+            if (fd.getProducto().getIdImpuesto() == 2) {
+                iva5 = iva5 + subtotal;
+            } else if (fd.getProducto().getIdImpuesto() == 3) {
+                iva10 = iva10 + subtotal;
+            }
             total = total + subtotal;
-            DETALLE = DETALLE + "-> " + pedidoDetalle1.getProducto().getDescripcion() + "\n" + pedidoDetalle1.getCantidad() + " " + pedidoDetalle1.getPrecio() + "  " + subtotal + "\n";
+            DETALLE = DETALLE + "-> " + fd.getProducto().getDescripcion() + "\n" + fd.getCantidad() + " " + precio + "  " + subtotal + "\n";
         }
         String SUMATOTAL = "---------------------------------\n"
-                + "Total= " + total + "\n";
+                + "Total= " + total + "\n"
+                + "liq. iva5% = " + iva5 + "\n"
+                + "liq. iva10% = " + iva10 + "\n"
+                + "liq. total = " + (iva5 + iva10) + "\n";
         String cabecera = PREF_PRINT_TICKET.getCabecera();
         String pie = PREF_PRINT_TICKET.getPie();
         String ticket = cabecera + ventaCabecera + COLUMNAS + DETALLE + SUMATOTAL + pie;
         byte[] bytes = ticket.getBytes();
         DocFlavor flavor = DocFlavor.BYTE_ARRAY.AUTOSENSE;
         Doc doc = new SimpleDoc(bytes, flavor, null);
-        DocPrintJob job = null;
+        DocPrintJob job;
         boolean existeImpresora = false;
         if (services.length > 0) {
             for (PrintService service : services) {
@@ -581,11 +620,11 @@ public class Impresora {
         pf.setPaper(p);
         job.setPrintable(vp, pf);
         if (services.length > 0) {
-            for (int i = 0; i < services.length; i++) {
-                if (services[i].getName().equals(nombreImpresora)) {
+            for (PrintService service : services) {
+                if (service.getName().equals(nombreImpresora)) {
                     try {
                         if (job != null) {
-                            job.setPrintService(services[i]);
+                            job.setPrintService(service);
                             job.print();
                             break;
                         } else {
@@ -622,20 +661,31 @@ public class Impresora {
         String COLUMNAS = "producto   cant  precio  subtotal\n";
         String DETALLE = "";
         int total = 0;
-        for (M_mesa_detalle mesaDetalle : detalles) {
-            int subtotal = Math.round(Math.round(mesaDetalle.getCantidad() * mesaDetalle.getPrecio()));
+        int iva5 = 0;
+        int iva10 = 0;
+        for (M_mesa_detalle md : detalles) {
+            Integer precio = md.getPrecio() - Math.round(Math.round(((md.getPrecio() * md.getDescuento()) / 100)));
+            int subtotal = Math.round(Math.round(md.getCantidad() * precio));
+            if (md.getProducto().getIdImpuesto() == 2) {
+                iva5 = iva5 + subtotal;
+            } else if (md.getProducto().getIdImpuesto() == 3) {
+                iva10 = iva10 + subtotal;
+            }
             total = total + subtotal;
-            DETALLE = DETALLE + "-> " + mesaDetalle.getProducto().getDescripcion() + "\n" + mesaDetalle.getCantidad() + " " + mesaDetalle.getPrecio() + "  " + subtotal + "\n";
+            DETALLE = DETALLE + "-> " + md.getProducto().getDescripcion() + "\n" + md.getCantidad() + " " + precio + "  " + subtotal + "\n";
         }
         String SUMATOTAL = "---------------------------------\n"
-                + "Total= " + total + "\n";
+                + "Total= " + total + "\n"
+                + "liq. iva5% = " + iva5 + "\n"
+                + "liq. iva10% = " + iva10 + "\n"
+                + "liq. total = " + (iva5 + iva10) + "\n";
         String cabecera = PREF_PRINT_TICKET.getCabecera();
         String pie = PREF_PRINT_TICKET.getPie();
         String ticket = cabecera + ventaCabecera + COLUMNAS + DETALLE + SUMATOTAL + pie;
         byte[] bytes = ticket.getBytes();
         DocFlavor flavor = DocFlavor.BYTE_ARRAY.AUTOSENSE;
         Doc doc = new SimpleDoc(bytes, flavor, null);
-        DocPrintJob job = null;
+        DocPrintJob job;
         boolean existeImpresora = false;
         if (services.length > 0) {
             for (PrintService service : services) {
@@ -679,20 +729,31 @@ public class Impresora {
         String COLUMNAS = "producto   cant  precio  subtotal\n";
         String DETALLE = "";
         int total = 0;
-        for (M_mesa_detalle mesaDetalle : detalles) {
-            int subtotal = Math.round(Math.round(mesaDetalle.getCantidad() * mesaDetalle.getPrecio()));
+        int iva5 = 0;
+        int iva10 = 0;
+        for (M_mesa_detalle md : detalles) {
+            Integer precio = md.getPrecio() - Math.round(Math.round(((md.getPrecio() * md.getDescuento()) / 100)));
+            int subtotal = Math.round(Math.round(md.getCantidad() * precio));
+            if (md.getProducto().getIdImpuesto() == 2) {
+                iva5 = iva5 + subtotal;
+            } else if (md.getProducto().getIdImpuesto() == 3) {
+                iva10 = iva10 + subtotal;
+            }
             total = total + subtotal;
-            DETALLE = DETALLE + "-> " + mesaDetalle.getProducto().getDescripcion() + "\n" + mesaDetalle.getCantidad() + " " + mesaDetalle.getPrecio() + "  " + subtotal + "\n";
+            DETALLE = DETALLE + "-> " + md.getProducto().getDescripcion() + "\n" + md.getCantidad() + " " + precio + "  " + subtotal + "\n";
         }
         String SUMATOTAL = "---------------------------------\n"
-                + "Total= " + total + "\n";
+                + "Total= " + total + "\n"
+                + "liq. iva5% = " + iva5 + "\n"
+                + "liq. iva10% = " + iva10 + "\n"
+                + "liq. total = " + (iva5 + iva10) + "\n";
         String cabecera = PREF_PRINT_TICKET.getCabecera();
         String pie = PREF_PRINT_TICKET.getPie();
         String ticket = cabecera + ventaCabecera + COLUMNAS + DETALLE + SUMATOTAL + pie;
         byte[] bytes = ticket.getBytes();
         DocFlavor flavor = DocFlavor.BYTE_ARRAY.AUTOSENSE;
         Doc doc = new SimpleDoc(bytes, flavor, null);
-        DocPrintJob job = null;
+        DocPrintJob job;
         boolean existeImpresora = false;
         if (services.length > 0) {
             for (PrintService service : services) {
@@ -757,7 +818,7 @@ public class Impresora {
         byte[] bytes = ticket.getBytes();
         DocFlavor flavor = DocFlavor.BYTE_ARRAY.AUTOSENSE;
         Doc doc = new SimpleDoc(bytes, flavor, null);
-        DocPrintJob job = null;
+        DocPrintJob job;
         boolean existeImpresora = false;
         if (services.length > 0) {
             for (PrintService service : services) {

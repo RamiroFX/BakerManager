@@ -23,7 +23,6 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
@@ -50,7 +49,7 @@ public class Resumen_ingreso extends JDialog implements ActionListener, KeyListe
 
     public Resumen_ingreso(C_inicio c_inicio, TableModel tm, M_cliente cliente_entidad, Integer nro_factura, String idEmpleado, Date inicio, Date fin, String tipo_operacion) {
         super(c_inicio.vista, DEFAULT_MODALITY_TYPE);
-        setTitle("Resumen de egresos");
+        setTitle("Resumen de ingresos");
         setSize(800, 600);
         setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(c_inicio.vista);
@@ -79,11 +78,11 @@ public class Resumen_ingreso extends JDialog implements ActionListener, KeyListe
         jftTotalEgCont.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("¤#,##0"))));
         jftTotalEgCred = new JFormattedTextField();
         jftTotalEgCred.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("¤#,##0"))));
-        jlContado = new JLabel("Egresos al contado");
+        jlContado = new JLabel("Ingresos al contado");
         jlContado.setHorizontalAlignment(SwingConstants.CENTER);
-        jlCredito = new JLabel("Egresos a crédito");
+        jlCredito = new JLabel("Ingresos a crédito");
         jlCredito.setHorizontalAlignment(SwingConstants.CENTER);
-        jlTotal = new JLabel("Total egresos");
+        jlTotal = new JLabel("Total ingresos");
         jlTotal.setHorizontalAlignment(SwingConstants.CENTER);
         jpTotalEgreso.add(jlContado);
         jpTotalEgreso.add(jftTotalEgCont);
