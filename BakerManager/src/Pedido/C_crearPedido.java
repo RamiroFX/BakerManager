@@ -26,6 +26,7 @@ import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Vector;
 import javax.swing.JOptionPane;
 
 /**
@@ -61,12 +62,18 @@ public class C_crearPedido extends MouseAdapter implements ActionListener, KeyLi
     }
 
     private void inicializarVista() {
-        this.vista.jrbContado.setSelected(true);
+        Vector condCompra = modelo.obtenerTipoOperacion();
+        for (int i = 0; i < condCompra.size(); i++) {
+            this.vista.jcbCondVenta.addItem(condCompra.get(i));
+        }
+        Vector tipoVenta = modelo.obtenerTipoVenta();
+        for (int i = 0; i < tipoVenta.size(); i++) {
+            this.vista.jcbTipoVenta.addItem(tipoVenta.get(i));
+        }
         this.modelo.getPedido().setIdCondVenta(TipoOperacion.CONTADO);
         this.modelo.getPedido().setEstado(PedidoEstado.PENDIENTE.getDescripcion());
         this.modelo.getPedido().setIdEstado(PedidoEstado.PENDIENTE.getId());
-        String func_alias = this.modelo.getPedido().getFuncionario().getAlias();
-        this.vista.jtfFuncionario.setText(func_alias);
+        this.vista.jtfNroFactura.setEditable(false);
         this.vista.jtPedidoDetalle.setModel(this.modelo.getDtm());
         this.vista.jbModificarDetalle.setEnabled(false);
         this.vista.jbEliminarDetalle.setEnabled(false);
@@ -99,8 +106,8 @@ public class C_crearPedido extends MouseAdapter implements ActionListener, KeyLi
 
     private void agregarListeners() {
         this.vista.jtPedidoDetalle.addMouseListener(this);
-        this.vista.jrbContado.addActionListener(this);
-        this.vista.jrbCredito.addActionListener(this);
+        this.vista.jcbCondVenta.addActionListener(this);
+        this.vista.jcbTipoVenta.addActionListener(this);
         this.vista.jbAceptar.addActionListener(this);
         this.vista.jbSeleccionarProducto.addActionListener(this);
         this.vista.jbCliente.addActionListener(this);
@@ -113,14 +120,14 @@ public class C_crearPedido extends MouseAdapter implements ActionListener, KeyLi
         this.vista.jbAceptar.addKeyListener(this);
         this.vista.jbImprimir.addKeyListener(this);
         this.vista.jbSalir.addKeyListener(this);
-        this.vista.jrbContado.addKeyListener(this);
-        this.vista.jrbCredito.addKeyListener(this);
+        this.vista.jcbCondVenta.addKeyListener(this);
+        this.vista.jcbTipoVenta.addKeyListener(this);
         this.vista.jcbHora.addKeyListener(this);
         this.vista.jcbMinuto.addKeyListener(this);
     }
 
     private void establecerCondicionVenta() {
-        if (this.vista.jrbContado.isSelected()) {
+        if (this.vista.jcbCondVenta.getSelectedIndex() == 1) {
             this.modelo.getPedido().setIdCondVenta(TipoOperacion.CONTADO);
         } else {
             this.modelo.getPedido().setIdCondVenta(TipoOperacion.CREDITO);
@@ -329,10 +336,10 @@ public class C_crearPedido extends MouseAdapter implements ActionListener, KeyLi
         Object source = e.getSource();
         if (source.equals(this.vista.jbAceptar)) {
             guardarPedido();
-        } else if (source.equals(this.vista.jrbContado)) {
+        } else if (source.equals(this.vista.jcbCondVenta)) {
             establecerCondicionVenta();
-        } else if (source.equals(this.vista.jrbCredito)) {
-            establecerCondicionVenta();
+        } else if (source.equals(this.vista.jcbTipoVenta)) {
+            //establecerCondicionVenta();
         } else if (source.equals(this.vista.jbSeleccionarProducto)) {
             SeleccionarProducto sp = new SeleccionarProducto(this);
             sp.mostrarVista();

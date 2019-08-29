@@ -29,14 +29,14 @@ import net.miginfocom.swing.MigLayout;
  * @author Ramiro Ferreira
  */
 public class V_crearPedido extends JDialog {
+
     //NORTE
     //norte 1
-
     JPanel jpNorth, jpNorth1, jpNorth2;
-    public JTextField jtfCliente, jtfFuncionario, jtfClieDireccion, jtfClieTelefono, jtfClieRuc;
+    public JTextField jtfCliente, jtfNroFactura, jtfClieDireccion, jtfClieTelefono, jtfClieRuc;
     public JButton jbCliente;
-    public JLabel jlFuncionario;
-    public JRadioButton jrbContado, jrbCredito;
+    public JLabel jlNroFactura;
+    public JComboBox jcbCondVenta, jcbTipoVenta;
     //norte 2
     public JComboBox jcbHora, jcbMinuto;
     public JDateChooser jdcFechaEntrega;
@@ -76,33 +76,34 @@ public class V_crearPedido extends JDialog {
         jbCliente = new JButton("Agregar cliente[F3]");
         jtfCliente = new JTextField(30);
         jtfCliente.setEditable(false);
-        jlFuncionario = new JLabel("Funcionario");
-        jtfFuncionario = new JTextField(30);
-        jtfFuncionario.setEditable(false);
-        jrbContado = new JRadioButton("Contado");
-        jrbCredito = new JRadioButton("Crédito");
+        jlNroFactura = new JLabel("Nro. factura");
+        jtfNroFactura = new JTextField(30);
+        jcbCondVenta = new JComboBox();
+        jcbTipoVenta = new JComboBox();
         jtfClieRuc = new JTextField(30);
         jtfClieRuc.setEditable(false);
         jtfClieDireccion = new JTextField(30);
         jtfClieDireccion.setEditable(false);
         jtfClieTelefono = new JTextField(30);
         jtfClieTelefono.setEditable(false);
-        javax.swing.ButtonGroup bg1 = new javax.swing.ButtonGroup();
-        bg1.add(jrbContado);
-        bg1.add(jrbCredito);
+        JPanel jpTiop = new JPanel();
+        jpTiop.add(new JLabel("Tipo operación"));
+        jpTiop.add(jcbTipoVenta);
+        JPanel jpCondVenta = new JPanel();
+        jpCondVenta.add(new JLabel("Cond. venta"));
+        jpCondVenta.add(jcbCondVenta);
         jpNorth1.add(jbCliente);
         jpNorth1.add(jtfCliente);
-        jpNorth1.add(jlFuncionario);
-        jpNorth1.add(jtfFuncionario);
-        jpNorth1.add(jrbContado);
-        jpNorth1.add(jrbCredito, "wrap");
+        jpNorth1.add(jlNroFactura);
+        jpNorth1.add(jtfNroFactura);
+        jpNorth1.add(jpCondVenta);
+        jpNorth1.add(jpTiop, "wrap");
         jpNorth1.add(new JLabel("R.U.C.:"));
         jpNorth1.add(jtfClieRuc);
         jpNorth1.add(new JLabel("Direccion:"));
         jpNorth1.add(jtfClieDireccion);
         jpNorth1.add(new JLabel("Telefono:"));
         jpNorth1.add(jtfClieTelefono);
-
 
         jpNorth2 = new JPanel(new MigLayout());
         jpNorth2.setBorder(new javax.swing.border.TitledBorder(new EtchedBorder(EtchedBorder.RAISED), "Datos de pedido", TitledBorder.CENTER, TitledBorder.ABOVE_TOP));
@@ -111,14 +112,14 @@ public class V_crearPedido extends JDialog {
             jcbHora.addItem("0" + i);
         }
         for (int i = 10; i < 24; i++) {
-            jcbHora.addItem(""+i);
+            jcbHora.addItem("" + i);
         }
         jcbMinuto = new JComboBox();
         for (int i = 0; i < 10; i++) {
             jcbMinuto.addItem("0" + i);
         }
         for (int i = 10; i < 60; i++) {
-            jcbMinuto.addItem(""+i);
+            jcbMinuto.addItem("" + i);
         }
         JPanel jpHora = new JPanel(new GridLayout(1, 2));
         jpHora.add(jcbHora);
@@ -185,7 +186,7 @@ public class V_crearPedido extends JDialog {
     private void initSouth() {
         jpSouth = new JPanel();
         jbAceptar = new JButton("Guardar cambios[F1]");
-        jbImprimir= new JButton("Imprimir[F2]");
+        jbImprimir = new JButton("Imprimir[F2]");
         jbSalir = new JButton("Salir[ESC]");
         jpSouth.add(jbAceptar);
         jpSouth.add(jbImprimir);

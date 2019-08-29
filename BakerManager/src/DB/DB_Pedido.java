@@ -718,7 +718,13 @@ public class DB_Pedido {
 
     public static ArrayList<M_pedidoDetalle> obtenerPedidoDetalles(Integer idPedido) {
         ArrayList<M_pedidoDetalle> detalles = null;
-        String query = "SELECT ID_PEDIDO_DETALLE, ID_PEDIDO_CABECERA, ID_PRODUCTO,(SELECT P.DESCRIPCION FROM PRODUCTO P WHERE P.ID_PRODUCTO = PD.ID_PRODUCTO)\"PRODUCTO\", CANTIDAD, PRECIO, DESCUENTO, OBSERVACION FROM PEDIDO_DETALLE PD WHERE PD.ID_PEDIDO_CABECERA = " + idPedido;
+        String query = "SELECT ID_PEDIDO_DETALLE, ID_PEDIDO_CABECERA, PD.ID_PRODUCTO,"
+                + "P.DESCRIPCION \"PRODUCTO\", "
+                + "(SELECT I.ID_IMPUESTO FROM IMPUESTO I WHERE I.ID_IMPUESTO = P.ID_IMPUESTO)\"ID_IMPUESTO\", "
+                + "CANTIDAD, PRECIO, DESCUENTO, OBSERVACION "
+                + "FROM PEDIDO_DETALLE PD, PRODUCTO P "
+                + "WHERE PD.ID_PRODUCTO = P.ID_PRODUCTO "
+                + "AND PD.ID_PEDIDO_CABECERA = " + idPedido;
         try {
             st = DB_manager.getConection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             rs = st.executeQuery(query);
@@ -734,6 +740,7 @@ public class DB_Pedido {
                 M_producto producto = new M_producto();
                 producto.setId(rs.getInt("ID_PRODUCTO"));
                 producto.setDescripcion(rs.getString("PRODUCTO"));
+                producto.setIdImpuesto(rs.getInt("ID_IMPUESTO"));
                 detalle.setProducto(producto);
                 detalles.add(detalle);
             }

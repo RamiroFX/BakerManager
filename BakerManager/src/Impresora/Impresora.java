@@ -368,6 +368,8 @@ public class Impresora {
             }
             DETALLE = DETALLE + "-> " + fd.getProducto().getDescripcion() + "\n" + fd.getCantidad() + " " + precio + "  " + subtotal + "\n";
         }
+        iva5 = iva5 / 21;
+        iva10 = iva10 / 11;
         String SUMATOTAL = "---------------------------------\n"
                 + "Total= " + total + "\n"
                 + "liq. iva5% = " + iva5 + "\n"
@@ -434,6 +436,8 @@ public class Impresora {
             }
             DETALLE = DETALLE + "-> " + fd.getProducto().getDescripcion() + "\n" + fd.getCantidad() + " " + precio + "  " + subtotal + "\n";
         }
+        iva5 = iva5 / 21;
+        iva10 = iva10 / 11;
         String SUMATOTAL = "---------------------------------\n"
                 + "Total= " + total + "\n"
                 + "liq. iva5% = " + iva5 + "\n"
@@ -502,6 +506,8 @@ public class Impresora {
             total = total + subtotal;
             DETALLE = DETALLE + "-> " + fd.getProducto().getDescripcion() + "\n" + fd.getCantidad() + " " + precio + "  " + subtotal + "\n";
         }
+        iva5 = iva5 / 21;
+        iva10 = iva10 / 11;
         String SUMATOTAL = "---------------------------------\n"
                 + "Total= " + total + "\n"
                 + "liq. iva5% = " + iva5 + "\n"
@@ -570,6 +576,8 @@ public class Impresora {
             total = total + subtotal;
             DETALLE = DETALLE + "-> " + fd.getProducto().getDescripcion() + "\n" + fd.getCantidad() + " " + precio + "  " + subtotal + "\n";
         }
+        iva5 = iva5 / 21;
+        iva10 = iva10 / 11;
         String SUMATOTAL = "---------------------------------\n"
                 + "Total= " + total + "\n"
                 + "liq. iva5% = " + iva5 + "\n"
@@ -674,6 +682,8 @@ public class Impresora {
             total = total + subtotal;
             DETALLE = DETALLE + "-> " + md.getProducto().getDescripcion() + "\n" + md.getCantidad() + " " + precio + "  " + subtotal + "\n";
         }
+        iva5 = iva5 / 21;
+        iva10 = iva10 / 11;
         String SUMATOTAL = "---------------------------------\n"
                 + "Total= " + total + "\n"
                 + "liq. iva5% = " + iva5 + "\n"
@@ -742,6 +752,8 @@ public class Impresora {
             total = total + subtotal;
             DETALLE = DETALLE + "-> " + md.getProducto().getDescripcion() + "\n" + md.getCantidad() + " " + precio + "  " + subtotal + "\n";
         }
+        iva5 = iva5 / 21;
+        iva10 = iva10 / 11;
         String SUMATOTAL = "---------------------------------\n"
                 + "Total= " + total + "\n"
                 + "liq. iva5% = " + iva5 + "\n"

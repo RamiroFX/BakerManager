@@ -1262,20 +1262,20 @@ public class DB_manager {
     }
 
     public static Vector obtenerTipoVenta() {
-        Vector pais = null;
+        Vector tipoVenta = null;
         String q = "SELECT descripcion  "
                 + "FROM impresion_tipo ";
         try {
             st = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             rs = st.executeQuery(q);
-            pais = new Vector();
+            tipoVenta = new Vector();
             while (rs.next()) {
-                pais.add(rs.getString("descripcion"));
+                tipoVenta.add(rs.getString("descripcion"));
             }
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
-        return pais;
+        return tipoVenta;
     }
 
     public static E_Empresa obtenerDatosEmpresa() {

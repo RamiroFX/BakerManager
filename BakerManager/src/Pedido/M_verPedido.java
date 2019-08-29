@@ -4,11 +4,15 @@
  */
 package Pedido;
 
+import DB.DB_Egreso;
+import DB.DB_Ingreso;
 import DB.DB_Pedido;
+import DB.DB_manager;
 import DB.ResultSetTableModel;
 import Entities.M_pedido;
 import Entities.M_pedidoDetalle;
 import java.util.ArrayList;
+import java.util.Vector;
 
 /**
  *
@@ -87,5 +91,23 @@ public class M_verPedido {
 
     public void setDetalles(ArrayList<M_pedidoDetalle> detalles) {
         this.detalles = detalles;
+    }    
+
+    public int getNroFactura() {
+        int nroFactura;
+        nroFactura = DB_Ingreso.obtenerUltimoNroFactura() + 1;
+        return nroFactura;
+    }
+
+    public boolean nroFacturaEnUso(int nroFactura) {
+        return DB_Ingreso.nroFacturaEnUso(nroFactura);
+    }
+
+    public Vector obtenerTipoOperacion() {
+        return DB_Egreso.obtenerTipoOperacion();
+    }
+
+    public Vector obtenerTipoVenta() {
+        return DB_manager.obtenerTipoVenta();
     }
 }

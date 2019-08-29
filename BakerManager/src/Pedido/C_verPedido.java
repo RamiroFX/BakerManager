@@ -24,6 +24,7 @@ import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Vector;
 import javax.swing.JOptionPane;
 
 /**
@@ -63,10 +64,18 @@ public class C_verPedido extends MouseAdapter implements ActionListener, KeyList
         String entidad = this.modelo.getPedido().getCliente().getEntidad();
         this.vista.jtfCliente.setText(nombre + " (" + entidad + ")");
         this.vista.jtfDireccionPedido.setText(this.modelo.getPedido().getDireccion());
-        this.vista.jtfFuncionario.setText(this.modelo.getPedido().getFuncionario().getAlias());
+        this.vista.jtfNroFactura.setText(this.modelo.getNroFactura() + "");
         this.vista.jtfReferencia.setText(this.modelo.getPedido().getReferencia());
         this.vista.jdcFechaEntrega.setDate(this.modelo.getPedido().getTiempoEntrega());
         this.vista.jtPedidoDetalle.setModel(this.modelo.getRstm());
+        Vector condCompra = modelo.obtenerTipoOperacion();
+        for (int i = 0; i < condCompra.size(); i++) {
+            this.vista.jcbCondVenta.addItem(condCompra.get(i));
+        }
+        Vector tipoVenta = modelo.obtenerTipoVenta();
+        for (int i = 0; i < tipoVenta.size(); i++) {
+            this.vista.jcbTipoVenta.addItem(tipoVenta.get(i));
+        }
         Calendar calendario = Calendar.getInstance();
         calendario.setTime(this.modelo.getPedido().getTiempoEntrega());
         int hora = calendario.get(Calendar.HOUR_OF_DAY);
@@ -85,16 +94,19 @@ public class C_verPedido extends MouseAdapter implements ActionListener, KeyList
         }
         this.vista.jcbHora.setSelectedItem(_hora);
         this.vista.jcbMinuto.setSelectedItem(_minuto);
-        switch (this.modelo.getPedido().getIdCondVenta()) {
+        int condVenta = this.modelo.getPedido().getIdCondVenta();
+        System.out.println("Pedido.C_verPedido.inicializarVista().condVenta: " + condVenta);
+        this.vista.jcbCondVenta.setSelectedIndex(condVenta - 1);
+        /*switch (condVenta) {
             case (1): {
-                this.vista.jrbContado.setSelected(true);
+                this.vista.jcbCondVenta.setSelectedIndex(1);
                 break;
             }
             case (2): {
                 this.vista.jrbCredito.setSelected(true);
                 break;
             }
-        }
+        }*/
         this.vista.jbEliminarDetalle.setEnabled(false);
         this.vista.jbModificarDetalle.setEnabled(false);
         if (!this.modelo.getPedido().getEstado().equals(PedidoEstado.PENDIENTE.getDescripcion())) {
@@ -106,8 +118,8 @@ public class C_verPedido extends MouseAdapter implements ActionListener, KeyList
             this.vista.jdcFechaEntrega.setEnabled(false);
             this.vista.jtfDireccionPedido.setEnabled(false);
             this.vista.jtfReferencia.setEnabled(false);
-            this.vista.jrbContado.setEnabled(false);
-            this.vista.jrbCredito.setEnabled(false);
+            this.vista.jcbCondVenta.setEnabled(false);
+            this.vista.jcbTipoVenta.setEnabled(false);
         }
         sumarTotal();
     }
@@ -115,8 +127,8 @@ public class C_verPedido extends MouseAdapter implements ActionListener, KeyList
     private void agregarListeners() {
         if (this.modelo.getPedido().getEstado().equals("Pendiente")) {
             this.vista.jtPedidoDetalle.addMouseListener(this);
-            this.vista.jrbContado.addActionListener(this);
-            this.vista.jrbCredito.addActionListener(this);
+            this.vista.jcbCondVenta.addActionListener(this);
+            this.vista.jcbTipoVenta.addActionListener(this);
             this.vista.jbAceptar.addActionListener(this);
             this.vista.jbSeleccionarProducto.addActionListener(this);
             this.vista.jbCliente.addActionListener(this);
@@ -133,7 +145,8 @@ public class C_verPedido extends MouseAdapter implements ActionListener, KeyList
     }
 
     private void establecerCondicionVenta() {
-        if (this.vista.jrbContado.isSelected()) {
+        System.out.println("Pedido.C_verPedido.establecerCondicionVenta(): " + this.vista.jcbCondVenta.getSelectedIndex());
+        if (this.vista.jcbCondVenta.getSelectedIndex() == 0) {
             this.modelo.getPedido().setIdCondVenta(TipoOperacion.CONTADO);
         } else {
             this.modelo.getPedido().setIdCondVenta(TipoOperacion.CREDITO);
@@ -303,10 +316,10 @@ public class C_verPedido extends MouseAdapter implements ActionListener, KeyList
         Object source = e.getSource();
         if (source.equals(this.vista.jbAceptar)) {
             guardarVenta();
-        } else if (source.equals(this.vista.jrbContado)) {
+        } else if (source.equals(this.vista.jcbCondVenta)) {
             establecerCondicionVenta();
-        } else if (source.equals(this.vista.jrbCredito)) {
-            establecerCondicionVenta();
+        } else if (source.equals(this.vista.jcbTipoVenta)) {
+            //  establecerCondicionVenta();
         } else if (source.equals(this.vista.jbSeleccionarProducto)) {
             SeleccionarProducto sp = new SeleccionarProducto(this);
             sp.mostrarVista();

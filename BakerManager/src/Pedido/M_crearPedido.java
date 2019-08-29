@@ -4,10 +4,14 @@
  */
 package Pedido;
 
+import DB.DB_Egreso;
+import DB.DB_Ingreso;
 import DB.DB_Pedido;
+import DB.DB_manager;
 import Entities.M_pedido;
 import Entities.M_pedidoDetalle;
 import java.util.ArrayList;
+import java.util.Vector;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -73,5 +77,23 @@ public class M_crearPedido {
 
     public void insertarPedido() {
         DB_Pedido.insertarPedido(getPedido(), getDetalles());
+    }
+
+    public int getNroFactura() {
+        int nroFactura;
+        nroFactura = DB_Ingreso.obtenerUltimoNroFactura() + 1;
+        return nroFactura;
+    }
+
+    public boolean nroFacturaEnUso(int nroFactura) {
+        return DB_Ingreso.nroFacturaEnUso(nroFactura);
+    }
+
+    public Vector obtenerTipoOperacion() {
+        return DB_Egreso.obtenerTipoOperacion();
+    }
+
+    public Vector obtenerTipoVenta() {
+        return DB_manager.obtenerTipoVenta();
     }
 }
