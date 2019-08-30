@@ -101,6 +101,10 @@ public class C_crearPedido extends MouseAdapter implements ActionListener, KeyLi
         } else {
             this.vista.jcbHora.setSelectedItem("" + horaAux);
         }
+        Calendar now = Calendar.getInstance();
+        now.set(Calendar.HOUR_OF_DAY, Integer.valueOf(vista.jcbHora.getSelectedItem() + ""));
+        now.set(Calendar.MINUTE, Integer.valueOf(vista.jcbMinuto.getSelectedItem() + ""));
+        this.modelo.getPedido().setTiempoEntrega(new Timestamp(now.getTimeInMillis()));
         establecerCondicionVenta();
     }
 
@@ -115,6 +119,8 @@ public class C_crearPedido extends MouseAdapter implements ActionListener, KeyLi
         this.vista.jbModificarDetalle.addActionListener(this);
         this.vista.jbImprimir.addActionListener(this);
         this.vista.jbSalir.addActionListener(this);
+        this.vista.jcbHora.addActionListener(this);
+        this.vista.jcbMinuto.addActionListener(this);
         this.vista.jbSeleccionarProducto.addKeyListener(this);
         this.vista.jbCliente.addKeyListener(this);
         this.vista.jbAceptar.addKeyListener(this);
@@ -127,7 +133,7 @@ public class C_crearPedido extends MouseAdapter implements ActionListener, KeyLi
     }
 
     private void establecerCondicionVenta() {
-        if (this.vista.jcbCondVenta.getSelectedIndex() == 1) {
+        if (this.vista.jcbCondVenta.getSelectedIndex() == 0) {
             this.modelo.getPedido().setIdCondVenta(TipoOperacion.CONTADO);
         } else {
             this.modelo.getPedido().setIdCondVenta(TipoOperacion.CREDITO);
@@ -306,6 +312,37 @@ public class C_crearPedido extends MouseAdapter implements ActionListener, KeyLi
         this.vista.dispose();
     }
 
+    private boolean establecerHoraEntrega() {
+        Date now = Calendar.getInstance().getTime();
+        Date entrega = null;
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        SimpleDateFormat sdfs = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+        String fechaEntrega = sdf.format(vista.jdcFechaEntrega.getDate()) + " " + vista.jcbHora.getSelectedItem() + ":" + vista.jcbMinuto.getSelectedItem() + ":00";
+        try {
+            entrega = sdfs.parse(fechaEntrega);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(vista, "La fecha de entrega debe ser mayor que la fecha fecha actual (" + sdfs.format(now) + ").", "Fecha inválida", JOptionPane.WARNING_MESSAGE);
+            return false;
+        }
+        if (now.before(entrega)) {
+            this.modelo.getPedido().setTiempoEntrega(new Timestamp(entrega.getTime()));
+            return true;
+        } else {
+            JOptionPane.showMessageDialog(vista, "La fecha de entrega debe ser mayor que la fecha fecha actual (" + sdfs.format(now) + ").", "Fecha inválida", JOptionPane.WARNING_MESSAGE);
+            String horaT = sdf.format(now).substring(0, 2);
+            int horas = Integer.valueOf(horaT);
+            //Se suma una hora para que la hora de entrega tenga una hora mas que la hora actual
+            int horaAux = horas + 1;
+            if (horaAux >= 0 && horaAux < 10) {
+                this.vista.jcbHora.setSelectedItem("0" + horaAux);
+            } else {
+                this.vista.jcbHora.setSelectedItem("" + horaAux);
+            }
+        }
+        return false;
+    }
+
     private void mostrarMensaje(String message) {
         Toaster popUp = new Toaster();
         popUp.showToaster(message);
@@ -321,6 +358,9 @@ public class C_crearPedido extends MouseAdapter implements ActionListener, KeyLi
                 }
                 if (modelo.getDetalles().isEmpty()) {
                     JOptionPane.showMessageDialog(vista, "Seleccione por lo menos un producto.", "Atención", JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
+                if (!establecerHoraEntrega()) {
                     return;
                 }
                 int opcion = JOptionPane.showConfirmDialog(vista, "¿Desea imprimir el pedido?", "Atención", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
@@ -340,6 +380,10 @@ public class C_crearPedido extends MouseAdapter implements ActionListener, KeyLi
             establecerCondicionVenta();
         } else if (source.equals(this.vista.jcbTipoVenta)) {
             //establecerCondicionVenta();
+        } else if (source.equals(this.vista.jcbHora)) {
+            establecerHoraEntrega();
+        } else if (source.equals(this.vista.jcbMinuto)) {
+            establecerHoraEntrega();
         } else if (source.equals(this.vista.jbSeleccionarProducto)) {
             SeleccionarProducto sp = new SeleccionarProducto(this);
             sp.mostrarVista();

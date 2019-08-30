@@ -91,8 +91,8 @@ public class DB_Ingreso {
                 + "AND FC.ID_FUNCIONARIO = F.ID_FUNCIONARIO "
                 + "AND F.ID_PERSONA = P.ID_PERSONA ";
         if (null != factura_cabecera) {
-            if (null != factura_cabecera.getIdFacturaCabecera()) {
-                Query = Query + " AND FC.ID_FACTURA_CABECERA = " + factura_cabecera.getIdFacturaCabecera();
+            if (null != factura_cabecera.getNroFactura()) {
+                Query = Query + " AND FC.NRO_FACTURA= " + factura_cabecera.getNroFactura();
             }
         }
         if (!"Todos".equals(tipo_operacion)) {
@@ -262,7 +262,8 @@ public class DB_Ingreso {
                 + "ID_FUNCIONARIO, "
                 + "ID_CLIENTE, "
                 + "TIEMPO, "
-                + "ID_COND_VENTA "
+                + "ID_COND_VENTA, "
+                + "NRO_FACTURA "
                 + "FROM FACTURA_CABECERA "
                 + "WHERE ID_FACTURA_CABECERA = " + idIngresoCabecera;
         try {
@@ -274,6 +275,7 @@ public class DB_Ingreso {
                 ingreso_cabecera.setIdCliente(rs.getInt("ID_CLIENTE"));
                 ingreso_cabecera.setIdCondVenta(rs.getInt("ID_COND_VENTA"));
                 ingreso_cabecera.setIdFuncionario(rs.getInt("ID_FUNCIONARIO"));
+                ingreso_cabecera.setNroFactura(rs.getInt("NRO_FACTURA"));
                 ingreso_cabecera.setTiempo(rs.getTimestamp("TIEMPO"));
             }
         } catch (SQLException ex) {

@@ -141,7 +141,7 @@ public class C0_gestionVentas implements GestionInterface {
                 try {
                     if (!vista.jtfNroFactura.getText().trim().isEmpty()) {
                         int nroFac = Integer.valueOf(vista.jtfNroFactura.getText());
-                        modelo.getCabecera().setIdFacturaCabecera(nroFac);
+                        modelo.getCabecera().setNroFactura(nroFac);
                     } else {
                         modelo.getCabecera().setIdFacturaCabecera(null);
                     }

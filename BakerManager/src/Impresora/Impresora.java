@@ -418,7 +418,7 @@ public class Impresora {
                 + "Cajero: " + pedidoCabecera.getFuncionario().getNombre() + "\n"
                 + "Cliente: " + pedidoCabecera.getCliente().getEntidad() + "\n"
                 + "R.U.C.: " + ruc + "\n"
-                + "Fecha pedido: " + sdfs.format(pedidoCabecera.getTiempoRecepcion()) + "\n"
+                + "Fecha pedido: " + sdfs.format(pedidoCabecera.getTiempoEntrega()) + "\n"
                 + "---------------------------------\n";
         String COLUMNAS = "producto   cant  precio  subtotal\n";
         String DETALLE = "";
