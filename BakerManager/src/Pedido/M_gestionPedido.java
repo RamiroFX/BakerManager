@@ -113,7 +113,7 @@ public class M_gestionPedido {
     public void pagarPedido(int idPedido) {
         M_pedido p = DB_Pedido.obtenerPedido(idPedido);
         setDetalles(DB_Pedido.obtenerPedidoDetalles(p.getIdPedido()));
-        DB_Pedido.pagarPedido(p, getDetalles());
+        DB_Pedido.pagarPedido(p, getDetalles(), null);
     }
 
     Vector obtenerTipoOperacion() {

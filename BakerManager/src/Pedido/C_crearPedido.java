@@ -66,10 +66,11 @@ public class C_crearPedido extends MouseAdapter implements ActionListener, KeyLi
         for (int i = 0; i < condCompra.size(); i++) {
             this.vista.jcbCondVenta.addItem(condCompra.get(i));
         }
-        Vector tipoVenta = modelo.obtenerTipoVenta();
+        /*Vector tipoVenta = modelo.obtenerTipoVenta();
         for (int i = 0; i < tipoVenta.size(); i++) {
             this.vista.jcbTipoVenta.addItem(tipoVenta.get(i));
-        }
+        }*/
+         this.vista.jcbTipoVenta.setEnabled(false);
         this.modelo.getPedido().setIdCondVenta(TipoOperacion.CONTADO);
         this.modelo.getPedido().setEstado(PedidoEstado.PENDIENTE.getDescripcion());
         this.modelo.getPedido().setIdEstado(PedidoEstado.PENDIENTE.getId());

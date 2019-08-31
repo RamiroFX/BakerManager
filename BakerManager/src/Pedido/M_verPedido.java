@@ -91,7 +91,13 @@ public class M_verPedido {
 
     public void setDetalles(ArrayList<M_pedidoDetalle> detalles) {
         this.detalles = detalles;
-    }    
+    }
+
+    public int pagarPedido(int idPedido, Integer nroFactura) {
+        M_pedido p = DB_Pedido.obtenerPedido(idPedido);
+        setDetalles(DB_Pedido.obtenerPedidoDetalles(p.getIdPedido()));
+        return DB_Pedido.pagarPedido(p, getDetalles(), nroFactura);
+    }
 
     public int getNroFactura() {
         int nroFactura;

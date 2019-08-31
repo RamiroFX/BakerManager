@@ -28,10 +28,10 @@ public class DB_Pedido {
     private static Statement st = null;
     private static PreparedStatement pst = null;
     private static ResultSet rs = null;
+
     /*
      * READ
      */
-
     public static ResultSetTableModel obtenerPedidos(boolean esTiempoRecepcionOEntrega, String inicio, String fin, String tipo_operacion, String nroFactura, String estado, M_pedido pedido, boolean conTotal) {
         ResultSetTableModel rstm = null;
         String total = "";
@@ -635,10 +635,10 @@ public class DB_Pedido {
         }
     }
 
-    public static void pagarPedido(M_pedido pedido, ArrayList<M_pedidoDetalle> detalle) {
+    public static int pagarPedido(M_pedido pedido, ArrayList<M_pedidoDetalle> detalle, Integer nroFactura) {
         String INSERT_DETALLE = "INSERT INTO FACTURA_DETALLE(ID_FACTURA_CABECERA, ID_PRODUCTO, CANTIDAD, PRECIO, DESCUENTO, OBSERVACION)VALUES (?, ?, ?, ?, ?, ?);";
         //LA SGBD SE ENCARGA DE INSERTAR EL TIMESTAMP.
-        String INSERT_CABECERA = "INSERT INTO FACTURA_CABECERA(ID_FUNCIONARIO, ID_CLIENTE, ID_COND_VENTA)VALUES (?, ?, ?);";
+        String INSERT_CABECERA = "INSERT INTO FACTURA_CABECERA(ID_FUNCIONARIO, ID_CLIENTE, NRO_FACTURA, ID_COND_VENTA)VALUES (?, ?, ?, ?);";
 
         long sq_cabecera = -1L;
         try {
@@ -646,7 +646,16 @@ public class DB_Pedido {
             pst = DB_manager.getConection().prepareStatement(INSERT_CABECERA, PreparedStatement.RETURN_GENERATED_KEYS);
             pst.setInt(1, pedido.getFuncionario().getId_funcionario());
             pst.setInt(2, pedido.getCliente().getIdCliente());
-            pst.setInt(3, pedido.getIdCondVenta());
+            try {
+                if (nroFactura == null) {
+                    pst.setNull(3, Types.VARCHAR);
+                } else {
+                    pst.setInt(3, nroFactura);
+                }
+            } catch (Exception e) {
+                pst.setNull(3, Types.INTEGER);
+            }
+            pst.setInt(4, pedido.getIdCondVenta());
             pst.executeUpdate();
             rs = pst.getGeneratedKeys();
             if (rs != null && rs.next()) {
@@ -714,6 +723,7 @@ public class DB_Pedido {
                 lgr.log(Level.WARNING, ex.getMessage(), ex);
             }
         }
+        return (int) sq_cabecera;
     }
 
     public static ArrayList<M_pedidoDetalle> obtenerPedidoDetalles(Integer idPedido) {

@@ -36,7 +36,7 @@ public class M_crearVentaRapida {
     private static final String SELECCIONE_POR_LO_MENOS_UN_ARTICULO = "Seleccione por lo menos un artículo.";
     private static final String CONFIRMAR = "Confirmar";
     private static final String ATENCION = "Atención";
-    private static final String DESEA_IMPRIMIR_EL_TICKET = "¿Desea imprimir el ticket?";
+    private static final String DESEA_IMPRIMIR_EL_TICKET = "¿Desea imprimir la venta?";
     private static final String ESTA_SEGURO_QUE_DESEA_CONFIRMAR_LA_VENTA = "¿Está seguro que desea confirmar la venta?";
 
     private M_facturaCabecera cabecera;

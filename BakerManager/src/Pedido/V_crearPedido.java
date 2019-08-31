@@ -50,7 +50,7 @@ public class V_crearPedido extends JDialog {
     public JFormattedTextField jftIva5, jftIva10, jftExenta, jftTotal;
     //SUR
     public JPanel jpSouth;
-    public JButton jbAceptar, jbSalir, jbImprimir;
+    public JButton jbAceptar, jbSalir, jbImprimir, jbPagarPedido;
 
     public V_crearPedido(JFrame frame) {
         super(frame, "Crear pedido", JDialog.ModalityType.APPLICATION_MODAL);
@@ -187,9 +187,11 @@ public class V_crearPedido extends JDialog {
         jpSouth = new JPanel();
         jbAceptar = new JButton("Guardar cambios[F1]");
         jbImprimir = new JButton("Imprimir[F2]");
+        jbPagarPedido = new JButton("Pagar pedido[F5]");
         jbSalir = new JButton("Salir[ESC]");
         jpSouth.add(jbAceptar);
         jpSouth.add(jbImprimir);
+        jpSouth.add(jbPagarPedido);
         jpSouth.add(jbSalir);
     }
 }
