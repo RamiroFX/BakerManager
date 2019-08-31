@@ -209,7 +209,14 @@ public class Impresora {
         faDetalles.add(fd10);
         List<M_campoImpresion> textoAImprimir = DB_manager.obtenerCampoImpresion(2, MyConstants.ACTIVO);
         PrinterJob job = PrinterJob.getPrinterJob();
-        job.setPrintable(new VentaPrintable(PREF_PRINT, fc, faDetalles, textoAImprimir));
+        Paper p = new Paper();
+        PageFormat pf = new PageFormat();
+        int width = PREF_PRINT.getAnchoPagina();
+        int height = PREF_PRINT.getLargoPagina();
+        p.setSize(width, height);
+        p.setImageableArea(PREF_PRINT.getMargenX(), PREF_PRINT.getMargenY(), width, height);
+        pf.setPaper(p);
+        job.setPrintable(new VentaPrintable(PREF_PRINT, fc, faDetalles, textoAImprimir), pf);
         PrintService[] services = PrintServiceLookup.lookupPrintServices(null, null);
         boolean existeImpresora = false;
         if (services.length > 0) {
