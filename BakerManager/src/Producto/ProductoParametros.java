@@ -289,14 +289,14 @@ public class ProductoParametros extends javax.swing.JDialog implements ActionLis
 
     private void updateButtonHandler() {
         if (this.jtpCenter.getSelectedComponent().equals(this.jspMarcas)) {
-            String marca = JOptionPane.showInputDialog(this, "Inserte el nombre de la marca", "Insertar marca", JOptionPane.PLAIN_MESSAGE);
+            String marca = JOptionPane.showInputDialog(this, "Inserte el nombre de la marca", "Modificar marca", JOptionPane.PLAIN_MESSAGE);
             if (marca != null) {
                 if (!marca.isEmpty()) {
                     modificarMarca(marca);
                 }
             }
         } else if (this.jtpCenter.getSelectedComponent().equals(this.jspCategorias)) {
-            String rubro = JOptionPane.showInputDialog(this, "Inserte el nombre del rubro", "Insertar categoria", JOptionPane.PLAIN_MESSAGE);
+            String rubro = JOptionPane.showInputDialog(this, "Inserte el nombre del rubro", "Modificar categoria", JOptionPane.PLAIN_MESSAGE);
             if (rubro != null) {
                 if (!rubro.isEmpty()) {
                     modificarCategoria(rubro);

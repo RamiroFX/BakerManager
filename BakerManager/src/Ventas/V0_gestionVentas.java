@@ -5,7 +5,6 @@
 package Ventas;
 
 import Interface.CommonFormat;
-import Utilities.JTablePagination;
 import com.toedter.calendar.JDateChooser;
 import java.awt.Dimension;
 import java.awt.Insets;
@@ -33,8 +32,7 @@ public class V0_gestionVentas extends JInternalFrame {
     public JTextField jtfNroFactura, jtfCliente, jtfEmpleado;
     public JComboBox jcbEmpleado, jcbCondCompra;
     private JPanel jpTop, jpBotonesTop, jpBot;
-    public JTable jtIngresoDetalle;
-    public JTablePagination jtIngresoCabecera;
+    public JTable jtIngresoDetalle, jtIngresoCabecera;
     private JScrollPane jspEgresoDetalle;
     private JSplitPane jspMid;
     public JDateChooser jddInicio, jddFinal;
@@ -104,14 +102,16 @@ public class V0_gestionVentas extends JInternalFrame {
 
     private void initMid() {
         //Panel medio izquierda
-        jtIngresoCabecera = new JTablePagination(100);
+        jtIngresoCabecera = new JTable();
+        jtIngresoCabecera.getTableHeader().setReorderingAllowed(false);
+        JScrollPane jspIngresoCabecera = new JScrollPane(jtIngresoCabecera);
 
         //panel medio derecha
         jtIngresoDetalle = new JTable();
         jtIngresoDetalle.getTableHeader().setReorderingAllowed(false);
         jspEgresoDetalle = new JScrollPane(jtIngresoDetalle);
         //creamos nuestro splitpane y agregamos los dos paneles del medio
-        jspMid = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, jtIngresoCabecera, jspEgresoDetalle);
+        jspMid = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, jspIngresoCabecera, jspEgresoDetalle);
         jspMid.setDividerLocation(this.getWidth() / 2);
         jspMid.setOneTouchExpandable(true);
     }

@@ -6,7 +6,11 @@
 package Ventas;
 
 import DB.DB_Ingreso;
+import Entities.E_facturaDetalleFX;
 import Entities.M_cliente;
+import Entities.M_facturaDetalle;
+import Excel.C_create_excel;
+import Excel.ExportarVentas;
 import bakermanager.C_inicio;
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
@@ -16,7 +20,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import javax.swing.JButton;
@@ -45,7 +51,7 @@ public class Resumen_ingreso extends JDialog implements ActionListener, KeyListe
     String idEmpleado, tipo_operacion;
     Integer nro_factura;
     JTabbedPane jtpPanel;
-    M_cliente cliente_entidad;
+    M_cliente cliente;
 
     public Resumen_ingreso(C_inicio c_inicio, TableModel tm, M_cliente cliente_entidad, Integer nro_factura, String idEmpleado, Date inicio, Date fin, String tipo_operacion) {
         super(c_inicio.vista, DEFAULT_MODALITY_TYPE);
@@ -55,7 +61,7 @@ public class Resumen_ingreso extends JDialog implements ActionListener, KeyListe
         setLocationRelativeTo(c_inicio.vista);
         this.inicio = inicio;
         this.fin = fin;
-        this.cliente_entidad = cliente_entidad;
+        this.cliente = cliente_entidad;
         this.idEmpleado = idEmpleado;
         this.tipo_operacion = tipo_operacion;
         this.nro_factura = nro_factura;
@@ -92,12 +98,13 @@ public class Resumen_ingreso extends JDialog implements ActionListener, KeyListe
         jpTotalEgreso.add(jftTotalEgreso);
         jbSalir = new JButton("Salir");
         jbImportarXLS = new JButton("Importar a excel");
+        jbImportarXLS.setName("exportar venta");
         jtpPanel = new JTabbedPane();
         jtpPanel.addKeyListener(this);
 
         JPanel jpCenter = new JPanel(new BorderLayout());
         JPanel jpSouth = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        //jpSouth.add(jbImportarXLS);
+        jpSouth.add(jbImportarXLS);
         jpSouth.add(jbSalir);
         jpCenter.add(jspEgreso, BorderLayout.CENTER);
         jpCenter.add(jpTotalEgreso, BorderLayout.SOUTH);
@@ -137,7 +144,7 @@ public class Resumen_ingreso extends JDialog implements ActionListener, KeyListe
         calendario.set(Calendar.SECOND, 0);
         calendario.set(Calendar.MILLISECOND, 0);
         java.sql.Timestamp fFin = java.sql.Timestamp.valueOf(sdfs.format(calendario.getTime()));
-        jtDetalle.setModel(DB_Ingreso.consultarIngresoDetalleAgrupado(fInicio, fFin, cliente_entidad));
+        jtDetalle.setModel(DB_Ingreso.consultarIngresoDetalleAgrupado(fInicio, fFin, cliente));
         jftTotalEgCred.setValue(totalCredito);
         jftTotalEgCont.setValue(totalContado);
         jftTotalEgreso.setValue(total);
@@ -148,7 +155,39 @@ public class Resumen_ingreso extends JDialog implements ActionListener, KeyListe
         jbImportarXLS.addActionListener(this);
     }
 
-    private void importarExcel(String proveedor_entidad, Integer nro_factura, String idEmpleado, String tipo_operacion) {
+    private void importarExcel(M_cliente cliente, Integer nro_factura, String idEmpleado, String tipo_operacion) {
+        String fechaInicio = "";
+        String fechaFinal = "";
+        try {
+            fechaInicio = new Timestamp(this.inicio.getTime()).toString().substring(0, 11);
+            fechaInicio = fechaInicio + "00:00:00.000";
+        } catch (Exception e) {
+            fechaInicio = "Todos";
+        }
+        try {
+            fechaFinal = new Timestamp(this.fin.getTime()).toString().substring(0, 11);
+            fechaFinal = fechaFinal + "23:59:59.000";
+        } catch (Exception e) {
+            fechaFinal = "Todos";
+        }
+
+        String entidad = "Todos";
+        if (cliente != null) {
+            if (cliente.getEntidad() != null) {
+                entidad = cliente.getEntidad();
+            }
+        }
+        ArrayList<E_facturaDetalleFX> ed = DB_Ingreso.obtenerVentaDetalles(entidad, nro_factura, idEmpleado, fechaInicio, fechaFinal, tipo_operacion);
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+        sdf.format(Calendar.getInstance().getTime());
+        String nombreHoja = null;
+        try {
+            nombreHoja = new Timestamp(this.inicio.getTime()).toString().substring(0, 11);
+        } catch (Exception e) {
+            nombreHoja = sdf.format(Calendar.getInstance().getTime());
+        }
+        ExportarVentas ce = new ExportarVentas(nombreHoja, ed, this.inicio, this.fin);
+        ce.initComp();
     }
 
     private void keyPressedHandler(final KeyEvent e) {
@@ -169,7 +208,7 @@ public class Resumen_ingreso extends JDialog implements ActionListener, KeyListe
         if (ae.getSource().equals(jbSalir)) {
             dispose();
         } else if (ae.getSource().equals(jbImportarXLS)) {
-            //importarExcel(cliente_entidad, nro_factura, idEmpleado, tipo_operacion);
+            importarExcel(cliente, nro_factura, idEmpleado, tipo_operacion);
         }
     }
 

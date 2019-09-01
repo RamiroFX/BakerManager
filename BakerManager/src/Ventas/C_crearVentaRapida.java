@@ -310,9 +310,9 @@ public class C_crearVentaRapida implements GestionInterface, InterfaceFacturaDet
     }
 
     private void guardarVenta() {
-        if (checkearNroFactura()) {
-            String nroFactura = this.vista.jtfNroFactura.getText();
-            this.modelo.getCabecera().setNroFactura(Integer.valueOf(nroFactura));
+        int currentItem = this.vista.jcbTipoVenta.getSelectedIndex();
+        if (currentItem == 0) {//ticket
+            this.modelo.getCabecera().setNroFactura(null);
             if (this.modelo.guardarVenta()) {
                 this.modelo.limpiarCampos();
                 this.vista.jtFacturaDetalle.setModel(this.modelo.getDtm());
@@ -323,7 +323,21 @@ public class C_crearVentaRapida implements GestionInterface, InterfaceFacturaDet
                 sumarTotal();
                 this.vista.jtfCodProd.setText("");
             }
-
+        } else {
+            if (checkearNroFactura()) {
+                String nroFactura = this.vista.jtfNroFactura.getText();
+                this.modelo.getCabecera().setNroFactura(Integer.valueOf(nroFactura));
+                if (this.modelo.guardarVenta()) {
+                    this.modelo.limpiarCampos();
+                    this.vista.jtFacturaDetalle.setModel(this.modelo.getDtm());
+                    recibirCliente(this.modelo.getCabecera().getCliente());
+                    establecerNroFactura();
+                    establecerCondicionVenta();
+                    establecerTipoVenta();
+                    sumarTotal();
+                    this.vista.jtfCodProd.setText("");
+                }
+            }
         }
     }
 
@@ -339,8 +353,12 @@ public class C_crearVentaRapida implements GestionInterface, InterfaceFacturaDet
     private void establecerTipoVenta() {
         int currentItem = this.vista.jcbTipoVenta.getSelectedIndex();
         if (currentItem == 0) {//ticket
+            this.vista.jtfNroFactura.setText("");
+            this.vista.jtfNroFactura.setEnabled(false);
             this.modelo.setTipoVenta(TipoVenta.TICKET);
         } else {
+            this.vista.jtfNroFactura.setText(modelo.getNroFactura() + "");
+            this.vista.jtfNroFactura.setEnabled(true);
             this.modelo.setTipoVenta(TipoVenta.FACTURA);
         }
     }

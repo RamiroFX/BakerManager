@@ -20,7 +20,7 @@ import javax.swing.JMenuItem;
 public class V_BarraMenu extends JMenuBar {
 
     public JMenu jmInicio, jmAyuda, jmHerramientas, jmOpciones;
-    public JMenuItem jmiCerrar, jmiAcerca, jmiPersonalizar, jmiConfigImpresion, 
+    public JMenuItem jmiCerrar, jmiAcerca, jmiPersonalizar, jmiConfigImpresion,
             jmiConfigImpresionTicket, jmiEmpresa;
     //public JMenuItem  jmiLogIn,jmiLogOut, jmiMenuPrincipal;
     private V_inicio frame; //referencia al frame principal.
@@ -56,12 +56,14 @@ public class V_BarraMenu extends JMenuBar {
         if (jmHerramientas == null) {
             jmHerramientas = new JMenu("Herramientas");
             jmiPersonalizar = new JMenuItem("Personalizar");
+            jmiPersonalizar.setEnabled(false);
+            jmiPersonalizar.setName("configuracion personalizar");
             jmiConfigImpresion = new JMenuItem("Config. impresion");
             jmiConfigImpresion.setEnabled(false);
-            jmiConfigImpresion = new JMenuItem("Config. impresion");
-            jmiConfigImpresion.setEnabled(false);
-            jmiConfigImpresionTicket= new JMenuItem("Config. ticket");
+            jmiConfigImpresion.setName("configuracion factura");
+            jmiConfigImpresionTicket = new JMenuItem("Config. ticket");
             jmiConfigImpresionTicket.setEnabled(false);
+            jmiConfigImpresionTicket.setName("configuracion ticket");
             getjmHerramientas().add(jmiPersonalizar);
             getjmHerramientas().add(jmiConfigImpresion);
             getjmHerramientas().add(jmiConfigImpresionTicket);
@@ -77,12 +79,13 @@ public class V_BarraMenu extends JMenuBar {
         }
         return jmAyuda;
     }
-    
+
     private JMenu getjmOpciones() {
         if (jmOpciones == null) {
             jmOpciones = new JMenu("Opciones");
             jmiEmpresa = new JMenuItem("Empresa");
             jmiEmpresa.setEnabled(false);
+            jmiEmpresa.setName("configuracion empresa");
             jmOpciones.add(jmiEmpresa);
         }
         return jmOpciones;

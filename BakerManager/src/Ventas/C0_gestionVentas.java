@@ -94,8 +94,8 @@ public class C0_gestionVentas implements GestionInterface {
                 this.vista.jbResumen.addActionListener(this);
             }
         }
-        this.vista.jtIngresoCabecera.table.addMouseListener(this);
-        this.vista.jtIngresoCabecera.table.addKeyListener(this);
+        this.vista.jtIngresoCabecera.addMouseListener(this);
+        this.vista.jtIngresoCabecera.addKeyListener(this);
         /**
          * **ESCAPE HOTKEY/
          */
@@ -150,8 +150,8 @@ public class C0_gestionVentas implements GestionInterface {
                     return;
                 }
                 if (modelo.validarFechas(vista.jddInicio.getDate(), vista.jddFinal.getDate())) {
-                    vista.jtIngresoCabecera.establecerModelo(modelo.obtenerVentas(vista.jddInicio.getDate(), vista.jddFinal.getDate(), vista.jcbCondCompra.getSelectedItem().toString()));
-                    Utilities.c_packColumn.packColumns(vista.jtIngresoCabecera.table, 1);
+                    vista.jtIngresoCabecera.setModel(modelo.obtenerVentas(vista.jddInicio.getDate(), vista.jddFinal.getDate(), vista.jcbCondCompra.getSelectedItem().toString()));
+                    Utilities.c_packColumn.packColumns(vista.jtIngresoCabecera, 1);
                 } else {
                     vista.jddFinal.setDate(vista.jddInicio.getDate());
                     vista.jddFinal.updateUI();
@@ -185,9 +185,9 @@ public class C0_gestionVentas implements GestionInterface {
     }
 
     private void obtenerEgresoDetalle(MouseEvent e) {
-        int fila = this.vista.jtIngresoCabecera.table.rowAtPoint(e.getPoint());
-        int columna = this.vista.jtIngresoCabecera.table.columnAtPoint(e.getPoint());
-        Integer idIngresoCabecera = Integer.valueOf(String.valueOf(this.vista.jtIngresoCabecera.table.getValueAt(fila, 0)));
+        int fila = this.vista.jtIngresoCabecera.rowAtPoint(e.getPoint());
+        int columna = this.vista.jtIngresoCabecera.columnAtPoint(e.getPoint());
+        Integer idIngresoCabecera = Integer.valueOf(String.valueOf(this.vista.jtIngresoCabecera.getValueAt(fila, 0)));
         //setProducto(DBmanagerProducto.mostrarProducto(idProducto));
         this.modelo.setCabecera(DB_Ingreso.obtenerIngresoCabeceraID(idIngresoCabecera));
         if ((fila > -1) && (columna > -1)) {
@@ -252,7 +252,7 @@ public class C0_gestionVentas implements GestionInterface {
         String empleado = empleado();
         M_cliente cliente = cliente();
         String tiop = tipoOperacion();
-        Resumen_ingreso re = new Resumen_ingreso(c_inicio, this.vista.jtIngresoCabecera.table.getModel(), cliente, nro_factura, empleado, vista.jddInicio.getDate(), vista.jddFinal.getDate(), tiop);
+        Resumen_ingreso re = new Resumen_ingreso(c_inicio, this.vista.jtIngresoCabecera.getModel(), cliente, nro_factura, empleado, vista.jddInicio.getDate(), vista.jddFinal.getDate(), tiop);
         re.setVisible(true);
     }
 
@@ -260,9 +260,9 @@ public class C0_gestionVentas implements GestionInterface {
         EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
-                int fila = vista.jtIngresoCabecera.table.getSelectedRow();
+                int fila = vista.jtIngresoCabecera.getSelectedRow();
                 if (fila > -1) {
-                    int idIngresoCabecera = Integer.valueOf(String.valueOf(vista.jtIngresoCabecera.table.getValueAt(fila, 0).toString()));
+                    int idIngresoCabecera = Integer.valueOf(String.valueOf(vista.jtIngresoCabecera.getValueAt(fila, 0).toString()));
                     vista.jtIngresoDetalle.setModel(DB_Ingreso.obtenerIngresoDetalle(idIngresoCabecera));
                     Utilities.c_packColumn.packColumns(vista.jtIngresoDetalle, 1);
                 }
@@ -308,9 +308,9 @@ public class C0_gestionVentas implements GestionInterface {
             crearResumen();
         }
         if (e.getSource().equals(this.vista.jbDetalle)) {
-            int fila = this.vista.jtIngresoCabecera.table.getSelectedRow();
+            int fila = this.vista.jtIngresoCabecera.getSelectedRow();
             if (fila > 0) {
-                Integer idIngresoCabecera = Integer.valueOf(String.valueOf(this.vista.jtIngresoCabecera.table.getValueAt(fila, 0)));
+                Integer idIngresoCabecera = Integer.valueOf(String.valueOf(this.vista.jtIngresoCabecera.getValueAt(fila, 0)));
                 Ver_ingreso ver_egreso = new Ver_ingreso(c_inicio, idIngresoCabecera);
                 ver_egreso.mostrarVista();
                 this.vista.jbDetalle.setEnabled(false);
@@ -320,7 +320,7 @@ public class C0_gestionVentas implements GestionInterface {
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        if (e.getSource().equals(this.vista.jtIngresoCabecera.table)) {
+        if (e.getSource().equals(this.vista.jtIngresoCabecera)) {
             obtenerEgresoDetalle(e);
         }
     }
@@ -365,7 +365,7 @@ public class C0_gestionVentas implements GestionInterface {
 
     @Override
     public void keyReleased(KeyEvent e) {
-        if (this.vista.jtIngresoCabecera.table.hasFocus()) {
+        if (this.vista.jtIngresoCabecera.hasFocus()) {
             completarCampos();
         }
     }

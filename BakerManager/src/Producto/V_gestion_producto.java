@@ -5,7 +5,6 @@
 package Producto;
 
 import Interface.CommonFormat;
-import Utilities.JTablePagination;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridLayout;
@@ -15,7 +14,9 @@ import javax.swing.JComboBox;
 import javax.swing.JInternalFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
+import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
@@ -36,7 +37,7 @@ public class V_gestion_producto extends JInternalFrame {
             jtfSuspendido, jtfRubro, jtfCantActual, jtfProveedor;
     public JComboBox jcbImpuesto, jcbMarca, jcbEstado, jcbRubro;
     private JPanel jpTop, jpBotonesTop, jpJtextFieldTop, jpMid, jpBot, jpMid1;
-    public JTablePagination jtProducto;
+    public JTable jtProducto;
     private JSplitPane jspMid;
 
     public V_gestion_producto() {
@@ -93,7 +94,9 @@ public class V_gestion_producto extends JInternalFrame {
 
     private void initMid() {
         //Panel medio izquierda
-        jtProducto = new JTablePagination(100);
+        jtProducto = new JTable();
+        jtProducto.getTableHeader().setReorderingAllowed(false);
+        JScrollPane jspProducto = new JScrollPane(jtProducto);
 
         //panel medio derecha
         jpMid = new JPanel(new BorderLayout());
@@ -162,7 +165,7 @@ public class V_gestion_producto extends JInternalFrame {
 
         jpMid.add(jpMid1, "Center");
         //creamos nuestro splitpane y agregamos los dos paneles del medio
-        jspMid = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, jtProducto, jpMid);
+        jspMid = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, jspProducto, jpMid);
         jspMid.setDividerLocation(this.getWidth() / 2);
         jspMid.setOneTouchExpandable(true);
     }

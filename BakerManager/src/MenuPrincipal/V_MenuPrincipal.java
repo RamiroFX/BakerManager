@@ -10,6 +10,7 @@ import java.awt.GridLayout;
 import java.awt.Toolkit;
 import java.text.SimpleDateFormat;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
 import javax.swing.JInternalFrame;
@@ -26,7 +27,7 @@ class V_MenuPrincipal extends JInternalFrame {
 
     JPanel jpSouth, jpCenter, jpNorth;
     JButton jbSalir, jbProveedores, jbProductos, jbVentas, jbEmpleados,
-            jbClientes, jbPedidos, jbCompras, jbCaja, jbReportes,jbCobroPago;
+            jbClientes, jbPedidos, jbCompras, jbCaja, jbReportes, jbCobroPago;
     JFormattedTextField jftFecha;
 
     public V_MenuPrincipal() {
@@ -112,6 +113,8 @@ class V_MenuPrincipal extends JInternalFrame {
         jpCenter.add(jbClientes);
         jpCenter.add(jbEmpleados);
         jpCenter.add(jbReportes);
+        jpCenter.add(new JComponent() {
+        });
         jpCenter.add(jbCobroPago);
         jpNorth.add(jftFecha);
         jpSouth.add(jbSalir);

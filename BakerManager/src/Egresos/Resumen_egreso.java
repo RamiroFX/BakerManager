@@ -122,7 +122,6 @@ public class Resumen_egreso extends JDialog implements ActionListener {
     }
 
     private void importarExcel(String proveedor_entidad, Integer nro_factura, String idEmpleado, String tipo_operacion) {
-
         String fechaInicio = "";
         String fechaFinal = "";
         try {
@@ -150,7 +149,6 @@ public class Resumen_egreso extends JDialog implements ActionListener {
         }
         C_create_excel ce = new C_create_excel(nombreHoja, ed, this.inicio, this.fin);
         ce.initComp();
-
     }
 
     @Override

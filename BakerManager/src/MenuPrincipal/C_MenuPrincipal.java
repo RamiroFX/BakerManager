@@ -78,11 +78,23 @@ public class C_MenuPrincipal implements ActionListener, KeyListener {
             if (this.vista.jbPedidos.getName().equals(accesos.get(i).getMenuDescripcion())) {
                 this.vista.jbPedidos.setEnabled(true);
             }
-            /*if (this.vista.jbCaja.getName().equals(accesos.get(i).getMenuDescripcion())) {
+            if (this.vista.jbCaja.getName().equals(accesos.get(i).getMenuDescripcion())) {
                 this.vista.jbCaja.setEnabled(true);
-            }*/
+            }
             if (this.vista.jbReportes.getName().equals(accesos.get(i).getMenuDescripcion())) {
                 this.vista.jbReportes.setEnabled(true);
+            }
+            if (this.c_inicio.vista.getJMenuBar().jmiConfigImpresion.getName().equals(accesos.get(i).getItemDescripcion())) {
+                this.c_inicio.vista.getJMenuBar().jmiConfigImpresion.setEnabled(true);
+            }
+            if (this.c_inicio.vista.getJMenuBar().jmiConfigImpresionTicket.getName().equals(accesos.get(i).getItemDescripcion())) {
+                this.c_inicio.vista.getJMenuBar().jmiConfigImpresionTicket.setEnabled(true);
+            }
+            if (this.c_inicio.vista.getJMenuBar().jmiEmpresa.getName().equals(accesos.get(i).getItemDescripcion())) {
+                this.c_inicio.vista.getJMenuBar().jmiEmpresa.setEnabled(true);
+            }
+            if (this.c_inicio.vista.getJMenuBar().jmiPersonalizar.getName().equals(accesos.get(i).getItemDescripcion())) {
+                this.c_inicio.vista.getJMenuBar().jmiPersonalizar.setEnabled(true);
             }
         }
     }
@@ -119,9 +131,6 @@ public class C_MenuPrincipal implements ActionListener, KeyListener {
         this.c_inicio.agregarVentana(vista);
         this.vista.setLocation(this.c_inicio.centrarPantalla(this.vista));
         //this.c_inicio.centrarPantalla(vista);
-        this.c_inicio.vista.getJMenuBar().jmiConfigImpresion.setEnabled(true);
-        this.c_inicio.vista.getJMenuBar().jmiConfigImpresionTicket.setEnabled(true);
-        this.c_inicio.vista.getJMenuBar().jmiEmpresa.setEnabled(true);
     }
 
     private void shutdown() {

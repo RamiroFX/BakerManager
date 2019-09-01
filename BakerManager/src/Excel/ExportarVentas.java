@@ -1,10 +1,11 @@
 /*
- * To change this template, choose Tools | Templates
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
 package Excel;
 
-import Entities.M_egreso_detalleFX;
+import Entities.E_facturaDetalleFX;
 import Entities.M_facturaDetalle;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -26,12 +27,12 @@ import org.apache.poi.ss.usermodel.Row;
  *
  * @author Ramiro
  */
-public class C_create_excel {
+public class ExportarVentas {
 
     public static int MULTIPLES_FECHAS = 1;
     public static int UNA_FECHA = 2;
     String nombreHoja;
-    ArrayList<M_egreso_detalleFX> egresoDetalle;
+    ArrayList<E_facturaDetalleFX> facturaDetalle;
     Date fechaInic, fechaFinal;
     HSSFWorkbook workbook;
     HSSFSheet sheet;
@@ -39,11 +40,11 @@ public class C_create_excel {
     HSSFCellStyle dateCellStyle;
     int tipo_fecha;
 
-    public C_create_excel(String nombreHoja, ArrayList<M_egreso_detalleFX> egresoDetalle, Date fechaInic, Date fechaFinal) {
+    public ExportarVentas(String nombreHoja, ArrayList<E_facturaDetalleFX> ed, Date inicio, Date fin) {
         this.nombreHoja = nombreHoja;
-        this.egresoDetalle = egresoDetalle;
-        this.fechaInic = fechaInic;
-        this.fechaFinal = fechaFinal;
+        this.facturaDetalle = ed;
+        this.fechaInic = inicio;
+        this.fechaFinal = fin;
         if (fechaInic != null && fechaFinal != null) {
             int dateType = fechaInic.compareTo(fechaFinal);
             if (dateType == 0) {
@@ -129,11 +130,11 @@ public class C_create_excel {
         if (tipo_fecha == MULTIPLES_FECHAS) {
         } else {
         }
-        totalEgreso2.createCell(0).setCellValue(new HSSFRichTextString("Total egresos"));
+        totalEgreso2.createCell(0).setCellValue(new HSSFRichTextString("Total ingresos"));
         totalEgreso2.getCell(0).setCellStyle(style2);
         //------------
         int col = 0;
-        cabecera.createCell(col).setCellValue(new HSSFRichTextString("Proveedor"));
+        cabecera.createCell(col).setCellValue(new HSSFRichTextString("Cliente"));
         cabecera.getCell(col).setCellStyle(style1);
         col++;
         if (tipo_fecha == MULTIPLES_FECHAS) {
@@ -161,9 +162,9 @@ public class C_create_excel {
 
         Integer total = 0;
         Integer SubTotal = 0;
-        int idEgresoCabecera = egresoDetalle.get(0).getId_cabecera();
-        for (int i = 0; i < egresoDetalle.size(); i++) {
-            SubTotal = SubTotal + (egresoDetalle.get(i).getTotal());
+        int idEgresoCabecera = facturaDetalle.get(0).getIdFacturaCabecera();
+        for (int i = 0; i < facturaDetalle.size(); i++) {
+            SubTotal = SubTotal + (facturaDetalle.get(i).getTotal());
         }
         total = total + SubTotal;
         //TOTAL EGRESOS
@@ -203,28 +204,28 @@ public class C_create_excel {
         int idEgCab = egresocabecera;
         boolean b = true;
         Integer SubTotal = 0;
-        for (int i = 0; i < egresoDetalle.size(); i++) {
-            if (idEgCab == egresoDetalle.get(i).getId_cabecera()) {
+        for (int i = 0; i < facturaDetalle.size(); i++) {
+            if (idEgCab == facturaDetalle.get(i).getIdFacturaCabecera()) {
                 if (b) {
                     Row asd = sheet.createRow(filaActual);
-                    asd.createCell(0).setCellValue(new HSSFRichTextString(egresoDetalle.get(i).getProveedor()));
+                    asd.createCell(0).setCellValue(new HSSFRichTextString(facturaDetalle.get(i).getClienteEntidad()));
                     asd.getCell(0).setCellStyle(style2);
-                    asd.createCell(1).setCellValue(egresoDetalle.get(i).getTiempo());
+                    asd.createCell(1).setCellValue(facturaDetalle.get(i).getTiempo());
                     asd.getCell(1).setCellStyle(dateCellStyle);
-                    if (egresoDetalle.get(i).getObservacion() != null) {
-                        asd.createCell(2).setCellValue(new HSSFRichTextString(egresoDetalle.get(i).getProducto() + "-(" + egresoDetalle.get(i).getObservacion() + ")"));
+                    if (facturaDetalle.get(i).getObservacion() != null) {
+                        asd.createCell(2).setCellValue(new HSSFRichTextString(facturaDetalle.get(i).getProducto() + "-(" + facturaDetalle.get(i).getObservacion() + ")"));
                     } else {
-                        asd.createCell(2).setCellValue(new HSSFRichTextString(egresoDetalle.get(i).getProducto()));
+                        asd.createCell(2).setCellValue(new HSSFRichTextString(facturaDetalle.get(i).getProductoDescripcion()));
                     }
-                    asd.createCell(3).setCellValue(egresoDetalle.get(i).getCantidad());
-                    asd.createCell(4).setCellValue(egresoDetalle.get(i).getDescuento());
-                    asd.createCell(5).setCellValue(egresoDetalle.get(i).getPrecio());
-                    asd.createCell(6).setCellValue(egresoDetalle.get(i).getTotal());
-                    for (int X = i; X < egresoDetalle.size(); X++) {
-                        if (idEgCab == egresoDetalle.get(X).getId_cabecera()) {
-                            SubTotal = SubTotal + egresoDetalle.get(X).getTotal();
+                    asd.createCell(3).setCellValue(facturaDetalle.get(i).getCantidad());
+                    asd.createCell(4).setCellValue(facturaDetalle.get(i).getDescuento());
+                    asd.createCell(5).setCellValue(facturaDetalle.get(i).getPrecio());
+                    asd.createCell(6).setCellValue(facturaDetalle.get(i).getTotal());
+                    for (int X = i; X < facturaDetalle.size(); X++) {
+                        if (idEgCab == facturaDetalle.get(X).getIdFacturaCabecera()) {
+                            SubTotal = SubTotal + facturaDetalle.get(X).getTotal();
                         } else {
-                            X = egresoDetalle.size();
+                            X = facturaDetalle.size();
                         }
                     }
                     asd.createCell(7).setCellValue(SubTotal);
@@ -233,17 +234,17 @@ public class C_create_excel {
                 if (!b) {
                     Row qwerty = sheet.createRow(filaActual);
                     filaActual++;
-                    qwerty.createCell(2).setCellValue(new HSSFRichTextString(egresoDetalle.get(i).getProducto()));
-                    qwerty.createCell(3).setCellValue(egresoDetalle.get(i).getCantidad());
-                    qwerty.createCell(4).setCellValue(egresoDetalle.get(i).getDescuento());
-                    qwerty.createCell(5).setCellValue(egresoDetalle.get(i).getPrecio());
-                    qwerty.createCell(6).setCellValue(egresoDetalle.get(i).getTotal());
+                    qwerty.createCell(2).setCellValue(new HSSFRichTextString(facturaDetalle.get(i).getProductoDescripcion()));
+                    qwerty.createCell(3).setCellValue(facturaDetalle.get(i).getCantidad());
+                    qwerty.createCell(4).setCellValue(facturaDetalle.get(i).getDescuento());
+                    qwerty.createCell(5).setCellValue(facturaDetalle.get(i).getPrecio());
+                    qwerty.createCell(6).setCellValue(facturaDetalle.get(i).getTotal());
                 }
                 b = false;
             } else {
                 SubTotal = 0;
                 b = true;
-                idEgCab = egresoDetalle.get(i).getId_cabecera();
+                idEgCab = facturaDetalle.get(i).getIdFacturaCabecera();
                 i--;
                 filaActual++;
             }
@@ -255,26 +256,26 @@ public class C_create_excel {
         int idEgCab = egresocabecera;
         boolean b = true;
         Integer SubTotal = 0;
-        for (int i = 0; i < egresoDetalle.size(); i++) {
-            if (idEgCab == egresoDetalle.get(i).getId_cabecera()) {
+        for (int i = 0; i < facturaDetalle.size(); i++) {
+            if (idEgCab == facturaDetalle.get(i).getIdFacturaCabecera()) {
                 if (b) {
                     Row asd = sheet.createRow(filaActual);
-                    asd.createCell(0).setCellValue(new HSSFRichTextString(egresoDetalle.get(i).getProveedor()));
+                    asd.createCell(0).setCellValue(new HSSFRichTextString(facturaDetalle.get(i).getClienteEntidad()));
                     asd.getCell(0).setCellStyle(style2);
-                    if (egresoDetalle.get(i).getObservacion() != null) {
-                        asd.createCell(1).setCellValue(new HSSFRichTextString(egresoDetalle.get(i).getProducto() + "-(" + egresoDetalle.get(i).getObservacion() + ")"));
+                    if (facturaDetalle.get(i).getObservacion() != null) {
+                        asd.createCell(1).setCellValue(new HSSFRichTextString(facturaDetalle.get(i).getProducto() + "-(" + facturaDetalle.get(i).getObservacion() + ")"));
                     } else {
-                        asd.createCell(1).setCellValue(new HSSFRichTextString(egresoDetalle.get(i).getProducto()));
+                        asd.createCell(1).setCellValue(new HSSFRichTextString(facturaDetalle.get(i).getProductoDescripcion()));
                     }
-                    asd.createCell(2).setCellValue(egresoDetalle.get(i).getCantidad());
-                    asd.createCell(3).setCellValue(egresoDetalle.get(i).getDescuento());
-                    asd.createCell(4).setCellValue(egresoDetalle.get(i).getPrecio());
-                    asd.createCell(5).setCellValue(egresoDetalle.get(i).getTotal());
-                    for (int X = i; X < egresoDetalle.size(); X++) {
-                        if (idEgCab == egresoDetalle.get(X).getId_cabecera()) {
-                            SubTotal = SubTotal + egresoDetalle.get(X).getTotal();
+                    asd.createCell(2).setCellValue(facturaDetalle.get(i).getCantidad());
+                    asd.createCell(3).setCellValue(facturaDetalle.get(i).getDescuento());
+                    asd.createCell(4).setCellValue(facturaDetalle.get(i).getPrecio());
+                    asd.createCell(5).setCellValue(facturaDetalle.get(i).getTotal());
+                    for (int X = i; X < facturaDetalle.size(); X++) {
+                        if (idEgCab == facturaDetalle.get(X).getIdFacturaCabecera()) {
+                            SubTotal = SubTotal + facturaDetalle.get(X).getTotal();
                         } else {
-                            X = egresoDetalle.size();
+                            X = facturaDetalle.size();
                         }
                     }
                     asd.createCell(6).setCellValue(SubTotal);
@@ -283,17 +284,17 @@ public class C_create_excel {
                 if (!b) {
                     Row qwerty = sheet.createRow(filaActual);
                     filaActual++;
-                    qwerty.createCell(1).setCellValue(new HSSFRichTextString(egresoDetalle.get(i).getProducto()));
-                    qwerty.createCell(2).setCellValue(egresoDetalle.get(i).getCantidad());
-                    qwerty.createCell(3).setCellValue(egresoDetalle.get(i).getDescuento());
-                    qwerty.createCell(4).setCellValue(egresoDetalle.get(i).getPrecio());
-                    qwerty.createCell(5).setCellValue(egresoDetalle.get(i).getTotal());
+                    qwerty.createCell(1).setCellValue(new HSSFRichTextString(facturaDetalle.get(i).getProductoDescripcion()));
+                    qwerty.createCell(2).setCellValue(facturaDetalle.get(i).getCantidad());
+                    qwerty.createCell(3).setCellValue(facturaDetalle.get(i).getDescuento());
+                    qwerty.createCell(4).setCellValue(facturaDetalle.get(i).getPrecio());
+                    qwerty.createCell(5).setCellValue(facturaDetalle.get(i).getTotal());
                 }
                 b = false;
             } else {
                 SubTotal = 0;
                 b = true;
-                idEgCab = egresoDetalle.get(i).getId_cabecera();
+                idEgCab = facturaDetalle.get(i).getIdFacturaCabecera();
                 i--;
                 filaActual++;
             }

@@ -96,8 +96,8 @@ public class C_gestion_producto implements ActionListener, KeyListener, MouseLis
     }
 
     private void concederPermisos() {
-        this.vista.jtProducto.table.addMouseListener(this);
-        this.vista.jtProducto.table.addKeyListener(this);
+        this.vista.jtProducto.addMouseListener(this);
+        this.vista.jtProducto.addKeyListener(this);
         ArrayList<M_menu_item> accesos = DatosUsuario.getRol_usuario().getAccesos();
         for (M_menu_item acceso : accesos) {
             if (this.vista.jbAgregar.getName().equals(acceso.getItemDescripcion())) {
@@ -167,16 +167,16 @@ public class C_gestion_producto implements ActionListener, KeyListener, MouseLis
                  * para los resultados del query.
                  */
 
-                vista.jtProducto.establecerModelo(DB_Producto.consultaSimpleProducto(desc.toLowerCase(), proveedor, marca, rubro, impuesto, estado));
+                vista.jtProducto.setModel(DB_Producto.consultaSimpleProducto(desc.toLowerCase(), proveedor, marca, rubro, impuesto, estado));
             }
         });
     }
 
     private void completarCampos(KeyEvent e) {
-        if (e.getSource().equals(this.vista.jtProducto.table)) {
-            int row = this.vista.jtProducto.table.getSelectedRow();
-            int columna = this.vista.jtProducto.table.getSelectedRow();
-            int idProducto = Integer.valueOf(String.valueOf(this.vista.jtProducto.table.getValueAt(row, 0)));
+        if (e.getSource().equals(this.vista.jtProducto)) {
+            int row = this.vista.jtProducto.getSelectedRow();
+            int columna = this.vista.jtProducto.getSelectedRow();
+            int idProducto = Integer.valueOf(String.valueOf(this.vista.jtProducto.getValueAt(row, 0)));
             if ((row > -1) && (columna > -1)) {
                 setProducto(DB_Producto.obtenerDatosProductoID(idProducto));
                 this.vista.jbModificar.setEnabled(true);
@@ -295,9 +295,9 @@ public class C_gestion_producto implements ActionListener, KeyListener, MouseLis
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        int fila = this.vista.jtProducto.table.rowAtPoint(e.getPoint());
-        int columna = this.vista.jtProducto.table.columnAtPoint(e.getPoint());
-        Integer idProducto = Integer.valueOf(String.valueOf(this.vista.jtProducto.table.getValueAt(fila, 0)));
+        int fila = this.vista.jtProducto.rowAtPoint(e.getPoint());
+        int columna = this.vista.jtProducto.columnAtPoint(e.getPoint());
+        Integer idProducto = Integer.valueOf(String.valueOf(this.vista.jtProducto.getValueAt(fila, 0)));
         //setProducto(DBmanagerProducto.mostrarProducto(idProducto));
         setProducto(DB_Producto.obtenerDatosProductoID(idProducto));
         if ((fila > -1) && (columna > -1)) {
