@@ -12,7 +12,7 @@ import java.sql.Timestamp;
  */
 public class M_pedido {
 
-    private Integer idPedido, idCondVenta, idEstado;
+    private Integer idPedido, idCondVenta, idEstado, idFacturaCabecera;
     private M_cliente cliente;
     private M_funcionario funcionario;
     private Timestamp tiempoRecepcion, tiempoEntrega;
@@ -29,6 +29,14 @@ public class M_pedido {
 
     public void setIdPedido(Integer idPedido) {
         this.idPedido = idPedido;
+    }
+
+    public Integer getIdFacturaCabecera() {
+        return idFacturaCabecera;
+    }
+
+    public void setIdFacturaCabecera(Integer idFacturaCabecera) {
+        this.idFacturaCabecera = idFacturaCabecera;
     }
 
     public Integer getIdCondVenta() {

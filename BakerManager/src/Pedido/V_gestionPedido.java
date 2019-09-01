@@ -29,7 +29,7 @@ import net.miginfocom.swing.MigLayout;
 public class V_gestionPedido extends JInternalFrame {
 
     public JButton jbBuscar, jbBuscarDetalle, jbBorrar, jbAgregar, jbDetalle,
-            jbResumen, jbCliente, jbEmpleado, jbPagoPedido, jbCancelarPedido
+            jbResumen, jbCliente, jbEmpleado, jbCancelarPedido
             ,jbPedidosPendientes,jbCharts;
     public JTextField jtfNroPedido, jtfCliente, jtfEmpleado;
     public JComboBox jcbEmpleado, jcbCondVenta, jcbEstadoPedido;
@@ -135,10 +135,10 @@ public class V_gestionPedido extends JInternalFrame {
         jbAgregar.setName("crear pedido");
         jbAgregar.setMargin(inset);
         jbAgregar.setFont(CommonFormat.fuente);
-        jbPagoPedido = new JButton("Pago de pedido");
+        /*jbPagoPedido = new JButton("Pago de pedido");
         jbPagoPedido.setName("entregar pedido");
         jbPagoPedido.setMargin(inset);
-        jbPagoPedido.setFont(CommonFormat.fuente);
+        jbPagoPedido.setFont(CommonFormat.fuente);*/
         jbCancelarPedido = new JButton("Cancelar pedido");
         jbCancelarPedido.setName("cancelar pedido");
         jbCancelarPedido.setMargin(inset);
@@ -156,7 +156,7 @@ public class V_gestionPedido extends JInternalFrame {
         jbCharts.setMargin(inset);
         jbCharts.setFont(CommonFormat.fuente);
         jpBot.add(jbAgregar);
-        jpBot.add(jbPagoPedido);
+        //jpBot.add(jbPagoPedido);
         jpBot.add(jbCancelarPedido);
         jpBot.add(jbDetalle);
         jpBot.add(jbResumen);

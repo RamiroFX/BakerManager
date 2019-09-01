@@ -311,8 +311,9 @@ public class DB_Ingreso {
                 + "FC.ID_CLIENTE, "//14
                 + "FC.TIEMPO, "//15
                 + "FC.ID_COND_VENTA, "//16
-                + "FC.NRO_FACTURA "//17
-                + "FROM FACTURA_CABECERA FC, CLIENTE C "
+                + "FC.NRO_FACTURA, "//17
+                + "(SELECT NOMBRE FROM PERSONA WHERE PERSONA.ID_PERSONA = F.ID_PERSONA)\"NOMBRE_FUNCIONARIO\" "//18
+                + "FROM FACTURA_CABECERA FC, CLIENTE C, FUNCIONARIO F "
                 + "WHERE ID_FACTURA_CABECERA = " + idIngresoCabecera;
         try {
             pst = DB_manager.getConection().prepareStatement(query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
@@ -330,6 +331,8 @@ public class DB_Ingreso {
                 cliente.setObservacion(rs.getString(9));
                 cliente.setTipo(rs.getString(10));
                 cliente.setCategoria(rs.getString(11));
+                M_funcionario f = new M_funcionario();
+                f.setNombre(rs.getString(18));
                 fc = new M_facturaCabecera();
                 fc.setIdFacturaCabecera(rs.getInt(12));
                 fc.setIdFuncionario(rs.getInt(13));
@@ -338,6 +341,7 @@ public class DB_Ingreso {
                 fc.setIdCondVenta(rs.getInt(16));
                 fc.setNroFactura(rs.getInt(17));
                 fc.setCliente(cliente);
+                fc.setFuncionario(f);
             }
         } catch (SQLException ex) {
             Logger lgr = Logger.getLogger(DB_Ingreso.class.getName());

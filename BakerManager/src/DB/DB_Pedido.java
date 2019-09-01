@@ -138,6 +138,7 @@ public class DB_Pedido {
                 + "PEDI.TIEMPO_ENTREGA, "
                 + "PEDI.ID_COND_VENTA, "
                 + "PEDI.ID_PEDIDO_ESTADO, "
+                + "PEDI.ID_FACTURA_CABECERA, "
                 + "(SELECT PEES.DESCRIPCION FROM PEDIDO_ESTADO PEES WHERE PEES.ID_PEDIDO_ESTADO = PEDI.ID_PEDIDO_ESTADO) \"ESTADO\","
                 + "PEDI.DIRECCION \"PDIRECCION\", "
                 + "PEDI.REFERENCIA, "
@@ -203,6 +204,7 @@ public class DB_Pedido {
                 pedido.setTiempoRecepcion(rs.getTimestamp("TIEMPO_RECEPCION"));
                 pedido.setDireccion(rs.getString("PDIRECCION"));
                 pedido.setReferencia(rs.getString("REFERENCIA"));
+                pedido.setIdFacturaCabecera(rs.getInt("ID_FACTURA_CABECERA"));
             }
         } catch (SQLException ex) {
             Logger lgr = Logger.getLogger(DB_Egreso.class.getName());
@@ -648,12 +650,12 @@ public class DB_Pedido {
             pst.setInt(2, pedido.getCliente().getIdCliente());
             try {
                 if (nroFactura == null) {
-                    pst.setNull(3, Types.VARCHAR);
+                    pst.setNull(3, Types.BIGINT);
                 } else {
                     pst.setInt(3, nroFactura);
                 }
             } catch (Exception e) {
-                pst.setNull(3, Types.INTEGER);
+                pst.setNull(3, Types.BIGINT);
             }
             pst.setInt(4, pedido.getIdCondVenta());
             pst.executeUpdate();

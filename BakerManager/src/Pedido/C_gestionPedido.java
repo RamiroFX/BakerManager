@@ -72,7 +72,7 @@ public class C_gestionPedido implements GestionInterface {
         this.vista.jbResumen.setEnabled(false);
         this.vista.jbCharts.setEnabled(false);
         this.vista.jbCancelarPedido.setEnabled(false);
-        this.vista.jbPagoPedido.setEnabled(false);
+        //this.vista.jbPagoPedido.setEnabled(false);
         this.vista.jbDetalle.setEnabled(false);
         //this.vista.jtPedido.getColumnModel().getColumn(6).setCellRenderer(new MyColorCellRenderer());
         this.vista.jtPedido.setDefaultRenderer(Object.class, new MyColorCellRenderer(6));
@@ -86,9 +86,9 @@ public class C_gestionPedido implements GestionInterface {
                 this.vista.jbAgregar.setEnabled(true);
                 this.vista.jbAgregar.addActionListener(this);
             }
-            if (this.vista.jbPagoPedido.getName().equals(acceso.getItemDescripcion())) {
+            /*if (this.vista.jbPagoPedido.getName().equals(acceso.getItemDescripcion())) {
                 this.vista.jbPagoPedido.addActionListener(this);
-            }
+            }*/
             if (this.vista.jbCancelarPedido.getName().equals(acceso.getItemDescripcion())) {
                 this.vista.jbCancelarPedido.addActionListener(this);
             }
@@ -123,7 +123,7 @@ public class C_gestionPedido implements GestionInterface {
         this.vista.jbBorrar.addKeyListener(this);
         this.vista.jbBuscarDetalle.addKeyListener(this);
         this.vista.jbAgregar.addKeyListener(this);
-        this.vista.jbPagoPedido.addKeyListener(this);
+        //this.vista.jbPagoPedido.addKeyListener(this);
         this.vista.jbCancelarPedido.addKeyListener(this);
         this.vista.jbResumen.addKeyListener(this);
         this.vista.jbCharts.addKeyListener(this);
@@ -135,9 +135,9 @@ public class C_gestionPedido implements GestionInterface {
             if (this.vista.jbDetalle.getName().equals(acceso.getItemDescripcion())) {
                 this.vista.jbDetalle.setEnabled(true);
             }
-            if (this.vista.jbPagoPedido.getName().equals(acceso.getItemDescripcion())) {
+            /*if (this.vista.jbPagoPedido.getName().equals(acceso.getItemDescripcion())) {
                 this.vista.jbPagoPedido.setEnabled(true);
-            }
+            }*/
             if (this.vista.jbCancelarPedido.getName().equals(acceso.getItemDescripcion())) {
                 this.vista.jbCancelarPedido.setEnabled(true);
             }
@@ -227,10 +227,10 @@ public class C_gestionPedido implements GestionInterface {
         if ((fila > -1) && (columna > -1)) {
             String estado = String.valueOf(this.vista.jtPedido.getValueAt(fila, 6));
             if (!estado.equals("Entregado")) {
-                this.vista.jbPagoPedido.setEnabled(true);
+                //this.vista.jbPagoPedido.setEnabled(true);
                 this.vista.jbCancelarPedido.setEnabled(true);
             } else {
-                this.vista.jbPagoPedido.setEnabled(false);
+                //this.vista.jbPagoPedido.setEnabled(false);
                 this.vista.jbCancelarPedido.setEnabled(false);
             }
             this.vista.jtPedidoDetalle.setModel(modelo.obtenerPedidoDetalle(idPedido));
@@ -268,13 +268,13 @@ public class C_gestionPedido implements GestionInterface {
     private void controlarTablaPedido() {
         if (this.vista.jtPedido.getRowCount() > 0) {
             this.vista.jbResumen.setEnabled(true);
-            this.vista.jbPagoPedido.setEnabled(true);
+            //this.vista.jbPagoPedido.setEnabled(true);
             this.vista.jbCancelarPedido.setEnabled(true);
             this.vista.jbDetalle.setEnabled(true);
         } else {
             this.vista.jbResumen.setEnabled(false);
             this.vista.jbDetalle.setEnabled(false);
-            this.vista.jbPagoPedido.setEnabled(false);
+            //this.vista.jbPagoPedido.setEnabled(false);
             this.vista.jbCancelarPedido.setEnabled(false);
         }
         verificarPermiso();
@@ -291,7 +291,7 @@ public class C_gestionPedido implements GestionInterface {
             Utilities.c_packColumn.packColumns(this.vista.jtPedido, 1);
             controlarTablaPedido();
             this.vista.jbDetalle.setEnabled(false);
-            this.vista.jbPagoPedido.setEnabled(false);
+            //this.vista.jbPagoPedido.setEnabled(false);
             this.vista.jbCancelarPedido.setEnabled(false);
         }
     }
@@ -308,7 +308,7 @@ public class C_gestionPedido implements GestionInterface {
             controlarTablaPedido();
             this.modelo.borrarDatos();
             this.vista.jbDetalle.setEnabled(false);
-            this.vista.jbPagoPedido.setEnabled(false);
+            //this.vista.jbPagoPedido.setEnabled(false);
             this.vista.jbCancelarPedido.setEnabled(false);
         }
     }
@@ -328,10 +328,10 @@ public class C_gestionPedido implements GestionInterface {
             if ((row > -1) && (columna > -1)) {
                 String estado = String.valueOf(this.vista.jtPedido.getValueAt(row, 6));
                 if (!estado.equals("Entregado")) {
-                    this.vista.jbPagoPedido.setEnabled(true);
+                    //this.vista.jbPagoPedido.setEnabled(true);
                     this.vista.jbCancelarPedido.setEnabled(true);
                 } else {
-                    this.vista.jbPagoPedido.setEnabled(false);
+                    //this.vista.jbPagoPedido.setEnabled(false);
                     this.vista.jbCancelarPedido.setEnabled(false);
                 }
                 this.vista.jtPedidoDetalle.setModel(modelo.obtenerPedidoDetalle(idPedido));
@@ -346,9 +346,9 @@ public class C_gestionPedido implements GestionInterface {
             crearPedido();
         } else if (e.getSource().equals(this.vista.jbPedidosPendientes)) {
             jbPedidosPendientesButtonHandler();
-        } else if (e.getSource().equals(this.vista.jbPagoPedido)) {
+        } /*else if (e.getSource().equals(this.vista.jbPagoPedido)) {
             pagarPedido();
-        } else if (e.getSource().equals(this.vista.jbCancelarPedido)) {
+        } */else if (e.getSource().equals(this.vista.jbCancelarPedido)) {
             cancelarPedido();
         } else if (e.getSource().equals(this.vista.jbBuscar)) {
             displayQueryResults();

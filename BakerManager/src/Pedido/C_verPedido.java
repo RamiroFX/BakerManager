@@ -115,6 +115,16 @@ public class C_verPedido extends MouseAdapter implements ActionListener, KeyList
             this.vista.jcbCondVenta.setEnabled(false);
             this.vista.jcbTipoVenta.setEnabled(false);
             this.vista.jbPagarPedido.setEnabled(false);
+            if (modelo.getPedido().getIdFacturaCabecera() != null) {
+                int idFaca = modelo.getPedido().getIdFacturaCabecera();
+                M_facturaCabecera faca = DB_Ingreso.obtenerIngresoCabeceraCompleto(idFaca);
+                if (faca.getNroFactura() != null & faca.getNroFactura() > 0) {
+                    this.vista.jtfNroFactura.setText(faca.getNroFactura() + "");
+                    this.vista.jcbTipoVenta.setSelectedIndex(1);
+                } else {
+                    this.vista.jcbTipoVenta.setSelectedIndex(0);
+                }
+            }
         }
         sumarTotal();
     }
@@ -309,7 +319,11 @@ public class C_verPedido extends MouseAdapter implements ActionListener, KeyList
         int opcion = JOptionPane.showConfirmDialog(vista, "¿Desea confirmas esta operación?\n Venta tipo: " + vista.jcbTipoVenta.getSelectedItem(), "Atención", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
         if (opcion == JOptionPane.YES_OPTION) {
             Integer idPedido = modelo.getPedido().getIdPedido();
-            int idFaca = this.modelo.pagarPedido(idPedido, modelo.getNroFactura());
+            Integer nroFactura = null;
+            if (vista.jcbTipoVenta.getSelectedIndex() == 1) {
+                nroFactura = modelo.getNroFactura();
+            }
+            int idFaca = this.modelo.pagarPedido(idPedido, nroFactura);
             ArrayList<M_facturaDetalle> fades = DB_Ingreso.obtenerVentaDetalles(idFaca);
             M_facturaCabecera faca = DB_Ingreso.obtenerIngresoCabeceraCompleto(idFaca);
             int opcion2 = JOptionPane.showConfirmDialog(vista, "¿Desea imprimir la venta?", "Atención", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);

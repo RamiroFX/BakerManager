@@ -70,7 +70,7 @@ public class C_crearPedido extends MouseAdapter implements ActionListener, KeyLi
         for (int i = 0; i < tipoVenta.size(); i++) {
             this.vista.jcbTipoVenta.addItem(tipoVenta.get(i));
         }*/
-         this.vista.jcbTipoVenta.setEnabled(false);
+        this.vista.jcbTipoVenta.setEnabled(false);
         this.modelo.getPedido().setIdCondVenta(TipoOperacion.CONTADO);
         this.modelo.getPedido().setEstado(PedidoEstado.PENDIENTE.getDescripcion());
         this.modelo.getPedido().setIdEstado(PedidoEstado.PENDIENTE.getId());
@@ -78,6 +78,7 @@ public class C_crearPedido extends MouseAdapter implements ActionListener, KeyLi
         this.vista.jtPedidoDetalle.setModel(this.modelo.getDtm());
         this.vista.jbModificarDetalle.setEnabled(false);
         this.vista.jbEliminarDetalle.setEnabled(false);
+        this.vista.jbPagarPedido.setEnabled(false);
         java.awt.Font fuente = new java.awt.Font("Times New Roman", 0, 18);
         javax.swing.text.DefaultFormatterFactory dff = new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(java.text.NumberFormat.getCurrencyInstance()));
         this.vista.jftExenta.setFormatterFactory(dff);
