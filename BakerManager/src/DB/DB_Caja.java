@@ -239,9 +239,6 @@ public class DB_Caja {
 
     public static ArrayList consultarCajasExportacion(Integer idFuncionario, Timestamp inicio, Timestamp fin) {
         ArrayList<CierreCaja> cajas = new ArrayList<>();
-        ArrayList<ArqueoCajaDetalle> arqueoApertura = new ArrayList<>();
-        ArrayList<ArqueoCajaDetalle> arqueoCierre = new ArrayList<>();
-        ArrayList<ArqueoCajaDetalle> arqueoDeposito = new ArrayList<>();
         String ATTACH_FUNCIONARIO = "AND CAJA.ID_FUNCIONARIO_CIERRE = ? ";
         String QUERY_CAJA = "SELECT ID_CAJA, ID_FUNCIONARIO_APERTURA, ID_FUNCIONARIO_CIERRE, "
                 + "TIEMPO_APERTURA, TIEMPO_CIERRE "
@@ -276,6 +273,7 @@ public class DB_Caja {
                 pst1.setInt(1, caja.getIdCaja());
                 pst1.setInt(2, 1);//APERTURA
                 ResultSet rs1 = pst1.executeQuery();
+                ArrayList<ArqueoCajaDetalle> arqueoApertura = new ArrayList<>();
                 while (rs1.next()) {
                     ArqueoCajaDetalle acd = new ArqueoCajaDetalle();
                     acd.setIdArqueoCajaDetalle(rs1.getInt("ID_ARQUEO_CAJA"));
@@ -295,6 +293,7 @@ public class DB_Caja {
                 pst2.setInt(1, caja.getIdCaja());
                 pst2.setInt(2, 2);//CIERRE
                 ResultSet rs2 = pst2.executeQuery();
+                ArrayList<ArqueoCajaDetalle> arqueoCierre = new ArrayList<>();
                 while (rs2.next()) {
                     ArqueoCajaDetalle acd = new ArqueoCajaDetalle();
                     acd.setIdArqueoCajaDetalle(rs2.getInt("ID_ARQUEO_CAJA"));
@@ -314,6 +313,7 @@ public class DB_Caja {
                 pst3.setInt(1, caja.getIdCaja());
                 pst3.setInt(2, 3);//DEPOSITO
                 ResultSet rs3 = pst3.executeQuery();
+                ArrayList<ArqueoCajaDetalle> arqueoDeposito = new ArrayList<>();
                 while (rs3.next()) {
                     ArqueoCajaDetalle acd = new ArqueoCajaDetalle();
                     acd.setIdArqueoCajaDetalle(rs3.getInt("ID_ARQUEO_CAJA"));

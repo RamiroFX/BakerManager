@@ -24,6 +24,7 @@ import java.util.Date;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
+import org.apache.poi.hssf.usermodel.HSSFFont;
 import org.apache.poi.hssf.usermodel.HSSFRichTextString;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -34,6 +35,7 @@ import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellUtil;
+import org.apache.poi.xssf.usermodel.XSSFFont;
 
 /**
  *
@@ -47,7 +49,7 @@ public class ExportarCaja {
 
     private HSSFWorkbook workbook;
     private ArrayList<HSSFSheet> sheets;
-    private CellStyle style1, style2, style3, style4, style5, style6, style7;
+    private CellStyle style1, style2, style3, style4, style5, style6, style7, style8;
     private HSSFCellStyle dateCellStyle;
     private File directory;
     private ArrayList<CierreCaja> cierreCajas;
@@ -117,6 +119,11 @@ public class ExportarCaja {
         style7.setBorderBottom(HSSFCellStyle.BORDER_THIN);
         style7.setDataFormat(format.getFormat("#,##0"));
 
+        HSSFFont font = workbook.createFont();
+        font.setBold(true);
+        font.setItalic(false);
+        style8 = workbook.createCellStyle();
+        style8.setFont(font);
         //END FORMAT STYLE
     }
 
@@ -494,6 +501,11 @@ public class ExportarCaja {
             cabecera.createCell(0).setCellValue(new HSSFRichTextString("Fecha"));
             cabecera.createCell(1).setCellValue(new HSSFRichTextString("Total egreso"));
             cabecera.createCell(2).setCellValue(new HSSFRichTextString("Total ingreso"));
+            cabecera.createCell(3).setCellValue(new HSSFRichTextString("Total depositado"));
+            cabecera.getCell(0).setCellStyle(style8);
+            cabecera.getCell(1).setCellStyle(style8);
+            cabecera.getCell(2).setCellStyle(style8);
+            cabecera.getCell(3).setCellStyle(style8);
             fila++;
         } else {
             JOptionPane.showMessageDialog(null, MENSAJE_ERROR, TITULO_ERROR, JOptionPane.ERROR_MESSAGE);
@@ -525,6 +537,10 @@ public class ExportarCaja {
                 cabecera.createCell(1).setCellValue(new HSSFRichTextString("Total egreso"));
                 cabecera.createCell(2).setCellValue(new HSSFRichTextString("Total ingreso"));
                 cabecera.createCell(3).setCellValue(new HSSFRichTextString("Depositado"));
+                cabecera.getCell(0).setCellStyle(style8);
+                cabecera.getCell(1).setCellStyle(style8);
+                cabecera.getCell(2).setCellStyle(style8);
+                cabecera.getCell(3).setCellStyle(style8);
                 fila++;
             }
             //TOTAL EGRESO
@@ -578,6 +594,7 @@ public class ExportarCaja {
 
             resumenTotalEgreso = resumenTotalEgreso + totalEgresos;
             resumenTotalIngreso = resumenTotalIngreso + totalIngresos;
+            resumenTotalDepositado = resumenTotalDepositado + totalDepositado;
         }
         //RESUMEN EN OTRO PESTANHA
         fila = 0;
