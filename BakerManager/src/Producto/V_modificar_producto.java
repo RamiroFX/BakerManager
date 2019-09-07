@@ -27,9 +27,9 @@ public class V_modificar_producto extends javax.swing.JDialog {
             jpPrincipal, jpBot;
     public JLabel jlProducto, jlCodigo, jlImpuesto, jlRubro, jlPrecioCosto, jlMarca,
             jlPrecioVta, jlPrecioMayorista, jlSuspendido, jlCalcularStock,
-            jlTituloProducto, jlCantActual;
+            jlTituloProducto, jlCantActual, jlObservacion;
     public JTextField jtfProducto, jtfCodigo, jtfPrecioCosto,
-            jtfPrecioVta, jtfPrecioMayorista, jtfCantActual;
+            jtfPrecioVta, jtfPrecioMayorista, jtfCantActual, jtfObservacion;
     public JTextArea jtaIngredientes;
     public JComboBox jcbImpuesto, jcbMarca, jcbEstado, jcbCalcularStock, jcbRubro;
     public JButton jbAceptar, jbCancelar;
@@ -52,7 +52,7 @@ public class V_modificar_producto extends javax.swing.JDialog {
         jpMid = new JPanel(new BorderLayout());
         jpMid3 = new JPanel();
         jpMid3.setBorder(new EtchedBorder(2));
-        jpMid1 = new JPanel(new GridLayout(11, 2));
+        jpMid1 = new JPanel(new GridLayout(12, 2));
         jlTituloProducto = new JLabel();
         jlTituloProducto.setFont(new Font(Font.MONOSPACED, 1, 20));
         jlProducto = new JLabel("Producto");
@@ -77,6 +77,8 @@ public class V_modificar_producto extends javax.swing.JDialog {
         jlCalcularStock.setHorizontalAlignment(JLabel.CENTER);
         jlCantActual = new JLabel("Cantidad actual");
         jlCantActual.setHorizontalAlignment(JLabel.CENTER);
+        jlObservacion = new JLabel("Observación");
+        jlObservacion.setHorizontalAlignment(JLabel.CENTER);
         jtfProducto = new JTextField();
         jtfProducto.setEditable(false);
         jtfCodigo = new JTextField();
@@ -84,6 +86,7 @@ public class V_modificar_producto extends javax.swing.JDialog {
         jtfPrecioVta = new JTextField();
         jtfPrecioMayorista = new JTextField();
         jtfCantActual = new JTextField();
+        jtfObservacion = new JTextField();
         jcbImpuesto = new JComboBox();
         jcbRubro = new JComboBox();
         jcbMarca = new JComboBox();
@@ -111,6 +114,8 @@ public class V_modificar_producto extends javax.swing.JDialog {
         jpMid1.add(jcbCalcularStock);
         jpMid1.add(jlCantActual);
         jpMid1.add(jtfCantActual);
+        jpMid1.add(jlObservacion);
+        jpMid1.add(jtfObservacion);
         jpMid3.add(jlTituloProducto);
         jpBot.add(jbAceptar);
         jpBot.add(jbCancelar);

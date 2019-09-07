@@ -204,7 +204,7 @@ public class DB_Egreso {
                 + "CASE "
                 + "	WHEN P.ID_IMPUESTO = 3 THEN ROUND(EGDE.CANTIDAD*(EGDE.PRECIO-(EGDE.PRECIO*EGDE.DESCUENTO)/100))ELSE '0' "
                 + "END AS \"IVA 10%\", "
-                + "OBSERVACION \"Obs.\" "
+                + "EGDE.OBSERVACION \"Obs.\" "
                 + "FROM EGRESO_DETALLE EGDE, PRODUCTO P "
                 + "WHERE EGDE.ID_PRODUCTO = P.ID_PRODUCTO "
                 + "AND EGDE.ID_EGRESO_CABECERA = " + idEgresoCabecera;

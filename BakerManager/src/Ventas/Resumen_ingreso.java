@@ -145,6 +145,7 @@ public class Resumen_ingreso extends JDialog implements ActionListener, KeyListe
         calendario.set(Calendar.MILLISECOND, 0);
         java.sql.Timestamp fFin = java.sql.Timestamp.valueOf(sdfs.format(calendario.getTime()));
         jtDetalle.setModel(DB_Ingreso.consultarIngresoDetalleAgrupado(fInicio, fFin, cliente));
+        Utilities.c_packColumn.packColumns(jtDetalle, 1);
         jftTotalEgCred.setValue(totalCredito);
         jftTotalEgCont.setValue(totalContado);
         jftTotalEgreso.setValue(total);

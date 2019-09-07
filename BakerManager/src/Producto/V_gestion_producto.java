@@ -31,10 +31,10 @@ public class V_gestion_producto extends JInternalFrame {
     public JButton jbParametros, jbBuscar, jbBorrar, jbProveedor,
             jbModificar, jbAgregar, jbEliminar, jbAsigProdProv, jbExportar;
     private JLabel jlProducto, jlCodigo, jlImpuesto, jlRubro, jlPrecioCosto, jlMarca,
-            jlPrecioVta, jlPrecioMayorista, jlEstado, jlCantActual;
+            jlPrecioVta, jlPrecioMayorista, jlEstado, jlCantActual, jlObservacion;
     public JTextField jtfBuscar, jtfProducto, jtfCodigo, jtfPrecioCosto,
             jtfPrecioVta, jtfPrecioMayorista, jtfImpuesto, jtfMarca,
-            jtfSuspendido, jtfRubro, jtfCantActual, jtfProveedor;
+            jtfSuspendido, jtfRubro, jtfCantActual, jtfObservacion, jtfProveedor;
     public JComboBox jcbImpuesto, jcbMarca, jcbEstado, jcbRubro;
     private JPanel jpTop, jpBotonesTop, jpJtextFieldTop, jpMid, jpBot, jpMid1;
     public JTable jtProducto;
@@ -100,7 +100,7 @@ public class V_gestion_producto extends JInternalFrame {
 
         //panel medio derecha
         jpMid = new JPanel(new BorderLayout());
-        jpMid1 = new JPanel(new GridLayout(10, 2));
+        jpMid1 = new JPanel(new GridLayout(11, 2));
         jlProducto = new JLabel("Producto");
         jlProducto.setHorizontalAlignment(JLabel.CENTER);
         jlCodigo = new JLabel("Codigo");
@@ -121,6 +121,8 @@ public class V_gestion_producto extends JInternalFrame {
         jlEstado.setHorizontalAlignment(JLabel.CENTER);
         jlCantActual = new JLabel("Cantidad actual");
         jlCantActual.setHorizontalAlignment(JLabel.CENTER);
+        jlObservacion = new JLabel("Observación");
+        jlObservacion.setHorizontalAlignment(JLabel.CENTER);
         jtfProducto = new JTextField();
         jtfProducto.setEditable(false);
         jtfCodigo = new JTextField();
@@ -141,6 +143,8 @@ public class V_gestion_producto extends JInternalFrame {
         jtfSuspendido.setEditable(false);
         jtfCantActual = new JTextField();
         jtfCantActual.setEditable(false);
+        jtfObservacion = new JTextField();
+        jtfObservacion.setEditable(false);
 
         jpMid1.add(jlProducto);
         jpMid1.add(jtfProducto);
@@ -162,6 +166,8 @@ public class V_gestion_producto extends JInternalFrame {
         jpMid1.add(jtfSuspendido);
         jpMid1.add(jlCantActual);
         jpMid1.add(jtfCantActual);
+        jpMid1.add(jlObservacion);
+        jpMid1.add(jtfObservacion);
 
         jpMid.add(jpMid1, "Center");
         //creamos nuestro splitpane y agregamos los dos paneles del medio

@@ -733,7 +733,7 @@ public class DB_Pedido {
         String query = "SELECT ID_PEDIDO_DETALLE, ID_PEDIDO_CABECERA, PD.ID_PRODUCTO,"
                 + "P.DESCRIPCION \"PRODUCTO\", "
                 + "(SELECT I.ID_IMPUESTO FROM IMPUESTO I WHERE I.ID_IMPUESTO = P.ID_IMPUESTO)\"ID_IMPUESTO\", "
-                + "CANTIDAD, PRECIO, DESCUENTO, OBSERVACION "
+                + "CANTIDAD, PRECIO, DESCUENTO, PD.OBSERVACION "
                 + "FROM PEDIDO_DETALLE PD, PRODUCTO P "
                 + "WHERE PD.ID_PRODUCTO = P.ID_PRODUCTO "
                 + "AND PD.ID_PEDIDO_CABECERA = " + idPedido;

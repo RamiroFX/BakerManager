@@ -71,7 +71,7 @@ public class C_modificar_producto implements ActionListener {
     private void completarCampos() {
         this.vista.jlTituloProducto.setText(this.modelo.producto.getDescripcion());
         this.vista.jtfProducto.setText(this.modelo.producto.getDescripcion());
-        this.vista.jtfCodigo.setText(String.valueOf(this.modelo.producto.getId()));
+        this.vista.jtfCodigo.setText(String.valueOf(this.modelo.producto.getCodBarra()));
         this.vista.jtfPrecioCosto.setText(String.valueOf(this.modelo.producto.getPrecioCosto()));
         this.vista.jtfPrecioMayorista.setText(String.valueOf(this.modelo.producto.getPrecioMayorista()));
         this.vista.jtfPrecioVta.setText(String.valueOf(this.modelo.producto.getPrecioVenta()));
@@ -80,6 +80,7 @@ public class C_modificar_producto implements ActionListener {
         this.vista.jcbMarca.setSelectedItem(this.modelo.producto.getMarca());
         this.vista.jtfCantActual.setText(String.valueOf(this.modelo.producto.getCantActual()));
         this.vista.jcbEstado.setSelectedItem(this.modelo.producto.getEstado());
+        this.vista.jtfObservacion.setText(this.modelo.producto.getObservacion());
     }
 
     private void modificarProductos() {
@@ -90,7 +91,9 @@ public class C_modificar_producto implements ActionListener {
             return;
         }
         if (codigo.isEmpty()) {
-            codigo = null;
+            javax.swing.JOptionPane.showMessageDialog(this.vista, "Verifique el código del producto. Campo vacío.", "Parametros incorrectos",
+                    javax.swing.JOptionPane.OK_OPTION);
+            return;
         }
         int precioCosto = 0;
         try {
@@ -140,6 +143,15 @@ public class C_modificar_producto implements ActionListener {
             JOptionPane.showMessageDialog(vista, "Ingrese una cantidad válida.", "Atención", JOptionPane.ERROR_MESSAGE);
             return;
         }
+        String observacion = this.vista.jtfObservacion.getText().trim();
+        if (observacion.length() > 250) {
+            javax.swing.JOptionPane.showMessageDialog(this.vista, "Verifique la observación del producto. Máximo 250 caracteres permitidos.", "Parametros incorrectos",
+                    javax.swing.JOptionPane.OK_OPTION);
+            return;
+        }
+        if (observacion.isEmpty()) {
+            observacion = null;
+        }
         M_producto producto = new M_producto();
         producto.setCantActual(cantActual);
         producto.setCodBarra(codigo);
@@ -150,6 +162,7 @@ public class C_modificar_producto implements ActionListener {
         producto.setImpuesto((Integer.valueOf((String) this.vista.jcbImpuesto.getSelectedItem())));
         producto.setMarca((String) this.vista.jcbMarca.getSelectedItem());
         producto.setEstado((String) this.vista.jcbEstado.getSelectedItem());
+        producto.setObservacion(observacion);
         if (modelo.actualizarProducto(producto)) {
             cerrar();
         }

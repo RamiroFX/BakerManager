@@ -373,7 +373,8 @@ public class DB_Ingreso {
                 + "AND FADE.ID_PRODUCTO = PROD.ID_PRODUCTO "
                 + "AND FACA.TIEMPO BETWEEN ? AND ? ";
 
-        String PIE = "GROUP BY PROD.DESCRIPCION, FADE.PRECIO, FADE.DESCUENTO,PROD.ID_IMPUESTO ";
+        String PIE = "GROUP BY PROD.DESCRIPCION, FADE.PRECIO, FADE.DESCUENTO,PROD.ID_IMPUESTO "
+                + "ORDER BY PROD.DESCRIPCION";
         if (cliente != null) {
             if (cliente.getIdCliente() != null) {
                 QUERY = QUERY + "AND FACA.ID_CLIENTE = ? " + PIE;
@@ -416,7 +417,7 @@ public class DB_Ingreso {
                 + "CASE "
                 + "	WHEN P.ID_IMPUESTO = 3 THEN ROUND(FD.CANTIDAD*(FD.PRECIO-(FD.PRECIO*FD.DESCUENTO)/100))ELSE '0' "
                 + "END AS \"IVA 10%\", "
-                + "OBSERVACION \"Obs.\" "
+                + "FD.OBSERVACION \"Obs.\" "
                 + "FROM FACTURA_DETALLE FD, PRODUCTO P "
                 + "WHERE FD.ID_PRODUCTO = P.ID_PRODUCTO "
                 + "AND ID_FACTURA_CABECERA = " + idIngresoCabecera;

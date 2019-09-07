@@ -71,10 +71,10 @@ public class C_crearPedido extends MouseAdapter implements ActionListener, KeyLi
             this.vista.jcbTipoVenta.addItem(tipoVenta.get(i));
         }*/
         this.vista.jcbTipoVenta.setEnabled(false);
+        this.vista.jtfNroFactura.setEnabled(false);
         this.modelo.getPedido().setIdCondVenta(TipoOperacion.CONTADO);
         this.modelo.getPedido().setEstado(PedidoEstado.PENDIENTE.getDescripcion());
         this.modelo.getPedido().setIdEstado(PedidoEstado.PENDIENTE.getId());
-        this.vista.jtfNroFactura.setEditable(false);
         this.vista.jtPedidoDetalle.setModel(this.modelo.getDtm());
         this.vista.jbModificarDetalle.setEnabled(false);
         this.vista.jbEliminarDetalle.setEnabled(false);

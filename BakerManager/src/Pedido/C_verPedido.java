@@ -117,11 +117,13 @@ public class C_verPedido extends MouseAdapter implements ActionListener, KeyList
             if (modelo.getPedido().getIdFacturaCabecera() != null) {
                 int idFaca = modelo.getPedido().getIdFacturaCabecera();
                 M_facturaCabecera faca = DB_Ingreso.obtenerIngresoCabeceraCompleto(idFaca);
-                if (faca.getNroFactura() != null & faca.getNroFactura() > 0) {
-                    this.vista.jtfNroFactura.setText(faca.getNroFactura() + "");
-                    this.vista.jcbTipoVenta.setSelectedIndex(1);
-                } else {
-                    this.vista.jcbTipoVenta.setSelectedIndex(0);
+                if (faca.getNroFactura() != null) {
+                    if (faca.getNroFactura() > 0) {
+                        this.vista.jtfNroFactura.setText(faca.getNroFactura() + "");
+                        this.vista.jcbTipoVenta.setSelectedIndex(1);
+                    } else {
+                        this.vista.jcbTipoVenta.setSelectedIndex(0);
+                    }
                 }
             }
         }

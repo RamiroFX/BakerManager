@@ -2,7 +2,6 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package Entities;
 
 /**
@@ -10,8 +9,9 @@ package Entities;
  * @author Ramiro
  */
 public class M_producto {
-    private String descripcion,marca,categoria,estado,codigo;
-    private Integer id,impuesto,precioCosto,precioMinorista,precioMayorista;
+
+    private String descripcion, marca, categoria, estado, codigo, observacion;
+    private Integer id, impuesto, precioCosto, precioMinorista, precioMayorista;
     private Integer idMarca;
     private Integer idEstado;
     private Integer idCategoria;
@@ -21,7 +21,10 @@ public class M_producto {
     public M_producto() {
     }
 
-    public M_producto(String descripcion, String marca, String rubro, String estado, Integer id, String codigo, Integer impuesto, int precioCosto, Integer precioMinorista, Integer precioMayorista, Double cantActual) {
+    public M_producto(String descripcion, String marca, String rubro, String estado, 
+            Integer id, String codigo, Integer impuesto, int precioCosto, 
+            Integer precioMinorista, Integer precioMayorista, Double cantActual, 
+            String observacion) {
         this.descripcion = descripcion;
         this.marca = marca;
         this.categoria = rubro;
@@ -33,6 +36,7 @@ public class M_producto {
         this.precioMinorista = precioMinorista;
         this.precioMayorista = precioMayorista;
         this.cantActual = cantActual;
+        this.observacion = observacion;
     }
 
     /**
@@ -109,14 +113,14 @@ public class M_producto {
      * @return the codBarra
      */
     public String getCodBarra() {
-        return codigo;
+        return getCodigo();
     }
 
     /**
      * @param codBarra the codBarra to set
      */
     public void setCodBarra(String codBarra) {
-        this.codigo = codBarra;
+        this.setCodigo(codBarra);
     }
 
     /**
@@ -151,14 +155,14 @@ public class M_producto {
      * @return the precioVenta
      */
     public Integer getPrecioVenta() {
-        return precioMinorista;
+        return getPrecioMinorista();
     }
 
     /**
      * @param precioVenta the precioVenta to set
      */
     public void setPrecioVenta(Integer precioVenta) {
-        this.precioMinorista = precioVenta;
+        this.setPrecioMinorista(precioVenta);
     }
 
     /**
@@ -243,6 +247,30 @@ public class M_producto {
      */
     public void setIdImpuesto(Integer idImpuesto) {
         this.idImpuesto = idImpuesto;
+    }
+
+    public String getCodigo() {
+        return codigo;
+    }
+
+    public void setCodigo(String codigo) {
+        this.codigo = codigo;
+    }
+
+    public String getObservacion() {
+        return observacion;
+    }
+
+    public void setObservacion(String observacion) {
+        this.observacion = observacion;
+    }
+
+    public Integer getPrecioMinorista() {
+        return precioMinorista;
+    }
+
+    public void setPrecioMinorista(Integer precioMinorista) {
+        this.precioMinorista = precioMinorista;
     }
 
 }

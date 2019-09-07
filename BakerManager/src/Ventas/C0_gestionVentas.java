@@ -271,7 +271,7 @@ public class C0_gestionVentas implements GestionInterface {
     }
 
     private void crearVentaRapida() {
-        CrearVentaRapida crv = new CrearVentaRapida(gestionVentas);
+        /*CrearVentaRapida crv = new CrearVentaRapida(gestionVentas);
         crv.mostrarVista();/*
         SwingUtilities.invokeLater(new Runnable() {//if we remove this block it wont work also (no matter when we call requestFocusInWindow)
             @Override
@@ -280,6 +280,8 @@ public class C0_gestionVentas implements GestionInterface {
                 crv.mostrarVista();
             }
         });*/
+        CrearVentas cv = new CrearVentas(gestionVentas);
+        cv.mostrarVista();
     }
 
     @Override

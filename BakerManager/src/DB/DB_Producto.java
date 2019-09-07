@@ -65,7 +65,7 @@ public class DB_Producto {
         }
         return (int) idProducto;
     }
-    
+
     public static ResultSetTableModel consultarProducto(String prodDescripcion) {
         ResultSetTableModel rstm = null;
         try {
@@ -349,9 +349,9 @@ public class DB_Producto {
                     + rubr
                     + estad
                     + finalQuery;
-            
+
             pst = DB_manager.getConection().prepareStatement(Query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-            pst.setString(1, descripcion + "%");            
+            pst.setString(1, descripcion + "%");
             rs = pst.executeQuery();
             productos = new ArrayList();
             while (rs.next()) {
@@ -379,7 +379,7 @@ public class DB_Producto {
         }
         return productos;
     }
-    
+
     public static M_producto obtenerDatosProductoID(int idProducto) {
         M_producto producto = null;
         try {
@@ -403,6 +403,7 @@ public class DB_Producto {
                 producto.setIdEstado(rs.getInt("id_estado"));
                 producto.setIdImpuesto(rs.getInt("id_impuesto"));
                 producto.setIdMarca(rs.getInt("id_marca"));
+                producto.setObservacion(rs.getString("observacion"));
             }
             storedFunct.close();
         } catch (SQLException ex) {
@@ -411,26 +412,27 @@ public class DB_Producto {
         }
         return producto;
     }
-    
-    public static M_producto obtenerProductoPorCodigo(String codigoProducto) {        
+
+    public static M_producto obtenerProductoPorCodigo(String codigoProducto) {
         M_producto producto = null;
         String Query = "SELECT PROD.ID_PRODUCTO \"id_prod\", "
-                    + "PROD.CODIGO \"cod_prod\", "
-                    + "PROD.DESCRIPCION \"descripcion\", "
-                    + "PROD.PRECIO_COSTO \"precio_costo\", "
-                    + "PROD.PRECIO_MINORISTA \"precio_minorista\", "
-                    + "PROD.PRECIO_MAYORISTA \"precio_mayorista\", "
-                    + "PROD.CANT_ACTUAL \"cant_actual\", "
-                    + "PROD.ID_MARCA \"id_marca\", "
-                    + "PROD.ID_IMPUESTO \"id_impuesto\", "
-                    + "PROD.ID_ESTADO \"id_estado\", "
-                    + "PROD.ID_CATEGORIA \"id_categoria\", "
-                    + "(SELECT IMPU.DESCRIPCION FROM IMPUESTO IMPU WHERE IMPU.ID_IMPUESTO = PROD.ID_IMPUESTO) \"impuesto\", "
-                    + "(SELECT ESTA.DESCRIPCION FROM ESTADO ESTA WHERE ESTA.ID_ESTADO = PROD.ID_ESTADO) \"estado\", "
-                    + "(SELECT MARC.DESCRIPCION FROM MARCA MARC WHERE MARC.ID_MARCA = PROD.ID_MARCA) \"marca\", "
-                    + "(SELECT PRCA.DESCRIPCION FROM PRODUCTO_CATEGORIA PRCA WHERE PRCA.ID_PRODUCTO_CATEGORIA = PROD.ID_CATEGORIA) \"categoria\" "
-                    + "FROM PRODUCTO PROD "
-                    + "WHERE PROD.CODIGO LIKE ? ";
+                + "PROD.CODIGO \"cod_prod\", "
+                + "PROD.DESCRIPCION \"descripcion\", "
+                + "PROD.PRECIO_COSTO \"precio_costo\", "
+                + "PROD.PRECIO_MINORISTA \"precio_minorista\", "
+                + "PROD.PRECIO_MAYORISTA \"precio_mayorista\", "
+                + "PROD.CANT_ACTUAL \"cant_actual\", "
+                + "PROD.ID_MARCA \"id_marca\", "
+                + "PROD.ID_IMPUESTO \"id_impuesto\", "
+                + "PROD.ID_ESTADO \"id_estado\", "
+                + "PROD.ID_CATEGORIA \"id_categoria\", "
+                + "PROD.OBSERVACION \"observacion\", "
+                + "(SELECT IMPU.DESCRIPCION FROM IMPUESTO IMPU WHERE IMPU.ID_IMPUESTO = PROD.ID_IMPUESTO) \"impuesto\", "
+                + "(SELECT ESTA.DESCRIPCION FROM ESTADO ESTA WHERE ESTA.ID_ESTADO = PROD.ID_ESTADO) \"estado\", "
+                + "(SELECT MARC.DESCRIPCION FROM MARCA MARC WHERE MARC.ID_MARCA = PROD.ID_MARCA) \"marca\", "
+                + "(SELECT PRCA.DESCRIPCION FROM PRODUCTO_CATEGORIA PRCA WHERE PRCA.ID_PRODUCTO_CATEGORIA = PROD.ID_CATEGORIA) \"categoria\" "
+                + "FROM PRODUCTO PROD "
+                + "WHERE PROD.CODIGO LIKE ? ";
         try {
             pst = DB_manager.getConection().prepareStatement(Query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             pst.setString(1, codigoProducto);
@@ -538,7 +540,7 @@ public class DB_Producto {
         String UPDATE = "UPDATE  producto SET CODIGO = ?, ID_MARCA = ?,"
                 + " ID_ESTADO = ?, ID_IMPUESTO = ?, ID_CATEGORIA = ?, "
                 + "PRECIO_COSTO = ?, PRECIO_MAYORISTA = ?, PRECIO_MINORISTA = ?, "
-                + "CANT_ACTUAL = ? WHERE ID_PRODUCTO = ? ;";
+                + "CANT_ACTUAL = ?, OBSERVACION = ? WHERE ID_PRODUCTO = ? ;";
         int result = -1;
         try {
 
@@ -553,7 +555,8 @@ public class DB_Producto {
             pst.setInt(7, producto.getPrecioMayorista());
             pst.setInt(8, producto.getPrecioVenta());
             pst.setDouble(9, producto.getCantActual());
-            pst.setInt(10, producto.getId());
+            pst.setString(10, producto.getObservacion());
+            pst.setInt(11, producto.getId());
             result = pst.executeUpdate();
             DB_manager.getConection().commit();
         } catch (SQLException ex) {

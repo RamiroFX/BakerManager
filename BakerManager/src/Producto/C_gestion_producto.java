@@ -182,7 +182,7 @@ public class C_gestion_producto implements ActionListener, KeyListener, MouseLis
                 this.vista.jbModificar.setEnabled(true);
                 this.vista.jbEliminar.setEnabled(true);
                 this.vista.jtfProducto.setText(getProducto().getDescripcion());
-                this.vista.jtfCodigo.setText(String.valueOf(getProducto().getId()));
+                this.vista.jtfCodigo.setText(String.valueOf(getProducto().getCodBarra()));
                 this.vista.jtfPrecioCosto.setText(String.valueOf(getProducto().getPrecioCosto()));
                 this.vista.jtfPrecioMayorista.setText(String.valueOf(getProducto().getPrecioMayorista()));
                 this.vista.jtfPrecioVta.setText(String.valueOf(getProducto().getPrecioVenta()));
@@ -191,6 +191,11 @@ public class C_gestion_producto implements ActionListener, KeyListener, MouseLis
                 this.vista.jtfMarca.setText(getProducto().getMarca());
                 this.vista.jtfSuspendido.setText(getProducto().getEstado());
                 this.vista.jtfCantActual.setText(String.valueOf(getProducto().getCantActual()));
+                String observacion = "";
+                if (getProducto().getObservacion() != null) {
+                    observacion = String.valueOf(getProducto().getObservacion());
+                }
+                this.vista.jtfObservacion.setText(observacion);
             }
         }
     }
@@ -304,7 +309,7 @@ public class C_gestion_producto implements ActionListener, KeyListener, MouseLis
             this.vista.jbModificar.setEnabled(true);
             this.vista.jbEliminar.setEnabled(true);
             this.vista.jtfProducto.setText(getProducto().getDescripcion());
-            this.vista.jtfCodigo.setText(String.valueOf(getProducto().getId()));
+            this.vista.jtfCodigo.setText(getProducto().getCodigo());
             this.vista.jtfPrecioCosto.setText(String.valueOf(getProducto().getPrecioCosto()));
             this.vista.jtfPrecioMayorista.setText(String.valueOf(getProducto().getPrecioMayorista()));
             this.vista.jtfPrecioVta.setText(String.valueOf(getProducto().getPrecioVenta()));
@@ -313,6 +318,11 @@ public class C_gestion_producto implements ActionListener, KeyListener, MouseLis
             this.vista.jtfMarca.setText(getProducto().getMarca());
             this.vista.jtfSuspendido.setText(getProducto().getEstado());
             this.vista.jtfCantActual.setText(String.valueOf(getProducto().getCantActual()));
+            String observacion = "";
+            if (getProducto().getObservacion() != null) {
+                observacion = String.valueOf(getProducto().getObservacion());
+            }
+            this.vista.jtfObservacion.setText(observacion);
             if (e.getClickCount() == 2) {
                 Modificar_producto c_modProd = new Modificar_producto(this, getProducto().getId());
                 c_modProd.mostrarVista();
