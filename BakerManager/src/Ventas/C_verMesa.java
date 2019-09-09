@@ -217,6 +217,7 @@ public class C_verMesa extends MouseAdapter implements ActionListener, KeyListen
         M_mesa_detalle detalle = new M_mesa_detalle();
         detalle.setIdMesaDetalle(idMesaDetalle);
         detalle.setCantidad(cantidad);
+        detalle.setProducto(producto);
         detalle.setDescuento(descuento);
         detalle.setExenta(impExenta);
         detalle.setIva10(imp10);

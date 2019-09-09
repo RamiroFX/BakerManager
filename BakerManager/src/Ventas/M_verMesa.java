@@ -133,12 +133,26 @@ public class M_verMesa {
             fd.setCantidad(Double.valueOf(getRstm().getValueAt(i, 3).toString()));
             fd.setPrecio(Integer.valueOf(getRstm().getValueAt(i, 4).toString()));
             fd.setDescuento(Double.valueOf(getRstm().getValueAt(i, 5).toString()));
-            fd.setExenta(Integer.valueOf(getRstm().getValueAt(i, 6).toString()));
+            int exenta = Integer.valueOf(getRstm().getValueAt(i, 6).toString());
+            int iva5 = Integer.valueOf(getRstm().getValueAt(i, 7).toString());
+            int iva10 = Integer.valueOf(getRstm().getValueAt(i, 8).toString());
+            fd.setExenta(exenta);
+            fd.setIva5(iva5);
+            fd.setIva10(iva10);
             Object obs = getRstm().getValueAt(i, 9);
             if (obs != null) {
                 fd.setObservacion(String.valueOf(obs.toString()));
             } else {
                 fd.setObservacion(null);
+            }
+            if (exenta > 0) {
+                fd.getProducto().setIdImpuesto(1);
+            }
+            if (iva5 > 0) {
+                fd.getProducto().setIdImpuesto(2);
+            }
+            if (iva10 > 0) {
+                fd.getProducto().setIdImpuesto(3);
             }
             getDetalles().add(fd);
         }
