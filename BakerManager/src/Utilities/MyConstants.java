@@ -33,11 +33,11 @@ public class MyConstants {
             RUC = "ruc",
             REMISION = "remision",
             SUB_TOTAL_EXENTA = "sub total exenta",
-            SUB_TOTAL_IVA5 = "sub total iva5",
-            SUB_TOTAL_IVA10 = "sub total iva10",
+            SUB_TOTAL_IVA5 = "sub total iva5%",
+            SUB_TOTAL_IVA10 = "sub total iva10%",
             TOTAL_LETRA = "total letra",
             TOTAL_NUMERO = "total numero",
-            LIQUIDACION_IVA5 = "liquidacion iva 5%",
-            LIQUIDACION_IVA10 = "liquidacion iva 10%",
+            LIQUIDACION_IVA5 = "liquidacion iva5%",
+            LIQUIDACION_IVA10 = "liquidacion iva10%",
             LIQUIDACION_TOTAL = "liquidacion total";
 }

@@ -29,14 +29,14 @@ import org.bolivia.qulqi.Qulqi;
  *
  * @author Ramiro
  */
-public class VentaPrintable implements Printable {
+public class ComprobanteVentaPrintable implements Printable {
 
     List<M_campoImpresion> campoImpresiones;
     M_facturaCabecera facturaCabecera;
     ArrayList<M_facturaDetalle> facturaDetalle;
     M_preferenciasImpresion preferencia;
 
-    public VentaPrintable(M_preferenciasImpresion preferencia, M_facturaCabecera facturaCabecera, ArrayList<M_facturaDetalle> facturaDetalle, List<M_campoImpresion> impresions) {
+    public ComprobanteVentaPrintable(M_preferenciasImpresion preferencia, M_facturaCabecera facturaCabecera, ArrayList<M_facturaDetalle> facturaDetalle, List<M_campoImpresion> impresions) {
         this.preferencia = preferencia;
         this.facturaCabecera = facturaCabecera;
         this.facturaDetalle = facturaDetalle;
