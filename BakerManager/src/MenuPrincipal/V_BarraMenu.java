@@ -21,7 +21,7 @@ public class V_BarraMenu extends JMenuBar {
 
     public JMenu jmInicio, jmAyuda, jmHerramientas, jmOpciones;
     public JMenuItem jmiCerrar, jmiAcerca, jmiPersonalizar, jmiConfigImpresion,
-            jmiConfigImpresionTicket, jmiEmpresa;
+            jmiConfigImpresionTicket, jmiConfigImpresionBoleta, jmiEmpresa;
     //public JMenuItem  jmiLogIn,jmiLogOut, jmiMenuPrincipal;
     private V_inicio frame; //referencia al frame principal.
     //private boolean loginActivo=true;
@@ -58,15 +58,19 @@ public class V_BarraMenu extends JMenuBar {
             jmiPersonalizar = new JMenuItem("Personalizar");
             jmiPersonalizar.setEnabled(false);
             jmiPersonalizar.setName("configuracion personalizar");
-            jmiConfigImpresion = new JMenuItem("Config. impresion");
+            jmiConfigImpresion = new JMenuItem("Config. factura");
             jmiConfigImpresion.setEnabled(false);
             jmiConfigImpresion.setName("configuracion factura");
             jmiConfigImpresionTicket = new JMenuItem("Config. ticket");
             jmiConfigImpresionTicket.setEnabled(false);
             jmiConfigImpresionTicket.setName("configuracion ticket");
+            jmiConfigImpresionBoleta = new JMenuItem("Config. boleta");
+            jmiConfigImpresionBoleta.setEnabled(false);
+            jmiConfigImpresionBoleta.setName("configuracion boleta");
             getjmHerramientas().add(jmiPersonalizar);
             getjmHerramientas().add(jmiConfigImpresion);
             getjmHerramientas().add(jmiConfigImpresionTicket);
+            getjmHerramientas().add(jmiConfigImpresionBoleta);
         }
         return jmHerramientas;
     }

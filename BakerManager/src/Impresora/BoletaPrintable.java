@@ -29,14 +29,14 @@ import org.bolivia.qulqi.Qulqi;
  *
  * @author Ramiro
  */
-public class ComprobanteVentaPrintable implements Printable {
+public class BoletaPrintable implements Printable {
 
     List<M_campoImpresion> campoImpresiones;
     M_facturaCabecera facturaCabecera;
     ArrayList<M_facturaDetalle> facturaDetalle;
     M_preferenciasImpresion preferencia;
 
-    public ComprobanteVentaPrintable(M_preferenciasImpresion preferencia, M_facturaCabecera facturaCabecera, ArrayList<M_facturaDetalle> facturaDetalle, List<M_campoImpresion> impresions) {
+    public BoletaPrintable(M_preferenciasImpresion preferencia, M_facturaCabecera facturaCabecera, ArrayList<M_facturaDetalle> facturaDetalle, List<M_campoImpresion> impresions) {
         this.preferencia = preferencia;
         this.facturaCabecera = facturaCabecera;
         this.facturaDetalle = facturaDetalle;
@@ -59,7 +59,12 @@ public class ComprobanteVentaPrintable implements Printable {
         }
         final String ruc = rucAux;
         g.setFont(new Font(preferencia.getLetterFont(), Font.PLAIN, preferencia.getLetterSize()));
-        g.drawRoundRect(10, 10, 300, 150, 30, 30);
+        int ancho = preferencia.getAnchoPagina();
+        g.drawRoundRect(10, 10, ancho-20, 130, 30, 30);//CABECERA
+        g.drawRoundRect(10, 150, ancho-20, 115, 30, 30);//DETALLE
+        g.drawRoundRect(10, 270, ancho-20, 15, 30, 30);//SUBTOTAL
+        g.drawRoundRect(10, 290, ancho-20, 15, 30, 30);//TOTAL
+        g.drawRoundRect(10, 310, ancho-20, 15, 30, 30);//LIQUIDACION
         Integer exenta = 0;
         Integer iva5 = 0;
         Integer iva10 = 0;

@@ -4,7 +4,8 @@
  */
 package bakermanager;
 
-import Configuracion.Configuracion;
+import Configuracion.ConfiguracionBoleta;
+import Configuracion.ConfiguracionFactura;
 import Configuracion.ConfiguracionTicket;
 import Empresa.Empresa;
 import Entities.M_rol_usuario;
@@ -51,6 +52,7 @@ public class C_inicio implements ActionListener {
         vista.getJMenuBar().jmiCerrar.addActionListener(this);
         vista.getJMenuBar().jmiConfigImpresion.addActionListener(this);
         vista.getJMenuBar().jmiConfigImpresionTicket.addActionListener(this);
+        vista.getJMenuBar().jmiConfigImpresionBoleta.addActionListener(this);
         vista.getJMenuBar().jmiEmpresa.addActionListener(this);
         vista.addWindowListener(wa);
     }
@@ -138,10 +140,13 @@ public class C_inicio implements ActionListener {
         if (fuente == vista.getJMenuBar().jmiCerrar) {
             System.exit(0);
         } else if (fuente == vista.getJMenuBar().jmiConfigImpresion) {
-            Configuracion config = new Configuracion(vista);
+            ConfiguracionFactura config = new ConfiguracionFactura(vista);
             config.mostrarVista();
         } else if (fuente == vista.getJMenuBar().jmiConfigImpresionTicket) {
             ConfiguracionTicket config = new ConfiguracionTicket(vista);
+            config.mostrarVista();
+        } else if (fuente == vista.getJMenuBar().jmiConfigImpresionBoleta) {
+            ConfiguracionBoleta config = new ConfiguracionBoleta(vista);
             config.mostrarVista();
         } else if (fuente == vista.getJMenuBar().jmiEmpresa) {
             Empresa empresa = new Empresa(vista);

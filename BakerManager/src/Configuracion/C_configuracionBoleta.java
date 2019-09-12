@@ -23,13 +23,13 @@ import java.awt.event.MouseListener;
  *
  * @author Ramiro
  */
-public class C_configuracion extends MouseAdapter implements ActionListener, KeyListener, MouseListener, crearModificarParametroCallback {
+public class C_configuracionBoleta extends MouseAdapter implements ActionListener, KeyListener, MouseListener, crearModificarParametroCallback {
 
     private static final int CREAR_PARAMETRO = 1, MODIFICAR_PARAMETRO = 2;
-    private V_configuracion vista;
-    private M_configuracion modelo;
+    private V_configuracionFactura vista;
+    private M_configuracionBoleta modelo;
 
-    public C_configuracion(V_configuracion vista, M_configuracion modelo) {
+    public C_configuracionBoleta(V_configuracionFactura vista, M_configuracionBoleta modelo) {
         this.vista = vista;
         this.modelo = modelo;
         inicializarVista();
@@ -72,9 +72,11 @@ public class C_configuracion extends MouseAdapter implements ActionListener, Key
      * Agrega valores a los componentes.
      */
     private void inicializarVista() {
+        this.vista.setTitle("Configuración de boleta");
+        this.vista.setName("configuracion_boleta");
         this.vista.jbModificarCampo.setEnabled(false);
         this.vista.jbHabilitarDeshabilitarCampo.setEnabled(false);
-        this.vista.jtFactura.setModel(modelo.getImpresionFacturaTM());
+        this.vista.jtFactura.setModel(modelo.getImpresionBoletaTM());
         //panel de preferencia
         for (int i = 0; i < modelo.getFormatoFechas().length; i++) {
             this.vista.jcbFormatoFecha.addItem(modelo.getFormatoFechas()[i]);
@@ -123,7 +125,7 @@ public class C_configuracion extends MouseAdapter implements ActionListener, Key
     private void modificarCampo() {
         int row = vista.jtFactura.getSelectedRow();
         if (row > -1) {
-            M_campoImpresion ci = modelo.getImpresionFacturaTM().getValueFromList(row);
+            M_campoImpresion ci = modelo.getImpresionBoletaTM().getValueFromList(row);
             V_crearModificarCampoImpresion cmci = new V_crearModificarCampoImpresion(MODIFICAR_PARAMETRO, this.vista, ci);
             cmci.setCallback(this);
             cmci.setVisible(true);
@@ -395,13 +397,13 @@ public class C_configuracion extends MouseAdapter implements ActionListener, Key
         pi.setLetterSize(this.vista.jcbTamañoLetra.getSelectedIndex() + 1);
         pi.setFormatoFecha(this.vista.jcbFormatoFecha.getSelectedItem() + "");
         modelo.guardarPreferencias(pi);
-        Impresora.PREF_PRINT = DB_Preferencia.obtenerPreferenciaImpresion();
+        Impresora.PREF_PRINT_FACTURA = DB_Preferencia.obtenerPreferenciaImpresionFactura();
         javax.swing.JOptionPane.showMessageDialog(this.vista, "Cambios guardados",
                 "Éxito", javax.swing.JOptionPane.INFORMATION_MESSAGE);
     }
 
     private void imprimirPaginaPrueba() {
-        Impresora.imprimirPaginaPrueba();
+        Impresora.imprimirBoletaPrueba();
     }
 
     @Override
@@ -435,7 +437,7 @@ public class C_configuracion extends MouseAdapter implements ActionListener, Key
                 this.vista.jbHabilitarDeshabilitarCampo.setEnabled(true);
                 if (e.getClickCount() == 2) {
                     int row = vista.jtFactura.getSelectedRow();
-                    M_campoImpresion ci = modelo.getImpresionFacturaTM().getValueFromList(row);
+                    M_campoImpresion ci = modelo.getImpresionBoletaTM().getValueFromList(row);
                     modificarParametroImpresion(ci);
                 }
             } else {
@@ -460,7 +462,7 @@ public class C_configuracion extends MouseAdapter implements ActionListener, Key
 
     @Override
     public void recibirParametroImpresion(M_campoImpresion ci) {
-        modelo.crearParametro(ci);
+        //modelo.crearParametro(ci);
     }
 
     @Override

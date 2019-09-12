@@ -20,7 +20,7 @@ import javax.swing.JTextField;
  *
  * @author Ramiro Ferreira
  */
-public class V_configuracion extends javax.swing.JDialog {
+public class V_configuracionFactura extends javax.swing.JDialog {
 
     private final String paperHint = "A4(595 x 842)pixels";
     public javax.swing.JButton jbCancelar, jbAgregarCampo, jbModificarCampo,
@@ -39,7 +39,7 @@ public class V_configuracion extends javax.swing.JDialog {
             jtfMargenX, jtfMargenY;
     public javax.swing.JButton jbGuardarPreferencias, jbGuardarImpresora;
 
-    public V_configuracion(JFrame frame) {
+    public V_configuracionFactura(JFrame frame) {
         super(frame, true);
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Configuración de impresiones");

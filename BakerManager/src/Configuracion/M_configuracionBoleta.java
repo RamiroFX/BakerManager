@@ -18,38 +18,30 @@ import javax.swing.JOptionPane;
  *
  * @author Ramiro Ferreira
  */
-public class M_configuracionComprobanteFactura {
+public class M_configuracionBoleta {
 
     private static final String ERROR_MESSAGE_NAME_ALREADY_EXIST = "El parametro ya existe", ERROR_TITLE = "Atención";
     private final int MAX_PRODUCT = 20, MAX_LETTER_SIZE = 30;
-    private ImpresionTableModel impresionFacturaTM;
+    private ImpresionTableModel impresionBoletaTM;
     private boolean isVisible;
-    private M_preferenciasImpresion preferenciasImpresion;
+    private M_preferenciasImpresion preferenciasBoleta;
     private String[] formatoFechas;
 
-    public M_configuracionComprobanteFactura() {
-        impresionFacturaTM = new ImpresionTableModel();
+    public M_configuracionBoleta() {
+        impresionBoletaTM = new ImpresionTableModel();
         inicializarDatos();
         isVisible = true;
         formatoFechas = new String[]{"dd/MMMM/yy", "dd/MMMM/yyyy", "dd/MM/yyyy"};
     }
 
     private void inicializarDatos() {
-        preferenciasImpresion = DB_Preferencia.obtenerPreferenciaImpresion();
-        ArrayList<M_campoImpresion> campoImpresionLista = DB_manager.obtenerCampoImpresion(1, MyConstants.TODOS);
-        impresionFacturaTM.setCampoImpresionList(campoImpresionLista);
+        preferenciasBoleta = DB_Preferencia.obtenerPreferenciaImpresionBoleta();
+        ArrayList<M_campoImpresion> campoImpresionLista = DB_manager.obtenerCampoImpresion(3, MyConstants.TODOS);
+        impresionBoletaTM.setCampoImpresionList(campoImpresionLista);
     }
 
-    public ImpresionTableModel getImpresionFacturaTM() {
-        return impresionFacturaTM;
-    }
-
-    void crearParametro(M_campoImpresion ci) {
-        if (DB_manager.existeCampoParametro(ci.getCampo())) {
-            JOptionPane.showMessageDialog(null, ERROR_MESSAGE_NAME_ALREADY_EXIST, ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
-        } else {
-            DB_manager.insertarCampoImpresion(1, ci);
-        }
+    public ImpresionTableModel getImpresionBoletaTM() {
+        return impresionBoletaTM;
     }
 
     void modificarParametro(M_campoImpresion ci) {
@@ -66,13 +58,13 @@ public class M_configuracionComprobanteFactura {
     }
 
     public void updateTable() {
-        ArrayList<M_campoImpresion> campoImpresionLista = DB_manager.obtenerCampoImpresion(1, MyConstants.TODOS);
-        impresionFacturaTM.setCampoImpresionList(campoImpresionLista);
-        this.impresionFacturaTM.updateTable();
+        ArrayList<M_campoImpresion> campoImpresionLista = DB_manager.obtenerCampoImpresion(2, MyConstants.TODOS);
+        impresionBoletaTM.setCampoImpresionList(campoImpresionLista);
+        this.impresionBoletaTM.updateTable();
     }
 
     public void habilitarDeshabilitarCampo(int row) {
-        M_campoImpresion ci = getImpresionFacturaTM().getValueFromList(row);
+        M_campoImpresion ci = getImpresionBoletaTM().getValueFromList(row);
         int estado = ci.getEstado().getId();
         switch (estado) {
             case 1: {
@@ -88,13 +80,13 @@ public class M_configuracionComprobanteFactura {
 
     public void ocultarMostrarCampo() {
         if (isIsVisible()) {
-            ArrayList<M_campoImpresion> campoImpresionLista = DB_manager.obtenerCampoImpresion(1, MyConstants.ACTIVO);
-            impresionFacturaTM.setCampoImpresionList(campoImpresionLista);
-            this.impresionFacturaTM.updateTable();
+            ArrayList<M_campoImpresion> campoImpresionLista = DB_manager.obtenerCampoImpresion(2, MyConstants.ACTIVO);
+            impresionBoletaTM.setCampoImpresionList(campoImpresionLista);
+            this.impresionBoletaTM.updateTable();
         } else {
-            ArrayList<M_campoImpresion> campoImpresionLista = DB_manager.obtenerCampoImpresion(1, MyConstants.TODOS);
-            impresionFacturaTM.setCampoImpresionList(campoImpresionLista);
-            this.impresionFacturaTM.updateTable();
+            ArrayList<M_campoImpresion> campoImpresionLista = DB_manager.obtenerCampoImpresion(2, MyConstants.TODOS);
+            impresionBoletaTM.setCampoImpresionList(campoImpresionLista);
+            this.impresionBoletaTM.updateTable();
         }
     }
 
@@ -125,11 +117,11 @@ public class M_configuracionComprobanteFactura {
     }
 
     public void guardarPreferencias(M_preferenciasImpresion prefImp) {
-        DB_Preferencia.modificarPreferenciaImpresion(prefImp);
+        DB_Preferencia.modificarPreferenciaImpresionBoleta(prefImp);
     }
 
     public M_preferenciasImpresion getPreferenciasImpresion() {
-        return preferenciasImpresion;
+        return preferenciasBoleta;
     }
 
 }

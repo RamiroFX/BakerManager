@@ -93,6 +93,9 @@ public class C_MenuPrincipal implements ActionListener, KeyListener {
             if (this.c_inicio.vista.getJMenuBar().jmiEmpresa.getName().equals(accesos.get(i).getItemDescripcion())) {
                 this.c_inicio.vista.getJMenuBar().jmiEmpresa.setEnabled(true);
             }
+            if (this.c_inicio.vista.getJMenuBar().jmiConfigImpresionBoleta.getName().equals(accesos.get(i).getItemDescripcion())) {
+                this.c_inicio.vista.getJMenuBar().jmiConfigImpresionBoleta.setEnabled(true);
+            }
             if (this.c_inicio.vista.getJMenuBar().jmiPersonalizar.getName().equals(accesos.get(i).getItemDescripcion())) {
                 this.c_inicio.vista.getJMenuBar().jmiPersonalizar.setEnabled(true);
             }

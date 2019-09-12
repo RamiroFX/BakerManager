@@ -23,13 +23,13 @@ import java.awt.event.MouseListener;
  *
  * @author Ramiro
  */
-public class C_configuracionComprobanteFactura extends MouseAdapter implements ActionListener, KeyListener, MouseListener, crearModificarParametroCallback {
+public class C_configuracionFactura extends MouseAdapter implements ActionListener, KeyListener, MouseListener, crearModificarParametroCallback {
 
     private static final int CREAR_PARAMETRO = 1, MODIFICAR_PARAMETRO = 2;
-    private V_configuracion vista;
-    private M_configuracion modelo;
+    private V_configuracionFactura vista;
+    private M_configuracionFactura modelo;
 
-    public C_configuracionComprobanteFactura(V_configuracion vista, M_configuracion modelo) {
+    public C_configuracionFactura(V_configuracionFactura vista, M_configuracionFactura modelo) {
         this.vista = vista;
         this.modelo = modelo;
         inicializarVista();
@@ -395,13 +395,13 @@ public class C_configuracionComprobanteFactura extends MouseAdapter implements A
         pi.setLetterSize(this.vista.jcbTamañoLetra.getSelectedIndex() + 1);
         pi.setFormatoFecha(this.vista.jcbFormatoFecha.getSelectedItem() + "");
         modelo.guardarPreferencias(pi);
-        Impresora.PREF_PRINT = DB_Preferencia.obtenerPreferenciaImpresion();
+        Impresora.PREF_PRINT_FACTURA = DB_Preferencia.obtenerPreferenciaImpresionFactura();
         javax.swing.JOptionPane.showMessageDialog(this.vista, "Cambios guardados",
                 "Éxito", javax.swing.JOptionPane.INFORMATION_MESSAGE);
     }
 
     private void imprimirPaginaPrueba() {
-        Impresora.imprimirPaginaPrueba();
+        Impresora.imprimirFacturaPrueba();
     }
 
     @Override

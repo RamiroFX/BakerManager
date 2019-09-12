@@ -5,9 +5,9 @@
  */
 package Empresa;
 
-import Configuracion.C_configuracion;
-import Configuracion.M_configuracion;
-import Configuracion.V_configuracion;
+import Configuracion.C_configuracionFactura;
+import Configuracion.M_configuracionFactura;
+import Configuracion.V_configuracionFactura;
 import javax.swing.JFrame;
 
 /**

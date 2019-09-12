@@ -59,7 +59,7 @@ public class M_crearVentaRapida {
         }
         this.detalle = new M_facturaDetalle();
         dtm = new FacturaDetalleTableModel(interfaceFacturaDetalle);
-        pi = DB_Preferencia.obtenerPreferenciaImpresion();
+        pi = DB_Preferencia.obtenerPreferenciaImpresionFactura();
         maxProdCant = pi.getMaxProducts();
     }
 

@@ -57,7 +57,8 @@ import javax.swing.JOptionPane;
  */
 public class Impresora {
 
-    public static M_preferenciasImpresion PREF_PRINT = DB_Preferencia.obtenerPreferenciaImpresion();
+    public static M_preferenciasImpresion PREF_PRINT_FACTURA = DB_Preferencia.obtenerPreferenciaImpresionFactura();
+    public static M_preferenciasImpresion PREF_PRINT_BOLETA = DB_Preferencia.obtenerPreferenciaImpresionBoleta();
     public static E_ticketPreferencia PREF_PRINT_TICKET = DB_Preferencia.obtenerPreferenciaImpresionTicket();
     private final static SimpleDateFormat sdfs = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 
@@ -112,8 +113,8 @@ public class Impresora {
 //        }
     }
 
-    public static void imprimirPaginaPrueba() {
-        String nombreImpresora = PREF_PRINT.getNombreImpresora();
+    public static void imprimirFacturaPrueba() {
+        String nombreImpresora = PREF_PRINT_FACTURA.getNombreImpresora();
         M_cliente cliente = new M_cliente();
         cliente.setNombre("Xxxxxx Xxxxxxxx");
         cliente.setRuc("12345678");
@@ -211,20 +212,155 @@ public class Impresora {
         PrinterJob job = PrinterJob.getPrinterJob();
         Paper p = new Paper();
         PageFormat pf = new PageFormat();
-        int width = PREF_PRINT.getAnchoPagina();
-        int height = PREF_PRINT.getLargoPagina();
+        int width = PREF_PRINT_FACTURA.getAnchoPagina();
+        int height = PREF_PRINT_FACTURA.getLargoPagina();
         p.setSize(width, height);
-        p.setImageableArea(PREF_PRINT.getMargenX(), PREF_PRINT.getMargenY(), width, height);
+        p.setImageableArea(PREF_PRINT_FACTURA.getMargenX(), PREF_PRINT_FACTURA.getMargenY(), width, height);
         pf.setPaper(p);
-        job.setPrintable(new VentaPrintable(PREF_PRINT, fc, faDetalles, textoAImprimir), pf);
+        job.setPrintable(new VentaPrintable(PREF_PRINT_FACTURA, fc, faDetalles, textoAImprimir), pf);
         PrintService[] services = PrintServiceLookup.lookupPrintServices(null, null);
         boolean existeImpresora = false;
         System.out.println("Impresora.Impresora.imprimirPaginaPrueba()");
-        System.out.println("PREF_PRINT.getAnchoPagina():" + PREF_PRINT.getAnchoPagina());
-        System.out.println("PREF_PRINT.getLargoPagina():" + PREF_PRINT.getLargoPagina());
-        System.out.println("PREF_PRINT.getMargenX():" + PREF_PRINT.getMargenX());
-        System.out.println("PREF_PRINT.getMargenY():" + PREF_PRINT.getMargenY());
+        System.out.println("PREF_PRINT.getAnchoPagina():" + PREF_PRINT_FACTURA.getAnchoPagina());
+        System.out.println("PREF_PRINT.getLargoPagina():" + PREF_PRINT_FACTURA.getLargoPagina());
+        System.out.println("PREF_PRINT.getMargenX():" + PREF_PRINT_FACTURA.getMargenX());
+        System.out.println("PREF_PRINT.getMargenY():" + PREF_PRINT_FACTURA.getMargenY());
         System.out.println("nombreImpresora:" + nombreImpresora);
+        if (services.length > 0) {
+            for (PrintService service : services) {
+                if (service.getName().equals(nombreImpresora)) {
+                    existeImpresora = true;
+                    System.out.println("service:" + service.toString());
+                    try {
+                        if (job != null) {
+                            job.setPrintService(service);
+                            job.defaultPage().setPaper(p);
+                            job.print();
+                            break;
+                        } else {
+                            JOptionPane.showMessageDialog(null, "No se pudo imprimir", "Error", JOptionPane.INFORMATION_MESSAGE);
+                        }
+                    } catch (PrinterException ex) {
+                        System.out.println(ex);
+                    }
+                    break;
+                }
+            }
+            if (!existeImpresora) {
+                JOptionPane.showMessageDialog(null, "No se encontró la impresora " + nombreImpresora, "Error", JOptionPane.INFORMATION_MESSAGE);
+            }
+        } else {
+            JOptionPane.showMessageDialog(null, "No se encontro impresoras disponibles", "Error", JOptionPane.INFORMATION_MESSAGE);
+        }
+    }
+    
+    public static void imprimirBoletaPrueba() {
+        String nombreImpresora = PREF_PRINT_BOLETA.getNombreImpresora();
+        M_cliente cliente = new M_cliente();
+        cliente.setNombre("Xxxxxx Xxxxxxxx");
+        cliente.setRuc("12345678");
+        cliente.setRucId("0");
+        cliente.setDireccion("35XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
+        cliente.setEntidad("Xxxxxx Xxxxxxxx");
+        M_facturaCabecera fc = new M_facturaCabecera();
+        fc.setCliente(cliente);
+        fc.setIdCondVenta(1);
+        fc.setIdNotaRemision(1);
+        fc.setNroFactura(123456789);
+        fc.setTiempo(new Timestamp(Calendar.getInstance().getTimeInMillis()));
+        M_producto prod1 = new M_producto("XXXXXXXXXX", "XXXXXXX", "XXXX", "Activo", 1, "XXXXXXXX", 2, 1, 1, 1, 1.0, "");
+        prod1.setIdImpuesto(1);
+        M_producto prod2 = new M_producto("XXXXXXXXXXXXXXX", "XXXXXXX", "XXXX", "Activo", 1, "XXXXXXXX", 2, 1, 1, 1, 1.0, "");
+        prod2.setIdImpuesto(2);
+        M_producto prod3 = new M_producto("XXXXXXXXXXXXXXXXXXXX", "XXXXXXX", "XXXX", "Activo", 1, "XXXXXXXX", 2, 1, 1, 1, 1.0, "");
+        prod3.setIdImpuesto(3);
+        M_producto prod4 = new M_producto("XXXXXXXXXXXXXXXXXXXXXXXXX", "XXXXXXX", "XXXX", "Activo", 1, "XXXXXXXX", 2, 1, 1, 1, 1.0, "");
+        prod4.setIdImpuesto(3);
+        M_producto prod5 = new M_producto("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX", "XXXXXXX", "XXXX", "Activo", 1, "XXXXXXXX", 2, 1, 1, 1, 1.0, "");
+        prod5.setIdImpuesto(3);
+        M_producto prod6 = new M_producto("XXXXXXXXXX", "XXXXXXX", "XXXX", "Activo", 1, "XXXXXXXX", 2, 1, 1, 1, 1.0, "");
+        prod6.setIdImpuesto(3);
+        M_producto prod7 = new M_producto("XXXXXXXXXXXXXXX", "XXXXXXX", "XXXX", "Activo", 1, "XXXXXXXX", 2, 1, 1, 1, 1.0, "");
+        prod7.setIdImpuesto(2);
+        M_producto prod8 = new M_producto("XXXXXXXXXXXXXXXXXXXX", "XXXXXXX", "XXXX", "Activo", 1, "XXXXXXXX", 2, 1, 1, 1, 1.0, "");
+        prod8.setIdImpuesto(2);
+        M_producto prod9 = new M_producto("XXXXXXXXXXXXXXXXXXXXXXXXX", "XXXXXXX", "XXXX", "Activo", 1, "XXXXXXXX", 2, 1, 1, 1, 1.0, "");
+        prod9.setIdImpuesto(2);
+        M_producto prod10 = new M_producto("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX", "XXXXXXX", "XXXX", "Activo", 1, "XXXXXXXX", 2, 1, 1, 1, 1.0, "");
+        prod10.setIdImpuesto(3);
+        ArrayList<M_facturaDetalle> faDetalles = new ArrayList<>();
+        M_facturaDetalle fd1 = new M_facturaDetalle();
+        fd1.setCantidad(1.0);
+        fd1.setDescuento(0.0);
+        fd1.setPrecio(100);
+        fd1.setProducto(prod1);
+        faDetalles.add(fd1);
+        M_facturaDetalle fd2 = new M_facturaDetalle();
+        fd2.setCantidad(10.0);
+        fd2.setDescuento(10.0);
+        fd2.setPrecio(150);
+        fd2.setProducto(prod2);
+        faDetalles.add(fd2);
+        M_facturaDetalle fd3 = new M_facturaDetalle();
+        fd3.setCantidad(15.0);
+        fd3.setDescuento(0.0);
+        fd3.setPrecio(500);
+        fd3.setProducto(prod3);
+        faDetalles.add(fd3);
+        M_facturaDetalle fd4 = new M_facturaDetalle();
+        fd4.setCantidad(750.0);
+        fd4.setDescuento(0.0);
+        fd4.setPrecio(100);
+        fd4.setProducto(prod4);
+        faDetalles.add(fd4);
+        M_facturaDetalle fd5 = new M_facturaDetalle();
+        fd5.setCantidad(1000.0);
+        fd5.setDescuento(0.0);
+        fd5.setPrecio(850);
+        fd5.setProducto(prod5);
+        faDetalles.add(fd5);
+        M_facturaDetalle fd6 = new M_facturaDetalle();
+        fd6.setCantidad(400.0);
+        fd6.setDescuento(0.0);
+        fd6.setPrecio(430);
+        fd6.setProducto(prod6);
+        faDetalles.add(fd6);
+        M_facturaDetalle fd7 = new M_facturaDetalle();
+        fd7.setCantidad(9.0);
+        fd7.setDescuento(0.0);
+        fd7.setPrecio(5000);
+        fd7.setProducto(prod7);
+        faDetalles.add(fd7);
+        M_facturaDetalle fd8 = new M_facturaDetalle();
+        fd8.setCantidad(19.0);
+        fd8.setDescuento(0.0);
+        fd8.setPrecio(20000);
+        fd8.setProducto(prod8);
+        faDetalles.add(fd8);
+        M_facturaDetalle fd9 = new M_facturaDetalle();
+        fd9.setCantidad(1.0);
+        fd9.setDescuento(0.0);
+        fd9.setPrecio(47000);
+        fd9.setProducto(prod9);
+        faDetalles.add(fd9);
+        M_facturaDetalle fd10 = new M_facturaDetalle();
+        fd10.setCantidad(3.0);
+        fd10.setDescuento(0.0);
+        fd10.setPrecio(250000);
+        fd10.setProducto(prod10);
+        faDetalles.add(fd10);
+        List<M_campoImpresion> textoAImprimir = DB_manager.obtenerCampoImpresion(2, MyConstants.ACTIVO);
+        PrinterJob job = PrinterJob.getPrinterJob();
+        Paper p = new Paper();
+        PageFormat pf = new PageFormat();
+        int width = PREF_PRINT_BOLETA.getAnchoPagina();
+        int height = PREF_PRINT_BOLETA.getLargoPagina();
+        p.setSize(width, height);
+        p.setImageableArea(PREF_PRINT_BOLETA.getMargenX(), PREF_PRINT_BOLETA.getMargenY(), width, height);
+        pf.setPaper(p);
+        job.setPrintable(new BoletaPrintable(PREF_PRINT_BOLETA, fc, faDetalles, textoAImprimir), pf);
+        PrintService[] services = PrintServiceLookup.lookupPrintServices(null, null);
+        boolean existeImpresora = false;
         if (services.length > 0) {
             for (PrintService service : services) {
                 if (service.getName().equals(nombreImpresora)) {
@@ -630,16 +766,16 @@ public class Impresora {
 
     public static void imprimirVentaFactura(final M_facturaCabecera facturaCabecera, final ArrayList<M_facturaDetalle> facturaDetalle) {
         PrintService[] services = PrintServiceLookup.lookupPrintServices(null, null);
-        String nombreImpresora = PREF_PRINT.getNombreImpresora();
+        String nombreImpresora = PREF_PRINT_FACTURA.getNombreImpresora();
         final List<M_campoImpresion> textoAImprimir = DB_manager.obtenerCampoImpresion(2, MyConstants.ACTIVO);
         Paper p = new Paper();
         PageFormat pf = new PageFormat();
-        VentaPrintable vp = new VentaPrintable(PREF_PRINT, facturaCabecera, facturaDetalle, textoAImprimir);
+        VentaPrintable vp = new VentaPrintable(PREF_PRINT_FACTURA, facturaCabecera, facturaDetalle, textoAImprimir);
         PrinterJob job = PrinterJob.getPrinterJob();
-        int width = PREF_PRINT.getAnchoPagina();
-        int height = PREF_PRINT.getLargoPagina();
+        int width = PREF_PRINT_FACTURA.getAnchoPagina();
+        int height = PREF_PRINT_FACTURA.getLargoPagina();
         p.setSize(width, height);
-        p.setImageableArea(PREF_PRINT.getMargenX(), PREF_PRINT.getMargenY(), width, height);
+        p.setImageableArea(PREF_PRINT_FACTURA.getMargenX(), PREF_PRINT_FACTURA.getMargenY(), width, height);
         pf.setPaper(p);
         job.setPrintable(vp, pf);
         if (services.length > 0) {

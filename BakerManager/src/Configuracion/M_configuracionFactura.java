@@ -19,7 +19,7 @@ import javax.swing.JOptionPane;
  *
  * @author Ramiro Ferreira
  */
-public class M_configuracion {
+public class M_configuracionFactura {
 
     private static final String ERROR_MESSAGE_NAME_ALREADY_EXIST = "El parametro ya existe", ERROR_TITLE = "Atención";
     private final int MAX_PRODUCT = 20, MAX_LETTER_SIZE = 30;
@@ -28,7 +28,7 @@ public class M_configuracion {
     private M_preferenciasImpresion preferenciasImpresion;
     private String[] formatoFechas;
 
-    public M_configuracion() {
+    public M_configuracionFactura() {
         impresionFacturaTM = new ImpresionTableModel();
         inicializarDatos();
         isVisible = true;
@@ -36,7 +36,7 @@ public class M_configuracion {
     }
 
     private void inicializarDatos() {
-        preferenciasImpresion = DB_Preferencia.obtenerPreferenciaImpresion();
+        preferenciasImpresion = DB_Preferencia.obtenerPreferenciaImpresionFactura();
         ArrayList<M_campoImpresion> campoImpresionLista = DB_manager.obtenerCampoImpresion(2, MyConstants.TODOS);
         impresionFacturaTM.setCampoImpresionList(campoImpresionLista);
     }
@@ -134,7 +134,7 @@ public class M_configuracion {
     }
 
     public void guardarPreferencias(M_preferenciasImpresion prefImp) {
-        DB_Preferencia.modificarPreferenciaImpresion(prefImp);
+        DB_Preferencia.modificarPreferenciaImpresionFactura(prefImp);
     }
 
     public M_preferenciasImpresion getPreferenciasImpresion() {
