@@ -402,7 +402,7 @@ public class C_configuracionBoleta extends MouseAdapter implements ActionListene
                 "Éxito", javax.swing.JOptionPane.INFORMATION_MESSAGE);
     }
 
-    private void imprimirPaginaPrueba() {
+    private void imprimirBoletaPrueba() {
         Impresora.imprimirBoletaPrueba();
     }
 
@@ -417,7 +417,7 @@ public class C_configuracionBoleta extends MouseAdapter implements ActionListene
         } else if (e.getSource() == this.vista.jbHabilitarDeshabilitarCampo) {
             quitarCampo();
         } else if (e.getSource() == this.vista.jbImprimirPaginaPrueba) {
-            imprimirPaginaPrueba();
+            imprimirBoletaPrueba();
         } else if (e.getSource() == this.vista.jbOcultarMostrarCampo) {
             ocultarMostrarCampo();
         } else if (e.getSource() == this.vista.jbGuardarPreferencias) {

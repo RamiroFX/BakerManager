@@ -59,12 +59,34 @@ public class BoletaPrintable implements Printable {
         }
         final String ruc = rucAux;
         g.setFont(new Font(preferencia.getLetterFont(), Font.PLAIN, preferencia.getLetterSize()));
+        int espacio = 20;
         int ancho = preferencia.getAnchoPagina();
-        g.drawRoundRect(10, 10, ancho-20, 130, 30, 30);//CABECERA
-        g.drawRoundRect(10, 150, ancho-20, 115, 30, 30);//DETALLE
-        g.drawRoundRect(10, 270, ancho-20, 15, 30, 30);//SUBTOTAL
-        g.drawRoundRect(10, 290, ancho-20, 15, 30, 30);//TOTAL
-        g.drawRoundRect(10, 310, ancho-20, 15, 30, 30);//LIQUIDACION
+        int alturaCabecera = 130;
+        int alturaDetalle = 130;
+        int alturaSubtotal = 20;
+        int alturaTotal = 20;
+        int alturaLiquidacion = 20;
+        g.drawRoundRect(10, 10, ancho - 20, alturaCabecera, 0, 0);//CABECERA
+        g.drawRoundRect(10, alturaCabecera + espacio, ancho - 20, alturaDetalle, 0, 0);//DETALLE
+        g.drawRoundRect(10, alturaCabecera + alturaDetalle + espacio, ancho - 20, alturaSubtotal, 0, 0);//SUBTOTAL
+        g.drawRoundRect(10, alturaCabecera + alturaDetalle + alturaSubtotal + espacio, ancho - 20, alturaTotal, 0, 0);//TOTAL
+        g.drawRoundRect(10, alturaCabecera + alturaDetalle + alturaSubtotal + alturaTotal + espacio, ancho - 20, alturaLiquidacion, 0, 0);//LIQUIDACION
+        if (preferencia.getIdDuplicado() == 1) {
+            int duplicadoDist = preferencia.getDistanceBetweenCopies();
+            g.drawRoundRect(10, duplicadoDist + 10, ancho - 20, alturaCabecera, 0, 0);//CABECERA
+            g.drawRoundRect(10, duplicadoDist + alturaCabecera + espacio, ancho - 20, alturaDetalle, 0, 0);//DETALLE
+            g.drawRoundRect(10, duplicadoDist + alturaCabecera + alturaDetalle + espacio, ancho - 20, alturaSubtotal, 0, 0);//SUBTOTAL
+            g.drawRoundRect(10, duplicadoDist + alturaCabecera + alturaDetalle + alturaSubtotal + espacio, ancho - 20, alturaTotal, 0, 0);//TOTAL
+            g.drawRoundRect(10, duplicadoDist + alturaCabecera + alturaDetalle + alturaSubtotal + alturaTotal + espacio, ancho - 20, alturaLiquidacion, 0, 0);//LIQUIDACION
+        }
+        if (preferencia.getIdTriplicado() == 1) {
+            int triplicadoDist = preferencia.getDistanceBetweenCopies() + preferencia.getDistanceBetweenCopies();
+            g.drawRoundRect(10, triplicadoDist + 10, ancho - 20, alturaCabecera, 0, 0);//CABECERA
+            g.drawRoundRect(10, triplicadoDist + alturaCabecera + espacio, ancho - 20, alturaDetalle, 0, 0);//DETALLE
+            g.drawRoundRect(10, triplicadoDist + alturaCabecera + alturaDetalle + espacio, ancho - 20, alturaSubtotal, 0, 0);//SUBTOTAL
+            g.drawRoundRect(10, triplicadoDist + alturaCabecera + alturaDetalle + alturaSubtotal + espacio, ancho - 20, alturaTotal, 0, 0);//TOTAL
+            g.drawRoundRect(10, triplicadoDist + alturaCabecera + alturaDetalle + alturaSubtotal + alturaTotal + espacio, ancho - 20, alturaLiquidacion, 0, 0);//LIQUIDACION
+        }
         Integer exenta = 0;
         Integer iva5 = 0;
         Integer iva10 = 0;
@@ -74,152 +96,120 @@ public class BoletaPrintable implements Printable {
             for (M_campoImpresion object : campoImpresiones) {
                 int posY = object.getY().intValue();
                 int posX = object.getX().intValue();
-                if (object.getCampo().equals(MyConstants.DATE_FULL)) {
-                    g.drawString(fechaEntrega, posX, posY);
+                /*
+                FECHA
+                 */
+                if (object.getCampo().equals(MyConstants.BOLETA_FECHA)) {
+                    g.drawString(MyConstants.BOLETA_FECHA + ": " + fechaEntrega, posX, posY);
                     if (preferencia.getIdDuplicado() == 1) {
                         int duplicadoDist = posY + preferencia.getDistanceBetweenCopies();
-                        g.drawString(fechaEntrega, posX, duplicadoDist);
+                        g.drawString(MyConstants.BOLETA_FECHA + ": " + fechaEntrega, posX, duplicadoDist);
                     }
                     if (preferencia.getIdTriplicado() == 1) {
                         int triplicadoDist = posY + preferencia.getDistanceBetweenCopies() + preferencia.getDistanceBetweenCopies();
-                        g.drawString(fechaEntrega, posX, triplicadoDist);
+                        g.drawString(MyConstants.BOLETA_FECHA + ": " + fechaEntrega, posX, triplicadoDist);
                     }
                 }
-                if (object.getCampo().equals(MyConstants.DATE_DAY)) {
-                    g.drawString(fechas[0], posX, posY);
-                    if (preferencia.getIdDuplicado() == 1) {
-                        int duplicadoDist = posY + preferencia.getDistanceBetweenCopies();
-                        g.drawString(fechas[0], posX, duplicadoDist);
-                    }
-                    if (preferencia.getIdTriplicado() == 1) {
-                        int triplicadoDist = posY + preferencia.getDistanceBetweenCopies() + preferencia.getDistanceBetweenCopies();
-                        g.drawString(fechas[0], posX, triplicadoDist);
-                    }
-                }
-                if (object.getCampo().equals(MyConstants.DATE_MONTH)) {
-                    g.drawString(fechas[1], posX, posY);
-                    if (preferencia.getIdDuplicado() == 1) {
-                        int duplicadoDist = posY + preferencia.getDistanceBetweenCopies();
-                        g.drawString(fechas[1], posX, duplicadoDist);
-                    }
-                    if (preferencia.getIdTriplicado() == 1) {
-                        int triplicadoDist = posY + preferencia.getDistanceBetweenCopies() + preferencia.getDistanceBetweenCopies();
-                        g.drawString(fechas[1], posX, triplicadoDist);
-                    }
-                }
-                if (object.getCampo().equals(MyConstants.DATE_YEAR_MIN)) {
-                    g.drawString(fechas[2], posX, posY);
-                    if (preferencia.getIdDuplicado() == 1) {
-                        int duplicadoDist = posY + preferencia.getDistanceBetweenCopies();
-                        g.drawString(fechas[2], posX, duplicadoDist);
-                    }
-                    if (preferencia.getIdTriplicado() == 1) {
-                        int triplicadoDist = posY + preferencia.getDistanceBetweenCopies() + preferencia.getDistanceBetweenCopies();
-                        g.drawString(fechas[2], posX, triplicadoDist);
-                    }
-                }
-                if (object.getCampo().equals(MyConstants.DATE_YEAR_FULL)) {
-                    g.drawString(fechas[2], posX, posY);
-                    if (preferencia.getIdDuplicado() == 1) {
-                        int duplicadoDist = posY + preferencia.getDistanceBetweenCopies();
-                        g.drawString(fechas[2], posX, duplicadoDist);
-                    }
-                    if (preferencia.getIdTriplicado() == 1) {
-                        int triplicadoDist = posY + preferencia.getDistanceBetweenCopies() + preferencia.getDistanceBetweenCopies();
-                        g.drawString(fechas[2], posX, triplicadoDist);
-                    }
-                }
-                if (object.getCampo().equals(MyConstants.NRO_FACTURA)) {
-                    String nroFactura = facturaCabecera.getNroFactura() + "";
-                    g.drawString(nroFactura, posX, posY);
-                    if (preferencia.getIdDuplicado() == 1) {
-                        int duplicadoDist = posY + preferencia.getDistanceBetweenCopies();
-                        g.drawString(nroFactura, posX, duplicadoDist);
-                    }
-                    if (preferencia.getIdTriplicado() == 1) {
-                        int triplicadoDist = posY + preferencia.getDistanceBetweenCopies() + preferencia.getDistanceBetweenCopies();
-                        g.drawString(nroFactura, posX, triplicadoDist);
-                    }
-                }
-                if (object.getCampo().equals(MyConstants.TIOP_CONTADO)) {
+                /*
+                CONDICION DE VENTA CONTADO
+                 */
+                if (object.getCampo().equals(MyConstants.BOLETA_COND_VENTA_CONTADO)) {
                     if (facturaCabecera.getIdCondVenta() == TipoOperacion.CONTADO) {
-                        g.drawString("X", posX, posY);
+                        g.drawString(MyConstants.BOLETA_COND_VENTA_CONTADO, posX, posY);
                         if (preferencia.getIdDuplicado() == 1) {
                             int duplicadoDist = posY + preferencia.getDistanceBetweenCopies();
-                            g.drawString("X", posX, duplicadoDist);
+                            g.drawString(MyConstants.BOLETA_COND_VENTA_CONTADO, posX, duplicadoDist);
                         }
                         if (preferencia.getIdTriplicado() == 1) {
                             int triplicadoDist = posY + preferencia.getDistanceBetweenCopies() + preferencia.getDistanceBetweenCopies();
-                            g.drawString("X", posX, triplicadoDist);
+                            g.drawString(MyConstants.BOLETA_COND_VENTA_CONTADO, posX, triplicadoDist);
                         }
                     }
                 }
-                if (object.getCampo().equals(MyConstants.TIOP_CREDITO)) {
+                /*
+                CONDICION DE VENTA CREDITO
+                 */
+                if (object.getCampo().equals(MyConstants.BOLETA_COND_VENTA_CREDITO)) {
                     if (facturaCabecera.getIdCondVenta() == TipoOperacion.CREDITO) {
-                        g.drawString("X", posX, posY);
+                        g.drawString(MyConstants.BOLETA_COND_VENTA_CREDITO, posX, posY);
                         if (preferencia.getIdDuplicado() == 1) {
                             int duplicadoDist = posY + preferencia.getDistanceBetweenCopies();
-                            g.drawString("X", posX, duplicadoDist);
+                            g.drawString(MyConstants.BOLETA_COND_VENTA_CREDITO, posX, duplicadoDist);
                         }
                         if (preferencia.getIdTriplicado() == 1) {
                             int triplicadoDist = posY + preferencia.getDistanceBetweenCopies() + preferencia.getDistanceBetweenCopies();
-                            g.drawString("X", posX, triplicadoDist);
+                            g.drawString(MyConstants.BOLETA_COND_VENTA_CREDITO, posX, triplicadoDist);
                         }
                     }
                 }
-                if (object.getCampo().equals(MyConstants.RS)) {
-                    g.drawString(facturaCabecera.getCliente().getEntidad(), posX, posY);
+                /*
+                RAZON SOCIAL
+                 */
+                if (object.getCampo().equals(MyConstants.BOLETA_RAZON_SOCIAL)) {
+                    g.drawString(MyConstants.BOLETA_RAZON_SOCIAL + ": " + facturaCabecera.getCliente().getEntidad(), posX, posY);
                     if (preferencia.getIdDuplicado() == 1) {
                         int duplicadoDist = posY + preferencia.getDistanceBetweenCopies();
-                        g.drawString(facturaCabecera.getCliente().getEntidad(), posX, duplicadoDist);
+                        g.drawString(MyConstants.BOLETA_RAZON_SOCIAL + ": " + facturaCabecera.getCliente().getEntidad(), posX, duplicadoDist);
                     }
                     if (preferencia.getIdTriplicado() == 1) {
                         int triplicadoDist = posY + preferencia.getDistanceBetweenCopies() + preferencia.getDistanceBetweenCopies();
-                        g.drawString(facturaCabecera.getCliente().getEntidad(), posX, triplicadoDist);
+                        g.drawString(MyConstants.BOLETA_RAZON_SOCIAL + ": " + facturaCabecera.getCliente().getEntidad(), posX, triplicadoDist);
                     }
                 }
-                if (object.getCampo().equals(MyConstants.RUC)) {
-                    g.drawString(ruc, posX, posY);
+                /*
+                R.U.C.
+                 */
+                if (object.getCampo().equals(MyConstants.BOLETA_RUC)) {
+                    g.drawString(MyConstants.BOLETA_RUC + ": " + ruc, posX, posY);
                     if (preferencia.getIdDuplicado() == 1) {
                         int duplicadoDist = posY + preferencia.getDistanceBetweenCopies();
-                        g.drawString(ruc, posX, duplicadoDist);
+                        g.drawString(MyConstants.BOLETA_RUC + ": " + ruc, posX, duplicadoDist);
                     }
                     if (preferencia.getIdTriplicado() == 1) {
                         int triplicadoDist = posY + preferencia.getDistanceBetweenCopies() + preferencia.getDistanceBetweenCopies();
-                        g.drawString(ruc, posX, triplicadoDist);
+                        g.drawString(MyConstants.BOLETA_RUC + ": " + ruc, posX, triplicadoDist);
                     }
                 }
-                if (object.getCampo().equals(MyConstants.DIR)) {
+                /*
+                DIRECCION
+                 */
+                if (object.getCampo().equals(MyConstants.BOLETA_DIRECCION)) {
                     String dir = "";
                     if (facturaCabecera.getCliente().getDireccion() != null) {
                         dir = facturaCabecera.getCliente().getDireccion();
                     }
-                    g.drawString(dir, posX, posY);
+                    g.drawString(MyConstants.BOLETA_DIRECCION + ": " + dir, posX, posY);
                     if (preferencia.getIdDuplicado() == 1) {
                         int duplicadoDist = posY + preferencia.getDistanceBetweenCopies();
-                        g.drawString(dir, posX, duplicadoDist);
+                        g.drawString(MyConstants.BOLETA_DIRECCION + ": " + dir, posX, duplicadoDist);
                     }
                     if (preferencia.getIdTriplicado() == 1) {
                         int triplicadoDist = posY + preferencia.getDistanceBetweenCopies() + preferencia.getDistanceBetweenCopies();
-                        g.drawString(dir, posX, triplicadoDist);
+                        g.drawString(MyConstants.BOLETA_DIRECCION + ": " + dir, posX, triplicadoDist);
                     }
                 }
-                if (object.getCampo().equals(MyConstants.REMISION)) {
+                /*
+                NOTA DE REMISION
+                 */
+                if (object.getCampo().equals(MyConstants.BOLETA_REMISION)) {
                     String remision = "";
                     if (facturaCabecera.getIdNotaRemision() != null) {
                         remision = facturaCabecera.getIdNotaRemision() + "";
                     }
-                    g.drawString(remision, posX, posY);
+                    g.drawString(MyConstants.BOLETA_REMISION + ": " + remision, posX, posY);
                     if (preferencia.getIdDuplicado() == 1) {
                         int duplicadoDist = posY + preferencia.getDistanceBetweenCopies();
-                        g.drawString(remision, posX, duplicadoDist);
+                        g.drawString(MyConstants.BOLETA_REMISION + ": " + remision, posX, duplicadoDist);
                     }
                     if (preferencia.getIdTriplicado() == 1) {
                         int triplicadoDist = posY + preferencia.getDistanceBetweenCopies() + preferencia.getDistanceBetweenCopies();
-                        g.drawString(remision, posX, triplicadoDist);
+                        g.drawString(MyConstants.BOLETA_REMISION + ": " + remision, posX, triplicadoDist);
                     }
                 }
-                if (object.getCampo().equals(MyConstants.DETAIL_CANT)) {
+                /*
+                DETALLE CANTIDAD
+                 */
+                if (object.getCampo().equals(MyConstants.BOLETA_DET_CANT_PROD)) {
                     for (M_facturaDetalle fd : facturaDetalle) {
                         g.drawString(fd.getCantidad() + "", posX, posY);
                         if (preferencia.getIdDuplicado() == 1) {
@@ -233,7 +223,10 @@ public class BoletaPrintable implements Printable {
                         posY = posY + espaciadorY;
                     }
                 }
-                if (object.getCampo().equals(MyConstants.DETAIL_COD)) {
+                /*
+                DETALLE CODIGO
+                 */
+                if (object.getCampo().equals(MyConstants.BOLETA_DET_COD_PROD)) {
                     for (M_facturaDetalle fd : facturaDetalle) {
                         g.drawString(fd.getProducto().getCodBarra() + "", posX, posY);
                         if (preferencia.getIdDuplicado() == 1) {
@@ -247,7 +240,10 @@ public class BoletaPrintable implements Printable {
                         posY = posY + espaciadorY;
                     }
                 }
-                if (object.getCampo().equals(MyConstants.DETAIL_PROD)) {
+                /*
+                DETALLE PRODUCTO
+                 */
+                if (object.getCampo().equals(MyConstants.BOLETA_DET_DESCRIPCION_PROD)) {
                     for (M_facturaDetalle fd : facturaDetalle) {
                         g.drawString(fd.getProducto().getDescripcion() + "", posX, posY);
                         if (preferencia.getIdDuplicado() == 1) {
@@ -261,7 +257,10 @@ public class BoletaPrintable implements Printable {
                         posY = posY + espaciadorY;
                     }
                 }
-                if (object.getCampo().equals(MyConstants.DETAIL_PRECIO)) {
+                /*
+                DETALLE PRECIO
+                 */
+                if (object.getCampo().equals(MyConstants.BOLETA_DET_PRECIO_PROD)) {
                     for (M_facturaDetalle fd : facturaDetalle) {
                         Integer precio = fd.getPrecio() - Math.round(Math.round(((fd.getPrecio() * fd.getDescuento()) / 100)));
                         //int precio = fd.getPrecio();
@@ -277,7 +276,10 @@ public class BoletaPrintable implements Printable {
                         posY = posY + espaciadorY;
                     }
                 }
-                if (object.getCampo().equals(MyConstants.DETAIL_DESC)) {
+                /*
+                DETALLE DESCUENTO
+                 */
+                if (object.getCampo().equals(MyConstants.BOLETA_DET_DESC_PROD)) {
                     for (M_facturaDetalle fd : facturaDetalle) {
                         double descuento = fd.getDescuento();
                         g.drawString(descuento + "", posX, posY);
@@ -292,7 +294,10 @@ public class BoletaPrintable implements Printable {
                         posY = posY + espaciadorY;
                     }
                 }
-                if (object.getCampo().equals(MyConstants.DETAIL_EXENTA)) {
+                /*
+                DETALLE EXENTA
+                 */
+                if (object.getCampo().equals(MyConstants.BOLETA_DET_EXENTA_PROD)) {
                     for (M_facturaDetalle fd : facturaDetalle) {
                         if (fd.getProducto().getIdImpuesto() == 1) {
                             Integer precio = fd.getPrecio() - Math.round(Math.round(((fd.getPrecio() * fd.getDescuento()) / 100)));
@@ -311,7 +316,10 @@ public class BoletaPrintable implements Printable {
                         posY = posY + espaciadorY;
                     }
                 }
-                if (object.getCampo().equals(MyConstants.DETAIL_IVA5)) {
+                /*
+                DETALLE IVA5%
+                 */
+                if (object.getCampo().equals(MyConstants.BOLETA_DET_IVA5_PROD)) {
                     for (M_facturaDetalle fd : facturaDetalle) {
                         if (fd.getProducto().getIdImpuesto() == 2) {
                             Integer precio = fd.getPrecio() - Math.round(Math.round(((fd.getPrecio() * fd.getDescuento()) / 100)));
@@ -330,7 +338,10 @@ public class BoletaPrintable implements Printable {
                         posY = posY + espaciadorY;
                     }
                 }
-                if (object.getCampo().equals(MyConstants.DETAIL_IVA10)) {
+                /*
+                DETALLE IVA10%
+                 */
+                if (object.getCampo().equals(MyConstants.BOLETA_DET_IVA10_PROD)) {
                     for (M_facturaDetalle fd : facturaDetalle) {
                         if (fd.getProducto().getIdImpuesto() == 3) {
                             Integer precio = fd.getPrecio() - Math.round(Math.round(((fd.getPrecio() * fd.getDescuento()) / 100)));
@@ -349,7 +360,10 @@ public class BoletaPrintable implements Printable {
                         posY = posY + espaciadorY;
                     }
                 }
-                if (object.getCampo().equals(MyConstants.SUB_TOTAL_EXENTA)) {
+                /*
+                SUBTOTAL EXENTA
+                 */
+                if (object.getCampo().equals(MyConstants.BOLETA_SUB_TOTAL)) {
                     g.drawString(exenta + "", posX, posY);
                     if (preferencia.getIdDuplicado() == 1) {
                         int duplicadoDist = posY + preferencia.getDistanceBetweenCopies();
@@ -360,7 +374,10 @@ public class BoletaPrintable implements Printable {
                         g.drawString(exenta + "", posX, triplicadoDist);
                     }
                 }
-                if (object.getCampo().equals(MyConstants.SUB_TOTAL_IVA5)) {
+                /*
+                SUBTOTAL IVA5%
+                 */
+                if (object.getCampo().equals(MyConstants.BOLETA_SUB_TOTAL_IVA5)) {
                     g.drawString(iva5 + "", posX, posY);
                     if (preferencia.getIdDuplicado() == 1) {
                         int duplicadoDist = posY + preferencia.getDistanceBetweenCopies();
@@ -371,7 +388,10 @@ public class BoletaPrintable implements Printable {
                         g.drawString(iva5 + "", posX, triplicadoDist);
                     }
                 }
-                if (object.getCampo().equals(MyConstants.SUB_TOTAL_IVA10)) {
+                /*
+                SUBTOTAL IVA10%
+                 */
+                if (object.getCampo().equals(MyConstants.BOLETA_SUB_TOTAL_IVA10)) {
                     g.drawString(iva10 + "", posX, posY);
                     if (preferencia.getIdDuplicado() == 1) {
                         int duplicadoDist = posY + preferencia.getDistanceBetweenCopies();
@@ -382,7 +402,10 @@ public class BoletaPrintable implements Printable {
                         g.drawString(iva10 + "", posX, triplicadoDist);
                     }
                 }
-                if (object.getCampo().equals(MyConstants.TOTAL_LETRA)) {
+                /*
+                TOTAL EN LETRAS
+                 */
+                if (object.getCampo().equals(MyConstants.BOLETA_TOTAL_LETRA)) {
                     //Calcular el total
                     int total_letra = 0;
                     for (M_facturaDetalle fd : facturaDetalle) {
@@ -395,17 +418,20 @@ public class BoletaPrintable implements Printable {
                     if (preferencia.getImprimirMoneda() == 1) {
                         totalLetra = totalLetra + preferencia.getDivisa().getDescripcion();
                     }
-                    g.drawString(totalLetra + "", posX, posY);
+                    g.drawString(MyConstants.BOLETA_TOTAL_LETRA + ": " + totalLetra + "", posX, posY);
                     if (preferencia.getIdDuplicado() == 1) {
                         int duplicadoDist = posY + preferencia.getDistanceBetweenCopies();
-                        g.drawString(totalLetra + "", posX, duplicadoDist);
+                        g.drawString(MyConstants.BOLETA_TOTAL_LETRA + ": " + totalLetra + "", posX, duplicadoDist);
                     }
                     if (preferencia.getIdTriplicado() == 1) {
                         int triplicadoDist = posY + preferencia.getDistanceBetweenCopies() + preferencia.getDistanceBetweenCopies();
-                        g.drawString(totalLetra + "", posX, triplicadoDist);
+                        g.drawString(MyConstants.BOLETA_TOTAL_LETRA + ": " + totalLetra + "", posX, triplicadoDist);
                     }
                 }
-                if (object.getCampo().equals(MyConstants.TOTAL_NUMERO)) {
+                /*
+                TOTAL NUMERO
+                 */
+                if (object.getCampo().equals(MyConstants.BOLETA_TOTAL_NUMERO)) {
                     //Calcular el total
                     int total = 0;
                     for (M_facturaDetalle fd : facturaDetalle) {
@@ -422,46 +448,55 @@ public class BoletaPrintable implements Printable {
                         g.drawString(total + "", posX, triplicadoDist);
                     }
                 }
-                if (object.getCampo().equals(MyConstants.LIQUIDACION_IVA5)) {
+                /*
+                LIQUIDACION IVA5%
+                 */
+                if (object.getCampo().equals(MyConstants.BOLETA_LIQ_IVA5)) {
                     //Calcular liquidacion de iva5 si es que hay productos con impuesto de 5%
                     if (iva5 > 0) {
                         liquidacionIva5 = iva5 / 21;
                     }
-                    g.drawString(liquidacionIva5 + "", posX, posY);
+                    g.drawString("(5%): " + liquidacionIva5 + "", posX, posY);
                     if (preferencia.getIdDuplicado() == 1) {
                         int duplicadoDist = posY + preferencia.getDistanceBetweenCopies();
-                        g.drawString(liquidacionIva5 + "", posX, duplicadoDist);
+                        g.drawString("(5%): " + liquidacionIva5 + "", posX, duplicadoDist);
                     }
                     if (preferencia.getIdTriplicado() == 1) {
                         int triplicadoDist = posY + preferencia.getDistanceBetweenCopies() + preferencia.getDistanceBetweenCopies();
-                        g.drawString(liquidacionIva5 + "", posX, triplicadoDist);
+                        g.drawString("(5%): " + liquidacionIva5 + "", posX, triplicadoDist);
                     }
                 }
-                if (object.getCampo().equals(MyConstants.LIQUIDACION_IVA10)) {
+                /*
+                LIQUIDACION IVA10%
+                 */
+                if (object.getCampo().equals(MyConstants.BOLETA_LIQ_IVA10)) {
                     //Calcular liquidacion de iva5 si es que hay productos con impuesto de 10%
                     if (iva10 > 0) {
                         liquidacionIva10 = iva10 / 11;
                     }
-                    g.drawString(liquidacionIva10 + "", posX, posY);
+                    g.drawString("(10%): " + liquidacionIva10 + "", posX, posY);
                     if (preferencia.getIdDuplicado() == 1) {
                         int duplicadoDist = posY + preferencia.getDistanceBetweenCopies();
-                        g.drawString(liquidacionIva10 + "", posX, duplicadoDist);
+                        g.drawString("(10%): " + liquidacionIva10 + "", posX, duplicadoDist);
                     }
                     if (preferencia.getIdTriplicado() == 1) {
                         int triplicadoDist = posY + preferencia.getDistanceBetweenCopies() + preferencia.getDistanceBetweenCopies();
-                        g.drawString(liquidacionIva10 + "", posX, triplicadoDist);
+                        g.drawString("(10%): " + liquidacionIva10 + "", posX, triplicadoDist);
                     }
                 }
-                if (object.getCampo().equals(MyConstants.LIQUIDACION_TOTAL)) {
+                /*
+                LIQUIDACION TOTAL
+                 */
+                if (object.getCampo().equals(MyConstants.BOLETA_LIQ_TOTAL)) {
                     int liquidTotal = liquidacionIva5 + liquidacionIva10;
-                    g.drawString(liquidTotal + "", posX, posY);
+                    g.drawString("Total I.V.A.: " + liquidTotal + "", posX, posY);
                     if (preferencia.getIdDuplicado() == 1) {
                         int duplicadoDist = posY + preferencia.getDistanceBetweenCopies();
-                        g.drawString(liquidTotal + "", posX, duplicadoDist);
+                        g.drawString("Total I.V.A.: " + liquidTotal + "", posX, duplicadoDist);
                     }
                     if (preferencia.getIdTriplicado() == 1) {
                         int triplicadoDist = posY + preferencia.getDistanceBetweenCopies() + preferencia.getDistanceBetweenCopies();
-                        g.drawString(liquidTotal + "", posX, triplicadoDist);
+                        g.drawString("Total I.V.A.: " + liquidTotal + "", posX, triplicadoDist);
                     }
                 }
             }

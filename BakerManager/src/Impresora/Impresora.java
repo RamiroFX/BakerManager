@@ -349,7 +349,7 @@ public class Impresora {
         fd10.setPrecio(250000);
         fd10.setProducto(prod10);
         faDetalles.add(fd10);
-        List<M_campoImpresion> textoAImprimir = DB_manager.obtenerCampoImpresion(2, MyConstants.ACTIVO);
+        List<M_campoImpresion> textoAImprimir = DB_manager.obtenerCampoImpresion(3, MyConstants.ACTIVO);
         PrinterJob job = PrinterJob.getPrinterJob();
         Paper p = new Paper();
         PageFormat pf = new PageFormat();

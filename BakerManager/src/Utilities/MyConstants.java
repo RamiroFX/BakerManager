@@ -66,7 +66,7 @@ public class MyConstants {
             BOLETA_DET_IVA10_PROD = "detalle iva10%",
             BOLETA_SUB_TOTAL = "sub total exenta",
             BOLETA_SUB_TOTAL_IVA5 = "sub total iva5",
-            BOLETA_SUB_TOTA_IVA10 = "sub total iva10",
+            BOLETA_SUB_TOTAL_IVA10 = "sub total iva10",
             BOLETA_TOTAL_LETRA = "total letra",
             BOLETA_TOTAL_NUMERO = "total numero",
             BOLETA_LIQ_IVA5 = "liquidacion iva 5%",
