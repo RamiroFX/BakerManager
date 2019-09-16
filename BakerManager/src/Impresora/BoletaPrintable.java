@@ -5,6 +5,7 @@
  */
 package Impresora;
 
+import Entities.E_Empresa;
 import Entities.M_campoImpresion;
 import Entities.M_facturaCabecera;
 import Entities.M_facturaDetalle;
@@ -31,16 +32,18 @@ import org.bolivia.qulqi.Qulqi;
  */
 public class BoletaPrintable implements Printable {
 
+    E_Empresa empresa;
     List<M_campoImpresion> campoImpresiones;
     M_facturaCabecera facturaCabecera;
     ArrayList<M_facturaDetalle> facturaDetalle;
     M_preferenciasImpresion preferencia;
 
-    public BoletaPrintable(M_preferenciasImpresion preferencia, M_facturaCabecera facturaCabecera, ArrayList<M_facturaDetalle> facturaDetalle, List<M_campoImpresion> impresions) {
+    public BoletaPrintable(M_preferenciasImpresion preferencia, M_facturaCabecera facturaCabecera, ArrayList<M_facturaDetalle> facturaDetalle, List<M_campoImpresion> impresions, E_Empresa empresa) {
         this.preferencia = preferencia;
         this.facturaCabecera = facturaCabecera;
         this.facturaDetalle = facturaDetalle;
         this.campoImpresiones = impresions;
+        this.empresa = empresa;
     }
 
     @Override
@@ -96,6 +99,150 @@ public class BoletaPrintable implements Printable {
             for (M_campoImpresion object : campoImpresiones) {
                 int posY = object.getY().intValue();
                 int posX = object.getX().intValue();
+                /*
+                RAZON SOCIAL EMPRESA
+                 */
+                if (object.getCampo().equals(MyConstants.BOLETA_RAZON_EMPRESA)) {
+                    String razonSocialEmpresa = "";
+                    if (empresa.getEntidad() != null) {
+                        razonSocialEmpresa = empresa.getEntidad();
+                    }
+                    g.drawString(razonSocialEmpresa, posX, posY);
+                    if (preferencia.getIdDuplicado() == 1) {
+                        int duplicadoDist = posY + preferencia.getDistanceBetweenCopies();
+                        g.drawString(razonSocialEmpresa, posX, duplicadoDist);
+                    }
+                    if (preferencia.getIdTriplicado() == 1) {
+                        int triplicadoDist = posY + preferencia.getDistanceBetweenCopies() + preferencia.getDistanceBetweenCopies();
+                        g.drawString(razonSocialEmpresa, posX, triplicadoDist);
+                    }
+                }
+                /*
+                NOMBRE FANTASIA
+                 */
+                if (object.getCampo().equals(MyConstants.BOLETA_NOMBRE_EMPRESA)) {
+                    String nombreFantasia = "";
+                    if (empresa.getNombre() != null) {
+                        nombreFantasia = empresa.getNombre();
+                    }
+                    g.drawString(nombreFantasia, posX, posY);
+                    if (preferencia.getIdDuplicado() == 1) {
+                        int duplicadoDist = posY + preferencia.getDistanceBetweenCopies();
+                        g.drawString(nombreFantasia, posX, duplicadoDist);
+                    }
+                    if (preferencia.getIdTriplicado() == 1) {
+                        int triplicadoDist = posY + preferencia.getDistanceBetweenCopies() + preferencia.getDistanceBetweenCopies();
+                        g.drawString(nombreFantasia, posX, triplicadoDist);
+                    }
+                }
+                /*
+                DIRECCION EMPRESA
+                 */
+                if (object.getCampo().equals(MyConstants.BOLETA_DIRECCION_EMPRESA)) {
+                    String direccion = "";
+                    if (empresa.getDireccion() != null) {
+                        direccion = empresa.getDireccion();
+                    }
+                    g.drawString(direccion, posX, posY);
+                    if (preferencia.getIdDuplicado() == 1) {
+                        int duplicadoDist = posY + preferencia.getDistanceBetweenCopies();
+                        g.drawString(direccion, posX, duplicadoDist);
+                    }
+                    if (preferencia.getIdTriplicado() == 1) {
+                        int triplicadoDist = posY + preferencia.getDistanceBetweenCopies() + preferencia.getDistanceBetweenCopies();
+                        g.drawString(direccion, posX, triplicadoDist);
+                    }
+                }
+                /*
+                EMAIL EMPRESA
+                 */
+                if (object.getCampo().equals(MyConstants.BOLETA_EMAIL_EMPRESA)) {
+                    String email = "";
+                    if (empresa.getEmail() != null) {
+                        email = empresa.getEmail();
+                    }
+                    g.drawString(email, posX, posY);
+                    if (preferencia.getIdDuplicado() == 1) {
+                        int duplicadoDist = posY + preferencia.getDistanceBetweenCopies();
+                        g.drawString(email, posX, duplicadoDist);
+                    }
+                    if (preferencia.getIdTriplicado() == 1) {
+                        int triplicadoDist = posY + preferencia.getDistanceBetweenCopies() + preferencia.getDistanceBetweenCopies();
+                        g.drawString(email, posX, triplicadoDist);
+                    }
+                }
+                /*
+                RUC EMPRESA
+                 */
+                if (object.getCampo().equals(MyConstants.BOLETA_RUC_EMPRESA)) {
+                    String rucEmpresa = "";
+                    if (empresa.getRuc() != null) {
+                        rucEmpresa = empresa.getRuc();
+                    }
+                    g.drawString(rucEmpresa, posX, posY);
+                    if (preferencia.getIdDuplicado() == 1) {
+                        int duplicadoDist = posY + preferencia.getDistanceBetweenCopies();
+                        g.drawString(rucEmpresa, posX, duplicadoDist);
+                    }
+                    if (preferencia.getIdTriplicado() == 1) {
+                        int triplicadoDist = posY + preferencia.getDistanceBetweenCopies() + preferencia.getDistanceBetweenCopies();
+                        g.drawString(rucEmpresa, posX, triplicadoDist);
+                    }
+                }
+                /*
+                PAGINA WEB EMPRESA
+                 */
+                if (object.getCampo().equals(MyConstants.BOLETA_PAG_WEB_EMPRESA)) {
+                    String pagWebEmpresa = "";
+                    if (empresa.getPagWeb() != null) {
+                        pagWebEmpresa = empresa.getPagWeb();
+                    }
+                    g.drawString(pagWebEmpresa, posX, posY);
+                    if (preferencia.getIdDuplicado() == 1) {
+                        int duplicadoDist = posY + preferencia.getDistanceBetweenCopies();
+                        g.drawString(pagWebEmpresa, posX, duplicadoDist);
+                    }
+                    if (preferencia.getIdTriplicado() == 1) {
+                        int triplicadoDist = posY + preferencia.getDistanceBetweenCopies() + preferencia.getDistanceBetweenCopies();
+                        g.drawString(pagWebEmpresa, posX, triplicadoDist);
+                    }
+                }
+                /*
+                DESCRIPCION EMPRESA
+                 */
+                if (object.getCampo().equals(MyConstants.BOLETA_DESCRIPCION_EMPRESA)) {
+                    String descripcionEmpresa = "";
+                    if (empresa.getDescripcion() != null) {
+                        descripcionEmpresa = empresa.getDescripcion();
+                    }
+                    g.drawString(descripcionEmpresa, posX, posY);
+                    if (preferencia.getIdDuplicado() == 1) {
+                        int duplicadoDist = posY + preferencia.getDistanceBetweenCopies();
+                        g.drawString(descripcionEmpresa, posX, duplicadoDist);
+                    }
+                    if (preferencia.getIdTriplicado() == 1) {
+                        int triplicadoDist = posY + preferencia.getDistanceBetweenCopies() + preferencia.getDistanceBetweenCopies();
+                        g.drawString(descripcionEmpresa, posX, triplicadoDist);
+                    }
+                }
+                /*
+                TELEFONO EMPRESA
+                 */
+                if (object.getCampo().equals(MyConstants.BOLETA_TELEFONO_EMPRESA)) {
+                    String telefonoEmpresa = "";
+                    if (empresa.getTelefono() != null) {
+                        telefonoEmpresa = empresa.getTelefono();
+                    }
+                    g.drawString(telefonoEmpresa, posX, posY);
+                    if (preferencia.getIdDuplicado() == 1) {
+                        int duplicadoDist = posY + preferencia.getDistanceBetweenCopies();
+                        g.drawString(telefonoEmpresa, posX, duplicadoDist);
+                    }
+                    if (preferencia.getIdTriplicado() == 1) {
+                        int triplicadoDist = posY + preferencia.getDistanceBetweenCopies() + preferencia.getDistanceBetweenCopies();
+                        g.drawString(telefonoEmpresa, posX, triplicadoDist);
+                    }
+                }
                 /*
                 FECHA
                  */
@@ -160,14 +307,14 @@ public class BoletaPrintable implements Printable {
                 R.U.C.
                  */
                 if (object.getCampo().equals(MyConstants.BOLETA_RUC)) {
-                    g.drawString(MyConstants.BOLETA_RUC + ": " + ruc, posX, posY);
+                    g.drawString("R.U.C.: " + ruc, posX, posY);
                     if (preferencia.getIdDuplicado() == 1) {
                         int duplicadoDist = posY + preferencia.getDistanceBetweenCopies();
-                        g.drawString(MyConstants.BOLETA_RUC + ": " + ruc, posX, duplicadoDist);
+                        g.drawString("R.U.C.: " + ruc, posX, duplicadoDist);
                     }
                     if (preferencia.getIdTriplicado() == 1) {
                         int triplicadoDist = posY + preferencia.getDistanceBetweenCopies() + preferencia.getDistanceBetweenCopies();
-                        g.drawString(MyConstants.BOLETA_RUC + ": " + ruc, posX, triplicadoDist);
+                        g.drawString("R.U.C.: " + ruc, posX, triplicadoDist);
                     }
                 }
                 /*
@@ -178,14 +325,14 @@ public class BoletaPrintable implements Printable {
                     if (facturaCabecera.getCliente().getDireccion() != null) {
                         dir = facturaCabecera.getCliente().getDireccion();
                     }
-                    g.drawString(MyConstants.BOLETA_DIRECCION + ": " + dir, posX, posY);
+                    g.drawString("Dirección: " + dir, posX, posY);
                     if (preferencia.getIdDuplicado() == 1) {
                         int duplicadoDist = posY + preferencia.getDistanceBetweenCopies();
-                        g.drawString(MyConstants.BOLETA_DIRECCION + ": " + dir, posX, duplicadoDist);
+                        g.drawString("Dirección: " + dir, posX, duplicadoDist);
                     }
                     if (preferencia.getIdTriplicado() == 1) {
                         int triplicadoDist = posY + preferencia.getDistanceBetweenCopies() + preferencia.getDistanceBetweenCopies();
-                        g.drawString(MyConstants.BOLETA_DIRECCION + ": " + dir, posX, triplicadoDist);
+                        g.drawString("Dirección: " + dir, posX, triplicadoDist);
                     }
                 }
                 /*
@@ -196,14 +343,14 @@ public class BoletaPrintable implements Printable {
                     if (facturaCabecera.getIdNotaRemision() != null) {
                         remision = facturaCabecera.getIdNotaRemision() + "";
                     }
-                    g.drawString(MyConstants.BOLETA_REMISION + ": " + remision, posX, posY);
+                    g.drawString("Remisión: " + remision, posX, posY);
                     if (preferencia.getIdDuplicado() == 1) {
                         int duplicadoDist = posY + preferencia.getDistanceBetweenCopies();
-                        g.drawString(MyConstants.BOLETA_REMISION + ": " + remision, posX, duplicadoDist);
+                        g.drawString("Remisión: " + remision, posX, duplicadoDist);
                     }
                     if (preferencia.getIdTriplicado() == 1) {
                         int triplicadoDist = posY + preferencia.getDistanceBetweenCopies() + preferencia.getDistanceBetweenCopies();
-                        g.drawString(MyConstants.BOLETA_REMISION + ": " + remision, posX, triplicadoDist);
+                        g.drawString("Remisión: " + remision, posX, triplicadoDist);
                     }
                 }
                 /*

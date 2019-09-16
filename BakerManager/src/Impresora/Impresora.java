@@ -16,6 +16,7 @@ import DB.DB_Ingreso;
 import DB.DB_Preferencia;
 import DB.DB_manager;
 import Entities.Caja;
+import Entities.E_Empresa;
 import Entities.E_ticketPreferencia;
 import Entities.M_campoImpresion;
 import Entities.M_cliente;
@@ -253,7 +254,7 @@ public class Impresora {
             JOptionPane.showMessageDialog(null, "No se encontro impresoras disponibles", "Error", JOptionPane.INFORMATION_MESSAGE);
         }
     }
-    
+
     public static void imprimirBoletaPrueba() {
         String nombreImpresora = PREF_PRINT_BOLETA.getNombreImpresora();
         M_cliente cliente = new M_cliente();
@@ -358,14 +359,14 @@ public class Impresora {
         p.setSize(width, height);
         p.setImageableArea(PREF_PRINT_BOLETA.getMargenX(), PREF_PRINT_BOLETA.getMargenY(), width, height);
         pf.setPaper(p);
-        job.setPrintable(new BoletaPrintable(PREF_PRINT_BOLETA, fc, faDetalles, textoAImprimir), pf);
+        E_Empresa empresa = DB_manager.obtenerDatosEmpresa();
+        job.setPrintable(new BoletaPrintable(PREF_PRINT_BOLETA, fc, faDetalles, textoAImprimir, empresa), pf);
         PrintService[] services = PrintServiceLookup.lookupPrintServices(null, null);
         boolean existeImpresora = false;
         if (services.length > 0) {
             for (PrintService service : services) {
                 if (service.getName().equals(nombreImpresora)) {
                     existeImpresora = true;
-                    System.out.println("service:" + service.toString());
                     try {
                         if (job != null) {
                             job.setPrintService(service);
