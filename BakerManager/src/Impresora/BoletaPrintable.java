@@ -63,17 +63,37 @@ public class BoletaPrintable implements Printable {
         final String ruc = rucAux;
         g.setFont(new Font(preferencia.getLetterFont(), Font.PLAIN, preferencia.getLetterSize()));
         int espacio = 20;
+        int espacioPeque = 10;
         int ancho = preferencia.getAnchoPagina();
         int alturaCabecera = 130;
         int alturaDetalle = 130;
         int alturaSubtotal = 20;
         int alturaTotal = 20;
         int alturaLiquidacion = 20;
-        g.drawRoundRect(10, 10, ancho - 20, alturaCabecera, 0, 0);//CABECERA
-        g.drawRoundRect(10, alturaCabecera + espacio, ancho - 20, alturaDetalle, 0, 0);//DETALLE
-        g.drawRoundRect(10, alturaCabecera + alturaDetalle + espacio, ancho - 20, alturaSubtotal, 0, 0);//SUBTOTAL
-        g.drawRoundRect(10, alturaCabecera + alturaDetalle + alturaSubtotal + espacio, ancho - 20, alturaTotal, 0, 0);//TOTAL
-        g.drawRoundRect(10, alturaCabecera + alturaDetalle + alturaSubtotal + alturaTotal + espacio, ancho - 20, alturaLiquidacion, 0, 0);//LIQUIDACION
+        g.drawRoundRect(10, 10, ancho - espacio, 60, 0, 0);//CABECERA-DATOS EMPRESA
+        g.drawRoundRect(10, 10, ancho - espacio, alturaCabecera, 0, 0);//CABECERA
+        g.drawRoundRect(10, alturaCabecera + espacio, ancho - espacio, alturaDetalle, 0, 0);//DETALLE
+        g.drawRoundRect(10, alturaCabecera + alturaDetalle + espacio, ancho - espacio, alturaSubtotal, 0, 0);//SUBTOTAL
+        g.drawRoundRect(10, alturaCabecera + alturaDetalle + alturaSubtotal + espacio, ancho - espacio, alturaTotal, 0, 0);//TOTAL
+        g.drawRoundRect(10, alturaCabecera + alturaDetalle + alturaSubtotal + alturaTotal + espacio, ancho - espacio, alturaLiquidacion, 0, 0);//LIQUIDACION
+        //LINEAS DIVISORIAS DEL DETALLE
+        g.drawLine(10, alturaCabecera + espacio + espacio, ancho - 10, alturaCabecera + espacio + espacio);//CABECERA
+        g.drawLine(50, alturaCabecera + espacio, 50, alturaCabecera + alturaDetalle + espacio);//CANTIDAD
+        g.drawLine(ancho - (espacioPeque * 25), alturaCabecera + espacio, ancho - (espacioPeque * 25), alturaCabecera + alturaDetalle + espacio);//PRECIO
+        g.drawLine(ancho - (espacioPeque * 20), alturaCabecera + espacio, ancho - (espacioPeque * 20), alturaCabecera + alturaDetalle + espacio);//EXENTA
+        g.drawLine(ancho - (espacioPeque * 14), alturaCabecera + espacio, ancho - (espacioPeque * 14), alturaCabecera + alturaDetalle + espacio);//IVA5
+        g.drawLine(ancho - (espacioPeque * 8), alturaCabecera + espacio, ancho - (espacioPeque * 8), alturaCabecera + alturaDetalle + espacio);//IVA10        
+        g.drawLine(ancho - (espacioPeque * 20), alturaCabecera + (espacio * 2), ancho - (espacioPeque * 20), alturaCabecera + alturaDetalle + (espacio * 2));//SUBTOTAL EXENTA
+        g.drawLine(ancho - (espacioPeque * 14), alturaCabecera + (espacio * 2), ancho - (espacioPeque * 14), alturaCabecera + alturaDetalle + (espacio * 2));//SUBTOTAL IVA5
+        g.drawLine(ancho - (espacioPeque * 8), alturaCabecera + (espacio * 2), ancho - (espacioPeque * 8), alturaCabecera + alturaDetalle + (espacio * 2));//SUBTOTAL IVA10
+        g.drawLine(ancho - (espacioPeque * 8), alturaCabecera + (espacio * 3), ancho - (espacioPeque * 8), alturaCabecera + alturaDetalle + (espacio * 3));//SUBTOTAL
+        g.drawString("CANT", 12, alturaCabecera + espacio + 10);
+        g.drawString("PRODUCTO", 100, alturaCabecera + espacio + 10);
+        g.drawString("PRECIO", ancho - (espacioPeque * 24), alturaCabecera + espacioPeque * 3);
+        g.drawString("EXENTA", ancho - (espacioPeque * 19), alturaCabecera + espacioPeque * 3);
+        g.drawString("IVA5%", ancho - (espacioPeque * 12), alturaCabecera + espacioPeque * 3);
+        g.drawString("IVA10%", ancho - (espacioPeque * 6), alturaCabecera + espacioPeque * 3);
+        g.drawString("LIQUIDACION I.V.A.", 12, alturaCabecera + alturaDetalle + alturaSubtotal + alturaTotal + espacio + espacioPeque);
         if (preferencia.getIdDuplicado() == 1) {
             int duplicadoDist = preferencia.getDistanceBetweenCopies();
             g.drawRoundRect(10, duplicadoDist + 10, ancho - 20, alturaCabecera, 0, 0);//CABECERA
