@@ -264,6 +264,7 @@ public class Impresora {
         cliente.setDireccion("35XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
         cliente.setEntidad("Xxxxxx Xxxxxxxx");
         M_facturaCabecera fc = new M_facturaCabecera();
+        fc.setIdFacturaCabecera(0);
         fc.setCliente(cliente);
         fc.setIdCondVenta(1);
         fc.setIdNotaRemision(1);
@@ -291,13 +292,13 @@ public class Impresora {
         prod10.setIdImpuesto(3);
         ArrayList<M_facturaDetalle> faDetalles = new ArrayList<>();
         M_facturaDetalle fd1 = new M_facturaDetalle();
-        fd1.setCantidad(1.0);
+        fd1.setCantidad(1.1);
         fd1.setDescuento(0.0);
         fd1.setPrecio(100);
         fd1.setProducto(prod1);
         faDetalles.add(fd1);
         M_facturaDetalle fd2 = new M_facturaDetalle();
-        fd2.setCantidad(10.0);
+        fd2.setCantidad(10.12);
         fd2.setDescuento(10.0);
         fd2.setPrecio(150);
         fd2.setProducto(prod2);
@@ -315,13 +316,13 @@ public class Impresora {
         fd4.setProducto(prod4);
         faDetalles.add(fd4);
         M_facturaDetalle fd5 = new M_facturaDetalle();
-        fd5.setCantidad(1000.0);
+        fd5.setCantidad(1000.123);
         fd5.setDescuento(0.0);
         fd5.setPrecio(850);
         fd5.setProducto(prod5);
         faDetalles.add(fd5);
         M_facturaDetalle fd6 = new M_facturaDetalle();
-        fd6.setCantidad(400.0);
+        fd6.setCantidad(1050.124);
         fd6.setDescuento(0.0);
         fd6.setPrecio(430);
         fd6.setProducto(prod6);
@@ -432,7 +433,7 @@ public class Impresora {
         prod10.setIdImpuesto(3);
         ArrayList<M_facturaDetalle> faDetalles = new ArrayList<>();
         M_facturaDetalle fd1 = new M_facturaDetalle();
-        fd1.setCantidad(1.0);
+        fd1.setCantidad(1.9);
         fd1.setDescuento(0.0);
         fd1.setPrecio(100);
         fd1.setProducto(prod1);
@@ -456,7 +457,7 @@ public class Impresora {
         fd4.setProducto(prod4);
         faDetalles.add(fd4);
         M_facturaDetalle fd5 = new M_facturaDetalle();
-        fd5.setCantidad(1000.0);
+        fd5.setCantidad(1000.55);
         fd5.setDescuento(0.0);
         fd5.setPrecio(850);
         fd5.setProducto(prod5);

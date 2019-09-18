@@ -11,6 +11,7 @@ import DB.ResultSetTableModel;
 import Entities.M_campoImpresion;
 import Entities.M_preferenciasImpresion;
 import ModeloTabla.ImpresionTableModel;
+import Parametros.TipoVenta;
 import Utilities.MyConstants;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
@@ -54,7 +55,7 @@ public class M_configuracionFactura {
     }
 
     void crearParametro(M_campoImpresion ci) {
-        if (DB_manager.existeCampoParametro(ci.getCampo())) {
+        if (DB_manager.existeCampoParametro(TipoVenta.FACTURA, ci.getCampo())) {
             JOptionPane.showMessageDialog(null, ERROR_MESSAGE_NAME_ALREADY_EXIST, ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
         } else {
             DB_manager.insertarCampoImpresion(2, ci);
@@ -62,8 +63,8 @@ public class M_configuracionFactura {
     }
 
     void modificarParametro(M_campoImpresion ci) {
-        if (DB_manager.existeCampoParametro(ci.getCampo())) {
-            M_campoImpresion ciAux = DB_manager.obtenerCampoParametro(ci.getCampo());
+        if (DB_manager.existeCampoParametro(TipoVenta.FACTURA, ci.getCampo())) {
+            M_campoImpresion ciAux = DB_manager.obtenerCampoParametro(TipoVenta.FACTURA, ci.getCampo());
             if (ciAux.getId() == ci.getId()) {
                 DB_manager.modificarCampoImpresion(ci);
             } else {

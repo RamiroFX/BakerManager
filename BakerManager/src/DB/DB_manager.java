@@ -220,11 +220,12 @@ public class DB_manager {
         return campoImpresionList;
     }
 
-    public static boolean existeCampoParametro(String campoParametroDescripcion) {
-        String Query = "SELECT DESCRIPCION FROM IMPRESION_CAMPO WHERE DESCRIPCION LIKE ?";
+    public static boolean existeCampoParametro(int idTipo, String campoParametroDescripcion) {
+        String Query = "SELECT DESCRIPCION FROM IMPRESION_CAMPO WHERE DESCRIPCION LIKE ? AND id_impresion_tipo = ?";
         try {
             pst = DB_manager.getConection().prepareStatement(Query);
             pst.setString(1, campoParametroDescripcion);
+            pst.setInt(2, idTipo);
             rs = pst.executeQuery();
             return rs.next();
         } catch (SQLException ex) {
@@ -247,14 +248,16 @@ public class DB_manager {
         return false;
     }
 
-    public static M_campoImpresion obtenerCampoParametro(String campoParametroDescripcion) {
+    public static M_campoImpresion obtenerCampoParametro(int idTipo, String campoParametroDescripcion) {
         M_campoImpresion ci = null;
         String Query = "SELECT IMPRESION_CAMPO.ID_IMPRESION_CAMPO, IMPRESION_CAMPO.DESCRIPCION, IMPRESION_CAMPO.COORDENADA_X, IMPRESION_CAMPO.COORDENADA_Y, "
                 + "ESTADO.ID_ESTADO, ESTADO.DESCRIPCION FROM IMPRESION_CAMPO, ESTADO "
-                + "WHERE IMPRESION_CAMPO.DESCRIPCION LIKE ? AND IMPRESION_CAMPO.ID_ESTADO= ESTADO.ID_ESTADO ;";
+                + "WHERE IMPRESION_CAMPO.DESCRIPCION LIKE ? AND IMPRESION_CAMPO.ID_IMPRESION_TIPO = ? "
+                + "AND IMPRESION_CAMPO.ID_ESTADO= ESTADO.ID_ESTADO ;";
         try {
             pst = DB_manager.getConection().prepareStatement(Query);
             pst.setString(1, campoParametroDescripcion);
+            pst.setInt(2, idTipo);
             rs = pst.executeQuery();
             while (rs.next()) {
                 Estado estado = new Estado();

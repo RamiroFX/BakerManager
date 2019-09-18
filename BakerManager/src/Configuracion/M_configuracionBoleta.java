@@ -10,6 +10,7 @@ import DB.DB_manager;
 import Entities.M_campoImpresion;
 import Entities.M_preferenciasImpresion;
 import ModeloTabla.ImpresionTableModel;
+import Parametros.TipoVenta;
 import Utilities.MyConstants;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
@@ -36,7 +37,7 @@ public class M_configuracionBoleta {
 
     private void inicializarDatos() {
         preferenciasBoleta = DB_Preferencia.obtenerPreferenciaImpresionBoleta();
-        ArrayList<M_campoImpresion> campoImpresionLista = DB_manager.obtenerCampoImpresion(3, MyConstants.TODOS);
+        ArrayList<M_campoImpresion> campoImpresionLista = DB_manager.obtenerCampoImpresion(TipoVenta.BOLETA, MyConstants.TODOS);
         impresionBoletaTM.setCampoImpresionList(campoImpresionLista);
     }
 
@@ -45,8 +46,8 @@ public class M_configuracionBoleta {
     }
 
     void modificarParametro(M_campoImpresion ci) {
-        if (DB_manager.existeCampoParametro(ci.getCampo())) {
-            M_campoImpresion ciAux = DB_manager.obtenerCampoParametro(ci.getCampo());
+        if (DB_manager.existeCampoParametro(TipoVenta.BOLETA, ci.getCampo())) {
+            M_campoImpresion ciAux = DB_manager.obtenerCampoParametro(TipoVenta.BOLETA,ci.getCampo());
             if (ciAux.getId() == ci.getId()) {
                 DB_manager.modificarCampoImpresion(ci);
             } else {
@@ -58,7 +59,7 @@ public class M_configuracionBoleta {
     }
 
     public void updateTable() {
-        ArrayList<M_campoImpresion> campoImpresionLista = DB_manager.obtenerCampoImpresion(3, MyConstants.TODOS);
+        ArrayList<M_campoImpresion> campoImpresionLista = DB_manager.obtenerCampoImpresion(TipoVenta.BOLETA, MyConstants.TODOS);
         impresionBoletaTM.setCampoImpresionList(campoImpresionLista);
         this.impresionBoletaTM.updateTable();
     }
@@ -80,11 +81,11 @@ public class M_configuracionBoleta {
 
     public void ocultarMostrarCampo() {
         if (isIsVisible()) {
-            ArrayList<M_campoImpresion> campoImpresionLista = DB_manager.obtenerCampoImpresion(3, MyConstants.ACTIVO);
+            ArrayList<M_campoImpresion> campoImpresionLista = DB_manager.obtenerCampoImpresion(TipoVenta.BOLETA, MyConstants.ACTIVO);
             impresionBoletaTM.setCampoImpresionList(campoImpresionLista);
             this.impresionBoletaTM.updateTable();
         } else {
-            ArrayList<M_campoImpresion> campoImpresionLista = DB_manager.obtenerCampoImpresion(3, MyConstants.TODOS);
+            ArrayList<M_campoImpresion> campoImpresionLista = DB_manager.obtenerCampoImpresion(TipoVenta.BOLETA, MyConstants.TODOS);
             impresionBoletaTM.setCampoImpresionList(campoImpresionLista);
             this.impresionBoletaTM.updateTable();
         }

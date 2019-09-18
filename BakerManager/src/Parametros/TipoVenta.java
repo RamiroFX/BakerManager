@@ -13,5 +13,6 @@ public class TipoVenta {
 
     public static final int TICKET = 1;
     public static final int FACTURA = 2;
+    public static final int BOLETA = 3;
 
 }

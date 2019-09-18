@@ -50,6 +50,7 @@ public class MyConstants {
             BOLETA_EMAIL_EMPRESA = "email_empresa",
             BOLETA_PAG_WEB_EMPRESA = "pag_web_empresa",
             BOLETA_FECHA = "fecha",
+            NRO_BOLETA = "nro_boleta",
             BOLETA_COND_VENTA_CREDITO = "cond. venta: credito",
             BOLETA_COND_VENTA_CONTADO = "cond. venta: contado",
             BOLETA_RAZON_SOCIAL = "razon social",
