@@ -129,7 +129,22 @@ public class M_crearVentaRapida {
                 int opcion = JOptionPane.showConfirmDialog(null, DESEA_IMPRIMIR_EL_TICKET, ATENCION, JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
                 if (opcion == JOptionPane.YES_OPTION) {
                     if (tipoVenta == TipoVenta.TICKET) {
-                        Impresora.imprimirTicketVenta(DatosUsuario.getRol_usuario(), getCabecera(), (ArrayList<M_facturaDetalle>) getDtm().getFacturaDetalleList());
+                        //TODO elejir tipo de comprobate impreso(ticket o boleta)
+                        int opcion2 = JOptionPane.showConfirmDialog(null, DESEA_IMPRIMIR_EL_TICKET, ATENCION, JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+                        switch (opcion2) {
+                            case 0: {
+                                Impresora.imprimirTicketVenta(DatosUsuario.getRol_usuario(), getCabecera(), (ArrayList<M_facturaDetalle>) getDtm().getFacturaDetalleList());
+                                break;
+                            }
+                            case 1: {
+                                Impresora.imprimirTicketVenta(DatosUsuario.getRol_usuario(), getCabecera(), (ArrayList<M_facturaDetalle>) getDtm().getFacturaDetalleList());
+                                break;
+                            }
+                            case 2: {
+                                break;
+                            }
+                        }
+                        //Impresora.imprimirTicketVenta(DatosUsuario.getRol_usuario(), getCabecera(), (ArrayList<M_facturaDetalle>) getDtm().getFacturaDetalleList());
                     } else if (tipoVenta == TipoVenta.FACTURA) {
                         Impresora.imprimirVentaFactura(getCabecera(), (ArrayList<M_facturaDetalle>) getDtm().getFacturaDetalleList());
                     }

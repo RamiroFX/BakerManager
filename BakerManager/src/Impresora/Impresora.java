@@ -221,17 +221,10 @@ public class Impresora {
         job.setPrintable(new VentaPrintable(PREF_PRINT_FACTURA, fc, faDetalles, textoAImprimir), pf);
         PrintService[] services = PrintServiceLookup.lookupPrintServices(null, null);
         boolean existeImpresora = false;
-        System.out.println("Impresora.Impresora.imprimirPaginaPrueba()");
-        System.out.println("PREF_PRINT.getAnchoPagina():" + PREF_PRINT_FACTURA.getAnchoPagina());
-        System.out.println("PREF_PRINT.getLargoPagina():" + PREF_PRINT_FACTURA.getLargoPagina());
-        System.out.println("PREF_PRINT.getMargenX():" + PREF_PRINT_FACTURA.getMargenX());
-        System.out.println("PREF_PRINT.getMargenY():" + PREF_PRINT_FACTURA.getMargenY());
-        System.out.println("nombreImpresora:" + nombreImpresora);
         if (services.length > 0) {
             for (PrintService service : services) {
                 if (service.getName().equals(nombreImpresora)) {
                     existeImpresora = true;
-                    System.out.println("service:" + service.toString());
                     try {
                         if (job != null) {
                             job.setPrintService(service);

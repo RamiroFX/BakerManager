@@ -20,13 +20,11 @@ import static java.awt.print.Printable.NO_SUCH_PAGE;
 import static java.awt.print.Printable.PAGE_EXISTS;
 import java.awt.print.PrinterException;
 import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import javax.swing.text.DefaultFormatterFactory;
 import org.bolivia.qulqi.Qulqi;
 
 /**
@@ -40,7 +38,7 @@ public class BoletaPrintable implements Printable {
     M_facturaCabecera facturaCabecera;
     ArrayList<M_facturaDetalle> facturaDetalle;
     M_preferenciasImpresion preferencia;
-    DecimalFormat integerFormat, decimalFormat, formateador;
+    DecimalFormat decimalFormat;
 
     public BoletaPrintable(M_preferenciasImpresion preferencia, M_facturaCabecera facturaCabecera, ArrayList<M_facturaDetalle> facturaDetalle, List<M_campoImpresion> impresions, E_Empresa empresa) {
         this.preferencia = preferencia;
@@ -48,11 +46,7 @@ public class BoletaPrintable implements Printable {
         this.facturaDetalle = facturaDetalle;
         this.campoImpresiones = impresions;
         this.empresa = empresa;
-        integerFormat = new DecimalFormat("###,###");
-        decimalFormat = new DecimalFormat("###,###.###");
-        DecimalFormatSymbols simbolos = new DecimalFormatSymbols();
-        simbolos.setDecimalSeparator('.');
-        formateador = new DecimalFormat("###.###", simbolos);
+        this.decimalFormat = new DecimalFormat("###,###.###");
     }
 
     @Override
@@ -106,19 +100,67 @@ public class BoletaPrintable implements Printable {
         g.drawString("LIQUIDACION I.V.A.", 12, alturaCabecera + alturaDetalle + alturaSubtotal + alturaTotal + espacio + espacioPeque + 5);
         if (preferencia.getIdDuplicado() == 1) {
             int duplicadoDist = preferencia.getDistanceBetweenCopies();
-            g.drawRoundRect(10, duplicadoDist + 10, ancho - 20, alturaCabecera, 0, 0);//CABECERA
-            g.drawRoundRect(10, duplicadoDist + alturaCabecera + espacio, ancho - 20, alturaDetalle, 0, 0);//DETALLE
-            g.drawRoundRect(10, duplicadoDist + alturaCabecera + alturaDetalle + espacio, ancho - 20, alturaSubtotal, 0, 0);//SUBTOTAL
-            g.drawRoundRect(10, duplicadoDist + alturaCabecera + alturaDetalle + alturaSubtotal + espacio, ancho - 20, alturaTotal, 0, 0);//TOTAL
-            g.drawRoundRect(10, duplicadoDist + alturaCabecera + alturaDetalle + alturaSubtotal + alturaTotal + espacio, ancho - 20, alturaLiquidacion, 0, 0);//LIQUIDACION
+            g.drawRoundRect(10, duplicadoDist + 10, ancho - espacio, alturaCabecera, 0, 0);//CABECERA
+            g.drawRoundRect(10, duplicadoDist + alturaCabecera + espacio, ancho - espacio, alturaDetalle, 0, 0);//DETALLE
+            g.drawRoundRect(10, duplicadoDist + alturaCabecera + alturaDetalle + espacio, ancho - espacio, alturaSubtotal, 0, 0);//SUBTOTAL
+            g.drawRoundRect(10, duplicadoDist + alturaCabecera + alturaDetalle + alturaSubtotal + espacio, ancho - espacio, alturaTotal, 0, 0);//TOTAL
+            g.drawRoundRect(10, duplicadoDist + alturaCabecera + alturaDetalle + alturaSubtotal + alturaTotal + espacio, ancho - espacio, alturaLiquidacion, 0, 0);//LIQUIDACION
+            g.drawRoundRect(10, duplicadoDist + 10, ancho - espacio, 60, 0, 0);//CABECERA-DATOS EMPRESA
+            g.drawRoundRect(10, duplicadoDist + alturaCabecera + espacio, ancho - espacio, alturaDetalle, 0, 0);//DETALLE
+            g.drawRoundRect(10, duplicadoDist + alturaCabecera + alturaDetalle + espacio, ancho - espacio, alturaSubtotal, 0, 0);//SUBTOTAL
+            g.drawRoundRect(10, duplicadoDist + alturaCabecera + alturaDetalle + alturaSubtotal + espacio, ancho - espacio, alturaTotal, 0, 0);//TOTAL
+            g.drawRoundRect(10, duplicadoDist + alturaCabecera + alturaDetalle + alturaSubtotal + alturaTotal + espacio, ancho - espacio, alturaLiquidacion, 0, 0);//LIQUIDACION
+            //LINEAS DIVISORIAS DEL DETALLE
+            g.drawLine(10, duplicadoDist + alturaCabecera + espacio + espacio, ancho - 10, alturaCabecera + espacio + espacio);//CABECERA
+            g.drawLine(70, duplicadoDist + alturaCabecera + espacio, 70, alturaCabecera + alturaDetalle + espacio);//CANTIDAD
+            g.drawLine(ancho - (espacioPeque * 25), duplicadoDist + alturaCabecera + espacio, ancho - (espacioPeque * 25), alturaCabecera + alturaDetalle + espacio);//PRECIO
+            g.drawLine(ancho - (espacioPeque * 20), duplicadoDist + alturaCabecera + espacio, ancho - (espacioPeque * 20), alturaCabecera + alturaDetalle + espacio);//EXENTA
+            g.drawLine(ancho - (espacioPeque * 14), duplicadoDist + alturaCabecera + espacio, ancho - (espacioPeque * 14), alturaCabecera + alturaDetalle + espacio);//IVA5
+            g.drawLine(ancho - (espacioPeque * 8), duplicadoDist + alturaCabecera + espacio, ancho - (espacioPeque * 8), alturaCabecera + alturaDetalle + espacio);//IVA10        
+            g.drawLine(ancho - (espacioPeque * 20), duplicadoDist + alturaCabecera + (espacio * 2), ancho - (espacioPeque * 20), alturaCabecera + alturaDetalle + (espacio * 2));//SUBTOTAL EXENTA
+            g.drawLine(ancho - (espacioPeque * 14), duplicadoDist + alturaCabecera + (espacio * 2), ancho - (espacioPeque * 14), alturaCabecera + alturaDetalle + (espacio * 2));//SUBTOTAL IVA5
+            g.drawLine(ancho - (espacioPeque * 8), duplicadoDist + alturaCabecera + (espacio * 2), ancho - (espacioPeque * 8), alturaCabecera + alturaDetalle + (espacio * 2));//SUBTOTAL IVA10
+            g.drawLine(ancho - (espacioPeque * 8), duplicadoDist + alturaCabecera + (espacio * 3), ancho - (espacioPeque * 8), alturaCabecera + alturaDetalle + (espacio * 3));//SUBTOTAL
+            g.drawString("CANT", 20, duplicadoDist + alturaCabecera + espacio + 15);
+            g.drawString("PRODUCTO", 100, duplicadoDist + alturaCabecera + espacio + 15);
+            g.drawString("PRECIO", ancho - (espacioPeque * 24), duplicadoDist + alturaCabecera + 5 + espacioPeque * 3);
+            g.drawString("EXENTA", ancho - (espacioPeque * 19), duplicadoDist + alturaCabecera + 5 + espacioPeque * 3);
+            g.drawString("IVA5%", ancho - (espacioPeque * 12), duplicadoDist + alturaCabecera + 5 + espacioPeque * 3);
+            g.drawString("IVA10%", ancho - (espacioPeque * 6), duplicadoDist + alturaCabecera + 5 + espacioPeque * 3);
+            g.drawString("Sub total", 12, duplicadoDist + alturaCabecera + alturaDetalle + espacio + espacioPeque + 5);
+            g.drawString("LIQUIDACION I.V.A.", 12, duplicadoDist + alturaCabecera + alturaDetalle + alturaSubtotal + alturaTotal + espacio + espacioPeque + 5);
         }
         if (preferencia.getIdTriplicado() == 1) {
             int triplicadoDist = preferencia.getDistanceBetweenCopies() + preferencia.getDistanceBetweenCopies();
-            g.drawRoundRect(10, triplicadoDist + 10, ancho - 20, alturaCabecera, 0, 0);//CABECERA
-            g.drawRoundRect(10, triplicadoDist + alturaCabecera + espacio, ancho - 20, alturaDetalle, 0, 0);//DETALLE
-            g.drawRoundRect(10, triplicadoDist + alturaCabecera + alturaDetalle + espacio, ancho - 20, alturaSubtotal, 0, 0);//SUBTOTAL
-            g.drawRoundRect(10, triplicadoDist + alturaCabecera + alturaDetalle + alturaSubtotal + espacio, ancho - 20, alturaTotal, 0, 0);//TOTAL
-            g.drawRoundRect(10, triplicadoDist + alturaCabecera + alturaDetalle + alturaSubtotal + alturaTotal + espacio, ancho - 20, alturaLiquidacion, 0, 0);//LIQUIDACION
+            g.drawRoundRect(10, triplicadoDist + 10, ancho - espacio, alturaCabecera, 0, 0);//CABECERA
+            g.drawRoundRect(10, triplicadoDist + alturaCabecera + espacio, ancho - espacio, alturaDetalle, 0, 0);//DETALLE
+            g.drawRoundRect(10, triplicadoDist + alturaCabecera + alturaDetalle + espacio, ancho - espacio, alturaSubtotal, 0, 0);//SUBTOTAL
+            g.drawRoundRect(10, triplicadoDist + alturaCabecera + alturaDetalle + alturaSubtotal + espacio, ancho - espacio, alturaTotal, 0, 0);//TOTAL
+            g.drawRoundRect(10, triplicadoDist + alturaCabecera + alturaDetalle + alturaSubtotal + alturaTotal + espacio, ancho - espacio, alturaLiquidacion, 0, 0);//LIQUIDACION
+            g.drawRoundRect(10, triplicadoDist + 10, ancho - espacio, 60, 0, 0);//CABECERA-DATOS EMPRESA
+            g.drawRoundRect(10, triplicadoDist + alturaCabecera + espacio, ancho - espacio, alturaDetalle, 0, 0);//DETALLE
+            g.drawRoundRect(10, triplicadoDist + alturaCabecera + alturaDetalle + espacio, ancho - espacio, alturaSubtotal, 0, 0);//SUBTOTAL
+            g.drawRoundRect(10, triplicadoDist + alturaCabecera + alturaDetalle + alturaSubtotal + espacio, ancho - espacio, alturaTotal, 0, 0);//TOTAL
+            g.drawRoundRect(10, triplicadoDist + alturaCabecera + alturaDetalle + alturaSubtotal + alturaTotal + espacio, ancho - espacio, alturaLiquidacion, 0, 0);//LIQUIDACION
+            //LINEAS DIVISORIAS DEL DETALLE
+            g.drawLine(10, triplicadoDist + alturaCabecera + espacio + espacio, ancho - 10, alturaCabecera + espacio + espacio);//CABECERA
+            g.drawLine(70, triplicadoDist + alturaCabecera + espacio, 70, alturaCabecera + alturaDetalle + espacio);//CANTIDAD
+            g.drawLine(ancho - (espacioPeque * 25), triplicadoDist + alturaCabecera + espacio, ancho - (espacioPeque * 25), alturaCabecera + alturaDetalle + espacio);//PRECIO
+            g.drawLine(ancho - (espacioPeque * 20), triplicadoDist + alturaCabecera + espacio, ancho - (espacioPeque * 20), alturaCabecera + alturaDetalle + espacio);//EXENTA
+            g.drawLine(ancho - (espacioPeque * 14), triplicadoDist + alturaCabecera + espacio, ancho - (espacioPeque * 14), alturaCabecera + alturaDetalle + espacio);//IVA5
+            g.drawLine(ancho - (espacioPeque * 8), triplicadoDist + alturaCabecera + espacio, ancho - (espacioPeque * 8), alturaCabecera + alturaDetalle + espacio);//IVA10        
+            g.drawLine(ancho - (espacioPeque * 20), triplicadoDist + alturaCabecera + (espacio * 2), ancho - (espacioPeque * 20), alturaCabecera + alturaDetalle + (espacio * 2));//SUBTOTAL EXENTA
+            g.drawLine(ancho - (espacioPeque * 14), triplicadoDist + alturaCabecera + (espacio * 2), ancho - (espacioPeque * 14), alturaCabecera + alturaDetalle + (espacio * 2));//SUBTOTAL IVA5
+            g.drawLine(ancho - (espacioPeque * 8), triplicadoDist + alturaCabecera + (espacio * 2), ancho - (espacioPeque * 8), alturaCabecera + alturaDetalle + (espacio * 2));//SUBTOTAL IVA10
+            g.drawLine(ancho - (espacioPeque * 8), triplicadoDist + alturaCabecera + (espacio * 3), ancho - (espacioPeque * 8), alturaCabecera + alturaDetalle + (espacio * 3));//SUBTOTAL
+            g.drawString("CANT", 20, triplicadoDist + alturaCabecera + espacio + 15);
+            g.drawString("PRODUCTO", 100, triplicadoDist + alturaCabecera + espacio + 15);
+            g.drawString("PRECIO", ancho - (espacioPeque * 24), triplicadoDist + alturaCabecera + 5 + espacioPeque * 3);
+            g.drawString("EXENTA", ancho - (espacioPeque * 19), triplicadoDist + alturaCabecera + 5 + espacioPeque * 3);
+            g.drawString("IVA5%", ancho - (espacioPeque * 12), triplicadoDist + alturaCabecera + 5 + espacioPeque * 3);
+            g.drawString("IVA10%", ancho - (espacioPeque * 6), triplicadoDist + alturaCabecera + 5 + espacioPeque * 3);
+            g.drawString("Sub total", 12, triplicadoDist + alturaCabecera + alturaDetalle + espacio + espacioPeque + 5);
+            g.drawString("LIQUIDACION I.V.A.", 12, triplicadoDist + alturaCabecera + alturaDetalle + alturaSubtotal + alturaTotal + espacio + espacioPeque + 5);
         }
         Integer exenta = 0;
         Integer iva5 = 0;
@@ -455,14 +497,14 @@ public class BoletaPrintable implements Printable {
                     for (M_facturaDetalle fd : facturaDetalle) {
                         Integer precio = fd.getPrecio() - Math.round(Math.round(((fd.getPrecio() * fd.getDescuento()) / 100)));
                         //int precio = fd.getPrecio();
-                        g.drawString(integerFormat.format(precio) + "", posX, posY);
+                        g.drawString(decimalFormat.format(precio) + "", posX, posY);
                         if (preferencia.getIdDuplicado() == 1) {
                             int duplicadoDist = posY + preferencia.getDistanceBetweenCopies();
-                            g.drawString(integerFormat.format(precio) + "", posX, duplicadoDist);
+                            g.drawString(decimalFormat.format(precio) + "", posX, duplicadoDist);
                         }
                         if (preferencia.getIdTriplicado() == 1) {
                             int triplicadoDist = posY + preferencia.getDistanceBetweenCopies() + preferencia.getDistanceBetweenCopies();
-                            g.drawString(integerFormat.format(precio) + "", posX, triplicadoDist);
+                            g.drawString(decimalFormat.format(precio) + "", posX, triplicadoDist);
                         }
                         posY = posY + espaciadorY;
                     }
@@ -493,14 +535,14 @@ public class BoletaPrintable implements Printable {
                         if (fd.getProducto().getIdImpuesto() == 1) {
                             Integer precio = fd.getPrecio() - Math.round(Math.round(((fd.getPrecio() * fd.getDescuento()) / 100)));
                             int subtotal = Math.round(Math.round(fd.getCantidad() * precio));
-                            g.drawString(integerFormat.format(subtotal) + "", posX, posY);
+                            g.drawString(decimalFormat.format(subtotal) + "", posX, posY);
                             if (preferencia.getIdDuplicado() == 1) {
                                 int duplicadoDist = posY + preferencia.getDistanceBetweenCopies();
-                                g.drawString(integerFormat.format(subtotal) + "", posX, duplicadoDist);
+                                g.drawString(decimalFormat.format(subtotal) + "", posX, duplicadoDist);
                             }
                             if (preferencia.getIdTriplicado() == 1) {
                                 int triplicadoDist = posY + preferencia.getDistanceBetweenCopies() + preferencia.getDistanceBetweenCopies();
-                                g.drawString(integerFormat.format(subtotal) + "", posX, triplicadoDist);
+                                g.drawString(decimalFormat.format(subtotal) + "", posX, triplicadoDist);
                             }
                             exenta = exenta + subtotal;
                         }
@@ -515,14 +557,14 @@ public class BoletaPrintable implements Printable {
                         if (fd.getProducto().getIdImpuesto() == 2) {
                             Integer precio = fd.getPrecio() - Math.round(Math.round(((fd.getPrecio() * fd.getDescuento()) / 100)));
                             int subtotal = Math.round(Math.round(fd.getCantidad() * precio));
-                            g.drawString(integerFormat.format(subtotal) + "", posX, posY);
+                            g.drawString(decimalFormat.format(subtotal) + "", posX, posY);
                             if (preferencia.getIdDuplicado() == 1) {
                                 int duplicadoDist = posY + preferencia.getDistanceBetweenCopies();
-                                g.drawString(integerFormat.format(subtotal) + "", posX, duplicadoDist);
+                                g.drawString(decimalFormat.format(subtotal) + "", posX, duplicadoDist);
                             }
                             if (preferencia.getIdTriplicado() == 1) {
                                 int triplicadoDist = posY + preferencia.getDistanceBetweenCopies() + preferencia.getDistanceBetweenCopies();
-                                g.drawString(integerFormat.format(subtotal) + "", posX, triplicadoDist);
+                                g.drawString(decimalFormat.format(subtotal) + "", posX, triplicadoDist);
                             }
                             iva5 = iva5 + subtotal;
                         }
@@ -537,14 +579,14 @@ public class BoletaPrintable implements Printable {
                         if (fd.getProducto().getIdImpuesto() == 3) {
                             Integer precio = fd.getPrecio() - Math.round(Math.round(((fd.getPrecio() * fd.getDescuento()) / 100)));
                             int subtotal = Math.round(Math.round(fd.getCantidad() * precio));
-                            g.drawString(integerFormat.format(subtotal) + "", posX, posY);
+                            g.drawString(decimalFormat.format(subtotal) + "", posX, posY);
                             if (preferencia.getIdDuplicado() == 1) {
                                 int duplicadoDist = posY + preferencia.getDistanceBetweenCopies();
-                                g.drawString(integerFormat.format(subtotal) + "", posX, duplicadoDist);
+                                g.drawString(decimalFormat.format(subtotal) + "", posX, duplicadoDist);
                             }
                             if (preferencia.getIdTriplicado() == 1) {
                                 int triplicadoDist = posY + preferencia.getDistanceBetweenCopies() + preferencia.getDistanceBetweenCopies();
-                                g.drawString(integerFormat.format(subtotal) + "", posX, triplicadoDist);
+                                g.drawString(decimalFormat.format(subtotal) + "", posX, triplicadoDist);
                             }
                             iva10 = iva10 + subtotal;
                         }
@@ -555,42 +597,42 @@ public class BoletaPrintable implements Printable {
                 SUBTOTAL EXENTA
                  */
                 if (object.getCampo().equals(MyConstants.BOLETA_SUB_TOTAL)) {
-                    g.drawString(integerFormat.format(exenta) + "", posX, posY);
+                    g.drawString(decimalFormat.format(exenta) + "", posX, posY);
                     if (preferencia.getIdDuplicado() == 1) {
                         int duplicadoDist = posY + preferencia.getDistanceBetweenCopies();
-                        g.drawString(integerFormat.format(exenta) + "", posX, duplicadoDist);
+                        g.drawString(decimalFormat.format(exenta) + "", posX, duplicadoDist);
                     }
                     if (preferencia.getIdTriplicado() == 1) {
                         int triplicadoDist = posY + preferencia.getDistanceBetweenCopies() + preferencia.getDistanceBetweenCopies();
-                        g.drawString(integerFormat.format(exenta) + "", posX, triplicadoDist);
+                        g.drawString(decimalFormat.format(exenta) + "", posX, triplicadoDist);
                     }
                 }
                 /*
                 SUBTOTAL IVA5%
                  */
                 if (object.getCampo().equals(MyConstants.BOLETA_SUB_TOTAL_IVA5)) {
-                    g.drawString(integerFormat.format(iva5) + "", posX, posY);
+                    g.drawString(decimalFormat.format(iva5) + "", posX, posY);
                     if (preferencia.getIdDuplicado() == 1) {
                         int duplicadoDist = posY + preferencia.getDistanceBetweenCopies();
-                        g.drawString(integerFormat.format(iva5) + "", posX, duplicadoDist);
+                        g.drawString(decimalFormat.format(iva5) + "", posX, duplicadoDist);
                     }
                     if (preferencia.getIdTriplicado() == 1) {
                         int triplicadoDist = posY + preferencia.getDistanceBetweenCopies() + preferencia.getDistanceBetweenCopies();
-                        g.drawString(integerFormat.format(iva5) + "", posX, triplicadoDist);
+                        g.drawString(decimalFormat.format(iva5) + "", posX, triplicadoDist);
                     }
                 }
                 /*
                 SUBTOTAL IVA10%
                  */
                 if (object.getCampo().equals(MyConstants.BOLETA_SUB_TOTAL_IVA10)) {
-                    g.drawString(integerFormat.format(iva10) + "", posX, posY);
+                    g.drawString(decimalFormat.format(iva10) + "", posX, posY);
                     if (preferencia.getIdDuplicado() == 1) {
                         int duplicadoDist = posY + preferencia.getDistanceBetweenCopies();
-                        g.drawString(integerFormat.format(iva10) + "", posX, duplicadoDist);
+                        g.drawString(decimalFormat.format(iva10) + "", posX, duplicadoDist);
                     }
                     if (preferencia.getIdTriplicado() == 1) {
                         int triplicadoDist = posY + preferencia.getDistanceBetweenCopies() + preferencia.getDistanceBetweenCopies();
-                        g.drawString(integerFormat.format(iva10) + "", posX, triplicadoDist);
+                        g.drawString(decimalFormat.format(iva10) + "", posX, triplicadoDist);
                     }
                 }
                 /*
@@ -629,14 +671,14 @@ public class BoletaPrintable implements Printable {
                         int subtotal = Math.round(Math.round(fd.getCantidad() * fd.getPrecio()));
                         total = total + subtotal;
                     }
-                    g.drawString(integerFormat.format(total) + "", posX, posY);
+                    g.drawString(decimalFormat.format(total) + "", posX, posY);
                     if (preferencia.getIdDuplicado() == 1) {
                         int duplicadoDist = posY + preferencia.getDistanceBetweenCopies();
-                        g.drawString(integerFormat.format(total) + "", posX, duplicadoDist);
+                        g.drawString(decimalFormat.format(total) + "", posX, duplicadoDist);
                     }
                     if (preferencia.getIdTriplicado() == 1) {
                         int triplicadoDist = posY + preferencia.getDistanceBetweenCopies() + preferencia.getDistanceBetweenCopies();
-                        g.drawString(integerFormat.format(total) + "", posX, triplicadoDist);
+                        g.drawString(decimalFormat.format(total) + "", posX, triplicadoDist);
                     }
                 }
                 /*
@@ -647,14 +689,14 @@ public class BoletaPrintable implements Printable {
                     if (iva5 > 0) {
                         liquidacionIva5 = iva5 / 21;
                     }
-                    g.drawString("(5%): " + integerFormat.format(liquidacionIva5) + "", posX, posY);
+                    g.drawString("(5%): " + decimalFormat.format(liquidacionIva5) + "", posX, posY);
                     if (preferencia.getIdDuplicado() == 1) {
                         int duplicadoDist = posY + preferencia.getDistanceBetweenCopies();
-                        g.drawString("(5%): " + integerFormat.format(liquidacionIva5) + "", posX, duplicadoDist);
+                        g.drawString("(5%): " + decimalFormat.format(liquidacionIva5) + "", posX, duplicadoDist);
                     }
                     if (preferencia.getIdTriplicado() == 1) {
                         int triplicadoDist = posY + preferencia.getDistanceBetweenCopies() + preferencia.getDistanceBetweenCopies();
-                        g.drawString("(5%): " + integerFormat.format(liquidacionIva5) + "", posX, triplicadoDist);
+                        g.drawString("(5%): " + decimalFormat.format(liquidacionIva5) + "", posX, triplicadoDist);
                     }
                 }
                 /*
@@ -665,14 +707,14 @@ public class BoletaPrintable implements Printable {
                     if (iva10 > 0) {
                         liquidacionIva10 = iva10 / 11;
                     }
-                    g.drawString("(10%): " + integerFormat.format(liquidacionIva10) + "", posX, posY);
+                    g.drawString("(10%): " + decimalFormat.format(liquidacionIva10) + "", posX, posY);
                     if (preferencia.getIdDuplicado() == 1) {
                         int duplicadoDist = posY + preferencia.getDistanceBetweenCopies();
-                        g.drawString("(10%): " + integerFormat.format(liquidacionIva10) + "", posX, duplicadoDist);
+                        g.drawString("(10%): " + decimalFormat.format(liquidacionIva10) + "", posX, duplicadoDist);
                     }
                     if (preferencia.getIdTriplicado() == 1) {
                         int triplicadoDist = posY + preferencia.getDistanceBetweenCopies() + preferencia.getDistanceBetweenCopies();
-                        g.drawString("(10%): " + integerFormat.format(liquidacionIva10) + "", posX, triplicadoDist);
+                        g.drawString("(10%): " + decimalFormat.format(liquidacionIva10) + "", posX, triplicadoDist);
                     }
                 }
                 /*
@@ -680,14 +722,14 @@ public class BoletaPrintable implements Printable {
                  */
                 if (object.getCampo().equals(MyConstants.BOLETA_LIQ_TOTAL)) {
                     int liquidTotal = liquidacionIva5 + liquidacionIva10;
-                    g.drawString("Total I.V.A.: " + integerFormat.format(liquidTotal) + "", posX, posY);
+                    g.drawString("Total I.V.A.: " + decimalFormat.format(liquidTotal) + "", posX, posY);
                     if (preferencia.getIdDuplicado() == 1) {
                         int duplicadoDist = posY + preferencia.getDistanceBetweenCopies();
-                        g.drawString("Total I.V.A.: " + integerFormat.format(liquidTotal) + "", posX, duplicadoDist);
+                        g.drawString("Total I.V.A.: " + decimalFormat.format(liquidTotal) + "", posX, duplicadoDist);
                     }
                     if (preferencia.getIdTriplicado() == 1) {
                         int triplicadoDist = posY + preferencia.getDistanceBetweenCopies() + preferencia.getDistanceBetweenCopies();
-                        g.drawString("Total I.V.A.: " + integerFormat.format(liquidTotal) + "", posX, triplicadoDist);
+                        g.drawString("Total I.V.A.: " + decimalFormat.format(liquidTotal) + "", posX, triplicadoDist);
                     }
                 }
             }
