@@ -397,7 +397,7 @@ public class C_configuracionBoleta extends MouseAdapter implements ActionListene
         pi.setLetterSize(this.vista.jcbTamañoLetra.getSelectedIndex() + 1);
         pi.setFormatoFecha(this.vista.jcbFormatoFecha.getSelectedItem() + "");
         modelo.guardarPreferencias(pi);
-        Impresora.PREF_PRINT_FACTURA = DB_Preferencia.obtenerPreferenciaImpresionFactura();
+        Impresora.PREF_PRINT_BOLETA = DB_Preferencia.obtenerPreferenciaImpresionBoleta();
         javax.swing.JOptionPane.showMessageDialog(this.vista, "Cambios guardados",
                 "Éxito", javax.swing.JOptionPane.INFORMATION_MESSAGE);
     }

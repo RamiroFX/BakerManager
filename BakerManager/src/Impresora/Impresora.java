@@ -344,7 +344,6 @@ public class Impresora {
         fd10.setPrecio(250000);
         fd10.setProducto(prod10);
         faDetalles.add(fd10);
-        List<M_campoImpresion> textoAImprimir = DB_manager.obtenerCampoImpresion(3, MyConstants.ACTIVO);
         PrinterJob job = PrinterJob.getPrinterJob();
         Paper p = new Paper();
         PageFormat pf = new PageFormat();
@@ -353,8 +352,7 @@ public class Impresora {
         p.setSize(width, height);
         p.setImageableArea(PREF_PRINT_BOLETA.getMargenX(), PREF_PRINT_BOLETA.getMargenY(), width, height);
         pf.setPaper(p);
-        E_Empresa empresa = DB_manager.obtenerDatosEmpresa();
-        job.setPrintable(new BoletaPrintable(PREF_PRINT_BOLETA, fc, faDetalles, textoAImprimir, empresa), pf);
+        job.setPrintable(new BoletaPrintable(PREF_PRINT_BOLETA, fc, faDetalles), pf);
         PrintService[] services = PrintServiceLookup.lookupPrintServices(null, null);
         boolean existeImpresora = false;
         if (services.length > 0) {
@@ -997,6 +995,45 @@ public class Impresora {
             if (!existeImpresora) {
                 JOptionPane.showMessageDialog(null, "No se encontró la impresora " + nombreImpresora, "Error", JOptionPane.INFORMATION_MESSAGE);
             }
+        }
+    }
+
+    public static void imprimirBoletaVenta(M_facturaCabecera facturaCabecera, ArrayList<M_facturaDetalle> facturaDetalle) {
+        PrintService[] services = PrintServiceLookup.lookupPrintServices(null, null);
+        String nombreImpresora = PREF_PRINT_BOLETA.getNombreImpresora();
+        Paper p = new Paper();
+        PageFormat pf = new PageFormat();
+        System.out.println("facturaDetalle.size: " + facturaDetalle.size());
+        BoletaPrintable vp = new BoletaPrintable(PREF_PRINT_BOLETA, facturaCabecera, facturaDetalle);
+        PrinterJob job = PrinterJob.getPrinterJob();
+        int width = PREF_PRINT_BOLETA.getAnchoPagina();
+        int height = PREF_PRINT_BOLETA.getLargoPagina();
+        p.setSize(width, height);
+        p.setImageableArea(PREF_PRINT_BOLETA.getMargenX(), PREF_PRINT_BOLETA.getMargenY(), width, height);
+        pf.setPaper(p);
+        job.setPrintable(vp, pf);
+        boolean existeImpresora = false;
+        if (services.length > 0) {
+            for (PrintService service : services) {
+                if (service.getName().equals(nombreImpresora)) {
+                    existeImpresora = true;
+                    try {
+                        if (job != null) {
+                            job.setPrintService(service);
+                            job.print();
+                            break;
+                        } else {
+                            JOptionPane.showMessageDialog(null, "No se pudo imprimir", "Error", JOptionPane.INFORMATION_MESSAGE);
+                        }
+                    } catch (PrinterException ex) {
+                        System.out.println(ex);
+                    }
+                    break;
+                }
+            }
+        }
+        if (!existeImpresora) {
+            JOptionPane.showMessageDialog(null, "No se encontró la impresora " + nombreImpresora, "Error", JOptionPane.INFORMATION_MESSAGE);
         }
     }
 }

@@ -5,6 +5,7 @@
  */
 package Impresora;
 
+import DB.DB_manager;
 import Entities.E_Empresa;
 import Entities.M_campoImpresion;
 import Entities.M_facturaCabecera;
@@ -40,12 +41,12 @@ public class BoletaPrintable implements Printable {
     M_preferenciasImpresion preferencia;
     DecimalFormat decimalFormat;
 
-    public BoletaPrintable(M_preferenciasImpresion preferencia, M_facturaCabecera facturaCabecera, ArrayList<M_facturaDetalle> facturaDetalle, List<M_campoImpresion> impresions, E_Empresa empresa) {
+    public BoletaPrintable(M_preferenciasImpresion preferencia, M_facturaCabecera facturaCabecera, ArrayList<M_facturaDetalle> facturaDetalle) {
         this.preferencia = preferencia;
         this.facturaCabecera = facturaCabecera;
         this.facturaDetalle = facturaDetalle;
-        this.campoImpresiones = impresions;
-        this.empresa = empresa;
+        this.campoImpresiones = DB_manager.obtenerCampoImpresion(3, MyConstants.ACTIVO);
+        this.empresa = DB_manager.obtenerDatosEmpresa();
         this.decimalFormat = new DecimalFormat("###,###.###");
     }
 
