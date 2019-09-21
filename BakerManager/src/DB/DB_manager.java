@@ -1401,4 +1401,8 @@ public class DB_manager {
         }
         return result;
     }
+
+    public static void recordarSeleccionImpresion(int tipoVenta) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }
