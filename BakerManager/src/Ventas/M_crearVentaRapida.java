@@ -10,6 +10,7 @@ import DB.DB_Ingreso;
 import DB.DB_Preferencia;
 import DB.DB_Producto;
 import DB.DB_manager;
+import Entities.E_preferenciaGeneral;
 import Entities.M_facturaCabecera;
 import Entities.M_facturaDetalle;
 import Entities.M_preferenciasImpresion;
@@ -21,11 +22,9 @@ import ModeloTabla.InterfaceFacturaDetalle;
 import Parametros.TipoOperacion;
 import Parametros.TipoVenta;
 import Impresora.Impresora;
-import java.awt.EventQueue;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.Vector;
 import javax.swing.JOptionPane;
 
@@ -34,13 +33,13 @@ import javax.swing.JOptionPane;
  * @author Ramiro Ferreira
  */
 public class M_crearVentaRapida {
-    
+
     private static final String SELECCIONE_POR_LO_MENOS_UN_ARTICULO = "Seleccione por lo menos un artículo.";
     private static final String CONFIRMAR = "Confirmar";
     private static final String ATENCION = "Atención";
     private static final String DESEA_IMPRIMIR_EL_TICKET = "¿Desea imprimir la venta?";
     private static final String ESTA_SEGURO_QUE_DESEA_CONFIRMAR_LA_VENTA = "¿Está seguro que desea confirmar la venta?";
-    
+
     private M_facturaCabecera cabecera;
     private M_facturaDetalle detalle;
     private M_telefono telefono;
@@ -48,7 +47,7 @@ public class M_crearVentaRapida {
     private Integer tipoVenta;
     private Integer maxProdCant;
     private M_preferenciasImpresion pi;
-    
+
     public M_crearVentaRapida(InterfaceFacturaDetalle interfaceFacturaDetalle) {
         this.cabecera = new M_facturaCabecera();
         this.cabecera.setCliente(DB_Cliente.obtenerDatosClienteID(1));//mostrador
@@ -64,19 +63,19 @@ public class M_crearVentaRapida {
         pi = DB_Preferencia.obtenerPreferenciaImpresionFactura();
         maxProdCant = pi.getMaxProducts();
     }
-    
+
     public M_facturaCabecera getCabecera() {
         return cabecera;
     }
-    
+
     public void setCabecera(M_facturaCabecera cabecera) {
         this.cabecera = cabecera;
     }
-    
+
     public M_facturaDetalle getDetalle() {
         return detalle;
     }
-    
+
     public void setDetalle(M_facturaDetalle detalle) {
         this.detalle = detalle;
     }
@@ -108,13 +107,13 @@ public class M_crearVentaRapida {
     public void setTelefono(M_telefono telefono) {
         this.telefono = telefono;
     }
-    
+
     public void validarDatos() {
     }
-    
+
     public void insertarVenta() {
     }
-    
+
     public boolean guardarVenta() {
         if (getDtm().getFacturaDetalleList().isEmpty()) {
             JOptionPane.showConfirmDialog(null, SELECCIONE_POR_LO_MENOS_UN_ARTICULO, ATENCION, JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
@@ -130,6 +129,10 @@ public class M_crearVentaRapida {
                 getCabecera().setTiempo(new Timestamp(c.getTimeInMillis()));
                 int opcion = JOptionPane.showConfirmDialog(null, DESEA_IMPRIMIR_EL_TICKET, ATENCION, JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
                 if (opcion == JOptionPane.YES_OPTION) {
+                    E_preferenciaGeneral pg = DB_Preferencia.obtenerPreferenciaGeneral();
+                    if (pg != null) {
+                        System.out.println("Ventas.M_crearVentaRapida.guardarVenta(): " + pg);
+                    }
                     if (tipoVenta == TipoVenta.TICKET) {
                         //TODO elejir tipo de comprobate impreso(ticket o boleta)
                         javax.swing.JCheckBox check = new javax.swing.JCheckBox("Recordar");
@@ -167,7 +170,7 @@ public class M_crearVentaRapida {
         }
         return false;
     }
-    
+
     public void limpiarCampos() {
         this.cabecera.setCliente(DB_Cliente.obtenerDatosClienteID(1));//mostrador
         this.cabecera.setIdCondVenta(TipoOperacion.CONTADO);
@@ -195,30 +198,30 @@ public class M_crearVentaRapida {
     private void recordarPreferencia(int tipoVenta) {
         DB_manager.recordarSeleccionImpresion(tipoVenta);
     }
-    
+
     boolean existeProductoPorCodigo(String codigoProducto) {
         return DB_Producto.existeCodigo(codigoProducto);
     }
-    
+
     public M_producto obtenerProductoPorCodigo(String codigoProducto) {
         M_producto unProducto = DB_Producto.obtenerProductoPorCodigo(codigoProducto);
         return unProducto;
     }
-    
+
     public int getNroFactura() {
         int nroFactura;
         nroFactura = DB_Ingreso.obtenerUltimoNroFactura() + 1;
         return nroFactura;
     }
-    
+
     public boolean nroFacturaEnUso(int nroFactura) {
         return DB_Ingreso.nroFacturaEnUso(nroFactura);
     }
-    
+
     public Vector obtenerTipoOperacion() {
         return DB_Egreso.obtenerTipoOperacion();
     }
-    
+
     public Vector obtenerTipoVenta() {
         return DB_manager.obtenerTipoVenta();
     }
@@ -243,5 +246,5 @@ public class M_crearVentaRapida {
     public Integer getMaxProdCant() {
         return maxProdCant;
     }
-    
+
 }

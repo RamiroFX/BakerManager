@@ -1402,7 +1402,49 @@ public class DB_manager {
         return result;
     }
 
-    public static void recordarSeleccionImpresion(int tipoVenta) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public static int recordarSeleccionImpresion(Integer tipoVenta) {
+        String UPDATE = "UPDATE preferencia_general SET id_impresion_tipo=? WHERE id_preferencia_general = 1;";
+        int result = -1;
+        try {
+            DB_manager.getConection().setAutoCommit(false);
+            pst = DB_manager.getConection().prepareStatement(UPDATE);
+            try {
+                if (tipoVenta != null) {
+                    pst.setInt(1, tipoVenta);
+                } else {
+                    pst.setNull(1, Types.INTEGER);
+                }
+            } catch (Exception e) {
+                pst.setNull(1, Types.INTEGER);
+            }
+            result = pst.executeUpdate();
+            DB_manager.getConection().commit();
+        } catch (SQLException ex) {
+            System.out.println(ex.getNextException());
+            if (DB_manager.getConection() != null) {
+                try {
+                    DB_manager.getConection().rollback();
+                } catch (SQLException ex1) {
+                    Logger lgr = Logger.getLogger(DB_Producto.class.getName());
+                    lgr.log(Level.WARNING, ex1.getMessage(), ex1);
+                }
+            }
+            Logger lgr = Logger.getLogger(DB_Producto.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        } finally {
+            try {
+                if (pst != null) {
+                    pst.close();
+                }
+                if (rs != null) {
+                    rs.close();
+                }
+            } catch (SQLException ex) {
+                Logger lgr = Logger.getLogger(DB_Producto.class.getName());
+                lgr.log(Level.WARNING, ex.getMessage(), ex);
+            }
+        }
+        return result;
     }
+    
 }

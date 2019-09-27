@@ -6,6 +6,7 @@
 package DB;
 
 import Entities.Divisa;
+import Entities.E_preferenciaGeneral;
 import Entities.E_ticketPreferencia;
 import Entities.M_preferenciasImpresion;
 import java.sql.PreparedStatement;
@@ -322,4 +323,23 @@ public class DB_Preferencia {
         return ticketPref;
     }
 
+    public static E_preferenciaGeneral obtenerPreferenciaGeneral() {
+        E_preferenciaGeneral prefGeneral = null;
+        String Query = "SELECT id_preferencia_general, "
+                + "id_impresion_tipo "
+                + "FROM preferencia_general WHERE id_preferencia_general = 1 ";
+        try {
+            pst = DB_manager.getConection().prepareStatement(Query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            rs = pst.executeQuery();
+            while (rs.next()) {
+                prefGeneral = new E_preferenciaGeneral();
+                prefGeneral.setIdPreferenciaGeneral(rs.getInt(1));
+                prefGeneral.setIdImpresionTipo(rs.getInt(2));
+            }
+        } catch (SQLException ex) {
+            Logger lgr = Logger.getLogger(DB_Producto.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        }
+        return prefGeneral;
+    }
 }
