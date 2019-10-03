@@ -249,8 +249,9 @@ public class C_gestionPedido implements GestionInterface {
         VerPedido vp = new VerPedido(this, idPedido);
         vp.mostrarVista();
         //Refrescar tabla
-        this.vista.jtPedido.setModel(this.modelo.getPedidosPendientes());
-        this.vista.jtPedidoDetalle.setModel(this.modelo.getDtm());
+        //this.vista.jtPedido.setModel(this.modelo.getPedidosPendientes());
+        //this.vista.jtPedidoDetalle.setModel(this.modelo.getDtm());
+        displayQueryResults();
         Utilities.c_packColumn.packColumns(this.vista.jtPedido, 1);
         controlarTablaPedido();
         this.vista.jbDetalle.setEnabled(false);

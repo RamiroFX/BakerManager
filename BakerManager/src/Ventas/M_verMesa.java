@@ -6,6 +6,7 @@ package Ventas;
 
 import DB.DB_Egreso;
 import DB.DB_Ingreso;
+import DB.DB_Producto;
 import DB.DB_manager;
 import DB.ResultSetTableModel;
 import Entities.M_cliente;
@@ -92,6 +93,15 @@ public class M_verMesa {
         if (opcion == JOptionPane.YES_OPTION) {
             Impresora.imprimirTicketVentaMesa(getMesa(), getDetalles());
         }
+    }
+    
+    boolean existeProductoPorCodigo(String codigoProducto) {
+        return DB_Producto.existeCodigo(codigoProducto);
+    }
+
+    public M_producto obtenerProductoPorCodigo(String codigoProducto) {
+        M_producto unProducto = DB_Producto.obtenerProductoPorCodigo(codigoProducto);
+        return unProducto;
     }
 
     public void guardarVentaDetalle() {

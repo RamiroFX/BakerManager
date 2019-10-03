@@ -37,6 +37,7 @@ public class SeleccionarCantidadProduducto extends javax.swing.JDialog implement
     public static final int MODIFICAR_MESA_DETALLE = 9;
     public static final int MODIFICAR_PEDIDO_DETALLE = 10;
     public static final int VER_PEDIDO_DETALLE = 11;
+    public static final int AGREGAR_MESA_DETALLE = 13;
     private javax.swing.JButton jbCancel;
     private javax.swing.JButton jbOK;
     private javax.swing.JLabel jlCantidad, jlDescuento, jlPrecio, jlObservacion;
@@ -101,7 +102,7 @@ public class SeleccionarCantidadProduducto extends javax.swing.JDialog implement
         tipo = MODIFICAR_INGRESO;
         this.crear_ingreso = crear_ingreso;
         this.row = row;
-        this.producto = crear_ingreso.modelo.getDtm().getFacturaDetalleList().get(row).getProducto();
+        this.producto = crear_ingreso.modelo.getTableModel().getFacturaDetalleList().get(row).getProducto();
         initComponents();
     }
 
@@ -142,6 +143,18 @@ public class SeleccionarCantidadProduducto extends javax.swing.JDialog implement
         initComponents();
     }
 
+    public SeleccionarCantidadProduducto(C_verMesa aThis, M_producto unProducto) {
+        super(aThis.vista, true);
+        setTitle("Seleccione una cantidad");
+        setSize(new java.awt.Dimension(300, 250));
+        setLocationRelativeTo(aThis.vista);
+        tipo = AGREGAR_MESA_DETALLE;
+        this.verMesa = aThis;
+        this.producto = unProducto;
+        initComponents();
+        inicializarVista(unProducto);
+    }
+
     private void inicializarVista(M_producto producto) {
         switch (tipo) {
             case (C_seleccionarProducto.CREAR_PEDIDO): {
@@ -165,6 +178,10 @@ public class SeleccionarCantidadProduducto extends javax.swing.JDialog implement
             }
             case (C_seleccionarProducto.CREAR_EGRESO): {
                 jtfPrecio.setText(producto.getPrecioCosto().toString());
+                break;
+            }
+            case (AGREGAR_MESA_DETALLE): {
+                jtfPrecio.setText(producto.getPrecioVenta().toString());
                 break;
             }
             default: {
@@ -315,6 +332,17 @@ public class SeleccionarCantidadProduducto extends javax.swing.JDialog implement
                         }
                         case (MODIFICAR_MESA_DETALLE): {
                             verMesa.modificarDetalle(producto, cantidad, precio, descuento, observacion, row);
+                            break;
+                        }
+                        case (AGREGAR_MESA_DETALLE): {
+                            M_facturaDetalle detalle = new M_facturaDetalle();
+                            detalle.setCantidad(cantidad);
+                            detalle.setDescuento(descuento);
+                            detalle.setPrecio(precio);
+                            detalle.setObservacion(observacion);
+                            detalle.setProducto(producto);
+                            detalle.setIdProducto(producto.getId());
+                            verMesa.recibirDetalle(detalle);
                             break;
                         }
                         case (C_seleccionarProducto.CREAR_PEDIDO): {

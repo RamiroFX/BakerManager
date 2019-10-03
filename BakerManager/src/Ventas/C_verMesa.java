@@ -15,7 +15,6 @@ import Entities.M_telefono;
 import Parametros.TipoOperacion;
 import Producto.SeleccionarCantidadProduducto;
 import Producto.SeleccionarProducto;
-import Impresora.Impresora;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -32,6 +31,9 @@ import javax.swing.JOptionPane;
  * @author Ramiro Ferreira
  */
 public class C_verMesa extends MouseAdapter implements ActionListener, KeyListener {
+
+    private static final String TITULO_ERROR = "Error";
+    private static final String PRODUCTO_NO_EXISTE = "El producto no existe";
 
     public M_verMesa modelo;
     public V_crearVentaRapida vista;
@@ -103,6 +105,7 @@ public class C_verMesa extends MouseAdapter implements ActionListener, KeyListen
         this.vista.jbAgregarProducto.addActionListener(this);
         this.vista.jbImprimir.addActionListener(this);
         this.vista.jbCliente.addActionListener(this);
+        this.vista.jtfCodProd.addActionListener(this);
         this.vista.jtFacturaDetalle.addMouseListener(this);
         this.vista.jbEliminarDetalle.addActionListener(this);
         this.vista.jbModificarDetalle.addActionListener(this);
@@ -317,6 +320,28 @@ public class C_verMesa extends MouseAdapter implements ActionListener, KeyListen
         this.crearVentas.actualizarTablaMesa();
     }
 
+    private void agregarProductoPorCodigo() {
+        final C_verMesa aThis = this;
+        EventQueue.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                //OBTENER CODIGO DESDE LA PISTOLA DE COD DE BARRAS
+                String codigoProducto = vista.jtfCodProd.getText().trim();
+                //VERIFICAR SI EXISTE EL PRODUCTO EN LA BD
+                boolean existeProd = modelo.existeProductoPorCodigo(codigoProducto);
+                if (existeProd) {
+                    //SELECCIONAR CANTIDAD DE PRODUCTO
+                    M_producto unProducto = modelo.obtenerProductoPorCodigo(codigoProducto);
+                    SeleccionarCantidadProduducto scp = new SeleccionarCantidadProduducto(aThis, unProducto);
+                    scp.setVisible(true);
+                    vista.jtfCodProd.setText("");
+                } else {
+                    JOptionPane.showMessageDialog(vista, PRODUCTO_NO_EXISTE, TITULO_ERROR, JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
+    }
+
     private void imprimirTicket() {
         EventQueue.invokeLater(new Runnable() {
             @Override
@@ -344,6 +369,9 @@ public class C_verMesa extends MouseAdapter implements ActionListener, KeyListen
         if (e.getSource().equals(this.vista.jbAgregarProducto)) {
             SeleccionarProducto sp = new SeleccionarProducto(this);
             sp.mostrarVista();
+        }
+        if (e.getSource().equals(this.vista.jtfCodProd)) {
+            agregarProductoPorCodigo();
         }
         if (e.getSource().equals(this.vista.jbCliente)) {
             Seleccionar_cliente sp = new Seleccionar_cliente(this);

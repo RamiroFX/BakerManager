@@ -77,7 +77,7 @@ public class C_crearVentaRapida implements GestionInterface, InterfaceFacturaDet
             this.vista.jcbTipoVenta.addItem(tipoVenta.get(i));
         }
         //this.vista.jrbContado.setSelected(true);
-        this.vista.jtFacturaDetalle.setModel(this.modelo.getDtm());
+        this.vista.jtFacturaDetalle.setModel(this.modelo.getTableModel());
         this.vista.jbModificarDetalle.setEnabled(false);
         this.vista.jbEliminarDetalle.setEnabled(false);
         java.awt.Font fuente = new java.awt.Font("Times New Roman", 0, 18);
@@ -136,7 +136,7 @@ public class C_crearVentaRapida implements GestionInterface, InterfaceFacturaDet
         EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
-                if (modelo.getDtm().getFacturaDetalleList().isEmpty()) {
+                if (modelo.getTableModel().getFacturaDetalleList().isEmpty()) {
                     vista.dispose();
                 } else {
                     int opcion = JOptionPane.showConfirmDialog(vista, "¿Cancelar venta?", "Atención", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
@@ -152,12 +152,12 @@ public class C_crearVentaRapida implements GestionInterface, InterfaceFacturaDet
         EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
-                if (modelo.getDtm().getFacturaDetalleList().isEmpty()) {
+                if (modelo.getTableModel().getFacturaDetalleList().isEmpty()) {
                     JOptionPane.showMessageDialog(vista, "No hay productos cargados", "Atención", JOptionPane.INFORMATION_MESSAGE);
                 } else {
                     int opcion = JOptionPane.showConfirmDialog(vista, "¿Desea imprimir la venta?", "Atención", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
                     if (opcion == JOptionPane.YES_OPTION) {
-                        Impresora.imprimirTicketVenta(DatosUsuario.getRol_usuario(), modelo.getCabecera(), (ArrayList<M_facturaDetalle>) modelo.getDtm().getFacturaDetalleList());
+                        Impresora.imprimirTicketVenta(DatosUsuario.getRol_usuario(), modelo.getCabecera(), (ArrayList<M_facturaDetalle>) modelo.getTableModel().getFacturaDetalleList());
                     }
                 }
             }
@@ -189,19 +189,13 @@ public class C_crearVentaRapida implements GestionInterface, InterfaceFacturaDet
                     imp10 = total;
                     break;
             }
-            if (null != detalle.getObservacion()) {
-                if (!detalle.getObservacion().isEmpty()) {
-                    String aux = detalle.getProducto().getDescripcion();
-                    detalle.getProducto().setDescripcion(aux + "-(" + detalle.getObservacion() + ")");
-                }
+            if (null == detalle.getObservacion()) {
+                detalle.setObservacion("");
             }
-            //Object[] rowData = {detalle.getProducto().getId(), detalle.getCantidad(), detalle.getProducto().getDescripcion(), detalle.getPrecio(), detalle.getDescuento(), impExenta, imp5, imp10};
             detalle.setExenta(impExenta);
             detalle.setIva5(imp5);
             detalle.setIva10(imp10);
-            //this.modelo.getDetalles().add(detalle);
-            this.modelo.getDtm().agregarDetalle(detalle);
-            //this.vista.jtFacturaDetalle.updateUI();
+            this.modelo.agregarDetalle(detalle);
             Utilities.c_packColumn.packColumns(this.vista.jtFacturaDetalle, 1);
             sumarTotal();
         } else {
@@ -214,7 +208,7 @@ public class C_crearVentaRapida implements GestionInterface, InterfaceFacturaDet
 
     private void eliminarDetalle() {
         int row = this.vista.jtFacturaDetalle.getSelectedRow();
-        this.modelo.getDtm().quitarDetalle(row);
+        this.modelo.getTableModel().quitarDetalle(row);
         //this.vista.jtFacturaDetalle.updateUI();
         this.vista.jbEliminarDetalle.setEnabled(false);
         this.vista.jbModificarDetalle.setEnabled(false);
@@ -222,17 +216,17 @@ public class C_crearVentaRapida implements GestionInterface, InterfaceFacturaDet
     }
 
     public void modificarDetalle(Double cantidad, Integer precio, Double descuento, String observacion, int row) {
-        this.modelo.getDtm().setValueAt(cantidad, row, 1);
-        this.modelo.getDtm().setValueAt(precio, row, 3);
-        this.modelo.getDtm().setValueAt(descuento, row, 4);
-        M_producto prod = this.modelo.getDtm().getFacturaDetalleList().get(row).getProducto();
+        this.modelo.getTableModel().setValueAt(cantidad, row, 1);
+        this.modelo.getTableModel().setValueAt(precio, row, 3);
+        this.modelo.getTableModel().setValueAt(descuento, row, 4);
+        M_producto prod = this.modelo.getTableModel().getFacturaDetalleList().get(row).getProducto();
         String producto = prod.getDescripcion();
         if (null != observacion) {
             if (!observacion.isEmpty()) {
                 producto = producto + "- (" + observacion + ")";
             }
         }
-        this.modelo.getDtm().setValueAt(producto, row, 2);
+        this.modelo.getTableModel().setValueAt(producto, row, 2);
         Integer impExenta = null;
         Integer imp5 = null;
         Integer imp10 = null;
@@ -251,10 +245,10 @@ public class C_crearVentaRapida implements GestionInterface, InterfaceFacturaDet
             imp5 = 0;
             imp10 = total;
         }
-        this.modelo.getDtm().setValueAt(impExenta, row, 5);
-        this.modelo.getDtm().setValueAt(imp5, row, 6);
-        this.modelo.getDtm().setValueAt(imp10, row, 7);
-        M_facturaDetalle detalle = this.modelo.getDtm().getFacturaDetalleList().get(row);
+        this.modelo.getTableModel().setValueAt(impExenta, row, 5);
+        this.modelo.getTableModel().setValueAt(imp5, row, 6);
+        this.modelo.getTableModel().setValueAt(imp10, row, 7);
+        M_facturaDetalle detalle = this.modelo.getTableModel().getFacturaDetalleList().get(row);
         detalle.setCantidad(cantidad);
         detalle.setPrecio(precio);
         detalle.setDescuento(descuento);
@@ -270,10 +264,10 @@ public class C_crearVentaRapida implements GestionInterface, InterfaceFacturaDet
         Integer iva5 = 0;
         Integer iva10 = 0;
         Integer total = 0;
-        for (int i = 0; i < this.modelo.getDtm().getRowCount(); i++) {
-            exenta = exenta + Integer.valueOf(String.valueOf(this.modelo.getDtm().getValueAt(i, 5)));
-            iva5 = iva5 + Integer.valueOf(String.valueOf(this.modelo.getDtm().getValueAt(i, 6)));
-            iva10 = iva10 + Integer.valueOf(String.valueOf(this.modelo.getDtm().getValueAt(i, 7)));
+        for (int i = 0; i < this.modelo.getTableModel().getRowCount(); i++) {
+            exenta = exenta + Integer.valueOf(String.valueOf(this.modelo.getTableModel().getValueAt(i, 5)));
+            iva5 = iva5 + Integer.valueOf(String.valueOf(this.modelo.getTableModel().getValueAt(i, 6)));
+            iva10 = iva10 + Integer.valueOf(String.valueOf(this.modelo.getTableModel().getValueAt(i, 7)));
         }
         total = exenta + iva5 + iva10;
         this.vista.jftExenta.setValue(exenta);
@@ -315,7 +309,7 @@ public class C_crearVentaRapida implements GestionInterface, InterfaceFacturaDet
             this.modelo.getCabecera().setNroFactura(null);
             if (this.modelo.guardarVenta()) {
                 this.modelo.limpiarCampos();
-                this.vista.jtFacturaDetalle.setModel(this.modelo.getDtm());
+                this.vista.jtFacturaDetalle.setModel(this.modelo.getTableModel());
                 recibirCliente(this.modelo.getCabecera().getCliente());
                 establecerNroFactura();
                 establecerCondicionVenta();
@@ -329,7 +323,7 @@ public class C_crearVentaRapida implements GestionInterface, InterfaceFacturaDet
                 this.modelo.getCabecera().setNroFactura(Integer.valueOf(nroFactura));
                 if (this.modelo.guardarVenta()) {
                     this.modelo.limpiarCampos();
-                    this.vista.jtFacturaDetalle.setModel(this.modelo.getDtm());
+                    this.vista.jtFacturaDetalle.setModel(this.modelo.getTableModel());
                     recibirCliente(this.modelo.getCabecera().getCliente());
                     establecerNroFactura();
                     establecerCondicionVenta();

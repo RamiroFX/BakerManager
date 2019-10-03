@@ -647,8 +647,15 @@ public class Impresora {
             } else if (fd.getProducto().getIdImpuesto() == 3) {
                 iva10 = iva10 + subtotal;
             }
+            //agregar observacion si es que tiene
+            String prodDescripcion = fd.getProducto().getDescripcion();
+            if (null != fd.getObservacion()) {
+                if (!fd.getObservacion().isEmpty()) {
+                    prodDescripcion = prodDescripcion + "-(" + fd.getObservacion() + ")";
+                }
+            }
             total = total + subtotal;
-            DETALLE = DETALLE + "-> " + fd.getProducto().getDescripcion() + "\n" + fd.getCantidad() + " " + precio + "  " + subtotal + "\n";
+            DETALLE = DETALLE + "-> " + prodDescripcion + "\n" + fd.getCantidad() + " " + precio + "  " + subtotal + "\n";
         }
         iva5 = iva5 / 21;
         iva10 = iva10 / 11;
@@ -717,8 +724,15 @@ public class Impresora {
             } else if (fd.getProducto().getIdImpuesto() == 3) {
                 iva10 = iva10 + subtotal;
             }
+            //agregar observacion si es que tiene
+            String prodDescripcion = fd.getProducto().getDescripcion();
+            if (null != fd.getObservacion()) {
+                if (!fd.getObservacion().isEmpty()) {
+                    prodDescripcion = prodDescripcion + "-(" + fd.getObservacion() + ")";
+                }
+            }
             total = total + subtotal;
-            DETALLE = DETALLE + "-> " + fd.getProducto().getDescripcion() + "\n" + fd.getCantidad() + " " + precio + "  " + subtotal + "\n";
+            DETALLE = DETALLE + "-> " + prodDescripcion + "\n" + fd.getCantidad() + " " + precio + "  " + subtotal + "\n";
         }
         iva5 = iva5 / 21;
         iva10 = iva10 / 11;
@@ -823,8 +837,15 @@ public class Impresora {
             } else if (md.getProducto().getIdImpuesto() == 3) {
                 iva10 = iva10 + subtotal;
             }
+            //agregar observacion si es que tiene
+            String prodDescripcion = md.getProducto().getDescripcion();
+            if (null != md.getObservacion()) {
+                if (!md.getObservacion().isEmpty()) {
+                    prodDescripcion = prodDescripcion + "-(" + md.getObservacion() + ")";
+                }
+            }
             total = total + subtotal;
-            DETALLE = DETALLE + "-> " + md.getProducto().getDescripcion() + "\n" + md.getCantidad() + " " + precio + "  " + subtotal + "\n";
+            DETALLE = DETALLE + "-> " + prodDescripcion + "\n" + md.getCantidad() + " " + precio + "  " + subtotal + "\n";
         }
         iva5 = iva5 / 21;
         iva10 = iva10 / 11;
@@ -893,8 +914,15 @@ public class Impresora {
             } else if (md.getProducto().getIdImpuesto() == 3) {
                 iva10 = iva10 + subtotal;
             }
+            //agregar observacion si es que tiene
+            String prodDescripcion = md.getProducto().getDescripcion();
+            if (null != md.getObservacion()) {
+                if (!md.getObservacion().isEmpty()) {
+                    prodDescripcion = prodDescripcion + "-(" + md.getObservacion() + ")";
+                }
+            }
             total = total + subtotal;
-            DETALLE = DETALLE + "-> " + md.getProducto().getDescripcion() + "\n" + md.getCantidad() + " " + precio + "  " + subtotal + "\n";
+            DETALLE = DETALLE + "-> " + prodDescripcion + "\n" + md.getCantidad() + " " + precio + "  " + subtotal + "\n";
         }
         iva5 = iva5 / 21;
         iva10 = iva10 / 11;

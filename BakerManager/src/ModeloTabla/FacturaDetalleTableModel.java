@@ -23,7 +23,7 @@ public class FacturaDetalleTableModel extends AbstractTableModel {
     private static final String ATENCION = "Atención";
 
     private List<M_facturaDetalle> facturaDetalleList;
-    private final String[] colNames = {"Cod.", "Cantidad", "Descripcion", "Precio", "Descuento", "Exenta", "IVA 5%", "IVA 10%"};
+    private final String[] colNames = {"Cod.", "Cantidad", "Descripcion", "Precio", "Descuento", "Exenta", "IVA 5%", "IVA 10%", "Observacion"};
 
     private final InterfaceFacturaDetalle interfaceFacturaDetalle;
 
@@ -113,6 +113,9 @@ public class FacturaDetalleTableModel extends AbstractTableModel {
                     return Math.round(Math.round((fd.getCantidad() * Precio)));
                 }
                 return 0;
+            }
+            case 8: {
+               return fd.getObservacion();
             }
             default: {
                 return null;
