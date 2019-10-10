@@ -6,6 +6,7 @@
 package DB;
 
 import Entities.Divisa;
+import Entities.E_impresionOrientacion;
 import Entities.E_preferenciaGeneral;
 import Entities.E_ticketPreferencia;
 import Entities.M_preferenciasImpresion;
@@ -41,7 +42,8 @@ public class DB_Preferencia {
                 + "ancho_pagina=?, "
                 + "largo_pagina=?, "
                 + "margen_x=?, "
-                + "margen_y=? "
+                + "margen_y=?, "
+                + "id_impresion_orientacion=? "
                 + "WHERE id_preferencia_impresion = 1;";
         int result = -1;
         try {
@@ -61,6 +63,7 @@ public class DB_Preferencia {
             pst.setInt(12, prefPrint.getLargoPagina());
             pst.setDouble(13, prefPrint.getMargenX());
             pst.setDouble(14, prefPrint.getMargenY());
+            pst.setDouble(15, prefPrint.getOrientacion().getId());
             result = pst.executeUpdate();
             DB_manager.getConection().commit();
         } catch (SQLException ex) {
@@ -106,7 +109,8 @@ public class DB_Preferencia {
                 + "ancho_pagina=?, "
                 + "largo_pagina=?, "
                 + "margen_x=?, "
-                + "margen_y=? "
+                + "margen_y=?, "
+                + "id_impresion_orientacion=? "
                 + "WHERE id_preferencia_impresion = 2;";
         int result = -1;
         try {
@@ -126,6 +130,7 @@ public class DB_Preferencia {
             pst.setInt(12, prefPrint.getLargoPagina());
             pst.setDouble(13, prefPrint.getMargenX());
             pst.setDouble(14, prefPrint.getMargenY());
+            pst.setDouble(15, prefPrint.getOrientacion().getId());
             result = pst.executeUpdate();
             DB_manager.getConection().commit();
         } catch (SQLException ex) {
@@ -216,7 +221,9 @@ public class DB_Preferencia {
                 + "largo_pagina, "
                 + "margen_x, "
                 + "margen_y, "
-                + "(SELECT descripcion FROM divisa WHERE id_divisa = preferencia_impresion.id_divisa)\"divisa_descripcion\" "
+                + "id_impresion_orientacion, "
+                + "(SELECT descripcion FROM divisa WHERE id_divisa = preferencia_impresion.id_divisa)\"divisa_descripcion\", "
+                + "(SELECT descripcion FROM impresion_orientacion WHERE id_impresion_orientacion = preferencia_impresion.id_impresion_orientacion)\"orientacion_descripcion\" "
                 + "FROM preferencia_impresion WHERE id_preferencia_impresion =1 ";
         try {
             pst = DB_manager.getConection().prepareStatement(Query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
@@ -225,9 +232,13 @@ public class DB_Preferencia {
                 Divisa d = new Divisa();
                 d.setId(rs.getInt("id_divisa"));
                 d.setDescripcion(rs.getString("divisa_descripcion"));
+                E_impresionOrientacion o = new E_impresionOrientacion();
+                o.setId(rs.getInt("id_impresion_orientacion"));
+                o.setDescripcion(rs.getString("orientacion_descripcion"));
                 prefPrint = new M_preferenciasImpresion();
                 prefPrint.setDistanceBetweenCopies(rs.getInt("distancia_entre_copias"));
                 prefPrint.setDivisa(d);
+                prefPrint.setOrientacion(o);
                 prefPrint.setId(rs.getInt("id_preferencia_impresion"));
                 prefPrint.setIdDuplicado(rs.getInt("id_estado_duplicado"));
                 prefPrint.setIdTriplicado(rs.getInt("id_estado_triplicado"));
@@ -266,7 +277,9 @@ public class DB_Preferencia {
                 + "largo_pagina, "
                 + "margen_x, "
                 + "margen_y, "
-                + "(SELECT descripcion FROM divisa WHERE id_divisa = preferencia_impresion.id_divisa)\"divisa_descripcion\" "
+                + "id_impresion_orientacion, "
+                + "(SELECT descripcion FROM divisa WHERE id_divisa = preferencia_impresion.id_divisa)\"divisa_descripcion\", "
+                + "(SELECT descripcion FROM impresion_orientacion WHERE id_impresion_orientacion = preferencia_impresion.id_impresion_orientacion)\"orientacion_descripcion\" "
                 + "FROM preferencia_impresion WHERE id_preferencia_impresion =2 ";
         try {
             pst = DB_manager.getConection().prepareStatement(Query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
@@ -275,9 +288,13 @@ public class DB_Preferencia {
                 Divisa d = new Divisa();
                 d.setId(rs.getInt("id_divisa"));
                 d.setDescripcion(rs.getString("divisa_descripcion"));
+                E_impresionOrientacion o = new E_impresionOrientacion();
+                o.setId(rs.getInt("id_impresion_orientacion"));
+                o.setDescripcion(rs.getString("orientacion_descripcion"));
                 prefPrint = new M_preferenciasImpresion();
                 prefPrint.setDistanceBetweenCopies(rs.getInt("distancia_entre_copias"));
                 prefPrint.setDivisa(d);
+                prefPrint.setOrientacion(o);
                 prefPrint.setId(rs.getInt("id_preferencia_impresion"));
                 prefPrint.setIdDuplicado(rs.getInt("id_estado_duplicado"));
                 prefPrint.setIdTriplicado(rs.getInt("id_estado_triplicado"));

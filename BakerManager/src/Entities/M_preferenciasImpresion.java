@@ -26,6 +26,7 @@ public class M_preferenciasImpresion {
     private String formatoFecha;
     private String nombreImpresora;
     private Divisa divisa;
+    private E_impresionOrientacion orientacion;
 
     /**
      * @return the id
@@ -164,6 +165,7 @@ public class M_preferenciasImpresion {
                 + " getMaxProducts " + getMaxProducts()
                 + " Divisa " + getDivisa()
                 + " ImprimirMoneda " + getImprimirMoneda()
+                + " Orientacion " + getOrientacion().getDescripcion()
                 + " Triplicado " + getIdTriplicado()
                 + " Duplicado" + getIdDuplicado();
     }
@@ -206,5 +208,13 @@ public class M_preferenciasImpresion {
 
     public void setNombreImpresora(String nombreImpresora) {
         this.nombreImpresora = nombreImpresora;
+    }
+
+    public E_impresionOrientacion getOrientacion() {
+        return orientacion;
+    }
+
+    public void setOrientacion(E_impresionOrientacion orientacion) {
+        this.orientacion = orientacion;
     }
 }

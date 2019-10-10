@@ -17,6 +17,7 @@ import DB.DB_Preferencia;
 import DB.DB_manager;
 import Entities.Caja;
 import Entities.E_Empresa;
+import Entities.E_impresionOrientacion;
 import Entities.E_ticketPreferencia;
 import Entities.M_campoImpresion;
 import Entities.M_cliente;
@@ -50,6 +51,7 @@ import javax.print.PrintException;
 import javax.print.PrintService;
 import javax.print.PrintServiceLookup;
 import javax.print.SimpleDoc;
+import javax.print.attribute.standard.OrientationRequested;
 import javax.swing.JOptionPane;
 
 /**
@@ -352,6 +354,20 @@ public class Impresora {
         p.setSize(width, height);
         p.setImageableArea(PREF_PRINT_BOLETA.getMargenX(), PREF_PRINT_BOLETA.getMargenY(), width, height);
         pf.setPaper(p);
+        switch (PREF_PRINT_BOLETA.getOrientacion().getId()) {
+            case E_impresionOrientacion.PORTRAIT: {
+                pf.setOrientation(PageFormat.LANDSCAPE);
+                break;
+            }
+            case E_impresionOrientacion.LANDSCAPE: {
+                pf.setOrientation(PageFormat.PORTRAIT);
+                break;
+            }
+            case E_impresionOrientacion.REVERSE_LANDSCAPE: {
+                pf.setOrientation(PageFormat.REVERSE_LANDSCAPE);
+                break;
+            }
+        }
         job.setPrintable(new BoletaPrintable(PREF_PRINT_BOLETA, fc, faDetalles), pf);
         PrintService[] services = PrintServiceLookup.lookupPrintServices(null, null);
         boolean existeImpresora = false;
