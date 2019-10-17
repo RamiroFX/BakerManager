@@ -6,6 +6,7 @@ package Ventas;
 
 import Cliente.Seleccionar_cliente;
 import DB.DB_Cliente;
+import Entities.E_impresionTipo;
 import Entities.M_cliente;
 import Entities.M_facturaDetalle;
 import Entities.M_funcionario;
@@ -66,7 +67,7 @@ public class C_verMesa extends MouseAdapter implements ActionListener, KeyListen
         for (int i = 0; i < condCompra.size(); i++) {
             this.vista.jcbCondVenta.addItem(condCompra.get(i));
         }
-        Vector tipoVenta = modelo.obtenerTipoVenta();
+        ArrayList<E_impresionTipo> tipoVenta = modelo.obtenerTipoVenta();
         for (int i = 0; i < tipoVenta.size(); i++) {
             this.vista.jcbTipoVenta.addItem(tipoVenta.get(i));
         }

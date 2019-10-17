@@ -6,6 +6,7 @@ package Ventas;
 
 import Cliente.Seleccionar_cliente;
 import DB.DB_Cliente;
+import Entities.E_impresionTipo;
 import Entities.M_cliente;
 import Entities.M_facturaDetalle;
 import Entities.M_producto;
@@ -72,7 +73,7 @@ public class C_crearVentaRapida implements GestionInterface, InterfaceFacturaDet
         for (int i = 0; i < condCompra.size(); i++) {
             this.vista.jcbCondVenta.addItem(condCompra.get(i));
         }
-        Vector tipoVenta = modelo.obtenerTipoVenta();
+        ArrayList<E_impresionTipo> tipoVenta = modelo.obtenerTipoVenta();
         for (int i = 0; i < tipoVenta.size(); i++) {
             this.vista.jcbTipoVenta.addItem(tipoVenta.get(i));
         }
@@ -304,7 +305,55 @@ public class C_crearVentaRapida implements GestionInterface, InterfaceFacturaDet
     }
 
     private void guardarVenta() {
-        int currentItem = this.vista.jcbTipoVenta.getSelectedIndex();
+        E_impresionTipo it = vista.jcbTipoVenta.getItemAt(vista.jcbTipoVenta.getSelectedIndex());
+        switch (modelo.getTipoVenta().getDescripcion()) {
+            case "ticket": {
+                this.modelo.getCabecera().setNroFactura(null);
+                if (this.modelo.guardarVenta()) {
+                    this.modelo.limpiarCampos();
+                    this.vista.jtFacturaDetalle.setModel(this.modelo.getTableModel());
+                    recibirCliente(this.modelo.getCabecera().getCliente());
+                    establecerNroFactura();
+                    establecerCondicionVenta();
+                    establecerTipoVenta();
+                    sumarTotal();
+                    this.vista.jtfCodProd.setText("");
+                }
+                break;
+            }
+            case "factura": {
+                if (checkearNroFactura()) {
+                    String nroFactura = this.vista.jtfNroFactura.getText();
+                    this.modelo.getCabecera().setNroFactura(Integer.valueOf(nroFactura));
+                    if (this.modelo.guardarVenta()) {
+                        this.modelo.limpiarCampos();
+                        this.vista.jtFacturaDetalle.setModel(this.modelo.getTableModel());
+                        recibirCliente(this.modelo.getCabecera().getCliente());
+                        establecerNroFactura();
+                        establecerCondicionVenta();
+                        establecerTipoVenta();
+                        sumarTotal();
+                        this.vista.jtfCodProd.setText("");
+                    }
+                }
+                break;
+            }
+            case "boleta": {
+                this.modelo.getCabecera().setNroFactura(null);
+                if (this.modelo.guardarVenta()) {
+                    this.modelo.limpiarCampos();
+                    this.vista.jtFacturaDetalle.setModel(this.modelo.getTableModel());
+                    recibirCliente(this.modelo.getCabecera().getCliente());
+                    establecerNroFactura();
+                    establecerCondicionVenta();
+                    establecerTipoVenta();
+                    sumarTotal();
+                    this.vista.jtfCodProd.setText("");
+                }
+                break;
+            }
+        }
+        /*int currentItem = this.vista.jcbTipoVenta.getSelectedIndex();
         if (currentItem == 0) {//ticket
             this.modelo.getCabecera().setNroFactura(null);
             if (this.modelo.guardarVenta()) {
@@ -332,7 +381,7 @@ public class C_crearVentaRapida implements GestionInterface, InterfaceFacturaDet
                     this.vista.jtfCodProd.setText("");
                 }
             }
-        }
+        }*/
     }
 
     private void establecerCondicionVenta() {
@@ -345,15 +394,26 @@ public class C_crearVentaRapida implements GestionInterface, InterfaceFacturaDet
     }
 
     private void establecerTipoVenta() {
-        int currentItem = this.vista.jcbTipoVenta.getSelectedIndex();
-        if (currentItem == 0) {//ticket
-            this.vista.jtfNroFactura.setText("");
-            this.vista.jtfNroFactura.setEnabled(false);
-            this.modelo.setTipoVenta(TipoVenta.TICKET);
-        } else {
-            this.vista.jtfNroFactura.setText(modelo.getNroFactura() + "");
-            this.vista.jtfNroFactura.setEnabled(true);
-            this.modelo.setTipoVenta(TipoVenta.FACTURA);
+        E_impresionTipo tipoVenta = this.vista.jcbTipoVenta.getItemAt(this.vista.jcbTipoVenta.getSelectedIndex());
+        switch (tipoVenta.getDescripcion()) {
+            case "ticket": {
+                this.vista.jtfNroFactura.setText("");
+                this.vista.jtfNroFactura.setEnabled(false);
+                this.modelo.setTipoVenta(tipoVenta);
+                break;
+            }
+            case "factura": {
+                this.vista.jtfNroFactura.setText(modelo.getNroFactura() + "");
+                this.vista.jtfNroFactura.setEnabled(true);
+                this.modelo.setTipoVenta(tipoVenta);
+                break;
+            }
+            case "boleta": {
+                this.vista.jtfNroFactura.setText("");
+                this.vista.jtfNroFactura.setEnabled(false);
+                this.modelo.setTipoVenta(tipoVenta);
+                break;
+            }
         }
     }
 

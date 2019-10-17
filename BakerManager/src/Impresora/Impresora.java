@@ -105,15 +105,6 @@ public class Impresora {
             }
 
         }
-
-//Imprimimos dentro de un try obligatoriamente
-//        try {
-//            if (job != null) {
-//                job.print(doc, null);
-//            }
-//        } catch (PrintException ex) {
-//            System.out.println(ex);
-//        }
     }
 
     public static void imprimirFacturaPrueba() {
@@ -213,14 +204,32 @@ public class Impresora {
         faDetalles.add(fd10);
         List<M_campoImpresion> textoAImprimir = DB_manager.obtenerCampoImpresion(2, MyConstants.ACTIVO);
         PrinterJob job = PrinterJob.getPrinterJob();
-        Paper p = new Paper();
-        PageFormat pf = new PageFormat();
+        Paper paper = new Paper();
+        PageFormat pageFormat = new PageFormat();
         int width = PREF_PRINT_FACTURA.getAnchoPagina();
         int height = PREF_PRINT_FACTURA.getLargoPagina();
-        p.setSize(width, height);
-        p.setImageableArea(PREF_PRINT_FACTURA.getMargenX(), PREF_PRINT_FACTURA.getMargenY(), width, height);
-        pf.setPaper(p);
-        job.setPrintable(new VentaPrintable(PREF_PRINT_FACTURA, fc, faDetalles, textoAImprimir), pf);
+        pageFormat.setPaper(paper);
+        switch (PREF_PRINT_FACTURA.getOrientacion().getId()) {
+            case E_impresionOrientacion.PORTRAIT: {
+                paper.setSize(width, height);
+                paper.setImageableArea(PREF_PRINT_FACTURA.getMargenX(), PREF_PRINT_FACTURA.getMargenY(), width, height);
+                pageFormat.setOrientation(PageFormat.PORTRAIT);
+                break;
+            }
+            case E_impresionOrientacion.LANDSCAPE: {
+                pageFormat.setOrientation(PageFormat.LANDSCAPE);
+                paper.setSize(height, width);
+                paper.setImageableArea(PREF_PRINT_FACTURA.getMargenX(), PREF_PRINT_FACTURA.getMargenY(), height, width);
+                break;
+            }
+            case E_impresionOrientacion.REVERSE_LANDSCAPE: {
+                paper.setSize(height, width);
+                paper.setImageableArea(PREF_PRINT_FACTURA.getMargenX(), PREF_PRINT_FACTURA.getMargenY(), width, height);
+                pageFormat.setOrientation(PageFormat.REVERSE_LANDSCAPE);
+                break;
+            }
+        }
+        job.setPrintable(new VentaPrintable(PREF_PRINT_FACTURA, fc, faDetalles, textoAImprimir), pageFormat);
         PrintService[] services = PrintServiceLookup.lookupPrintServices(null, null);
         boolean existeImpresora = false;
         if (services.length > 0) {
@@ -230,7 +239,7 @@ public class Impresora {
                     try {
                         if (job != null) {
                             job.setPrintService(service);
-                            job.defaultPage().setPaper(p);
+                            job.defaultPage().setPaper(paper);
                             job.print();
                             break;
                         } else {
@@ -347,13 +356,13 @@ public class Impresora {
         fd10.setProducto(prod10);
         faDetalles.add(fd10);
         PrinterJob job = PrinterJob.getPrinterJob();
-        Paper p = new Paper();
+        Paper paper = new Paper();
         PageFormat pf = new PageFormat();
         int width = PREF_PRINT_BOLETA.getAnchoPagina();
         int height = PREF_PRINT_BOLETA.getLargoPagina();
-        p.setSize(width, height);
-        p.setImageableArea(PREF_PRINT_BOLETA.getMargenX(), PREF_PRINT_BOLETA.getMargenY(), width, height);
-        pf.setPaper(p);
+        paper.setSize(width, height);
+        paper.setImageableArea(PREF_PRINT_BOLETA.getMargenX(), PREF_PRINT_BOLETA.getMargenY(), width, height);
+        pf.setPaper(paper);
         switch (PREF_PRINT_BOLETA.getOrientacion().getId()) {
             case E_impresionOrientacion.PORTRAIT: {
                 pf.setOrientation(PageFormat.LANDSCAPE);
@@ -378,7 +387,7 @@ public class Impresora {
                     try {
                         if (job != null) {
                             job.setPrintService(service);
-                            job.defaultPage().setPaper(p);
+                            job.defaultPage().setPaper(paper);
                             job.print();
                             break;
                         } else {
@@ -787,20 +796,38 @@ public class Impresora {
         }
     }
 
-    public static void imprimirVentaFactura(final M_facturaCabecera facturaCabecera, final ArrayList<M_facturaDetalle> facturaDetalle) {
+    public static void imprimirFacturaVenta(final M_facturaCabecera facturaCabecera, final ArrayList<M_facturaDetalle> facturaDetalle) {
         PrintService[] services = PrintServiceLookup.lookupPrintServices(null, null);
         String nombreImpresora = PREF_PRINT_FACTURA.getNombreImpresora();
-        final List<M_campoImpresion> textoAImprimir = DB_manager.obtenerCampoImpresion(2, MyConstants.ACTIVO);
-        Paper p = new Paper();
-        PageFormat pf = new PageFormat();
-        VentaPrintable vp = new VentaPrintable(PREF_PRINT_FACTURA, facturaCabecera, facturaDetalle, textoAImprimir);
-        PrinterJob job = PrinterJob.getPrinterJob();
         int width = PREF_PRINT_FACTURA.getAnchoPagina();
         int height = PREF_PRINT_FACTURA.getLargoPagina();
-        p.setSize(width, height);
-        p.setImageableArea(PREF_PRINT_FACTURA.getMargenX(), PREF_PRINT_FACTURA.getMargenY(), width, height);
-        pf.setPaper(p);
-        job.setPrintable(vp, pf);
+        final List<M_campoImpresion> textoAImprimir = DB_manager.obtenerCampoImpresion(2, MyConstants.ACTIVO);
+        Paper paper = new Paper();
+        PageFormat pageFormat = new PageFormat();
+        switch (PREF_PRINT_FACTURA.getOrientacion().getId()) {
+            case E_impresionOrientacion.PORTRAIT: {
+                paper.setSize(width, height);
+                paper.setImageableArea(PREF_PRINT_FACTURA.getMargenX(), PREF_PRINT_FACTURA.getMargenY(), width, height);
+                pageFormat.setOrientation(PageFormat.PORTRAIT);
+                break;
+            }
+            case E_impresionOrientacion.LANDSCAPE: {
+                pageFormat.setOrientation(PageFormat.LANDSCAPE);
+                paper.setSize(height, width);
+                paper.setImageableArea(PREF_PRINT_FACTURA.getMargenX(), PREF_PRINT_FACTURA.getMargenY(), height, width);
+                break;
+            }
+            case E_impresionOrientacion.REVERSE_LANDSCAPE: {
+                paper.setSize(height, width);
+                paper.setImageableArea(PREF_PRINT_FACTURA.getMargenX(), PREF_PRINT_FACTURA.getMargenY(), height, width);
+                pageFormat.setOrientation(PageFormat.REVERSE_LANDSCAPE);
+                break;
+            }
+        }
+        VentaPrintable vp = new VentaPrintable(PREF_PRINT_FACTURA, facturaCabecera, facturaDetalle, textoAImprimir);
+        PrinterJob job = PrinterJob.getPrinterJob();
+        pageFormat.setPaper(paper);
+        job.setPrintable(vp, pageFormat);
         if (services.length > 0) {
             for (PrintService service : services) {
                 if (service.getName().equals(nombreImpresora)) {

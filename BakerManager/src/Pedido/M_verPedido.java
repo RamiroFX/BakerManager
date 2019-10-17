@@ -7,8 +7,10 @@ package Pedido;
 import DB.DB_Egreso;
 import DB.DB_Ingreso;
 import DB.DB_Pedido;
+import DB.DB_Preferencia;
 import DB.DB_manager;
 import DB.ResultSetTableModel;
+import Entities.E_impresionTipo;
 import Entities.M_pedido;
 import Entities.M_pedidoDetalle;
 import java.util.ArrayList;
@@ -113,7 +115,7 @@ public class M_verPedido {
         return DB_Egreso.obtenerTipoOperacion();
     }
 
-    public Vector obtenerTipoVenta() {
-        return DB_manager.obtenerTipoVenta();
+    public ArrayList<E_impresionTipo> obtenerTipoVenta() {
+        return DB_Preferencia.obtenerImpresionTipo();
     }
 }

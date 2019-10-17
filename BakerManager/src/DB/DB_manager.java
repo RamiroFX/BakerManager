@@ -1263,7 +1263,7 @@ public class DB_manager {
         }
         return tiop;
     }
-
+/*
     public static Vector obtenerTipoVenta() {
         Vector tipoVenta = null;
         String q = "SELECT descripcion  "
@@ -1279,7 +1279,7 @@ public class DB_manager {
             ex.printStackTrace();
         }
         return tipoVenta;
-    }
+    }*/
 
     public static E_Empresa obtenerDatosEmpresa() {
         E_Empresa e = null;

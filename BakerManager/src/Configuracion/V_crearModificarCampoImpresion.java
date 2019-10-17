@@ -74,7 +74,7 @@ public class V_crearModificarCampoImpresion extends javax.swing.JDialog implemen
         jtfCoordenadaY = new javax.swing.JTextField("0.00");
         jtfCoordenadaX = new javax.swing.JTextField("0.00");
         jtfCampo = new javax.swing.JTextField();
-
+        jtfCampo.setEditable(false);
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         jbOK.setText("OK");
         jbOK.addActionListener(this);

@@ -14,6 +14,7 @@ import Entities.M_funcionario;
 import Entities.M_telefono;
 import MenuPrincipal.DatosUsuario;
 import Impresora.Impresora;
+import Parametros.TipoVenta;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -137,11 +138,25 @@ public class C_ver_ingreso implements ActionListener, KeyListener {
         EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
+                switch(1){
+                    case TipoVenta.FACTURA:{
+                        
+                        break;
+                    }
+                    case TipoVenta.BOLETA:{
+                        
+                        break;
+                    }
+                    case TipoVenta.TICKET:{
+                        
+                        break;
+                    }
+                }
                 if (faca.getNroFactura() != null) {
                     int opcion = JOptionPane.showConfirmDialog(vista, "¿Desea imprimir la factura?", "Atención", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
                     if (opcion == JOptionPane.YES_OPTION) {
                         ArrayList<M_facturaDetalle> fade = DB_Ingreso.obtenerVentaDetalles(idEgresoCabecera);
-                        Impresora.imprimirVentaFactura(faca, fade);
+                        Impresora.imprimirFacturaVenta(faca, fade);
                     }
                 } else {
                     int opcion = JOptionPane.showConfirmDialog(vista, "¿Desea imprimir el ticket?", "Atención", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);

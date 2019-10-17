@@ -9,19 +9,19 @@ package Entities;
  *
  * @author Ramiro Ferreira
  */
-public class E_impresionOrientacion {
+public class E_impresionTipo {
 
-    public static final int PORTRAIT = 1;
-    public static final int LANDSCAPE = 2;
-    public static final int REVERSE_LANDSCAPE = 3;
+    public static final int TICKET = 1;
+    public static final int FACTURA = 2;
+    public static final int BOLETA = 3;
 
     private int id;
     private String descripcion;
 
-    public E_impresionOrientacion() {
+    public E_impresionTipo() {
     }
 
-    public E_impresionOrientacion(int id, String descripcion) {
+    public E_impresionTipo(int id, String descripcion) {
         this.id = id;
         this.descripcion = descripcion;
     }
@@ -56,15 +56,15 @@ public class E_impresionOrientacion {
 
         /* Check if o is an instance of Complex or not 
           "null instanceof [type]" also returns false */
-        if (!(o instanceof E_impresionOrientacion)) {
+        if (!(o instanceof E_impresionTipo)) {
             return false;
         }
 
         // typecast o to Complex so that we can compare data members  
-        E_impresionOrientacion c = (E_impresionOrientacion) o;
+        E_impresionTipo c = (E_impresionTipo) o;
 
         // Compare the data members and return accordingly  
         return this.getId() == c.getId();
     }
-
+    
 }

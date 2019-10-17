@@ -5,6 +5,7 @@
  */
 package Configuracion;
 
+import Entities.E_impresionOrientacion;
 import java.awt.BorderLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -38,6 +39,8 @@ public class V_configuracionFactura extends javax.swing.JDialog {
     public JTextField jtfNombreImpresora, jtfAnchoPapel, jtfLargoPapel,
             jtfMargenX, jtfMargenY;
     public javax.swing.JButton jbGuardarPreferencias, jbGuardarImpresora;
+    public javax.swing.JLabel jlOrientacion;
+    public JComboBox<E_impresionOrientacion> jcbOrientacion;
 
     public V_configuracionFactura(JFrame frame) {
         super(frame, true);
@@ -140,8 +143,10 @@ public class V_configuracionFactura extends javax.swing.JDialog {
         jtfLargoPapel.setToolTipText(paperHint);
         jtfMargenX = new JTextField();
         jtfMargenY = new JTextField();
+        jlOrientacion = new JLabel("Orientación", JLabel.CENTER);
+        jcbOrientacion = new JComboBox();
         jbGuardarImpresora = new javax.swing.JButton("Guardar");
-        javax.swing.JPanel jpImpresoraYPapel1 = new javax.swing.JPanel(new java.awt.GridLayout(5, 2));
+        javax.swing.JPanel jpImpresoraYPapel1 = new javax.swing.JPanel(new java.awt.GridLayout(6, 2));
         jpImpresoraYPapel1.add(new JLabel("Nombre de impresora", JLabel.CENTER));
         jpImpresoraYPapel1.add(jtfNombreImpresora);
         jpImpresoraYPapel1.add(new JLabel("Ancho de papel", JLabel.CENTER));
@@ -152,6 +157,8 @@ public class V_configuracionFactura extends javax.swing.JDialog {
         jpImpresoraYPapel1.add(jtfMargenX);
         jpImpresoraYPapel1.add(new JLabel("Margen Y", JLabel.CENTER));
         jpImpresoraYPapel1.add(jtfMargenY);
+        jpImpresoraYPapel1.add(jlOrientacion);
+        jpImpresoraYPapel1.add(jcbOrientacion);
         javax.swing.JPanel jpImpresoraYPapel2 = new javax.swing.JPanel();
         jpImpresoraYPapel2.add(jbGuardarImpresora);
         jpImpresoraYPapel = new javax.swing.JPanel(new java.awt.BorderLayout());

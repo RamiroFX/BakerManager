@@ -7,6 +7,7 @@ package DB;
 
 import Entities.Divisa;
 import Entities.E_impresionOrientacion;
+import Entities.E_impresionTipo;
 import Entities.E_preferenciaGeneral;
 import Entities.E_ticketPreferencia;
 import Entities.M_preferenciasImpresion;
@@ -14,6 +15,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -358,5 +360,45 @@ public class DB_Preferencia {
             lgr.log(Level.SEVERE, ex.getMessage(), ex);
         }
         return prefGeneral;
+    }
+
+    public static ArrayList<E_impresionOrientacion> obtenerImpresionOrientacion() {
+        ArrayList<E_impresionOrientacion> impresionOrientacion = null;
+        String q = "SELECT * "
+                + "FROM impresion_orientacion ";
+        try {
+            st = DB_manager.getConection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            rs = st.executeQuery(q);
+            impresionOrientacion = new ArrayList();
+            while (rs.next()) {
+                E_impresionOrientacion pc = new E_impresionOrientacion();
+                pc.setId(rs.getInt("id_impresion_orientacion"));
+                pc.setDescripcion(rs.getString("descripcion"));
+                impresionOrientacion.add(pc);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return impresionOrientacion;
+    }
+
+    public static ArrayList<E_impresionTipo> obtenerImpresionTipo() {
+        ArrayList<E_impresionTipo> impresionTipos = null;
+        String q = "SELECT * "
+                + "FROM impresion_tipo ";
+        try {
+            st = DB_manager.getConection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            rs = st.executeQuery(q);
+            impresionTipos = new ArrayList();
+            while (rs.next()) {
+                E_impresionTipo pc = new E_impresionTipo();
+                pc.setId(rs.getInt("id_impresion_tipo"));
+                pc.setDescripcion(rs.getString("descripcion"));
+                impresionTipos.add(pc);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return impresionTipos;
     }
 }

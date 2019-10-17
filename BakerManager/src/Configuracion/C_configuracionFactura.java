@@ -7,6 +7,7 @@ package Configuracion;
 
 import DB.DB_Preferencia;
 import Entities.Divisa;
+import Entities.E_impresionOrientacion;
 import Entities.M_campoImpresion;
 import Entities.M_preferenciasImpresion;
 import Interface.crearModificarParametroCallback;
@@ -85,6 +86,9 @@ public class C_configuracionFactura extends MouseAdapter implements ActionListen
         for (int i = 1; i < modelo.getMaxLetterSize(); i++) {
             this.vista.jcbTamañoLetra.addItem(i);
         }
+        for (int i = 0; i < modelo.getOrientations().size(); i++) {
+            this.vista.jcbOrientacion.addItem(modelo.getOrientations().get(i));
+        }
         this.vista.jcbMoneda.addItem(new Divisa(1, "Guaraní/es"));
         this.vista.jtfDistanciaEntreCopias.setText(modelo.getPreferenciasImpresion().getDistanceBetweenCopies() + "");
         this.vista.jtfTipoLetra.setText(modelo.getPreferenciasImpresion().getLetterFont());
@@ -106,6 +110,7 @@ public class C_configuracionFactura extends MouseAdapter implements ActionListen
         } else {
             this.vista.jchkMoneda.setSelected(false);
         }
+        this.vista.jcbOrientacion.setSelectedItem(modelo.getPreferenciasImpresion().getOrientacion());
         this.vista.jtfNombreImpresora.setText(modelo.getPreferenciasImpresion().getNombreImpresora());
         this.vista.jtfAnchoPapel.setText(modelo.getPreferenciasImpresion().getAnchoPagina() + "");
         this.vista.jtfLargoPapel.setText(modelo.getPreferenciasImpresion().getLargoPagina() + "");
@@ -394,6 +399,7 @@ public class C_configuracionFactura extends MouseAdapter implements ActionListen
         pi.setMaxProducts(this.vista.jcbCantProd.getSelectedIndex() + 1);
         pi.setLetterSize(this.vista.jcbTamañoLetra.getSelectedIndex() + 1);
         pi.setFormatoFecha(this.vista.jcbFormatoFecha.getSelectedItem() + "");
+        pi.setOrientacion(this.vista.jcbOrientacion.getItemAt(this.vista.jcbOrientacion.getSelectedIndex()));
         modelo.guardarPreferencias(pi);
         Impresora.PREF_PRINT_FACTURA = DB_Preferencia.obtenerPreferenciaImpresionFactura();
         javax.swing.JOptionPane.showMessageDialog(this.vista, "Cambios guardados",

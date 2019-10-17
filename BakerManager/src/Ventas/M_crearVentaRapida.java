@@ -10,6 +10,7 @@ import DB.DB_Ingreso;
 import DB.DB_Preferencia;
 import DB.DB_Producto;
 import DB.DB_manager;
+import Entities.E_impresionTipo;
 import Entities.E_preferenciaGeneral;
 import Entities.M_facturaCabecera;
 import Entities.M_facturaDetalle;
@@ -44,7 +45,7 @@ public class M_crearVentaRapida {
     private M_facturaDetalle detalle;
     private M_telefono telefono;
     private FacturaDetalleTableModel dtm;
-    private Integer tipoVenta;
+    private E_impresionTipo tipoVenta;
     private Integer maxProdCant;
     private M_preferenciasImpresion pi;
 
@@ -111,14 +112,14 @@ public class M_crearVentaRapida {
     /**
      * @return the tipoVenta
      */
-    public int getTipoVenta() {
+    public E_impresionTipo getTipoVenta() {
         return tipoVenta;
     }
 
     /**
      * @param tipoVenta the tipoVenta to set
      */
-    public void setTipoVenta(int tipoVenta) {
+    public void setTipoVenta(E_impresionTipo tipoVenta) {
         this.tipoVenta = tipoVenta;
     }
 
@@ -136,21 +137,41 @@ public class M_crearVentaRapida {
     }
 
     public boolean guardarVenta() {
-        E_preferenciaGeneral pg1 = DB_Preferencia.obtenerPreferenciaGeneral();
-        System.out.println("Ventas.M_crearVentaRapida.obtenerPreferenciaGeneral()" + pg1);
         if (getTableModel().getFacturaDetalleList().isEmpty()) {
             JOptionPane.showConfirmDialog(null, SELECCIONE_POR_LO_MENOS_UN_ARTICULO, ATENCION, JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
         } else {
             int response = JOptionPane.showConfirmDialog(null, ESTA_SEGURO_QUE_DESEA_CONFIRMAR_LA_VENTA, CONFIRMAR, JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
             if (response == JOptionPane.YES_OPTION) {
-                if (tipoVenta == TipoVenta.TICKET) {
+                //INICIO GUARDAR VENTA
+                if (!"factura".equals(tipoVenta.getDescripcion())) {
                     this.cabecera.setNroFactura(null);
                 }
                 int nroTicket = DB_Ingreso.insertarIngreso(getCabecera(), (ArrayList<M_facturaDetalle>) getTableModel().getFacturaDetalleList());
                 getCabecera().setIdFacturaCabecera(nroTicket);
                 Calendar c = Calendar.getInstance();
                 getCabecera().setTiempo(new Timestamp(c.getTimeInMillis()));
-                int opcion = JOptionPane.showConfirmDialog(null, IMPRIMIR_VENTA, ATENCION, JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+                //FIN GUARDAR VENTA
+            }
+            int opcion = JOptionPane.showConfirmDialog(null, IMPRIMIR_VENTA, ATENCION, JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+            //INICIO IMPRIMIR
+            if (opcion == JOptionPane.YES_OPTION) {
+                switch (getTipoVenta().getDescripcion()) {
+                    case "ticket": {
+                        this.cabecera.setNroFactura(null);
+                        Impresora.imprimirTicketVenta(DatosUsuario.getRol_usuario(), getCabecera(), (ArrayList<M_facturaDetalle>) getTableModel().getFacturaDetalleList());
+                        break;
+                    }
+                    case "factura": {
+                        Impresora.imprimirFacturaVenta(getCabecera(), (ArrayList<M_facturaDetalle>) getTableModel().getFacturaDetalleList());
+                        break;
+                    }
+                    case "boleta": {
+                        this.cabecera.setNroFactura(null);
+                        Impresora.imprimirBoletaVenta(getCabecera(), (ArrayList<M_facturaDetalle>) getTableModel().getFacturaDetalleList());
+                        break;
+                    }
+                }
+                /*
                 if (opcion == JOptionPane.YES_OPTION) {
                     if (tipoVenta == TipoVenta.TICKET) {
                         //TODO elejir tipo de comprobate impreso(ticket o boleta)
@@ -198,9 +219,9 @@ public class M_crearVentaRapida {
                             }
                         }
                     } else if (tipoVenta == TipoVenta.FACTURA) {
-                        Impresora.imprimirVentaFactura(getCabecera(), (ArrayList<M_facturaDetalle>) getTableModel().getFacturaDetalleList());
+                        Impresora.imprimirFacturaVenta(getCabecera(), (ArrayList<M_facturaDetalle>) getTableModel().getFacturaDetalleList());
                     }
-                }
+                }*/
                 return true;
             }
         }
@@ -247,8 +268,8 @@ public class M_crearVentaRapida {
         return DB_Egreso.obtenerTipoOperacion();
     }
 
-    public Vector obtenerTipoVenta() {
-        return DB_manager.obtenerTipoVenta();
+    public ArrayList<E_impresionTipo> obtenerTipoVenta() {
+        return DB_Preferencia.obtenerImpresionTipo();
     }
 
     public void agregarDetalle(M_facturaDetalle detalle) {

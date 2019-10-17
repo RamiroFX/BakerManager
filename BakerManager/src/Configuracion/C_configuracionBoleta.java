@@ -108,6 +108,8 @@ public class C_configuracionBoleta extends MouseAdapter implements ActionListene
         } else {
             this.vista.jchkMoneda.setSelected(false);
         }
+        this.vista.jcbOrientacion.setVisible(false);
+        this.vista.jlOrientacion.setVisible(false);
         this.vista.jtfNombreImpresora.setText(modelo.getPreferenciasImpresion().getNombreImpresora());
         this.vista.jtfAnchoPapel.setText(modelo.getPreferenciasImpresion().getAnchoPagina() + "");
         this.vista.jtfLargoPapel.setText(modelo.getPreferenciasImpresion().getLargoPagina() + "");

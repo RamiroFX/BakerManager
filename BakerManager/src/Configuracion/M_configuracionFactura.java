@@ -8,6 +8,7 @@ package Configuracion;
 import DB.DB_Preferencia;
 import DB.DB_manager;
 import DB.ResultSetTableModel;
+import Entities.E_impresionOrientacion;
 import Entities.M_campoImpresion;
 import Entities.M_preferenciasImpresion;
 import ModeloTabla.ImpresionTableModel;
@@ -140,6 +141,10 @@ public class M_configuracionFactura {
 
     public M_preferenciasImpresion getPreferenciasImpresion() {
         return preferenciasImpresion;
+    }
+
+    public ArrayList<E_impresionOrientacion> getOrientations() {
+        return DB_Preferencia.obtenerImpresionOrientacion();
     }
 
 }

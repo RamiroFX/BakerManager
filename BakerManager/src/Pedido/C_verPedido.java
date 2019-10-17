@@ -6,6 +6,7 @@ package Pedido;
 
 import Cliente.Seleccionar_cliente;
 import DB.DB_Ingreso;
+import Entities.E_impresionTipo;
 import Entities.M_cliente;
 import Entities.M_facturaCabecera;
 import Entities.M_facturaDetalle;
@@ -76,7 +77,7 @@ public class C_verPedido extends MouseAdapter implements ActionListener, KeyList
         for (int i = 0; i < condCompra.size(); i++) {
             this.vista.jcbCondVenta.addItem(condCompra.get(i));
         }
-        Vector tipoVenta = modelo.obtenerTipoVenta();
+        ArrayList<E_impresionTipo> tipoVenta = modelo.obtenerTipoVenta();
         for (int i = 0; i < tipoVenta.size(); i++) {
             this.vista.jcbTipoVenta.addItem(tipoVenta.get(i));
         }
@@ -332,7 +333,7 @@ public class C_verPedido extends MouseAdapter implements ActionListener, KeyList
                 if (vista.jcbTipoVenta.getSelectedIndex() == 0) {
                     Impresora.imprimirTicketVenta(DatosUsuario.getRol_usuario(), faca, fades);
                 } else if (vista.jcbTipoVenta.getSelectedIndex() == 1) {
-                    Impresora.imprimirVentaFactura(faca, fades);
+                    Impresora.imprimirFacturaVenta(faca, fades);
                 }
             }
             cerrar();

@@ -4,6 +4,7 @@
  */
 package Ventas;
 
+import Entities.E_impresionTipo;
 import java.awt.BorderLayout;
 import java.awt.Insets;
 import java.awt.event.WindowAdapter;
@@ -39,7 +40,8 @@ public class V_crearVentaRapida extends JDialog {
     public JButton jbCliente;
     public JLabel jlNroFactura;
     //public JRadioButton jrbContado, jrbCredito;
-    public JComboBox jcbCondVenta, jcbTipoVenta;
+    public JComboBox jcbCondVenta;
+    public JComboBox<E_impresionTipo> jcbTipoVenta;
     //CENTRO
     JPanel jpCenter;
     public JTable jtFacturaDetalle;

@@ -6,9 +6,11 @@ package Ventas;
 
 import DB.DB_Egreso;
 import DB.DB_Ingreso;
+import DB.DB_Preferencia;
 import DB.DB_Producto;
 import DB.DB_manager;
 import DB.ResultSetTableModel;
+import Entities.E_impresionTipo;
 import Entities.M_cliente;
 import Entities.M_funcionario;
 import Entities.M_mesa;
@@ -94,7 +96,7 @@ public class M_verMesa {
             Impresora.imprimirTicketVentaMesa(getMesa(), getDetalles());
         }
     }
-    
+
     boolean existeProductoPorCodigo(String codigoProducto) {
         return DB_Producto.existeCodigo(codigoProducto);
     }
@@ -183,7 +185,7 @@ public class M_verMesa {
         return DB_Egreso.obtenerTipoOperacion();
     }
 
-    public Vector obtenerTipoVenta() {
-        return DB_manager.obtenerTipoVenta();
+    public ArrayList<E_impresionTipo> obtenerTipoVenta() {
+        return DB_Preferencia.obtenerImpresionTipo();
     }
 }
