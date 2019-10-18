@@ -5,8 +5,11 @@
 package Ventas;
 
 import DB.DB_Cliente;
+import DB.DB_Egreso;
 import DB.DB_Funcionario;
 import DB.DB_Ingreso;
+import DB.DB_Preferencia;
+import Entities.E_impresionTipo;
 import Entities.M_cliente;
 import Entities.M_facturaCabecera;
 import Entities.M_facturaDetalle;
@@ -21,6 +24,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.ArrayList;
+import java.util.Vector;
 import javax.swing.JOptionPane;
 
 /**
@@ -29,12 +33,12 @@ import javax.swing.JOptionPane;
  */
 public class C_ver_ingreso implements ActionListener, KeyListener {
 
-    public V_ver_ingreso vista;
+    public V_crearVentaRapida vista;
     int idEgresoCabecera;
     M_facturaCabecera faca;
     M_cliente cliente;
 
-    public C_ver_ingreso(int idEgresoCabecera, V_ver_ingreso vista) {
+    public C_ver_ingreso(int idEgresoCabecera, V_crearVentaRapida vista) {
         this.idEgresoCabecera = idEgresoCabecera;
         this.vista = vista;
         inicializarVista();
@@ -53,7 +57,7 @@ public class C_ver_ingreso implements ActionListener, KeyListener {
         this.vista.jtfClieRuc.addKeyListener(this);
         this.vista.jtfClieTelefono.addKeyListener(this);
         this.vista.jtfCliente.addKeyListener(this);
-        this.vista.jtfFuncionario.addKeyListener(this);
+        this.vista.jtfNroFactura.addKeyListener(this);
         //this.vista.jbImprimir.addKeyListener(this);
     }
 
@@ -88,6 +92,14 @@ public class C_ver_ingreso implements ActionListener, KeyListener {
         faca.setFuncionario(funcionario);
         this.vista.jtfCliente.setText(cliente.getNombre() + " - " + cliente.getEntidad());
         this.vista.jtFacturaDetalle.setModel(DB_Ingreso.obtenerIngresoDetalle(idEgresoCabecera));
+        Vector condCompra = obtenerTipoOperacion();
+        for (int i = 0; i < condCompra.size(); i++) {
+            this.vista.jcbCondVenta.addItem(condCompra.get(i));
+        }
+        ArrayList<E_impresionTipo> tipoVenta = obtenerTipoVenta();
+        for (int i = 0; i < tipoVenta.size(); i++) {
+            this.vista.jcbTipoVenta.addItem(tipoVenta.get(i));
+        }
         Utilities.c_packColumn.packColumns(this.vista.jtFacturaDetalle, 1);
         java.awt.Font fuente = new java.awt.Font("Times New Roman", 0, 18);
         javax.swing.text.DefaultFormatterFactory dff = new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(java.text.NumberFormat.getCurrencyInstance()));
@@ -101,11 +113,11 @@ public class C_ver_ingreso implements ActionListener, KeyListener {
         this.vista.jftTotal.setFont(fuente); // NOI18N
         switch (faca.getIdCondVenta()) {
             case Parametros.TipoOperacion.CONTADO: {
-                this.vista.jrbContado.setSelected(true);
+                this.vista.jcbCondVenta.setSelectedIndex(1);
                 break;
             }
             case Parametros.TipoOperacion.CREDITO: {
-                this.vista.jrbCredito.setSelected(true);
+                this.vista.jcbCondVenta.setSelectedIndex(2);
                 break;
             }
         }
@@ -120,8 +132,28 @@ public class C_ver_ingreso implements ActionListener, KeyListener {
         if (!telefono.isEmpty()) {
             this.vista.jtfClieTelefono.setText(telefono.get(0).getNumero());
         }
-        this.vista.jtfFuncionario.setText(funcionario.getNombre() + " " + funcionario.getApellido());
+        this.vista.jtfNroFactura.setText(faca.getNroFactura() + "");
+        this.vista.jtfNroFactura.setEditable(false);
+        if (faca.getNroFactura() < 1) {
+            E_impresionTipo tipoFactura = new E_impresionTipo(2, "factura");
+            this.vista.jcbTipoVenta.removeItem(tipoFactura);
+        }
+        this.vista.jtfCodProd.setEnabled(false);
+        this.vista.jbAgregarProducto.setEnabled(false);
+        this.vista.jbModificarDetalle.setEnabled(false);
+        this.vista.jbEliminarDetalle.setEnabled(false);
+        this.vista.jcbCondVenta.setEnabled(false);
+        this.vista.jbCliente.setEnabled(false);
+        this.vista.jbAceptar.setEnabled(false);
         sumarTotal();
+    }
+
+    public ArrayList<E_impresionTipo> obtenerTipoVenta() {
+        return DB_Preferencia.obtenerImpresionTipo();
+    }
+
+    public Vector obtenerTipoOperacion() {
+        return DB_Egreso.obtenerTipoOperacion();
     }
 
     @Override
@@ -138,30 +170,30 @@ public class C_ver_ingreso implements ActionListener, KeyListener {
         EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
-                switch(1){
-                    case TipoVenta.FACTURA:{
-                        
+                E_impresionTipo impreTipo = vista.jcbTipoVenta.getItemAt(vista.jcbTipoVenta.getSelectedIndex());
+                switch (impreTipo.getDescripcion()) {
+                    case "factura": {
+                        int opcion = JOptionPane.showConfirmDialog(vista, "¿Desea imprimir la factura?", "Atención", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+                        if (opcion == JOptionPane.YES_OPTION) {
+                            ArrayList<M_facturaDetalle> fade = DB_Ingreso.obtenerVentaDetalles(idEgresoCabecera);
+                            Impresora.imprimirFacturaVenta(faca, fade);
+                        }
                         break;
                     }
-                    case TipoVenta.BOLETA:{
-                        
+                    case "boleta": {
+                        int opcion = JOptionPane.showConfirmDialog(vista, "¿Desea imprimir la boleta?", "Atención", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+                        if (opcion == JOptionPane.YES_OPTION) {
+                            ArrayList<M_facturaDetalle> facturaDetalle = DB_Ingreso.obtenerVentaDetalles(idEgresoCabecera);
+                            Impresora.imprimirBoletaVenta(faca, facturaDetalle);
+                        }
                         break;
                     }
-                    case TipoVenta.TICKET:{
-                        
+                    case "ticket": {
+                        int opcion = JOptionPane.showConfirmDialog(vista, "¿Desea imprimir el ticket?", "Atención", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+                        if (opcion == JOptionPane.YES_OPTION) {
+                            Impresora.imprimirTicketVentaGuardada(DatosUsuario.getRol_usuario(), faca);
+                        }
                         break;
-                    }
-                }
-                if (faca.getNroFactura() != null) {
-                    int opcion = JOptionPane.showConfirmDialog(vista, "¿Desea imprimir la factura?", "Atención", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
-                    if (opcion == JOptionPane.YES_OPTION) {
-                        ArrayList<M_facturaDetalle> fade = DB_Ingreso.obtenerVentaDetalles(idEgresoCabecera);
-                        Impresora.imprimirFacturaVenta(faca, fade);
-                    }
-                } else {
-                    int opcion = JOptionPane.showConfirmDialog(vista, "¿Desea imprimir el ticket?", "Atención", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
-                    if (opcion == JOptionPane.YES_OPTION) {
-                        Impresora.imprimirTicketVentaGuardada(DatosUsuario.getRol_usuario(), faca);
                     }
                 }
             }

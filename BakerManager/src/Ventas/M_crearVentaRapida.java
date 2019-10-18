@@ -171,59 +171,8 @@ public class M_crearVentaRapida {
                         break;
                     }
                 }
-                /*
-                if (opcion == JOptionPane.YES_OPTION) {
-                    if (tipoVenta == TipoVenta.TICKET) {
-                        //TODO elejir tipo de comprobate impreso(ticket o boleta)
-                        E_preferenciaGeneral pg = DB_Preferencia.obtenerPreferenciaGeneral();
-                        if (pg != null) {
-                            switch (pg.getIdImpresionTipo()) {
-                                case TipoVenta.TICKET: {
-                                    //Ticket
-                                    Impresora.imprimirTicketVenta(DatosUsuario.getRol_usuario(), getCabecera(), (ArrayList<M_facturaDetalle>) getTableModel().getFacturaDetalleList());
-                                    break;
-                                }
-                                case TipoVenta.BOLETA: {
-                                    //Boleta
-                                    Impresora.imprimirBoletaVenta(getCabecera(), (ArrayList<M_facturaDetalle>) getTableModel().getFacturaDetalleList());
-                                    break;
-                                }
-                                default:
-                                    javax.swing.JCheckBox check = new javax.swing.JCheckBox("Recordar");
-                                    Object[] options = {"Ticket",
-                                        "Boleta", check};
-                                    int n = JOptionPane.showOptionDialog(null,
-                                            "Eliga tipo de impresion",
-                                            "Atención",
-                                            JOptionPane.YES_NO_OPTION,
-                                            JOptionPane.QUESTION_MESSAGE,
-                                            null, //do not use a custom Icon
-                                            options, //the titles of buttons
-                                            options[0]); //default button title
-                                    if (check.isSelected()) {
-                                        recordarPreferencia(tipoVenta);
-                                    }
-                                    switch (n) {
-                                        case 0: {
-                                            //Ticket
-                                            Impresora.imprimirTicketVenta(DatosUsuario.getRol_usuario(), getCabecera(), (ArrayList<M_facturaDetalle>) getTableModel().getFacturaDetalleList());
-                                            break;
-                                        }
-                                        case 1: {
-                                            //Boleta
-                                            Impresora.imprimirBoletaVenta(getCabecera(), (ArrayList<M_facturaDetalle>) getTableModel().getFacturaDetalleList());
-                                            break;
-                                        }
-                                    }
-                                    break;
-                            }
-                        }
-                    } else if (tipoVenta == TipoVenta.FACTURA) {
-                        Impresora.imprimirFacturaVenta(getCabecera(), (ArrayList<M_facturaDetalle>) getTableModel().getFacturaDetalleList());
-                    }
-                }*/
-                return true;
             }
+            return true;
         }
         return false;
     }

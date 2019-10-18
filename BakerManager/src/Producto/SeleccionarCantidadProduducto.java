@@ -392,9 +392,9 @@ public class SeleccionarCantidadProduducto extends javax.swing.JDialog implement
             return false;
         }
         try {
-            String cantidad = this.jtfCantidad.getText().replace(',', '.');
-            d = Double.valueOf(cantidad);
-        } catch (Exception e) {
+            String cantidadAux = this.jtfCantidad.getText().replace(',', '.');
+            d = Double.valueOf(cantidadAux);
+        } catch (NumberFormatException e) {
             javax.swing.JOptionPane.showMessageDialog(this, "Verifique en uno de los campos el parametro:"
                     + e.getMessage().substring(17) + "\n"
                     + "Asegurese de colocar un numero valido\n"
@@ -436,64 +436,69 @@ public class SeleccionarCantidadProduducto extends javax.swing.JDialog implement
     }
 
     private void checkearTotal() {
-        Double descuento = null;
-        Double cantidad = null;
-        Integer total = null;
-        Integer precio = null;
-        try {
-            total = Integer.valueOf(jtfTotal.getText());
-        } catch (Exception e) {
-            javax.swing.JOptionPane.showMessageDialog(null, "Verifique en uno de los campos el parametro:"
-                    + e.getMessage().substring(12) + "\n"
-                    + "Asegurese de colocar un numero valido\n"
-                    + "en el campo Total.",
-                    "Parametros incorrectos",
-                    javax.swing.JOptionPane.OK_OPTION);
-            jtfTotal.setText("");
-            return;
-        }
-        try {
-            descuento = Double.valueOf(String.valueOf(jtfDescuento.getText()));
-        } catch (Exception e) {
-            javax.swing.JOptionPane.showMessageDialog(null, "Verifique en uno de los campos el parametro:"
-                    + e.getMessage().substring(12) + "\n"
-                    + "Asegurese de colocar un numero valido\n"
-                    + "en el campo Descuento.",
-                    "Parametros incorrectos",
-                    javax.swing.JOptionPane.OK_OPTION);
-            jtfDescuento.setText("0.0");
-            return;
-        }
-        try {
-            String cantidadfx = jtfCantidad.getText().replace(',', '.');
-            cantidad = Double.valueOf(cantidadfx);
-        } catch (Exception e) {
-            javax.swing.JOptionPane.showMessageDialog(null, "Verifique en uno de los campos el parametro:"
-                    + e.getMessage().substring(12) + "\n"
-                    + "Asegurese de colocar un numero valido\n"
-                    + "en el campo Cantidad.",
-                    "Parametros incorrectos",
-                    javax.swing.JOptionPane.OK_OPTION);
-            jtfCantidad.setText("0");
-            return;
-        }
-        try {
-            precio = Integer.valueOf(String.valueOf(jtfPrecio.getText()));
-        } catch (Exception e) {
-            javax.swing.JOptionPane.showMessageDialog(null, "Verifique en uno de los campos el parametro:"
-                    + e.getMessage().substring(12) + "\n"
-                    + "Asegurese de colocar un numero valido\n"
-                    + "en el campo Precio.",
-                    "Parametros incorrectos",
-                    javax.swing.JOptionPane.OK_OPTION);
-            jtfPrecio.setText("");
-            return;
-        }
-        Double precioTemporal = precio - ((precio * descuento) / 100);
-        cantidad = Double.valueOf(total / precioTemporal);
-        DecimalFormat df = new DecimalFormat("#.###");
-        df.setRoundingMode(RoundingMode.CEILING);
-        jtfCantidad.setText(df.format(cantidad).replace(',', '.'));
+        EventQueue.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                Double descuento = null;
+                Double cantidad = null;
+                Integer total = null;
+                Integer precio = null;
+                try {
+                    total = Integer.valueOf(jtfTotal.getText());
+                } catch (Exception e) {
+                    javax.swing.JOptionPane.showMessageDialog(null, "Verifique en uno de los campos el parametro:"
+                            + e.getMessage().substring(12) + "\n"
+                            + "Asegurese de colocar un numero valido\n"
+                            + "en el campo Total.",
+                            "Parametros incorrectos",
+                            javax.swing.JOptionPane.OK_OPTION);
+                    jtfTotal.setText("");
+                    return;
+                }
+                try {
+                    descuento = Double.valueOf(String.valueOf(jtfDescuento.getText()));
+                } catch (Exception e) {
+                    javax.swing.JOptionPane.showMessageDialog(null, "Verifique en uno de los campos el parametro:"
+                            + e.getMessage().substring(12) + "\n"
+                            + "Asegurese de colocar un numero valido\n"
+                            + "en el campo Descuento.",
+                            "Parametros incorrectos",
+                            javax.swing.JOptionPane.OK_OPTION);
+                    jtfDescuento.setText("0.0");
+                    return;
+                }
+                try {
+                    String cantidadfx = jtfCantidad.getText().replace(',', '.');
+                    cantidad = Double.valueOf(cantidadfx);
+                } catch (Exception e) {
+                    javax.swing.JOptionPane.showMessageDialog(null, "Verifique en uno de los campos el parametro:"
+                            + e.getMessage().substring(12) + "\n"
+                            + "Asegurese de colocar un numero valido\n"
+                            + "en el campo Cantidad.",
+                            "Parametros incorrectos",
+                            javax.swing.JOptionPane.OK_OPTION);
+                    jtfCantidad.setText("0");
+                    return;
+                }
+                try {
+                    precio = Integer.valueOf(String.valueOf(jtfPrecio.getText()));
+                } catch (Exception e) {
+                    javax.swing.JOptionPane.showMessageDialog(null, "Verifique en uno de los campos el parametro:"
+                            + e.getMessage().substring(12) + "\n"
+                            + "Asegurese de colocar un numero valido\n"
+                            + "en el campo Precio.",
+                            "Parametros incorrectos",
+                            javax.swing.JOptionPane.OK_OPTION);
+                    jtfPrecio.setText("");
+                    return;
+                }
+                Double precioTemporal = precio - ((precio * descuento) / 100);
+                cantidad = Double.valueOf(total / precioTemporal);
+                DecimalFormat df = new DecimalFormat("#.###");
+                df.setRoundingMode(RoundingMode.CEILING);
+                jtfCantidad.setText(df.format(cantidad).replace(',', '.'));
+            }
+        });
     }
 
     @Override

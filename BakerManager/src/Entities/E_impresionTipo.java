@@ -64,7 +64,7 @@ public class E_impresionTipo {
         E_impresionTipo c = (E_impresionTipo) o;
 
         // Compare the data members and return accordingly  
-        return this.getId() == c.getId();
+        return this.getDescripcion().equals(c.getDescripcion());
     }
     
 }

@@ -12,11 +12,11 @@ import bakermanager.C_inicio;
  */
 public class Ver_ingreso {
 
-    public V_ver_ingreso vista;
+    public V_crearVentaRapida vista;
     public C_ver_ingreso controlador;
 
     public Ver_ingreso(C_inicio c_inicio, Integer idIngresoCabecera) {
-        this.vista = new V_ver_ingreso(c_inicio.vista);
+        this.vista = new V_crearVentaRapida(c_inicio.vista);
         this.controlador = new C_ver_ingreso(idIngresoCabecera, this.vista);
     }
 
