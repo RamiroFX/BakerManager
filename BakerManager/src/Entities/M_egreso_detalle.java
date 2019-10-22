@@ -12,6 +12,7 @@ public class M_egreso_detalle {
     private Integer id_detalle;
     private Integer id_cabecera;
     private Integer id_producto;
+    private M_producto producto;
     private Integer precio;
     private Integer iva_exenta;
     private Integer iva_cinco;
@@ -170,6 +171,14 @@ public class M_egreso_detalle {
      */
     public void setDescuento(Double descuento) {
         this.descuento = descuento;
+    }
+
+    public M_producto getProducto() {
+        return producto;
+    }
+
+    public void setProducto(M_producto producto) {
+        this.producto = producto;
     }
     
 }

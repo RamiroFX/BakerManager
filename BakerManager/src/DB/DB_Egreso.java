@@ -7,6 +7,9 @@ package DB;
 import Entities.M_egreso_cabecera;
 import Entities.M_egreso_detalle;
 import Entities.M_egreso_detalleFX;
+import Entities.M_funcionario;
+import Entities.M_producto;
+import Entities.M_proveedor;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -32,7 +35,6 @@ public class DB_Egreso {
     /*
      * READ
      */
-
     public static ResultSetTableModel obtenerEgreso(Timestamp inicio, Timestamp fin, int tipo_operacion) {
         ResultSetTableModel rstm = null;
         String Query = "SELECT EGCA.ID_EGRESO_CABECERA \"ID egreso\", "
@@ -380,27 +382,74 @@ public class DB_Egreso {
 
     public static M_egreso_cabecera obtenerEgresoCabeceraID(int idEgresoCabecera) {
         M_egreso_cabecera egreso_cabecera = null;
-        String query = "SELECT EGCA.ID_EGRESO_CABECERA, "
+        String query = "SELECT PROV.ID_PROVEEDOR, "
+                + "PROV.ENTIDAD, "
+                + "PROV.NOMBRE, "
+                + "PROV.RUC, "
+                + "PROV.RUC_IDENTIFICADOR, "
+                + "PROV.DESCRIPCION, "
+                + "PROV.EMAIL, "
+                + "PROV.PAG_WEB, "
+                + "PROV.OBSERVACION, "
+                + "EGCA.ID_EGRESO_CABECERA, "
                 + "EGCA.ID_PROVEEDOR, "
                 + "EGCA.ID_FUNCIONARIO, "
                 + "EGCA.TIEMPO, "
                 + "EGCA.NRO_FACTURA, "
                 + "(SELECT TIOP.DESCRIPCION FROM TIPO_OPERACION TIOP WHERE TIOP.ID_TIPO_OPERACION = EGCA.ID_COND_COMPRA)\"EGCA.ID_COND_COMPRA\", "
-                + "EGCA.ID_COND_COMPRA "
-                + "FROM EGRESO_CABECERA EGCA "
-                + "WHERE EGCA.ID_EGRESO_CABECERA = " + idEgresoCabecera;
+                + "EGCA.ID_COND_COMPRA, "
+                + "FUNC.ID_FUNCIONARIO, "
+                + "FUNC.ID_PERSONA, "
+                + "FUNC.ALIAS, "
+                + "FUNC.FECHA_INGRESO, "
+                + "FUNC.NRO_CELULAR, "
+                + "FUNC.NRO_TELEFONO, "
+                + "FUNC.EMAIL, "
+                + "FUNC.DIRECCION, "
+                + "FUNC.OBSERVACION, "
+                + "PERS.NOMBRE, "
+                + "PERS.APELLIDO "
+                + "FROM EGRESO_CABECERA EGCA, PROVEEDOR PROV, FUNCIONARIO FUNC, PERSONA PERS "
+                + "WHERE EGCA.ID_PROVEEDOR = PROV.ID_PROVEEDOR "
+                + "AND EGCA.ID_FUNCIONARIO = FUNC.ID_FUNCIONARIO "
+                + "AND FUNC.ID_PERSONA = PERS.ID_PERSONA "
+                + "AND EGCA.ID_EGRESO_CABECERA = " + idEgresoCabecera;
         try {
             pst = DB_manager.getConection().prepareStatement(query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             rs = pst.executeQuery();
             while (rs.next()) {
+                M_proveedor proveedor = new M_proveedor();
+                M_funcionario funcionario = new M_funcionario();
+                proveedor.setId(rs.getInt(1));
+                proveedor.setEntidad(rs.getString(2));
+                proveedor.setNombre(rs.getString(3));
+                proveedor.setRuc(rs.getString(4));
+                proveedor.setRuc_id(rs.getString(5));
+                proveedor.setDescripcion(rs.getString(6));
+                proveedor.setEmail(rs.getString(7));
+                proveedor.setPagWeb(rs.getString(8));
+                proveedor.setObservacion(rs.getString(9));
+                funcionario.setId_funcionario(rs.getInt(17));
+                funcionario.setId_persona(rs.getInt(18));
+                funcionario.setAlias(rs.getString(19));
+                funcionario.setFecha_ingreso(rs.getDate(20));
+                funcionario.setNro_celular(rs.getString(21));
+                funcionario.setNro_telefono(rs.getString(22));
+                funcionario.setEmail(rs.getString(23));
+                funcionario.setDireccion(rs.getString(24));
+                funcionario.setObservacion(rs.getString(25));
+                funcionario.setNombre(rs.getString(26));
+                funcionario.setApellido(rs.getString(27));
                 egreso_cabecera = new M_egreso_cabecera();
-                egreso_cabecera.setId_cabecera(rs.getInt("ID_EGRESO_CABECERA"));
-                egreso_cabecera.setId_condVenta(rs.getInt("ID_COND_COMPRA"));
-                egreso_cabecera.setId_empleado(rs.getInt("ID_FUNCIONARIO"));
-                egreso_cabecera.setId_proveedor(rs.getInt("ID_PROVEEDOR"));
-                egreso_cabecera.setTiempo(rs.getTimestamp("TIEMPO"));
-                egreso_cabecera.setNro_factura(rs.getInt("NRO_FACTURA"));
-                egreso_cabecera.setCondVenta(rs.getString("ID_COND_COMPRA"));
+                egreso_cabecera.setProveedor(proveedor);
+                egreso_cabecera.setFuncionario(funcionario);
+                egreso_cabecera.setId_cabecera(rs.getInt(10));
+                egreso_cabecera.setId_proveedor(rs.getInt(11));;
+                egreso_cabecera.setId_empleado(rs.getInt(12));
+                egreso_cabecera.setTiempo(rs.getTimestamp(13));
+                egreso_cabecera.setNro_factura(rs.getInt(14));
+                egreso_cabecera.setCondVenta(rs.getString(15));
+                egreso_cabecera.setId_condVenta(rs.getInt(16));
             }
         } catch (SQLException ex) {
             Logger lgr = Logger.getLogger(DB_Egreso.class.getName());
@@ -541,6 +590,56 @@ public class DB_Egreso {
             }
         }
         return Arraylist;
+    }
+
+    public static ArrayList<M_egreso_detalle> obtenerEgresoDetalles(Integer idEgresoCabecera) {
+        ArrayList<M_egreso_detalle> detalles = null;
+        String query = "SELECT ID_EGRESO_DETALLE, "
+                + "ID_EGRESO_CABECERA, ID_PRODUCTO,"
+                + "(SELECT P.DESCRIPCION FROM PRODUCTO P WHERE P.ID_PRODUCTO = ED.ID_PRODUCTO)\"PRODUCTO\", "
+                + "(SELECT P.ID_IMPUESTO FROM PRODUCTO P WHERE P.ID_PRODUCTO = ED.ID_PRODUCTO)\"ID_IMPUESTO\", "
+                + "CANTIDAD, "
+                + "PRECIO, "
+                + "DESCUENTO, "
+                + "OBSERVACION "
+                + "FROM EGRESO_DETALLE ED "
+                + "WHERE ED.ID_EGRESO_CABECERA = " + idEgresoCabecera;
+        try {
+            st = DB_manager.getConection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            rs = st.executeQuery(query);
+            detalles = new ArrayList();
+            while (rs.next()) {
+                M_egreso_detalle detalle = new M_egreso_detalle();
+                detalle.setCantidad(rs.getDouble("CANTIDAD"));
+                detalle.setDescuento(rs.getDouble("DESCUENTO"));
+                detalle.setId_cabecera(rs.getInt("ID_EGRESO_CABECERA"));
+                detalle.setId_detalle(rs.getInt("ID_EGRESO_DETALLE"));
+                detalle.setObservacion(rs.getString("OBSERVACION"));
+                detalle.setPrecio(rs.getInt("PRECIO"));
+                M_producto producto = new M_producto();
+                producto.setId(rs.getInt("ID_PRODUCTO"));
+                producto.setDescripcion(rs.getString("PRODUCTO"));
+                producto.setIdImpuesto(rs.getInt("ID_IMPUESTO"));
+                detalle.setProducto(producto);
+                detalles.add(detalle);
+            }
+        } catch (SQLException ex) {
+            Logger lgr = Logger.getLogger(DB_Egreso.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (st != null) {
+                    st.close();
+                }
+            } catch (SQLException ex) {
+                Logger lgr = Logger.getLogger(DB_Egreso.class.getName());
+                lgr.log(Level.WARNING, ex.getMessage(), ex);
+            }
+        }
+        return detalles;
     }
 
     public static ResultSetTableModel obtenerEgresoCabecera(Integer idEgresoDetalle) {
@@ -749,7 +848,6 @@ public class DB_Egreso {
     /*
      * CREATE
      */
-
     public static void insertarEgresoTEMPORAL(M_egreso_cabecera egreso_cabecera, M_egreso_detalle[] egreso_detalle) {
         String insertDetalle = "INSERT INTO egreso_detalle(id_egreso_cabecera, id_producto, cantidad, precio, descuento, observacion)VALUES (?, ?, ?, ?, ?, ?)";
         String INSERT_CABECERA = "INSERT INTO egreso_cabecera(nro_factura, id_proveedor, id_funcionario, tiempo, ID_COND_COMPRA)VALUES (?, ?, ?, ?, ?)";

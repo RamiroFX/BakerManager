@@ -305,7 +305,6 @@ public class C_crearVentaRapida implements GestionInterface, InterfaceFacturaDet
     }
 
     private void guardarVenta() {
-        E_impresionTipo it = vista.jcbTipoVenta.getItemAt(vista.jcbTipoVenta.getSelectedIndex());
         switch (modelo.getTipoVenta().getDescripcion()) {
             case "ticket": {
                 this.modelo.getCabecera().setNroFactura(null);
@@ -319,6 +318,7 @@ public class C_crearVentaRapida implements GestionInterface, InterfaceFacturaDet
                     sumarTotal();
                     this.vista.jtfCodProd.setText("");
                 }
+                vista.toFront();
                 break;
             }
             case "factura": {
@@ -336,6 +336,8 @@ public class C_crearVentaRapida implements GestionInterface, InterfaceFacturaDet
                         this.vista.jtfCodProd.setText("");
                     }
                 }
+                //vista.jtfCodProd.requestFocusInWindow();
+                vista.toFront();
                 break;
             }
             case "boleta": {
@@ -350,38 +352,11 @@ public class C_crearVentaRapida implements GestionInterface, InterfaceFacturaDet
                     sumarTotal();
                     this.vista.jtfCodProd.setText("");
                 }
+                //vista.jtfCodProd.requestFocusInWindow();
+                vista.toFront();
                 break;
             }
         }
-        /*int currentItem = this.vista.jcbTipoVenta.getSelectedIndex();
-        if (currentItem == 0) {//ticket
-            this.modelo.getCabecera().setNroFactura(null);
-            if (this.modelo.guardarVenta()) {
-                this.modelo.limpiarCampos();
-                this.vista.jtFacturaDetalle.setModel(this.modelo.getTableModel());
-                recibirCliente(this.modelo.getCabecera().getCliente());
-                establecerNroFactura();
-                establecerCondicionVenta();
-                establecerTipoVenta();
-                sumarTotal();
-                this.vista.jtfCodProd.setText("");
-            }
-        } else {
-            if (checkearNroFactura()) {
-                String nroFactura = this.vista.jtfNroFactura.getText();
-                this.modelo.getCabecera().setNroFactura(Integer.valueOf(nroFactura));
-                if (this.modelo.guardarVenta()) {
-                    this.modelo.limpiarCampos();
-                    this.vista.jtFacturaDetalle.setModel(this.modelo.getTableModel());
-                    recibirCliente(this.modelo.getCabecera().getCliente());
-                    establecerNroFactura();
-                    establecerCondicionVenta();
-                    establecerTipoVenta();
-                    sumarTotal();
-                    this.vista.jtfCodProd.setText("");
-                }
-            }
-        }*/
     }
 
     private void establecerCondicionVenta() {

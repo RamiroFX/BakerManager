@@ -7,8 +7,12 @@ package Egresos;
 import DB.DB_Egreso;
 import DB.DB_Funcionario;
 import DB.DB_Proveedor;
+import Impresora.Impresora;
+import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Date;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -41,6 +45,7 @@ class C_ver_egreso implements ActionListener {
 
     private void agregarListeners() {
         this.vista.jbSalir.addActionListener(this);
+        this.vista.jbImprimir.addActionListener(this);
     }
 
     private void cerrar() {
@@ -68,6 +73,7 @@ class C_ver_egreso implements ActionListener {
 
     private void initComp() {
         this.modelo.egreso_cabecera = DB_Egreso.obtenerEgresoCabeceraID(idEgresoCabecera);
+        this.modelo.egresoDetalles = DB_Egreso.obtenerEgresoDetalles(idEgresoCabecera);
         this.modelo.proveedor = DB_Proveedor.obtenerDatosProveedorID(this.modelo.egreso_cabecera.getId_proveedor());
         this.modelo.empleado = DB_Funcionario.obtenerDatosFuncionarioID(modelo.egreso_cabecera.getId_empleado());
         this.vista.jtfProveedor.setText(this.modelo.proveedor.getNombre());
@@ -90,10 +96,48 @@ class C_ver_egreso implements ActionListener {
         sumarTotal();
     }
 
+    private void imprimir() {
+
+        Object[] options = {"Ticket",
+            "Boleta"};
+        int n = JOptionPane.showOptionDialog(this.vista,
+                "Eliga tipo de impresion",
+                "Atención",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                null, //do not use a custom Icon
+                options, //the titles of buttons
+                options[0]); //default button title
+        switch (n) {
+            case 0: {
+                //Ticket
+                EventQueue.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        Impresora.imprimirTicketCompra(modelo.egreso_cabecera, modelo.egresoDetalles);
+                    }
+                });
+                break;
+            }
+            case 1: {
+                //Boleta
+                EventQueue.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        Impresora.imprimirBoletaCompra(modelo.egreso_cabecera, modelo.egresoDetalles);
+                    }
+                });
+                break;
+            }
+        }
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource().equals(this.vista.jbSalir)) {
             cerrar();
+        } else if (e.getSource().equals(this.vista.jbImprimir)) {
+            imprimir();
         }
     }
 }
