@@ -4,6 +4,7 @@
  */
 package Pedido;
 
+import Entities.E_impresionTipo;
 import com.toedter.calendar.JDateChooser;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -36,7 +37,8 @@ public class V_crearPedido extends JDialog {
     public JTextField jtfCliente, jtfNroFactura, jtfClieDireccion, jtfClieTelefono, jtfClieRuc;
     public JButton jbCliente;
     public JLabel jlNroFactura;
-    public JComboBox jcbCondVenta, jcbTipoVenta;
+    public JComboBox jcbCondVenta;
+    public JComboBox<E_impresionTipo> jcbTipoVenta;
     //norte 2
     public JComboBox jcbHora, jcbMinuto;
     public JDateChooser jdcFechaEntrega;

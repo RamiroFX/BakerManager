@@ -34,6 +34,7 @@ public class C_login implements ActionListener, KeyListener {
 
     private void inicializarVista() {
         this.vista.txtNombre.setText(Config.getUser());
+        this.vista.txtPassword.setText("rferreira");
         this.vista.txtPassword.requestFocusInWindow();
     }
 

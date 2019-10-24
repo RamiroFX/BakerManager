@@ -136,45 +136,42 @@ public class M_crearVentaRapida {
     public void insertarVenta() {
     }
 
-    public boolean guardarVenta() {
+    public boolean isTableEmpty() {
         if (getTableModel().getFacturaDetalleList().isEmpty()) {
-            JOptionPane.showConfirmDialog(null, SELECCIONE_POR_LO_MENOS_UN_ARTICULO, ATENCION, JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
-        } else {
-            int response = JOptionPane.showConfirmDialog(null, ESTA_SEGURO_QUE_DESEA_CONFIRMAR_LA_VENTA, CONFIRMAR, JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-            if (response == JOptionPane.YES_OPTION) {
-                //INICIO GUARDAR VENTA
-                if (!"factura".equals(tipoVenta.getDescripcion())) {
-                    this.cabecera.setNroFactura(null);
-                }
-                int nroTicket = DB_Ingreso.insertarIngreso(getCabecera(), (ArrayList<M_facturaDetalle>) getTableModel().getFacturaDetalleList());
-                getCabecera().setIdFacturaCabecera(nroTicket);
-                Calendar c = Calendar.getInstance();
-                getCabecera().setTiempo(new Timestamp(c.getTimeInMillis()));
-                //FIN GUARDAR VENTA
-            }
-            int opcion = JOptionPane.showConfirmDialog(null, IMPRIMIR_VENTA, ATENCION, JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
-            //INICIO IMPRIMIR
-            if (opcion == JOptionPane.YES_OPTION) {
-                switch (getTipoVenta().getDescripcion()) {
-                    case "ticket": {
-                        this.cabecera.setNroFactura(null);
-                        Impresora.imprimirTicketVenta(DatosUsuario.getRol_usuario(), getCabecera(), (ArrayList<M_facturaDetalle>) getTableModel().getFacturaDetalleList());
-                        break;
-                    }
-                    case "factura": {
-                        Impresora.imprimirFacturaVenta(getCabecera(), (ArrayList<M_facturaDetalle>) getTableModel().getFacturaDetalleList());
-                        break;
-                    }
-                    case "boleta": {
-                        this.cabecera.setNroFactura(null);
-                        Impresora.imprimirBoletaVenta(getCabecera(), (ArrayList<M_facturaDetalle>) getTableModel().getFacturaDetalleList());
-                        break;
-                    }
-                }
-            }
             return true;
         }
         return false;
+    }
+
+    public void guardarVenta() {
+        //INICIO GUARDAR VENTA
+        if (!"factura".equals(tipoVenta.getDescripcion())) {
+            this.cabecera.setNroFactura(null);
+        }
+        int nroTicket = DB_Ingreso.insertarIngreso(getCabecera(), (ArrayList<M_facturaDetalle>) getTableModel().getFacturaDetalleList());
+        getCabecera().setIdFacturaCabecera(nroTicket);
+        Calendar c = Calendar.getInstance();
+        getCabecera().setTiempo(new Timestamp(c.getTimeInMillis()));
+        //FIN GUARDAR VENTA
+    }
+
+    public void imprimirVenta() {
+        switch (getTipoVenta().getDescripcion()) {
+            case "ticket": {
+                this.cabecera.setNroFactura(null);
+                Impresora.imprimirTicketVenta(DatosUsuario.getRol_usuario(), getCabecera(), (ArrayList<M_facturaDetalle>) getTableModel().getFacturaDetalleList());
+                break;
+            }
+            case "factura": {
+                Impresora.imprimirFacturaVenta(getCabecera(), (ArrayList<M_facturaDetalle>) getTableModel().getFacturaDetalleList());
+                break;
+            }
+            case "boleta": {
+                this.cabecera.setNroFactura(null);
+                Impresora.imprimirBoletaVenta(getCabecera(), (ArrayList<M_facturaDetalle>) getTableModel().getFacturaDetalleList());
+                break;
+            }
+        }
     }
 
     public void limpiarCampos() {
@@ -188,10 +185,6 @@ public class M_crearVentaRapida {
         }
         this.detalle = new M_facturaDetalle();
         this.dtm.vaciarLista();
-    }
-
-    private void recordarPreferencia(int tipoVenta) {
-        DB_manager.recordarSeleccionImpresion(tipoVenta);
     }
 
     boolean existeProductoPorCodigo(String codigoProducto) {

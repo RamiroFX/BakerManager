@@ -162,12 +162,26 @@ public class C_verPedido extends MouseAdapter implements ActionListener, KeyList
     }
 
     private void establecerTipoVenta() {
-        if (this.vista.jcbTipoVenta.getSelectedIndex() == 0) {
-            this.vista.jtfNroFactura.setText("");
-            this.vista.jtfNroFactura.setEnabled(false);
-        } else {
-            this.vista.jtfNroFactura.setText(modelo.getNroFactura() + "");
-            this.vista.jtfNroFactura.setEnabled(true);
+        E_impresionTipo tipoVenta = this.vista.jcbTipoVenta.getItemAt(this.vista.jcbTipoVenta.getSelectedIndex());
+        switch (tipoVenta.getDescripcion()) {
+            case "ticket": {
+                this.vista.jtfNroFactura.setText("");
+                this.vista.jtfNroFactura.setEnabled(false);
+                this.modelo.setTipoVenta(tipoVenta);
+                break;
+            }
+            case "factura": {
+                this.vista.jtfNroFactura.setText(modelo.getNroFactura() + "");
+                this.vista.jtfNroFactura.setEnabled(true);
+                this.modelo.setTipoVenta(tipoVenta);
+                break;
+            }
+            case "boleta": {
+                this.vista.jtfNroFactura.setText("");
+                this.vista.jtfNroFactura.setEnabled(false);
+                this.modelo.setTipoVenta(tipoVenta);
+                break;
+            }
         }
     }
 
@@ -322,18 +336,30 @@ public class C_verPedido extends MouseAdapter implements ActionListener, KeyList
         if (opcion == JOptionPane.YES_OPTION) {
             Integer idPedido = modelo.getPedido().getIdPedido();
             Integer nroFactura = null;
-            if (vista.jcbTipoVenta.getSelectedIndex() == 1) {
+            E_impresionTipo tipoVenta = this.vista.jcbTipoVenta.getItemAt(this.vista.jcbTipoVenta.getSelectedIndex());
+            if (tipoVenta.getDescripcion().equals("factura")) {
                 nroFactura = modelo.getNroFactura();
             }
+            //GUARDAR VENTA
             int idFaca = this.modelo.pagarPedido(idPedido, nroFactura);
             ArrayList<M_facturaDetalle> fades = DB_Ingreso.obtenerVentaDetalles(idFaca);
             M_facturaCabecera faca = DB_Ingreso.obtenerIngresoCabeceraCompleto(idFaca);
+            //IMPRIMIR VENTA
             int opcion2 = JOptionPane.showConfirmDialog(vista, "¿Desea imprimir la venta?", "Atención", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
             if (opcion2 == JOptionPane.YES_OPTION) {
-                if (vista.jcbTipoVenta.getSelectedIndex() == 0) {
-                    Impresora.imprimirTicketVenta(DatosUsuario.getRol_usuario(), faca, fades);
-                } else if (vista.jcbTipoVenta.getSelectedIndex() == 1) {
-                    Impresora.imprimirFacturaVenta(faca, fades);
+                switch (tipoVenta.getDescripcion()) {
+                    case "ticket": {
+                        Impresora.imprimirTicketVenta(DatosUsuario.getRol_usuario(), faca, fades);
+                        break;
+                    }
+                    case "factura": {
+                        Impresora.imprimirFacturaVenta(faca, fades);
+                        break;
+                    }
+                    case "boleta": {
+                        Impresora.imprimirBoletaVenta(faca, fades);
+                        break;
+                    }
                 }
             }
             cerrar();

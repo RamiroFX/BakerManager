@@ -26,12 +26,27 @@ public class M_verPedido {
     private M_pedidoDetalle detalle;
     private ArrayList<M_pedidoDetalle> detalles;
     private ResultSetTableModel rstm;
+    private E_impresionTipo tipoVenta;
 
     public M_verPedido(int idPedido) {
         this.pedido = DB_Pedido.obtenerPedido(idPedido);
         this.detalle = new M_pedidoDetalle();
         this.rstm = DB_Pedido.obtenerPedidoDetalle(idPedido);
         this.detalles = DB_Pedido.obtenerPedidoDetalles(idPedido);
+    }
+
+    /**
+     * @return the tipoVenta
+     */
+    public E_impresionTipo getTipoVenta() {
+        return tipoVenta;
+    }
+
+    /**
+     * @param tipoVenta the tipoVenta to set
+     */
+    public void setTipoVenta(E_impresionTipo tipoVenta) {
+        this.tipoVenta = tipoVenta;
     }
 
     public M_pedido getPedido() {
