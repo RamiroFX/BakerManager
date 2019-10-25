@@ -541,6 +541,25 @@ public class DB_manager {
         return estado;
     }
 
+    public static ArrayList<Estado> obtenerEstados() {
+        ArrayList<Estado> estado = null;
+        String q = "SELECT * FROM estado ";
+        try {
+            st = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            rs = st.executeQuery(q);
+            estado = new ArrayList();
+            while (rs.next()) {
+                Estado e = new Estado();
+                e.setId(rs.getInt("id_estado"));
+                e.setDescripcion(rs.getString("descripcion"));
+                estado.add(e);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return estado;
+    }
+
     public static Vector consultarRespuesta() {
         Vector respuesta = null;
         String q = "SELECT descripcion "
@@ -1263,7 +1282,8 @@ public class DB_manager {
         }
         return tiop;
     }
-/*
+
+    /*
     public static Vector obtenerTipoVenta() {
         Vector tipoVenta = null;
         String q = "SELECT descripcion  "
@@ -1446,5 +1466,5 @@ public class DB_manager {
         }
         return result;
     }
-    
+
 }

@@ -11,6 +11,8 @@ package Entities;
  */
 public class Estado {
 
+    public static final int ACTIVO = 1, INACTIVO = 2, TODOS = 3;
+
     private int id;
     private String descripcion;
 
@@ -38,4 +40,28 @@ public class Estado {
         this.descripcion = descripcion;
     }
 
+    @Override
+    public String toString() {
+        return getDescripcion();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        // If the object is compared with itself then return true   
+        if (o == this) {
+            return true;
+        }
+
+        /* Check if o is an instance of Complex or not 
+          "null instanceof [type]" also returns false */
+        if (!(o instanceof Estado)) {
+            return false;
+        }
+
+        // typecast o to Complex so that we can compare data members  
+        Estado c = (Estado) o;
+
+        // Compare the data members and return accordingly  
+        return this.getId() == c.getId();
+    }
 }

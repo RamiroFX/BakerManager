@@ -48,9 +48,9 @@ public class C_crearVentaRapida implements GestionInterface, InterfaceFacturaDet
 
     public M_crearVentaRapida modelo;
     public V_crearVentaRapida vista;
-    private C0_gestionVentas gestionVentas;
+    private C_gestionVentas gestionVentas;
 
-    public C_crearVentaRapida(V_crearVentaRapida vista, C0_gestionVentas gestionVentas) {
+    public C_crearVentaRapida(V_crearVentaRapida vista, C_gestionVentas gestionVentas) {
         this.modelo = new M_crearVentaRapida(this);
         this.vista = vista;
         this.gestionVentas = gestionVentas;

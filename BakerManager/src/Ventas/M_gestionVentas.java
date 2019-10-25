@@ -5,7 +5,9 @@
 package Ventas;
 
 import DB.DB_Ingreso;
+import DB.DB_manager;
 import DB.ResultSetTableModel;
+import Entities.Estado;
 import Entities.M_facturaCabecera;
 import Entities.M_facturaDetalle;
 import java.sql.Timestamp;
@@ -16,13 +18,13 @@ import java.util.Date;
  *
  * @author Ramiro Ferreira
  */
-public class M0_gestionVentas {
+public class M_gestionVentas {
 
     M_facturaCabecera cabecera;
     M_facturaDetalle detalle;
     ArrayList<M_facturaDetalle> detalles;
 
-    public M0_gestionVentas() {
+    public M_gestionVentas() {
         this.cabecera = new M_facturaCabecera();
         this.detalle = new M_facturaDetalle();
         this.detalles = new ArrayList<>();
@@ -79,12 +81,23 @@ public class M0_gestionVentas {
         } catch (Exception e) {
             fechaFinal = "Todos";
         }
-        return DB_Ingreso.obtenerIngreso(fechaInicio, fechaFinal, condVenta, getCabecera());
+        return DB_Ingreso.obtenerIngreso(fechaInicio, fechaFinal, condVenta, getCabecera(), 1);
     }
 
     public void borrarDatos() {
         setCabecera(new M_facturaCabecera());
         setDetalle(new M_facturaDetalle());
         setDetalles(new ArrayList<M_facturaDetalle>());
+    }
+
+    public ArrayList<Estado> getEstados() {
+        ArrayList<Estado> estados = DB_manager.obtenerEstados();
+        estados.add(new Estado(3, "Todos"));
+        return estados;
+    }
+
+    public void anularVenta(int idVenta) {
+        //id 2 es inactivo
+        DB_Ingreso.anularVenta(idVenta, 2);
     }
 }

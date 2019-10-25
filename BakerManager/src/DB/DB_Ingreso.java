@@ -5,6 +5,7 @@
 package DB;
 
 import Entities.E_facturaDetalleFX;
+import Entities.Estado;
 import Entities.M_cliente;
 import Entities.M_facturaCabecera;
 import Entities.M_facturaDetalle;
@@ -76,7 +77,7 @@ public class DB_Ingreso {
         return (int) nroFactura;
     }
 
-    public static ResultSetTableModel obtenerIngreso(String inicio, String fin, String tipo_operacion, M_facturaCabecera factura_cabecera) {
+    public static ResultSetTableModel obtenerIngreso(String inicio, String fin, String tipo_operacion, M_facturaCabecera factura_cabecera, int idEstado) {
         ResultSetTableModel rstm = null;
 
         String Query = "SELECT ID_FACTURA_CABECERA \"ID\", "
@@ -107,6 +108,7 @@ public class DB_Ingreso {
                 Query = Query + " AND FC.ID_FUNCIONARIO = " + factura_cabecera.getFuncionario().getId_funcionario();
             }
         }
+        Query = Query + " AND FC.ID_ESTADO = " + idEstado;
         Query = Query + " ORDER BY \"ID\"";
         try {
             st = DB_manager.getConection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
@@ -1284,5 +1286,32 @@ public class DB_Ingreso {
             lgr.log(Level.SEVERE, ex.getMessage(), ex);
         }
         return false;
+    }
+
+    public static void anularVenta(int idVenta, int idEstado) {
+        String UPDATE_VENTA = "UPDATE FACTURA_CABECERA SET ID_ESTADO = ? WHERE ID_FACTURA_CABECERA = ?";
+        try {
+            DB_manager.habilitarTransaccionManual();
+            pst = DB_manager.getConection().prepareStatement(UPDATE_VENTA);
+            pst.setInt(1, idEstado);
+            pst.setInt(2, idVenta);
+            pst.executeUpdate();
+            pst.close();
+            DB_manager.establecerTransaccion();
+        } catch (SQLException ex) {
+            System.out.println(ex.getNextException());
+            if (DB_manager.getConection() != null) {
+                try {
+                    DB_manager.getConection().rollback();
+                } catch (SQLException ex1) {
+                    Logger lgr = Logger.getLogger(DB_Proveedor.class
+                            .getName());
+                    lgr.log(Level.WARNING, ex1.getMessage(), ex1);
+                }
+            }
+            Logger lgr = Logger.getLogger(DB_Proveedor.class
+                    .getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        }
     }
 }

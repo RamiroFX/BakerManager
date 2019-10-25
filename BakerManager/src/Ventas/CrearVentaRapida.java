@@ -13,7 +13,7 @@ public class CrearVentaRapida {
     C_crearVentaRapida controlador;
     M_crearVentaRapida modelo;
     V_crearVentaRapida vista;
-    public CrearVentaRapida(C0_gestionVentas gestionVentas) {
+    public CrearVentaRapida(C_gestionVentas gestionVentas) {
         this.vista = new V_crearVentaRapida(gestionVentas.c_inicio.vista);
         this.controlador = new C_crearVentaRapida(vista, gestionVentas);
     }

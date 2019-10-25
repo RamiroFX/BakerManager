@@ -23,9 +23,9 @@ public class C_crearVentas extends MouseAdapter implements ActionListener, KeyLi
 
     V_crearVentas vista;
     M_crearVentas modelo;
-    C0_gestionVentas gestionVentas;
+    C_gestionVentas gestionVentas;
 
-    public C_crearVentas(V_crearVentas vista, M_crearVentas modelo, C0_gestionVentas gestionVentas) {
+    public C_crearVentas(V_crearVentas vista, M_crearVentas modelo, C_gestionVentas gestionVentas) {
         this.vista = vista;
         this.modelo = modelo;
         this.gestionVentas = gestionVentas;

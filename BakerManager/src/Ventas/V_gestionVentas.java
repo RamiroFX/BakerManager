@@ -4,12 +4,14 @@
  */
 package Ventas;
 
+import Entities.Estado;
 import Interface.CommonFormat;
 import com.toedter.calendar.JDateChooser;
 import java.awt.Dimension;
 import java.awt.Insets;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JInternalFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -25,19 +27,20 @@ import net.miginfocom.swing.MigLayout;
  *
  * @author Ramiro Ferreira
  */
-public class V0_gestionVentas extends JInternalFrame {
+public class V_gestionVentas extends JInternalFrame {
 
     public JButton jbBuscar, jbBuscarDetalle, jbBorrar, jbAgregar, jbDetalle,
-            jbResumen, jbCliente, jbEmpleado;
+            jbResumen, jbCliente, jbEmpleado, jbAnular;
     public JTextField jtfNroFactura, jtfCliente, jtfEmpleado;
     public JComboBox jcbEmpleado, jcbCondCompra;
+    public JComboBox<Estado> jcbEstado;
     private JPanel jpTop, jpBotonesTop, jpBot;
     public JTable jtIngresoDetalle, jtIngresoCabecera;
     private JScrollPane jspEgresoDetalle;
     private JSplitPane jspMid;
     public JDateChooser jddInicio, jddFinal;
 
-    public V0_gestionVentas() {
+    public V_gestionVentas() {
         super("Ventas", true, true, true, true);
         setSize(950, 600);
         setName("jifGestionVentas");
@@ -69,6 +72,7 @@ public class V0_gestionVentas extends JInternalFrame {
         jddInicio.setPreferredSize(new Dimension(150, 10));
         jddFinal = new JDateChooser();
         jddFinal.setPreferredSize(new Dimension(150, 10));
+        jcbEstado = new JComboBox<>();
         jpFiltros.add(jbCliente, "growx");
         jpFiltros.add(jtfCliente, "growx");
         jpFiltros.add(new JLabel("Fecha inicio:"));
@@ -80,7 +84,17 @@ public class V0_gestionVentas extends JInternalFrame {
         jpFiltros.add(new JLabel("Fecha final:"));
         jpFiltros.add(jddFinal, "growx");
         jpFiltros.add(new JLabel("Nro. factura:"));
-        jpFiltros.add(jtfNroFactura, "growx");
+        jpFiltros.add(jtfNroFactura, "growx, wrap");
+        jpFiltros.add(new JComponent() {
+        });
+        jpFiltros.add(new JComponent() {
+        });
+        jpFiltros.add(new JComponent() {
+        });
+        jpFiltros.add(new JComponent() {
+        });
+        jpFiltros.add(new JLabel("Estado"));
+        jpFiltros.add(jcbEstado, "growx");
         jpBotonesTop = new JPanel(new MigLayout());
         jpBotonesTop.setBorder(new EtchedBorder(EtchedBorder.RAISED));
         /*jtfBuscar = new JTextField();
@@ -127,6 +141,10 @@ public class V0_gestionVentas extends JInternalFrame {
         jbDetalle.setName("detalle venta");
         jbDetalle.setFont(CommonFormat.fuente);
         jbDetalle.setMargin(insets);
+        jbAnular = new JButton("Anular");
+        jbAnular.setName("anular venta");
+        jbAnular.setFont(CommonFormat.fuente);
+        jbAnular.setMargin(insets);
         jbResumen = new JButton("Ver resumen [F2]");
         jbResumen.setName("resumen venta");
         jbResumen.setMargin(insets);
@@ -134,6 +152,7 @@ public class V0_gestionVentas extends JInternalFrame {
         jbResumen.setEnabled(false);
         jpBot.add(jbAgregar);
         jpBot.add(jbDetalle);
+        jpBot.add(jbAnular);
         jpBot.add(jbResumen);
         jpBot.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED), "Opciones"));
     }

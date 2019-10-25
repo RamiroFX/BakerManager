@@ -8,7 +8,7 @@ import Egresos.C_buscar_detalle;
 import Egresos.C_gestionEgresos;
 import Entities.M_funcionario;
 import Pedido.C_gestionPedido;
-import Ventas.C0_gestionVentas;
+import Ventas.C_gestionVentas;
 import Ventas.C_buscar_venta_detalle;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
@@ -35,7 +35,7 @@ public class C_seleccionar_funcionario extends MouseAdapter implements ActionLis
     M_funcionario funcionario;
     V_seleccionar_funcionario vista;
     //C_crear_venta c_ingreso;
-    private C0_gestionVentas gestion_venta;
+    private C_gestionVentas gestion_venta;
     private C_gestionEgresos gestion_compra;
     private C_buscar_detalle buscarDetalleEgreso;
     private C_gestionPedido gestionPedido;
@@ -43,7 +43,7 @@ public class C_seleccionar_funcionario extends MouseAdapter implements ActionLis
     private C_gestionCaja gestionCaja;
     private C_gestionCobroPago gestionCobroPago;
 
-    public C_seleccionar_funcionario(V_seleccionar_funcionario vista, C0_gestionVentas gestion_venta) {
+    public C_seleccionar_funcionario(V_seleccionar_funcionario vista, C_gestionVentas gestion_venta) {
         this.gestion_venta = gestion_venta;
         this.vista = vista;
         this.tipo = GESTION_VENTA;

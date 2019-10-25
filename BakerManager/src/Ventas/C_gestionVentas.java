@@ -14,6 +14,7 @@ import Interface.GestionInterface;
 import MenuPrincipal.DatosUsuario;
 import bakermanager.C_inicio;
 import Empleado.Seleccionar_funcionario;
+import Entities.Estado;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -29,14 +30,14 @@ import javax.swing.JOptionPane;
  *
  * @author Ramiro Ferreira
  */
-public class C0_gestionVentas implements GestionInterface {
+public class C_gestionVentas implements GestionInterface {
 
-    public M0_gestionVentas modelo;
-    public V0_gestionVentas vista;
+    public M_gestionVentas modelo;
+    public V_gestionVentas vista;
     public C_inicio c_inicio;
-    private final C0_gestionVentas gestionVentas;
+    private final C_gestionVentas gestionVentas;
 
-    public C0_gestionVentas(M0_gestionVentas modelo, V0_gestionVentas vista, C_inicio c_inicio) {
+    public C_gestionVentas(M_gestionVentas modelo, V_gestionVentas vista, C_inicio c_inicio) {
         this.modelo = modelo;
         this.vista = vista;
         this.c_inicio = c_inicio;
@@ -53,6 +54,10 @@ public class C0_gestionVentas implements GestionInterface {
         for (int i = 0; i < condCompra.size(); i++) {
             this.vista.jcbCondCompra.addItem(condCompra.get(i));
         }
+        ArrayList<Estado> estados = modelo.getEstados();
+        for (int i = 0; i < estados.size(); i++) {
+            this.vista.jcbEstado.addItem(estados.get(i));
+        }
         Date today = Calendar.getInstance().getTime();
         this.vista.jddInicio.setDate(today);
         this.vista.jddFinal.setDate(today);
@@ -64,6 +69,7 @@ public class C0_gestionVentas implements GestionInterface {
         this.vista.jbCliente.setEnabled(false);
         this.vista.jbEmpleado.setEnabled(false);
         this.vista.jcbCondCompra.setEnabled(false);
+        this.vista.jbAnular.setEnabled(false);
     }
 
     @Override
@@ -93,6 +99,9 @@ public class C0_gestionVentas implements GestionInterface {
                 this.vista.jbResumen.setEnabled(true);
                 this.vista.jbResumen.addActionListener(this);
             }
+            if (this.vista.jbAnular.getName().equals(accesos.get(i).getItemDescripcion())) {
+                this.vista.jbAnular.addActionListener(this);
+            }
         }
         this.vista.jtIngresoCabecera.addMouseListener(this);
         this.vista.jtIngresoCabecera.addKeyListener(this);
@@ -101,6 +110,7 @@ public class C0_gestionVentas implements GestionInterface {
          */
         this.vista.jbAgregar.addKeyListener(this);
         this.vista.jbResumen.addKeyListener(this);
+        this.vista.jbAnular.addKeyListener(this);
         this.vista.jbDetalle.addKeyListener(this);
         this.vista.jbBuscar.addKeyListener(this);
         this.vista.jbCliente.addKeyListener(this);
@@ -112,10 +122,12 @@ public class C0_gestionVentas implements GestionInterface {
 
     private void verificarPermiso() {
         ArrayList<M_menu_item> accesos = DatosUsuario.getRol_usuario().getAccesos();
-        for (M_menu_item acceso : accesos) {
-            if (this.vista.jbDetalle.getName().equals(acceso.getItemDescripcion())) {
+        for (int i = 0; i < accesos.size(); i++) {
+            if (this.vista.jbDetalle.getName().equals(accesos.get(i).getItemDescripcion())) {
                 this.vista.jbDetalle.setEnabled(true);
-                return;
+            }
+            if (this.vista.jbAnular.getName().equals(accesos.get(i).getItemDescripcion())) {
+                this.vista.jbAnular.setEnabled(true);
             }
         }
     }
@@ -284,6 +296,19 @@ public class C0_gestionVentas implements GestionInterface {
         cv.mostrarVista();
     }
 
+    private void anularVenta() {
+        int opcion = JOptionPane.showConfirmDialog(vista, "¿Está seguro que desea continuar? Accion irreversible.", "Atención", JOptionPane.WARNING_MESSAGE, JOptionPane.YES_NO_OPTION);
+        if (opcion == JOptionPane.YES_OPTION) {
+            int fila = this.vista.jtIngresoCabecera.getSelectedRow();
+            if (fila > 0) {
+                Integer idIngresoCabecera = Integer.valueOf(String.valueOf(this.vista.jtIngresoCabecera.getValueAt(fila, 0)));
+                modelo.anularVenta(idIngresoCabecera);
+            }
+        }
+        this.vista.jbDetalle.setEnabled(false);
+        this.vista.jbAnular.setEnabled(false);
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource().equals(this.vista.jbAgregar)) {
@@ -308,6 +333,9 @@ public class C0_gestionVentas implements GestionInterface {
         }
         if (e.getSource().equals(this.vista.jbResumen)) {
             crearResumen();
+        }
+        if (e.getSource().equals(this.vista.jbAnular)) {
+            anularVenta();
         }
         if (e.getSource().equals(this.vista.jbDetalle)) {
             int fila = this.vista.jtIngresoCabecera.getSelectedRow();
