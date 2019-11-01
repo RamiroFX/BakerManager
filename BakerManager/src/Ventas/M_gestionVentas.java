@@ -64,7 +64,7 @@ public class M_gestionVentas {
         return false;
     }
 
-    public ResultSetTableModel obtenerVentas(final Date f_inicio, final Date f_final, final String condVenta) {
+    public ResultSetTableModel obtenerVentas(final Date f_inicio, final Date f_final, final String condVenta, int idEstado) {
         String fechaInicio = "";
         String fechaFinal = "";
         try {
@@ -81,7 +81,7 @@ public class M_gestionVentas {
         } catch (Exception e) {
             fechaFinal = "Todos";
         }
-        return DB_Ingreso.obtenerIngreso(fechaInicio, fechaFinal, condVenta, getCabecera(), 1);
+        return DB_Ingreso.obtenerIngreso(fechaInicio, fechaFinal, condVenta, getCabecera(), idEstado);
     }
 
     public void borrarDatos() {

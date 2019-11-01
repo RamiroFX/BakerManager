@@ -19,6 +19,7 @@ import Entities.Caja;
 import Entities.E_Empresa;
 import Entities.E_impresionOrientacion;
 import Entities.E_ticketPreferencia;
+import Entities.Estado;
 import Entities.M_campoImpresion;
 import Entities.M_cliente;
 import Entities.M_egreso_cabecera;
@@ -814,8 +815,8 @@ public class Impresora {
         Timestamp fi = new Timestamp(fin.getTimeInMillis());
         int egresoContado = DB_Egreso.obtenerTotalEgreso(ini, fi, 1);
         int egresoCretdito = DB_Egreso.obtenerTotalEgreso(ini, fi, 2);
-        int ingresoContado = DB_Ingreso.obtenerTotalIngreso(ini, fi, 1);
-        int ingresoCretdito = DB_Ingreso.obtenerTotalIngreso(ini, fi, 2);
+        int ingresoContado = DB_Ingreso.obtenerTotalIngreso(ini, fi, 1, Estado.ACTIVO);
+        int ingresoCretdito = DB_Ingreso.obtenerTotalIngreso(ini, fi, 2, Estado.ACTIVO);
         int cajaCierre = DB_Caja.obtenerTotalArqueoCaja(caja.getIdCaja(), 2);
 
         String CABECERA = "Fecha y hora: " + fechaEntrega + "\n"
@@ -874,7 +875,7 @@ public class Impresora {
             }
         }
         String ventaCabecera = "Fecha y hora: " + fechaEntrega + "\n"
-                + "Compra nro.: " + facturaCabecera.getId_cabecera()+ "\n"
+                + "Compra nro.: " + facturaCabecera.getId_cabecera() + "\n"
                 + "Cajero: " + facturaCabecera.getFuncionario().getNombre() + "\n"
                 + "Proveedor: " + facturaCabecera.getProveedor().getEntidad() + "\n"
                 + "R.U.C.: " + ruc + "\n"

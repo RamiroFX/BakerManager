@@ -10,6 +10,7 @@ import DB.DB_Funcionario;
 import DB.DB_Ingreso;
 import Entities.ArqueoCajaDetalle;
 import Entities.CierreCaja;
+import Entities.Estado;
 import Entities.M_funcionario;
 import Entities.Moneda;
 import java.io.File;
@@ -381,8 +382,8 @@ public class ExportarCaja {
             sheets.get(monthCursor).addMergedRegion(new CellRangeAddress(fila, fila, 0, 1));
             fila++;
             //TOTAL EGRESO
-            int ingresoContado = DB_Ingreso.obtenerTotalIngreso(ini, fi, 1);
-            int ingresoCretdito = DB_Ingreso.obtenerTotalIngreso(ini, fi, 2);
+            int ingresoContado = DB_Ingreso.obtenerTotalIngreso(ini, fi, 1,Estado.ACTIVO);
+            int ingresoCretdito = DB_Ingreso.obtenerTotalIngreso(ini, fi, 2,Estado.ACTIVO);
             int totalIngresos = ingresoContado + ingresoCretdito;
             Row totalIngreso = sheets.get(monthCursor).createRow(fila);
             totalIngreso.createCell(0).setCellValue(new HSSFRichTextString("Total ingresos"));
@@ -559,8 +560,8 @@ public class ExportarCaja {
             int egresoCretdito = DB_Egreso.obtenerTotalEgreso(ini, fi, 2);
             int totalEgresos = egresoContado + egresoCretdito;
             //TOTAL INGRESO
-            int ingresoContado = DB_Ingreso.obtenerTotalIngreso(ini, fi, 1);
-            int ingresoCretdito = DB_Ingreso.obtenerTotalIngreso(ini, fi, 2);
+            int ingresoContado = DB_Ingreso.obtenerTotalIngreso(ini, fi, 1,Estado.ACTIVO);
+            int ingresoCretdito = DB_Ingreso.obtenerTotalIngreso(ini, fi, 2,Estado.ACTIVO);
             int totalIngresos = ingresoContado + ingresoCretdito;
             //TOTAL DEPOSITADO
             int totalDepositado = 0;

@@ -113,8 +113,8 @@ class V_MenuPrincipal extends JInternalFrame {
         jpCenter.add(jbClientes);
         jpCenter.add(jbEmpleados);
         jpCenter.add(jbReportes);
-        jpCenter.add(new JComponent() {});
-        //jpCenter.add(jbCobroPago);
+        //jpCenter.add(new JComponent() {});
+        jpCenter.add(jbCobroPago);
         jpNorth.add(jftFecha);
         jpSouth.add(jbSalir);
     }

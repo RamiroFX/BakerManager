@@ -11,6 +11,7 @@ import DB.DB_Egreso;
 import DB.DB_Ingreso;
 import Entities.ArqueoCajaDetalle;
 import Entities.Caja;
+import Entities.Estado;
 import Entities.Moneda;
 import MenuPrincipal.DatosUsuario;
 import bakermanager.C_inicio;
@@ -526,8 +527,8 @@ public class SaldarCaja extends JDialog implements ActionListener, KeyListener {
         int egresoContado = DB_Egreso.obtenerTotalEgreso(ini, fi, 1);
         int egresoCretdito = DB_Egreso.obtenerTotalEgreso(ini, fi, 2);
         int totalEgreso = egresoContado + egresoCretdito;
-        int ingresoContado = DB_Ingreso.obtenerTotalIngreso(ini, fi, 1);
-        int ingresoCretdito = DB_Ingreso.obtenerTotalIngreso(ini, fi, 2);
+        int ingresoContado = DB_Ingreso.obtenerTotalIngreso(ini, fi, 1, Estado.ACTIVO);
+        int ingresoCretdito = DB_Ingreso.obtenerTotalIngreso(ini, fi, 2, Estado.ACTIVO);
         int totalIngreso = ingresoContado + ingresoCretdito;
 
         int totalEgrMasIng = totalEgreso + totalIngreso;

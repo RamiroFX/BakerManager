@@ -162,7 +162,11 @@ public class C_gestionVentas implements GestionInterface {
                     return;
                 }
                 if (modelo.validarFechas(vista.jddInicio.getDate(), vista.jddFinal.getDate())) {
-                    vista.jtIngresoCabecera.setModel(modelo.obtenerVentas(vista.jddInicio.getDate(), vista.jddFinal.getDate(), vista.jcbCondCompra.getSelectedItem().toString()));
+                    Estado estado = vista.jcbEstado.getItemAt(vista.jcbEstado.getSelectedIndex());
+                    Date fechaInicio = vista.jddInicio.getDate();
+                    Date fechaFinal = vista.jddFinal.getDate();
+                    String condCompra = vista.jcbCondCompra.getSelectedItem().toString();
+                    vista.jtIngresoCabecera.setModel(modelo.obtenerVentas(fechaInicio, fechaFinal, condCompra, estado.getId()));
                     Utilities.c_packColumn.packColumns(vista.jtIngresoCabecera, 1);
                 } else {
                     vista.jddFinal.setDate(vista.jddInicio.getDate());
@@ -194,14 +198,13 @@ public class C_gestionVentas implements GestionInterface {
         this.vista.jtfEmpleado.setText("");
         this.vista.jtfNroFactura.setText("");
         this.vista.jcbCondCompra.setSelectedItem("Todos");
+        this.vista.jcbEstado.setSelectedItem(new Estado(1, "Activo"));
     }
 
     private void obtenerEgresoDetalle(MouseEvent e) {
         int fila = this.vista.jtIngresoCabecera.rowAtPoint(e.getPoint());
         int columna = this.vista.jtIngresoCabecera.columnAtPoint(e.getPoint());
         Integer idIngresoCabecera = Integer.valueOf(String.valueOf(this.vista.jtIngresoCabecera.getValueAt(fila, 0)));
-        //setProducto(DBmanagerProducto.mostrarProducto(idProducto));
-        this.modelo.setCabecera(DB_Ingreso.obtenerIngresoCabeceraID(idIngresoCabecera));
         if ((fila > -1) && (columna > -1)) {
             verificarPermiso();
             this.vista.jtIngresoDetalle.setModel(DB_Ingreso.obtenerIngresoDetalle(idIngresoCabecera));
@@ -264,7 +267,8 @@ public class C_gestionVentas implements GestionInterface {
         String empleado = empleado();
         M_cliente cliente = cliente();
         String tiop = tipoOperacion();
-        Resumen_ingreso re = new Resumen_ingreso(c_inicio, this.vista.jtIngresoCabecera.getModel(), cliente, nro_factura, empleado, vista.jddInicio.getDate(), vista.jddFinal.getDate(), tiop);
+        Estado estado = vista.jcbEstado.getItemAt(vista.jcbEstado.getSelectedIndex());
+        Resumen_ingreso re = new Resumen_ingreso(c_inicio, this.vista.jtIngresoCabecera.getModel(), cliente, nro_factura, empleado, vista.jddInicio.getDate(), vista.jddFinal.getDate(), tiop, estado);
         re.setVisible(true);
     }
 
@@ -300,11 +304,12 @@ public class C_gestionVentas implements GestionInterface {
         int opcion = JOptionPane.showConfirmDialog(vista, "¿Está seguro que desea continuar? Accion irreversible.", "Atención", JOptionPane.WARNING_MESSAGE, JOptionPane.YES_NO_OPTION);
         if (opcion == JOptionPane.YES_OPTION) {
             int fila = this.vista.jtIngresoCabecera.getSelectedRow();
-            if (fila > 0) {
+            if (fila > -1) {
                 Integer idIngresoCabecera = Integer.valueOf(String.valueOf(this.vista.jtIngresoCabecera.getValueAt(fila, 0)));
                 modelo.anularVenta(idIngresoCabecera);
             }
         }
+        displayQueryResults();
         this.vista.jbDetalle.setEnabled(false);
         this.vista.jbAnular.setEnabled(false);
     }
@@ -339,7 +344,7 @@ public class C_gestionVentas implements GestionInterface {
         }
         if (e.getSource().equals(this.vista.jbDetalle)) {
             int fila = this.vista.jtIngresoCabecera.getSelectedRow();
-            if (fila > 0) {
+            if (fila > -1) {
                 Integer idIngresoCabecera = Integer.valueOf(String.valueOf(this.vista.jtIngresoCabecera.getValueAt(fila, 0)));
                 Ver_ingreso ver_egreso = new Ver_ingreso(c_inicio, idIngresoCabecera);
                 ver_egreso.mostrarVista();

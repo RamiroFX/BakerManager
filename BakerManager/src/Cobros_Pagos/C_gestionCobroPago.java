@@ -97,8 +97,8 @@ public class C_gestionCobroPago implements GestionInterface {
                 this.vista.jbBorrarPago.addActionListener(this);
             }
         }
-        this.vista.jtCobro.addMouseListener(this);
-        this.vista.jtCobro.addKeyListener(this);
+        this.vista.jtCobroCabecera.addMouseListener(this);
+        this.vista.jtCobroCabecera.addKeyListener(this);
         this.vista.jtPago.addMouseListener(this);
         this.vista.jtPago.addKeyListener(this);
         /**
@@ -136,10 +136,10 @@ public class C_gestionCobroPago implements GestionInterface {
     }
 
     private void invocarVistaVerCaja() {
-        int fila = this.vista.jtCobro.getSelectedRow();
-        int columna = this.vista.jtCobro.getSelectedColumn();
+        int fila = this.vista.jtCobroCabecera.getSelectedRow();
+        int columna = this.vista.jtCobroCabecera.getSelectedColumn();
         if ((fila > -1) && (columna > -1)) {
-            int idCaja = Integer.valueOf(String.valueOf(this.vista.jtCobro.getValueAt(fila, 0)));
+            int idCaja = Integer.valueOf(String.valueOf(this.vista.jtCobroCabecera.getValueAt(fila, 0)));
             ////TO DO
         }
         this.vista.jbDetalleCobro.setEnabled(false);
@@ -159,8 +159,8 @@ public class C_gestionCobroPago implements GestionInterface {
                     if (modelo.getFuncionario() != null && modelo.getFuncionario().getId_funcionario() != null) {
                         idFuncionario = modelo.getFuncionario().getId_funcionario();
                     }
-                    vista.jtCobro.setModel(modelo.consultarCajas(idFuncionario, fecha_inicio, fecha_fin));
-                    Utilities.c_packColumn.packColumns(vista.jtCobro, 1);
+                    vista.jtCobroCabecera.setModel(modelo.consultarCajas(idFuncionario, fecha_inicio, fecha_fin));
+                    Utilities.c_packColumn.packColumns(vista.jtCobroCabecera, 1);
                     vista.jbDetalleCobro.setEnabled(false);
                 } else {
                     vista.jddFinalCobro.setDate(vista.jddInicioCobro.getDate());
@@ -216,8 +216,8 @@ public class C_gestionCobroPago implements GestionInterface {
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        int fila = this.vista.jtCobro.rowAtPoint(e.getPoint());
-        int columna = this.vista.jtCobro.columnAtPoint(e.getPoint());
+        int fila = this.vista.jtCobroCabecera.rowAtPoint(e.getPoint());
+        int columna = this.vista.jtCobroCabecera.columnAtPoint(e.getPoint());
         if ((fila > -1) && (columna > -1)) {
             this.vista.jbDetalleCobro.setEnabled(true);
             if (e.getClickCount() == 2) {

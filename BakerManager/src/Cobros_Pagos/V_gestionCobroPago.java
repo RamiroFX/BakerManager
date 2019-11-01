@@ -11,10 +11,14 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Insets;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JFormattedTextField;
 import javax.swing.JInternalFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
@@ -30,10 +34,15 @@ public class V_gestionCobroPago extends JInternalFrame {
 
     //NORTH VARIABLES
     //COBRO
-    public JTextField jtfEmpCobro;
+    public JButton jbBuscarCobro, jbBorrarCobro, jbDetalleCobro,
+            jbCliente, jbEmpCobro, jbCobro, jbCobroPendientes;
+    public JTextField jtfNroFactura, jtfCliente, jtfEmpCobro;
+    public JComboBox jcbEmpleado, jcbCondVenta, jcbEstadoPedido;
+    private JPanel jpCobros, jpCobroTop, jpCobroBotonesTop, jpCobroBot;
+    public JTable jtCobroCabecera, jtCobroDetalle;
+    private JScrollPane jspCobroCabecera, jspCobroDetalle;
+    private JSplitPane jspCobroMid;
     public JDateChooser jddInicioCobro, jddFinalCobro;
-    public JButton jbEmpCobro, jbBuscarCobro, jbBorrarCobro;
-    private JPanel jpBotonesTopCobro;
     //PAGO
     public JTextField jtfEmpPago;
     public JDateChooser jddInicioPago, jddFinalPago;
@@ -42,48 +51,114 @@ public class V_gestionCobroPago extends JInternalFrame {
 
     //CENTER VARIABLES
     public JTabbedPane jtpMid;
-    public JScrollPane jspCobro, jspPago;
-    public JTable jtCobro, jtPago;
+    public JScrollPane jspPago;
+    public JTable jtPago;
     //SOUTH VARIABLES
-    public JButton jbCobro, jbPago, jbDetalleCobro,
-            jbDetallePago;
+    public JButton jbPago, jbDetallePago;
 
     public V_gestionCobroPago() {
         super("Cobros y pagos", true, true, true, true);
+        initializeCobroVariables();
         initializeVariables();
+        initializeGlobalVariables();
+
         constructWindows();
         constructLayout();
     }
 
-    private void initializeVariables() {
-        jpBotonesTopCobro = new JPanel(new MigLayout("", "[fill][fill]", "[fill][]"));
+    private void initializeGlobalVariables() {
+
+        jtpMid = new JTabbedPane();
+
+        jtpMid.addTab("COBROS", jpCobros);
+        //jtpMid.addTab("PAGOS", jpPagos);
+    }
+
+    private void initializeCobroVariables() {
+        Insets insets = new Insets(10, 10, 10, 10);
+        jpCobroBotonesTop = new JPanel(new MigLayout("", "[fill][fill]", "[fill][]"));
         JPanel jpFiltrosCobro = new JPanel(new MigLayout(
                 "", // Layout Constraints
                 "[grow][][grow]", // Column constraints
                 "[][shrink 0]"));    // Row constraints);
         jbEmpCobro = new JButton("Funcionario");
+        jbCliente = new JButton("Cliente");
         jtfEmpCobro = new JTextField();
         jtfEmpCobro.setPreferredSize(new Dimension(250, 10));
         jtfEmpCobro.setEditable(false);
+        jtfCliente = new JTextField();
+        jtfCliente.setPreferredSize(new Dimension(250, 10));
+        jtfCliente.setEditable(false);
         jddInicioCobro = new JDateChooser();
         jddInicioCobro.setPreferredSize(new Dimension(150, 10));
         jddFinalCobro = new JDateChooser();
         jddFinalCobro.setPreferredSize(new Dimension(150, 10));
-        jpFiltrosCobro.add(jbEmpCobro, "growx");
-        jpFiltrosCobro.add(jtfEmpCobro, "growx");
+        jcbCondVenta = new JComboBox<Object>();
+        jtfNroFactura = new JFormattedTextField();
+        jpFiltrosCobro.add(jbCliente, "growx");
+        jpFiltrosCobro.add(jtfCliente, "growx");
         jpFiltrosCobro.add(new JLabel("Fecha inicio:"));
         jpFiltrosCobro.add(jddInicioCobro, "growx");
+        jpFiltrosCobro.add(new JLabel("Cond. compra:"));
+        jpFiltrosCobro.add(jcbCondVenta, "wrap");
+        jpFiltrosCobro.add(jbEmpCobro);
+        jpFiltrosCobro.add(jtfEmpCobro, "growx");
         jpFiltrosCobro.add(new JLabel("Fecha final:"));
         jpFiltrosCobro.add(jddFinalCobro, "growx");
-        jpBotonesTopCobro = new JPanel(new MigLayout());
-        jpBotonesTopCobro.setBorder(new EtchedBorder(EtchedBorder.RAISED));
+        jpFiltrosCobro.add(new JLabel("Nro. factura:"));
+        jpFiltrosCobro.add(jtfNroFactura, "growx");
+        jpFiltrosCobro.add(new JComponent() {
+        }, "growx");
+        jpFiltrosCobro.add(new JComponent() {
+        }, "growx");
+        //
+        jpCobroBotonesTop = new JPanel(new MigLayout());
+        jpCobroBotonesTop.setBorder(new EtchedBorder(EtchedBorder.RAISED));
         jbBuscarCobro = new JButton("Buscar");
-        jbBuscarCobro.setName("buscar venta");
+        jbBuscarCobro.setName("buscar cobro");
+        jbCobroPendientes = new JButton("Cobro pendiente");
+        jbCobroPendientes.setName("cobro pendiente");
         jbBorrarCobro = new JButton("Borrar");
-        jpBotonesTopCobro.add(jbBuscarCobro);
-        jpBotonesTopCobro.add(jbBorrarCobro);
-        //PAGO NORTH VARIABLES
+        jpCobroBotonesTop.add(jbBorrarCobro);
+        jpCobroBotonesTop.add(jbBuscarCobro);
+        jpCobroBotonesTop.add(jbBorrarCobro, "span, growx, wrap");
+        jpCobroBotonesTop.add(jbCobroPendientes, "span, growx");
 
+        //MID VARIABLES
+        jtCobroCabecera = new JTable();
+        jspCobroCabecera = new JScrollPane(jtCobroCabecera);
+        jspCobroMid = new JSplitPane();
+        //SOUTH VARIABLES
+        jbCobro = new JButton("Cobrar");
+        jbCobro.setName("cobrar venta");
+        jbCobro.setFont(CommonFormat.fuente);
+        jbCobro.setEnabled(false);
+        jbCobro.setMargin(insets);
+
+        jbDetalleCobro = new JButton("Ver detalle");
+        jbDetalleCobro.setName("detalle cobro");
+        jbDetalleCobro.setFont(CommonFormat.fuente);
+        jbDetalleCobro.setEnabled(false);
+        jbDetalleCobro.setMargin(insets);
+        TitledBorder optionBorder = new TitledBorder(new EtchedBorder(EtchedBorder.RAISED), "Opciones");
+        TitledBorder filterBorder = new TitledBorder(new EtchedBorder(EtchedBorder.RAISED), "Filtro de busqueda");
+        jpCobroTop = new JPanel(new MigLayout("", "[fill][fill]", "[fill][]"));
+        jpCobroTop.setBorder(filterBorder);
+        jpCobroTop.add(jpFiltrosCobro);
+        jpCobroTop.add(jpCobroBotonesTop);
+        jpCobroBot = new JPanel();
+        jpCobroBot.setBorder(optionBorder);
+        jpCobroBot.add(jbCobro);
+        jpCobroBot.add(jbDetalleCobro);
+        jpCobros = new JPanel(new BorderLayout());
+        jpCobros.add(jpCobroTop, BorderLayout.NORTH);
+        jpCobros.add(jspCobroCabecera, BorderLayout.CENTER);
+        jpCobros.add(jpCobroBot, BorderLayout.SOUTH);
+    }
+
+    private void initializeVariables() {
+        Insets insets = new Insets(10, 10, 10, 10);
+        //PAGO NORTH VARIABLES
         jpBotonesTopPago = new JPanel(new MigLayout("", "[fill][fill]", "[fill][]"));
         JPanel jpFiltrosPago = new JPanel(new MigLayout(
                 "", // Layout Constraints
@@ -111,30 +186,14 @@ public class V_gestionCobroPago extends JInternalFrame {
         jpBotonesTopPago.add(jbBuscarPago);
         jpBotonesTopPago.add(jbBorrarPago);
 
-        //MID VARIABLES
-        jtpMid = new JTabbedPane();
-        jtCobro = new JTable();
-        jspCobro = new JScrollPane(jtCobro);
         jtPago = new JTable();
         jspPago = new JScrollPane(jtPago);
 
-        //SOUTH VARIABLES        
-        Insets insets = new Insets(10, 10, 10, 10);
-        jbCobro = new JButton("Cobrar");
-        jbCobro.setName("cobrar venta");
-        jbCobro.setFont(CommonFormat.fuente);
-        jbCobro.setEnabled(false);
-        jbCobro.setMargin(insets);
         jbPago = new JButton("Pagar");
         jbPago.setName("cobrar venta");
         jbPago.setFont(CommonFormat.fuente);
         jbPago.setEnabled(false);
         jbPago.setMargin(insets);
-        jbDetalleCobro = new JButton("Ver detalle");
-        jbDetalleCobro.setName("detalle cobro");
-        jbDetalleCobro.setFont(CommonFormat.fuente);
-        jbDetalleCobro.setEnabled(false);
-        jbDetalleCobro.setMargin(insets);
         jbDetallePago = new JButton("Ver detalle");
         jbDetallePago.setName("detalle pago");
         jbDetallePago.setFont(CommonFormat.fuente);
@@ -142,19 +201,7 @@ public class V_gestionCobroPago extends JInternalFrame {
         jbDetallePago.setMargin(insets);
 
         TitledBorder optionBorder = new TitledBorder(new EtchedBorder(EtchedBorder.RAISED), "Opciones");
-        TitledBorder filterBorder = new TitledBorder(new EtchedBorder(EtchedBorder.RAISED), "Filtro de busqueda");        
-        JPanel jpBotonesNorteCobro = new JPanel();
-        jpBotonesNorteCobro.setBorder(filterBorder);
-        jpBotonesNorteCobro.add(jpFiltrosCobro);
-        jpBotonesNorteCobro.add(jpBotonesTopCobro);
-        JPanel jpBotonesSurCobro = new JPanel();
-        jpBotonesSurCobro.setBorder(optionBorder);
-        jpBotonesSurCobro.add(jbCobro);
-        jpBotonesSurCobro.add(jbDetalleCobro);
-        JPanel jpCobros = new JPanel(new BorderLayout());
-        jpCobros.add(jpBotonesNorteCobro, BorderLayout.NORTH);
-        jpCobros.add(jspCobro, BorderLayout.CENTER);
-        jpCobros.add(jpBotonesSurCobro, BorderLayout.SOUTH);
+        TitledBorder filterBorder = new TitledBorder(new EtchedBorder(EtchedBorder.RAISED), "Filtro de busqueda");
 
         JPanel jpBotonesNortePago = new JPanel();
         jpBotonesNortePago.setBorder(filterBorder);
@@ -168,9 +215,6 @@ public class V_gestionCobroPago extends JInternalFrame {
         jpPagos.add(jpBotonesNortePago, BorderLayout.NORTH);
         jpPagos.add(jspPago, BorderLayout.CENTER);
         jpPagos.add(jpBotonesSurPago, BorderLayout.SOUTH);
-
-        jtpMid.addTab("COBROS", jpCobros);
-        jtpMid.addTab("PAGOS", jpPagos);
     }
 
     private void constructWindows() {

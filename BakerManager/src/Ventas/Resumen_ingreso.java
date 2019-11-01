@@ -7,6 +7,7 @@ package Ventas;
 
 import DB.DB_Ingreso;
 import Entities.E_facturaDetalleFX;
+import Entities.Estado;
 import Entities.M_cliente;
 import Entities.M_facturaDetalle;
 import Excel.C_create_excel;
@@ -52,8 +53,11 @@ public class Resumen_ingreso extends JDialog implements ActionListener, KeyListe
     Integer nro_factura;
     JTabbedPane jtpPanel;
     M_cliente cliente;
+    Estado estado;
 
-    public Resumen_ingreso(C_inicio c_inicio, TableModel tm, M_cliente cliente_entidad, Integer nro_factura, String idEmpleado, Date inicio, Date fin, String tipo_operacion) {
+    public Resumen_ingreso(C_inicio c_inicio, TableModel tm, M_cliente cliente_entidad,
+            Integer nro_factura, String idEmpleado, Date inicio, Date fin,
+            String tipo_operacion, Estado estado) {
         super(c_inicio.vista, DEFAULT_MODALITY_TYPE);
         setTitle("Resumen de ingresos");
         setSize(800, 600);
@@ -65,6 +69,7 @@ public class Resumen_ingreso extends JDialog implements ActionListener, KeyListe
         this.idEmpleado = idEmpleado;
         this.tipo_operacion = tipo_operacion;
         this.nro_factura = nro_factura;
+        this.estado = estado;
         inicializarComponentes();
         inicializarVista(tm, inicio, fin);
         agregarListener();
@@ -144,7 +149,7 @@ public class Resumen_ingreso extends JDialog implements ActionListener, KeyListe
         calendario.set(Calendar.SECOND, 0);
         calendario.set(Calendar.MILLISECOND, 0);
         java.sql.Timestamp fFin = java.sql.Timestamp.valueOf(sdfs.format(calendario.getTime()));
-        jtDetalle.setModel(DB_Ingreso.consultarIngresoDetalleAgrupado(fInicio, fFin, cliente));
+        jtDetalle.setModel(DB_Ingreso.consultarIngresoDetalleAgrupado(fInicio, fFin, cliente, estado));
         Utilities.c_packColumn.packColumns(jtDetalle, 1);
         jftTotalEgCred.setValue(totalCredito);
         jftTotalEgCont.setValue(totalContado);
@@ -156,7 +161,7 @@ public class Resumen_ingreso extends JDialog implements ActionListener, KeyListe
         jbImportarXLS.addActionListener(this);
     }
 
-    private void importarExcel(M_cliente cliente, Integer nro_factura, String idEmpleado, String tipo_operacion) {
+    private void importarExcel(M_cliente cliente, Integer nro_factura, String idEmpleado, String tipo_operacion, Estado estado) {
         String fechaInicio = "";
         String fechaFinal = "";
         try {
@@ -178,7 +183,7 @@ public class Resumen_ingreso extends JDialog implements ActionListener, KeyListe
                 entidad = cliente.getEntidad();
             }
         }
-        ArrayList<E_facturaDetalleFX> ed = DB_Ingreso.obtenerVentaDetalles(entidad, nro_factura, idEmpleado, fechaInicio, fechaFinal, tipo_operacion);
+        ArrayList<E_facturaDetalleFX> ed = DB_Ingreso.obtenerVentaDetalles(entidad, nro_factura, idEmpleado, fechaInicio, fechaFinal, tipo_operacion, estado);
         SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
         sdf.format(Calendar.getInstance().getTime());
         String nombreHoja = null;
@@ -209,7 +214,7 @@ public class Resumen_ingreso extends JDialog implements ActionListener, KeyListe
         if (ae.getSource().equals(jbSalir)) {
             dispose();
         } else if (ae.getSource().equals(jbImportarXLS)) {
-            importarExcel(cliente, nro_factura, idEmpleado, tipo_operacion);
+            importarExcel(cliente, nro_factura, idEmpleado, tipo_operacion, estado);
         }
     }
 

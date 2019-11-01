@@ -6,6 +6,7 @@
 package Excel;
 
 import Entities.E_facturaDetalleFX;
+import Entities.Estado;
 import Entities.M_facturaDetalle;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -200,6 +201,7 @@ public class ExportarVentas {
     }
 
     private void escribirCeldasConFecha(int egresocabecera) {
+        System.out.println("Excel.ExportarVentas.escribirCeldasConFecha()");
         int filaActual = 4;
         int idEgCab = egresocabecera;
         boolean b = true;
@@ -213,7 +215,7 @@ public class ExportarVentas {
                     asd.createCell(1).setCellValue(facturaDetalle.get(i).getTiempo());
                     asd.getCell(1).setCellStyle(dateCellStyle);
                     if (facturaDetalle.get(i).getObservacion() != null) {
-                        asd.createCell(2).setCellValue(new HSSFRichTextString(facturaDetalle.get(i).getProducto() + "-(" + facturaDetalle.get(i).getObservacion() + ")"));
+                        asd.createCell(2).setCellValue(new HSSFRichTextString(facturaDetalle.get(i).getProductoDescripcion() + "-(" + facturaDetalle.get(i).getObservacion() + ")"));
                     } else {
                         asd.createCell(2).setCellValue(new HSSFRichTextString(facturaDetalle.get(i).getProductoDescripcion()));
                     }
@@ -252,6 +254,7 @@ public class ExportarVentas {
     }
 
     private void escribirCeldasSinFecha(int egresocabecera) {
+        System.out.println("Excel.ExportarVentas.escribirCeldasSinFecha()");
         int filaActual = 3;
         int idEgCab = egresocabecera;
         boolean b = true;
@@ -263,7 +266,7 @@ public class ExportarVentas {
                     asd.createCell(0).setCellValue(new HSSFRichTextString(facturaDetalle.get(i).getClienteEntidad()));
                     asd.getCell(0).setCellStyle(style2);
                     if (facturaDetalle.get(i).getObservacion() != null) {
-                        asd.createCell(1).setCellValue(new HSSFRichTextString(facturaDetalle.get(i).getProducto() + "-(" + facturaDetalle.get(i).getObservacion() + ")"));
+                        asd.createCell(1).setCellValue(new HSSFRichTextString(facturaDetalle.get(i).getProductoDescripcion() + "-(" + facturaDetalle.get(i).getObservacion() + ")"));
                     } else {
                         asd.createCell(1).setCellValue(new HSSFRichTextString(facturaDetalle.get(i).getProductoDescripcion()));
                     }

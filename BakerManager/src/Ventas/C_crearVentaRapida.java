@@ -16,7 +16,6 @@ import MenuPrincipal.DatosUsuario;
 import ModeloTabla.InterfaceFacturaDetalle;
 import Parametros.Impuesto;
 import Parametros.TipoOperacion;
-import Parametros.TipoVenta;
 import Producto.SeleccionarCantidadProduducto;
 import Producto.SeleccionarProducto;
 import Impresora.Impresora;
@@ -24,13 +23,9 @@ import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Vector;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JOptionPane;
-import javax.swing.SwingUtilities;
 
 /**
  *
@@ -86,7 +81,6 @@ public class C_crearVentaRapida implements GestionInterface, InterfaceFacturaDet
         for (int i = 0; i < tipoVenta.size(); i++) {
             this.vista.jcbTipoVenta.addItem(tipoVenta.get(i));
         }
-        //this.vista.jrbContado.setSelected(true);
         this.vista.jtFacturaDetalle.setModel(this.modelo.getTableModel());
         this.vista.jbModificarDetalle.setEnabled(false);
         this.vista.jbEliminarDetalle.setEnabled(false);
@@ -115,8 +109,6 @@ public class C_crearVentaRapida implements GestionInterface, InterfaceFacturaDet
         this.vista.jtFacturaDetalle.addMouseListener(this);
         this.vista.jbEliminarDetalle.addActionListener(this);
         this.vista.jbModificarDetalle.addActionListener(this);
-        /*this.vista.jrbContado.addActionListener(this);
-        this.vista.jrbCredito.addActionListener(this);*/
         this.vista.jcbCondVenta.addActionListener(this);
         this.vista.jcbTipoVenta.addActionListener(this);
         this.vista.jtfCodProd.addKeyListener(this);
@@ -319,16 +311,6 @@ public class C_crearVentaRapida implements GestionInterface, InterfaceFacturaDet
             public void run() {
                 if (modelo.isTableEmpty()) {
                     JOptionPane.showConfirmDialog(vista, SELECCIONE_POR_LO_MENOS_UN_ARTICULO, ATENCION, JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
-                    /*System.out.println("1");
-                    SwingUtilities.invokeLater(new Runnable() {
-                        public void run() {
-                            System.out.println("2");
-
-                            //JOptionPane.showConfirmDialog(vista, SELECCIONE_POR_LO_MENOS_UN_ARTICULO, ATENCION, JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
-                            vista.jtfCodProd.requestFocusInWindow();
-                        }
-                    });
-                    System.out.println("3");*/
                     return;
                 }
                 int response = JOptionPane.showConfirmDialog(vista, ESTA_SEGURO_QUE_DESEA_CONFIRMAR_LA_VENTA, CONFIRMAR, JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
@@ -507,12 +489,10 @@ public class C_crearVentaRapida implements GestionInterface, InterfaceFacturaDet
 
     @Override
     public void keyTyped(KeyEvent e) {
-        System.out.println("Ventas.C_crearVentaRapida.keyTyped(): " + e);
     }
 
     @Override
     public void keyPressed(KeyEvent e) {
-        System.out.println("Ventas.C_crearVentaRapida.keyPressed(): " + e);
         switch (e.getKeyCode()) {
             case KeyEvent.VK_ESCAPE: {
                 cerrar();
@@ -524,7 +504,6 @@ public class C_crearVentaRapida implements GestionInterface, InterfaceFacturaDet
 
     @Override
     public void keyReleased(KeyEvent e) {
-        System.out.println("Ventas.C_crearVentaRapida.keyReleased(): " + e);
         switch (e.getKeyCode()) {
             case KeyEvent.VK_F1: {
                 guardarVenta();

@@ -79,7 +79,6 @@ public class DB_Ingreso {
 
     public static ResultSetTableModel obtenerIngreso(String inicio, String fin, String tipo_operacion, M_facturaCabecera factura_cabecera, int idEstado) {
         ResultSetTableModel rstm = null;
-
         String Query = "SELECT ID_FACTURA_CABECERA \"ID\", "
                 + "NRO_FACTURA \"Nro. Factura\", "
                 + "(SELECT NOMBRE || ' '|| APELLIDO WHERE F.ID_PERSONA = P.ID_PERSONA)\"Empleado\", "
@@ -108,7 +107,9 @@ public class DB_Ingreso {
                 Query = Query + " AND FC.ID_FUNCIONARIO = " + factura_cabecera.getFuncionario().getId_funcionario();
             }
         }
-        Query = Query + " AND FC.ID_ESTADO = " + idEstado;
+        if (idEstado != Estado.TODOS) {
+            Query = Query + " AND FC.ID_ESTADO = " + idEstado;
+        }
         Query = Query + " ORDER BY \"ID\"";
         try {
             st = DB_manager.getConection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
@@ -211,6 +212,8 @@ public class DB_Ingreso {
                 pst.setDouble(5, detalle.get(i).getDescuento());
                 try {
                     if (detalle.get(i).getObservacion() == null) {
+                        pst.setNull(6, Types.VARCHAR);
+                    } else if (detalle.get(i).getObservacion().trim().isEmpty()) {
                         pst.setNull(6, Types.VARCHAR);
                     } else {
                         pst.setString(6, detalle.get(i).getObservacion());
@@ -365,7 +368,8 @@ public class DB_Ingreso {
         return fc;
     }
 
-    public static ResultSetTableModel consultarIngresoDetalleAgrupado(Timestamp inicio, Timestamp fin, M_cliente cliente) {
+    public static ResultSetTableModel consultarIngresoDetalleAgrupado(Timestamp inicio, Timestamp fin, M_cliente cliente, Estado estado) {
+        int pos = 1;
         String QUERY = "SELECT PROD.DESCRIPCION \"Producto\", SUM(FADE.CANTIDAD) \"Cantidad\", FADE.PRECIO \"Precio\", FADE.DESCUENTO \"Descuento\", "
                 + "CASE WHEN PROD.ID_IMPUESTO = 1 THEN SUM(ROUND(FADE.CANTIDAD*(FADE.PRECIO-(FADE.PRECIO*FADE.DESCUENTO)/100))) ELSE '0' END AS \"Exenta\", "
                 + "CASE WHEN PROD.ID_IMPUESTO = 2 THEN SUM(ROUND(FADE.CANTIDAD*(FADE.PRECIO-(FADE.PRECIO*FADE.DESCUENTO)/100))) ELSE '0' END AS \"IVA 5%\", "
@@ -379,20 +383,28 @@ public class DB_Ingreso {
                 + "ORDER BY PROD.DESCRIPCION";
         if (cliente != null) {
             if (cliente.getIdCliente() != null) {
-                QUERY = QUERY + "AND FACA.ID_CLIENTE = ? " + PIE;
+                QUERY = QUERY + "AND FACA.ID_CLIENTE = ? ";
             }
-        } else {
-            QUERY = QUERY + PIE;
         }
+        if (estado.getId() != Estado.TODOS) {
+            QUERY = QUERY + "AND FACA.ID_ESTADO = ? ";
+        }
+        QUERY = QUERY + PIE;
         ResultSetTableModel rstm = null;
         try {
             pst = DB_manager.getConection().prepareStatement(QUERY, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-            pst.setTimestamp(1, inicio);
-            pst.setTimestamp(2, fin);
+            pst.setTimestamp(pos, inicio);
+            pos++;
+            pst.setTimestamp(pos, fin);
+            pos++;
             if (cliente != null) {
                 if (cliente.getIdCliente() != null) {
-                    pst.setInt(3, cliente.getIdCliente());
+                    pst.setInt(pos, cliente.getIdCliente());
+                    pos++;
                 }
+            }
+            if (estado.getId() != Estado.TODOS) {
+                pst.setInt(pos, estado.getId());
             }
             rs = pst.executeQuery();
             rstm = new ResultSetTableModel(rs);
@@ -450,7 +462,7 @@ public class DB_Ingreso {
         return rstm;
     }
 
-    public static Integer obtenerTotalIngreso(Timestamp inicio, Timestamp fin, int tipo_operacion) {
+    public static Integer obtenerTotalIngreso(Timestamp inicio, Timestamp fin, int tipo_operacion, int idEstado) {
         Integer totalEgreso = 0;
         String query = "SELECT SUM(ROUND(FADE.CANTIDAD*(FADE.PRECIO-(FADE.PRECIO*FADE.DESCUENTO)/100)))\"Total\" "
                 + "FROM FACTURA_DETALLE FADE, FACTURA_CABECERA FACA "
@@ -458,6 +470,9 @@ public class DB_Ingreso {
                 + "AND FACA.TIEMPO BETWEEN '" + inicio + "'::timestamp  "
                 + "AND '" + fin + "'::timestamp "
                 + "AND FACA.ID_COND_VENTA = " + tipo_operacion;
+        if (idEstado != 3) {
+            query = query + " AND FACA.ID_ESTADO = " + idEstado;
+        }
         try {
             pst = DB_manager.getConection().prepareStatement(query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             rs = pst.executeQuery();
@@ -1005,7 +1020,9 @@ public class DB_Ingreso {
         return detalles;
     }
 
-    public static ArrayList<E_facturaDetalleFX> obtenerVentaDetalles(String clienteEntidad, Integer nro_factura, String idEmpleado, String inicio, String fin, String tipo_operacion) {
+    public static ArrayList<E_facturaDetalleFX> obtenerVentaDetalles(String clienteEntidad,
+            Integer nro_factura, String idEmpleado, String inicio, String fin,
+            String tipo_operacion, Estado estado) {
         String fromQuery = "FROM FACTURA_DETALLE FADE, FACTURA_CABECERA FACA,FUNCIONARIO FUNC, PERSONA PERS, CLIENTE CLIE, PRODUCTO P ";
         String fInicio = "";
         String fFinal;
@@ -1040,7 +1057,13 @@ public class DB_Ingreso {
         if ("Todos".equals(tipo_operacion)) {
             tiop = "";
         } else {
-            tiop = " AND FACA.ID_COND_COMPRA = " + tipo_operacion;
+            tiop = " AND FACA.ID_COND_VENTA = " + tipo_operacion;
+        }
+        String esta;
+        if (estado.getId() == Estado.TODOS) {
+            esta = "";
+        } else {
+            esta = " AND FACA.ID_ESTADO = " + estado.getId();
         }
         String numero_fac = "";
         try {
@@ -1083,6 +1106,7 @@ public class DB_Ingreso {
                 + fFinal
                 + empleado
                 + tiop
+                + esta
                 + numero_fac
                 + " ORDER BY FACA.TIEMPO";
         ArrayList facturaDetalles = null;
