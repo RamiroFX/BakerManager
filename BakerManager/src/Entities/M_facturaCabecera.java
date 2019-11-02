@@ -68,6 +68,7 @@ public class M_facturaCabecera {
         this.idFuncionario = idFuncionario;
     }
 
+
     public Integer getIdCondVenta() {
         return idCondVenta;
     }
@@ -91,11 +92,11 @@ public class M_facturaCabecera {
     public void setTiempo(Timestamp tiempo) {
         this.tiempo = tiempo;
     }
-    
+
     public Integer getNroFactura() {
         return nroFactura;
     }
-    
+
     public void setNroFactura(Integer nroFactura) {
         this.nroFactura = nroFactura;
     }

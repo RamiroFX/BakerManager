@@ -5,10 +5,16 @@
  */
 package Cobros_Pagos;
 
+import Cliente.Seleccionar_cliente;
 import Empleado.Seleccionar_funcionario;
+import Entities.E_tipoOperacion;
+import Entities.Estado;
+import Entities.M_cliente;
 import Entities.M_funcionario;
 import Entities.M_menu_item;
 import Interface.GestionInterface;
+import Interface.RecibirClienteCallback;
+import Interface.RecibirEmpleadoCallback;
 import MenuPrincipal.DatosUsuario;
 import bakermanager.C_inicio;
 import java.awt.EventQueue;
@@ -26,7 +32,7 @@ import javax.swing.JOptionPane;
  *
  * @author Ramiro Ferreira
  */
-public class C_gestionCobroPago implements GestionInterface {
+public class C_gestionCobroPago implements GestionInterface, RecibirEmpleadoCallback, RecibirClienteCallback {
 
     V_gestionCobroPago vista;
     M_gestionCobroPago modelo;
@@ -53,19 +59,21 @@ public class C_gestionCobroPago implements GestionInterface {
 
         this.vista.jddInicioPago.setDate(date);
         this.vista.jddFinalPago.setDate(date);
+        ArrayList<E_tipoOperacion> tipoOperaciones = modelo.obtenerTipoOperacion();
+        for (int i = 0; i < tipoOperaciones.size(); i++) {
+            this.vista.jcbCondVenta.addItem(tipoOperaciones.get(i));
+        }
+
     }
 
     @Override
     public void concederPermisos() {
         ArrayList<M_menu_item> accesos = DatosUsuario.getRol_usuario().getAccesos();
-        for (M_menu_item acceso : accesos) {
+        /*for (M_menu_item acceso : accesos) {
             if (this.vista.jbCobro.getName().equals(acceso.getItemDescripcion())) {
                 this.vista.jbCobro.setEnabled(true);
                 this.vista.jbCobro.addActionListener(this);
             }
-            /*if (this.vista.jbResumen.getName().equals(acceso.getItemDescripcion())) {
-                this.vista.jbResumen.addActionListener(this);
-            }*/
             if (this.vista.jbDetalleCobro.getName().equals(acceso.getItemDescripcion())) {
                 this.vista.jbDetalleCobro.addActionListener(this);
             }
@@ -82,9 +90,6 @@ public class C_gestionCobroPago implements GestionInterface {
                 this.vista.jbPago.setEnabled(true);
                 this.vista.jbPago.addActionListener(this);
             }
-            /*if (this.vista.jbResumen.getName().equals(acceso.getItemDescripcion())) {
-                this.vista.jbResumen.addActionListener(this);
-            }*/
             if (this.vista.jbDetallePago.getName().equals(acceso.getItemDescripcion())) {
                 this.vista.jbDetallePago.addActionListener(this);
             }
@@ -96,7 +101,14 @@ public class C_gestionCobroPago implements GestionInterface {
                 this.vista.jbEmpPago.addActionListener(this);
                 this.vista.jbBorrarPago.addActionListener(this);
             }
-        }
+        }*/
+        //TODO conceder permisos
+        this.vista.jbBuscarCobro.addActionListener(this);
+        this.vista.jbCliente.addActionListener(this);
+        this.vista.jbEmpCobro.addActionListener(this);
+        this.vista.jbBorrarCobro.addActionListener(this);
+        this.vista.jbCobroPendientes.addActionListener(this);
+        //END TODO
         this.vista.jtCobroCabecera.addMouseListener(this);
         this.vista.jtCobroCabecera.addKeyListener(this);
         this.vista.jtPago.addMouseListener(this);
@@ -131,6 +143,52 @@ public class C_gestionCobroPago implements GestionInterface {
         }
     }
 
+    private void consultarCobros() {
+        EventQueue.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    if (!vista.jtfNroFactura.getText().trim().isEmpty()) {
+                        int nroFac = Integer.valueOf(vista.jtfNroFactura.getText());
+                        modelo.getFacturaCabecera().setNroFactura(nroFac);
+                    } else {
+                        modelo.getFacturaCabecera().setIdFacturaCabecera(null);
+                    }
+                } catch (Exception e) {
+                    JOptionPane.showMessageDialog(vista, "Ingrese un número entero válido para Nro. factura", "Atención", JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
+                if (validarFechas(vista.jddInicioCobro.getDate(), vista.jddFinalCobro.getDate())) {
+                    //Estado estado = vista.jcbEstado.getItemAt(vista.jcbEstado.getSelectedIndex());
+                    Date fechaInicio = vista.jddInicioCobro.getDate();
+                    Date fechaFinal = vista.jddFinalCobro.getDate();
+                    E_tipoOperacion condCompra = vista.jcbCondVenta.getItemAt(vista.jcbCondVenta.getSelectedIndex());
+                    String nroFactura = vista.jtfNroFactura.getText().trim();
+                    M_cliente cliente = modelo.getCliente();
+                    M_funcionario funcionario = modelo.getFuncionario();
+                    vista.jtCobroCabecera.setModel(modelo.obtenerCobro(cliente, funcionario, fechaInicio, fechaFinal, condCompra, nroFactura));
+                    Utilities.c_packColumn.packColumns(vista.jtCobroCabecera, 1);
+                } else {
+                    vista.jddFinalCobro.setDate(vista.jddInicioCobro.getDate());
+                    vista.jddFinalCobro.updateUI();
+                    JOptionPane.showMessageDialog(vista, "La fecha inicio debe ser menor que fecha final", "Atención", JOptionPane.WARNING_MESSAGE);
+                }
+            }
+        });
+    }
+
+    private void consultarCobrosPendiente() {
+        EventQueue.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                E_tipoOperacion condCompra = new E_tipoOperacion(-1, 0, "Todos");
+                M_cliente cliente = modelo.getCliente();
+                vista.jtCobroCabecera.setModel(modelo.obtenerCobroPendiente(cliente, condCompra));
+                Utilities.c_packColumn.packColumns(vista.jtCobroCabecera, 1);
+            }
+        });
+    }
+
     private void invocarVistaSaldarCaja() {
         //TO DO
     }
@@ -145,44 +203,24 @@ public class C_gestionCobroPago implements GestionInterface {
         this.vista.jbDetalleCobro.setEnabled(false);
     }
 
-    private void consultarCobros() {
-        EventQueue.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                Date inicio = vista.jddInicioCobro.getDate();
-                Date fin = vista.jddFinalCobro.getDate();
-                if (validarFechas(inicio, fin)) {
-                    SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-                    String fecha_inicio = sdf.format(vista.jddInicioCobro.getDate());
-                    String fecha_fin = sdf.format(vista.jddFinalCobro.getDate());
-                    int idFuncionario = -1;
-                    if (modelo.getFuncionario() != null && modelo.getFuncionario().getId_funcionario() != null) {
-                        idFuncionario = modelo.getFuncionario().getId_funcionario();
-                    }
-                    vista.jtCobroCabecera.setModel(modelo.consultarCajas(idFuncionario, fecha_inicio, fecha_fin));
-                    Utilities.c_packColumn.packColumns(vista.jtCobroCabecera, 1);
-                    vista.jbDetalleCobro.setEnabled(false);
-                } else {
-                    vista.jddFinalCobro.setDate(vista.jddInicioCobro.getDate());
-                    vista.jddFinalCobro.updateUI();
-                    JOptionPane.showMessageDialog(vista, "La fecha inicio debe ser menor que fecha final", "Atención", JOptionPane.WARNING_MESSAGE);
-                }
-            }
-        });
+    @Override
+    public void recibirFuncionario(M_funcionario funcionario) {
+        System.out.println("Cobros_Pagos.C_gestionCobroPago.recibirFuncionario()");
+        this.modelo.setFuncionario(funcionario);
+        this.vista.jtfEmpCobro.setText(this.modelo.obtenerNombreFuncionario());
     }
 
-    public void recibirFuncionario(M_funcionario funcionario) {
-        this.modelo.setFuncionario(funcionario);
-        String alias = this.modelo.getFuncionario().getAlias();
-        String nombre = this.modelo.getFuncionario().getNombre();
-        String apellido = this.modelo.getFuncionario().getApellido();
-        this.vista.jtfEmpCobro.setText(alias + "-(" + nombre + " " + apellido + ")");
+    @Override
+    public void recibirCliente(M_cliente cliente) {
+        this.modelo.setCliente(cliente);
+        this.vista.jtfCliente.setText(this.modelo.obtenerNombreCliente());
     }
 
     private void borrarDatos() {
         Date date = Calendar.getInstance().getTime();
         this.modelo.borrarDatos();
         this.vista.jtfEmpCobro.setText("");
+        this.vista.jtfCliente.setText("");
         this.vista.jddInicioCobro.setDate(date);
         this.vista.jddFinalCobro.setDate(date);
     }
@@ -205,12 +243,19 @@ public class C_gestionCobroPago implements GestionInterface {
         } else if (src.equals(this.vista.jbBuscarCobro)) {
             consultarCobros();
         } else if (src.equals(this.vista.jbEmpCobro)) {
-            Seleccionar_funcionario sf = new Seleccionar_funcionario(this);
+            Seleccionar_funcionario sf = new Seleccionar_funcionario(this.c_inicio.vista);
+            sf.setCallback(this);
             sf.mostrarVista();
+        } else if (src.equals(this.vista.jbCliente)) {
+            Seleccionar_cliente sc = new Seleccionar_cliente(this.c_inicio.vista);
+            sc.setCallback(this);
+            sc.mostrarVista();
         } else if (src.equals(this.vista.jbBorrarCobro)) {
             borrarDatos();
         } else if (src.equals(this.vista.jbDetalleCobro)) {
             invocarVistaVerCaja();
+        } else if (src.equals(this.vista.jbCobroPendientes)) {
+            consultarCobrosPendiente();
         }
     }
 

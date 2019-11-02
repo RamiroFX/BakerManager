@@ -5,6 +5,7 @@
 package DB;
 
 import Entities.E_Empresa;
+import Entities.E_tipoOperacion;
 import Entities.Estado;
 import Entities.M_campoImpresion;
 import Entities.ProductoCategoria;
@@ -1281,6 +1282,40 @@ public class DB_manager {
             }
         }
         return tiop;
+    }
+    
+    public static ArrayList<E_tipoOperacion> obtenerTipoOperaciones() {
+        ArrayList<E_tipoOperacion> tiopList = null;
+        String q = "SELECT *  "
+                + "FROM TIPO_OPERACION ";
+        try {
+            st = DB_manager.getConection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            rs = st.executeQuery(q);
+            tiopList = new ArrayList();
+            while (rs.next()) {
+                E_tipoOperacion tiop = new E_tipoOperacion();
+                tiop.setId(rs.getInt("id_tipo_operacion"));
+                tiop.setDuracion(rs.getInt("duracion"));
+                tiop.setDescripcion(rs.getString("descripcion"));
+                tiopList.add(tiop);
+            }
+        } catch (SQLException ex) {
+            Logger lgr = Logger.getLogger(DB_Egreso.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (st != null) {
+                    st.close();
+                }
+            } catch (SQLException ex) {
+                Logger lgr = Logger.getLogger(DB_Egreso.class.getName());
+                lgr.log(Level.WARNING, ex.getMessage(), ex);
+            }
+        }
+        return tiopList;
     }
 
     /*

@@ -10,6 +10,7 @@ import DB.DB_Ingreso;
 import Entities.M_cliente;
 import Entities.M_mesa;
 import Entities.M_mesa_detalle;
+import Interface.RecibirClienteCallback;
 import Parametros.TipoOperacion;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -31,7 +32,7 @@ import net.miginfocom.swing.MigLayout;
  *
  * @author Ramiro Ferreira
  */
-public class ConfigurarMesa extends JDialog implements ActionListener, KeyListener {
+public class ConfigurarMesa extends JDialog implements ActionListener, KeyListener, RecibirClienteCallback {
 
     private JLabel jlNroMesa;
     private JButton jbCliente, jbAceptar, jbCancelar;
@@ -155,7 +156,9 @@ public class ConfigurarMesa extends JDialog implements ActionListener, KeyListen
     }
 
     private void crearCliente() {
-        Seleccionar_cliente sc = new Seleccionar_cliente(this);
+        //Seleccionar_cliente sc = new Seleccionar_cliente(this);
+        Seleccionar_cliente sc = new Seleccionar_cliente(this.crearVentas.gestionVentas.c_inicio.vista);
+        sc.setCallback(this);
         sc.mostrarVista();
     }
 

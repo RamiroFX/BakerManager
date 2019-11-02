@@ -19,7 +19,7 @@ import Entities.M_producto;
 import Entities.M_telefono;
 import MenuPrincipal.DatosUsuario;
 import ModeloTabla.FacturaDetalleTableModel;
-import ModeloTabla.InterfaceFacturaDetalle;
+import Interface.InterfaceFacturaDetalle;
 import Parametros.TipoOperacion;
 import Parametros.TipoVenta;
 import Impresora.Impresora;

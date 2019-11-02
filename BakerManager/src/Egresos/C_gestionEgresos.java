@@ -14,6 +14,7 @@ import MenuPrincipal.DatosUsuario;
 import Proveedor.Seleccionar_proveedor;
 import bakermanager.C_inicio;
 import Empleado.Seleccionar_funcionario;
+import Interface.RecibirEmpleadoCallback;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -33,7 +34,7 @@ import javax.swing.JOptionPane;
  *
  * @author Ramiro Ferreira
  */
-public class C_gestionEgresos extends MouseAdapter implements ActionListener, KeyListener {
+public class C_gestionEgresos extends MouseAdapter implements ActionListener, KeyListener, RecibirEmpleadoCallback {
 
     private M_egreso_cabecera m_egreso_cabecera;
     V_gestion_egresos vista;
@@ -293,6 +294,7 @@ public class C_gestionEgresos extends MouseAdapter implements ActionListener, Ke
         this.vista.jtfProveedor.setText(nombre + " - " + entidad);
     }
 
+    @Override
     public void recibirFuncionario(M_funcionario funcionario) {
         this.m_egreso_cabecera.setFuncionario(funcionario);
         this.m_egreso_cabecera.setId_empleado(funcionario.getId_funcionario());
@@ -327,7 +329,8 @@ public class C_gestionEgresos extends MouseAdapter implements ActionListener, Ke
             Seleccionar_proveedor sp = new Seleccionar_proveedor(this);
             sp.mostrarVista();
         } else if (e.getSource() == this.vista.jbFuncionario) {
-            Seleccionar_funcionario sf = new Seleccionar_funcionario(this);
+            Seleccionar_funcionario sf = new Seleccionar_funcionario(this.c_inicio.vista);
+            sf.setCallback(this);
             sf.mostrarVista();
         } else if (e.getSource() == this.vista.jbBorrar) {
             borrarParametros();

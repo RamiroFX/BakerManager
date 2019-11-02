@@ -100,4 +100,11 @@ public class M_gestionVentas {
         //id 2 es inactivo
         DB_Ingreso.anularVenta(idVenta, 2);
     }
+
+    public String obtenerNombreFuncionario() {
+        String alias = this.getCabecera().getFuncionario().getAlias();
+        String nombre = this.getCabecera().getFuncionario().getNombre();
+        String apellido = this.getCabecera().getFuncionario().getApellido();
+        return alias + "-(" + nombre + " " + apellido + ")";
+    }
 }

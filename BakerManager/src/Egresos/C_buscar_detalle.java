@@ -11,6 +11,7 @@ import Entities.M_proveedor;
 import Proveedor.Seleccionar_proveedor;
 import bakermanager.C_inicio;
 import Empleado.Seleccionar_funcionario;
+import Interface.RecibirEmpleadoCallback;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -28,7 +29,7 @@ import javax.swing.JOptionPane;
  *
  * @author Ramiro
  */
-public class C_buscar_detalle extends MouseAdapter implements ActionListener, KeyListener {
+public class C_buscar_detalle extends MouseAdapter implements ActionListener, KeyListener, RecibirEmpleadoCallback {
 
     V_buscar_detalle vista;
     M_proveedor proveedor;
@@ -220,7 +221,8 @@ public class C_buscar_detalle extends MouseAdapter implements ActionListener, Ke
             Seleccionar_proveedor sp = new Seleccionar_proveedor(this);
             sp.mostrarVista();
         } else if (e.getSource() == this.vista.jbFuncionario) {
-            Seleccionar_funcionario sf = new Seleccionar_funcionario(this);
+            Seleccionar_funcionario sf = new Seleccionar_funcionario(this.c_inicio.vista);
+            sf.setCallback(this);
             sf.mostrarVista();
         } else if (e.getSource() == this.vista.jbCerrar) {
             cerrar();
@@ -277,6 +279,7 @@ public class C_buscar_detalle extends MouseAdapter implements ActionListener, Ke
         this.vista.jtfProveedor.setText(nombre + " - " + entidad);
     }
 
+    @Override
     public void recibirFuncionario(M_funcionario funcionario) {
         this.funcionario = funcionario;
         String nombre = funcionario.getNombre();

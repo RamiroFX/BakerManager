@@ -13,6 +13,7 @@ import Entities.M_funcionario;
 import Entities.M_mesa_detalle;
 import Entities.M_producto;
 import Entities.M_telefono;
+import Interface.RecibirClienteCallback;
 import Parametros.TipoOperacion;
 import Producto.SeleccionarCantidadProduducto;
 import Producto.SeleccionarProducto;
@@ -31,7 +32,7 @@ import javax.swing.JOptionPane;
  *
  * @author Ramiro Ferreira
  */
-public class C_verMesa extends MouseAdapter implements ActionListener, KeyListener {
+public class C_verMesa extends MouseAdapter implements ActionListener, KeyListener, RecibirClienteCallback {
 
     private static final String TITULO_ERROR = "Error";
     private static final String PRODUCTO_NO_EXISTE = "El producto no existe";
@@ -261,6 +262,7 @@ public class C_verMesa extends MouseAdapter implements ActionListener, KeyListen
         this.vista.jftTotal.setValue(total);
     }
 
+    @Override
     public void recibirCliente(M_cliente cliente) {
         this.modelo.actualizarDatosMesa(cliente);
         String nombre = this.modelo.getMesa().getCliente().getNombre();
@@ -375,7 +377,9 @@ public class C_verMesa extends MouseAdapter implements ActionListener, KeyListen
             agregarProductoPorCodigo();
         }
         if (e.getSource().equals(this.vista.jbCliente)) {
-            Seleccionar_cliente sp = new Seleccionar_cliente(this);
+            //Seleccionar_cliente sp = new Seleccionar_cliente(this);
+            Seleccionar_cliente sp = new Seleccionar_cliente(this.crearVentas.gestionVentas.c_inicio.vista);
+            sp.setCallback(this);
             sp.mostrarVista();
         }
         if (e.getSource().equals(this.vista.jbEliminarDetalle)) {
@@ -430,7 +434,8 @@ public class C_verMesa extends MouseAdapter implements ActionListener, KeyListen
             sp.mostrarVista();
         }
         if (e.getKeyCode() == KeyEvent.VK_F3) {
-            Seleccionar_cliente sp = new Seleccionar_cliente(this);
+            Seleccionar_cliente sp = new Seleccionar_cliente(this.crearVentas.gestionVentas.c_inicio.vista);
+            sp.setCallback(this);
             sp.mostrarVista();
         }
     }

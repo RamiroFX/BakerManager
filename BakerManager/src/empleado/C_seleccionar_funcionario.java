@@ -1,15 +1,9 @@
 package Empleado;
 
-import Caja.C_gestionCaja;
-import Cobros_Pagos.C_gestionCobroPago;
 import DB.DB_Cliente;
 import DB.DB_Funcionario;
-import Egresos.C_buscar_detalle;
-import Egresos.C_gestionEgresos;
 import Entities.M_funcionario;
-import Pedido.C_gestionPedido;
-import Ventas.C_gestionVentas;
-import Ventas.C_buscar_venta_detalle;
+import Interface.RecibirEmpleadoCallback;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -24,77 +18,13 @@ import java.awt.event.MouseEvent;
  */
 public class C_seleccionar_funcionario extends MouseAdapter implements ActionListener, KeyListener {
 
-    public static final int GESTION_VENTA = 1;
-    public static final int GESTION_COMPRA = 2;
-    public static final int BUSCAR_DETALLE_EGRESO = 3;
-    public static final int GESTION_PEDIDO = 4;
-    public static final int BUSCAR_VENTA_DETALLE = 5;
-    public static final int GESTION_CAJA = 6;
-    public static final int GESTION_COBRO_PAGO = 7;
-    int idCliente, tipo;
+    int idFuncionario;
     M_funcionario funcionario;
     V_seleccionar_funcionario vista;
-    //C_crear_venta c_ingreso;
-    private C_gestionVentas gestion_venta;
-    private C_gestionEgresos gestion_compra;
-    private C_buscar_detalle buscarDetalleEgreso;
-    private C_gestionPedido gestionPedido;
-    private C_buscar_venta_detalle buscarVentaDetalle;
-    private C_gestionCaja gestionCaja;
-    private C_gestionCobroPago gestionCobroPago;
+    private RecibirEmpleadoCallback callback;
 
-    public C_seleccionar_funcionario(V_seleccionar_funcionario vista, C_gestionVentas gestion_venta) {
-        this.gestion_venta = gestion_venta;
+    public C_seleccionar_funcionario(V_seleccionar_funcionario vista) {
         this.vista = vista;
-        this.tipo = GESTION_VENTA;
-        inicializarVista();
-        agregarListeners();
-    }
-
-    public C_seleccionar_funcionario(V_seleccionar_funcionario vista, C_gestionEgresos gestion_compra) {
-        this.gestion_compra = gestion_compra;
-        this.vista = vista;
-        this.tipo = GESTION_COMPRA;
-        inicializarVista();
-        agregarListeners();
-    }
-
-    public C_seleccionar_funcionario(V_seleccionar_funcionario vista, C_buscar_detalle buscarDetalleEgreso) {
-        this.buscarDetalleEgreso = buscarDetalleEgreso;
-        this.vista = vista;
-        this.tipo = BUSCAR_DETALLE_EGRESO;
-        inicializarVista();
-        agregarListeners();
-    }
-
-    public C_seleccionar_funcionario(V_seleccionar_funcionario vista, C_gestionPedido gestionPedido) {
-        this.gestionPedido = gestionPedido;
-        this.vista = vista;
-        this.tipo = GESTION_PEDIDO;
-        inicializarVista();
-        agregarListeners();
-    }
-
-    public C_seleccionar_funcionario(V_seleccionar_funcionario vista, C_buscar_venta_detalle buscarVentaDetalle) {
-        this.buscarVentaDetalle = buscarVentaDetalle;
-        this.vista = vista;
-        this.tipo = BUSCAR_VENTA_DETALLE;
-        inicializarVista();
-        agregarListeners();
-    }
-
-    C_seleccionar_funcionario(V_seleccionar_funcionario vista, C_gestionCaja gestionCaja) {
-        this.gestionCaja = gestionCaja;
-        this.vista = vista;
-        this.tipo = GESTION_CAJA;
-        inicializarVista();
-        agregarListeners();
-    }
-
-    C_seleccionar_funcionario(V_seleccionar_funcionario vista, C_gestionCobroPago gestionCobroPago) {
-        this.gestionCobroPago = gestionCobroPago;
-        this.vista = vista;
-        this.tipo = GESTION_COBRO_PAGO;
         inicializarVista();
         agregarListeners();
     }
@@ -126,48 +56,13 @@ public class C_seleccionar_funcionario extends MouseAdapter implements ActionLis
         System.runFinalization();
     }
 
+    public void setCallback(RecibirEmpleadoCallback recb) {
+        this.callback = recb;
+    }
+
     private void seleccionarFuncionario(M_funcionario funcionario) {
-        switch (tipo) {
-            case GESTION_VENTA: {
-                this.gestion_venta.recibirFuncionario(funcionario);
-                cerrar();
-                break;
-            }
-            case GESTION_COMPRA: {
-                this.gestion_compra.recibirFuncionario(funcionario);
-                cerrar();
-                break;
-            }
-            case BUSCAR_DETALLE_EGRESO: {
-                this.buscarDetalleEgreso.recibirFuncionario(funcionario);
-                cerrar();
-                break;
-            }
-            case GESTION_PEDIDO: {
-                this.gestionPedido.recibirFuncionario(funcionario);
-                cerrar();
-                break;
-            }
-            case BUSCAR_VENTA_DETALLE: {
-                this.buscarVentaDetalle.recibirFuncionario(funcionario);
-                cerrar();
-                break;
-            }
-            case GESTION_CAJA: {
-                this.gestionCaja.recibirFuncionario(funcionario);
-                cerrar();
-                break;
-            }
-            case GESTION_COBRO_PAGO: {
-                this.gestionCobroPago.recibirFuncionario(funcionario);
-                cerrar();
-                break;
-            }
-            default: {
-                cerrar();
-                break;
-            }
-        }
+        this.callback.recibirFuncionario(funcionario);
+        cerrar();
     }
 
     private void displayQueryResults() {
@@ -206,8 +101,8 @@ public class C_seleccionar_funcionario extends MouseAdapter implements ActionLis
     public void mouseClicked(MouseEvent e) {
         int fila = this.vista.jtCliente.rowAtPoint(e.getPoint());
         int columna = this.vista.jtCliente.columnAtPoint(e.getPoint());
-        idCliente = Integer.valueOf(String.valueOf(this.vista.jtCliente.getValueAt(fila, 0)));
-        funcionario = DB_Funcionario.obtenerDatosFuncionarioID(idCliente);
+        idFuncionario = Integer.valueOf(String.valueOf(this.vista.jtCliente.getValueAt(fila, 0)));
+        funcionario = DB_Funcionario.obtenerDatosFuncionarioID(idFuncionario);
         if ((fila > -1) && (columna > -1)) {
             this.vista.jbAceptar.setEnabled(true);
             if (e.getClickCount() == 2) {

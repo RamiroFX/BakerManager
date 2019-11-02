@@ -17,7 +17,7 @@ public class M_funcionario extends M_persona {
     public M_funcionario() {
         super();
     }
-    
+
     public M_funcionario(String ocupacion, String observacion, String alias, String email, String nro_celular, String nro_telefono, String direccion, String password, Date fechaIngreso, Integer id_funcionario, ArrayList rol, String nombre, String apellido, String sexo, String pais, String ciudad, Date fechaNacimiento, String estadoCivil, Integer idPersona, Integer ci) {
         super(nombre, apellido, sexo, pais, ciudad, fechaNacimiento, estadoCivil, idPersona, ci);
         this.ocupacion = ocupacion;
@@ -194,4 +194,10 @@ public class M_funcionario extends M_persona {
     public void setPassword(String password) {
         this.password = password;
     }
+
+    @Override
+    public String toString() {
+        return getAlias();
+    }
+
 }

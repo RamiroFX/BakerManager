@@ -17,6 +17,7 @@ import Parametros.TipoOperacion;
 import Producto.SeleccionarCantidadProduducto;
 import Producto.SeleccionarProducto;
 import Impresora.Impresora;
+import Interface.RecibirClienteCallback;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -36,7 +37,7 @@ import javax.swing.JOptionPane;
  *
  * @author Ramiro Ferreira
  */
-public class C_verPedido extends MouseAdapter implements ActionListener, KeyListener {
+public class C_verPedido extends MouseAdapter implements ActionListener, KeyListener, RecibirClienteCallback {
 
     public V_crearPedido vista;
     public M_verPedido modelo;
@@ -273,6 +274,7 @@ public class C_verPedido extends MouseAdapter implements ActionListener, KeyList
         this.vista.jftTotal.setValue(total);
     }
 
+    @Override
     public void recibirCliente(M_cliente cliente) {
         int opcion = JOptionPane.showConfirmDialog(vista, "¿Desea confirmar esta operación?", "Atención", JOptionPane.YES_NO_OPTION);
         if (opcion == JOptionPane.YES_OPTION) {
@@ -391,7 +393,8 @@ public class C_verPedido extends MouseAdapter implements ActionListener, KeyList
             SeleccionarProducto sp = new SeleccionarProducto(this);
             sp.mostrarVista();
         } else if (source.equals(this.vista.jbCliente)) {
-            Seleccionar_cliente sc = new Seleccionar_cliente(this);
+            Seleccionar_cliente sc = new Seleccionar_cliente(this.gestionPedido.c_inicio.vista);
+            sc.setCallback(this);
             sc.mostrarVista();
         } else if (source.equals(this.vista.jbEliminarDetalle)) {
             eliminarDetalle();
@@ -437,8 +440,9 @@ public class C_verPedido extends MouseAdapter implements ActionListener, KeyList
             sp.mostrarVista();
         }
         if (e.getKeyCode() == KeyEvent.VK_F3) {
-            Seleccionar_cliente sp = new Seleccionar_cliente(this);
-            sp.mostrarVista();
+            Seleccionar_cliente sc = new Seleccionar_cliente(this.gestionPedido.c_inicio.vista);
+            sc.setCallback(this);
+            sc.mostrarVista();
         }
     }
 

@@ -53,6 +53,13 @@ public class M_gestionCaja {
         this.funcionario = funcionario;
     }
 
+    public String obtenerNombreFuncionario() {
+        String alias = this.getFuncionario().getAlias();
+        String nombre = this.getFuncionario().getNombre();
+        String apellido = this.getFuncionario().getApellido();
+        return alias + "-(" + nombre + " " + apellido + ")";
+    }
+
     public ResultSetTableModel consultarCajas(int idFuncionario, Timestamp fecha_inicio, Timestamp fecha_fin) {
         return DB_Caja.consultarCajas(idFuncionario, fecha_inicio, fecha_fin);
     }
@@ -76,7 +83,7 @@ public class M_gestionCaja {
         ExportarCaja ec = new ExportarCaja(acd);
         ec.exportar();
     }
-    
+
     public void exportarExcelMinimalista(Integer idFuncionario, Date fecha_inicio, Date fecha_fin) {
         SimpleDateFormat sdfs = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Calendar calendario = Calendar.getInstance();

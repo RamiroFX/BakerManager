@@ -11,6 +11,8 @@ import Entities.M_funcionario;
 import bakermanager.C_inicio;
 import Empleado.Seleccionar_funcionario;
 import Entities.M_cliente;
+import Interface.RecibirClienteCallback;
+import Interface.RecibirEmpleadoCallback;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -28,7 +30,8 @@ import javax.swing.JOptionPane;
  *
  * @author Ramiro
  */
-public class C_buscar_venta_detalle extends MouseAdapter implements ActionListener, KeyListener {
+public class C_buscar_venta_detalle extends MouseAdapter implements ActionListener,
+        KeyListener, RecibirEmpleadoCallback, RecibirClienteCallback {
 
     public V_buscar_venta_detalle vista;
     M_cliente cliente;
@@ -168,7 +171,7 @@ public class C_buscar_venta_detalle extends MouseAdapter implements ActionListen
                  * Se utiliza el objeto factory para obtener un TableModel
                  * para los resultados del query.
                  */
-                /*vista.jtDetalle.setModel(DB_Egreso.obtenerEgresoDetalleAvanzado(
+ /*vista.jtDetalle.setModel(DB_Egreso.obtenerEgresoDetalleAvanzado(
                  producto, cliente, marca, impuesto,
                  categoria, estado, fechaInicio, fechaFinal, tiop, empleado, tipoBusquedaDescripcion));*/
                 vista.jtDetalle.establecerModelo(DB_Ingreso.obtenerIngresoDetalleAvanzado(
@@ -217,10 +220,12 @@ public class C_buscar_venta_detalle extends MouseAdapter implements ActionListen
 
             this.vista.jbDetalle.setEnabled(false);
         } else if (e.getSource() == this.vista.jbCliente) {
-            Seleccionar_cliente sp = new Seleccionar_cliente(this);
+            Seleccionar_cliente sp = new Seleccionar_cliente(this.c_inicio.vista);
+            sp.setCallback(this);
             sp.mostrarVista();
         } else if (e.getSource() == this.vista.jbFuncionario) {
-            Seleccionar_funcionario sf = new Seleccionar_funcionario(this);
+            Seleccionar_funcionario sf = new Seleccionar_funcionario(this.c_inicio.vista);
+            sf.setCallback(this);
             sf.mostrarVista();
         } else if (e.getSource() == this.vista.jbCerrar) {
             cerrar();
@@ -270,6 +275,7 @@ public class C_buscar_venta_detalle extends MouseAdapter implements ActionListen
         }
     }
 
+    @Override
     public void recibirCliente(M_cliente cliente) {
         this.cliente = cliente;
         String nombre = cliente.getNombre();
@@ -277,6 +283,7 @@ public class C_buscar_venta_detalle extends MouseAdapter implements ActionListen
         this.vista.jtfCliente.setText(nombre + " - " + entidad);
     }
 
+    @Override
     public void recibirFuncionario(M_funcionario funcionario) {
         this.funcionario = funcionario;
         String nombre = funcionario.getNombre();

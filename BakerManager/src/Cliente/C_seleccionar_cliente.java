@@ -6,6 +6,7 @@ package Cliente;
 
 import DB.DB_Cliente;
 import Entities.M_cliente;
+import Interface.RecibirClienteCallback;
 import Pedido.C_crearPedido;
 import Pedido.C_gestionPedido;
 import Pedido.C_verPedido;
@@ -31,89 +32,20 @@ import javax.swing.KeyStroke;
  */
 public class C_seleccionar_cliente extends MouseAdapter implements ActionListener, KeyListener {
 
-    public static final int GESTION_VENTA = 1;
-    public static final int CREAR_VENTA = 2;
-    public static final int CONFIGURAR_MESA = 3;
-    public static final int VER_MESA = 5;
-    public static final int GESTION_PEDIDO = 6;
-    public static final int CREAR_PEDIDO = 7;
-    public static final int VER_PEDIDO = 8;
-    public static final int BUSCAR_VENTA_DETALLE = 9;
     private static final String ENTER_KEY = "Entrar";
     int idCliente, tipo;
     M_cliente cliente;
     V_seleccionar_cliente vista;
-    C_crearVentaRapida c_ingreso;
-    C_gestionVentas gestion_venta;
-    ConfigurarMesa configurarMesa;
-    C_verMesa verMesa;
-    C_gestionPedido gestionPedido;
-    C_crearPedido crearPedido;
-    C_verPedido verPedido;
-    C_buscar_venta_detalle ventaDetalle;
+    RecibirClienteCallback callback;
 
-    public C_seleccionar_cliente(V_seleccionar_cliente vista, C_crearVentaRapida c_ingreso) {
-        this.c_ingreso = c_ingreso;
+    public C_seleccionar_cliente(V_seleccionar_cliente vista) {
         this.vista = vista;
-        this.tipo = CREAR_VENTA;
         inicializarVista();
         agregarListeners();
     }
 
-    public C_seleccionar_cliente(V_seleccionar_cliente vista, C_gestionVentas gestion_venta) {
-        this.gestion_venta = gestion_venta;
-        this.vista = vista;
-        this.tipo = GESTION_VENTA;
-        inicializarVista();
-        agregarListeners();
-    }
-
-    public C_seleccionar_cliente(V_seleccionar_cliente vista, ConfigurarMesa configurarMesa) {
-        this.configurarMesa = configurarMesa;
-        this.vista = vista;
-        this.tipo = CONFIGURAR_MESA;
-        inicializarVista();
-        agregarListeners();
-    }
-
-    public C_seleccionar_cliente(V_seleccionar_cliente vista, C_verMesa verMesa) {
-        this.verMesa = verMesa;
-        this.vista = vista;
-        this.tipo = VER_MESA;
-        inicializarVista();
-        agregarListeners();
-    }
-
-    public C_seleccionar_cliente(V_seleccionar_cliente vista, C_gestionPedido gestionPedido) {
-        this.gestionPedido = gestionPedido;
-        this.vista = vista;
-        this.tipo = GESTION_PEDIDO;
-        inicializarVista();
-        agregarListeners();
-    }
-
-    public C_seleccionar_cliente(V_seleccionar_cliente vista, C_crearPedido crearPedido) {
-        this.crearPedido = crearPedido;
-        this.vista = vista;
-        this.tipo = CREAR_PEDIDO;
-        inicializarVista();
-        agregarListeners();
-    }
-
-    public C_seleccionar_cliente(V_seleccionar_cliente vista, C_verPedido verPedido) {
-        this.verPedido = verPedido;
-        this.vista = vista;
-        this.tipo = VER_PEDIDO;
-        inicializarVista();
-        agregarListeners();
-    }
-
-    public C_seleccionar_cliente(V_seleccionar_cliente vista, C_buscar_venta_detalle ventaDetalle) {
-        this.ventaDetalle = ventaDetalle;
-        this.vista = vista;
-        this.tipo = BUSCAR_VENTA_DETALLE;
-        inicializarVista();
-        agregarListeners();
+    public void setCallback(RecibirClienteCallback rccb) {
+        this.callback = rccb;
     }
 
     void mostrarVista() {
@@ -162,53 +94,8 @@ public class C_seleccionar_cliente extends MouseAdapter implements ActionListene
     }
 
     private void seleccionarCliente(M_cliente cliente) {
-        switch (tipo) {
-            case GESTION_VENTA: {
-                this.gestion_venta.recibirCliente(cliente);
-                cerrar();
-                break;
-            }
-            case CREAR_VENTA: {
-                this.c_ingreso.recibirCliente(cliente);
-                cerrar();
-                break;
-            }
-            case CONFIGURAR_MESA: {
-                this.configurarMesa.recibirCliente(cliente);
-                cerrar();
-                break;
-            }
-            case VER_MESA: {
-                this.verMesa.recibirCliente(cliente);
-                cerrar();
-                break;
-            }
-            case GESTION_PEDIDO: {
-                this.gestionPedido.recibirCliente(cliente);
-                cerrar();
-                break;
-            }
-            case CREAR_PEDIDO: {
-                this.crearPedido.recibirCliente(cliente);
-                cerrar();
-                break;
-            }
-            case VER_PEDIDO: {
-                this.verPedido.recibirCliente(cliente);
-                cerrar();
-                break;
-            }
-
-            case BUSCAR_VENTA_DETALLE: {
-                this.ventaDetalle.recibirCliente(cliente);
-                cerrar();
-                break;
-            }
-            default: {
-                cerrar();
-                break;
-            }
-        }
+        this.callback.recibirCliente(cliente);
+        cerrar();
     }
 
     private void displayQueryResults() {

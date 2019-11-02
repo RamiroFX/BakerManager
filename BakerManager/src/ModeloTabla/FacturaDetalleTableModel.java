@@ -5,6 +5,7 @@
  */
 package ModeloTabla;
 
+import Interface.InterfaceFacturaDetalle;
 import Entities.M_facturaDetalle;
 import Parametros.Impuesto;
 import java.util.ArrayList;

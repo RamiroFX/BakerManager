@@ -15,6 +15,8 @@ import MenuPrincipal.DatosUsuario;
 import bakermanager.C_inicio;
 import Empleado.Seleccionar_funcionario;
 import Entities.Estado;
+import Interface.RecibirClienteCallback;
+import Interface.RecibirEmpleadoCallback;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -30,7 +32,7 @@ import javax.swing.JOptionPane;
  *
  * @author Ramiro Ferreira
  */
-public class C_gestionVentas implements GestionInterface {
+public class C_gestionVentas implements GestionInterface, RecibirEmpleadoCallback,RecibirClienteCallback {
 
     public M_gestionVentas modelo;
     public V_gestionVentas vista;
@@ -177,6 +179,7 @@ public class C_gestionVentas implements GestionInterface {
         });
     }
 
+    @Override
     public void recibirCliente(M_cliente cliente) {
         this.modelo.cabecera.setCliente(cliente);
         String nombre = this.modelo.cabecera.getCliente().getNombre();
@@ -184,12 +187,10 @@ public class C_gestionVentas implements GestionInterface {
         this.vista.jtfCliente.setText(nombre + "-(" + entidad + ")");
     }
 
+    @Override
     public void recibirFuncionario(M_funcionario funcionario) {
         this.modelo.cabecera.setFuncionario(funcionario);
-        String alias = this.modelo.cabecera.getFuncionario().getAlias();
-        String nombre = this.modelo.cabecera.getFuncionario().getNombre();
-        String apellido = this.modelo.cabecera.getFuncionario().getApellido();
-        this.vista.jtfEmpleado.setText(alias + "-(" + nombre + " " + apellido + ")");
+        this.vista.jtfEmpleado.setText(this.modelo.obtenerNombreFuncionario());
     }
 
     private void borrarDatos() {
@@ -326,11 +327,13 @@ public class C_gestionVentas implements GestionInterface {
             buscarVentaDetalle();
         }
         if (e.getSource().equals(this.vista.jbCliente)) {
-            Seleccionar_cliente sc = new Seleccionar_cliente(this);
+            Seleccionar_cliente sc = new Seleccionar_cliente(this.c_inicio.vista);
+            sc.setCallback(this);
             sc.mostrarVista();
         }
         if (e.getSource().equals(this.vista.jbEmpleado)) {
-            Seleccionar_funcionario sf = new Seleccionar_funcionario(this);
+            Seleccionar_funcionario sf = new Seleccionar_funcionario(this.c_inicio.vista);
+            sf.setCallback(this);
             sf.mostrarVista();
         }
         if (e.getSource().equals(this.vista.jbBorrar)) {

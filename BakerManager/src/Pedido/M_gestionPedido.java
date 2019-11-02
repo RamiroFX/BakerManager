@@ -42,6 +42,13 @@ public class M_gestionPedido {
         this.rstmPedido = DB_Pedido.obtenerPedidosPendientes(true);
     }
 
+    public String obtenerNombreFuncionario() {
+        String alias = this.getPedido().getFuncionario().getAlias();
+        String nombre = this.getPedido().getFuncionario().getNombre();
+        String apellido = this.getPedido().getFuncionario().getApellido();
+        return alias + "-(" + nombre + " " + apellido + ")";
+    }
+
     public M_pedido getPedido() {
         return pedido;
     }

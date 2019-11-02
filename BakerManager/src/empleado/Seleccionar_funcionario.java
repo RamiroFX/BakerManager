@@ -4,13 +4,8 @@
  */
 package Empleado;
 
-import Caja.C_gestionCaja;
-import Cobros_Pagos.C_gestionCobroPago;
-import Egresos.C_buscar_detalle;
-import Egresos.C_gestionEgresos;
-import Pedido.C_gestionPedido;
-import Ventas.C_gestionVentas;
-import Ventas.C_buscar_venta_detalle;
+import Interface.RecibirEmpleadoCallback;
+import bakermanager.V_inicio;
 
 /**
  *
@@ -21,39 +16,13 @@ public class Seleccionar_funcionario {
     private V_seleccionar_funcionario vista;
     private C_seleccionar_funcionario controlador;
 
-    public Seleccionar_funcionario(C_gestionVentas gestionVenta) {
-        this.vista = new V_seleccionar_funcionario(gestionVenta.c_inicio.vista);
-        this.controlador = new C_seleccionar_funcionario(vista, gestionVenta);
-    }
-    
-    public Seleccionar_funcionario(C_gestionEgresos gestionEgresos) {
-        this.vista = new V_seleccionar_funcionario(gestionEgresos.c_inicio.vista);
-        this.controlador = new C_seleccionar_funcionario(vista, gestionEgresos);
-    }
-    
-    public Seleccionar_funcionario(C_buscar_detalle buscarDetalleEgreso) {
-        this.vista = new V_seleccionar_funcionario(buscarDetalleEgreso.c_inicio.vista);
-        this.controlador = new C_seleccionar_funcionario(vista, buscarDetalleEgreso);
-    }
-    
-    public Seleccionar_funcionario(C_gestionPedido gestionPedido) {
-        this.vista = new V_seleccionar_funcionario(gestionPedido.c_inicio.vista);
-        this.controlador = new C_seleccionar_funcionario(vista, gestionPedido);
-    }
-    
-    public Seleccionar_funcionario(C_buscar_venta_detalle buscarVentaDetalle) {
-        this.vista = new V_seleccionar_funcionario(buscarVentaDetalle.c_inicio.vista);
-        this.controlador = new C_seleccionar_funcionario(vista, buscarVentaDetalle);
+    public Seleccionar_funcionario(V_inicio v_inicio) {
+        this.vista = new V_seleccionar_funcionario(v_inicio);
+        this.controlador = new C_seleccionar_funcionario(vista);
     }
 
-    public Seleccionar_funcionario(C_gestionCaja caja) {
-        this.vista = new V_seleccionar_funcionario(caja.c_inicio.vista);
-        this.controlador = new C_seleccionar_funcionario(vista, caja);
-    }
-
-    public Seleccionar_funcionario(C_gestionCobroPago cobroPago) {
-        this.vista = new V_seleccionar_funcionario(cobroPago.c_inicio.vista);
-        this.controlador = new C_seleccionar_funcionario(vista, cobroPago);
+    public void setCallback(RecibirEmpleadoCallback recb) {
+        this.controlador.setCallback(recb);
     }
 
     public void mostrarVista() {

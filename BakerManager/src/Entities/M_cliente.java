@@ -16,7 +16,6 @@ public class M_cliente {
     public M_cliente() {
     }
 
-    
     public Integer getIdCliente() {
         return idCliente;
     }
@@ -120,4 +119,10 @@ public class M_cliente {
     public void setObservacion(String observacion) {
         this.observacion = observacion;
     }
+
+    @Override
+    public String toString() {
+        return getEntidad();
+    }
+
 }

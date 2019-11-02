@@ -4,6 +4,7 @@ import Empleado.Seleccionar_funcionario;
 import Entities.M_funcionario;
 import Entities.M_menu_item;
 import Interface.GestionInterface;
+import Interface.RecibirEmpleadoCallback;
 import MenuPrincipal.DatosUsuario;
 import bakermanager.C_inicio;
 import java.awt.EventQueue;
@@ -21,7 +22,7 @@ import javax.swing.JOptionPane;
  *
  * @author Ramiro Ferreira
  */
-public class C_gestionCaja implements GestionInterface {
+public class C_gestionCaja implements GestionInterface, RecibirEmpleadoCallback {
 
     V_gestionCaja vista;
     M_gestionCaja modelo;
@@ -148,12 +149,10 @@ public class C_gestionCaja implements GestionInterface {
         });
     }
 
+    @Override
     public void recibirFuncionario(M_funcionario funcionario) {
         this.modelo.setFuncionario(funcionario);
-        String alias = this.modelo.getFuncionario().getAlias();
-        String nombre = this.modelo.getFuncionario().getNombre();
-        String apellido = this.modelo.getFuncionario().getApellido();
-        this.vista.jtfEmpleado.setText(alias + "-(" + nombre + " " + apellido + ")");
+        this.vista.jtfEmpleado.setText(this.modelo.obtenerNombreFuncionario());
     }
 
     public void exportarExcel() {
@@ -247,7 +246,8 @@ public class C_gestionCaja implements GestionInterface {
         } else if (src.equals(this.vista.jbBuscar)) {
             consultarCajas();
         } else if (src.equals(this.vista.jbEmpleado)) {
-            Seleccionar_funcionario sf = new Seleccionar_funcionario(this);
+            Seleccionar_funcionario sf = new Seleccionar_funcionario(this.c_inicio.vista);
+            sf.setCallback(this);
             sf.mostrarVista();
         } else if (src.equals(this.vista.jbBorrar)) {
             borrarDatos();

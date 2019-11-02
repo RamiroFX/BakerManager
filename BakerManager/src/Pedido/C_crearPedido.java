@@ -14,6 +14,7 @@ import Parametros.TipoOperacion;
 import Producto.SeleccionarCantidadProduducto;
 import Producto.SeleccionarProducto;
 import Impresora.Impresora;
+import Interface.RecibirClienteCallback;
 import com.nitido.utils.toaster.Toaster;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
@@ -33,7 +34,7 @@ import javax.swing.JOptionPane;
  *
  * @author Ramiro Ferreira
  */
-public class C_crearPedido extends MouseAdapter implements ActionListener, KeyListener {
+public class C_crearPedido extends MouseAdapter implements ActionListener, KeyListener, RecibirClienteCallback {
 
     public M_crearPedido modelo;
     public V_crearPedido vista;
@@ -248,6 +249,7 @@ public class C_crearPedido extends MouseAdapter implements ActionListener, KeyLi
         this.vista.jftTotal.setValue(total);
     }
 
+    @Override
     public void recibirCliente(M_cliente cliente) {
         this.modelo.getPedido().setCliente(cliente);
         String nombre = this.modelo.getPedido().getCliente().getNombre();
@@ -390,7 +392,8 @@ public class C_crearPedido extends MouseAdapter implements ActionListener, KeyLi
             SeleccionarProducto sp = new SeleccionarProducto(this);
             sp.mostrarVista();
         } else if (source.equals(this.vista.jbCliente)) {
-            Seleccionar_cliente sc = new Seleccionar_cliente(this);
+            Seleccionar_cliente sc = new Seleccionar_cliente(this.gestionPedido.c_inicio.vista);
+            sc.setCallback(this);
             sc.mostrarVista();
         } else if (source.equals(this.vista.jbEliminarDetalle)) {
             eliminarDetalle();
@@ -428,8 +431,9 @@ public class C_crearPedido extends MouseAdapter implements ActionListener, KeyLi
                 break;
             }
             case KeyEvent.VK_F3: {
-                Seleccionar_cliente sp = new Seleccionar_cliente(this);
-                sp.mostrarVista();
+                Seleccionar_cliente sc = new Seleccionar_cliente(this.gestionPedido.c_inicio.vista);
+                sc.setCallback(this);
+                sc.mostrarVista();
                 break;
             }
             case KeyEvent.VK_F4: {

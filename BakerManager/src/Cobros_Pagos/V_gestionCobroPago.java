@@ -5,6 +5,7 @@
  */
 package Cobros_Pagos;
 
+import Entities.E_tipoOperacion;
 import Interface.CommonFormat;
 import com.toedter.calendar.JDateChooser;
 import java.awt.BorderLayout;
@@ -37,7 +38,8 @@ public class V_gestionCobroPago extends JInternalFrame {
     public JButton jbBuscarCobro, jbBorrarCobro, jbDetalleCobro,
             jbCliente, jbEmpCobro, jbCobro, jbCobroPendientes;
     public JTextField jtfNroFactura, jtfCliente, jtfEmpCobro;
-    public JComboBox jcbEmpleado, jcbCondVenta, jcbEstadoPedido;
+    public JComboBox jcbEmpleado, jcbEstadoPedido;
+    public JComboBox<E_tipoOperacion> jcbCondVenta;
     private JPanel jpCobros, jpCobroTop, jpCobroBotonesTop, jpCobroBot;
     public JTable jtCobroCabecera, jtCobroDetalle;
     private JScrollPane jspCobroCabecera, jspCobroDetalle;
@@ -93,7 +95,7 @@ public class V_gestionCobroPago extends JInternalFrame {
         jddInicioCobro.setPreferredSize(new Dimension(150, 10));
         jddFinalCobro = new JDateChooser();
         jddFinalCobro.setPreferredSize(new Dimension(150, 10));
-        jcbCondVenta = new JComboBox<Object>();
+        jcbCondVenta = new JComboBox<E_tipoOperacion>();
         jtfNroFactura = new JFormattedTextField();
         jpFiltrosCobro.add(jbCliente, "growx");
         jpFiltrosCobro.add(jtfCliente, "growx");
@@ -127,7 +129,11 @@ public class V_gestionCobroPago extends JInternalFrame {
         //MID VARIABLES
         jtCobroCabecera = new JTable();
         jspCobroCabecera = new JScrollPane(jtCobroCabecera);
-        jspCobroMid = new JSplitPane();
+        jtCobroDetalle = new JTable();
+        jspCobroDetalle = new JScrollPane(jtCobroDetalle);
+        jspCobroMid = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, jspCobroCabecera, jspCobroDetalle);
+        //jspCobroMid.setDividerLocation(this.getWidth() / 2);
+        jspCobroMid.setOneTouchExpandable(true);
         //SOUTH VARIABLES
         jbCobro = new JButton("Cobrar");
         jbCobro.setName("cobrar venta");
@@ -152,7 +158,7 @@ public class V_gestionCobroPago extends JInternalFrame {
         jpCobroBot.add(jbDetalleCobro);
         jpCobros = new JPanel(new BorderLayout());
         jpCobros.add(jpCobroTop, BorderLayout.NORTH);
-        jpCobros.add(jspCobroCabecera, BorderLayout.CENTER);
+        jpCobros.add(jspCobroMid, BorderLayout.CENTER);
         jpCobros.add(jpCobroBot, BorderLayout.SOUTH);
     }
 

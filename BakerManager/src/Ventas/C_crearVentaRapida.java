@@ -13,12 +13,13 @@ import Entities.M_producto;
 import Entities.M_telefono;
 import Interface.GestionInterface;
 import MenuPrincipal.DatosUsuario;
-import ModeloTabla.InterfaceFacturaDetalle;
+import Interface.InterfaceFacturaDetalle;
 import Parametros.Impuesto;
 import Parametros.TipoOperacion;
 import Producto.SeleccionarCantidadProduducto;
 import Producto.SeleccionarProducto;
 import Impresora.Impresora;
+import Interface.RecibirClienteCallback;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -31,7 +32,7 @@ import javax.swing.JOptionPane;
  *
  * @author Ramiro Ferreira
  */
-public class C_crearVentaRapida implements GestionInterface, InterfaceFacturaDetalle {
+public class C_crearVentaRapida implements GestionInterface, InterfaceFacturaDetalle, RecibirClienteCallback {
 
     private static final String TITULO_ERROR = "Error";
     private static final String PRODUCTO_NO_EXISTE = "El producto no existe";
@@ -278,6 +279,7 @@ public class C_crearVentaRapida implements GestionInterface, InterfaceFacturaDet
         this.vista.jftTotal.setValue(total);
     }
 
+    @Override
     public void recibirCliente(M_cliente cliente) {
         this.modelo.getCabecera().setCliente(cliente);
         String nombre = this.modelo.getCabecera().getCliente().getNombre();
@@ -442,7 +444,8 @@ public class C_crearVentaRapida implements GestionInterface, InterfaceFacturaDet
             imprimirTicket();
         }
         if (e.getSource().equals(this.vista.jbCliente)) {
-            Seleccionar_cliente sp = new Seleccionar_cliente(this);
+            Seleccionar_cliente sp = new Seleccionar_cliente(this.gestionVentas.c_inicio.vista);
+            sp.setCallback(this);
             sp.mostrarVista();
         }
         if (e.getSource().equals(this.vista.jbEliminarDetalle)) {
@@ -514,8 +517,9 @@ public class C_crearVentaRapida implements GestionInterface, InterfaceFacturaDet
                 break;
             }
             case KeyEvent.VK_F3: {
-                Seleccionar_cliente sp = new Seleccionar_cliente(this);
-                sp.mostrarVista();
+            Seleccionar_cliente sp = new Seleccionar_cliente(this.gestionVentas.c_inicio.vista);
+            sp.setCallback(this);
+            sp.mostrarVista();
                 break;
             }
             case KeyEvent.VK_F4: {
