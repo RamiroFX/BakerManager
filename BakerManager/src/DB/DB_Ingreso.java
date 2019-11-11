@@ -4,6 +4,7 @@
  */
 package DB;
 
+import Entities.E_facturaCabeceraFX;
 import Entities.E_facturaDetalleFX;
 import Entities.E_tipoOperacion;
 import Entities.Estado;
@@ -125,7 +126,119 @@ public class DB_Ingreso {
         }
         return rstm;
     }
+    
+    
 
+    public static ArrayList<E_facturaCabeceraFX> obtenerVentaCabeceras(String clienteEntidad,
+            Integer nro_factura, String idEmpleado, String inicio, String fin,
+            String tipo_operacion, Estado estado) {
+        String fromQuery = "FROM FACTURA_DETALLE FADE, FACTURA_CABECERA FACA,FUNCIONARIO FUNC, PERSONA PERS, CLIENTE CLIE, PRODUCTO P ";
+        String fInicio = "";
+        String fFinal;
+        if ("Todos".equals(inicio)) {
+            fInicio = "";
+            if ("Todos".equals(fin)) {
+                fFinal = "";
+            } else {
+                fFinal = " AND FACA.TIEMPO <'" + fin + "'::timestamp ";
+            }
+        } else {
+            fInicio = "AND FACA.TIEMPO BETWEEN '" + inicio + "'::timestamp  ";
+            fFinal = "AND '" + fin + "'::timestamp ";
+            if ("Todos".equals(fin)) {
+                fInicio = "AND FACA.TIEMPO > '" + inicio + "'::timestamp ";
+                fFinal = "";
+            }
+        }
+        String prov;
+        if ("Todos".equals(clienteEntidad)) {
+            prov = "";
+        } else {
+            prov = " AND CLIE.ID_CLIENTE = FACA.ID_CLIENTE AND CLIE.ENTIDAD LIKE'" + clienteEntidad + "' ";
+        }
+        String empleado;
+        if ("Todos".equals(idEmpleado)) {
+            empleado = "";
+        } else {
+            empleado = " AND FUNC.ID_FUNCIONARIO = " + idEmpleado;
+        }
+        String tiop;
+        if ("Todos".equals(tipo_operacion)) {
+            tiop = "";
+        } else {
+            tiop = " AND FACA.ID_COND_VENTA = " + tipo_operacion;
+        }
+        String esta;
+        if (estado.getId() == Estado.TODOS) {
+            esta = "";
+        } else {
+            esta = " AND FACA.ID_ESTADO = " + estado.getId();
+        }
+        String numero_fac = "";
+        try {
+            if (nro_factura != null) {
+                numero_fac = " AND FACA.NRO_FACTURA = " + nro_factura;
+            } else {
+                numero_fac = "";
+            }
+        } catch (Exception e) {
+            numero_fac = "";
+        }
+        String Query = "SELECT FACA.ID_FACTURA_CABECERA, "
+                + "FACA.NRO_FACTURA, "
+                + "ROUND(SUM (FADE.CANTIDAD*(FADE.PRECIO-(FADE.PRECIO*FADE.DESCUENTO)/100)))\"TOTAL\", "
+                + "CLIE.ENTIDAD, "
+                + "FACA.TIEMPO, "
+                + "(SELECT TIOP.DESCRIPCION FROM TIPO_OPERACION TIOP WHERE TIOP.ID_TIPO_OPERACION = FACA.ID_COND_VENTA) \"COND_VENTA\" "
+                + fromQuery
+                + "WHERE FACA.ID_FUNCIONARIO = FUNC.ID_FUNCIONARIO "
+                + "AND PERS.ID_PERSONA = FUNC.ID_PERSONA "
+                + "AND FACA.ID_CLIENTE = CLIE.ID_CLIENTE "
+                + "AND FACA.ID_FACTURA_CABECERA = FADE.ID_FACTURA_CABECERA "
+                + "AND FADE.ID_PRODUCTO = P.ID_PRODUCTO "
+                + prov
+                + fInicio
+                + fFinal
+                + empleado
+                + tiop
+                + esta
+                + numero_fac
+                + "GROUP BY FACA.ID_FACTURA_CABECERA, FACA.NRO_FACTURA, CLIE.ENTIDAD, FACA.TIEMPO "
+                + " ORDER BY FACA.TIEMPO";
+        ArrayList result = new ArrayList();
+        try {
+            st = DB_manager.getConection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            // se ejecuta el query y se obtienen los resultados en un ResultSet
+            rs = st.executeQuery(Query);
+            while (rs.next()) {
+                E_facturaCabeceraFX fadex = new E_facturaCabeceraFX();
+                fadex.setIdFacturaCabecera(rs.getInt("ID_FACTURA_CABECERA"));
+                fadex.setNroFactura(rs.getInt("NRO_FACTURA"));
+                fadex.setTotal(rs.getInt("TOTAL"));
+                fadex.setClienteEntidad(rs.getString("ENTIDAD"));
+                fadex.setCondVenta(rs.getString("COND_VENTA"));
+                fadex.setTiempo(rs.getDate("TIEMPO"));
+                result.add(fadex);
+            }
+        } catch (SQLException ex) {
+            Logger lgr = Logger.getLogger(DB_Egreso.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (pst != null) {
+                    pst.close();
+                }
+            } catch (SQLException ex) {
+                Logger lgr = Logger.getLogger(DB_Egreso.class.getName());
+                lgr.log(Level.WARNING, ex.getMessage(), ex);
+            }
+        }
+        return result;
+    }
+    
     public static ResultSetTableModel obtenerIngresoCabecera(Integer idIngresoDetalle) {
         ResultSetTableModel rstm = null;
         String Query = "SELECT FACA.ID_FACTURA_CABECERA \"ID ingreso\", "

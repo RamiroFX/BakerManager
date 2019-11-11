@@ -6,11 +6,11 @@
 package Ventas;
 
 import DB.DB_Ingreso;
+import Entities.E_facturaCabeceraFX;
 import Entities.E_facturaDetalleFX;
 import Entities.Estado;
 import Entities.M_cliente;
-import Entities.M_facturaDetalle;
-import Excel.C_create_excel;
+import Entities.M_facturaCabecera;
 import Excel.ExportarVentas;
 import bakermanager.C_inicio;
 import java.awt.BorderLayout;
@@ -30,6 +30,7 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
@@ -161,7 +162,7 @@ public class Resumen_ingreso extends JDialog implements ActionListener, KeyListe
         jbImportarXLS.addActionListener(this);
     }
 
-    private void importarExcel(M_cliente cliente, Integer nro_factura, String idEmpleado, String tipo_operacion, Estado estado) {
+    private void importarExcelCompleto(M_cliente cliente, Integer nro_factura, String idEmpleado, String tipo_operacion, Estado estado) {
         String fechaInicio = "";
         String fechaFinal = "";
         try {
@@ -196,6 +197,76 @@ public class Resumen_ingreso extends JDialog implements ActionListener, KeyListe
         ce.initComp();
     }
 
+    private void importarExcelResumido(M_cliente cliente, Integer nro_factura, String idEmpleado, String tipo_operacion, Estado estado) {
+        String fechaInicio = "";
+        String fechaFinal = "";
+        try {
+            fechaInicio = new Timestamp(this.inicio.getTime()).toString().substring(0, 11);
+            fechaInicio = fechaInicio + "00:00:00.000";
+        } catch (Exception e) {
+            fechaInicio = "Todos";
+        }
+        try {
+            fechaFinal = new Timestamp(this.fin.getTime()).toString().substring(0, 11);
+            fechaFinal = fechaFinal + "23:59:59.000";
+        } catch (Exception e) {
+            fechaFinal = "Todos";
+        }
+
+        String entidad = "Todos";
+        if (cliente != null) {
+            if (cliente.getEntidad() != null) {
+                entidad = cliente.getEntidad();
+            }
+        }
+        ArrayList<E_facturaCabeceraFX> ed = DB_Ingreso.obtenerVentaCabeceras(entidad, nro_factura, idEmpleado, fechaInicio, fechaFinal, tipo_operacion, estado);
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+        sdf.format(Calendar.getInstance().getTime());
+        String nombreHoja = null;
+        try {
+            nombreHoja = new Timestamp(this.inicio.getTime()).toString().substring(0, 11);
+        } catch (Exception e) {
+            nombreHoja = sdf.format(Calendar.getInstance().getTime());
+        }
+        ExportarVentas ce = new ExportarVentas(nombreHoja, ed, this.inicio, this.fin, estado);
+        ce.initCompResumido();
+    }
+
+    private void exportHandler() {
+        Object[] options = {"Completo",
+            "Resumido"};
+        int n = JOptionPane.showOptionDialog(this,
+                "Eliga tipo de reporte",
+                "Atención",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                null, //do not use a custom Icon
+                options, //the titles of buttons
+                options[0]); //default button title
+        switch (n) {
+            case 0: {
+                //Completo
+                EventQueue.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        importarExcelCompleto(cliente, nro_factura, idEmpleado, tipo_operacion, estado);
+                    }
+                });
+                break;
+            }
+            case 1: {
+                //Minimalista
+                EventQueue.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        importarExcelResumido(cliente, nro_factura, idEmpleado, tipo_operacion, estado);
+                    }
+                });
+                break;
+            }
+        }
+    }
+
     private void keyPressedHandler(final KeyEvent e) {
         EventQueue.invokeLater(new Runnable() {
             @Override
@@ -214,7 +285,7 @@ public class Resumen_ingreso extends JDialog implements ActionListener, KeyListe
         if (ae.getSource().equals(jbSalir)) {
             dispose();
         } else if (ae.getSource().equals(jbImportarXLS)) {
-            importarExcel(cliente, nro_factura, idEmpleado, tipo_operacion, estado);
+            exportHandler();
         }
     }
 

@@ -65,15 +65,7 @@ public class C_crearVentaRapida implements GestionInterface, InterfaceFacturaDet
         } catch (Exception e) {
             this.vista.jtfClieTelefono.setText("");
         }
-        if (this.modelo.getCabecera().getCliente().getRuc() != null) {
-            if (this.modelo.getCabecera().getCliente().getRucId() != null) {
-                this.vista.jtfClieRuc.setText(this.modelo.getCabecera().getCliente().getRuc() + "-" + this.modelo.getCabecera().getCliente().getRucId());
-            } else {
-                this.vista.jtfClieRuc.setText(this.modelo.getCabecera().getCliente().getRuc());
-            }
-        } else {
-            this.vista.jtfClieRuc.setText("");
-        }
+        this.vista.jtfClieRuc.setText(modelo.obtenerRucCliente());
         Vector condCompra = modelo.obtenerTipoOperacion();
         for (int i = 0; i < condCompra.size(); i++) {
             this.vista.jcbCondVenta.addItem(condCompra.get(i));

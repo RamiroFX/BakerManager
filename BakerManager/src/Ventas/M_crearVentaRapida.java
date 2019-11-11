@@ -218,4 +218,16 @@ public class M_crearVentaRapida {
         getTableModel().agregarDetalle(detalle);
     }
 
+    public String obtenerRucCliente() {
+        String ruc = "";
+        String div = "";
+        if (this.getCabecera().getCliente().getRuc() != null) {
+            ruc = this.getCabecera().getCliente().getRuc();
+        }
+        if (this.getCabecera().getCliente().getRucId() != null) {
+            div = "-" + this.getCabecera().getCliente().getRucId();
+        }
+        return ruc + div;
+    }
+
 }
