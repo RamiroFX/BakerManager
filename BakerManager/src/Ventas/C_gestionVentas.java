@@ -32,7 +32,7 @@ import javax.swing.JOptionPane;
  *
  * @author Ramiro Ferreira
  */
-public class C_gestionVentas implements GestionInterface, RecibirEmpleadoCallback,RecibirClienteCallback {
+public class C_gestionVentas implements GestionInterface, RecibirEmpleadoCallback, RecibirClienteCallback {
 
     public M_gestionVentas modelo;
     public V_gestionVentas vista;
@@ -307,7 +307,12 @@ public class C_gestionVentas implements GestionInterface, RecibirEmpleadoCallbac
             int fila = this.vista.jtIngresoCabecera.getSelectedRow();
             if (fila > -1) {
                 Integer idIngresoCabecera = Integer.valueOf(String.valueOf(this.vista.jtIngresoCabecera.getValueAt(fila, 0)));
-                modelo.anularVenta(idIngresoCabecera);
+                int opcion2 = JOptionPane.showConfirmDialog(vista, "¿Desea recuperar el número de factura?.", "Atención", JOptionPane.WARNING_MESSAGE, JOptionPane.YES_NO_OPTION);
+                if (opcion2 == JOptionPane.YES_OPTION) {
+                    modelo.anularVenta(idIngresoCabecera, true);
+                } else {
+                    modelo.anularVenta(idIngresoCabecera, false);
+                }
             }
         }
         displayQueryResults();

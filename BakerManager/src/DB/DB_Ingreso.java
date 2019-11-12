@@ -22,8 +22,6 @@ import java.sql.Statement;
 import java.sql.Timestamp;
 import java.sql.Types;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -126,8 +124,6 @@ public class DB_Ingreso {
         }
         return rstm;
     }
-    
-    
 
     public static ArrayList<E_facturaCabeceraFX> obtenerVentaCabeceras(String clienteEntidad,
             Integer nro_factura, String idEmpleado, String inicio, String fin,
@@ -238,7 +234,7 @@ public class DB_Ingreso {
         }
         return result;
     }
-    
+
     public static ResultSetTableModel obtenerIngresoCabecera(Integer idIngresoDetalle) {
         ResultSetTableModel rstm = null;
         String Query = "SELECT FACA.ID_FACTURA_CABECERA \"ID ingreso\", "
@@ -1428,8 +1424,11 @@ public class DB_Ingreso {
         return false;
     }
 
-    public static void anularVenta(int idVenta, int idEstado) {
+    public static void anularVenta(int idVenta, int idEstado, boolean recuperarNroFact) {
         String UPDATE_VENTA = "UPDATE FACTURA_CABECERA SET ID_ESTADO = ? WHERE ID_FACTURA_CABECERA = ?";
+        if (recuperarNroFact) {
+            UPDATE_VENTA = "UPDATE FACTURA_CABECERA SET ID_ESTADO = ?, NRO_FACTURA = NULL WHERE ID_FACTURA_CABECERA = ?";
+        }
         try {
             DB_manager.habilitarTransaccionManual();
             pst = DB_manager.getConection().prepareStatement(UPDATE_VENTA);

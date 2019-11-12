@@ -96,9 +96,9 @@ public class M_gestionVentas {
         return estados;
     }
 
-    public void anularVenta(int idVenta) {
+    public void anularVenta(int idVenta, boolean recuperarNroFact) {
         //id 2 es inactivo
-        DB_Ingreso.anularVenta(idVenta, 2);
+        DB_Ingreso.anularVenta(idVenta, 2, recuperarNroFact);
     }
 
     public String obtenerNombreFuncionario() {
