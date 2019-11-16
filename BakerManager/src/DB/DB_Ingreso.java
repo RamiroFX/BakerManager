@@ -202,6 +202,8 @@ public class DB_Ingreso {
                 + "GROUP BY FACA.ID_FACTURA_CABECERA, FACA.NRO_FACTURA, CLIE.ENTIDAD, FACA.TIEMPO "
                 + " ORDER BY FACA.TIEMPO";
         ArrayList result = new ArrayList();
+        System.out.println("DB.DB_Ingreso.obtenerVentaCabeceras()");
+        System.out.println(Query);
         try {
             st = DB_manager.getConection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             // se ejecuta el query y se obtienen los resultados en un ResultSet
@@ -1240,6 +1242,142 @@ public class DB_Ingreso {
                 fadex.setPrecio(rs.getInt("PRECIO"));
                 fadex.setTotal(rs.getInt("TOTAL"));
                 fadex.setClienteEntidad(rs.getString("ENTIDAD"));
+                fadex.setObservacion(rs.getString("OBSERVACION"));
+                fadex.setTiempo(rs.getDate("tiempo"));
+                facturaDetalles.add(fadex);
+            }
+        } catch (SQLException ex) {
+            Logger lgr = Logger.getLogger(DB_Egreso.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (pst != null) {
+                    pst.close();
+                }
+            } catch (SQLException ex) {
+                Logger lgr = Logger.getLogger(DB_Egreso.class.getName());
+                lgr.log(Level.WARNING, ex.getMessage(), ex);
+            }
+        }
+        return facturaDetalles;
+    }
+    
+    //14/11/19
+    public static ArrayList<E_facturaDetalleFX> obtenerVentaDetallesFX(String clienteEntidad,
+            Integer nro_factura, String idEmpleado, String inicio, String fin,
+            String tipo_operacion, Estado estado) {
+        String fromQuery = "FROM FACTURA_DETALLE FADE, FACTURA_CABECERA FACA,FUNCIONARIO FUNC, PERSONA PERS, CLIENTE CLIE, PRODUCTO P ";
+        String fInicio = "";
+        String fFinal;
+        if ("Todos".equals(inicio)) {
+            fInicio = "";
+            if ("Todos".equals(fin)) {
+                fFinal = "";
+            } else {
+                fFinal = " AND FACA.TIEMPO <'" + fin + "'::timestamp ";
+            }
+        } else {
+            fInicio = "AND FACA.TIEMPO BETWEEN '" + inicio + "'::timestamp  ";
+            fFinal = "AND '" + fin + "'::timestamp ";
+            if ("Todos".equals(fin)) {
+                fInicio = "AND FACA.TIEMPO > '" + inicio + "'::timestamp ";
+                fFinal = "";
+            }
+        }
+        String prov;
+        if ("Todos".equals(clienteEntidad)) {
+            prov = "";
+        } else {
+            prov = " AND CLIE.ID_CLIENTE = FACA.ID_CLIENTE AND CLIE.ENTIDAD LIKE'" + clienteEntidad + "' ";
+        }
+        String empleado;
+        if ("Todos".equals(idEmpleado)) {
+            empleado = "";
+        } else {
+            empleado = " AND FUNC.ID_FUNCIONARIO = " + idEmpleado;
+        }
+        String tiop;
+        if ("Todos".equals(tipo_operacion)) {
+            tiop = "";
+        } else {
+            tiop = " AND FACA.ID_COND_VENTA = " + tipo_operacion;
+        }
+        String esta;
+        if (estado.getId() == Estado.TODOS) {
+            esta = "";
+        } else {
+            esta = " AND FACA.ID_ESTADO = " + estado.getId();
+        }
+        String numero_fac = "";
+        try {
+            if (nro_factura != null) {
+                numero_fac = " AND FACA.NRO_FACTURA = " + nro_factura;
+            } else {
+                numero_fac = "";
+            }
+        } catch (Exception e) {
+            numero_fac = "";
+        }
+        String Query = "SELECT FADE.ID_FACTURA_DETALLE, "
+                + "FADE.ID_PRODUCTO , "
+                + "P.DESCRIPCION  \"PRODUCTO\", "
+                + "FADE.CANTIDAD , "
+                + "FADE.PRECIO , "
+                + "FADE.DESCUENTO, "
+                + "CASE "
+                + "	WHEN P.ID_IMPUESTO = 1 THEN ROUND(FADE.CANTIDAD*(FADE.PRECIO-(FADE.PRECIO*FADE.DESCUENTO)/100))ELSE '0' "
+                + "END AS \"EXENTA\", "
+                + "CASE "
+                + "	WHEN P.ID_IMPUESTO = 2 THEN ROUND(FADE.CANTIDAD*(FADE.PRECIO-(FADE.PRECIO*FADE.DESCUENTO)/100))ELSE '0' "
+                + "END AS \"CINCO\", "
+                + "CASE "
+                + "	WHEN P.ID_IMPUESTO = 3 THEN ROUND(FADE.CANTIDAD*(FADE.PRECIO-(FADE.PRECIO*FADE.DESCUENTO)/100))ELSE '0' "
+                + "END AS \"DIEZ\", "
+                + "(FADE.CANTIDAD*FADE.PRECIO ) \"TOTAL\", "
+                + "CLIE.ENTIDAD, "
+                + "FADE.OBSERVACION, "
+                + "FACA.tiempo, "
+                + "FACA.NRO_FACTURA, "
+                + "(SELECT TIOP.DESCRIPCION FROM TIPO_OPERACION TIOP WHERE TIOP.ID_TIPO_OPERACION = FACA.ID_COND_VENTA) \"COND_VENTA\" "
+                + "FACA.ID_FACTURA_CABECERA "
+                + fromQuery
+                + "WHERE FACA.ID_FUNCIONARIO = FUNC.ID_FUNCIONARIO "
+                + "AND PERS.ID_PERSONA = FUNC.ID_PERSONA "
+                + "AND FACA.ID_CLIENTE = CLIE.ID_CLIENTE "
+                + "AND FACA.ID_FACTURA_CABECERA = FADE.ID_FACTURA_CABECERA "
+                + "AND FADE.ID_PRODUCTO = P.ID_PRODUCTO "
+                + prov
+                + fInicio
+                + fFinal
+                + empleado
+                + tiop
+                + esta
+                + numero_fac
+                + " ORDER BY FACA.TIEMPO";
+        ArrayList facturaDetalles = null;
+        try {
+            pst = DB_manager.getConection().prepareStatement(Query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            rs = pst.executeQuery();
+            facturaDetalles = new ArrayList();
+            E_facturaDetalleFX fadex;
+            while (rs.next()) {
+                fadex = new E_facturaDetalleFX();
+                fadex.setCantidad(rs.getDouble("CANTIDAD"));
+                fadex.setDescuento(rs.getDouble("DESCUENTO"));
+                fadex.setIdFacturaCabecera(rs.getInt("ID_FACTURA_CABECERA"));
+                fadex.setIdFacturaDetalle(rs.getInt("ID_FACTURA_DETALLE"));
+                fadex.setProductoDescripcion(rs.getString("Producto"));
+                fadex.setIva5(rs.getInt("CINCO"));
+                fadex.setIva10(rs.getInt("DIEZ"));
+                fadex.setExenta(rs.getInt("EXENTA"));
+                fadex.setPrecio(rs.getInt("PRECIO"));
+                fadex.setTotal(rs.getInt("TOTAL"));
+                fadex.setNroFacura(rs.getInt("NRO_FACTURA"));
+                fadex.setClienteEntidad(rs.getString("ENTIDAD"));
+                fadex.setCondVenta(rs.getString("COND_VENTA"));
                 fadex.setObservacion(rs.getString("OBSERVACION"));
                 fadex.setTiempo(rs.getDate("tiempo"));
                 facturaDetalles.add(fadex);

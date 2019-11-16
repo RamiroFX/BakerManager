@@ -128,6 +128,7 @@ public class V_gestionCobroPago extends JInternalFrame {
 
         //MID VARIABLES
         jtCobroCabecera = new JTable();
+        jtCobroCabecera.getTableHeader().setReorderingAllowed(false);
         jspCobroCabecera = new JScrollPane(jtCobroCabecera);
         jtCobroDetalle = new JTable();
         jspCobroDetalle = new JScrollPane(jtCobroDetalle);

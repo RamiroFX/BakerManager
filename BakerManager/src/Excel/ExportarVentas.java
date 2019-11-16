@@ -31,8 +31,6 @@ import org.apache.poi.ss.usermodel.Row;
  */
 public class ExportarVentas {
 
-    public static int MULTIPLES_FECHAS = 1;
-    public static int UNA_FECHA = 2;
     String nombreHoja;
     ArrayList<E_facturaDetalleFX> facturaDetalle;
     ArrayList<E_facturaCabeceraFX> facturaCabeceraFX;
@@ -43,40 +41,16 @@ public class ExportarVentas {
     HSSFCellStyle dateCellStyle;
     int tipo_fecha;
 
-    public ExportarVentas(String nombreHoja, ArrayList<E_facturaDetalleFX> ed, Date inicio, Date fin) {
+    /*
+    TIPO
+    1=COMPLETO
+    2=RESUMIDO
+     */
+    public ExportarVentas(String nombreHoja, ArrayList<E_facturaDetalleFX> ed, Date inicio, Date fin, int tipo) {
         this.nombreHoja = nombreHoja;
         this.facturaDetalle = ed;
         this.fechaInic = inicio;
         this.fechaFinal = fin;
-        if (fechaInic != null && fechaFinal != null) {
-            int dateType = fechaInic.compareTo(fechaFinal);
-            if (dateType == 0) {
-                tipo_fecha = UNA_FECHA;
-            } else {
-                tipo_fecha = MULTIPLES_FECHAS;
-            }
-        } else {
-            tipo_fecha = MULTIPLES_FECHAS;
-        }
-        createWorkBook();
-        createCellStyles();
-    }
-
-    public ExportarVentas(String nombreHoja, ArrayList<E_facturaCabeceraFX> ic, Date inicio, Date fin, Estado estado) {
-        this.nombreHoja = nombreHoja;
-        this.facturaCabeceraFX = ic;
-        this.fechaInic = inicio;
-        this.fechaFinal = fin;
-        if (fechaInic != null && fechaFinal != null) {
-            int dateType = fechaInic.compareTo(fechaFinal);
-            if (dateType == 0) {
-                tipo_fecha = UNA_FECHA;
-            } else {
-                tipo_fecha = MULTIPLES_FECHAS;
-            }
-        } else {
-            tipo_fecha = MULTIPLES_FECHAS;
-        }
         createWorkBook();
         createCellStyles();
     }
@@ -210,6 +184,94 @@ public class ExportarVentas {
             sheet.autoSizeColumn(4);
             sheet.autoSizeColumn(5);
         }
+        try {
+            FileOutputStream out = new FileOutputStream(directory.getPath() + ".xls");
+            workbook.write(out);
+            out.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void initCompResumidoFX() {
+        File directory = null;
+        String desktop = System.getProperty("user.home") + "\\Desktop";
+        JFileChooser chooser = new JFileChooser(desktop);
+        if (chooser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
+            directory = chooser.getSelectedFile();
+            directory.setWritable(true);
+            directory.setExecutable(true);
+            directory.setReadable(true);
+        } else {
+            return;
+        }
+        // Create a row and put some cells in it. Rows are 0 based.
+        int filaActual = 0;
+        int col = 0;
+        Row fechaInicio = sheet.createRow(filaActual);
+        filaActual++;
+        Row fechaFin = null;
+        if (fechaInic != null && fechaFinal != null) {
+            int dateType = fechaInic.compareTo(fechaFinal);
+            if (dateType == 0) {
+                fechaInicio.createCell(col).setCellValue(new HSSFRichTextString("Fecha :"));
+                fechaInicio.createCell(col).setCellValue(fechaInic);
+                fechaInicio.getCell(col).setCellStyle(dateCellStyle);
+                col++;
+            } else {
+                fechaFin = sheet.createRow(filaActual);
+                filaActual++;
+                fechaFin.createCell(col).setCellValue(new HSSFRichTextString("Fecha fin:"));
+                fechaFin.createCell(col).setCellValue(fechaFinal);
+                fechaFin.getCell(col).setCellStyle(dateCellStyle);
+                fechaInicio.createCell(col).setCellValue(new HSSFRichTextString("Fecha inicio:"));
+                fechaInicio.createCell(col).setCellValue(fechaInic);
+                fechaInicio.getCell(col).setCellStyle(dateCellStyle);
+            }
+        }
+        Row totalIngreso2 = sheet.createRow(filaActual);
+        filaActual++;
+        Row cabecera = sheet.createRow(filaActual);
+        filaActual++;
+
+        totalIngreso2.createCell(0).setCellValue(new HSSFRichTextString("Total ingresos"));
+        totalIngreso2.getCell(0).setCellStyle(style2);
+        cabecera.createCell(col).setCellValue(new HSSFRichTextString("Tiempo"));
+        cabecera.getCell(col).setCellStyle(style1);
+        col++;
+        cabecera.createCell(col).setCellValue(new HSSFRichTextString("Nro. Factura"));
+        cabecera.getCell(col).setCellStyle(style1);
+        col++;
+        cabecera.createCell(col).setCellValue(new HSSFRichTextString("Cliente"));
+        cabecera.getCell(col).setCellStyle(style1);
+        col++;
+        cabecera.createCell(col).setCellValue(new HSSFRichTextString("Total"));
+        cabecera.getCell(col).setCellStyle(style1);
+        col++;
+        cabecera.createCell(col).setCellValue(new HSSFRichTextString("Impuesto"));
+        cabecera.getCell(col).setCellStyle(style1);
+        col++;
+        //FIN CUERPO
+        Integer total = 0;
+        Integer SubTotal = 0;
+        for (int i = 0; i < facturaDetalle.size(); i++) {
+            SubTotal = SubTotal + (facturaDetalle.get(i).getTotal());
+        }
+        total = total + SubTotal;
+        //TOTAL INGRESOS
+
+        totalIngreso2.createCell(1).setCellValue(total);
+        int idEgresoCabecera = facturaDetalle.get(0).getIdFacturaCabecera();
+        SubTotal = 0;
+        escribirCeldasConFechaResumido(idEgresoCabecera);
+        sheet.autoSizeColumn(0);
+        sheet.autoSizeColumn(1);
+        sheet.autoSizeColumn(2);
+        sheet.autoSizeColumn(3);
+        sheet.autoSizeColumn(4);
+        sheet.autoSizeColumn(5);
         try {
             FileOutputStream out = new FileOutputStream(directory.getPath() + ".xls");
             workbook.write(out);
@@ -373,6 +435,50 @@ public class ExportarVentas {
         }
     }
 
+    private void escribirCeldasConFechaResumido(int egresocabecera) {
+        System.out.println("Excel.ExportarVentas.escribirCeldasConFecha()");
+        int filaActual = 4;
+        int idEgCab = egresocabecera;
+        System.out.println("facturaDetalle: " + facturaDetalle.size());
+        for (int i = 0; i < facturaDetalle.size(); i++) {
+            if (idEgCab == facturaDetalle.get(i).getIdFacturaCabecera()) {
+                Row asd = sheet.createRow(filaActual);
+                int pos = 0;
+                asd.createCell(pos).setCellValue(facturaDetalle.get(i).getTiempo());
+                asd.getCell(pos).setCellStyle(dateCellStyle);
+                pos++;
+                asd.createCell(pos).setCellValue(new HSSFRichTextString(facturaDetalle.get(i).getNroFacura() + ""));
+                asd.getCell(pos).setCellStyle(style2);
+                pos++;
+                asd.createCell(pos).setCellValue(new HSSFRichTextString(facturaDetalle.get(i).getClienteEntidad()));
+                asd.getCell(pos).setCellStyle(style2);
+                pos++;
+                //calcular el total e iva total
+                int exenta = 0, iva5 = 0, iva10 = 0;
+                int SubTotal = 0;
+                int TotalImpuesto = 0;
+                for (int X = i; X < facturaDetalle.size(); X++) {
+                    if (idEgCab == facturaDetalle.get(X).getIdFacturaCabecera()) {
+                        exenta = exenta + facturaDetalle.get(X).getExenta();
+                        iva5 = iva5 + facturaDetalle.get(X).getIva5();
+                        iva10 = iva10 + facturaDetalle.get(X).getIva10();
+                        TotalImpuesto = TotalImpuesto + exenta + iva5 + iva10;
+                        SubTotal = SubTotal + facturaDetalle.get(X).getTotal();
+                        //i++;
+                    } else {
+                        X = facturaDetalle.size();
+                    }
+                    //i--;
+                }
+                asd.createCell(pos).setCellValue(SubTotal);
+                pos++;
+                asd.createCell(pos).setCellValue(TotalImpuesto);
+                filaActual++;
+                idEgCab = facturaDetalle.get(i).getIdFacturaCabecera();
+            }
+        }
+    }
+
     private void escribirCeldasSinFecha(int egresocabecera) {
         System.out.println("Excel.ExportarVentas.escribirCeldasSinFecha()");
         int filaActual = 3;
@@ -423,5 +529,4 @@ public class ExportarVentas {
             }
         }
     }
-
 }

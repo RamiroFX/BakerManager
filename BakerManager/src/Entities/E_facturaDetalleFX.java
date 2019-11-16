@@ -12,9 +12,9 @@ import java.util.Date;
  */
 public class E_facturaDetalleFX {
 
-    private Integer idFacturaDetalle, idFacturaCabecera, idProducto, precio, total, exenta, iva5, iva10;
+    private Integer idFacturaDetalle, nroFacura, idFacturaCabecera, idProducto, precio, total, exenta, iva5, iva10;
     private Double cantidad, descuento;
-    private String productoDescripcion, observacion, clienteEntidad;
+    private String productoDescripcion, observacion, clienteEntidad, condVenta;
     private M_producto producto;
     private Date tiempo;
 
@@ -148,5 +148,21 @@ public class E_facturaDetalleFX {
      */
     public void setTiempo(Date tiempo) {
         this.tiempo = tiempo;
+    }
+
+    public Integer getNroFacura() {
+        return nroFacura;
+    }
+
+    public void setNroFacura(Integer nroFacura) {
+        this.nroFacura = nroFacura;
+    }
+
+    public String getCondVenta() {
+        return condVenta;
+    }
+
+    public void setCondVenta(String condVenta) {
+        this.condVenta = condVenta;
     }
 }

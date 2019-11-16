@@ -219,7 +219,7 @@ public class Resumen_ingreso extends JDialog implements ActionListener, KeyListe
                 entidad = cliente.getEntidad();
             }
         }
-        ArrayList<E_facturaCabeceraFX> ed = DB_Ingreso.obtenerVentaCabeceras(entidad, nro_factura, idEmpleado, fechaInicio, fechaFinal, tipo_operacion, estado);
+        ArrayList<E_facturaDetalleFX> ed = DB_Ingreso.obtenerVentaDetalles(entidad, nro_factura, idEmpleado, fechaInicio, fechaFinal, tipo_operacion, estado);
         SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
         sdf.format(Calendar.getInstance().getTime());
         String nombreHoja = null;
@@ -228,8 +228,8 @@ public class Resumen_ingreso extends JDialog implements ActionListener, KeyListe
         } catch (Exception e) {
             nombreHoja = sdf.format(Calendar.getInstance().getTime());
         }
-        ExportarVentas ce = new ExportarVentas(nombreHoja, ed, this.inicio, this.fin, estado);
-        ce.initCompResumido();
+        ExportarVentas ce = new ExportarVentas(nombreHoja, ed, this.inicio, this.fin);
+        ce.initCompResumidoFX();
     }
 
     private void exportHandler() {
