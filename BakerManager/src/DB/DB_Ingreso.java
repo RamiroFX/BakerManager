@@ -4,6 +4,7 @@
  */
 package DB;
 
+import Entities.E_facturaCabecera;
 import Entities.E_facturaCabeceraFX;
 import Entities.E_facturaDetalleFX;
 import Entities.E_tipoOperacion;
@@ -434,7 +435,10 @@ public class DB_Ingreso {
                 + "FC.NRO_FACTURA, "//17
                 + "(SELECT NOMBRE FROM PERSONA WHERE PERSONA.ID_PERSONA = F.ID_PERSONA)\"NOMBRE_FUNCIONARIO\" "//18
                 + "FROM FACTURA_CABECERA FC, CLIENTE C, FUNCIONARIO F "
-                + "WHERE ID_FACTURA_CABECERA = " + idIngresoCabecera;
+                + "WHERE FC.ID_CLIENTE = C.ID_CLIENTE "
+                + "AND FC.ID_FUNCIONARIO = F.ID_FUNCIONARIO "
+                + "AND FC.ID_FACTURA_CABECERA = " + idIngresoCabecera;
+                //+ "WHERE ID_FACTURA_CABECERA = "+ idIngresoCabecera;
         try {
             pst = DB_manager.getConection().prepareStatement(query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             rs = pst.executeQuery();
@@ -1264,7 +1268,7 @@ public class DB_Ingreso {
         }
         return facturaDetalles;
     }
-    
+
     //14/11/19
     public static ArrayList<E_facturaDetalleFX> obtenerVentaDetallesFX(String clienteEntidad,
             Integer nro_factura, String idEmpleado, String inicio, String fin,

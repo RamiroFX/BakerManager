@@ -193,7 +193,7 @@ public class Resumen_ingreso extends JDialog implements ActionListener, KeyListe
         } catch (Exception e) {
             nombreHoja = sdf.format(Calendar.getInstance().getTime());
         }
-        ExportarVentas ce = new ExportarVentas(nombreHoja, ed, this.inicio, this.fin);
+        ExportarVentas ce = new ExportarVentas(nombreHoja, ed, this.inicio, this.fin, 1);
         ce.initComp();
     }
 
@@ -228,7 +228,7 @@ public class Resumen_ingreso extends JDialog implements ActionListener, KeyListe
         } catch (Exception e) {
             nombreHoja = sdf.format(Calendar.getInstance().getTime());
         }
-        ExportarVentas ce = new ExportarVentas(nombreHoja, ed, this.inicio, this.fin);
+        ExportarVentas ce = new ExportarVentas(nombreHoja, ed, this.inicio, this.fin, 1);
         ce.initCompResumidoFX();
     }
 
