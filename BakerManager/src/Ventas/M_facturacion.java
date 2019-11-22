@@ -21,12 +21,14 @@ public class M_facturacion {
     private int entidad;
     private String inicio, fin;
     private String condVenta;
+    private boolean agregarTodos;
 
     M_facturacion(int idCliente, String fechaInicio, String fechaFin, String condVenta) {
         this.entidad = idCliente;
         this.inicio = fechaInicio;
         this.fin = fechaFin;
         this.condVenta = condVenta;
+        this.agregarTodos = false;
     }
 
     public List<E_facturaCabeceraFX> obtenerVentasCabecera() {
@@ -34,14 +36,14 @@ public class M_facturacion {
     }
 
     public List<M_facturaDetalle> obtenerVentasDetalle(ArrayList<SeleccionVentaCabecera> ventaCabecera) {
-        String cadenaCabeceras = "";
-        for (int i = 0; i < ventaCabecera.size(); i++) {
-            SeleccionVentaCabecera get = ventaCabecera.get(i);
-            cadenaCabeceras = cadenaCabeceras + get.getFacturaCabecera().getIdFacturaCabecera() + ",";
-        }
-        cadenaCabeceras = cadenaCabeceras.substring(0, cadenaCabeceras.length() - 1);
-        System.out.println("Ventas.M_facturacion.obtenerVentasDetalle()");
-        System.out.println(cadenaCabeceras);
         return DB_Ingreso.obtenerVentaDetalles(ventaCabecera);
+    }
+
+    public boolean isAgregarTodos() {
+        return agregarTodos;
+    }
+
+    public void setAgregarTodos(boolean agregarTodos) {
+        this.agregarTodos = agregarTodos;
     }
 }

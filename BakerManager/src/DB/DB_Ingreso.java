@@ -1706,15 +1706,16 @@ public class DB_Ingreso {
         List<SeleccionVentaCabecera> possibleValues = cadenaCabeceras;
         StringBuilder builder = new StringBuilder();
 
-        for (Object possibleValue : possibleValues) {
-            builder.append("?,");
+        for (SeleccionVentaCabecera seleccionVenta : possibleValues) {
+            if (seleccionVenta.isEstaSeleccionado()) {
+                builder.append("?,");
+            }
         }
 
         String QUERY = "SELECT PROD.CODIGO \"Codigo\", "
                 + "(SELECT IMPU.DESCRIPCION FROM IMPUESTO IMPU WHERE IMPU.ID_IMPUESTO = PROD.ID_IMPUESTO)\"IMPUESTO\","
                 + "PROD.DESCRIPCION \"Producto\", SUM(FADE.CANTIDAD) \"Cantidad\", "
                 + "FADE.PRECIO \"Precio\", FADE.DESCUENTO \"Descuento\", "
-                + "FADE.OBSERVACION \"Observacion\", "
                 + "CASE WHEN PROD.ID_IMPUESTO = 1 THEN SUM(ROUND(FADE.CANTIDAD*(FADE.PRECIO-(FADE.PRECIO*FADE.DESCUENTO)/100))) ELSE '0' END AS \"Exenta\", "
                 + "CASE WHEN PROD.ID_IMPUESTO = 2 THEN SUM(ROUND(FADE.CANTIDAD*(FADE.PRECIO-(FADE.PRECIO*FADE.DESCUENTO)/100))) ELSE '0' END AS \"IVA 5%\", "
                 + "CASE WHEN PROD.ID_IMPUESTO = 3 THEN SUM(ROUND(FADE.CANTIDAD*(FADE.PRECIO-(FADE.PRECIO*FADE.DESCUENTO)/100))) ELSE '0' END AS \"IVA 10%\" "
@@ -1724,14 +1725,18 @@ public class DB_Ingreso {
                 + "AND FACA.ID_FACTURA_CABECERA IN ("
                 + builder.deleteCharAt(builder.length() - 1).toString() + ")";
 
-        String PIE = "GROUP BY PROD.DESCRIPCION, PROD.CODIGO, FADE.PRECIO, FADE.DESCUENTO,PROD.ID_IMPUESTO, FADE.OBSERVACION  "
+        String PIE = "GROUP BY PROD.DESCRIPCION, PROD.CODIGO, FADE.PRECIO, FADE.DESCUENTO,PROD.ID_IMPUESTO  "
                 + "ORDER BY PROD.DESCRIPCION";
         QUERY = QUERY + PIE;
+        System.out.println("DB.DB_Ingreso.obtenerVentaDetalles()");
+        System.out.println(QUERY);
         try {
             pst = DB_manager.getConection().prepareStatement(QUERY, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             int index = 1;
-            for (SeleccionVentaCabecera o : possibleValues) {
-                pst.setInt(index++, o.getFacturaCabecera().getIdFacturaCabecera());
+            for (SeleccionVentaCabecera ventaCabecera : possibleValues) {
+                if (ventaCabecera.isEstaSeleccionado()) {
+                    pst.setInt(index++, ventaCabecera.getFacturaCabecera().getIdFacturaCabecera());
+                }
             }
             rs = pst.executeQuery();
             while (rs.next()) {
@@ -1747,7 +1752,7 @@ public class DB_Ingreso {
                 fade.setExenta(rs.getInt("Exenta"));
                 fade.setIva5(rs.getInt("IVA 5%"));
                 fade.setIva10(rs.getInt("IVA 10%"));
-                fade.setObservacion(rs.getString("Observacion"));
+                fade.setObservacion("");
                 list.add(fade);
             }
         } catch (SQLException ex) {

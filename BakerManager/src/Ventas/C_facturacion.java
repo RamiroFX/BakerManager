@@ -89,18 +89,22 @@ public class C_facturacion implements ActionListener, KeyListener, InterfaceSele
     }
 
     private void quitarTodos() {
+        modelo.setAgregarTodos(true);
         int rows = this.vista.jtVentasCabecera.getModel().getRowCount();
         for (int i = 0; i < rows; i++) {
             this.vista.jtVentasCabecera.getModel().setValueAt(false, i, 5);
         }
+        modelo.setAgregarTodos(false);
         consultarDetalle();
     }
 
     private void seleccionarTodos() {
+        modelo.setAgregarTodos(true);
         int rows = this.vista.jtVentasCabecera.getModel().getRowCount();
         for (int i = 0; i < rows; i++) {
             this.vista.jtVentasCabecera.getModel().setValueAt(true, i, 5);
         }
+        modelo.setAgregarTodos(false);
         consultarDetalle();
     }
 
@@ -143,18 +147,18 @@ public class C_facturacion implements ActionListener, KeyListener, InterfaceSele
         }
         tm.setFacturaDetalleList(list);
         this.vista.jtVentasDetalle.setModel(tm);
-        this.vista.jtfTotalItems.setText(V_facturacion.TOTAL_ITEMS + list.size());
+        this.vista.jtfTotalItems.setText(V_facturacion.TOTAL_ITEMS + list.size()+" | "+V_facturacion.TOTAL_ITEMS);
         Utilities.c_packColumn.packColumns(this.vista.jtVentasDetalle, 1);
     }
 
     @Override
     public void notificarCambio() {
-        JOptionPane.showMessageDialog(vista, "Hubo un cambio en la tabla detalle");
     }
 
     @Override
     public void notificarCambioSeleccion() {
-        JOptionPane.showMessageDialog(vista, "Hubo un cambio en la tabla cabecera");
-        consultarDetalle();
+        if (!modelo.isAgregarTodos()) {
+            consultarDetalle();
+        }
     }
 }
