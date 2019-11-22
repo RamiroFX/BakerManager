@@ -30,9 +30,9 @@ import net.miginfocom.swing.MigLayout;
 public class V_gestionVentas extends JInternalFrame {
 
     public JButton jbBuscar, jbBuscarDetalle, jbBorrar, jbAgregar, jbDetalle,
-            jbResumen, jbCliente, jbEmpleado, jbAnular;
+            jbResumen, jbCliente, jbEmpleado, jbAnular, jbFacturacion;
     public JTextField jtfNroFactura, jtfCliente, jtfEmpleado;
-    public JComboBox jcbEmpleado, jcbCondCompra;
+    public JComboBox jcbEmpleado, jcbCondVenta;
     public JComboBox<Estado> jcbEstado;
     private JPanel jpTop, jpBotonesTop, jpBot;
     public JTable jtIngresoDetalle, jtIngresoCabecera;
@@ -66,7 +66,7 @@ public class V_gestionVentas extends JInternalFrame {
         jtfEmpleado = new JTextField();
         jtfEmpleado.setPreferredSize(new Dimension(250, 10));
         jtfEmpleado.setEditable(false);
-        jcbCondCompra = new JComboBox();
+        jcbCondVenta = new JComboBox();
         jtfNroFactura = new JTextField();
         jddInicio = new JDateChooser();
         jddInicio.setPreferredSize(new Dimension(150, 10));
@@ -78,7 +78,7 @@ public class V_gestionVentas extends JInternalFrame {
         jpFiltros.add(new JLabel("Fecha inicio:"));
         jpFiltros.add(jddInicio, "growx");
         jpFiltros.add(new JLabel("Cond. compra:"));
-        jpFiltros.add(jcbCondCompra, "wrap");
+        jpFiltros.add(jcbCondVenta, "wrap");
         jpFiltros.add(jbEmpleado);
         jpFiltros.add(jtfEmpleado, "growx");
         jpFiltros.add(new JLabel("Fecha final:"));
@@ -150,10 +150,16 @@ public class V_gestionVentas extends JInternalFrame {
         jbResumen.setMargin(insets);
         jbResumen.setFont(CommonFormat.fuente);
         jbResumen.setEnabled(false);
+        jbFacturacion= new JButton("Facturación");
+        jbFacturacion.setName("facturacion");
+        jbFacturacion.setMargin(insets);
+        jbFacturacion.setFont(CommonFormat.fuente);
+        //jbFacturacion.setEnabled(false);
         jpBot.add(jbAgregar);
         jpBot.add(jbDetalle);
         jpBot.add(jbAnular);
         jpBot.add(jbResumen);
+        jpBot.add(jbFacturacion);
         jpBot.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED), "Opciones"));
     }
 }

@@ -6,11 +6,9 @@
 package Ventas;
 
 import DB.DB_Ingreso;
-import Entities.E_facturaCabeceraFX;
 import Entities.E_facturaDetalleFX;
 import Entities.Estado;
 import Entities.M_cliente;
-import Entities.M_facturaCabecera;
 import Excel.ExportarVentas;
 import bakermanager.C_inicio;
 import java.awt.BorderLayout;

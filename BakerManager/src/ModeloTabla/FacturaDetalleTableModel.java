@@ -44,6 +44,7 @@ public class FacturaDetalleTableModel extends AbstractTableModel {
 
     @Override
     public Class<?> getColumnClass(int columnIndex) {
+        System.out.println("ModeloTabla.FacturaDetalleTableModel.getColumnClass(): "+columnIndex);
         return getValueAt(0, columnIndex).getClass();
     }
 
@@ -78,6 +79,8 @@ public class FacturaDetalleTableModel extends AbstractTableModel {
     @Override
     public Object getValueAt(int rowIndex, int colIndex) {
         M_facturaDetalle fd = this.facturaDetalleList.get(rowIndex);
+        System.out.println("ModeloTabla.FacturaDetalleTableModel.getValueAt()");
+        System.out.println(fd);
         switch (colIndex) {
             case 0: {
                 return fd.getProducto().getCodBarra();

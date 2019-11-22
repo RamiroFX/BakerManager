@@ -22,6 +22,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.beans.PropertyVetoException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -52,9 +53,9 @@ public class C_gestionVentas implements GestionInterface, RecibirEmpleadoCallbac
     public final void inicializarVista() {
         this.vista.jbDetalle.setEnabled(false);
         Vector condCompra = DB_Egreso.obtenerTipoOperacion();
-        this.vista.jcbCondCompra.addItem("Todos");
+        this.vista.jcbCondVenta.addItem("Todos");
         for (int i = 0; i < condCompra.size(); i++) {
-            this.vista.jcbCondCompra.addItem(condCompra.get(i));
+            this.vista.jcbCondVenta.addItem(condCompra.get(i));
         }
         ArrayList<Estado> estados = modelo.getEstados();
         for (int i = 0; i < estados.size(); i++) {
@@ -70,8 +71,9 @@ public class C_gestionVentas implements GestionInterface, RecibirEmpleadoCallbac
         this.vista.jbResumen.setEnabled(false);
         this.vista.jbCliente.setEnabled(false);
         this.vista.jbEmpleado.setEnabled(false);
-        this.vista.jcbCondCompra.setEnabled(false);
+        this.vista.jcbCondVenta.setEnabled(false);
         this.vista.jbAnular.setEnabled(false);
+        //this.vista.jbFacturacion.setEnabled(false);
     }
 
     @Override
@@ -89,7 +91,7 @@ public class C_gestionVentas implements GestionInterface, RecibirEmpleadoCallbac
                 this.vista.jbCliente.addActionListener(this);
                 this.vista.jbEmpleado.setEnabled(true);
                 this.vista.jbEmpleado.addActionListener(this);
-                this.vista.jcbCondCompra.setEnabled(true);
+                this.vista.jcbCondVenta.setEnabled(true);
                 this.vista.jbBorrar.addActionListener(this);
                 this.vista.jbBuscarDetalle.setEnabled(true);
                 this.vista.jbBuscarDetalle.addActionListener(this);
@@ -104,7 +106,14 @@ public class C_gestionVentas implements GestionInterface, RecibirEmpleadoCallbac
             if (this.vista.jbAnular.getName().equals(accesos.get(i).getItemDescripcion())) {
                 this.vista.jbAnular.addActionListener(this);
             }
+            //TODO ADD ACCESS
+            /*if (this.vista.jbFacturacion.getName().equals(accesos.get(i).getItemDescripcion())) {
+                this.vista.jbFacturacion.addActionListener(this);
+            }*/
         }
+        //TODO remove
+        this.vista.jbFacturacion.addActionListener(this);
+
         this.vista.jtIngresoCabecera.addMouseListener(this);
         this.vista.jtIngresoCabecera.addKeyListener(this);
         /**
@@ -117,9 +126,10 @@ public class C_gestionVentas implements GestionInterface, RecibirEmpleadoCallbac
         this.vista.jbBuscar.addKeyListener(this);
         this.vista.jbCliente.addKeyListener(this);
         this.vista.jbEmpleado.addKeyListener(this);
-        this.vista.jcbCondCompra.addKeyListener(this);
+        this.vista.jcbCondVenta.addKeyListener(this);
         this.vista.jbBorrar.addKeyListener(this);
         this.vista.jbBuscarDetalle.addKeyListener(this);
+        this.vista.jbFacturacion.addKeyListener(this);
     }
 
     private void verificarPermiso() {
@@ -167,7 +177,7 @@ public class C_gestionVentas implements GestionInterface, RecibirEmpleadoCallbac
                     Estado estado = vista.jcbEstado.getItemAt(vista.jcbEstado.getSelectedIndex());
                     Date fechaInicio = vista.jddInicio.getDate();
                     Date fechaFinal = vista.jddFinal.getDate();
-                    String condCompra = vista.jcbCondCompra.getSelectedItem().toString();
+                    String condCompra = vista.jcbCondVenta.getSelectedItem().toString();
                     vista.jtIngresoCabecera.setModel(modelo.obtenerVentas(fechaInicio, fechaFinal, condCompra, estado.getId()));
                     Utilities.c_packColumn.packColumns(vista.jtIngresoCabecera, 1);
                 } else {
@@ -198,7 +208,7 @@ public class C_gestionVentas implements GestionInterface, RecibirEmpleadoCallbac
         this.vista.jtfCliente.setText("");
         this.vista.jtfEmpleado.setText("");
         this.vista.jtfNroFactura.setText("");
-        this.vista.jcbCondCompra.setSelectedItem("Todos");
+        this.vista.jcbCondVenta.setSelectedItem("Todos");
         this.vista.jcbEstado.setSelectedItem(new Estado(1, "Activo"));
     }
 
@@ -237,8 +247,8 @@ public class C_gestionVentas implements GestionInterface, RecibirEmpleadoCallbac
 
     private String tipoOperacion() {
         String idEmpleado = "";
-        String datosTipoOperacion = vista.jcbCondCompra.getSelectedItem().toString();
-        if (vista.jcbCondCompra.getSelectedItem().toString().equals("Todos")) {
+        String datosTipoOperacion = vista.jcbCondVenta.getSelectedItem().toString();
+        if (vista.jcbCondVenta.getSelectedItem().toString().equals("Todos")) {
             return "Todos";
         } else {
             idEmpleado = DB_Egreso.obtenerTipoOperacion(datosTipoOperacion).toString();
@@ -320,6 +330,64 @@ public class C_gestionVentas implements GestionInterface, RecibirEmpleadoCallbac
         this.vista.jbAnular.setEnabled(false);
     }
 
+    private void facturarVentas() {
+        EventQueue.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                //VALIDAR CLIENTE
+                int idCliente = -1;
+                if (cliente() == null) {
+                    JOptionPane.showMessageDialog(vista, "Seleccione un cliente para facturar", "Atención", JOptionPane.WARNING_MESSAGE);
+                    return;
+                } else {
+                    idCliente = cliente().getIdCliente();
+                }
+                //VALIDAR NRO FACTURA
+                if (!vista.jtfNroFactura.getText().trim().isEmpty()) {
+                    JOptionPane.showMessageDialog(vista, "Solo se permiten ventas sin Nro de Factura", "Atención", JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
+                //VALIDAR ESTADO
+                Estado estado = vista.jcbEstado.getItemAt(vista.jcbEstado.getSelectedIndex());
+                if (!estado.getDescripcion().equals("Activo")) {
+                    JOptionPane.showMessageDialog(vista, "Solo se permiten ventas Activas", "Atención", JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
+                //VALIDAR FECHAS
+                if (!modelo.validarFechas(vista.jddInicio.getDate(), vista.jddFinal.getDate())) {
+                    vista.jddFinal.setDate(vista.jddInicio.getDate());
+                    vista.jddFinal.updateUI();
+                    JOptionPane.showMessageDialog(vista, "La fecha inicio debe ser menor que fecha final", "Atención", JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
+                String fechaInicio = "";
+                String fechaFinal = "";
+                try {
+                    java.util.Date dateInicio = vista.jddInicio.getDate();
+                    fechaInicio = new Timestamp(dateInicio.getTime()).toString().substring(0, 11);
+                    fechaInicio = fechaInicio + "00:00:00.000";
+                } catch (Exception e) {
+                    fechaInicio = "Todos";
+                }
+                try {
+                    java.util.Date dateFinal = vista.jddFinal.getDate();
+                    fechaFinal = new Timestamp(dateFinal.getTime()).toString().substring(0, 11);
+                    fechaFinal = fechaFinal + "23:59:59.000";
+                } catch (Exception e) {
+                    fechaFinal = "Todos";
+                }
+                //VALIDAR CONDICION DE VENTA
+                String condVenta = vista.jcbCondVenta.getSelectedItem().toString();
+                if (condVenta.equals("Todos")) {
+                    JOptionPane.showMessageDialog(vista, "Seleccione una condición de venta", "Atención", JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
+                Facturacion facturacion = new Facturacion(c_inicio, idCliente, fechaInicio, fechaFinal, condVenta);
+                facturacion.mostrarVista();
+            }
+        });
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource().equals(this.vista.jbAgregar)) {
@@ -358,6 +426,9 @@ public class C_gestionVentas implements GestionInterface, RecibirEmpleadoCallbac
                 ver_egreso.mostrarVista();
                 this.vista.jbDetalle.setEnabled(false);
             }
+        }
+        if (e.getSource().equals(this.vista.jbFacturacion)) {
+            facturarVentas();
         }
     }
 

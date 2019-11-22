@@ -21,9 +21,9 @@ public class M_producto {
     public M_producto() {
     }
 
-    public M_producto(String descripcion, String marca, String rubro, String estado, 
-            Integer id, String codigo, Integer impuesto, int precioCosto, 
-            Integer precioMinorista, Integer precioMayorista, Double cantActual, 
+    public M_producto(String descripcion, String marca, String rubro, String estado,
+            Integer id, String codigo, Integer impuesto, int precioCosto,
+            Integer precioMinorista, Integer precioMayorista, Double cantActual,
             String observacion) {
         this.descripcion = descripcion;
         this.marca = marca;
@@ -271,6 +271,11 @@ public class M_producto {
 
     public void setPrecioMinorista(Integer precioMinorista) {
         this.precioMinorista = precioMinorista;
+    }
+
+    @Override
+    public String toString() {
+        return getCodBarra()+"-"+getCodigo()+"-"+getDescripcion();
     }
 
 }

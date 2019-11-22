@@ -13,8 +13,9 @@ import java.util.Date;
 public class E_facturaCabeceraFX {
 
     private Integer idFacturaCabecera, total, nroFactura;
-    private String clienteEntidad, condVenta;
+    private String clienteEntidad, condVenta, funcionario;
     private Date tiempo;
+    private String tiempoString;
 
     public Integer getIdFacturaCabecera() {
         return idFacturaCabecera;
@@ -74,5 +75,33 @@ public class E_facturaCabeceraFX {
 
     public void setCondVenta(String condVenta) {
         this.condVenta = condVenta;
+    }
+
+    /**
+     * @return the funcionario
+     */
+    public String getFuncionario() {
+        return funcionario;
+    }
+
+    /**
+     * @param funcionario the funcionario to set
+     */
+    public void setFuncionario(String funcionario) {
+        this.funcionario = funcionario;
+    }
+
+    /**
+     * @return the tiempoString
+     */
+    public String getTiempoString() {
+        return tiempoString;
+    }
+
+    /**
+     * @param tiempoString the tiempoString to set
+     */
+    public void setTiempoString(String tiempoString) {
+        this.tiempoString = tiempoString;
     }
 }

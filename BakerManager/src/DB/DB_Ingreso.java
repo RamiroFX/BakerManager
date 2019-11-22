@@ -4,7 +4,6 @@
  */
 package DB;
 
-import Entities.E_facturaCabecera;
 import Entities.E_facturaCabeceraFX;
 import Entities.E_facturaDetalleFX;
 import Entities.E_tipoOperacion;
@@ -16,6 +15,7 @@ import Entities.M_funcionario;
 import Entities.M_mesa;
 import Entities.M_mesa_detalle;
 import Entities.M_producto;
+import ModeloTabla.SeleccionVentaCabecera;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -23,6 +23,8 @@ import java.sql.Statement;
 import java.sql.Timestamp;
 import java.sql.Types;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -438,7 +440,7 @@ public class DB_Ingreso {
                 + "WHERE FC.ID_CLIENTE = C.ID_CLIENTE "
                 + "AND FC.ID_FUNCIONARIO = F.ID_FUNCIONARIO "
                 + "AND FC.ID_FACTURA_CABECERA = " + idIngresoCabecera;
-                //+ "WHERE ID_FACTURA_CABECERA = "+ idIngresoCabecera;
+        //+ "WHERE ID_FACTURA_CABECERA = "+ idIngresoCabecera;
         try {
             pst = DB_manager.getConection().prepareStatement(query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             rs = pst.executeQuery();
@@ -1647,5 +1649,111 @@ public class DB_Ingreso {
             lgr.log(Level.SEVERE, ex.getMessage(), ex);
         }
         return rstm;
+    }
+
+    public static List<E_facturaCabeceraFX> obtenerVentasCabeceras(int idCliente, String inicio, String fin, String condVenta) {
+        List<E_facturaCabeceraFX> list = new ArrayList<>();
+        String Query = "SELECT ID_FACTURA_CABECERA \"ID\", "
+                + "(SELECT NOMBRE || ' '|| APELLIDO WHERE F.ID_PERSONA = P.ID_PERSONA)\"Empleado\", "
+                + "(SELECT ENTIDAD FROM CLIENTE C WHERE FC.ID_CLIENTE = C.ID_CLIENTE) \"Cliente\", "
+                + "to_char(TIEMPO,'DD/MM/YYYY HH24:MI:SS:MS') \"Tiempo\", "
+                + "ROUND((SELECT SUM (CANTIDAD*(PRECIO-(PRECIO*DESCUENTO)/100)) FROM FACTURA_DETALLE FCC WHERE FCC.ID_FACTURA_CABECERA = FC.ID_FACTURA_CABECERA))\"Total\", "
+                + "(SELECT TIOP.DESCRIPCION FROM TIPO_OPERACION TIOP WHERE TIOP.ID_TIPO_OPERACION = FC.ID_COND_VENTA) \"COND_VENTA\" "
+                + "FROM FACTURA_CABECERA FC ,FUNCIONARIO F, PERSONA P "
+                + "WHERE  FC.TIEMPO BETWEEN '" + inicio + "'::timestamp  "
+                + "AND '" + fin + "'::timestamp "
+                + "AND FC.ID_FUNCIONARIO = F.ID_FUNCIONARIO "
+                + "AND F.ID_PERSONA = P.ID_PERSONA "
+                + "AND FC.ID_COND_VENTA = (SELECT TIOP.ID_TIPO_OPERACION FROM TIPO_OPERACION TIOP WHERE TIOP.DESCRIPCION LIKE'" + condVenta + "') "
+                + " AND FC.ID_CLIENTE = " + idCliente;
+
+        Query = Query + " ORDER BY \"ID\"";
+        try {
+            st = DB_manager.getConection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            // se ejecuta el query y se obtienen los resultados en un ResultSet
+            rs = st.executeQuery(Query);
+            while (rs.next()) {
+                E_facturaCabeceraFX faca = new E_facturaCabeceraFX();
+                faca.setIdFacturaCabecera(rs.getInt("ID"));
+                faca.setTotal(rs.getInt("TOTAL"));
+                faca.setClienteEntidad(rs.getString("Cliente"));
+                faca.setFuncionario(rs.getString("Empleado"));
+                faca.setCondVenta(rs.getString("COND_VENTA"));
+                faca.setTiempoString(rs.getString("TIEMPO"));
+                list.add(faca);
+            }
+        } catch (SQLException ex) {
+            Logger lgr = Logger.getLogger(DB_Egreso.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (pst != null) {
+                    pst.close();
+                }
+            } catch (SQLException ex) {
+                Logger lgr = Logger.getLogger(DB_Egreso.class.getName());
+                lgr.log(Level.WARNING, ex.getMessage(), ex);
+            }
+        }
+        return list;
+    }
+
+    public static List<M_facturaDetalle> obtenerVentaDetalles(ArrayList<SeleccionVentaCabecera> cadenaCabeceras) {
+        List<M_facturaDetalle> list = new ArrayList<>();
+        List<SeleccionVentaCabecera> possibleValues = cadenaCabeceras;
+        StringBuilder builder = new StringBuilder();
+
+        for (Object possibleValue : possibleValues) {
+            builder.append("?,");
+        }
+
+        String QUERY = "SELECT PROD.CODIGO \"Codigo\", "
+                + "(SELECT IMPU.DESCRIPCION FROM IMPUESTO IMPU WHERE IMPU.ID_IMPUESTO = PROD.ID_IMPUESTO)\"IMPUESTO\","
+                + "PROD.DESCRIPCION \"Producto\", SUM(FADE.CANTIDAD) \"Cantidad\", "
+                + "FADE.PRECIO \"Precio\", FADE.DESCUENTO \"Descuento\", "
+                + "FADE.OBSERVACION \"Observacion\", "
+                + "CASE WHEN PROD.ID_IMPUESTO = 1 THEN SUM(ROUND(FADE.CANTIDAD*(FADE.PRECIO-(FADE.PRECIO*FADE.DESCUENTO)/100))) ELSE '0' END AS \"Exenta\", "
+                + "CASE WHEN PROD.ID_IMPUESTO = 2 THEN SUM(ROUND(FADE.CANTIDAD*(FADE.PRECIO-(FADE.PRECIO*FADE.DESCUENTO)/100))) ELSE '0' END AS \"IVA 5%\", "
+                + "CASE WHEN PROD.ID_IMPUESTO = 3 THEN SUM(ROUND(FADE.CANTIDAD*(FADE.PRECIO-(FADE.PRECIO*FADE.DESCUENTO)/100))) ELSE '0' END AS \"IVA 10%\" "
+                + "FROM FACTURA_DETALLE FADE, FACTURA_CABECERA FACA, PRODUCTO PROD "
+                + "WHERE FADE.ID_FACTURA_CABECERA = FACA.ID_FACTURA_CABECERA "
+                + "AND FADE.ID_PRODUCTO = PROD.ID_PRODUCTO "
+                + "AND FACA.ID_FACTURA_CABECERA IN ("
+                + builder.deleteCharAt(builder.length() - 1).toString() + ")";
+
+        String PIE = "GROUP BY PROD.DESCRIPCION, PROD.CODIGO, FADE.PRECIO, FADE.DESCUENTO,PROD.ID_IMPUESTO, FADE.OBSERVACION  "
+                + "ORDER BY PROD.DESCRIPCION";
+        QUERY = QUERY + PIE;
+        try {
+            pst = DB_manager.getConection().prepareStatement(QUERY, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            int index = 1;
+            for (SeleccionVentaCabecera o : possibleValues) {
+                pst.setInt(index++, o.getFacturaCabecera().getIdFacturaCabecera());
+            }
+            rs = pst.executeQuery();
+            while (rs.next()) {
+                M_facturaDetalle fade = new M_facturaDetalle();
+                M_producto producto = new M_producto();
+                producto.setCodBarra(rs.getString("Codigo"));
+                producto.setDescripcion(rs.getString("Producto"));
+                producto.setImpuesto(rs.getInt("IMPUESTO"));
+                fade.setProducto(producto);
+                fade.setCantidad(rs.getDouble("Cantidad"));
+                fade.setPrecio(rs.getInt("Precio"));
+                fade.setDescuento(rs.getDouble("Descuento"));
+                fade.setExenta(rs.getInt("Exenta"));
+                fade.setIva5(rs.getInt("IVA 5%"));
+                fade.setIva10(rs.getInt("IVA 10%"));
+                fade.setObservacion(rs.getString("Observacion"));
+                list.add(fade);
+            }
+        } catch (SQLException ex) {
+            Logger lgr = Logger.getLogger(DB_Egreso.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        }
+        return list;
     }
 }
