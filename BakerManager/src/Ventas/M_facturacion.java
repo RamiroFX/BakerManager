@@ -8,6 +8,7 @@ package Ventas;
 import DB.DB_Ingreso;
 import Entities.E_facturaCabeceraFX;
 import Entities.M_facturaDetalle;
+import MenuPrincipal.DatosUsuario;
 import ModeloTabla.SeleccionVentaCabecera;
 import java.util.ArrayList;
 import java.util.List;
@@ -45,5 +46,17 @@ public class M_facturacion {
 
     public void setAgregarTodos(boolean agregarTodos) {
         this.agregarTodos = agregarTodos;
+    }
+
+    public int getNroFactura() {
+        int nroFactura;
+        nroFactura = DB_Ingreso.obtenerUltimoNroFactura() + 1;
+        return nroFactura;
+    }
+
+    public boolean facturar(ArrayList<E_facturaCabeceraFX> facalist) {
+        int idFuncionario = DatosUsuario.getRol_usuario().getFuncionario().getId_funcionario();
+        DB_Ingreso.facturarVentas(facalist, idFuncionario, getNroFactura());
+        return true;
     }
 }

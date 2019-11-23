@@ -7,6 +7,7 @@ package Ventas;
 
 import Entities.E_facturaCabeceraFX;
 import Entities.M_facturaDetalle;
+import Impresora.Impresora;
 import Interface.InterfaceFacturaDetalle;
 import Interface.InterfaceSeleccionVentaCabecera;
 import ModeloTabla.FacturaDetalleTableModel;
@@ -26,6 +27,7 @@ import javax.swing.JOptionPane;
  */
 public class C_facturacion implements ActionListener, KeyListener, InterfaceSeleccionVentaCabecera, InterfaceFacturaDetalle {
 
+    private static final String MESSAGE = "La cantidad actual sobrepasa el limite permitido ", TITLE = "Atención";
     V_facturacion vista;
     M_facturacion modelo;
 
@@ -38,13 +40,16 @@ public class C_facturacion implements ActionListener, KeyListener, InterfaceSele
 
     private void completarCampos() {
         SeleccionVentaCabeceraTableModel tm = new SeleccionVentaCabeceraTableModel(this);
+        FacturaDetalleTableModel tmd = new FacturaDetalleTableModel(this);
         ArrayList<SeleccionVentaCabecera> list = new ArrayList<>();
         for (E_facturaCabeceraFX ventaCabecera : modelo.obtenerVentasCabecera()) {
             list.add(new SeleccionVentaCabecera(ventaCabecera, false));
         }
         tm.setList(list);
         this.vista.jtVentasCabecera.setModel(tm);
-        this.vista.jtfTotalItems.setText(V_facturacion.TOTAL_ITEMS + "0");
+        this.vista.jtVentasDetalle.setModel(tmd);
+        this.vista.jftTotalItems.setValue(0);
+        this.vista.jftTotal.setValue(0);
         Utilities.c_packColumn.packColumns(this.vista.jtVentasCabecera, 1);
     }
 
@@ -135,19 +140,51 @@ public class C_facturacion implements ActionListener, KeyListener, InterfaceSele
     }
 
     private void facturar() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (!controlarCantidadItems()) {
+            return;
+        }
+        int nroFactura = modelo.getNroFactura();
+        int opcion = JOptionPane.showConfirmDialog(vista, "¿Está seguro que desea continuar? Accion irreversible.\n Nro. Factura = " + nroFactura, "Atención", JOptionPane.WARNING_MESSAGE, JOptionPane.YES_NO_OPTION);
+        if (opcion == JOptionPane.YES_OPTION) {
+            ArrayList<E_facturaCabeceraFX> facalist = new ArrayList<>();
+            SeleccionVentaCabeceraTableModel vctm = (SeleccionVentaCabeceraTableModel) vista.jtVentasCabecera.getModel();
+            ArrayList<SeleccionVentaCabecera> sefacalist = vctm.getList();
+            for (int i = 0; i < sefacalist.size(); i++) {
+                SeleccionVentaCabecera get = sefacalist.get(i);
+                if (get.isEstaSeleccionado()) {
+                    facalist.add(get.getFacturaCabecera());
+                }
+            }
+            modelo.facturar(facalist);
+            //TODO IMPRIMIR FACTURA
+            completarCampos();
+        }
+    }
+
+    private boolean controlarCantidadItems() {
+        FacturaDetalleTableModel fdtm = (FacturaDetalleTableModel) vista.jtVentasDetalle.getModel();
+        int cantidadMaxima = Impresora.PREF_PRINT_FACTURA.getMaxProducts();
+        int cantidadActual = fdtm.getRowCount();
+        if (cantidadActual > cantidadMaxima) {
+            JOptionPane.showMessageDialog(vista, MESSAGE + " (" + cantidadMaxima + ")", TITLE, JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+        return true;
     }
 
     private void consultarDetalle() {
         SeleccionVentaCabeceraTableModel vctm = (SeleccionVentaCabeceraTableModel) vista.jtVentasCabecera.getModel();
         FacturaDetalleTableModel tm = new FacturaDetalleTableModel(this);
         ArrayList<M_facturaDetalle> list = new ArrayList<>();
-        for (M_facturaDetalle ventaCabecera : modelo.obtenerVentasDetalle(vctm.getList())) {
-            list.add(ventaCabecera);
+        int total = 0;
+        for (M_facturaDetalle ventaDetalle : modelo.obtenerVentasDetalle(vctm.getList())) {
+            list.add(ventaDetalle);
+            total = total + ventaDetalle.calcularTotal();
         }
         tm.setFacturaDetalleList(list);
         this.vista.jtVentasDetalle.setModel(tm);
-        this.vista.jtfTotalItems.setText(V_facturacion.TOTAL_ITEMS + list.size()+" | "+V_facturacion.TOTAL_ITEMS);
+        this.vista.jftTotalItems.setValue(list.size());
+        this.vista.jftTotal.setValue(total);
         Utilities.c_packColumn.packColumns(this.vista.jtVentasDetalle, 1);
     }
 

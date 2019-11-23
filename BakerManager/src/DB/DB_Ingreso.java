@@ -27,6 +27,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -1703,15 +1704,20 @@ public class DB_Ingreso {
 
     public static List<M_facturaDetalle> obtenerVentaDetalles(ArrayList<SeleccionVentaCabecera> cadenaCabeceras) {
         List<M_facturaDetalle> list = new ArrayList<>();
+        boolean b = true;
         List<SeleccionVentaCabecera> possibleValues = cadenaCabeceras;
         StringBuilder builder = new StringBuilder();
 
         for (SeleccionVentaCabecera seleccionVenta : possibleValues) {
             if (seleccionVenta.isEstaSeleccionado()) {
                 builder.append("?,");
+                b = false;
             }
         }
-
+        //para controlar que la lista contenga por lo menos una venta seleccionada
+        if (b) {
+            return list;
+        }
         String QUERY = "SELECT PROD.CODIGO \"Codigo\", "
                 + "(SELECT IMPU.DESCRIPCION FROM IMPUESTO IMPU WHERE IMPU.ID_IMPUESTO = PROD.ID_IMPUESTO)\"IMPUESTO\","
                 + "PROD.DESCRIPCION \"Producto\", SUM(FADE.CANTIDAD) \"Cantidad\", "
@@ -1723,13 +1729,11 @@ public class DB_Ingreso {
                 + "WHERE FADE.ID_FACTURA_CABECERA = FACA.ID_FACTURA_CABECERA "
                 + "AND FADE.ID_PRODUCTO = PROD.ID_PRODUCTO "
                 + "AND FACA.ID_FACTURA_CABECERA IN ("
-                + builder.deleteCharAt(builder.length() - 1).toString() + ")";
+                + builder.substring(0, builder.length() - 1) + ")";
 
         String PIE = "GROUP BY PROD.DESCRIPCION, PROD.CODIGO, FADE.PRECIO, FADE.DESCUENTO,PROD.ID_IMPUESTO  "
                 + "ORDER BY PROD.DESCRIPCION";
         QUERY = QUERY + PIE;
-        System.out.println("DB.DB_Ingreso.obtenerVentaDetalles()");
-        System.out.println(QUERY);
         try {
             pst = DB_manager.getConection().prepareStatement(QUERY, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             int index = 1;
@@ -1760,5 +1764,67 @@ public class DB_Ingreso {
             lgr.log(Level.SEVERE, ex.getMessage(), ex);
         }
         return list;
+    }
+
+    public static void facturarVentas(ArrayList<E_facturaCabeceraFX> facalist, int idFuncionario, int nroFactura) {
+        String INSERT_FACTURACION_DETALLE = "INSERT INTO FACTURACION_DETALLE(ID_FACTURACION_CABECERA, ID_FACTURA_CABECERA)VALUES (?, ?);";
+        //LA SGBD SE ENCARGA DE INSERTAR EL TIMESTAMP.
+        String INSERT_FACTURACION_CABECERA = "INSERT INTO FACTURACION_CABECERA(ID_FUNCIONARIO, NRO_FACTURA)VALUES (?, ?);";
+        String UPDATE_FACTURA_CABECERA = "UPDATE FACTURA_CABECERA SET NRO_FACTURA = ? WHERE ID_FACTURA_CABECERA = ? ;";
+
+        long sq_cabecera = -1L;
+        try {
+            DB_manager.getConection().setAutoCommit(false);
+            pst = DB_manager.getConection().prepareStatement(INSERT_FACTURACION_CABECERA, PreparedStatement.RETURN_GENERATED_KEYS);
+            pst.setInt(1, idFuncionario);
+            pst.setInt(2, nroFactura);
+            pst.executeUpdate();
+            rs = pst.getGeneratedKeys();
+            if (rs != null && rs.next()) {
+                sq_cabecera = rs.getLong(1);
+            }
+            pst.close();
+            rs.close();
+            for (int i = 0; i < facalist.size(); i++) {
+                pst = DB_manager.getConection().prepareStatement(INSERT_FACTURACION_DETALLE);
+                pst.setInt(1, (int) sq_cabecera);
+                pst.setInt(2, facalist.get(i).getIdFacturaCabecera());
+                pst.executeUpdate();
+                pst.close();
+            }
+            for (int i = 0; i < facalist.size(); i++) {
+                pst = DB_manager.getConection().prepareStatement(UPDATE_FACTURA_CABECERA);
+                pst.setInt(1, nroFactura);
+                pst.setInt(2, facalist.get(i).getIdFacturaCabecera());
+                pst.executeUpdate();
+                pst.close();
+            }
+            DB_manager.establecerTransaccion();
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(null, "Hubo un problema al facturar", "Atención", JOptionPane.ERROR_MESSAGE);
+            if (DB_manager.getConection() != null) {
+                try {
+                    DB_manager.getConection().rollback();
+                } catch (SQLException ex1) {
+                    Logger lgr = Logger.getLogger(DB_Ingreso.class.getName());
+                    lgr.log(Level.WARNING, ex1.getMessage(), ex1);
+                }
+            }
+            Logger lgr = Logger.getLogger(DB_Ingreso.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        } finally {
+            try {
+                if (pst != null) {
+                    pst.close();
+                }
+                if (rs != null) {
+                    rs.close();
+                }
+            } catch (SQLException ex) {
+                Logger lgr = Logger.getLogger(DB_Ingreso.class.getName());
+                lgr.log(Level.WARNING, ex.getMessage(), ex);
+            }
+        }
+        //return (int) sq_cabecera;
     }
 }

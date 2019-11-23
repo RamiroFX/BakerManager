@@ -333,7 +333,7 @@ public class C_gestionPedido implements GestionInterface, RecibirEmpleadoCallbac
         if (e.getSource().equals(this.vista.jtPedido)) {
             int row = this.vista.jtPedido.getSelectedRow();
             int columna = this.vista.jtPedido.getSelectedRow();
-            int idPedido = Integer.valueOf(String.valueOf(this.vista.jtPedido.getValueAt(row, 0)));
+            int idPedido = Integer.valueOf(String.valueOf(this.vista.jtPedido.getValueAt(row, 0) + ""));
             controlarTablaPedido();
             if ((row > -1) && (columna > -1)) {
                 String estado = String.valueOf(this.vista.jtPedido.getValueAt(row, 6));

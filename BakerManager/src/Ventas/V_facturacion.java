@@ -6,13 +6,17 @@ package Ventas;
 
 import bakermanager.C_inicio;
 import java.awt.BorderLayout;
+import java.awt.GridLayout;
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JFormattedTextField;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 
 /**
  *
@@ -22,8 +26,9 @@ public class V_facturacion extends JDialog {
 
     private static final String TITULO = "Facturación";
     public static final String TOTAL_ITEMS = "Items seleccionados = ";
+    public static final String TOTAL_VALUE = "Importe total = ";
 
-    JTextField jtfTotalItems;
+    public JFormattedTextField jftTotalItems, jftTotal;
     JPanel jpCenter, jpSouth;
     JTable jtVentasCabecera, jtVentasDetalle;
     JSplitPane jspCenter;
@@ -56,13 +61,24 @@ public class V_facturacion extends JDialog {
         /*
          * VENTAS DETALLE
          */
-        this.jtfTotalItems = new JTextField();
-        this.jtfTotalItems.setHorizontalAlignment(JTextField.CENTER);
+        this.jftTotalItems = new JFormattedTextField();
+        this.jftTotalItems.setHorizontalAlignment(JTextField.CENTER);
+        this.jftTotalItems.setEditable(false);
+        this.jftTotal = new JFormattedTextField();
+        this.jftTotal.setHorizontalAlignment(JTextField.CENTER);
+        this.jftTotal.setEditable(false);
+        JLabel jlTotalItems = new JLabel(TOTAL_ITEMS, SwingConstants.CENTER);
+        JLabel jlTotalValue = new JLabel(TOTAL_VALUE, SwingConstants.CENTER);
+        JPanel jpDetalleAux = new JPanel(new GridLayout(2, 2));
+        jpDetalleAux.add(jlTotalItems);
+        jpDetalleAux.add(jftTotalItems);
+        jpDetalleAux.add(jlTotalValue);
+        jpDetalleAux.add(jftTotal);
         this.jtVentasDetalle = new JTable();
         JScrollPane jspVentasDetalle = new JScrollPane(this.jtVentasDetalle);
         JPanel jpVentasDetalle = new JPanel(new BorderLayout());
         jpVentasDetalle.add(jspVentasDetalle, BorderLayout.CENTER);
-        jpVentasDetalle.add(jtfTotalItems, BorderLayout.SOUTH);
+        jpVentasDetalle.add(jpDetalleAux, BorderLayout.SOUTH);
         /*
          * SPLIT PANE
          */
