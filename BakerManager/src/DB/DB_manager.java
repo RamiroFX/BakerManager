@@ -9,6 +9,7 @@ import Entities.E_tipoOperacion;
 import Entities.Estado;
 import Entities.M_campoImpresion;
 import Entities.ProductoCategoria;
+import Parametros.TipoOperacion;
 import Utilities.MyConstants;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
@@ -1254,6 +1255,38 @@ public class DB_manager {
         return idTipoOperacion;
     }
 
+    public static E_tipoOperacion obtenerTipoOperaccion(int idTipoOperacion) {
+        E_tipoOperacion tiop = null;
+        String query = "SELECT * FROM TIPO_OPERACION WHERE ID_TIPO_OPERACION =  ? ;";
+        try {
+            pst = DB_manager.getConection().prepareStatement(query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            pst.setInt(1, idTipoOperacion);
+            rs = pst.executeQuery();
+            while (rs.next()) {
+                tiop = new E_tipoOperacion();
+                tiop.setId(rs.getInt("ID_TIPO_OPERACION"));
+                tiop.setDuracion(rs.getInt("DURACION"));
+                tiop.setDescripcion(rs.getString("DESCRIPCION"));
+            }
+        } catch (SQLException ex) {
+            Logger lgr = Logger.getLogger(DB_manager.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (pst != null) {
+                    pst.close();
+                }
+            } catch (SQLException ex) {
+                Logger lgr = Logger.getLogger(DB_Egreso.class.getName());
+                lgr.log(Level.WARNING, ex.getMessage(), ex);
+            }
+        }
+        return tiop;
+    }
+
     public static Vector obtenerTipoOperacion() {
         Vector tiop = null;
         String q = "SELECT descripcion  "
@@ -1283,7 +1316,7 @@ public class DB_manager {
         }
         return tiop;
     }
-    
+
     public static ArrayList<E_tipoOperacion> obtenerTipoOperaciones() {
         ArrayList<E_tipoOperacion> tiopList = null;
         String q = "SELECT *  "
@@ -1335,7 +1368,6 @@ public class DB_manager {
         }
         return tipoVenta;
     }*/
-
     public static E_Empresa obtenerDatosEmpresa() {
         E_Empresa e = null;
         String Query = "SELECT id_empresa, razon_social, nombre_fantasia, "

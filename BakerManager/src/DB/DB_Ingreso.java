@@ -82,6 +82,46 @@ public class DB_Ingreso {
         }
         return (int) nroFactura;
     }
+    public static int obtenerUltimoNroFacturacion() {
+        String Query = "SELECT nro_factura FROM facturacion_cabecera WHERE nro_factura IS NOT NULL  ORDER BY id_facturacion_cabecera DESC LIMIT 1;";
+        long nroFactura = 0;
+        try {
+            DB_manager.getConection().setAutoCommit(false);
+            pst = DB_manager.getConection().prepareStatement(Query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            rs = pst.executeQuery();
+            while (rs.next()) {
+                nroFactura = rs.getInt(1);
+            }
+            pst.close();
+            rs.close();
+            DB_manager.establecerTransaccion();
+        } catch (SQLException ex) {
+            System.out.println(ex.getNextException());
+            if (DB_manager.getConection() != null) {
+                try {
+                    DB_manager.getConection().rollback();
+                } catch (SQLException ex1) {
+                    Logger lgr = Logger.getLogger(DB_Ingreso.class.getName());
+                    lgr.log(Level.WARNING, ex1.getMessage(), ex1);
+                }
+            }
+            Logger lgr = Logger.getLogger(DB_Ingreso.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        } finally {
+            try {
+                if (pst != null) {
+                    pst.close();
+                }
+                if (rs != null) {
+                    rs.close();
+                }
+            } catch (SQLException ex) {
+                Logger lgr = Logger.getLogger(DB_Ingreso.class.getName());
+                lgr.log(Level.WARNING, ex.getMessage(), ex);
+            }
+        }
+        return (int) nroFactura;
+    }
 
     public static ResultSetTableModel obtenerIngreso(String inicio, String fin, String tipo_operacion, M_facturaCabecera factura_cabecera, int idEstado) {
         ResultSetTableModel rstm = null;
@@ -1666,9 +1706,12 @@ public class DB_Ingreso {
                 + "AND FC.ID_FUNCIONARIO = F.ID_FUNCIONARIO "
                 + "AND F.ID_PERSONA = P.ID_PERSONA "
                 + "AND FC.ID_COND_VENTA = (SELECT TIOP.ID_TIPO_OPERACION FROM TIPO_OPERACION TIOP WHERE TIOP.DESCRIPCION LIKE'" + condVenta + "') "
+                + " AND NRO_FACTURA IS NULL "
                 + " AND FC.ID_CLIENTE = " + idCliente;
 
         Query = Query + " ORDER BY \"ID\"";
+        System.err.println("q:");
+        System.err.println(Query);
         try {
             st = DB_manager.getConection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             // se ejecuta el query y se obtienen los resultados en un ResultSet

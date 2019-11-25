@@ -5,8 +5,10 @@
  */
 package Ventas;
 
+import DB.DB_Cliente;
 import DB.DB_Ingreso;
 import Entities.E_facturaCabeceraFX;
+import Entities.M_cliente;
 import Entities.M_facturaDetalle;
 import MenuPrincipal.DatosUsuario;
 import ModeloTabla.SeleccionVentaCabecera;
@@ -49,14 +51,29 @@ public class M_facturacion {
     }
 
     public int getNroFactura() {
-        int nroFactura;
-        nroFactura = DB_Ingreso.obtenerUltimoNroFactura() + 1;
-        return nroFactura;
+        int nroFactura = DB_Ingreso.obtenerUltimoNroFactura() + 1;
+        int nroFacturacion = DB_Ingreso.obtenerUltimoNroFacturacion() + 1;
+        System.out.println("Ventas.M_facturacion.getNroFactura()");
+        System.out.println("nroFactura: " + nroFactura);
+        System.out.println("nroFacturacion: " + nroFacturacion);
+        if (nroFactura >= nroFacturacion) {
+            return nroFactura;
+        } else {
+            return nroFacturacion;
+        }
     }
 
     public boolean facturar(ArrayList<E_facturaCabeceraFX> facalist) {
         int idFuncionario = DatosUsuario.getRol_usuario().getFuncionario().getId_funcionario();
         DB_Ingreso.facturarVentas(facalist, idFuncionario, getNroFactura());
         return true;
+    }
+
+    public M_cliente obtenerCliente() {
+        return DB_Cliente.obtenerDatosClienteID(entidad);
+    }
+
+    public String obtenerTipoOperacion() {
+        return condVenta;
     }
 }

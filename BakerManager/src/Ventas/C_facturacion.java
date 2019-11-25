@@ -28,6 +28,7 @@ import javax.swing.JOptionPane;
 public class C_facturacion implements ActionListener, KeyListener, InterfaceSeleccionVentaCabecera, InterfaceFacturaDetalle {
 
     private static final String MESSAGE = "La cantidad actual sobrepasa el limite permitido ", TITLE = "Atención";
+    private static final String MESSAGE2 = "Seleccione por lo menos una venta";
     V_facturacion vista;
     M_facturacion modelo;
 
@@ -144,7 +145,12 @@ public class C_facturacion implements ActionListener, KeyListener, InterfaceSele
             return;
         }
         int nroFactura = modelo.getNroFactura();
-        int opcion = JOptionPane.showConfirmDialog(vista, "¿Está seguro que desea continuar? Accion irreversible.\n Nro. Factura = " + nroFactura, "Atención", JOptionPane.WARNING_MESSAGE, JOptionPane.YES_NO_OPTION);
+        String mAlerta = "¿Está seguro que desea continuar? Accion irreversible.";
+        String mNroFactura = "\n Nro. Factura: " + nroFactura;
+        String mCliente = "\n Cliente: " + modelo.obtenerCliente().getEntidad();
+        String mCondVenta = "\n Condición de venta: " + modelo.obtenerTipoOperacion();
+        String mMensaje = mAlerta + mCliente + mCondVenta + mNroFactura;
+        int opcion = JOptionPane.showConfirmDialog(vista, mMensaje, "Atención", JOptionPane.WARNING_MESSAGE, JOptionPane.YES_NO_OPTION);
         if (opcion == JOptionPane.YES_OPTION) {
             ArrayList<E_facturaCabeceraFX> facalist = new ArrayList<>();
             SeleccionVentaCabeceraTableModel vctm = (SeleccionVentaCabeceraTableModel) vista.jtVentasCabecera.getModel();
@@ -167,6 +173,10 @@ public class C_facturacion implements ActionListener, KeyListener, InterfaceSele
         int cantidadActual = fdtm.getRowCount();
         if (cantidadActual > cantidadMaxima) {
             JOptionPane.showMessageDialog(vista, MESSAGE + " (" + cantidadMaxima + ")", TITLE, JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+        if (cantidadActual <= 0) {
+            JOptionPane.showMessageDialog(vista, MESSAGE2, TITLE, JOptionPane.ERROR_MESSAGE);
             return false;
         }
         return true;
