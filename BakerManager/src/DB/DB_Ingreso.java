@@ -1764,6 +1764,7 @@ public class DB_Ingreso {
         String QUERY = "SELECT PROD.CODIGO \"Codigo\", "
                 + "(SELECT IMPU.DESCRIPCION FROM IMPUESTO IMPU WHERE IMPU.ID_IMPUESTO = PROD.ID_IMPUESTO)\"IMPUESTO\","
                 + "PROD.DESCRIPCION \"Producto\", SUM(FADE.CANTIDAD) \"Cantidad\", "
+                + "PROD.ID_IMPUESTO \"ID_IMPUESTO\","
                 + "FADE.PRECIO \"Precio\", FADE.DESCUENTO \"Descuento\", "
                 + "CASE WHEN PROD.ID_IMPUESTO = 1 THEN SUM(ROUND(FADE.CANTIDAD*(FADE.PRECIO-(FADE.PRECIO*FADE.DESCUENTO)/100))) ELSE '0' END AS \"Exenta\", "
                 + "CASE WHEN PROD.ID_IMPUESTO = 2 THEN SUM(ROUND(FADE.CANTIDAD*(FADE.PRECIO-(FADE.PRECIO*FADE.DESCUENTO)/100))) ELSE '0' END AS \"IVA 5%\", "
@@ -1774,7 +1775,7 @@ public class DB_Ingreso {
                 + "AND FACA.ID_FACTURA_CABECERA IN ("
                 + builder.substring(0, builder.length() - 1) + ")";
 
-        String PIE = "GROUP BY PROD.DESCRIPCION, PROD.CODIGO, FADE.PRECIO, FADE.DESCUENTO,PROD.ID_IMPUESTO  "
+        String PIE = "GROUP BY PROD.DESCRIPCION, PROD.CODIGO, PROD.ID_IMPUESTO, FADE.PRECIO, FADE.DESCUENTO,PROD.ID_IMPUESTO  "
                 + "ORDER BY PROD.DESCRIPCION";
         QUERY = QUERY + PIE;
         try {
@@ -1792,6 +1793,7 @@ public class DB_Ingreso {
                 producto.setCodBarra(rs.getString("Codigo"));
                 producto.setDescripcion(rs.getString("Producto"));
                 producto.setImpuesto(rs.getInt("IMPUESTO"));
+                producto.setIdImpuesto(rs.getInt("ID_IMPUESTO"));
                 fade.setProducto(producto);
                 fade.setCantidad(rs.getDouble("Cantidad"));
                 fade.setPrecio(rs.getInt("Precio"));

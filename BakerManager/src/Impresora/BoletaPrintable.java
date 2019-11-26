@@ -62,6 +62,8 @@ public class BoletaPrintable implements Printable {
         if (facturaCabecera.getCliente().getRuc() != null) {
             if (facturaCabecera.getCliente().getRucId() != null) {
                 rucAux = facturaCabecera.getCliente().getRuc() + "-" + facturaCabecera.getCliente().getRucId();
+            } else {
+                rucAux = facturaCabecera.getCliente().getRuc();
             }
         }
         final String ruc = rucAux;

@@ -16,7 +16,6 @@ import DB.DB_Ingreso;
 import DB.DB_Preferencia;
 import DB.DB_manager;
 import Entities.Caja;
-import Entities.E_Empresa;
 import Entities.E_impresionOrientacion;
 import Entities.E_ticketPreferencia;
 import Entities.Estado;
@@ -24,7 +23,6 @@ import Entities.M_campoImpresion;
 import Entities.M_cliente;
 import Entities.M_egreso_cabecera;
 import Entities.M_egreso_detalle;
-import Entities.M_egreso_detalleFX;
 import Entities.M_facturaCabecera;
 import Entities.M_facturaDetalle;
 import Entities.M_funcionario;
@@ -55,7 +53,6 @@ import javax.print.PrintException;
 import javax.print.PrintService;
 import javax.print.PrintServiceLookup;
 import javax.print.SimpleDoc;
-import javax.print.attribute.standard.OrientationRequested;
 import javax.swing.JOptionPane;
 
 /**
@@ -429,6 +426,8 @@ public class Impresora {
         if (pedidoCabecera.getCliente().getRuc() != null) {
             if (pedidoCabecera.getCliente().getRucId() != null) {
                 ruc = pedidoCabecera.getCliente().getRuc() + "-" + pedidoCabecera.getCliente().getRucId();
+            }else {
+                ruc = pedidoCabecera.getCliente().getRuc();
             }
         }
         String ventaCabecera = "Fecha y hora: " + fechaEntrega + "\n"
@@ -498,6 +497,8 @@ public class Impresora {
         if (facturaCabecera.getCliente().getRuc() != null) {
             if (facturaCabecera.getCliente().getRucId() != null) {
                 ruc = facturaCabecera.getCliente().getRuc() + "-" + facturaCabecera.getCliente().getRucId();
+            }else{
+                ruc = facturaCabecera.getCliente().getRuc();
             }
         }
         String ventaCabecera = "Fecha y hora: " + fechaEntrega + "\n"
@@ -576,6 +577,8 @@ public class Impresora {
         if (facturaCabecera.getCliente().getRuc() != null) {
             if (facturaCabecera.getCliente().getRucId() != null) {
                 ruc = facturaCabecera.getCliente().getRuc() + "-" + facturaCabecera.getCliente().getRucId();
+            }else {
+                ruc = facturaCabecera.getCliente().getRuc();
             }
         }
         String ventaCabecera = "Fecha y hora: " + fechaEntrega + "\n"
@@ -653,6 +656,8 @@ public class Impresora {
         if (mesaCabecera.getCliente().getRuc() != null) {
             if (mesaCabecera.getCliente().getRucId() != null) {
                 ruc = mesaCabecera.getCliente().getRuc() + "-" + mesaCabecera.getCliente().getRucId();
+            }else{
+                ruc = mesaCabecera.getCliente().getRuc();
             }
         }
         String ventaCabecera = "Fecha y hora: " + fechaEntrega + "\n"
@@ -730,6 +735,8 @@ public class Impresora {
         if (mesaCabecera.getCliente().getRuc() != null) {
             if (mesaCabecera.getCliente().getRucId() != null) {
                 ruc = mesaCabecera.getCliente().getRuc() + "-" + mesaCabecera.getCliente().getRucId();
+            }else{
+                ruc = mesaCabecera.getCliente().getRuc();
             }
         }
         String ventaCabecera = "Fecha y hora: " + fechaEntrega + "\n"
@@ -872,6 +879,8 @@ public class Impresora {
         if (facturaCabecera.getProveedor().getRuc() != null) {
             if (facturaCabecera.getProveedor().getRuc_id() != null) {
                 ruc = facturaCabecera.getProveedor().getRuc() + "-" + facturaCabecera.getProveedor().getRuc_id();
+            }else{
+                ruc = facturaCabecera.getProveedor().getRuc();
             }
         }
         String ventaCabecera = "Fecha y hora: " + fechaEntrega + "\n"

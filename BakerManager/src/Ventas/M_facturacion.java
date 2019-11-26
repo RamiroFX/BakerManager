@@ -7,7 +7,9 @@ package Ventas;
 
 import DB.DB_Cliente;
 import DB.DB_Ingreso;
+import DB.DB_manager;
 import Entities.E_facturaCabeceraFX;
+import Entities.E_tipoOperacion;
 import Entities.M_cliente;
 import Entities.M_facturaDetalle;
 import MenuPrincipal.DatosUsuario;
@@ -63,9 +65,9 @@ public class M_facturacion {
         }
     }
 
-    public boolean facturar(ArrayList<E_facturaCabeceraFX> facalist) {
+    public boolean facturar(ArrayList<E_facturaCabeceraFX> facalist, int nroFactura) {
         int idFuncionario = DatosUsuario.getRol_usuario().getFuncionario().getId_funcionario();
-        DB_Ingreso.facturarVentas(facalist, idFuncionario, getNroFactura());
+        DB_Ingreso.facturarVentas(facalist, idFuncionario, nroFactura);
         return true;
     }
 
@@ -73,7 +75,8 @@ public class M_facturacion {
         return DB_Cliente.obtenerDatosClienteID(entidad);
     }
 
-    public String obtenerTipoOperacion() {
-        return condVenta;
+    public E_tipoOperacion obtenerTipoOperacion() {
+        E_tipoOperacion tiop = DB_manager.obtenerTipoOperaccion(condVenta);
+        return tiop;
     }
 }

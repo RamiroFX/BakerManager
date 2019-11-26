@@ -68,7 +68,6 @@ public class M_facturaCabecera {
         this.idFuncionario = idFuncionario;
     }
 
-
     public Integer getIdCondVenta() {
         return idCondVenta;
     }
@@ -99,5 +98,16 @@ public class M_facturaCabecera {
 
     public void setNroFactura(Integer nroFactura) {
         this.nroFactura = nroFactura;
+    }
+
+    @Override
+    public String toString() {
+        return getClass().getName() + "{"
+                + "cliente:" + getCliente().getEntidad() + ","
+                + "funcionario:" + getFuncionario().getAlias() + ","
+                + "idCondVenta:" + getIdCondVenta() + ","
+                + "nroFactura:" + getNroFactura() + ","
+                + "tiempo:" + getTiempo()
+                + "}";
     }
 }

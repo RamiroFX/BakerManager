@@ -1287,6 +1287,38 @@ public class DB_manager {
         return tiop;
     }
 
+    public static E_tipoOperacion obtenerTipoOperaccion(String tipoOperacion) {
+        E_tipoOperacion tiop = null;
+        String query = "SELECT * FROM TIPO_OPERACION WHERE DESCRIPCION LIKE ? ;";
+        try {
+            pst = DB_manager.getConection().prepareStatement(query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            pst.setString(1, tipoOperacion);
+            rs = pst.executeQuery();
+            while (rs.next()) {
+                tiop = new E_tipoOperacion();
+                tiop.setId(rs.getInt("ID_TIPO_OPERACION"));
+                tiop.setDuracion(rs.getInt("DURACION"));
+                tiop.setDescripcion(rs.getString("DESCRIPCION"));
+            }
+        } catch (SQLException ex) {
+            Logger lgr = Logger.getLogger(DB_manager.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (pst != null) {
+                    pst.close();
+                }
+            } catch (SQLException ex) {
+                Logger lgr = Logger.getLogger(DB_Egreso.class.getName());
+                lgr.log(Level.WARNING, ex.getMessage(), ex);
+            }
+        }
+        return tiop;
+    }
+
     public static Vector obtenerTipoOperacion() {
         Vector tiop = null;
         String q = "SELECT descripcion  "
