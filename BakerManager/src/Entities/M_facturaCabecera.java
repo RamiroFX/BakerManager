@@ -13,7 +13,7 @@ import java.sql.Timestamp;
 public class M_facturaCabecera {
 
     private Integer idFacturaCabecera, idCliente, idFuncionario, idCondVenta, idNotaRemision;
-    private Integer nroFactura;
+    private Integer nroFactura, total;
     private Timestamp tiempo;
     private M_cliente cliente;
     private M_funcionario funcionario;
@@ -100,6 +100,14 @@ public class M_facturaCabecera {
         this.nroFactura = nroFactura;
     }
 
+    public Integer getTotal() {
+        return this.total;
+    }
+
+    public void setTotal(int total) {
+        this.total = total;
+    }
+
     @Override
     public String toString() {
         return getClass().getName() + "{"
@@ -110,4 +118,5 @@ public class M_facturaCabecera {
                 + "tiempo:" + getTiempo()
                 + "}";
     }
+
 }

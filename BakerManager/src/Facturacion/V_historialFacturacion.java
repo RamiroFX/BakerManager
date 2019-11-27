@@ -51,6 +51,7 @@ public class V_historialFacturacion extends JDialog {
         getContentPane().add(jpTop, "North");
         getContentPane().add(jspMid, "Center");
         getContentPane().add(jpBot, "South");
+        setLocationRelativeTo(null);
     }
 
     private void initTop() {

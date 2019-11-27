@@ -24,6 +24,7 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -116,29 +117,30 @@ public class C_historialFacturacion implements GestionInterface, RecibirEmpleado
         EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
-                /*try {
+                //VALIDAR NRO FACTURA
+                try {
                     if (!vista.jtfNroFactura.getText().trim().isEmpty()) {
                         int nroFac = Integer.valueOf(vista.jtfNroFactura.getText());
                         modelo.getCabecera().setNroFactura(nroFac);
                     } else {
-                        modelo.getCabecera().setIdFacturaCabecera(null);
+                        modelo.getCabecera().setNroFactura(-1);
                     }
                 } catch (Exception e) {
                     JOptionPane.showMessageDialog(vista, "Ingrese un número entero válido para Nro. factura", "Atención", JOptionPane.WARNING_MESSAGE);
                     return;
                 }
-                if (modelo.validarFechas(vista.jddInicio.getDate(), vista.jddFinal.getDate())) {
-                    Estado estado = vista.jcbEstado.getItemAt(vista.jcbEstado.getSelectedIndex());
-                    Date fechaInicio = vista.jddInicio.getDate();
-                    Date fechaFinal = vista.jddFinal.getDate();
-                    String condCompra = vista.jcbCondVenta.getSelectedItem().toString();
-                    vista.jtIngresoCabecera.setModel(modelo.obtenerVentas(fechaInicio, fechaFinal, condCompra, estado.getId()));
-                    Utilities.c_packColumn.packColumns(vista.jtIngresoCabecera, 1);
-                } else {
+                //VALIDAR FECHA
+                if (!modelo.validarFechas(vista.jddInicio.getDate(), vista.jddFinal.getDate())) {
                     vista.jddFinal.setDate(vista.jddInicio.getDate());
                     vista.jddFinal.updateUI();
                     JOptionPane.showMessageDialog(vista, "La fecha inicio debe ser menor que fecha final", "Atención", JOptionPane.WARNING_MESSAGE);
-                }*/
+                    return;
+                }
+                Date fechaInicio = vista.jddInicio.getDate();
+                Date fechaFinal = vista.jddFinal.getDate();
+                int idTipoOperacion = vista.jcbCondVenta.getItemAt(vista.jcbCondVenta.getSelectedIndex()).getId();
+                vista.jtFacturacion.setModel(modelo.obtenerFacturacion(fechaInicio, fechaFinal, idTipoOperacion));
+                Utilities.c_packColumn.packColumns(vista.jtFacturacion, 1);
             }
         });
     }
@@ -177,18 +179,18 @@ public class C_historialFacturacion implements GestionInterface, RecibirEmpleado
         }
         if (e.getClickCount() == 2) {
             if (vista.jbFacturacionDetalle.isEnabled()) {
-               /* Ver_ingreso ver_egreso = new Ver_ingreso(c_inicio, idIngresoCabecera);
+                /* Ver_ingreso ver_egreso = new Ver_ingreso(c_inicio, idIngresoCabecera);
                 ver_egreso.mostrarVista();*/
                 this.vista.jbFacturacionDetalle.setEnabled(false);
             }
         }
     }
 
-    private String empleado() {
+    private M_funcionario empleado() {
         if (vista.jtfEmpleado.getText().isEmpty()) {
-            return "Todos";
+            return null;
         }
-        return modelo.cabecera.getFuncionario().getId_funcionario().toString();
+        return modelo.cabecera.getFuncionario();
     }
 
     private M_cliente cliente() {
@@ -198,28 +200,25 @@ public class C_historialFacturacion implements GestionInterface, RecibirEmpleado
         return modelo.cabecera.getCliente();
     }
 
-    private String tipoOperacion() {
-        String idEmpleado = "";
-        String datosTipoOperacion = vista.jcbCondVenta.getSelectedItem().toString();
-        if (vista.jcbCondVenta.getSelectedItem().toString().equals("Todos")) {
-            return "Todos";
-        } else {
-            idEmpleado = DB_Egreso.obtenerTipoOperacion(datosTipoOperacion).toString();
-        }
-        return idEmpleado;
+    private E_tipoOperacion tipoOperacion() {
+        return vista.jcbCondVenta.getItemAt(vista.jcbCondVenta.getSelectedIndex());
     }
 
-    private void crearResumen() {
+    private void facturacionDetalle() {
     }
 
-    private void completarCampos() {
+    private void ventaDetalle() {
+
+    }
+
+    private void consultarVentas() {
         EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
                 int fila = vista.jtFacturacion.getSelectedRow();
                 if (fila > -1) {
                     int idFacturacion = Integer.valueOf(String.valueOf(vista.jtFacturacion.getValueAt(fila, 0).toString()));
-                    //vista.jtVentas.setModel(DB_Ingreso.obtenerIngresoDetalle(idFacturacion));
+                    vista.jtVentas.setModel(modelo.obtenerVentasPorFacturacion(idFacturacion));
                     Utilities.c_packColumn.packColumns(vista.jtVentas, 1);
                 }
             }
@@ -292,7 +291,7 @@ public class C_historialFacturacion implements GestionInterface, RecibirEmpleado
     @Override
     public void keyReleased(KeyEvent e) {
         if (this.vista.jtFacturacion.hasFocus()) {
-            completarCampos();
+            consultarVentas();
         }
     }
 }

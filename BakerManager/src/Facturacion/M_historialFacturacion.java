@@ -5,10 +5,14 @@
  */
 package Facturacion;
 
+import DB.DB_Ingreso;
 import DB.DB_manager;
 import Entities.E_facturacionCabecera;
 import Entities.E_tipoOperacion;
+import ModeloTabla.FacturaCabeceraTableModel;
+import ModeloTabla.FacturacionCabeceraTableModel;
 import java.util.ArrayList;
+import java.util.Date;
 
 /**
  *
@@ -17,6 +21,10 @@ import java.util.ArrayList;
 public class M_historialFacturacion {
 
     public E_facturacionCabecera cabecera;
+
+    public M_historialFacturacion() {
+        this.cabecera = new E_facturacionCabecera();
+    }
 
     public E_facturacionCabecera getCabecera() {
         return cabecera;
@@ -46,6 +54,38 @@ public class M_historialFacturacion {
         String nombre = this.getCabecera().getFuncionario().getNombre();
         String apellido = this.getCabecera().getFuncionario().getApellido();
         return alias + "-(" + nombre + " " + apellido + ")";
+    }
+
+    public boolean validarFechas(Date f_inicio, Date f_final) {
+        if (f_inicio != null && f_final != null) {
+            int dateValue = f_inicio.compareTo(f_final);
+            if (dateValue <= 0) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public FacturaCabeceraTableModel obtenerVentasPorFacturacion(int idFacturacion) {
+        FacturaCabeceraTableModel tm = new FacturaCabeceraTableModel();
+        tm.setFacturaCabeceraList(DB_Ingreso.obtenerVentasPorFacturacion(idFacturacion));
+        return tm;
+
+    }
+
+    public FacturacionCabeceraTableModel obtenerFacturacion(Date fechaInicio, Date fechaFinal, int idTipoOperacion) {
+        FacturacionCabeceraTableModel tm = new FacturacionCabeceraTableModel();
+        //TODO validar datos
+        if(cabecera.getCliente().getIdCliente() != null){
+            
+        }else{
+            
+        }
+        int idCliente = cabecera.getCliente().getIdCliente();
+        int idFuncionario = cabecera.getFuncionario().getId_funcionario();
+        int nroFactura = cabecera.getNroFactura();
+        tm.setFacturacionCabeceraList(DB_Ingreso.obtenerFacturaciones(idCliente, idFuncionario, nroFactura, fechaInicio, fechaFinal, idTipoOperacion));
+        return tm;
     }
 
 }
