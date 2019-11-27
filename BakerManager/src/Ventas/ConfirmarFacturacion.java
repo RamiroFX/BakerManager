@@ -4,6 +4,7 @@
  */
 package Ventas;
 
+import Facturacion.V_facturacion;
 import DB.DB_Ingreso;
 import Entities.E_facturacionCabecera;
 import Interface.InterfaceConfirmarFacturacion;

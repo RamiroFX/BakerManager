@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Ventas;
+package Facturacion;
 
 import DB.DB_Cliente;
 import DB.DB_Ingreso;

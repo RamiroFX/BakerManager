@@ -4,6 +4,7 @@
  */
 package Ventas;
 
+import Facturacion.Facturacion;
 import Cliente.Seleccionar_cliente;
 import DB.DB_Egreso;
 import DB.DB_Ingreso;
@@ -15,6 +16,7 @@ import MenuPrincipal.DatosUsuario;
 import bakermanager.C_inicio;
 import Empleado.Seleccionar_funcionario;
 import Entities.Estado;
+import Facturacion.HistorialFacturacion;
 import Interface.RecibirClienteCallback;
 import Interface.RecibirEmpleadoCallback;
 import java.awt.EventQueue;
@@ -110,9 +112,14 @@ public class C_gestionVentas implements GestionInterface, RecibirEmpleadoCallbac
             /*if (this.vista.jbFacturacion.getName().equals(accesos.get(i).getItemDescripcion())) {
                 this.vista.jbFacturacion.addActionListener(this);
             }*/
+            //TODO ADD ACCESS
+            /*if (this.vista.jbHistorialFacturacion.getName().equals(accesos.get(i).getItemDescripcion())) {
+                this.vista.jbHistorialFacturacion.addActionListener(this);
+            }*/
         }
         //TODO remove
-        this.vista.jbFacturacion.addActionListener(this);
+        this.vista.jbFacturar.addActionListener(this);
+        this.vista.jbHistorialFacturacion.addActionListener(this);
 
         this.vista.jtIngresoCabecera.addMouseListener(this);
         this.vista.jtIngresoCabecera.addKeyListener(this);
@@ -129,7 +136,8 @@ public class C_gestionVentas implements GestionInterface, RecibirEmpleadoCallbac
         this.vista.jcbCondVenta.addKeyListener(this);
         this.vista.jbBorrar.addKeyListener(this);
         this.vista.jbBuscarDetalle.addKeyListener(this);
-        this.vista.jbFacturacion.addKeyListener(this);
+        this.vista.jbFacturar.addKeyListener(this);
+        this.vista.jbHistorialFacturacion.addKeyListener(this);
     }
 
     private void verificarPermiso() {
@@ -388,6 +396,16 @@ public class C_gestionVentas implements GestionInterface, RecibirEmpleadoCallbac
         });
     }
 
+    private void historialFacturacion() {
+        EventQueue.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                HistorialFacturacion hf = new HistorialFacturacion(c_inicio);
+                hf.mostrarVista();
+            }
+        });
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource().equals(this.vista.jbAgregar)) {
@@ -427,8 +445,11 @@ public class C_gestionVentas implements GestionInterface, RecibirEmpleadoCallbac
                 this.vista.jbDetalle.setEnabled(false);
             }
         }
-        if (e.getSource().equals(this.vista.jbFacturacion)) {
+        if (e.getSource().equals(this.vista.jbFacturar)) {
             facturarVentas();
+        }
+        if (e.getSource().equals(this.vista.jbHistorialFacturacion)) {
+            historialFacturacion();
         }
     }
 

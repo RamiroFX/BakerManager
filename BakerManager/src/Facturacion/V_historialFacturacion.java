@@ -1,18 +1,20 @@
 /*
- * To change this template, choose Tools | Templates
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Ventas;
+package Facturacion;
 
-import Entities.Estado;
+import Entities.E_tipoOperacion;
 import Interface.CommonFormat;
+import bakermanager.V_inicio;
 import com.toedter.calendar.JDateChooser;
+import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Insets;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
-import javax.swing.JComponent;
-import javax.swing.JInternalFrame;
+import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -25,25 +27,24 @@ import net.miginfocom.swing.MigLayout;
 
 /**
  *
- * @author Ramiro Ferreira
+ * @author Ramiro
  */
-public class V_gestionVentas extends JInternalFrame {
+public class V_historialFacturacion extends JDialog {
 
-    public JButton jbBuscar, jbBuscarDetalle, jbBorrar, jbAgregar, jbDetalle,
-            jbResumen, jbCliente, jbEmpleado, jbAnular, jbFacturar, jbHistorialFacturacion;
+    public JButton jbBuscar, jbBorrar, jbSalir,
+            jbCliente, jbEmpleado, jbFacturacionDetalle, jbVentaDetalle;
     public JTextField jtfNroFactura, jtfCliente, jtfEmpleado;
-    public JComboBox jcbEmpleado, jcbCondVenta;
-    public JComboBox<Estado> jcbEstado;
+    public JComboBox<E_tipoOperacion> jcbCondVenta;
     private JPanel jpTop, jpBotonesTop, jpBot;
-    public JTable jtIngresoDetalle, jtIngresoCabecera;
-    private JScrollPane jspEgresoDetalle;
+    public JTable jtFacturacion, jtVentas;
+    ;
     private JSplitPane jspMid;
     public JDateChooser jddInicio, jddFinal;
 
-    public V_gestionVentas() {
-        super("Ventas", true, true, true, true);
+    public V_historialFacturacion(V_inicio inicio) {
+        super(inicio, "Historial de facturacion");
         setSize(950, 600);
-        setName("jifGestionVentas");
+        setName("jdHistorialFacturacion");
         initTop();
         initMid();
         initBot();
@@ -72,7 +73,6 @@ public class V_gestionVentas extends JInternalFrame {
         jddInicio.setPreferredSize(new Dimension(150, 10));
         jddFinal = new JDateChooser();
         jddFinal.setPreferredSize(new Dimension(150, 10));
-        jcbEstado = new JComboBox<>();
         jpFiltros.add(jbCliente, "growx");
         jpFiltros.add(jtfCliente, "growx");
         jpFiltros.add(new JLabel("Fecha inicio:"));
@@ -85,16 +85,6 @@ public class V_gestionVentas extends JInternalFrame {
         jpFiltros.add(jddFinal, "growx");
         jpFiltros.add(new JLabel("Nro. factura:"));
         jpFiltros.add(jtfNroFactura, "growx, wrap");
-        jpFiltros.add(new JComponent() {
-        });
-        jpFiltros.add(new JComponent() {
-        });
-        jpFiltros.add(new JComponent() {
-        });
-        jpFiltros.add(new JComponent() {
-        });
-        jpFiltros.add(new JLabel("Estado"));
-        jpFiltros.add(jcbEstado, "growx");
         jpBotonesTop = new JPanel(new MigLayout());
         jpBotonesTop.setBorder(new EtchedBorder(EtchedBorder.RAISED));
         /*jtfBuscar = new JTextField();
@@ -102,13 +92,10 @@ public class V_gestionVentas extends JInternalFrame {
          jtfBuscar.setFont(new java.awt.Font("Times New Roman", 0, 16));
          jpJtextFieldTop.add(jtfBuscar);*/
         jbBuscar = new JButton("Buscar");
-        jbBuscar.setName("buscar venta");
+        jbBuscar.setName("buscar facturacion");
         jbBorrar = new JButton("Borrar");
-        jbBuscarDetalle = new JButton("Buscar por detalle");
-        jpBotonesTop.add(jbBuscar);
-        jpBotonesTop.add(jbBorrar, "wrap");
-        jpBotonesTop.add(jbBuscarDetalle, "span, growx");
-        //jpTop.add(jpJtextFieldTop, "pushx");
+        jpBotonesTop.add(jbBuscar, "wrap");
+        jpBotonesTop.add(jbBorrar);
         jpTop.add(jpFiltros);
         jpTop.add(jpBotonesTop);
         jpTop.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED), "Filtro de busqueda"));
@@ -116,55 +103,39 @@ public class V_gestionVentas extends JInternalFrame {
 
     private void initMid() {
         //Panel medio izquierda
-        jtIngresoCabecera = new JTable();
-        jtIngresoCabecera.getTableHeader().setReorderingAllowed(false);
-        JScrollPane jspIngresoCabecera = new JScrollPane(jtIngresoCabecera);
+        Insets insets = new Insets(10, 10, 10, 10);
+        jbFacturacionDetalle = new JButton("Facturación detalle");
+        jbFacturacionDetalle.setFont(CommonFormat.fuente);
+        jbFacturacionDetalle.setMargin(insets);
+        jbFacturacionDetalle.setName("detalle facturacion");
+        jtFacturacion = new JTable();
+        jtFacturacion.getTableHeader().setReorderingAllowed(false);
+        JScrollPane jspFacturacion = new JScrollPane(jtFacturacion);
+        JPanel jpFacturacion = new JPanel(new BorderLayout());
+        jpFacturacion.add(jspFacturacion, BorderLayout.CENTER);
+        jpFacturacion.add(jbFacturacionDetalle, BorderLayout.SOUTH);
 
         //panel medio derecha
-        jtIngresoDetalle = new JTable();
-        jtIngresoDetalle.getTableHeader().setReorderingAllowed(false);
-        jspEgresoDetalle = new JScrollPane(jtIngresoDetalle);
+        jbVentaDetalle = new JButton("Venta detalle");
+        jbVentaDetalle.setFont(CommonFormat.fuente);
+        jbVentaDetalle.setName("detalle venta");
+        jbVentaDetalle.setMargin(insets);
+        jtVentas = new JTable();
+        jtVentas.getTableHeader().setReorderingAllowed(false);
+        JScrollPane jspVentas = new JScrollPane(jtVentas);
+        JPanel jpVentas = new JPanel(new BorderLayout());
+        jpVentas.add(jspVentas, BorderLayout.CENTER);
+        jpVentas.add(jbVentaDetalle, BorderLayout.SOUTH);
         //creamos nuestro splitpane y agregamos los dos paneles del medio
-        jspMid = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, jspIngresoCabecera, jspEgresoDetalle);
+        jspMid = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, jpFacturacion, jpVentas);
         jspMid.setDividerLocation(this.getWidth() / 2);
         jspMid.setOneTouchExpandable(true);
     }
 
     private void initBot() {
         jpBot = new JPanel();
-        Insets insets = new Insets(10, 10, 10, 10);
-        jbAgregar = new JButton("Crear venta [F1]");
-        jbAgregar.setName("crear venta");
-        jbAgregar.setFont(CommonFormat.fuente);
-        jbAgregar.setMargin(insets);
-        jbDetalle = new JButton("Ver detalle");
-        jbDetalle.setName("detalle venta");
-        jbDetalle.setFont(CommonFormat.fuente);
-        jbDetalle.setMargin(insets);
-        jbAnular = new JButton("Anular");
-        jbAnular.setName("anular venta");
-        jbAnular.setFont(CommonFormat.fuente);
-        jbAnular.setMargin(insets);
-        jbResumen = new JButton("Ver resumen [F2]");
-        jbResumen.setName("resumen venta");
-        jbResumen.setMargin(insets);
-        jbResumen.setFont(CommonFormat.fuente);
-        jbResumen.setEnabled(false);
-        jbFacturar = new JButton("Facturar");
-        jbFacturar.setName("facturacion");
-        jbFacturar.setMargin(insets);
-        jbFacturar.setFont(CommonFormat.fuente);
-        jbHistorialFacturacion = new JButton("Historial de facturación");
-        jbHistorialFacturacion.setName("historial facturacion");
-        jbHistorialFacturacion.setMargin(insets);
-        jbHistorialFacturacion.setFont(CommonFormat.fuente);
-        //jbFacturacion.setEnabled(false);
-        jpBot.add(jbAgregar);
-        jpBot.add(jbDetalle);
-        jpBot.add(jbAnular);
-        jpBot.add(jbResumen);
-        jpBot.add(jbFacturar);
-        jpBot.add(jbHistorialFacturacion);
+        jbSalir = new JButton("Salir");
+        jpBot.add(jbSalir);
         jpBot.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED), "Opciones"));
     }
 }
