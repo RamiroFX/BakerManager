@@ -41,7 +41,7 @@ public class C_historialFacturacion implements GestionInterface, RecibirEmpleado
         this.vista = vista;
         this.c_inicio = c_inicio;
         inicializarVista();
-        //concederPermisos();
+        concederPermisos();
     }
 
     @Override
@@ -55,11 +55,11 @@ public class C_historialFacturacion implements GestionInterface, RecibirEmpleado
         Date today = Calendar.getInstance().getTime();
         this.vista.jddInicio.setDate(today);
         this.vista.jddFinal.setDate(today);
-        this.vista.jbBuscar.setEnabled(false);
+        /*this.vista.jbBuscar.setEnabled(false);
         this.vista.jbCliente.setEnabled(false);
         this.vista.jbEmpleado.setEnabled(false);
         this.vista.jcbCondVenta.setEnabled(false);
-        this.vista.jbSalir.setEnabled(false);
+        this.vista.jbSalir.setEnabled(false);*/
     }
 
     @Override
@@ -85,6 +85,9 @@ public class C_historialFacturacion implements GestionInterface, RecibirEmpleado
         }
         //TODO remove
         this.vista.jbSalir.addActionListener(this);
+        this.vista.jbBuscar.addActionListener(this);
+        this.vista.jbBuscar.addActionListener(this);
+        this.vista.jbVentaDetalle.addActionListener(this);
 
         this.vista.jtFacturacion.addMouseListener(this);
         this.vista.jtFacturacion.addKeyListener(this);
@@ -113,7 +116,7 @@ public class C_historialFacturacion implements GestionInterface, RecibirEmpleado
         this.vista.dispose();
     }
 
-    private void displayQueryResults() {
+    private void consultarFacturaciones() {
         EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
@@ -170,10 +173,10 @@ public class C_historialFacturacion implements GestionInterface, RecibirEmpleado
     private void obtenerVentaCabecera(MouseEvent e) {
         int fila = this.vista.jtFacturacion.rowAtPoint(e.getPoint());
         int columna = this.vista.jtFacturacion.columnAtPoint(e.getPoint());
-        Integer idIngresoCabecera = Integer.valueOf(String.valueOf(this.vista.jtFacturacion.getValueAt(fila, 0)));
+        Integer idFacturacion = Integer.valueOf(String.valueOf(this.vista.jtFacturacion.getValueAt(fila, 0)));
         if ((fila > -1) && (columna > -1)) {
-            //verificarPermiso();
-            //this.vista.jtVentas.setModel(DB_Ingreso.obtenerIngresoDetalle(idIngresoCabecera));
+            //TODO add verificarPermiso();
+            this.vista.jtVentas.setModel(modelo.obtenerVentasPorFacturacion(idFacturacion));
         } else {
             this.vista.jbFacturacionDetalle.setEnabled(false);
         }
@@ -228,7 +231,7 @@ public class C_historialFacturacion implements GestionInterface, RecibirEmpleado
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource().equals(this.vista.jbBuscar)) {
-            displayQueryResults();
+            consultarFacturaciones();
         }
         if (e.getSource().equals(this.vista.jbCliente)) {
             Seleccionar_cliente sc = new Seleccionar_cliente(this.c_inicio.vista);
@@ -242,6 +245,9 @@ public class C_historialFacturacion implements GestionInterface, RecibirEmpleado
         }
         if (e.getSource().equals(this.vista.jbBorrar)) {
             borrarDatos();
+        }
+        if (e.getSource().equals(this.vista.jbSalir)) {
+            cerrar();
         }
     }
 

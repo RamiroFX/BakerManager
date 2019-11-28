@@ -70,7 +70,7 @@ public class FacturacionCabeceraTableModel extends AbstractTableModel {
                 return fc.getCliente().getEntidad();
             }
             case 3: {
-                return fc.getFuncionario().getAlias();
+                return fc.getFuncionario().getNombre();
             }
             case 4: {
                 return fc.getTiempo();

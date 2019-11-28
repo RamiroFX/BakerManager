@@ -1814,10 +1814,10 @@ public class DB_Ingreso {
         return list;
     }
 
-    public static void facturarVentas(ArrayList<E_facturaCabeceraFX> facalist, int idFuncionario, int nroFactura) {
+    public static void facturarVentas(ArrayList<E_facturaCabeceraFX> facalist, int idFuncionario, int idCliente ,int nroFactura, int idTipoOperacion) {
         String INSERT_FACTURACION_DETALLE = "INSERT INTO FACTURACION_DETALLE(ID_FACTURACION_CABECERA, ID_FACTURA_CABECERA)VALUES (?, ?);";
         //LA SGBD SE ENCARGA DE INSERTAR EL TIMESTAMP.
-        String INSERT_FACTURACION_CABECERA = "INSERT INTO FACTURACION_CABECERA(ID_FUNCIONARIO, NRO_FACTURA)VALUES (?, ?);";
+        String INSERT_FACTURACION_CABECERA = "INSERT INTO FACTURACION_CABECERA(ID_FUNCIONARIO, ID_CLIENTE, NRO_FACTURA, ID_COND_VENTA)VALUES (?, ?, ?, ?);";
         String UPDATE_FACTURA_CABECERA = "UPDATE FACTURA_CABECERA SET NRO_FACTURA = ? WHERE ID_FACTURA_CABECERA = ? ;";
 
         long sq_cabecera = -1L;
@@ -1825,7 +1825,9 @@ public class DB_Ingreso {
             DB_manager.getConection().setAutoCommit(false);
             pst = DB_manager.getConection().prepareStatement(INSERT_FACTURACION_CABECERA, PreparedStatement.RETURN_GENERATED_KEYS);
             pst.setInt(1, idFuncionario);
-            pst.setInt(2, nroFactura);
+            pst.setInt(2, idCliente);
+            pst.setInt(3, nroFactura);
+            pst.setInt(4, idTipoOperacion);
             pst.executeUpdate();
             rs = pst.getGeneratedKeys();
             if (rs != null && rs.next()) {
@@ -1893,15 +1895,18 @@ public class DB_Ingreso {
                 + "FC.NRO_FACTURA, "//17
                 + "(SELECT NOMBRE FROM PERSONA WHERE PERSONA.ID_PERSONA = F.ID_PERSONA)\"NOMBRE_FUNCIONARIO\", "//18
                 + "ROUND(SUM (FADE.CANTIDAD*(FADE.PRECIO-(FADE.PRECIO*FADE.DESCUENTO)/100)))\"TOTAL\" "//19
-                + "FROM FACTURA_CABECERA FC, CLIENTE C, FUNCIONARIO F, FACTURACION_CABECERA FAC "
+                + "FROM FACTURA_CABECERA FC, FACTURA_DETALLE FADE,  CLIENTE C, FUNCIONARIO F, "
+                + "FACTURACION_CABECERA FAC, FACTURACION_DETALLE FACDE "
                 + "WHERE FC.ID_CLIENTE = C.ID_CLIENTE "
-                + "AND FC.ID_FUNCIONARIO = F.ID_FUNCIONARIO "
-                + "AND FAC.ID_FACTURA_CABECERA = FC.ID_FACTURA_CABECERA "
+                + "AND FC.ID_FACTURA_CABECERA = FADE.ID_FACTURA_CABECERA "
+                + "AND FAC.ID_FUNCIONARIO = F.ID_FUNCIONARIO "
+                + "AND FAC.ID_FACTURACION_CABECERA = FACDE.ID_FACTURACION_CABECERA "
+                + "AND FACDE.ID_FACTURA_CABECERA = FC.ID_FACTURA_CABECERA "
                 + "AND FAC.ID_FACTURACION_CABECERA = ? "
                 + "GROUP BY C.ID_CLIENTE, C.NOMBRE, C.ENTIDAD, C.RUC, C.RUC_IDENTIFICADOR, "
-                + "C.DIRECCION, C.EMAIL, C.PAG_WEB, C.OBSERVACION, TIPO, CATEGORIA, "
+                + "C.DIRECCION, C.EMAIL, C.PAG_WEB, C.OBSERVACION, f.id_persona, fac.id_cond_venta,"
                 + "FC.ID_FACTURA_CABECERA, FC.ID_FUNCIONARIO, FC.ID_CLIENTE, FC.TIEMPO, "
-                + "FC.ID_COND_VENTA, FC.NRO_FACTURA, NOMBRE_FUNCIONARIO "
+                + "FC.ID_COND_VENTA, FC.NRO_FACTURA "
                 + "ORDER BY FC.ID_FACTURA_CABECERA";
 
         try {
@@ -1972,11 +1977,14 @@ public class DB_Ingreso {
                 + "(SELECT NOMBRE FROM PERSONA WHERE PERSONA.ID_PERSONA = F.ID_PERSONA)\"NOMBRE_FUNCIONARIO\", "//18
                 + "ROUND(SUM (FADE.CANTIDAD*(FADE.PRECIO-(FADE.PRECIO*FADE.DESCUENTO)/100)))\"TOTAL\", "//19
                 + "(SELECT DESCRIPCION FROM TIPO_OPERACION WHERE TIPO_OPERACION.ID_TIPO_OPERACION = FAC.ID_COND_VENTA)\"TIPO_OPERACION\" "//20
-                + "FROM FACTURA_CABECERA FC, CLIENTE C, FUNCIONARIO F, FACTURACION_CABECERA FAC "
+                + "FROM FACTURA_CABECERA FC, FACTURA_DETALLE FADE, CLIENTE C, FUNCIONARIO F, "
+                + "FACTURACION_CABECERA FAC, FACTURACION_DETALLE FACDE "
                 + "WHERE FC.ID_CLIENTE = C.ID_CLIENTE "
-                + "AND FC.ID_FUNCIONARIO = F.ID_FUNCIONARIO "
-                + "AND FAC.ID_FACTURA_CABECERA = FC.ID_FACTURA_CABECERA "
-                + "AND FC.TIEMPO BETWEEN ?  "
+                + "AND FAC.ID_FUNCIONARIO = F.ID_FUNCIONARIO "
+                + "AND FC.ID_FACTURA_CABECERA = FADE.ID_FACTURA_CABECERA "
+                + "AND FAC.ID_FACTURACION_CABECERA = FACDE.ID_FACTURACION_CABECERA "
+                + "AND FACDE.ID_FACTURA_CABECERA = FC.ID_FACTURA_CABECERA "
+                + "AND FAC.TIEMPO BETWEEN ?  "
                 + "AND ? ";
         if (idCliente > 0) {
             query = query + " AND FAC.ID_CLIENTE = ? ";
@@ -1991,9 +1999,9 @@ public class DB_Ingreso {
             query = query + " AND FAC.NRO_FACTURA = ? ";
         }
         String groupBy = " GROUP BY C.ID_CLIENTE, C.NOMBRE, C.ENTIDAD, C.RUC, C.RUC_IDENTIFICADOR, "
-                + "C.DIRECCION, C.EMAIL, C.PAG_WEB, C.OBSERVACION, TIPO, CATEGORIA, "
+                + "C.DIRECCION, C.EMAIL, C.PAG_WEB, C.OBSERVACION, f.id_persona, fac.id_cond_venta,"
                 + "FC.ID_FACTURA_CABECERA, FC.ID_FUNCIONARIO, FC.ID_CLIENTE, FC.TIEMPO, "
-                + "FC.ID_COND_VENTA, FC.NRO_FACTURA, NOMBRE_FUNCIONARIO ";
+                + "FC.ID_COND_VENTA, FC.NRO_FACTURA ";
         String orderBy = "ORDER BY FC.ID_FACTURA_CABECERA";
         query = query + groupBy + orderBy;
         int pos = 3;

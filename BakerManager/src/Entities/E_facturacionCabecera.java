@@ -82,4 +82,18 @@ public class E_facturacionCabecera {
     public void setCondVenta(E_tipoOperacion condVenta) {
         this.condVenta = condVenta;
     }
+
+    @Override
+    public String toString() {
+        return getClass().getName() + "{"
+                + "id: " + getId() + ","
+                + "cliente.id: " + getCliente().getIdCliente()+ ","
+                + "funcionario.id: " + getFuncionario().getId_funcionario()+ ","
+                + "tipoOperacion.id: " + getCondVenta().getId() + ","
+                + "nroFactura: " + getNroFactura()+ ","
+                + "tiempo: " + getTiempo() + ","
+                + "total: " + getTotal()
+                + "}";
+    }
+
 }

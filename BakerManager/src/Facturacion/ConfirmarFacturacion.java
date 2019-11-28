@@ -2,9 +2,8 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package Ventas;
+package Facturacion;
 
-import Facturacion.V_facturacion;
 import DB.DB_Ingreso;
 import Entities.E_facturacionCabecera;
 import Interface.InterfaceConfirmarFacturacion;

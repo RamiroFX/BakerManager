@@ -16,7 +16,6 @@ import Interface.InterfaceSeleccionVentaCabecera;
 import ModeloTabla.FacturaDetalleTableModel;
 import ModeloTabla.SeleccionVentaCabecera;
 import ModeloTabla.SeleccionVentaCabeceraTableModel;
-import Ventas.ConfirmarFacturacion;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -209,7 +208,7 @@ public class C_facturacion implements ActionListener, KeyListener, InterfaceSele
                 facalist.add(get.getFacturaCabecera());
             }
         }
-        modelo.facturar(facalist, facturacionCabecera.getNroFactura());
+        modelo.facturar(facalist, facturacionCabecera.getNroFactura(),modelo.obtenerTipoOperacion().getId());
         //IMPRIMIR FACTURA
         M_facturaCabecera facturaCabecera = new M_facturaCabecera();
         facturaCabecera.setCliente(modelo.obtenerCliente());

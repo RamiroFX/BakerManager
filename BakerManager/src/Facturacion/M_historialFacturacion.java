@@ -38,7 +38,7 @@ public class M_historialFacturacion {
         E_tipoOperacion todos = new E_tipoOperacion();
         todos.setDescripcion("Todos");
         todos.setDuracion(0);
-        todos.setId(0);
+        todos.setId(-1);
         ArrayList<E_tipoOperacion> condVenta = new ArrayList<>();
         condVenta.add(todos);
         condVenta.addAll(DB_manager.obtenerTipoOperaciones());
@@ -75,15 +75,18 @@ public class M_historialFacturacion {
 
     public FacturacionCabeceraTableModel obtenerFacturacion(Date fechaInicio, Date fechaFinal, int idTipoOperacion) {
         FacturacionCabeceraTableModel tm = new FacturacionCabeceraTableModel();
-        //TODO validar datos
-        if(cabecera.getCliente().getIdCliente() != null){
-            
-        }else{
-            
+        int idCliente = -1;
+        int idFuncionario = -1;
+        int nroFactura = -1;
+        if (cabecera.getCliente().getIdCliente() != null) {
+            idCliente = cabecera.getCliente().getIdCliente();
         }
-        int idCliente = cabecera.getCliente().getIdCliente();
-        int idFuncionario = cabecera.getFuncionario().getId_funcionario();
-        int nroFactura = cabecera.getNroFactura();
+        if (cabecera.getFuncionario().getId_funcionario() != null) {
+            idFuncionario = cabecera.getFuncionario().getId_funcionario();
+        }
+        if (cabecera.getNroFactura() > 0) {
+            nroFactura = cabecera.getNroFactura();
+        }
         tm.setFacturacionCabeceraList(DB_Ingreso.obtenerFacturaciones(idCliente, idFuncionario, nroFactura, fechaInicio, fechaFinal, idTipoOperacion));
         return tm;
     }
