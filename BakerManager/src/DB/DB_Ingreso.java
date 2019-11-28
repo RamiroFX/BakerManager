@@ -1814,7 +1814,7 @@ public class DB_Ingreso {
         return list;
     }
 
-    public static void facturarVentas(ArrayList<E_facturaCabeceraFX> facalist, int idFuncionario, int idCliente ,int nroFactura, int idTipoOperacion) {
+    public static void facturarVentas(ArrayList<E_facturaCabeceraFX> facalist, int idFuncionario, int idCliente, int nroFactura, int idTipoOperacion) {
         String INSERT_FACTURACION_DETALLE = "INSERT INTO FACTURACION_DETALLE(ID_FACTURACION_CABECERA, ID_FACTURA_CABECERA)VALUES (?, ?);";
         //LA SGBD SE ENCARGA DE INSERTAR EL TIMESTAMP.
         String INSERT_FACTURACION_CABECERA = "INSERT INTO FACTURACION_CABECERA(ID_FUNCIONARIO, ID_CLIENTE, NRO_FACTURA, ID_COND_VENTA)VALUES (?, ?, ?, ?);";
@@ -1908,7 +1908,8 @@ public class DB_Ingreso {
                 + "FC.ID_FACTURA_CABECERA, FC.ID_FUNCIONARIO, FC.ID_CLIENTE, FC.TIEMPO, "
                 + "FC.ID_COND_VENTA, FC.NRO_FACTURA "
                 + "ORDER BY FC.ID_FACTURA_CABECERA";
-
+        System.out.println("DB.DB_Ingreso.obtenerVentasPorFacturacion()");
+        System.out.println(query);
         try {
             pst = DB_manager.getConection().prepareStatement(query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             pst.setInt(1, idFacturacion);
@@ -1959,7 +1960,9 @@ public class DB_Ingreso {
         return list;
     }
 
-    public static List<E_facturacionCabecera> obtenerFacturaciones(int idCliente, int idFuncionario, int nroFactura, Date fechaInicio, Date fechaFinal, int idTipoOperacion) {
+    public static List<E_facturacionCabecera> obtenerFacturaciones(int idCliente,
+            int idFuncionario, int nroFactura, Date fechaInicio, Date fechaFinal,
+            int idTipoOperacion) {
         List<E_facturacionCabecera> list = new ArrayList<>();
         String q_cliente = "C.ID_CLIENTE, C.NOMBRE, C.ENTIDAD, C.RUC, C.RUC_IDENTIFICADOR, C.DIRECCION, C.EMAIL, C.PAG_WEB, C.OBSERVACION, ";
         String q_tipo = "(SELECT CLTI.DESCRIPCION FROM CLIENTE_TIPO CLTI WHERE CLTI.ID_CLIENTE_TIPO = C.ID_TIPO) \"TIPO\", ";

@@ -12,6 +12,7 @@ import Entities.E_tipoOperacion;
 import ModeloTabla.FacturaCabeceraTableModel;
 import ModeloTabla.FacturacionCabeceraTableModel;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 
 /**
@@ -67,6 +68,7 @@ public class M_historialFacturacion {
     }
 
     public FacturaCabeceraTableModel obtenerVentasPorFacturacion(int idFacturacion) {
+        System.out.println("Facturacion.M_historialFacturacion.obtenerVentasPorFacturacion(): " + idFacturacion);
         FacturaCabeceraTableModel tm = new FacturaCabeceraTableModel();
         tm.setFacturaCabeceraList(DB_Ingreso.obtenerVentasPorFacturacion(idFacturacion));
         return tm;
@@ -87,7 +89,20 @@ public class M_historialFacturacion {
         if (cabecera.getNroFactura() > 0) {
             nroFactura = cabecera.getNroFactura();
         }
-        tm.setFacturacionCabeceraList(DB_Ingreso.obtenerFacturaciones(idCliente, idFuncionario, nroFactura, fechaInicio, fechaFinal, idTipoOperacion));
+        Calendar calendarInicio = Calendar.getInstance();
+        calendarInicio.setTime(fechaInicio);
+        calendarInicio.set(Calendar.HOUR_OF_DAY, 0);
+        calendarInicio.set(Calendar.MINUTE, 0);
+        calendarInicio.set(Calendar.SECOND, 0);
+        calendarInicio.set(Calendar.MILLISECOND, 0);
+        Calendar calendarFinal = Calendar.getInstance();
+        calendarFinal.setTime(fechaFinal);
+        calendarFinal.set(Calendar.HOUR_OF_DAY, 23);
+        calendarFinal.set(Calendar.MINUTE, 59);
+        calendarFinal.set(Calendar.SECOND, 59);
+        calendarFinal.set(Calendar.MILLISECOND, 999);
+
+        tm.setFacturacionCabeceraList(DB_Ingreso.obtenerFacturaciones(idCliente, idFuncionario, nroFactura, calendarInicio.getTime(), calendarFinal.getTime(), idTipoOperacion));
         return tm;
     }
 
