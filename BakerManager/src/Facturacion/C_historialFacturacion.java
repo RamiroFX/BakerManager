@@ -8,6 +8,7 @@ package Facturacion;
 import Cliente.Seleccionar_cliente;
 import Empleado.Seleccionar_funcionario;
 import Entities.E_tipoOperacion;
+import Entities.Estado;
 import Entities.M_cliente;
 import Entities.M_funcionario;
 import Entities.M_menu_item;
@@ -15,6 +16,7 @@ import Interface.GestionInterface;
 import Interface.RecibirClienteCallback;
 import Interface.RecibirEmpleadoCallback;
 import MenuPrincipal.DatosUsuario;
+import Ventas.Resumen_ingreso;
 import Ventas.Ver_ingreso;
 import bakermanager.C_inicio;
 import java.awt.EventQueue;
@@ -88,6 +90,7 @@ public class C_historialFacturacion implements GestionInterface, RecibirEmpleado
         this.vista.jbBuscar.addActionListener(this);
         this.vista.jbBuscar.addActionListener(this);
         this.vista.jbVentaDetalle.addActionListener(this);
+        this.vista.jbFacturacionDetalle.addActionListener(this);
         this.vista.jbCliente.addActionListener(this);
         this.vista.jbEmpleado.addActionListener(this);
 
@@ -235,6 +238,13 @@ public class C_historialFacturacion implements GestionInterface, RecibirEmpleado
     }
 
     private void facturacionDetalle() {
+        int fila = vista.jtFacturacion.getSelectedRow();
+        if (fila > -1) {
+            Integer idFacturacion = Integer.valueOf(String.valueOf(this.vista.jtFacturacion.getValueAt(fila, 0)));
+            Resumen_ingreso re = new Resumen_ingreso(c_inicio);
+            re.inicializarDatos(idFacturacion);
+            re.setVisible(true);
+        }
     }
 
     private void ventaDetalle() {

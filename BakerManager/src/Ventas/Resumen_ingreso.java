@@ -7,9 +7,15 @@ package Ventas;
 
 import DB.DB_Ingreso;
 import Entities.E_facturaDetalleFX;
+import Entities.E_facturacionCabecera;
+import Entities.E_tipoOperacion;
 import Entities.Estado;
 import Entities.M_cliente;
+import Entities.M_facturaCabecera;
 import Excel.ExportarVentas;
+import Interface.InterfaceFacturaDetalle;
+import ModeloTabla.FacturaCabeceraTableModel;
+import ModeloTabla.FacturaDetalleTableModel;
 import bakermanager.C_inicio;
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
@@ -40,7 +46,7 @@ import javax.swing.table.TableModel;
  *
  * @author Ramiro Ferreira
  */
-public class Resumen_ingreso extends JDialog implements ActionListener, KeyListener {
+public class Resumen_ingreso extends JDialog implements ActionListener, KeyListener, InterfaceFacturaDetalle {
 
     JScrollPane jspEgreso, jspDetalle;
     JTable jtEgreso, jtDetalle;
@@ -72,6 +78,47 @@ public class Resumen_ingreso extends JDialog implements ActionListener, KeyListe
         inicializarComponentes();
         inicializarVista(tm, inicio, fin);
         agregarListener();
+    }
+
+    public Resumen_ingreso(C_inicio c_inicio) {
+        super(c_inicio.vista, DEFAULT_MODALITY_TYPE);
+        setTitle("Detalle de facturación");
+        setSize(800, 600);
+        setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+        setLocationRelativeTo(c_inicio.vista);
+        inicializarComponentes();
+        agregarListener();
+    }
+
+    public void inicializarDatos(int idFacturacion) {
+        FacturaCabeceraTableModel tm = new FacturaCabeceraTableModel();
+        tm.setFacturaCabeceraList(DB_Ingreso.obtenerVentasPorFacturacion(idFacturacion));
+        jtEgreso.setModel(tm);
+        Utilities.c_packColumn.packColumns(jtEgreso, 1);
+        Integer total = 0;
+        Integer totalContado = 0;
+        Integer totalCredito = 0;
+        for (M_facturaCabecera faca : tm.getFacturaCabeceraList()) {
+            total = total + faca.getTotal();
+            switch (faca.getIdCondVenta()) {
+                case 1: {//contado
+                    totalContado = totalContado + faca.getTotal();
+                    break;
+                }
+                case 2: {//credito
+                    totalCredito = totalCredito + faca.getTotal();
+                    break;
+                }
+            }
+        }
+        FacturaDetalleTableModel tmDetalle = new FacturaDetalleTableModel(this);
+        tmDetalle.setFacturaDetalleList(DB_Ingreso.consultarIngresoDetalleAgrupado(tm.getFacturaCabeceraList()));
+        jtDetalle.setModel(tmDetalle);
+        Utilities.c_packColumn.packColumns(jtDetalle, 1);
+        jftTotalEgCred.setValue(totalCredito);
+        jftTotalEgCont.setValue(totalContado);
+        jftTotalEgreso.setValue(total);
+        this.jbImportarXLS.setVisible(false);
     }
 
     private void inicializarComponentes() {
@@ -302,5 +349,10 @@ public class Resumen_ingreso extends JDialog implements ActionListener, KeyListe
 
     private void cerrar() {
         this.dispose();
+    }
+
+    @Override
+    public void notificarCambio() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

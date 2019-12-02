@@ -578,6 +578,63 @@ public class DB_Ingreso {
         return rstm;
     }
 
+    public static List<M_facturaDetalle> consultarIngresoDetalleAgrupado(List<M_facturaCabecera> cadenaCabeceras) {
+        List<M_facturaDetalle> list = new ArrayList<>();
+        boolean b = true;
+        List<M_facturaCabecera> possibleValues = cadenaCabeceras;
+        StringBuilder builder = new StringBuilder();
+
+        for (M_facturaCabecera seleccionVenta : possibleValues) {
+            builder.append("?,");
+        }
+        String QUERY = "SELECT PROD.CODIGO \"Codigo\", "
+                + "(SELECT IMPU.DESCRIPCION FROM IMPUESTO IMPU WHERE IMPU.ID_IMPUESTO = PROD.ID_IMPUESTO)\"IMPUESTO\","
+                + "PROD.DESCRIPCION \"Producto\", SUM(FADE.CANTIDAD) \"Cantidad\", "
+                + "PROD.ID_IMPUESTO \"ID_IMPUESTO\","
+                + "FADE.PRECIO \"Precio\", FADE.DESCUENTO \"Descuento\", "
+                + "CASE WHEN PROD.ID_IMPUESTO = 1 THEN SUM(ROUND(FADE.CANTIDAD*(FADE.PRECIO-(FADE.PRECIO*FADE.DESCUENTO)/100))) ELSE '0' END AS \"Exenta\", "
+                + "CASE WHEN PROD.ID_IMPUESTO = 2 THEN SUM(ROUND(FADE.CANTIDAD*(FADE.PRECIO-(FADE.PRECIO*FADE.DESCUENTO)/100))) ELSE '0' END AS \"IVA 5%\", "
+                + "CASE WHEN PROD.ID_IMPUESTO = 3 THEN SUM(ROUND(FADE.CANTIDAD*(FADE.PRECIO-(FADE.PRECIO*FADE.DESCUENTO)/100))) ELSE '0' END AS \"IVA 10%\" "
+                + "FROM FACTURA_DETALLE FADE, FACTURA_CABECERA FACA, PRODUCTO PROD "
+                + "WHERE FADE.ID_FACTURA_CABECERA = FACA.ID_FACTURA_CABECERA "
+                + "AND FADE.ID_PRODUCTO = PROD.ID_PRODUCTO "
+                + "AND FACA.ID_FACTURA_CABECERA IN ("
+                + builder.substring(0, builder.length() - 1) + ")";
+
+        String PIE = "GROUP BY PROD.DESCRIPCION, PROD.CODIGO, PROD.ID_IMPUESTO, FADE.PRECIO, FADE.DESCUENTO,PROD.ID_IMPUESTO  "
+                + "ORDER BY PROD.DESCRIPCION";
+        QUERY = QUERY + PIE;
+        try {
+            pst = DB_manager.getConection().prepareStatement(QUERY, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            int index = 1;
+            for (M_facturaCabecera ventaCabecera : possibleValues) {
+                pst.setInt(index++, ventaCabecera.getIdFacturaCabecera());
+            }
+            rs = pst.executeQuery();
+            while (rs.next()) {
+                M_facturaDetalle fade = new M_facturaDetalle();
+                M_producto producto = new M_producto();
+                producto.setCodBarra(rs.getString("Codigo"));
+                producto.setDescripcion(rs.getString("Producto"));
+                producto.setImpuesto(rs.getInt("IMPUESTO"));
+                producto.setIdImpuesto(rs.getInt("ID_IMPUESTO"));
+                fade.setProducto(producto);
+                fade.setCantidad(rs.getDouble("Cantidad"));
+                fade.setPrecio(rs.getInt("Precio"));
+                fade.setDescuento(rs.getDouble("Descuento"));
+                fade.setExenta(rs.getInt("Exenta"));
+                fade.setIva5(rs.getInt("IVA 5%"));
+                fade.setIva10(rs.getInt("IVA 10%"));
+                fade.setObservacion("");
+                list.add(fade);
+            }
+        } catch (SQLException ex) {
+            Logger lgr = Logger.getLogger(DB_Egreso.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        }
+        return list;
+    }
+
     public static ResultSetTableModel obtenerIngresoDetalle(Integer idIngresoCabecera) {
         String Query = "SELECT "
                 + "FD.ID_PRODUCTO \"ID art.\", "
