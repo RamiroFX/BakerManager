@@ -59,7 +59,6 @@ public class FacturaCabeceraTableModel extends AbstractTableModel {
     @Override
     public Object getValueAt(int rowIndex, int colIndex) {
         M_facturaCabecera fc = this.facturaCabeceraList.get(rowIndex);
-        System.out.println("fc: "+fc);
         switch (colIndex) {
             case 0: {
                 return fc.getIdFacturaCabecera();

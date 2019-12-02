@@ -68,7 +68,6 @@ public class M_historialFacturacion {
     }
 
     public FacturaCabeceraTableModel obtenerVentasPorFacturacion(int idFacturacion) {
-        System.out.println("Facturacion.M_historialFacturacion.obtenerVentasPorFacturacion(): " + idFacturacion);
         FacturaCabeceraTableModel tm = new FacturaCabeceraTableModel();
         tm.setFacturaCabeceraList(DB_Ingreso.obtenerVentasPorFacturacion(idFacturacion));
         return tm;

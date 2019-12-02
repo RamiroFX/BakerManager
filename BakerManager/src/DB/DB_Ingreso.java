@@ -16,7 +16,6 @@ import Entities.M_funcionario;
 import Entities.M_mesa;
 import Entities.M_mesa_detalle;
 import Entities.M_producto;
-import ModeloTabla.FacturaCabeceraTableModel;
 import ModeloTabla.SeleccionVentaCabecera;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -1879,66 +1878,44 @@ public class DB_Ingreso {
 
     public static List<M_facturaCabecera> obtenerVentasPorFacturacion(int idFacturacion) {
         List<M_facturaCabecera> list = new ArrayList<>();
-        M_facturaCabecera fc = null;
-        String q_cliente = "C.ID_CLIENTE, C.NOMBRE, C.ENTIDAD, C.RUC, C.RUC_IDENTIFICADOR, C.DIRECCION, C.EMAIL, C.PAG_WEB, C.OBSERVACION, ";
-        String q_tipo = "(SELECT CLTI.DESCRIPCION FROM CLIENTE_TIPO CLTI WHERE CLTI.ID_CLIENTE_TIPO = C.ID_TIPO) \"TIPO\", ";
-        String q_categoria = "(SELECT CLCA.DESCRIPCION FROM CLIENTE_CATEGORIA CLCA WHERE CLCA.ID_CLIENTE_CATEGORIA = C.ID_CATEGORIA) \"CATEGORIA\", ";
-        String query = "SELECT "
-                + q_cliente
-                + q_tipo
-                + q_categoria
-                + "FC.ID_FACTURA_CABECERA, "//12
-                + "FC.ID_FUNCIONARIO, "//13
-                + "FC.ID_CLIENTE, "//14
-                + "FC.TIEMPO, "//15
-                + "FC.ID_COND_VENTA, "//16
-                + "FC.NRO_FACTURA, "//17
-                + "(SELECT NOMBRE FROM PERSONA WHERE PERSONA.ID_PERSONA = F.ID_PERSONA)\"NOMBRE_FUNCIONARIO\", "//18
-                + "ROUND(SUM (FADE.CANTIDAD*(FADE.PRECIO-(FADE.PRECIO*FADE.DESCUENTO)/100)))\"TOTAL\" "//19
-                + "FROM FACTURA_CABECERA FC, FACTURA_DETALLE FADE,  CLIENTE C, FUNCIONARIO F, "
-                + "FACTURACION_CABECERA FAC, FACTURACION_DETALLE FACDE "
-                + "WHERE FC.ID_CLIENTE = C.ID_CLIENTE "
-                + "AND FC.ID_FACTURA_CABECERA = FADE.ID_FACTURA_CABECERA "
-                + "AND FAC.ID_FUNCIONARIO = F.ID_FUNCIONARIO "
-                + "AND FAC.ID_FACTURACION_CABECERA = FACDE.ID_FACTURACION_CABECERA "
+        String query = "SELECT FC.ID_FACTURA_CABECERA, "//1
+                + "FC.NRO_FACTURA,"//2
+                + " C.ENTIDAD, "//3
+                + "FC.ID_COND_VENTA, "//4
+                + "(SELECT DESCRIPCION FROM TIPO_OPERACION WHERE TIPO_OPERACION.ID_TIPO_OPERACION = FC.ID_COND_VENTA)\"TIPO_OPERACION\" , "//4
+                + "(SELECT NOMBRE FROM PERSONA WHERE PERSONA.ID_PERSONA = F.ID_PERSONA)\"NOMBRE_FUNCIONARIO\", "//6
+                + "FC.TIEMPO, "//7
+                + "ROUND(SUM (FADE.CANTIDAD*(FADE.PRECIO-(FADE.PRECIO*FADE.DESCUENTO)/100)))\"TOTAL\" "//8
+                + "FROM FACTURACION_CABECERA FAC, FACTURACION_DETALLE FACDE, "
+                + "FACTURA_CABECERA FC, FACTURA_DETALLE FADE, CLIENTE C, FUNCIONARIO F "
+                + "WHERE FAC.ID_FACTURACION_CABECERA = FACDE.ID_FACTURACION_CABECERA "
                 + "AND FACDE.ID_FACTURA_CABECERA = FC.ID_FACTURA_CABECERA "
+                + "AND FC.ID_FACTURA_CABECERA = FADE.ID_FACTURA_CABECERA "
+                + "AND FAC.ID_CLIENTE = C.ID_CLIENTE "
+                + "AND FAC.ID_FUNCIONARIO = F.ID_FUNCIONARIO "
                 + "AND FAC.ID_FACTURACION_CABECERA = ? "
-                + "GROUP BY C.ID_CLIENTE, C.NOMBRE, C.ENTIDAD, C.RUC, C.RUC_IDENTIFICADOR, "
-                + "C.DIRECCION, C.EMAIL, C.PAG_WEB, C.OBSERVACION, f.id_persona, fac.id_cond_venta,"
-                + "FC.ID_FACTURA_CABECERA, FC.ID_FUNCIONARIO, FC.ID_CLIENTE, FC.TIEMPO, "
-                + "FC.ID_COND_VENTA, FC.NRO_FACTURA "
+                + "GROUP BY FC.ID_FACTURA_CABECERA,FC.NRO_FACTURA, C.ENTIDAD, "
+                + "FC.TIEMPO, F.ID_PERSONA, FC.ID_COND_VENTA "
                 + "ORDER BY FC.ID_FACTURA_CABECERA";
-        System.out.println("DB.DB_Ingreso.obtenerVentasPorFacturacion()");
-        System.out.println(query);
         try {
             pst = DB_manager.getConection().prepareStatement(query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             pst.setInt(1, idFacturacion);
             rs = pst.executeQuery();
             while (rs.next()) {
                 M_cliente cliente = new M_cliente();
-                cliente.setIdCliente(rs.getInt(1));
-                cliente.setNombre(rs.getString(2));
                 cliente.setEntidad(rs.getString(3));
-                cliente.setRuc(rs.getString(4));
-                cliente.setRucId(rs.getString(5));
-                cliente.setDireccion(rs.getString(6));
-                cliente.setEmail(rs.getString(7));
-                cliente.setPaginaWeb(rs.getString(8));
-                cliente.setObservacion(rs.getString(9));
-                cliente.setTipo(rs.getString(10));
-                cliente.setCategoria(rs.getString(11));
+
                 M_funcionario f = new M_funcionario();
-                f.setNombre(rs.getString(18));
-                fc = new M_facturaCabecera();
-                fc.setIdFacturaCabecera(rs.getInt(12));
-                fc.setIdFuncionario(rs.getInt(13));
-                fc.setIdCliente(rs.getInt(14));
-                fc.setTiempo(rs.getTimestamp(15));
-                fc.setIdCondVenta(rs.getInt(16));
-                fc.setNroFactura(rs.getInt(17));
+                f.setAlias(rs.getString(6));
+
+                M_facturaCabecera fc = new M_facturaCabecera();
+                fc.setIdFacturaCabecera(rs.getInt(1));
+                fc.setTiempo(rs.getTimestamp(7));
+                fc.setIdCondVenta(rs.getInt(4));
+                fc.setNroFactura(rs.getInt(2));
                 fc.setCliente(cliente);
                 fc.setFuncionario(f);
-                fc.setTotal(rs.getInt(19));
+                fc.setTotal(rs.getInt(8));
                 list.add(fc);
             }
         } catch (SQLException ex) {
@@ -1964,31 +1941,29 @@ public class DB_Ingreso {
             int idFuncionario, int nroFactura, Date fechaInicio, Date fechaFinal,
             int idTipoOperacion) {
         List<E_facturacionCabecera> list = new ArrayList<>();
-        String q_cliente = "C.ID_CLIENTE, C.NOMBRE, C.ENTIDAD, C.RUC, C.RUC_IDENTIFICADOR, C.DIRECCION, C.EMAIL, C.PAG_WEB, C.OBSERVACION, ";
-        String q_tipo = "(SELECT CLTI.DESCRIPCION FROM CLIENTE_TIPO CLTI WHERE CLTI.ID_CLIENTE_TIPO = C.ID_TIPO) \"TIPO\", ";
-        String q_categoria = "(SELECT CLCA.DESCRIPCION FROM CLIENTE_CATEGORIA CLCA WHERE CLCA.ID_CLIENTE_CATEGORIA = C.ID_CATEGORIA) \"CATEGORIA\", ";
         String query = "SELECT "
-                + q_cliente
-                + q_tipo
-                + q_categoria
-                + "FC.ID_FACTURA_CABECERA, "//12
-                + "FC.ID_FUNCIONARIO, "//13
-                + "FC.ID_CLIENTE, "//14
-                + "FC.TIEMPO, "//15
-                + "FC.ID_COND_VENTA, "//16
-                + "FC.NRO_FACTURA, "//17
-                + "(SELECT NOMBRE FROM PERSONA WHERE PERSONA.ID_PERSONA = F.ID_PERSONA)\"NOMBRE_FUNCIONARIO\", "//18
-                + "ROUND(SUM (FADE.CANTIDAD*(FADE.PRECIO-(FADE.PRECIO*FADE.DESCUENTO)/100)))\"TOTAL\", "//19
-                + "(SELECT DESCRIPCION FROM TIPO_OPERACION WHERE TIPO_OPERACION.ID_TIPO_OPERACION = FAC.ID_COND_VENTA)\"TIPO_OPERACION\" "//20
-                + "FROM FACTURA_CABECERA FC, FACTURA_DETALLE FADE, CLIENTE C, FUNCIONARIO F, "
-                + "FACTURACION_CABECERA FAC, FACTURACION_DETALLE FACDE "
-                + "WHERE FC.ID_CLIENTE = C.ID_CLIENTE "
-                + "AND FAC.ID_FUNCIONARIO = F.ID_FUNCIONARIO "
-                + "AND FC.ID_FACTURA_CABECERA = FADE.ID_FACTURA_CABECERA "
-                + "AND FAC.ID_FACTURACION_CABECERA = FACDE.ID_FACTURACION_CABECERA "
+                + "FAC.ID_FACTURACION_CABECERA,"//1
+                + "FAC.NRO_FACTURA,"//2
+                + "C.ENTIDAD,"//3
+                + "(SELECT NOMBRE FROM PERSONA WHERE PERSONA.ID_PERSONA = F.ID_PERSONA)\"NOMBRE_FUNCIONARIO\","//4
+                + "FAC.TIEMPO,"//5
+                + "FAC.ID_COND_VENTA, " //6
+                + "(SELECT DESCRIPCION FROM TIPO_OPERACION WHERE TIPO_OPERACION.ID_TIPO_OPERACION = FAC.ID_COND_VENTA)\"TIPO_OPERACION\" ,"//7
+                + "ROUND(SUM (FADE.CANTIDAD*(FADE.PRECIO-(FADE.PRECIO*FADE.DESCUENTO)/100)))\"TOTAL\" "//8
+                + "FROM FACTURACION_CABECERA FAC, "
+                + "     FACTURACION_DETALLE FACDE,  "
+                + "     FACTURA_CABECERA FC, "
+                + "     FACTURA_DETALLE FADE,"
+                + "     CLIENTE C,"
+                + "     FUNCIONARIO F "
+                + "WHERE FAC.ID_FACTURACION_CABECERA = FACDE.ID_FACTURACION_CABECERA "
                 + "AND FACDE.ID_FACTURA_CABECERA = FC.ID_FACTURA_CABECERA "
-                + "AND FAC.TIEMPO BETWEEN ?  "
-                + "AND ? ";
+                + "AND FC.ID_FACTURA_CABECERA = FADE.ID_FACTURA_CABECERA   "
+                + "AND FAC.ID_CLIENTE = C.ID_CLIENTE "
+                + "AND FAC.ID_FUNCIONARIO = F.ID_FUNCIONARIO "
+                + "AND FAC.TIEMPO BETWEEN ?  AND ? ";
+        String groupBy = " GROUP BY FAC.ID_FACTURACION_CABECERA,FAC.NRO_FACTURA, C.ENTIDAD, FAC.TIEMPO,F.ID_PERSONA, FAC.ID_COND_VENTA ";
+        String orderBy = "ORDER BY FAC.ID_FACTURACION_CABECERA";
         if (idCliente > 0) {
             query = query + " AND FAC.ID_CLIENTE = ? ";
         }
@@ -2001,11 +1976,6 @@ public class DB_Ingreso {
         if (nroFactura > 0) {
             query = query + " AND FAC.NRO_FACTURA = ? ";
         }
-        String groupBy = " GROUP BY C.ID_CLIENTE, C.NOMBRE, C.ENTIDAD, C.RUC, C.RUC_IDENTIFICADOR, "
-                + "C.DIRECCION, C.EMAIL, C.PAG_WEB, C.OBSERVACION, f.id_persona, fac.id_cond_venta,"
-                + "FC.ID_FACTURA_CABECERA, FC.ID_FUNCIONARIO, FC.ID_CLIENTE, FC.TIEMPO, "
-                + "FC.ID_COND_VENTA, FC.NRO_FACTURA ";
-        String orderBy = "ORDER BY FC.ID_FACTURA_CABECERA";
         query = query + groupBy + orderBy;
         int pos = 3;
         try {
@@ -2031,31 +2001,20 @@ public class DB_Ingreso {
             rs = pst.executeQuery();
             while (rs.next()) {
                 M_cliente cliente = new M_cliente();
-                cliente.setIdCliente(rs.getInt(1));
-                cliente.setNombre(rs.getString(2));
                 cliente.setEntidad(rs.getString(3));
-                cliente.setRuc(rs.getString(4));
-                cliente.setRucId(rs.getString(5));
-                cliente.setDireccion(rs.getString(6));
-                cliente.setEmail(rs.getString(7));
-                cliente.setPaginaWeb(rs.getString(8));
-                cliente.setObservacion(rs.getString(9));
-                cliente.setTipo(rs.getString(10));
-                cliente.setCategoria(rs.getString(11));
                 M_funcionario f = new M_funcionario();
-                f.setId_funcionario(rs.getInt(13));
-                f.setNombre(rs.getString(18));
+                f.setNombre(rs.getString(4));
                 E_tipoOperacion tiop = new E_tipoOperacion();
-                tiop.setId(rs.getInt(16));
-                tiop.setDescripcion(rs.getString(20));
+                tiop.setId(rs.getInt(6));
+                tiop.setDescripcion(rs.getString(7));
                 E_facturacionCabecera fc = new E_facturacionCabecera();
-                fc.setId(rs.getInt(12));
-                fc.setTiempo(rs.getTimestamp(15));
+                fc.setId(rs.getInt(1));
+                fc.setTiempo(rs.getTimestamp(5));
                 fc.setCondVenta(tiop);
-                fc.setNroFactura(rs.getInt(17));
+                fc.setNroFactura(rs.getInt(2));
                 fc.setCliente(cliente);
                 fc.setFuncionario(f);
-                fc.setTotal(rs.getInt(19));
+                fc.setTotal(rs.getInt(8));
                 list.add(fc);
             }
         } catch (SQLException ex) {

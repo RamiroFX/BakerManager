@@ -6,7 +6,6 @@
 package Facturacion;
 
 import Cliente.Seleccionar_cliente;
-import DB.DB_Egreso;
 import Empleado.Seleccionar_funcionario;
 import Entities.E_tipoOperacion;
 import Entities.M_cliente;
@@ -16,6 +15,7 @@ import Interface.GestionInterface;
 import Interface.RecibirClienteCallback;
 import Interface.RecibirEmpleadoCallback;
 import MenuPrincipal.DatosUsuario;
+import Ventas.Ver_ingreso;
 import bakermanager.C_inicio;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
@@ -88,6 +88,8 @@ public class C_historialFacturacion implements GestionInterface, RecibirEmpleado
         this.vista.jbBuscar.addActionListener(this);
         this.vista.jbBuscar.addActionListener(this);
         this.vista.jbVentaDetalle.addActionListener(this);
+        this.vista.jbCliente.addActionListener(this);
+        this.vista.jbEmpleado.addActionListener(this);
 
         this.vista.jtFacturacion.addMouseListener(this);
         this.vista.jtFacturacion.addKeyListener(this);
@@ -114,6 +116,40 @@ public class C_historialFacturacion implements GestionInterface, RecibirEmpleado
     @Override
     public final void cerrar() {
         this.vista.dispose();
+    }
+
+    @Override
+    public void recibirCliente(M_cliente cliente) {
+        this.modelo.cabecera.setCliente(cliente);
+        String nombre = this.modelo.cabecera.getCliente().getNombre();
+        String entidad = this.modelo.cabecera.getCliente().getEntidad();
+        this.vista.jtfCliente.setText(nombre + "-(" + entidad + ")");
+    }
+
+    @Override
+    public void recibirFuncionario(M_funcionario funcionario) {
+        this.modelo.cabecera.setFuncionario(funcionario);
+        this.vista.jtfEmpleado.setText(this.modelo.obtenerNombreFuncionario());
+    }
+
+    private void verificarPermiso() {
+        ArrayList<M_menu_item> accesos = DatosUsuario.getRol_usuario().getAccesos();
+        for (int i = 0; i < accesos.size(); i++) {
+            if (this.vista.jbVentaDetalle.getName().equals(accesos.get(i).getItemDescripcion())) {
+                this.vista.jbVentaDetalle.setEnabled(true);
+            }
+            if (this.vista.jbFacturacionDetalle.getName().equals(accesos.get(i).getItemDescripcion())) {
+                this.vista.jbFacturacionDetalle.setEnabled(true);
+            }
+        }
+    }
+
+    private void borrarDatos() {
+        this.modelo.borrarDatos();
+        this.vista.jtfCliente.setText("");
+        this.vista.jtfEmpleado.setText("");
+        this.vista.jtfNroFactura.setText("");
+        this.vista.jcbCondVenta.setSelectedIndex(0);
     }
 
     private void consultarFacturaciones() {
@@ -148,28 +184,6 @@ public class C_historialFacturacion implements GestionInterface, RecibirEmpleado
         });
     }
 
-    @Override
-    public void recibirCliente(M_cliente cliente) {
-        this.modelo.cabecera.setCliente(cliente);
-        String nombre = this.modelo.cabecera.getCliente().getNombre();
-        String entidad = this.modelo.cabecera.getCliente().getEntidad();
-        this.vista.jtfCliente.setText(nombre + "-(" + entidad + ")");
-    }
-
-    @Override
-    public void recibirFuncionario(M_funcionario funcionario) {
-        this.modelo.cabecera.setFuncionario(funcionario);
-        this.vista.jtfEmpleado.setText(this.modelo.obtenerNombreFuncionario());
-    }
-
-    private void borrarDatos() {
-        this.modelo.borrarDatos();
-        this.vista.jtfCliente.setText("");
-        this.vista.jtfEmpleado.setText("");
-        this.vista.jtfNroFactura.setText("");
-        this.vista.jcbCondVenta.setSelectedIndex(0);
-    }
-
     private void obtenerVentaCabecera(MouseEvent e) {
         int fila = this.vista.jtFacturacion.rowAtPoint(e.getPoint());
         int columna = this.vista.jtFacturacion.columnAtPoint(e.getPoint());
@@ -177,41 +191,33 @@ public class C_historialFacturacion implements GestionInterface, RecibirEmpleado
         if ((fila > -1) && (columna > -1)) {
             //TODO add verificarPermiso();
             this.vista.jtVentas.setModel(modelo.obtenerVentasPorFacturacion(idFacturacion));
+            this.vista.jbFacturacionDetalle.setEnabled(true);//TODO si tiene permiso
         } else {
             this.vista.jbFacturacionDetalle.setEnabled(false);
         }
         if (e.getClickCount() == 2) {
             if (vista.jbFacturacionDetalle.isEnabled()) {
-                /* Ver_ingreso ver_egreso = new Ver_ingreso(c_inicio, idIngresoCabecera);
-                ver_egreso.mostrarVista();*/
+                facturacionDetalle();
                 this.vista.jbFacturacionDetalle.setEnabled(false);
             }
         }
     }
 
-    private M_funcionario empleado() {
-        if (vista.jtfEmpleado.getText().isEmpty()) {
-            return null;
+    private void ventasMouseHandler(MouseEvent e) {
+        int fila = this.vista.jtVentas.rowAtPoint(e.getPoint());
+        int columna = this.vista.jtVentas.columnAtPoint(e.getPoint());
+        if ((fila > -1) && (columna > -1)) {
+            //TODO add verificarPermiso();
+            this.vista.jbVentaDetalle.setEnabled(true);//TODO si tiene permiso
+        } else {
+            this.vista.jbVentaDetalle.setEnabled(false);
         }
-        return modelo.cabecera.getFuncionario();
-    }
-
-    private M_cliente cliente() {
-        if (vista.jtfCliente.getText().isEmpty()) {
-            return null;
+        if (e.getClickCount() == 2) {
+            if (vista.jbVentaDetalle.isEnabled()) {
+                ventaDetalle();
+                this.vista.jbVentaDetalle.setEnabled(false);
+            }
         }
-        return modelo.cabecera.getCliente();
-    }
-
-    private E_tipoOperacion tipoOperacion() {
-        return vista.jcbCondVenta.getItemAt(vista.jcbCondVenta.getSelectedIndex());
-    }
-
-    private void facturacionDetalle() {
-    }
-
-    private void ventaDetalle() {
-
     }
 
     private void consultarVentas() {
@@ -228,33 +234,59 @@ public class C_historialFacturacion implements GestionInterface, RecibirEmpleado
         });
     }
 
+    private void facturacionDetalle() {
+    }
+
+    private void ventaDetalle() {
+        int fila = this.vista.jtVentas.getSelectedRow();
+        if (fila > -1) {
+            //verificarPermiso();
+            Integer idVentaCabecera = Integer.valueOf(String.valueOf(this.vista.jtVentas.getValueAt(fila, 0)));
+            Ver_ingreso ver_egreso = new Ver_ingreso(c_inicio, idVentaCabecera);
+            ver_egreso.mostrarVista();
+            this.vista.jbVentaDetalle.setEnabled(false);
+        }
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (e.getSource().equals(this.vista.jbBuscar)) {
+        Object source = e.getSource();
+        if (source.equals(this.vista.jbBuscar)) {
             consultarFacturaciones();
         }
-        if (e.getSource().equals(this.vista.jbCliente)) {
+        if (source.equals(this.vista.jbCliente)) {
             Seleccionar_cliente sc = new Seleccionar_cliente(this.c_inicio.vista);
             sc.setCallback(this);
             sc.mostrarVista();
         }
-        if (e.getSource().equals(this.vista.jbEmpleado)) {
+        if (source.equals(this.vista.jbEmpleado)) {
             Seleccionar_funcionario sf = new Seleccionar_funcionario(this.c_inicio.vista);
             sf.setCallback(this);
             sf.mostrarVista();
         }
-        if (e.getSource().equals(this.vista.jbBorrar)) {
+        if (source.equals(this.vista.jbFacturacionDetalle)) {
+            facturacionDetalle();
+        }
+        if (source.equals(this.vista.jbVentaDetalle)) {
+            ventaDetalle();
+        }
+        if (source.equals(this.vista.jbBorrar)) {
             borrarDatos();
         }
-        if (e.getSource().equals(this.vista.jbSalir)) {
+        if (source.equals(this.vista.jbSalir)) {
             cerrar();
         }
     }
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        if (e.getSource().equals(this.vista.jtFacturacion)) {
+        Object source = e.getSource();
+        if (source.equals(this.vista.jtFacturacion)) {
+            //verificarPermiso();
             obtenerVentaCabecera(e);
+        }
+        if (source.equals(this.vista.jtVentas)) {
+            ventasMouseHandler(e);
         }
     }
 
