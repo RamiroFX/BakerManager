@@ -12,6 +12,7 @@ import Entities.E_tipoOperacion;
 import Entities.Estado;
 import Entities.M_cliente;
 import Entities.M_facturaCabecera;
+import Entities.M_facturaDetalle;
 import Excel.ExportarVentas;
 import Interface.InterfaceFacturaDetalle;
 import ModeloTabla.FacturaCabeceraTableModel;
@@ -50,7 +51,7 @@ public class Resumen_ingreso extends JDialog implements ActionListener, KeyListe
 
     JScrollPane jspEgreso, jspDetalle;
     JTable jtEgreso, jtDetalle;
-    JButton jbSalir, jbImportarXLS;
+    JButton jbSalir, jbImportarXLS, jbImprimirFacturacion;
     JLabel jlContado, jlCredito, jlTotal;
     JFormattedTextField jftTotalEgreso, jftTotalEgCont, jftTotalEgCred;
     Date inicio, fin;
@@ -105,7 +106,7 @@ public class Resumen_ingreso extends JDialog implements ActionListener, KeyListe
                     totalContado = totalContado + faca.getTotal();
                     break;
                 }
-                case 2: {//credito
+                default: {//credito
                     totalCredito = totalCredito + faca.getTotal();
                     break;
                 }
@@ -119,6 +120,8 @@ public class Resumen_ingreso extends JDialog implements ActionListener, KeyListe
         jftTotalEgCont.setValue(totalContado);
         jftTotalEgreso.setValue(total);
         this.jbImportarXLS.setVisible(false);
+        this.jbImprimirFacturacion.setVisible(true);
+        this.jbImprimirFacturacion.addActionListener(this);
     }
 
     private void inicializarComponentes() {
@@ -150,12 +153,16 @@ public class Resumen_ingreso extends JDialog implements ActionListener, KeyListe
         jbSalir = new JButton("Salir");
         jbImportarXLS = new JButton("Importar a excel");
         jbImportarXLS.setName("exportar venta");
+        jbImprimirFacturacion = new JButton("Imprimir facturación");
+        jbImprimirFacturacion.setName("imprimir facturacion");
+        jbImprimirFacturacion.setVisible(false);
         jtpPanel = new JTabbedPane();
         jtpPanel.addKeyListener(this);
 
         JPanel jpCenter = new JPanel(new BorderLayout());
         JPanel jpSouth = new JPanel(new FlowLayout(FlowLayout.CENTER));
         jpSouth.add(jbImportarXLS);
+        jpSouth.add(jbImprimirFacturacion);
         jpSouth.add(jbSalir);
         jpCenter.add(jspEgreso, BorderLayout.CENTER);
         jpCenter.add(jpTotalEgreso, BorderLayout.SOUTH);
@@ -325,12 +332,58 @@ public class Resumen_ingreso extends JDialog implements ActionListener, KeyListe
         });
     }
 
+    private void imprimirFacturacion() {
+        Object[] options = {"Ticket", "Boleta", "Factura"};
+        int n = JOptionPane.showOptionDialog(this,
+                "Eliga tipo de impresión",
+                "Atención",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                null, //do not use a custom Icon
+                options, //the titles of buttons
+                options[0]); //default button title
+        switch (n) {
+            case 0: {
+                //Ticket
+                EventQueue.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        //IMPRIMIR TICKET
+                    }
+                });
+                break;
+            }
+            case 1: {
+                //Boleta
+                EventQueue.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        //IMPRIMIR BOLETA
+                    }
+                });
+                break;
+            }
+            case 2: {
+                //Boleta
+                EventQueue.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        //IMPRIMIR FACTURA
+                    }
+                });
+                break;
+            }
+        }
+    }
+
     @Override
     public void actionPerformed(ActionEvent ae) {
         if (ae.getSource().equals(jbSalir)) {
             dispose();
         } else if (ae.getSource().equals(jbImportarXLS)) {
             exportHandler();
+        } else if (ae.getSource().equals(jbImprimirFacturacion)) {
+            imprimirFacturacion();
         }
     }
 
@@ -353,6 +406,5 @@ public class Resumen_ingreso extends JDialog implements ActionListener, KeyListe
 
     @Override
     public void notificarCambio() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

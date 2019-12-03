@@ -66,7 +66,7 @@ public class C_historialFacturacion implements GestionInterface, RecibirEmpleado
 
     @Override
     public final void concederPermisos() {
-        ArrayList<M_menu_item> accesos = DatosUsuario.getRol_usuario().getAccesos();
+        /*ArrayList<M_menu_item> accesos = DatosUsuario.getRol_usuario().getAccesos();
         for (int i = 0; i < accesos.size(); i++) {
             if (this.vista.jbBuscar.getName().equals(accesos.get(i).getItemDescripcion())) {
                 this.vista.jbBuscar.setEnabled(true);
@@ -84,10 +84,9 @@ public class C_historialFacturacion implements GestionInterface, RecibirEmpleado
             if (this.vista.jbVentaDetalle.getName().equals(accesos.get(i).getItemDescripcion())) {
                 this.vista.jbVentaDetalle.addActionListener(this);
             }
-        }
+        }*/
         //TODO remove
         this.vista.jbSalir.addActionListener(this);
-        this.vista.jbBuscar.addActionListener(this);
         this.vista.jbBuscar.addActionListener(this);
         this.vista.jbVentaDetalle.addActionListener(this);
         this.vista.jbFacturacionDetalle.addActionListener(this);
@@ -187,7 +186,21 @@ public class C_historialFacturacion implements GestionInterface, RecibirEmpleado
         });
     }
 
-    private void obtenerVentaCabecera(MouseEvent e) {
+    private void consultarVentas() {
+        EventQueue.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                int fila = vista.jtFacturacion.getSelectedRow();
+                if (fila > -1) {
+                    int idFacturacion = Integer.valueOf(String.valueOf(vista.jtFacturacion.getValueAt(fila, 0).toString()));
+                    vista.jtVentas.setModel(modelo.obtenerVentasPorFacturacion(idFacturacion));
+                    Utilities.c_packColumn.packColumns(vista.jtVentas, 1);
+                }
+            }
+        });
+    }
+
+    private void facturacionMouseHandler(MouseEvent e) {
         int fila = this.vista.jtFacturacion.rowAtPoint(e.getPoint());
         int columna = this.vista.jtFacturacion.columnAtPoint(e.getPoint());
         Integer idFacturacion = Integer.valueOf(String.valueOf(this.vista.jtFacturacion.getValueAt(fila, 0)));
@@ -221,20 +234,6 @@ public class C_historialFacturacion implements GestionInterface, RecibirEmpleado
                 this.vista.jbVentaDetalle.setEnabled(false);
             }
         }
-    }
-
-    private void consultarVentas() {
-        EventQueue.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                int fila = vista.jtFacturacion.getSelectedRow();
-                if (fila > -1) {
-                    int idFacturacion = Integer.valueOf(String.valueOf(vista.jtFacturacion.getValueAt(fila, 0).toString()));
-                    vista.jtVentas.setModel(modelo.obtenerVentasPorFacturacion(idFacturacion));
-                    Utilities.c_packColumn.packColumns(vista.jtVentas, 1);
-                }
-            }
-        });
     }
 
     private void facturacionDetalle() {
@@ -293,7 +292,7 @@ public class C_historialFacturacion implements GestionInterface, RecibirEmpleado
         Object source = e.getSource();
         if (source.equals(this.vista.jtFacturacion)) {
             //verificarPermiso();
-            obtenerVentaCabecera(e);
+            facturacionMouseHandler(e);
         }
         if (source.equals(this.vista.jtVentas)) {
             ventasMouseHandler(e);
