@@ -34,6 +34,8 @@ public class C_facturacion implements ActionListener, KeyListener, InterfaceSele
 
     private static final String MESSAGE = "La cantidad actual sobrepasa el limite permitido ", TITLE = "Atención";
     private static final String MESSAGE2 = "Seleccione por lo menos una venta";
+    private static final String ATENCION = "Atención";
+    private static final String IMPRIMIR_VENTA = "¿Desea imprimir la factura?";
     V_facturacion vista;
     M_facturacion modelo;
 
@@ -208,17 +210,20 @@ public class C_facturacion implements ActionListener, KeyListener, InterfaceSele
                 facalist.add(get.getFacturaCabecera());
             }
         }
-        modelo.facturar(facalist, facturacionCabecera.getNroFactura(),modelo.obtenerTipoOperacion().getId());
+        modelo.facturar(facalist, facturacionCabecera.getNroFactura(), modelo.obtenerTipoOperacion().getId());
         //IMPRIMIR FACTURA
-        M_facturaCabecera facturaCabecera = new M_facturaCabecera();
-        facturaCabecera.setCliente(modelo.obtenerCliente());
-        facturaCabecera.setNroFactura(facturacionCabecera.getNroFactura());
-        facturaCabecera.setIdCondVenta(modelo.obtenerTipoOperacion().getId());
-        Calendar c = Calendar.getInstance();
-        facturaCabecera.setTiempo(new Timestamp(c.getTimeInMillis()));
-        FacturaDetalleTableModel tm = (FacturaDetalleTableModel) vista.jtVentasDetalle.getModel();
-        ArrayList<M_facturaDetalle> facturaDetalle = (ArrayList<M_facturaDetalle>) tm.getFacturaDetalleList();
-        Impresora.imprimirFacturaVenta(facturaCabecera, facturaDetalle);
+        int opcion = JOptionPane.showConfirmDialog(vista, IMPRIMIR_VENTA, ATENCION, JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+        if (opcion == JOptionPane.YES_OPTION) {
+            M_facturaCabecera facturaCabecera = new M_facturaCabecera();
+            facturaCabecera.setCliente(modelo.obtenerCliente());
+            facturaCabecera.setNroFactura(facturacionCabecera.getNroFactura());
+            facturaCabecera.setIdCondVenta(modelo.obtenerTipoOperacion().getId());
+            Calendar c = Calendar.getInstance();
+            facturaCabecera.setTiempo(new Timestamp(c.getTimeInMillis()));
+            FacturaDetalleTableModel tm = (FacturaDetalleTableModel) vista.jtVentasDetalle.getModel();
+            ArrayList<M_facturaDetalle> facturaDetalle = (ArrayList<M_facturaDetalle>) tm.getFacturaDetalleList();
+            Impresora.imprimirFacturaVenta(facturaCabecera, facturaDetalle);
+        }
         completarCampos();
     }
 }

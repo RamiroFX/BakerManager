@@ -13,8 +13,11 @@ import Entities.Estado;
 import Entities.M_cliente;
 import Entities.M_facturaCabecera;
 import Entities.M_facturaDetalle;
+import Entities.M_rol_usuario;
 import Excel.ExportarVentas;
+import Impresora.Impresora;
 import Interface.InterfaceFacturaDetalle;
+import MenuPrincipal.DatosUsuario;
 import ModeloTabla.FacturaCabeceraTableModel;
 import ModeloTabla.FacturaDetalleTableModel;
 import bakermanager.C_inicio;
@@ -344,11 +347,19 @@ public class Resumen_ingreso extends JDialog implements ActionListener, KeyListe
                 options[0]); //default button title
         switch (n) {
             case 0: {
-                //Ticket
                 EventQueue.invokeLater(new Runnable() {
                     @Override
                     public void run() {
-                        //IMPRIMIR TICKET
+                        FacturaCabeceraTableModel tmCabecera = (FacturaCabeceraTableModel) jtEgreso.getModel();
+                        FacturaDetalleTableModel tmDetalle = (FacturaDetalleTableModel) jtDetalle.getModel();
+                        if (tmCabecera.getFacturaCabeceraList().isEmpty()) {
+                            JOptionPane.showMessageDialog(null, "No hay datos para impirmir");
+                        } else {
+                            M_facturaCabecera facturaCabecera = tmCabecera.getFacturaCabeceraList().get(0);
+                            ArrayList<M_facturaDetalle> facturaDetalle = (ArrayList<M_facturaDetalle>) tmDetalle.getFacturaDetalleList();
+                            M_rol_usuario rol_usuario = DatosUsuario.getRol_usuario();
+                            Impresora.imprimirTicketVenta(rol_usuario, facturaCabecera, facturaDetalle);
+                        }
                     }
                 });
                 break;
@@ -358,17 +369,33 @@ public class Resumen_ingreso extends JDialog implements ActionListener, KeyListe
                 EventQueue.invokeLater(new Runnable() {
                     @Override
                     public void run() {
-                        //IMPRIMIR BOLETA
+                        FacturaCabeceraTableModel tmCabecera = (FacturaCabeceraTableModel) jtEgreso.getModel();
+                        FacturaDetalleTableModel tmDetalle = (FacturaDetalleTableModel) jtDetalle.getModel();
+                        if (tmCabecera.getFacturaCabeceraList().isEmpty()) {
+                            JOptionPane.showMessageDialog(null, "No hay datos para impirmir");
+                        } else {
+                            M_facturaCabecera facturaCabecera = tmCabecera.getFacturaCabeceraList().get(0);
+                            ArrayList<M_facturaDetalle> facturaDetalle = (ArrayList<M_facturaDetalle>) tmDetalle.getFacturaDetalleList();
+                            Impresora.imprimirBoletaVenta(facturaCabecera, facturaDetalle);
+                        }
                     }
                 });
                 break;
             }
             case 2: {
-                //Boleta
                 EventQueue.invokeLater(new Runnable() {
                     @Override
                     public void run() {
-                        //IMPRIMIR FACTURA
+                        FacturaCabeceraTableModel tmCabecera = (FacturaCabeceraTableModel) jtEgreso.getModel();
+                        FacturaDetalleTableModel tmDetalle = (FacturaDetalleTableModel) jtDetalle.getModel();
+                        if (tmCabecera.getFacturaCabeceraList().isEmpty()) {
+                            JOptionPane.showMessageDialog(null, "No hay datos para impirmir");
+                        } else {
+                            M_facturaCabecera facturaCabecera = tmCabecera.getFacturaCabeceraList().get(0);
+                            System.err.println("facturaCabecera.getNroFactura: " + facturaCabecera.getNroFactura());
+                            ArrayList<M_facturaDetalle> facturaDetalle = (ArrayList<M_facturaDetalle>) tmDetalle.getFacturaDetalleList();
+                            Impresora.imprimirFacturaVenta(facturaCabecera, facturaDetalle);
+                        }
                     }
                 });
                 break;

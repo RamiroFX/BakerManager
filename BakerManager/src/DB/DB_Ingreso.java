@@ -1951,6 +1951,7 @@ public class DB_Ingreso {
                 + "AND FAC.ID_CLIENTE = C.ID_CLIENTE "
                 + "AND FAC.ID_FUNCIONARIO = F.ID_FUNCIONARIO "
                 + "AND FAC.ID_FACTURACION_CABECERA = ? "
+                + "AND FC.ID_ESTADO = 1 "
                 + "GROUP BY FC.ID_FACTURA_CABECERA,FC.NRO_FACTURA, C.ENTIDAD, "
                 + "FC.TIEMPO, F.ID_PERSONA, FC.ID_COND_VENTA "
                 + "ORDER BY FC.ID_FACTURA_CABECERA";

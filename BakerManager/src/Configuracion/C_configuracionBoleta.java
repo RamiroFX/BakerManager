@@ -7,6 +7,7 @@ package Configuracion;
 
 import DB.DB_Preferencia;
 import Entities.Divisa;
+import Entities.E_impresionOrientacion;
 import Entities.M_campoImpresion;
 import Entities.M_preferenciasImpresion;
 import Interface.crearModificarParametroCallback;
@@ -398,6 +399,7 @@ public class C_configuracionBoleta extends MouseAdapter implements ActionListene
         pi.setMaxProducts(this.vista.jcbCantProd.getSelectedIndex() + 1);
         pi.setLetterSize(this.vista.jcbTamañoLetra.getSelectedIndex() + 1);
         pi.setFormatoFecha(this.vista.jcbFormatoFecha.getSelectedItem() + "");
+        pi.setOrientacion(new E_impresionOrientacion(1, "vertical"));
         modelo.guardarPreferencias(pi);
         Impresora.PREF_PRINT_BOLETA = DB_Preferencia.obtenerPreferenciaImpresionBoleta();
         javax.swing.JOptionPane.showMessageDialog(this.vista, "Cambios guardados",

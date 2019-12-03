@@ -59,7 +59,7 @@ public class DB_rol {
                     + "AND PR.ID_MENU = M.ID_MENU "
                     + "AND PR.ID_MENU_ITEM = MI.ID_MENU_ITEM "
                     + "AND R.ID_ROL = " + idRol + " ";
-            String ORDER_BY = " ORDER BY MI.ID_MENU_ITEM ";
+            String ORDER_BY = " ORDER BY M.ID_MENU ";
             String query = SELECT + ORDER_BY;
             st = DB_manager.getConection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             // se ejecuta el query y se obtienen los resultados en un ResultSet

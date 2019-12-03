@@ -75,7 +75,8 @@ public class C_gestionVentas implements GestionInterface, RecibirEmpleadoCallbac
         this.vista.jbEmpleado.setEnabled(false);
         this.vista.jcbCondVenta.setEnabled(false);
         this.vista.jbAnular.setEnabled(false);
-        //this.vista.jbFacturacion.setEnabled(false);
+        this.vista.jbFacturar.setEnabled(false);
+        this.vista.jbHistorialFacturacion.setEnabled(false);
     }
 
     @Override
@@ -108,18 +109,15 @@ public class C_gestionVentas implements GestionInterface, RecibirEmpleadoCallbac
             if (this.vista.jbAnular.getName().equals(accesos.get(i).getItemDescripcion())) {
                 this.vista.jbAnular.addActionListener(this);
             }
-            //TODO ADD ACCESS
-            /*if (this.vista.jbFacturacion.getName().equals(accesos.get(i).getItemDescripcion())) {
-                this.vista.jbFacturacion.addActionListener(this);
-            }*/
-            //TODO ADD ACCESS
-            /*if (this.vista.jbHistorialFacturacion.getName().equals(accesos.get(i).getItemDescripcion())) {
+            if (this.vista.jbFacturar.getName().equals(accesos.get(i).getItemDescripcion())) {
+                this.vista.jbFacturar.setEnabled(true);
+                this.vista.jbFacturar.addActionListener(this);
+            }
+            if (this.vista.jbHistorialFacturacion.getName().equals(accesos.get(i).getItemDescripcion())) {
+                this.vista.jbHistorialFacturacion.setEnabled(true);
                 this.vista.jbHistorialFacturacion.addActionListener(this);
-            }*/
+            }
         }
-        //TODO remove
-        this.vista.jbFacturar.addActionListener(this);
-        this.vista.jbHistorialFacturacion.addActionListener(this);
 
         this.vista.jtIngresoCabecera.addMouseListener(this);
         this.vista.jtIngresoCabecera.addKeyListener(this);

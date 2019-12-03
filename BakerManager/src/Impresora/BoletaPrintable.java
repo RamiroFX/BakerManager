@@ -114,16 +114,16 @@ public class BoletaPrintable implements Printable {
             g.drawRoundRect(10, duplicadoDist + alturaCabecera + alturaDetalle + alturaSubtotal + espacio, ancho - espacio, alturaTotal, 0, 0);//TOTAL
             g.drawRoundRect(10, duplicadoDist + alturaCabecera + alturaDetalle + alturaSubtotal + alturaTotal + espacio, ancho - espacio, alturaLiquidacion, 0, 0);//LIQUIDACION
             //LINEAS DIVISORIAS DEL DETALLE
-            g.drawLine(10, duplicadoDist + alturaCabecera + espacio + espacio, ancho - 10, alturaCabecera + espacio + espacio);//CABECERA
-            g.drawLine(70, duplicadoDist + alturaCabecera + espacio, 70, alturaCabecera + alturaDetalle + espacio);//CANTIDAD
-            g.drawLine(ancho - (espacioPeque * 25), duplicadoDist + alturaCabecera + espacio, ancho - (espacioPeque * 25), alturaCabecera + alturaDetalle + espacio);//PRECIO
-            g.drawLine(ancho - (espacioPeque * 20), duplicadoDist + alturaCabecera + espacio, ancho - (espacioPeque * 20), alturaCabecera + alturaDetalle + espacio);//EXENTA
-            g.drawLine(ancho - (espacioPeque * 14), duplicadoDist + alturaCabecera + espacio, ancho - (espacioPeque * 14), alturaCabecera + alturaDetalle + espacio);//IVA5
-            g.drawLine(ancho - (espacioPeque * 8), duplicadoDist + alturaCabecera + espacio, ancho - (espacioPeque * 8), alturaCabecera + alturaDetalle + espacio);//IVA10        
-            g.drawLine(ancho - (espacioPeque * 20), duplicadoDist + alturaCabecera + (espacio * 2), ancho - (espacioPeque * 20), alturaCabecera + alturaDetalle + (espacio * 2));//SUBTOTAL EXENTA
-            g.drawLine(ancho - (espacioPeque * 14), duplicadoDist + alturaCabecera + (espacio * 2), ancho - (espacioPeque * 14), alturaCabecera + alturaDetalle + (espacio * 2));//SUBTOTAL IVA5
-            g.drawLine(ancho - (espacioPeque * 8), duplicadoDist + alturaCabecera + (espacio * 2), ancho - (espacioPeque * 8), alturaCabecera + alturaDetalle + (espacio * 2));//SUBTOTAL IVA10
-            g.drawLine(ancho - (espacioPeque * 8), duplicadoDist + alturaCabecera + (espacio * 3), ancho - (espacioPeque * 8), alturaCabecera + alturaDetalle + (espacio * 3));//SUBTOTAL
+            g.drawLine(10, (duplicadoDist + alturaCabecera + espacio + espacio), (ancho - 10), (duplicadoDist + alturaCabecera + espacio + espacio));//CABECERA
+            g.drawLine(70, (duplicadoDist + alturaCabecera + espacio), 70, (duplicadoDist+alturaCabecera + alturaDetalle + espacio));//CANTIDAD
+            g.drawLine(ancho - (espacioPeque * 25), (duplicadoDist + alturaCabecera + espacio), ancho - (espacioPeque * 25), (duplicadoDist + alturaCabecera + alturaDetalle + espacio));//PRECIO
+            g.drawLine(ancho - (espacioPeque * 20), (duplicadoDist + alturaCabecera + espacio), ancho - (espacioPeque * 20), (duplicadoDist + alturaCabecera + alturaDetalle + espacio));//EXENTA
+            g.drawLine(ancho - (espacioPeque * 14), (duplicadoDist + alturaCabecera + espacio), ancho - (espacioPeque * 14), (duplicadoDist + alturaCabecera + alturaDetalle + espacio));//IVA5
+            g.drawLine(ancho - (espacioPeque * 8), (duplicadoDist + alturaCabecera + espacio), ancho - (espacioPeque * 8), (duplicadoDist + alturaCabecera + alturaDetalle + espacio));//IVA10        
+            g.drawLine(ancho - (espacioPeque * 20), (duplicadoDist + alturaCabecera + (espacio * 2)), ancho - (espacioPeque * 20), (duplicadoDist + alturaCabecera + alturaDetalle + (espacio * 2)));//SUBTOTAL EXENTA
+            g.drawLine(ancho - (espacioPeque * 14), (duplicadoDist + alturaCabecera + (espacio * 2)), ancho - (espacioPeque * 14), (duplicadoDist + alturaCabecera + alturaDetalle + (espacio * 2)));//SUBTOTAL IVA5
+            g.drawLine(ancho - (espacioPeque * 8), (duplicadoDist + alturaCabecera + (espacio * 2)), ancho - (espacioPeque * 8), (duplicadoDist + alturaCabecera + alturaDetalle + (espacio * 2)));//SUBTOTAL IVA10
+            g.drawLine(ancho - (espacioPeque * 8), (duplicadoDist + alturaCabecera + (espacio * 3)), ancho - (espacioPeque * 8), (duplicadoDist + alturaCabecera + alturaDetalle + (espacio * 3)));//SUBTOTAL
             g.drawString("CANT", 20, duplicadoDist + alturaCabecera + espacio + 15);
             g.drawString("PRODUCTO", 100, duplicadoDist + alturaCabecera + espacio + 15);
             g.drawString("PRECIO", ancho - (espacioPeque * 24), duplicadoDist + alturaCabecera + 5 + espacioPeque * 3);
@@ -146,16 +146,16 @@ public class BoletaPrintable implements Printable {
             g.drawRoundRect(10, triplicadoDist + alturaCabecera + alturaDetalle + alturaSubtotal + espacio, ancho - espacio, alturaTotal, 0, 0);//TOTAL
             g.drawRoundRect(10, triplicadoDist + alturaCabecera + alturaDetalle + alturaSubtotal + alturaTotal + espacio, ancho - espacio, alturaLiquidacion, 0, 0);//LIQUIDACION
             //LINEAS DIVISORIAS DEL DETALLE
-            g.drawLine(10, triplicadoDist + alturaCabecera + espacio + espacio, ancho - 10, alturaCabecera + espacio + espacio);//CABECERA
-            g.drawLine(70, triplicadoDist + alturaCabecera + espacio, 70, alturaCabecera + alturaDetalle + espacio);//CANTIDAD
-            g.drawLine(ancho - (espacioPeque * 25), triplicadoDist + alturaCabecera + espacio, ancho - (espacioPeque * 25), alturaCabecera + alturaDetalle + espacio);//PRECIO
-            g.drawLine(ancho - (espacioPeque * 20), triplicadoDist + alturaCabecera + espacio, ancho - (espacioPeque * 20), alturaCabecera + alturaDetalle + espacio);//EXENTA
-            g.drawLine(ancho - (espacioPeque * 14), triplicadoDist + alturaCabecera + espacio, ancho - (espacioPeque * 14), alturaCabecera + alturaDetalle + espacio);//IVA5
-            g.drawLine(ancho - (espacioPeque * 8), triplicadoDist + alturaCabecera + espacio, ancho - (espacioPeque * 8), alturaCabecera + alturaDetalle + espacio);//IVA10        
-            g.drawLine(ancho - (espacioPeque * 20), triplicadoDist + alturaCabecera + (espacio * 2), ancho - (espacioPeque * 20), alturaCabecera + alturaDetalle + (espacio * 2));//SUBTOTAL EXENTA
-            g.drawLine(ancho - (espacioPeque * 14), triplicadoDist + alturaCabecera + (espacio * 2), ancho - (espacioPeque * 14), alturaCabecera + alturaDetalle + (espacio * 2));//SUBTOTAL IVA5
-            g.drawLine(ancho - (espacioPeque * 8), triplicadoDist + alturaCabecera + (espacio * 2), ancho - (espacioPeque * 8), alturaCabecera + alturaDetalle + (espacio * 2));//SUBTOTAL IVA10
-            g.drawLine(ancho - (espacioPeque * 8), triplicadoDist + alturaCabecera + (espacio * 3), ancho - (espacioPeque * 8), alturaCabecera + alturaDetalle + (espacio * 3));//SUBTOTAL
+            g.drawLine(10, (triplicadoDist + alturaCabecera + espacio + espacio), (ancho - 10), (triplicadoDist + alturaCabecera + espacio + espacio));//CABECERA
+            g.drawLine(70, (triplicadoDist + alturaCabecera + espacio), 70, (triplicadoDist+alturaCabecera + alturaDetalle + espacio));//CANTIDAD
+            g.drawLine(ancho - (espacioPeque * 25), (triplicadoDist + alturaCabecera + espacio), ancho - (espacioPeque * 25), (triplicadoDist + alturaCabecera + alturaDetalle + espacio));//PRECIO
+            g.drawLine(ancho - (espacioPeque * 20), (triplicadoDist + alturaCabecera + espacio), ancho - (espacioPeque * 20), (triplicadoDist + alturaCabecera + alturaDetalle + espacio));//EXENTA
+            g.drawLine(ancho - (espacioPeque * 14), (triplicadoDist + alturaCabecera + espacio), ancho - (espacioPeque * 14), (triplicadoDist + alturaCabecera + alturaDetalle + espacio));//IVA5
+            g.drawLine(ancho - (espacioPeque * 8), (triplicadoDist + alturaCabecera + espacio), ancho - (espacioPeque * 8), (triplicadoDist + alturaCabecera + alturaDetalle + espacio));//IVA10        
+            g.drawLine(ancho - (espacioPeque * 20), (triplicadoDist + alturaCabecera + (espacio * 2)), ancho - (espacioPeque * 20), (triplicadoDist + alturaCabecera + alturaDetalle + (espacio * 2)));//SUBTOTAL EXENTA
+            g.drawLine(ancho - (espacioPeque * 14), (triplicadoDist + alturaCabecera + (espacio * 2)), ancho - (espacioPeque * 14), (triplicadoDist + alturaCabecera + alturaDetalle + (espacio * 2)));//SUBTOTAL IVA5
+            g.drawLine(ancho - (espacioPeque * 8), (triplicadoDist + alturaCabecera + (espacio * 2)), ancho - (espacioPeque * 8), (triplicadoDist + alturaCabecera + alturaDetalle + (espacio * 2)));//SUBTOTAL IVA10
+            g.drawLine(ancho - (espacioPeque * 8), (triplicadoDist + alturaCabecera + (espacio * 3)), ancho - (espacioPeque * 8), (triplicadoDist + alturaCabecera + alturaDetalle + (espacio * 3)));//SUBTOTAL
             g.drawString("CANT", 20, triplicadoDist + alturaCabecera + espacio + 15);
             g.drawString("PRODUCTO", 100, triplicadoDist + alturaCabecera + espacio + 15);
             g.drawString("PRECIO", ancho - (espacioPeque * 24), triplicadoDist + alturaCabecera + 5 + espacioPeque * 3);

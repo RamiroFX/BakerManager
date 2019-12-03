@@ -151,7 +151,7 @@ public class V_gestionVentas extends JInternalFrame {
         jbResumen.setFont(CommonFormat.fuente);
         jbResumen.setEnabled(false);
         jbFacturar = new JButton("Facturar");
-        jbFacturar.setName("facturacion");
+        jbFacturar.setName("facturar venta");
         jbFacturar.setMargin(insets);
         jbFacturar.setFont(CommonFormat.fuente);
         jbHistorialFacturacion = new JButton("Historial de facturación");
