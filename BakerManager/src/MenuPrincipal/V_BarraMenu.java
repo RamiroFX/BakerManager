@@ -21,7 +21,8 @@ public class V_BarraMenu extends JMenuBar {
 
     public JMenu jmInicio, jmAyuda, jmHerramientas, jmOpciones;
     public JMenuItem jmiCerrar, jmiAcerca, jmiPersonalizar, jmiConfigImpresion,
-            jmiConfigImpresionTicket, jmiConfigImpresionBoleta, jmiEmpresa;
+            jmiConfigImpresionTicket, jmiConfigImpresionBoleta, jmiEmpresa, 
+            jmiProduccion;
     //public JMenuItem  jmiLogIn,jmiLogOut, jmiMenuPrincipal;
     private V_inicio frame; //referencia al frame principal.
     //private boolean loginActivo=true;
@@ -88,9 +89,12 @@ public class V_BarraMenu extends JMenuBar {
         if (jmOpciones == null) {
             jmOpciones = new JMenu("Opciones");
             jmiEmpresa = new JMenuItem("Empresa");
+            //TODO remove
+            jmiProduccion= new JMenuItem("Produccion");
             jmiEmpresa.setEnabled(false);
             jmiEmpresa.setName("configuracion empresa");
             jmOpciones.add(jmiEmpresa);
+            jmOpciones.add(jmiProduccion);
         }
         return jmOpciones;
     }

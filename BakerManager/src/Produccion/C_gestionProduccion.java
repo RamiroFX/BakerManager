@@ -31,6 +31,10 @@ public class C_gestionProduccion implements GestionInterface {
 
     @Override
     public final void inicializarVista() {
+        E_productoClasificacion pc1 = new E_productoClasificacion(E_productoClasificacion.MATERIA_PRIMA, "Materia prima");
+        E_productoClasificacion pc2 = new E_productoClasificacion(E_productoClasificacion.PRODUCTO_TERMINADO, "Producto terminado");
+        this.vista.jcbCondVenta.addItem(pc1);
+        this.vista.jcbCondVenta.addItem(pc2);
     }
 
     @Override
@@ -54,7 +58,6 @@ public class C_gestionProduccion implements GestionInterface {
         } catch (PropertyVetoException ex) {
         }
     }
-
 
     @Override
     public void actionPerformed(ActionEvent e) {
