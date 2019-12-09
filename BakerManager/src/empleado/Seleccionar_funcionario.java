@@ -6,6 +6,7 @@ package Empleado;
 
 import Interface.RecibirEmpleadoCallback;
 import bakermanager.V_inicio;
+import javax.swing.JDialog;
 
 /**
  *
@@ -18,6 +19,10 @@ public class Seleccionar_funcionario {
 
     public Seleccionar_funcionario(V_inicio v_inicio) {
         this.vista = new V_seleccionar_funcionario(v_inicio);
+        this.controlador = new C_seleccionar_funcionario(vista);
+    }
+    public Seleccionar_funcionario(JDialog dialog) {
+        this.vista = new V_seleccionar_funcionario(dialog);
         this.controlador = new C_seleccionar_funcionario(vista);
     }
 

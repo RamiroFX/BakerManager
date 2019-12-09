@@ -9,43 +9,45 @@ package Entities;
  *
  * @author Ramiro Ferreira
  */
-public class E_banco {
+public class E_Divisa {
 
     private int id;
     private String descripcion;
-    private String observacion;
-    private Estado estado;
 
+    public E_Divisa() {
+    }
+
+    public E_Divisa(int id, String descripcion) {
+        this.id = id;
+        this.descripcion = descripcion;
+    }
+
+    /**
+     * @return the id
+     */
     public int getId() {
         return id;
     }
 
+    /**
+     * @param id the id to set
+     */
     public void setId(int id) {
         this.id = id;
     }
 
+    /**
+     * @return the descripcion
+     */
     public String getDescripcion() {
         return descripcion;
     }
 
+    /**
+     * @param descripcion the descripcion to set
+     */
     public void setDescripcion(String descripcion) {
         this.descripcion = descripcion;
-    }
-
-    public String getObservacion() {
-        return observacion;
-    }
-
-    public void setObservacion(String observacion) {
-        this.observacion = observacion;
-    }
-
-    public Estado getEstado() {
-        return estado;
-    }
-
-    public void setEstado(Estado estado) {
-        this.estado = estado;
     }
 
     @Override

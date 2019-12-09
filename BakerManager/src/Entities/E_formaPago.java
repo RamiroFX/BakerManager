@@ -11,6 +11,7 @@ package Entities;
  */
 public class E_formaPago {
 
+    public static final int EFECTIVO = 1, TARJETA = 2, CHEQUE = 3;
     private int id;
     private String descripcion;
 

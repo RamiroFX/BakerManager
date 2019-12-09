@@ -59,9 +59,6 @@ public class V_crearVentas extends JDialog {
                 new DateFormatter(new SimpleDateFormat("dd/MM/yyyy hh:mm:ss"))));
         jftTiempo.setFont(new java.awt.Font("Monospaced", 1, 14));
         jftTiempo.setFocusable(false);
-        // setFecha(new Date());
-        //jftFecha.setText("00/00/00");
-        //jftFecha.setText(DateFormat.getDateInstance().format(getFecha()));
         jftTiempo.setEditable(false);
         jftTiempo.setPreferredSize(new Dimension(250, 30));
         jpNorth.add(new JLabel("Funcionario: "));

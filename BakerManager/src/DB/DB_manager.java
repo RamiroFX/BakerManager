@@ -4,7 +4,11 @@
  */
 package DB;
 
+import Entities.E_Divisa;
 import Entities.E_Empresa;
+import Entities.E_banco;
+import Entities.E_formaPago;
+import Entities.E_tipoCheque;
 import Entities.E_tipoOperacion;
 import Entities.Estado;
 import Entities.M_campoImpresion;
@@ -1564,6 +1568,82 @@ public class DB_manager {
             }
         }
         return result;
+    }
+
+    public static ArrayList<E_formaPago> obtenerFormaPagos() {
+        ArrayList<E_formaPago> formaPagos = null;
+        String q = "SELECT * FROM forma_pago ";
+        try {
+            st = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            rs = st.executeQuery(q);
+            formaPagos = new ArrayList();
+            while (rs.next()) {
+                E_formaPago e = new E_formaPago();
+                e.setId(rs.getInt("id_forma_pago"));
+                e.setDescripcion(rs.getString("descripcion"));
+                formaPagos.add(e);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return formaPagos;
+    }
+
+    public static ArrayList<E_Divisa> obtenerDivisas() {
+        ArrayList<E_Divisa> divisas = null;
+        String q = "SELECT * FROM divisa ";
+        try {
+            st = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            rs = st.executeQuery(q);
+            divisas = new ArrayList();
+            while (rs.next()) {
+                E_Divisa e = new E_Divisa();
+                e.setId(rs.getInt("id_divisa"));
+                e.setDescripcion(rs.getString("descripcion"));
+                divisas.add(e);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return divisas;
+    }
+
+    public static ArrayList<E_banco> obtenerBancos() {
+        ArrayList<E_banco> bancos = null;
+        String q = "SELECT * FROM banco ";
+        try {
+            st = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            rs = st.executeQuery(q);
+            bancos = new ArrayList();
+            while (rs.next()) {
+                E_banco e = new E_banco();
+                e.setId(rs.getInt("id_banco"));
+                e.setDescripcion(rs.getString("descripcion"));
+                bancos.add(e);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return bancos;
+    }
+
+    public static ArrayList<E_tipoCheque> obtenerTipoCheques() {
+        ArrayList<E_tipoCheque> tipoCheques = null;
+        String q = "SELECT * FROM tipo_cheque ";
+        try {
+            st = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            rs = st.executeQuery(q);
+            tipoCheques = new ArrayList();
+            while (rs.next()) {
+                E_tipoCheque e = new E_tipoCheque();
+                e.setId(rs.getInt("id_tipo_cheque"));
+                e.setDescripcion(rs.getString("descripcion"));
+                tipoCheques.add(e);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return tipoCheques;
     }
 
 }

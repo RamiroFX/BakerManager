@@ -41,6 +41,17 @@ public class V_seleccionar_funcionario extends JDialog {
         getContentPane().add(jpBotones, BorderLayout.SOUTH);
     }
 
+    public V_seleccionar_funcionario(JDialog dialog) {
+        super(dialog, "Seleccionar funcionario", true);
+        setSize(600, 400);
+        setLocationRelativeTo(dialog);
+        initComp();
+        getContentPane().setLayout(new BorderLayout());
+        getContentPane().add(jpNorth, BorderLayout.NORTH);
+        getContentPane().add(jspCliente, BorderLayout.CENTER);
+        getContentPane().add(jpBotones, BorderLayout.SOUTH);
+    }
+
     private void initComp() {
         jtCliente = new JTable();
         jtCliente.getTableHeader().setReorderingAllowed(false);

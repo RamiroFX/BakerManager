@@ -5,7 +5,7 @@
  */
 package DB;
 
-import Entities.Divisa;
+import Entities.E_Divisa;
 import Entities.E_impresionOrientacion;
 import Entities.E_impresionTipo;
 import Entities.E_preferenciaGeneral;
@@ -231,7 +231,7 @@ public class DB_Preferencia {
             pst = DB_manager.getConection().prepareStatement(Query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             rs = pst.executeQuery();
             while (rs.next()) {
-                Divisa d = new Divisa();
+                E_Divisa d = new E_Divisa();
                 d.setId(rs.getInt("id_divisa"));
                 d.setDescripcion(rs.getString("divisa_descripcion"));
                 E_impresionOrientacion o = new E_impresionOrientacion();
@@ -287,7 +287,7 @@ public class DB_Preferencia {
             pst = DB_manager.getConection().prepareStatement(Query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             rs = pst.executeQuery();
             while (rs.next()) {
-                Divisa d = new Divisa();
+                E_Divisa d = new E_Divisa();
                 d.setId(rs.getInt("id_divisa"));
                 d.setDescripcion(rs.getString("divisa_descripcion"));
                 E_impresionOrientacion o = new E_impresionOrientacion();

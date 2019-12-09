@@ -6,7 +6,7 @@
 package Configuracion;
 
 import DB.DB_Preferencia;
-import Entities.Divisa;
+import Entities.E_Divisa;
 import Entities.E_impresionOrientacion;
 import Entities.M_campoImpresion;
 import Entities.M_preferenciasImpresion;
@@ -88,7 +88,7 @@ public class C_configuracionBoleta extends MouseAdapter implements ActionListene
         for (int i = 1; i < modelo.getMaxLetterSize(); i++) {
             this.vista.jcbTamañoLetra.addItem(i);
         }
-        this.vista.jcbMoneda.addItem(new Divisa(1, "Guaraní/es"));
+        this.vista.jcbMoneda.addItem(new E_Divisa(1, "Guaraní/es"));
         this.vista.jtfDistanciaEntreCopias.setText(modelo.getPreferenciasImpresion().getDistanceBetweenCopies() + "");
         this.vista.jtfTipoLetra.setText(modelo.getPreferenciasImpresion().getLetterFont());
         this.vista.jcbCantProd.setSelectedItem(modelo.getPreferenciasImpresion().getMaxProducts());
@@ -379,7 +379,7 @@ public class C_configuracionBoleta extends MouseAdapter implements ActionListene
         pi.setLargoPagina(largoPagina);
         pi.setMargenX(margenX);
         pi.setMargenY(margenY);
-        pi.setDivisa(new Divisa(1, "Guaraní/es"));
+        pi.setDivisa(new E_Divisa(1, "Guaraní/es"));
         if (this.vista.jchkDuplicado.isSelected()) {
             pi.setIdDuplicado(1);
         } else {

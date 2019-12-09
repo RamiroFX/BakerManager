@@ -9,15 +9,16 @@ package Entities;
  *
  * @author Ramiro Ferreira
  */
-public class Divisa {
+public class E_tipoCheque {
 
+    public static final int A_LA_ORDEN = 1, CRUZADO = 2, AL_PORTADOR = 3, DIFERIDO = 4;
     private int id;
     private String descripcion;
 
-    public Divisa() {
+    public E_tipoCheque() {
     }
 
-    public Divisa(int id, String descripcion) {
+    public E_tipoCheque(int id, String descripcion) {
         this.id = id;
         this.descripcion = descripcion;
     }
@@ -54,5 +55,4 @@ public class Divisa {
     public String toString() {
         return getDescripcion();
     }
-
 }

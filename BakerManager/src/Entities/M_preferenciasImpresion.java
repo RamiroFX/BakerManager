@@ -25,7 +25,7 @@ public class M_preferenciasImpresion {
     private String letterFont;
     private String formatoFecha;
     private String nombreImpresora;
-    private Divisa divisa;
+    private E_Divisa divisa;
     private E_impresionOrientacion orientacion;
 
     /**
@@ -140,11 +140,11 @@ public class M_preferenciasImpresion {
         this.letterFont = letterFont;
     }
 
-    public Divisa getDivisa() {
+    public E_Divisa getDivisa() {
         return divisa;
     }
 
-    public void setDivisa(Divisa divisa) {
+    public void setDivisa(E_Divisa divisa) {
         this.divisa = divisa;
     }
 
