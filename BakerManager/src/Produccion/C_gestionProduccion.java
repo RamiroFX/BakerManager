@@ -39,6 +39,8 @@ public class C_gestionProduccion implements GestionInterface {
 
     @Override
     public final void concederPermisos() {
+        //TODO add access
+        this.vista.jbAgregar.addActionListener(this);
     }
 
     private void verificarPermiso() {
@@ -61,6 +63,11 @@ public class C_gestionProduccion implements GestionInterface {
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        Object source = e.getSource();
+        if (source.equals(this.vista.jbAgregar)) {
+            CrearProduccion cp = new CrearProduccion(c_inicio);
+            cp.mostrarVista();
+        }
     }
 
     @Override

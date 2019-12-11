@@ -5,6 +5,7 @@
 package Producto;
 
 import Egresos.C_crear_egreso;
+import Interface.RecibirProductoCallback;
 import Pedido.C_crearPedido;
 import Pedido.C_verPedido;
 import Ventas.C_crearVentaRapida;
@@ -43,6 +44,11 @@ public class SeleccionarProducto {
     public SeleccionarProducto(C_verPedido verPedido) {
         vista = new V_seleccionarProducto(verPedido.vista);
         controlador = new C_seleccionarProducto(vista, verPedido);
+    }
+
+    public SeleccionarProducto(JDialog main, RecibirProductoCallback callback) {
+        vista = new V_seleccionarProducto(main);
+        controlador = new C_seleccionarProducto(vista, callback);
     }
 
     public void mostrarVista() {

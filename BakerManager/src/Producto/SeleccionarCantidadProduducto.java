@@ -10,6 +10,7 @@ import Entities.M_facturaDetalle;
 import Entities.M_menu_item;
 import Entities.M_pedidoDetalle;
 import Entities.M_producto;
+import Interface.RecibirProductoCallback;
 import MenuPrincipal.DatosUsuario;
 import Pedido.C_crearPedido;
 import Pedido.C_verPedido;
@@ -23,6 +24,7 @@ import java.awt.event.KeyListener;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import net.miginfocom.swing.MigLayout;
 
@@ -58,6 +60,7 @@ public class SeleccionarCantidadProduducto extends javax.swing.JDialog implement
     Double descuento;
     Integer precio;
     String observacion;
+    RecibirProductoCallback callback;
 
     public SeleccionarCantidadProduducto(C_seleccionarProducto selecProd, M_producto producto) {
         super(selecProd.vista, true);
@@ -69,6 +72,22 @@ public class SeleccionarCantidadProduducto extends javax.swing.JDialog implement
         tipo = selecProd.tipo;//CREAR EGRESO
         initComponents();
         inicializarVista(producto);
+    }
+
+    public SeleccionarCantidadProduducto(JDialog vista, M_producto producto, RecibirProductoCallback callback) {
+        super(vista, true);
+        setTitle("Seleccione una cantidad");
+        setSize(new java.awt.Dimension(300, 250));
+        setLocationRelativeTo(selecProd.vista);
+        this.producto = selecProd.producto;
+        this.callback = callback;
+        tipo = 999;//CREAR EGRESO
+        initComponents();
+        inicializarVista(producto);
+    }
+
+    public void setCallback(RecibirProductoCallback callback) {
+        this.callback = callback;
     }
 
     public SeleccionarCantidadProduducto(C_crear_egreso crear_egreso, int row, M_producto producto) {
@@ -274,6 +293,12 @@ public class SeleccionarCantidadProduducto extends javax.swing.JDialog implement
             }
             if (observacion.isEmpty()) {
                 observacion = null;
+            }
+            //TODO remove
+            if (callback != null) {
+                callback.recibirProducto(cantidad, precio, descuento, producto, observacion);
+                dispose();
+                return;
             }
             switch (tipo) {
                 case (C_seleccionarProducto.CREAR_INGRESO_RAPIDO): {

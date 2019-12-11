@@ -8,7 +8,6 @@ import DB.DB_Egreso;
 import DB.DB_Ingreso;
 import DB.DB_Pedido;
 import DB.DB_Preferencia;
-import DB.DB_manager;
 import Entities.E_impresionTipo;
 import Entities.M_pedido;
 import Entities.M_pedidoDetalle;

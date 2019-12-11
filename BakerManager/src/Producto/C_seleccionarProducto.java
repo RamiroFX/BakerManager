@@ -10,6 +10,7 @@ import Egresos.C_crear_egreso;
 import Entities.M_menu_item;
 import Entities.M_producto;
 import Entities.M_proveedor;
+import Interface.RecibirProductoCallback;
 import MenuPrincipal.DatosUsuario;
 import Pedido.C_crearPedido;
 import Pedido.C_verPedido;
@@ -53,6 +54,16 @@ public class C_seleccionarProducto extends MouseAdapter implements ActionListene
     C_verMesa verMesa;
     C_crearPedido crearPedido;
     C_verPedido verPedido;
+
+    private RecibirProductoCallback callback;
+
+    public C_seleccionarProducto(V_seleccionarProducto vista, RecibirProductoCallback callback) {
+        this.tipo = CREAR_EGRESO;
+        this.callback = callback;
+        this.vista = vista;
+        inicializarVista();
+        agregarListeners();
+    }
 
     public C_seleccionarProducto(V_seleccionarProducto vista, C_crear_egreso c_egresos) {
         this.tipo = CREAR_EGRESO;
@@ -228,6 +239,7 @@ public class C_seleccionarProducto extends MouseAdapter implements ActionListene
             producto = DB_Producto.obtenerDatosProductoID(idProducto);
             vista.jbAceptar.setEnabled(true);
             SeleccionarCantidadProduducto scp = new SeleccionarCantidadProduducto(this, producto);
+            scp.setCallback(callback);
             scp.setVisible(true);
             vista.jtfBuscar.requestFocusInWindow();
         }/*
@@ -253,6 +265,7 @@ public class C_seleccionarProducto extends MouseAdapter implements ActionListene
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == this.vista.jbAceptar) {
             SeleccionarCantidadProduducto scp = new SeleccionarCantidadProduducto(this, producto);
+            scp.setCallback(callback);
             scp.setVisible(true);
             this.vista.jtfBuscar.requestFocusInWindow();
             SwingUtilities.invokeLater(new Runnable() {
@@ -295,6 +308,7 @@ public class C_seleccionarProducto extends MouseAdapter implements ActionListene
             this.vista.jbAceptar.setEnabled(true);
             if (e.getClickCount() == 2) {
                 SeleccionarCantidadProduducto scp = new SeleccionarCantidadProduducto(this, producto);
+                scp.setCallback(callback);
                 scp.setVisible(true);
                 this.vista.jtfBuscar.requestFocusInWindow();
             }
