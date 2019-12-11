@@ -29,11 +29,18 @@ public class M_crearProduccion {
         return tm;
     }
 
-    public void agregarDetalle(double cantidad,M_producto producto) {
+    public void agregarDetalle(double cantidad, M_producto producto) {
         E_produccionDetalle produccion = new E_produccionDetalle();
         produccion.setCantidad(cantidad);
         produccion.setProducto(producto);
         getTm().agregarDetalle(produccion);
     }
 
+    public void modificarDetalle(int index, double cantidad) {
+        getTm().modificarCantidadDetalle(index, cantidad);
+    }
+
+    public void removerDetalle(int index) {
+        getTm().quitarDetalle(index);
+    }
 }

@@ -4,7 +4,7 @@
  */
 package Produccion;
 
-import Pedido.*;
+import Entities.Estado;
 import Interface.CommonFormat;
 import com.toedter.calendar.JDateChooser;
 import java.awt.Dimension;
@@ -30,10 +30,10 @@ import net.miginfocom.swing.MigLayout;
 public class V_gestionProduccion extends JInternalFrame {
 
     public JButton jbBuscar, jbBuscarDetalle, jbBorrar, jbAgregar, jbDetalle,
-            jbResumen, jbCliente, jbEmpleado, jbCancelarPedido
-            ,jbCharts;
+            jbResumen, jbCliente, jbEmpleado, jbCancelarPedido, jbCharts;
     public JTextField jtfNroPedido, jtfCliente, jtfEmpleado;
-    public JComboBox jcbEmpleado, jcbCondVenta, jcbEstadoPedido;
+    public JComboBox jcbEmpleado, jcbCondVenta;
+    public JComboBox<Estado> jcbEstado;
     private JPanel jpTop, jpBotonesTop, jpBot;
     public JTable jtPedido, jtPedidoDetalle;
     private JScrollPane jspEgresoCabecera, jspEgresoDetalle;
@@ -70,7 +70,7 @@ public class V_gestionProduccion extends JInternalFrame {
         jtfEmpleado.setPreferredSize(new Dimension(250, 10));
         jtfEmpleado.setEditable(false);
         jcbCondVenta = new JComboBox();
-        jcbEstadoPedido = new JComboBox();
+        jcbEstado = new JComboBox();
         jtfNroPedido = new JTextField();
         jddInicio = new JDateChooser();
         jddInicio.setPreferredSize(new Dimension(150, 10));
@@ -83,7 +83,7 @@ public class V_gestionProduccion extends JInternalFrame {
         jpFiltros.add(new JLabel("Cond. compra:"));
         jpFiltros.add(jcbCondVenta);
         jpFiltros.add(new JLabel("Estado:"));
-        jpFiltros.add(jcbEstadoPedido, "wrap");
+        jpFiltros.add(jcbEstado, "wrap");
         jpFiltros.add(jbEmpleado);
         jpFiltros.add(jtfEmpleado, "growx");
         jpFiltros.add(new JLabel("Fecha final:"));
@@ -103,7 +103,7 @@ public class V_gestionProduccion extends JInternalFrame {
         jbBorrar = new JButton("Borrar");
         jbBuscarDetalle = new JButton("Buscar por detalle");
         jpBotonesTop.add(jbBuscar, "span, growx, wrap");
-        jpBotonesTop.add(jbBorrar,"growx");
+        jpBotonesTop.add(jbBorrar, "growx");
         jpBotonesTop.add(jbBuscarDetalle, "span, growx");
         //jpTop.add(jpJtextFieldTop, "pushx");
         jpTop.add(jpFiltros);

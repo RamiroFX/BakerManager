@@ -4,12 +4,14 @@
  */
 package Produccion;
 
+import Entities.Estado;
 import Interface.GestionInterface;
 import bakermanager.C_inicio;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.beans.PropertyVetoException;
+import java.util.ArrayList;
 
 /**
  *
@@ -35,6 +37,11 @@ public class C_gestionProduccion implements GestionInterface {
         E_productoClasificacion pc2 = new E_productoClasificacion(E_productoClasificacion.PRODUCTO_TERMINADO, "Producto terminado");
         this.vista.jcbCondVenta.addItem(pc1);
         this.vista.jcbCondVenta.addItem(pc2);
+        ArrayList<Estado> estados = modelo.obtenerEstados();
+        for (int i = 0; i < estados.size(); i++) {
+            Estado get = estados.get(i);
+            this.vista.jcbEstado.addItem(get);
+        }
     }
 
     @Override

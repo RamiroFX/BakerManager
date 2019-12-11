@@ -84,6 +84,12 @@ public class ProduccionTableModel extends AbstractTableModel {
         fireTableDataChanged();
     }
 
+    public void modificarCantidadDetalle(int index, double cantidad) {
+        this.produccionList.get(index).setCantidad(cantidad);
+        fireTableCellUpdated(index, 0);
+        fireTableDataChanged();
+    }
+
     public void quitarDetalle(int index) {
         this.produccionList.remove(index);
         fireTableDataChanged();

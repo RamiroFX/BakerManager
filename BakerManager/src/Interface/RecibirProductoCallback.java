@@ -15,4 +15,6 @@ public interface RecibirProductoCallback {
 
     public void recibirProducto(double cantidad, int precio, double descuento, M_producto producto, String observacion);
 
+    public void modificarProducto(int posicion, double cantidad, int precio, double descuento, M_producto producto, String observacion);
+
 }

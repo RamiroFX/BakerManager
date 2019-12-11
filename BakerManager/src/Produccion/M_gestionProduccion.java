@@ -5,7 +5,10 @@
 package Produccion;
 
 import DB.DB_Egreso;
+import DB.DB_manager;
+import Entities.Estado;
 import ModeloTabla.ProduccionTableModel;
+import java.util.ArrayList;
 import java.util.Vector;
 
 /**
@@ -29,10 +32,14 @@ public class M_gestionProduccion {
     }
 
     public void borrarDatos() {
-        
+
     }
 
     Vector obtenerTipoOperacion() {
         return DB_Egreso.obtenerTipoOperacion();
+    }
+
+    public ArrayList<Estado> obtenerEstados() {
+        return DB_manager.obtenerEstados();
     }
 }

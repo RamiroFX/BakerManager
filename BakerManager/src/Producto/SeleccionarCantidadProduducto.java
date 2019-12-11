@@ -67,6 +67,7 @@ public class SeleccionarCantidadProduducto extends javax.swing.JDialog implement
         setTitle("Seleccione una cantidad");
         setSize(new java.awt.Dimension(300, 250));
         setLocationRelativeTo(selecProd.vista);
+        this.row = -1;
         this.selecProd = selecProd;
         this.producto = selecProd.producto;
         tipo = selecProd.tipo;//CREAR EGRESO
@@ -74,13 +75,14 @@ public class SeleccionarCantidadProduducto extends javax.swing.JDialog implement
         inicializarVista(producto);
     }
 
-    public SeleccionarCantidadProduducto(JDialog vista, M_producto producto, RecibirProductoCallback callback) {
+    public SeleccionarCantidadProduducto(JDialog vista, M_producto producto, RecibirProductoCallback callback, int index) {
         super(vista, true);
         setTitle("Seleccione una cantidad");
         setSize(new java.awt.Dimension(300, 250));
-        setLocationRelativeTo(selecProd.vista);
-        this.producto = selecProd.producto;
+        setLocationRelativeTo(vista);
+        this.producto = producto;
         this.callback = callback;
+        this.row = index;
         tipo = 999;//CREAR EGRESO
         initComponents();
         inicializarVista(producto);
@@ -296,7 +298,11 @@ public class SeleccionarCantidadProduducto extends javax.swing.JDialog implement
             }
             //TODO remove
             if (callback != null) {
-                callback.recibirProducto(cantidad, precio, descuento, producto, observacion);
+                if (row > -1) {
+                    callback.modificarProducto(row, cantidad, precio, descuento, producto, observacion);
+                } else {
+                    callback.recibirProducto(cantidad, precio, descuento, producto, observacion);
+                }
                 dispose();
                 return;
             }

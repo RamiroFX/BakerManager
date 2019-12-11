@@ -5,38 +5,20 @@
  */
 package Produccion;
 
-import Cliente.Seleccionar_cliente;
 import Empleado.Seleccionar_funcionario;
-import Entities.M_cliente;
 import Entities.M_funcionario;
-import Entities.M_pedidoDetalle;
 import Entities.M_producto;
-import Impresora.Impresora;
-import Interface.RecibirClienteCallback;
 import Interface.RecibirEmpleadoCallback;
 import Interface.RecibirProductoCallback;
-import MenuPrincipal.DatosUsuario;
-import Parametros.PedidoEstado;
-import Parametros.TipoOperacion;
-import Pedido.C_gestionPedido;
-import Pedido.M_crearPedido;
-import Pedido.V_crearPedido;
 import Producto.SeleccionarCantidadProduducto;
 import Producto.SeleccionarProducto;
-import com.nitido.utils.toaster.Toaster;
-import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
-import java.util.Vector;
-import javax.swing.JOptionPane;
 
 /**
  *
@@ -59,31 +41,18 @@ class C_crearProduccion extends MouseAdapter implements ActionListener, KeyListe
     }
 
     private void cerrar() {
-        /*if (!this.modelo.getDetalles().isEmpty()) {
-            int opcion = JOptionPane.showConfirmDialog(vista, "Hay producto cargados, ¿Desea cancelar?", "Atención", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
-            if (opcion == JOptionPane.YES_OPTION) {
-                this.vista.dispose();
-            }
-        }*/
+        //TODO controlar que no existan productos cargados antes de cerrar la ventana
         this.vista.dispose();
     }
 
     private void inicializarVista() {
         this.vista.jtProduccionDetalle.setModel(modelo.getTm());
-        /*Vector condCompra = modelo.obtenerTipoOperacion();
-        for (int i = 0; i < condCompra.size(); i++) {
-            this.vista.jcbCondVenta.addItem(condCompra.get(i));
-        }*/
- /*Vector tipoVenta = modelo.obtenerTipoVenta();
-        for (int i = 0; i < tipoVenta.size(); i++) {
-            this.vista.jcbTipoVenta.addItem(tipoVenta.get(i));
-        }*/
-        this.vista.jtfNroOrdenTrabajo.setEnabled(false);
+        E_productoClasificacion pc1 = new E_productoClasificacion(E_productoClasificacion.MATERIA_PRIMA, "Materia prima");
+        E_productoClasificacion pc2 = new E_productoClasificacion(E_productoClasificacion.PRODUCTO_TERMINADO, "Producto terminado");
+        this.vista.jcbCondVenta.addItem(pc1);
+        this.vista.jcbCondVenta.addItem(pc2);
         this.vista.jbModificarDetalle.setEnabled(false);
         this.vista.jbEliminarDetalle.setEnabled(false);
-        java.awt.Font fuente = new java.awt.Font("Times New Roman", 0, 18);
-        javax.swing.text.DefaultFormatterFactory dff = new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(java.text.NumberFormat.getCurrencyInstance()));
-
         Calendar calendar = Calendar.getInstance();
         this.vista.jdcFechaEntrega.setDate(calendar.getTime());
         establecerCondicionVenta();
@@ -108,13 +77,20 @@ class C_crearProduccion extends MouseAdapter implements ActionListener, KeyListe
     private void establecerCondicionVenta() {
     }
 
-    public void recibirDetalle(M_pedidoDetalle detalle) {
-    }
-
     private void eliminarDetalle() {
+        int fila = this.vista.jtProduccionDetalle.getSelectedRow();
+        if (fila > -1) {
+            modelo.removerDetalle(fila);
+        }
     }
 
-    public void modificarDetalle(Double cantidad, Integer precio, Double descuento, String observacion, int row) {
+    public void modificarDetalle() {
+        int fila = this.vista.jtProduccionDetalle.getSelectedRow();
+        if (fila > -1) {
+            M_producto producto = modelo.getTm().getList().get(fila).getProducto();
+            SeleccionarCantidadProduducto scp = new SeleccionarCantidadProduducto(this.vista, producto, this, fila);
+            scp.setVisible(true);
+        }
     }
 
     private void sumarTotal() {
@@ -147,8 +123,7 @@ class C_crearProduccion extends MouseAdapter implements ActionListener, KeyListe
         } else if (source.equals(this.vista.jbEliminarDetalle)) {
             eliminarDetalle();
         } else if (source.equals(this.vista.jbModificarDetalle)) {
-            /*SeleccionarCantidadProduducto scp = new SeleccionarCantidadProduducto(this, this.vista.jtPedidoDetalle.getSelectedRow());
-            scp.setVisible(true);*/
+            modificarDetalle();
         } else if (source.equals(this.vista.jbSalir)) {
             cerrar();
         }
@@ -178,14 +153,14 @@ class C_crearProduccion extends MouseAdapter implements ActionListener, KeyListe
                 break;
             }
             case KeyEvent.VK_F3: {
-                /*Seleccionar_cliente sc = new Seleccionar_cliente(this.gestionPedido.c_inicio.vista);
-                sc.setCallback(this);
-                sc.mostrarVista();*/
+                Seleccionar_funcionario sf = new Seleccionar_funcionario(this.vista);
+                sf.setCallback(this);
+                sf.mostrarVista();
                 break;
             }
             case KeyEvent.VK_F4: {
-                /*SeleccionarProducto sp = new SeleccionarProducto(this);
-                sp.mostrarVista();*/
+                SeleccionarProducto sp = new SeleccionarProducto(vista, this);
+                sp.mostrarVista();
                 break;
             }
             case KeyEvent.VK_ESCAPE: {
@@ -207,5 +182,10 @@ class C_crearProduccion extends MouseAdapter implements ActionListener, KeyListe
     @Override
     public void recibirFuncionario(M_funcionario funcionario) {
         this.vista.jtfFuncionario.setText(funcionario.getNombre());
+    }
+
+    @Override
+    public void modificarProducto(int posicion, double cantidad, int precio, double descuento, M_producto producto, String observacion) {
+        modelo.modificarDetalle(posicion, cantidad);
     }
 }
