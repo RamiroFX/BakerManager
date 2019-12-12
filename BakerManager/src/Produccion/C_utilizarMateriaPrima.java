@@ -24,12 +24,12 @@ import java.util.Calendar;
  *
  * @author Ramiro
  */
-class C_crearProduccion extends MouseAdapter implements ActionListener, KeyListener, RecibirEmpleadoCallback, RecibirProductoCallback {
+class C_utilizarMateriaPrima extends MouseAdapter implements ActionListener, KeyListener, RecibirEmpleadoCallback, RecibirProductoCallback {
 
-    public M_crearProduccion modelo;
-    public V_crearProduccion vista;
+    public M_utilizarMateriaPrima modelo;
+    public V_utilizarMateriaPrima vista;
 
-    public C_crearProduccion(M_crearProduccion modelo, V_crearProduccion vista) {
+    public C_utilizarMateriaPrima(M_utilizarMateriaPrima modelo, V_utilizarMateriaPrima vista) {
         this.modelo = modelo;
         this.vista = vista;
         inicializarVista();
@@ -46,21 +46,15 @@ class C_crearProduccion extends MouseAdapter implements ActionListener, KeyListe
     }
 
     private void inicializarVista() {
-        this.vista.jtProduccionDetalle.setModel(modelo.getTm());
-        E_productoClasificacion pc1 = new E_productoClasificacion(E_productoClasificacion.MATERIA_PRIMA, "Productos terminados");
-        E_productoClasificacion pc2 = new E_productoClasificacion(E_productoClasificacion.PRODUCTO_TERMINADO, "Rollos");
-        this.vista.jcbCondVenta.addItem(pc1);
-        this.vista.jcbCondVenta.addItem(pc2);
+        this.vista.jtMateriaPrimaDetalle.setModel(modelo.getTm());
         this.vista.jbModificarDetalle.setEnabled(false);
         this.vista.jbEliminarDetalle.setEnabled(false);
         Calendar calendar = Calendar.getInstance();
         this.vista.jdcFechaEntrega.setDate(calendar.getTime());
-        establecerCondicionVenta();
     }
 
     private void agregarListeners() {
-        this.vista.jtProduccionDetalle.addMouseListener(this);
-        this.vista.jcbCondVenta.addActionListener(this);
+        this.vista.jtMateriaPrimaDetalle.addMouseListener(this);
         this.vista.jbAceptar.addActionListener(this);
         this.vista.jbSeleccionarProducto.addActionListener(this);
         this.vista.jbFuncionario.addActionListener(this);
@@ -71,21 +65,17 @@ class C_crearProduccion extends MouseAdapter implements ActionListener, KeyListe
         this.vista.jbFuncionario.addKeyListener(this);
         this.vista.jbAceptar.addKeyListener(this);
         this.vista.jbSalir.addKeyListener(this);
-        this.vista.jcbCondVenta.addKeyListener(this);
-    }
-
-    private void establecerCondicionVenta() {
     }
 
     private void eliminarDetalle() {
-        int fila = this.vista.jtProduccionDetalle.getSelectedRow();
+        int fila = this.vista.jtMateriaPrimaDetalle.getSelectedRow();
         if (fila > -1) {
             modelo.removerDetalle(fila);
         }
     }
 
     public void modificarDetalle() {
-        int fila = this.vista.jtProduccionDetalle.getSelectedRow();
+        int fila = this.vista.jtMateriaPrimaDetalle.getSelectedRow();
         if (fila > -1) {
             M_producto producto = modelo.getTm().getList().get(fila).getProducto();
             SeleccionarCantidadProduducto scp = new SeleccionarCantidadProduducto(this.vista, producto, this, fila);
@@ -93,26 +83,14 @@ class C_crearProduccion extends MouseAdapter implements ActionListener, KeyListe
         }
     }
 
-    private void sumarTotal() {
-    }
-
-    private void guardarPedido() {
-    }
-
-    private boolean establecerHoraEntrega() {
-        return false;
-    }
-
-    private void imprimir() {
+    private void guardar() {
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         Object source = e.getSource();
         if (source.equals(this.vista.jbAceptar)) {
-            guardarPedido();
-        } else if (source.equals(this.vista.jcbCondVenta)) {
-            establecerCondicionVenta();
+            guardar();
         } else if (source.equals(this.vista.jbSeleccionarProducto)) {
             SeleccionarProducto sp = new SeleccionarProducto(vista, this);
             sp.mostrarVista();
@@ -131,7 +109,7 @@ class C_crearProduccion extends MouseAdapter implements ActionListener, KeyListe
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        if (e.getSource().equals(this.vista.jtProduccionDetalle)) {
+        if (e.getSource().equals(this.vista.jtMateriaPrimaDetalle)) {
             this.vista.jbModificarDetalle.setEnabled(true);
             this.vista.jbEliminarDetalle.setEnabled(true);
         }
@@ -145,11 +123,7 @@ class C_crearProduccion extends MouseAdapter implements ActionListener, KeyListe
     public void keyPressed(KeyEvent e) {
         switch (e.getKeyCode()) {
             case KeyEvent.VK_F1: {
-                guardarPedido();
-                break;
-            }
-            case KeyEvent.VK_F2: {
-                imprimir();
+                guardar();
                 break;
             }
             case KeyEvent.VK_F3: {
@@ -180,12 +154,12 @@ class C_crearProduccion extends MouseAdapter implements ActionListener, KeyListe
     }
 
     @Override
-    public void recibirFuncionario(M_funcionario funcionario) {
-        this.vista.jtfFuncionario.setText(funcionario.getNombre());
+    public void modificarProducto(int posicion, double cantidad, int precio, double descuento, M_producto producto, String observacion) {
+        modelo.modificarDetalle(posicion, cantidad);
     }
 
     @Override
-    public void modificarProducto(int posicion, double cantidad, int precio, double descuento, M_producto producto, String observacion) {
-        modelo.modificarDetalle(posicion, cantidad);
+    public void recibirFuncionario(M_funcionario funcionario) {
+        this.vista.jtfFuncionario.setText(funcionario.getNombre());
     }
 }

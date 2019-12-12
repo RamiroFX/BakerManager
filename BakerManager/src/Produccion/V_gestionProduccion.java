@@ -29,9 +29,10 @@ import net.miginfocom.swing.MigLayout;
  */
 public class V_gestionProduccion extends JInternalFrame {
 
-    public JButton jbBuscar, jbBuscarDetalle, jbBorrar, jbAgregar, jbDetalle,
-            jbResumen, jbCliente, jbEmpleado, jbCancelarPedido, jbCharts;
-    public JTextField jtfNroPedido, jtfCliente, jtfEmpleado;
+    public JButton jbBuscar, jbBuscarDetalle, jbBorrar, jbCrearProduccion,
+            jbRegistroMateriaPrima, jbDetalle,
+            jbResumen, jbEmpleado, jbAnular;
+    public JTextField jtfNroOrdenTrabajo, jtfEmpleado;
     public JComboBox jcbEmpleado, jcbCondVenta;
     public JComboBox<Estado> jcbEstado;
     private JPanel jpTop, jpBotonesTop, jpBot;
@@ -61,43 +62,33 @@ public class V_gestionProduccion extends JInternalFrame {
                 "", // Layout Constraints
                 "[grow][][grow]", // Column constraints
                 "[][shrink 0]"));    // Row constraints);
-        jbCliente = new JButton("Cliente");
-        jtfCliente = new JTextField();
-        jtfCliente.setPreferredSize(new Dimension(250, 10));
-        jtfCliente.setEditable(false);
         jbEmpleado = new JButton("Funcionario");
         jtfEmpleado = new JTextField();
         jtfEmpleado.setPreferredSize(new Dimension(250, 10));
         jtfEmpleado.setEditable(false);
         jcbCondVenta = new JComboBox();
         jcbEstado = new JComboBox();
-        jtfNroPedido = new JTextField();
+        jtfNroOrdenTrabajo = new JTextField();
         jddInicio = new JDateChooser();
         jddInicio.setPreferredSize(new Dimension(150, 10));
         jddFinal = new JDateChooser();
         jddFinal.setPreferredSize(new Dimension(150, 10));
-        jpFiltros.add(jbCliente, "growx");
-        jpFiltros.add(jtfCliente, "growx");
+        jpFiltros.add(jbEmpleado, "growx");
+        jpFiltros.add(jtfEmpleado, "growx");
         jpFiltros.add(new JLabel("Fecha inicio:"));
         jpFiltros.add(jddInicio, "growx");
         jpFiltros.add(new JLabel("Cond. compra:"));
-        jpFiltros.add(jcbCondVenta);
+        jpFiltros.add(jcbCondVenta, "wrap");
         jpFiltros.add(new JLabel("Estado:"));
-        jpFiltros.add(jcbEstado, "wrap");
-        jpFiltros.add(jbEmpleado);
-        jpFiltros.add(jtfEmpleado, "growx");
+        jpFiltros.add(jcbEstado);
         jpFiltros.add(new JLabel("Fecha final:"));
         jpFiltros.add(jddFinal, "growx");
-        jpFiltros.add(new JLabel("Nro. factura:"));
-        jpFiltros.add(jtfNroPedido, "growx");
+        jpFiltros.add(new JLabel("Nro. Orden trabajo:"));
+        jpFiltros.add(jtfNroOrdenTrabajo, "growx");
         jpFiltros.add(new JLabel(), "growx");
         jpFiltros.add(new JLabel(), "growx");
         jpBotonesTop = new JPanel(new MigLayout());
         jpBotonesTop.setBorder(new EtchedBorder(EtchedBorder.RAISED));
-        /*jtfBuscar = new JTextField();
-         jtfBuscar.setHorizontalAlignment(JTextField.CENTER);
-         jtfBuscar.setFont(new java.awt.Font("Times New Roman", 0, 16));
-         jpJtextFieldTop.add(jtfBuscar);*/
         jbBuscar = new JButton("Buscar");
         jbBuscar.setName("buscar produccion");
         jbBorrar = new JButton("Borrar");
@@ -105,7 +96,6 @@ public class V_gestionProduccion extends JInternalFrame {
         jpBotonesTop.add(jbBuscar, "span, growx, wrap");
         jpBotonesTop.add(jbBorrar, "growx");
         jpBotonesTop.add(jbBuscarDetalle, "span, growx");
-        //jpTop.add(jpJtextFieldTop, "pushx");
         jpTop.add(jpFiltros);
         jpTop.add(jpBotonesTop);
         jpTop.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED), "Filtro de busqueda"));
@@ -130,36 +120,31 @@ public class V_gestionProduccion extends JInternalFrame {
     private void initBot() {
         jpBot = new JPanel();
         Insets inset = new Insets(10, 10, 10, 10);
-        jbAgregar = new JButton("Crear produccion [F1]");
-        jbAgregar.setName("crear produccion");
-        jbAgregar.setMargin(inset);
-        jbAgregar.setFont(CommonFormat.fuente);
-        /*jbPagoPedido = new JButton("Pago de pedido");
-        jbPagoPedido.setName("entregar pedido");
-        jbPagoPedido.setMargin(inset);
-        jbPagoPedido.setFont(CommonFormat.fuente);*/
-        jbCancelarPedido = new JButton("Cancelar produccion");
-        jbCancelarPedido.setName("cancelar produccion");
-        jbCancelarPedido.setMargin(inset);
-        jbCancelarPedido.setFont(CommonFormat.fuente);
+        jbCrearProduccion = new JButton("Crear produccion [F1]");
+        jbCrearProduccion.setName("crear produccion");
+        jbCrearProduccion.setMargin(inset);
+        jbCrearProduccion.setFont(CommonFormat.fuente);
+        jbRegistroMateriaPrima = new JButton("Utilizar Materia Prima [F2]");
+        jbRegistroMateriaPrima.setName("utilizar materia prima");
+        jbRegistroMateriaPrima.setMargin(inset);
+        jbRegistroMateriaPrima.setFont(CommonFormat.fuente);
+        jbAnular = new JButton("Cancelar produccion");
+        jbAnular.setName("cancelar produccion");
+        jbAnular.setMargin(inset);
+        jbAnular.setFont(CommonFormat.fuente);
         jbDetalle = new JButton("Ver detalle");
         jbDetalle.setName("modificar produccion");
         jbDetalle.setMargin(inset);
         jbDetalle.setFont(CommonFormat.fuente);
-        jbResumen = new JButton("Ver resumen [F2]");
+        jbResumen = new JButton("Ver resumen [F3]");
         jbResumen.setName("resumen produccion");
         jbResumen.setMargin(inset);
         jbResumen.setFont(CommonFormat.fuente);
-        jbCharts = new JButton("Diagramas [F3]");
-        jbCharts.setName("grafico produccion");
-        jbCharts.setMargin(inset);
-        jbCharts.setFont(CommonFormat.fuente);
-        jpBot.add(jbAgregar);
-        //jpBot.add(jbPagoPedido);
-        jpBot.add(jbCancelarPedido);
+        jpBot.add(jbCrearProduccion);
+        jpBot.add(jbRegistroMateriaPrima);
+        jpBot.add(jbAnular);
         jpBot.add(jbDetalle);
         jpBot.add(jbResumen);
-        jpBot.add(jbCharts);
         jpBot.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED), "Opciones"));
     }
 }

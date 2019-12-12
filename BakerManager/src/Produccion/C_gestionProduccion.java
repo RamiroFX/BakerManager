@@ -47,7 +47,8 @@ public class C_gestionProduccion implements GestionInterface {
     @Override
     public final void concederPermisos() {
         //TODO add access
-        this.vista.jbAgregar.addActionListener(this);
+        this.vista.jbCrearProduccion.addActionListener(this);
+        this.vista.jbRegistroMateriaPrima.addActionListener(this);
     }
 
     private void verificarPermiso() {
@@ -71,9 +72,12 @@ public class C_gestionProduccion implements GestionInterface {
     @Override
     public void actionPerformed(ActionEvent e) {
         Object source = e.getSource();
-        if (source.equals(this.vista.jbAgregar)) {
+        if (source.equals(this.vista.jbCrearProduccion)) {
             CrearProduccion cp = new CrearProduccion(c_inicio);
             cp.mostrarVista();
+        } else if (source.equals(this.vista.jbRegistroMateriaPrima)) {
+            UtilizarMateriaPrima ump = new UtilizarMateriaPrima(c_inicio);
+            ump.mostrarVista();
         }
     }
 
