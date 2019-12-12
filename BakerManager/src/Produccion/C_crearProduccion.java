@@ -19,12 +19,18 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Calendar;
+import javax.swing.JOptionPane;
 
 /**
  *
  * @author Ramiro
  */
 class C_crearProduccion extends MouseAdapter implements ActionListener, KeyListener, RecibirEmpleadoCallback, RecibirProductoCallback {
+
+    private static final String VALIDAR_RESPONSABLE_MSG = "Seleccione un responsable de producción",
+            VALIDAR_ORDEN_TRABAJO_MSG_1 = "Ingrese una orden de trabajo",
+            VALIDAR_ORDEN_TRABAJO_MSG_2 = "Ingrese solo números enteros en orden de trabajo",
+            VALIDAR_TITULO = "Atención";
 
     public M_crearProduccion modelo;
     public V_crearProduccion vista;
@@ -104,6 +110,23 @@ class C_crearProduccion extends MouseAdapter implements ActionListener, KeyListe
     }
 
     private void imprimir() {
+    }
+
+    private boolean validarResponsable() {
+        if (this.vista.jtfFuncionario.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(vista, VALIDAR_RESPONSABLE_MSG, VALIDAR_TITULO, JOptionPane.WARNING_MESSAGE);
+            return false;
+        }
+        return true;
+    }
+
+    private boolean validarOrdenTrabajo() {
+        if (this.vista.jtfNroOrdenTrabajo.getText().trim().isEmpty()) {
+            JOptionPane.showMessageDialog(vista, VALIDAR_ORDEN_TRABAJO_MSG_1, VALIDAR_TITULO, JOptionPane.WARNING_MESSAGE);
+            return false;
+        }
+        //TODO validar numeros enteros y en la bd
+        return true;
     }
 
     @Override
