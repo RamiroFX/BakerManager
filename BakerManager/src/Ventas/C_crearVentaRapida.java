@@ -83,10 +83,16 @@ public class C_crearVentaRapida implements GestionInterface, InterfaceFacturaDet
         this.vista.jftExenta.setFont(fuente); // NOI18N
         this.vista.jftIva5.setFormatterFactory(dff);
         this.vista.jftIva5.setFont(fuente); // NOI18N
+        this.vista.jftImpIva5.setFormatterFactory(dff);
+        this.vista.jftImpIva5.setFont(fuente); // NOI18N
         this.vista.jftIva10.setFormatterFactory(dff);
         this.vista.jftIva10.setFont(fuente); // NOI18N
+        this.vista.jftImpIva10.setFormatterFactory(dff);
+        this.vista.jftImpIva10.setFont(fuente); // NOI18N
         this.vista.jftTotal.setFormatterFactory(dff);
         this.vista.jftTotal.setFont(fuente); // NOI18N
+        this.vista.jftIvaTotal.setFormatterFactory(dff);
+        this.vista.jftIvaTotal.setFont(fuente); // NOI18N
         establecerCondicionVenta();
         establecerTipoVenta();
     }
@@ -256,19 +262,26 @@ public class C_crearVentaRapida implements GestionInterface, InterfaceFacturaDet
 
     private void sumarTotal() {
         Integer exenta = 0;
-        Integer iva5 = 0;
-        Integer iva10 = 0;
+        Integer total5 = 0;
+        Integer total10 = 0;
+        Integer totalIva5 = 0;
+        Integer totalIva10 = 0;
         Integer total = 0;
         for (int i = 0; i < this.modelo.getTableModel().getRowCount(); i++) {
             exenta = exenta + Integer.valueOf(String.valueOf(this.modelo.getTableModel().getValueAt(i, 5)));
-            iva5 = iva5 + Integer.valueOf(String.valueOf(this.modelo.getTableModel().getValueAt(i, 6)));
-            iva10 = iva10 + Integer.valueOf(String.valueOf(this.modelo.getTableModel().getValueAt(i, 7)));
+            total5 = total5 + Integer.valueOf(String.valueOf(this.modelo.getTableModel().getValueAt(i, 6)));
+            total10 = total10 + Integer.valueOf(String.valueOf(this.modelo.getTableModel().getValueAt(i, 7)));
         }
-        total = exenta + iva5 + iva10;
+        total = exenta + total5 + total10;
+        totalIva5 = total5 / 21;
+        totalIva10 = total10 / 11;
         this.vista.jftExenta.setValue(exenta);
-        this.vista.jftIva5.setValue(iva5);
-        this.vista.jftIva10.setValue(iva10);
+        this.vista.jftIva5.setValue(total5);
+        this.vista.jftImpIva5.setValue(totalIva5);
+        this.vista.jftIva10.setValue(total10);
+        this.vista.jftImpIva10.setValue(totalIva10);
         this.vista.jftTotal.setValue(total);
+        this.vista.jftIvaTotal.setValue(totalIva5 + totalIva10);
     }
 
     @Override
@@ -509,9 +522,9 @@ public class C_crearVentaRapida implements GestionInterface, InterfaceFacturaDet
                 break;
             }
             case KeyEvent.VK_F3: {
-            Seleccionar_cliente sp = new Seleccionar_cliente(this.gestionVentas.c_inicio.vista);
-            sp.setCallback(this);
-            sp.mostrarVista();
+                Seleccionar_cliente sp = new Seleccionar_cliente(this.gestionVentas.c_inicio.vista);
+                sp.setCallback(this);
+                sp.mostrarVista();
                 break;
             }
             case KeyEvent.VK_F4: {
