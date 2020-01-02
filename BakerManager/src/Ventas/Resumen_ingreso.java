@@ -62,6 +62,7 @@ public class Resumen_ingreso extends JDialog implements ActionListener, KeyListe
     Integer nro_factura;
     JTabbedPane jtpPanel;
     M_cliente cliente;
+    E_facturacionCabecera facturacionCabecera;
     Estado estado;
 
     public Resumen_ingreso(C_inicio c_inicio, TableModel tm, M_cliente cliente_entidad,
@@ -94,9 +95,10 @@ public class Resumen_ingreso extends JDialog implements ActionListener, KeyListe
         agregarListener();
     }
 
-    public void inicializarDatos(int idFacturacion) {
+    public void inicializarDatos(E_facturacionCabecera facturacionCabecera) {
+        this.facturacionCabecera = facturacionCabecera;
         FacturaCabeceraTableModel tm = new FacturaCabeceraTableModel();
-        tm.setFacturaCabeceraList(DB_Ingreso.obtenerVentasPorFacturacion(idFacturacion));
+        tm.setFacturaCabeceraList(DB_Ingreso.obtenerVentasPorFacturacion(facturacionCabecera.getId()));
         jtEgreso.setModel(tm);
         Utilities.c_packColumn.packColumns(jtEgreso, 1);
         Integer total = 0;
@@ -356,6 +358,7 @@ public class Resumen_ingreso extends JDialog implements ActionListener, KeyListe
                             JOptionPane.showMessageDialog(null, "No hay datos para impirmir");
                         } else {
                             M_facturaCabecera facturaCabecera = tmCabecera.getFacturaCabeceraList().get(0);
+                            facturaCabecera.setTiempo(new Timestamp(facturacionCabecera.getTiempo().getTime()));
                             ArrayList<M_facturaDetalle> facturaDetalle = (ArrayList<M_facturaDetalle>) tmDetalle.getFacturaDetalleList();
                             M_rol_usuario rol_usuario = DatosUsuario.getRol_usuario();
                             Impresora.imprimirTicketVenta(rol_usuario, facturaCabecera, facturaDetalle);
@@ -375,6 +378,7 @@ public class Resumen_ingreso extends JDialog implements ActionListener, KeyListe
                             JOptionPane.showMessageDialog(null, "No hay datos para impirmir");
                         } else {
                             M_facturaCabecera facturaCabecera = tmCabecera.getFacturaCabeceraList().get(0);
+                            facturaCabecera.setTiempo(new Timestamp(facturacionCabecera.getTiempo().getTime()));
                             ArrayList<M_facturaDetalle> facturaDetalle = (ArrayList<M_facturaDetalle>) tmDetalle.getFacturaDetalleList();
                             Impresora.imprimirBoletaVenta(facturaCabecera, facturaDetalle);
                         }
@@ -392,6 +396,7 @@ public class Resumen_ingreso extends JDialog implements ActionListener, KeyListe
                             JOptionPane.showMessageDialog(null, "No hay datos para impirmir");
                         } else {
                             M_facturaCabecera facturaCabecera = tmCabecera.getFacturaCabeceraList().get(0);
+                            facturaCabecera.setTiempo(new Timestamp(facturacionCabecera.getTiempo().getTime()));
                             System.err.println("facturaCabecera.getNroFactura: " + facturaCabecera.getNroFactura());
                             ArrayList<M_facturaDetalle> facturaDetalle = (ArrayList<M_facturaDetalle>) tmDetalle.getFacturaDetalleList();
                             Impresora.imprimirFacturaVenta(facturaCabecera, facturaDetalle);

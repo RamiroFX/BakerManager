@@ -7,6 +7,7 @@ package Facturacion;
 
 import Cliente.Seleccionar_cliente;
 import Empleado.Seleccionar_funcionario;
+import Entities.E_facturacionCabecera;
 import Entities.E_tipoOperacion;
 import Entities.Estado;
 import Entities.M_cliente;
@@ -16,6 +17,7 @@ import Interface.GestionInterface;
 import Interface.RecibirClienteCallback;
 import Interface.RecibirEmpleadoCallback;
 import MenuPrincipal.DatosUsuario;
+import ModeloTabla.FacturacionCabeceraTableModel;
 import Ventas.Resumen_ingreso;
 import Ventas.Ver_ingreso;
 import bakermanager.C_inicio;
@@ -240,8 +242,10 @@ public class C_historialFacturacion implements GestionInterface, RecibirEmpleado
         int fila = vista.jtFacturacion.getSelectedRow();
         if (fila > -1) {
             Integer idFacturacion = Integer.valueOf(String.valueOf(this.vista.jtFacturacion.getValueAt(fila, 0)));
+            FacturacionCabeceraTableModel tm = (FacturacionCabeceraTableModel) this.vista.jtFacturacion.getModel();
+            E_facturacionCabecera facturacionCabecera = tm.getFacturacionCabeceraList().get(fila);
             Resumen_ingreso re = new Resumen_ingreso(c_inicio);
-            re.inicializarDatos(idFacturacion);
+            re.inicializarDatos(facturacionCabecera);
             re.setVisible(true);
         }
     }
