@@ -323,6 +323,8 @@ public class C_crearVentaRapida implements GestionInterface, InterfaceFacturaDet
                 int response = JOptionPane.showConfirmDialog(vista, ESTA_SEGURO_QUE_DESEA_CONFIRMAR_LA_VENTA, CONFIRMAR, JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
                 if (response == JOptionPane.YES_OPTION) {
                     modelo.guardarVenta();
+                }else{
+                    return;
                 }
                 int opcion = JOptionPane.showConfirmDialog(vista, IMPRIMIR_VENTA, ATENCION, JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
                 if (opcion == JOptionPane.YES_OPTION) {

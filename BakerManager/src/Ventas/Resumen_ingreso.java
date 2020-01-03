@@ -397,7 +397,6 @@ public class Resumen_ingreso extends JDialog implements ActionListener, KeyListe
                         } else {
                             M_facturaCabecera facturaCabecera = tmCabecera.getFacturaCabeceraList().get(0);
                             facturaCabecera.setTiempo(new Timestamp(facturacionCabecera.getTiempo().getTime()));
-                            System.err.println("facturaCabecera.getNroFactura: " + facturaCabecera.getNroFactura());
                             ArrayList<M_facturaDetalle> facturaDetalle = (ArrayList<M_facturaDetalle>) tmDetalle.getFacturaDetalleList();
                             Impresora.imprimirFacturaVenta(facturaCabecera, facturaDetalle);
                         }

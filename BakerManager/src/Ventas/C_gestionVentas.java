@@ -323,9 +323,14 @@ public class C_gestionVentas implements GestionInterface, RecibirEmpleadoCallbac
             int fila = this.vista.jtIngresoCabecera.getSelectedRow();
             if (fila > -1) {
                 Integer idIngresoCabecera = Integer.valueOf(String.valueOf(this.vista.jtIngresoCabecera.getValueAt(fila, 0)));
-                int opcion2 = JOptionPane.showConfirmDialog(vista, "¿Desea recuperar el número de factura?.", "Atención", JOptionPane.WARNING_MESSAGE, JOptionPane.YES_NO_OPTION);
-                if (opcion2 == JOptionPane.YES_OPTION) {
-                    modelo.anularVenta(idIngresoCabecera, true);
+                Object nroFactura = this.vista.jtIngresoCabecera.getValueAt(fila, 1);
+                if (nroFactura != null) {
+                    int opcion2 = JOptionPane.showConfirmDialog(vista, "¿Desea recuperar el número de factura?.", "Atención", JOptionPane.WARNING_MESSAGE, JOptionPane.YES_NO_OPTION);
+                    if (opcion2 == JOptionPane.YES_OPTION) {
+                        modelo.anularVenta(idIngresoCabecera, true);
+                    } else {
+                        modelo.anularVenta(idIngresoCabecera, false);
+                    }
                 } else {
                     modelo.anularVenta(idIngresoCabecera, false);
                 }
