@@ -213,6 +213,7 @@ public class C_crearVentaRapida implements GestionInterface, InterfaceFacturaDet
         //this.vista.jtFacturaDetalle.updateUI();
         this.vista.jbEliminarDetalle.setEnabled(false);
         this.vista.jbModificarDetalle.setEnabled(false);
+        Utilities.c_packColumn.packColumns(this.vista.jtFacturaDetalle, 1);
         sumarTotal();
     }
 
@@ -257,6 +258,7 @@ public class C_crearVentaRapida implements GestionInterface, InterfaceFacturaDet
         //this.vista.jtFacturaDetalle.updateUI();
         this.vista.jbEliminarDetalle.setEnabled(false);
         this.vista.jbModificarDetalle.setEnabled(false);
+        Utilities.c_packColumn.packColumns(this.vista.jtFacturaDetalle, 1);
         sumarTotal();
     }
 
@@ -323,7 +325,7 @@ public class C_crearVentaRapida implements GestionInterface, InterfaceFacturaDet
                 int response = JOptionPane.showConfirmDialog(vista, ESTA_SEGURO_QUE_DESEA_CONFIRMAR_LA_VENTA, CONFIRMAR, JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
                 if (response == JOptionPane.YES_OPTION) {
                     modelo.guardarVenta();
-                }else{
+                } else {
                     return;
                 }
                 int opcion = JOptionPane.showConfirmDialog(vista, IMPRIMIR_VENTA, ATENCION, JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);

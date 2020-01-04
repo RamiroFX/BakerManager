@@ -58,7 +58,7 @@ public class V_crearVentaRapida extends JDialog {
 
     public V_crearVentaRapida(JFrame frame) {
         super(frame, "Crear venta", JDialog.ModalityType.APPLICATION_MODAL);
-        setSize(900, 700);
+        setSize(950, 700);
         setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
         initComponents();
         setLocationRelativeTo(frame);

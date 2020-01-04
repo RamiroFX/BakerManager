@@ -106,10 +106,10 @@ public class V_crear_producto extends JDialog {
             jpPrincipal.add(jcbImpuesto);
             jpPrincipal.add(jlRubro);
             jpPrincipal.add(jcbCategoria);
-            jpPrincipal.add(jlPrecioCosto);
-            jpPrincipal.add(jtfPrecioCosto);
             jpPrincipal.add(jlMarca);
             jpPrincipal.add(jcbMarca);
+            jpPrincipal.add(jlPrecioCosto);
+            jpPrincipal.add(jtfPrecioCosto);
             jpPrincipal.add(jlPrecioVta);
             jpPrincipal.add(jtfPrecioVta);
             jpPrincipal.add(jlPrecioMayorista);

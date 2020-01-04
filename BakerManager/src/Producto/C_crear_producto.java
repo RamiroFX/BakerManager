@@ -54,6 +54,7 @@ public class C_crear_producto implements ActionListener, KeyListener {
         for (int i = 0; i < impuesto.size(); i++) {
             this.vista.jcbImpuesto.addItem(impuesto.get(i));
         }
+        this.vista.jcbImpuesto.setSelectedIndex(2);
         Vector rubro = modelo.obtenerRubro();
         for (int i = 0; i < rubro.size(); i++) {
             this.vista.jcbCategoria.addItem(rubro.get(i));

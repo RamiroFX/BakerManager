@@ -168,6 +168,7 @@ public class C_gestion_producto implements ActionListener, KeyListener, MouseLis
                  */
 
                 vista.jtProducto.setModel(DB_Producto.consultaSimpleProducto(desc.toLowerCase(), proveedor, marca, rubro, impuesto, estado));
+                Utilities.c_packColumn.packColumns(vista.jtProducto, 1);
             }
         });
     }
