@@ -48,6 +48,22 @@ public class V_crear_proveedor extends javax.swing.JDialog {
         initComponents();
     }
 
+    public V_crear_proveedor(javax.swing.JDialog dialog, boolean isCreate) {
+        super(dialog, true);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        if (isCreate) {
+            setTitle("Crear proveedor");
+            setName("jdCrearProveedor");
+        } else {
+            setTitle("Modificar proveedor");
+            setName("jdModificarProveedor");
+        }
+        setAlwaysOnTop(false);
+        setPreferredSize(new java.awt.Dimension(870, 400));
+        setResizable(false);
+        initComponents();
+    }
+
     private void initComponents() {
         initPaneNorth();
         initDatosGenerales();

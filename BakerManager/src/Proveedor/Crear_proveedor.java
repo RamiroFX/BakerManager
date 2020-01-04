@@ -5,6 +5,10 @@
  */
 package Proveedor;
 
+import Interface.InterfaceNotificarCambio;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+
 /**
  *
  * @author Ramiro
@@ -15,14 +19,24 @@ public class Crear_proveedor {
     private V_crear_proveedor vista;
     private C_crear_proveedor controlador;
 
-    public Crear_proveedor(C_gestion_proveedores gestionProveedores) {
+    public Crear_proveedor(JFrame frame) {
         this.modelo = new M_crear_proveedor();
-        this.vista = new V_crear_proveedor(gestionProveedores.c_inicio.vista, true);
-        this.controlador = new C_crear_proveedor(this.modelo, this.vista, gestionProveedores);
+        this.vista = new V_crear_proveedor(frame, true);
+        this.controlador = new C_crear_proveedor(this.modelo, this.vista);
+    }
+
+    public Crear_proveedor(JDialog dialog) {
+        this.modelo = new M_crear_proveedor();
+        this.vista = new V_crear_proveedor(dialog, true);
+        this.controlador = new C_crear_proveedor(this.modelo, this.vista);
     }
 
     public void mostrarVista() {
         this.controlador.mostrarVista();
+    }
+
+    public void setInterface(InterfaceNotificarCambio interfaceNotificarCambio) {
+        this.controlador.setInterfaceNotificarCambio(interfaceNotificarCambio);
     }
 
 }

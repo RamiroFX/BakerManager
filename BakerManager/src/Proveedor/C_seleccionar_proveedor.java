@@ -13,6 +13,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import Entities.M_proveedor;
+import Interface.InterfaceNotificarCambio;
 import Producto.C_crear_producto;
 import Producto.C_gestion_producto;
 import Producto.C_seleccionarProducto;
@@ -28,7 +29,7 @@ import javax.swing.KeyStroke;
  *
  * @author Ramiro Ferreira
  */
-public class C_seleccionar_proveedor extends MouseAdapter implements ActionListener, KeyListener {
+public class C_seleccionar_proveedor extends MouseAdapter implements ActionListener, KeyListener, InterfaceNotificarCambio {
 
     public static final int GESTION_EGRESO = 1;
     public static final int CREAR_EGRESO = 2;
@@ -36,7 +37,7 @@ public class C_seleccionar_proveedor extends MouseAdapter implements ActionListe
     public static final int ASIGNAR_PRODUCTO_PROVEEDOR = 4;
     public static final int BUSCAR_DETALLE_EGRESO = 5;
     public static final int GESTION_PRODUCTO = 6;
-    public static final int SELECCIONAR_PRODUCTO = 7;    
+    public static final int SELECCIONAR_PRODUCTO = 7;
     private static final String ENTER_KEY = "Entrar";
     private int idProveedor, tipo;
     private M_proveedor proveedor;
@@ -126,6 +127,7 @@ public class C_seleccionar_proveedor extends MouseAdapter implements ActionListe
 
     private void agregarListeners() {
         //ACTION LISTENERS
+        this.vista.jbCrearProveedor.addActionListener(this);
         this.vista.jbAceptar.addActionListener(this);
         this.vista.jbCancelar.addActionListener(this);
         this.vista.jckbEntidad.addActionListener(this);
@@ -136,6 +138,7 @@ public class C_seleccionar_proveedor extends MouseAdapter implements ActionListe
         this.vista.jtProveedor.addMouseListener(this);
         //KEY LISTENERS
         this.vista.jtfBuscar.addKeyListener(this);
+        this.vista.jbCrearProveedor.addKeyListener(this);
         this.vista.jbAceptar.addKeyListener(this);
         this.vista.jbCancelar.addKeyListener(this);
         this.vista.jckbEntidad.addKeyListener(this);
@@ -242,6 +245,10 @@ public class C_seleccionar_proveedor extends MouseAdapter implements ActionListe
             displayQueryResults();
         } else if (ae.getSource() == this.vista.jbCancelar) {
             cerrar();
+        } else if (ae.getSource() == this.vista.jbCrearProveedor) {
+            Crear_proveedor crearProveedor = new Crear_proveedor(vista);
+            crearProveedor.setInterface(this);
+            crearProveedor.mostrarVista();
         }
     }
 
@@ -284,4 +291,10 @@ public class C_seleccionar_proveedor extends MouseAdapter implements ActionListe
     @Override
     public void keyReleased(KeyEvent e) {
     }
+
+    @Override
+    public void notificarCambio() {
+        displayQueryResults();
+    }
+
 }

@@ -23,31 +23,34 @@ import net.miginfocom.swing.MigLayout;
  */
 public class V_seleccionar_cliente extends JDialog {
 
-    JButton jbAceptar, jbCancelar;
+    JButton jbCrearCliente, jbAceptar, jbCancelar;
     JScrollPane jspCliente;
     JTable jtCliente;
-    JPanel jpBotones,jpNorth;
+    JPanel jpBotones, jpNorth;
     JTextField jtfBuscar;
     JCheckBox jckbEntidadNombre, jckbRUC;
-    JRadioButton jrbExclusivo,jrbInclusivo;
+    JRadioButton jrbExclusivo, jrbInclusivo;
+
     public V_seleccionar_cliente(Window main) {
         super(main, "Seleccionar cliente", ModalityType.APPLICATION_MODAL);
         setSize(600, 400);
         setLocationRelativeTo(main);
         initComp();
         getContentPane().setLayout(new BorderLayout());
-        getContentPane().add(jpNorth,BorderLayout.NORTH);
-        getContentPane().add(jspCliente,BorderLayout.CENTER);
-        getContentPane().add(jpBotones,BorderLayout.SOUTH);
+        getContentPane().add(jpNorth, BorderLayout.NORTH);
+        getContentPane().add(jspCliente, BorderLayout.CENTER);
+        getContentPane().add(jpBotones, BorderLayout.SOUTH);
     }
-    
+
     private void initComp() {
         jtCliente = new JTable();
         this.jtCliente.getTableHeader().setReorderingAllowed(false);
         jspCliente = new JScrollPane(jtCliente);
-        jbAceptar = new  JButton("Aceptar");
-        jbCancelar = new  JButton("Cancelar");
+        jbAceptar = new JButton("Aceptar");
+        jbCancelar = new JButton("Cancelar");
+        jbCrearCliente = new JButton("Crear cliente");
         jpBotones = new JPanel();
+        jpBotones.add(jbCrearCliente);
         jpBotones.add(jbAceptar);
         jpBotones.add(jbCancelar);
         jtfBuscar = new JTextField();
@@ -55,13 +58,13 @@ public class V_seleccionar_cliente extends JDialog {
         jckbEntidadNombre.setSelected(true);
         jckbRUC = new JCheckBox("R.U.C.");
         jckbRUC.setSelected(true);
-        jrbExclusivo = new javax.swing.JRadioButton("Exclusivo",true);
+        jrbExclusivo = new javax.swing.JRadioButton("Exclusivo", true);
         jrbInclusivo = new javax.swing.JRadioButton("Inclusivo");
         javax.swing.ButtonGroup bg1 = new javax.swing.ButtonGroup();
 
         bg1.add(jrbExclusivo);
         bg1.add(jrbInclusivo);
-        jpNorth = new JPanel(new MigLayout("align center"));        
+        jpNorth = new JPanel(new MigLayout("align center"));
         String width = "width :100:";
         //C F
         jpNorth.add(jtfBuscar, "width :300:, cell 0 0");

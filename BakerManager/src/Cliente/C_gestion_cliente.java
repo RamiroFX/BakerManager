@@ -9,6 +9,7 @@ import Entities.M_cliente;
 import Entities.M_cliente_contacto;
 import Entities.M_menu_item;
 import Interface.GestionInterface;
+import Interface.InterfaceNotificarCambio;
 import MenuPrincipal.DatosUsuario;
 import bakermanager.C_inicio;
 import java.awt.AlphaComposite;
@@ -29,7 +30,7 @@ import javax.swing.JOptionPane;
  *
  * @author Ramiro Ferreira
  */
-public class C_gestion_cliente implements GestionInterface {
+public class C_gestion_cliente implements GestionInterface, InterfaceNotificarCambio {
 
     public C_inicio c_inicio;
     private M_cliente m_cliente;
@@ -260,7 +261,8 @@ public class C_gestion_cliente implements GestionInterface {
 
     public void actionPerformed(ActionEvent e) {
         if (e.getSource().equals(this.vista.jbCrearCliente)) {
-            Crear_cliente crear_cliente = new Crear_cliente(this);
+            Crear_cliente crear_cliente = new Crear_cliente(this.c_inicio.vista);
+            crear_cliente.setInterfaceNotificarCambio(this);
             crear_cliente.mostrarVista();
         }
         if (e.getSource().equals(this.vista.jbModificarCliente)) {
@@ -371,5 +373,10 @@ public class C_gestion_cliente implements GestionInterface {
 
     @Override
     public void mouseExited(MouseEvent e) {
+    }
+
+    @Override
+    public void notificarCambio() {
+        this.vista.jtCliente.setModel(DB_Cliente.consultarCliente("", false, true, true));
     }
 }

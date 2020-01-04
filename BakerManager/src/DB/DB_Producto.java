@@ -462,6 +462,71 @@ public class DB_Producto {
         return producto;
     }
 
+    public static M_producto obtenerProductoPorDescripcion(String descripcion) {
+        M_producto producto = null;
+        String Query = "SELECT PROD.ID_PRODUCTO \"id_prod\", "
+                + "PROD.CODIGO \"cod_prod\", "
+                + "PROD.DESCRIPCION \"descripcion\", "
+                + "PROD.PRECIO_COSTO \"precio_costo\", "
+                + "PROD.PRECIO_MINORISTA \"precio_minorista\", "
+                + "PROD.PRECIO_MAYORISTA \"precio_mayorista\", "
+                + "PROD.CANT_ACTUAL \"cant_actual\", "
+                + "PROD.ID_MARCA \"id_marca\", "
+                + "PROD.ID_IMPUESTO \"id_impuesto\", "
+                + "PROD.ID_ESTADO \"id_estado\", "
+                + "PROD.ID_CATEGORIA \"id_categoria\", "
+                + "PROD.OBSERVACION \"observacion\", "
+                + "(SELECT IMPU.DESCRIPCION FROM IMPUESTO IMPU WHERE IMPU.ID_IMPUESTO = PROD.ID_IMPUESTO) \"impuesto\", "
+                + "(SELECT ESTA.DESCRIPCION FROM ESTADO ESTA WHERE ESTA.ID_ESTADO = PROD.ID_ESTADO) \"estado\", "
+                + "(SELECT MARC.DESCRIPCION FROM MARCA MARC WHERE MARC.ID_MARCA = PROD.ID_MARCA) \"marca\", "
+                + "(SELECT PRCA.DESCRIPCION FROM PRODUCTO_CATEGORIA PRCA WHERE PRCA.ID_PRODUCTO_CATEGORIA = PROD.ID_CATEGORIA) \"categoria\" "
+                + "FROM PRODUCTO PROD "
+                + "WHERE PROD.DESCRIPCION LIKE ? ";
+        try {
+            pst = DB_manager.getConection().prepareStatement(Query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            pst.setString(1, descripcion);
+            rs = pst.executeQuery();
+            while (rs.next()) {
+                producto = new M_producto();
+                producto.setCantActual(rs.getDouble("cant_actual"));
+                producto.setCodBarra(rs.getString("cod_prod"));
+                producto.setDescripcion(rs.getString("descripcion"));
+                producto.setEstado(rs.getString("estado"));
+                producto.setId(rs.getInt("id_prod"));
+                producto.setImpuesto(rs.getInt("impuesto"));
+                producto.setMarca(rs.getString("marca"));
+                producto.setPrecioCosto(rs.getInt("precio_costo"));
+                producto.setPrecioMayorista(rs.getInt("precio_mayorista"));
+                producto.setPrecioVenta(rs.getInt("precio_minorista"));
+                producto.setCategoria(rs.getString("categoria"));
+                producto.setIdCategoria(rs.getInt("id_categoria"));
+                producto.setIdEstado(rs.getInt("id_estado"));
+                producto.setIdImpuesto(rs.getInt("id_impuesto"));
+                producto.setIdMarca(rs.getInt("id_marca"));
+            }
+        } catch (SQLException ex) {
+            Logger lgr = Logger.getLogger(DB_Producto.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        }
+        return producto;
+    }
+
+    public static boolean productoEnUso(int idProducto) {
+        boolean enUso = false;
+        String q = "SELECT DISTINCT ID_PRODUCTO "
+                + "FROM FACTURA_DETALLE "
+                + "WHERE ID_PRODUCTO = ? ;";
+        try {
+            pst = DB_manager.getConection().prepareStatement(q);
+            pst.setInt(1, idProducto);
+            rs = pst.executeQuery();
+            return !rs.isBeforeFirst();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return enUso;
+    }
+
     public static long insertarProducto(M_producto prod) {
         long id_producto = -1L;
         String stm = "INSERT INTO PRODUCTO("
@@ -540,7 +605,7 @@ public class DB_Producto {
         String UPDATE = "UPDATE  producto SET CODIGO = ?, ID_MARCA = ?,"
                 + " ID_ESTADO = ?, ID_IMPUESTO = ?, ID_CATEGORIA = ?, "
                 + "PRECIO_COSTO = ?, PRECIO_MAYORISTA = ?, PRECIO_MINORISTA = ?, "
-                + "CANT_ACTUAL = ?, OBSERVACION = ? WHERE ID_PRODUCTO = ? ;";
+                + "CANT_ACTUAL = ?, OBSERVACION = ?, DESCRIPCION = ? WHERE ID_PRODUCTO = ? ;";
         int result = -1;
         try {
 
@@ -556,7 +621,8 @@ public class DB_Producto {
             pst.setInt(8, producto.getPrecioVenta());
             pst.setDouble(9, producto.getCantActual());
             pst.setString(10, producto.getObservacion());
-            pst.setInt(11, producto.getId());
+            pst.setString(11, producto.getDescripcion());
+            pst.setInt(12, producto.getId());
             result = pst.executeUpdate();
             DB_manager.getConection().commit();
         } catch (SQLException ex) {
@@ -663,16 +729,15 @@ public class DB_Producto {
     }
 
     public static boolean existeProducto(String prodDescripcion) {
-        String Query = "SELECT DESCRIPCION FROM PRODUCTO WHERE DESCRIPCION LIKE ?";
+        String Query = "SELECT DESCRIPCION FROM PRODUCTO WHERE LOWER(DESCRIPCION) LIKE ?";
         try {
             pst = DB_manager.getConection().prepareStatement(Query);
-            pst.setString(1, prodDescripcion);
+            pst.setString(1, prodDescripcion.toLowerCase());
             rs = pst.executeQuery();
             return rs.next();
         } catch (SQLException ex) {
             Logger lgr = Logger.getLogger(DB_Producto.class.getName());
             lgr.log(Level.SEVERE, ex.getMessage(), ex);
-
         } finally {
             try {
                 if (rs != null) {

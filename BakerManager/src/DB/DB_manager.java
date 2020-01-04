@@ -13,7 +13,6 @@ import Entities.E_tipoOperacion;
 import Entities.Estado;
 import Entities.M_campoImpresion;
 import Entities.ProductoCategoria;
-import Parametros.TipoOperacion;
 import Utilities.MyConstants;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;

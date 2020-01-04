@@ -9,6 +9,7 @@ import Entities.M_contacto;
 import Entities.M_sucursal;
 import Entities.M_telefono;
 import Entities.M_proveedor;
+import Interface.InterfaceNotificarCambio;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -26,15 +27,17 @@ public class C_crear_proveedor extends MouseAdapter implements ActionListener, K
 
     private M_crear_proveedor modelo;
     public V_crear_proveedor vista;
-    private C_gestion_proveedores padre;
+    private InterfaceNotificarCambio interfaceNotificarCambio;
 
-    public C_crear_proveedor(M_crear_proveedor modelo, V_crear_proveedor vista,
-            C_gestion_proveedores gestionProveedor) {
+    public C_crear_proveedor(M_crear_proveedor modelo, V_crear_proveedor vista) {
         this.modelo = modelo;
         this.vista = vista;
-        this.padre = gestionProveedor;
         inicializarVista();
         agregarListeners();
+    }
+
+    public void setInterfaceNotificarCambio(InterfaceNotificarCambio interfaceNotificarCambio) {
+        this.interfaceNotificarCambio = interfaceNotificarCambio;
     }
 
     public void mostrarVista() {
@@ -209,7 +212,7 @@ public class C_crear_proveedor extends MouseAdapter implements ActionListener, K
          } else {
          nombreFantasia = this.vista.jtfNombreFantasia.getText();
          }*/
-        /*
+ /*
          * VALIDAR R.U.C.
          */
         String ruc = this.vista.jtfRUC.getText().trim();
@@ -236,7 +239,7 @@ public class C_crear_proveedor extends MouseAdapter implements ActionListener, K
          } else {
          ruc = this.vista.jtfRUC.getText();
          }*/
-        /*
+ /*
          * VALIDAR R.U.C. ID
          */
         String rucId = this.vista.jtfRUC_ID.getText().trim();
@@ -370,8 +373,7 @@ public class C_crear_proveedor extends MouseAdapter implements ActionListener, K
     }
 
     private void actualizarTablaProveedores() {
-        this.padre.vista.jtProveedor.setModel(modelo.consultarProveedor("", true, true, false));
-        Utilities.c_packColumn.packColumns(this.padre.vista.jtProveedor, 2);
+        interfaceNotificarCambio.notificarCambio();
     }
 
     private void cerrar() {

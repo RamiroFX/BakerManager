@@ -80,7 +80,6 @@ public class V_modificar_producto extends javax.swing.JDialog {
         jlObservacion = new JLabel("Observación");
         jlObservacion.setHorizontalAlignment(JLabel.CENTER);
         jtfProducto = new JTextField();
-        jtfProducto.setEditable(false);
         jtfCodigo = new JTextField();
         jtfPrecioCosto = new JTextField();
         jtfPrecioVta = new JTextField();

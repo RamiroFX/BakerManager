@@ -6,6 +6,7 @@ package Cliente;
 
 import DB.DB_Cliente;
 import Entities.M_cliente;
+import Interface.InterfaceNotificarCambio;
 import Interface.RecibirClienteCallback;
 import Pedido.C_crearPedido;
 import Pedido.C_gestionPedido;
@@ -30,7 +31,7 @@ import javax.swing.KeyStroke;
  *
  * @author Ramiro Ferreira
  */
-public class C_seleccionar_cliente extends MouseAdapter implements ActionListener, KeyListener {
+public class C_seleccionar_cliente extends MouseAdapter implements ActionListener, KeyListener, InterfaceNotificarCambio {
 
     private static final String ENTER_KEY = "Entrar";
     int idCliente, tipo;
@@ -71,6 +72,7 @@ public class C_seleccionar_cliente extends MouseAdapter implements ActionListene
         //ACTION LISTENERS
         this.vista.jbAceptar.addActionListener(this);
         this.vista.jbCancelar.addActionListener(this);
+        this.vista.jbCrearCliente.addActionListener(this);
         this.vista.jckbEntidadNombre.addActionListener(this);
         this.vista.jckbRUC.addActionListener(this);
         this.vista.jrbExclusivo.addActionListener(this);
@@ -81,6 +83,7 @@ public class C_seleccionar_cliente extends MouseAdapter implements ActionListene
         this.vista.jtfBuscar.addKeyListener(this);
         this.vista.jbAceptar.addKeyListener(this);
         this.vista.jbCancelar.addKeyListener(this);
+        this.vista.jbCrearCliente.addKeyListener(this);
         this.vista.jckbEntidadNombre.addKeyListener(this);
         this.vista.jckbRUC.addKeyListener(this);
         this.vista.jrbExclusivo.addKeyListener(this);
@@ -152,6 +155,10 @@ public class C_seleccionar_cliente extends MouseAdapter implements ActionListene
             displayQueryResults();
         } else if (ae.getSource() == this.vista.jbCancelar) {
             cerrar();
+        } else if (ae.getSource() == this.vista.jbCrearCliente) {
+            Crear_cliente crear_cliente = new Crear_cliente(this.vista);
+            crear_cliente.setInterfaceNotificarCambio(this);
+            crear_cliente.mostrarVista();
         }
     }
 
@@ -193,5 +200,10 @@ public class C_seleccionar_cliente extends MouseAdapter implements ActionListene
 
     @Override
     public void keyReleased(KeyEvent e) {
+    }
+
+    @Override
+    public void notificarCambio() {
+        this.displayQueryResults();
     }
 }

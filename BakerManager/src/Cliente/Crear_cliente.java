@@ -4,6 +4,10 @@
  */
 package Cliente;
 
+import Interface.InterfaceNotificarCambio;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+
 /**
  *
  * @author Ramiro Ferreira
@@ -14,13 +18,23 @@ public class Crear_cliente {
     private V_crear_cliente vista;
     private C_crear_cliente controlador;
 
-    public Crear_cliente(C_gestion_cliente gestion_cliente) {
+    public Crear_cliente(JFrame frame) {
         this.modelo = new M_crear_cliente();
-        this.vista = new V_crear_cliente(gestion_cliente.c_inicio.vista, true);
-        this.controlador = new C_crear_cliente(this.modelo, this.vista, gestion_cliente);
+        this.vista = new V_crear_cliente(frame, true);
+        this.controlador = new C_crear_cliente(this.modelo, this.vista);
+    }
+
+    public Crear_cliente(JDialog dialogo) {
+        this.modelo = new M_crear_cliente();
+        this.vista = new V_crear_cliente(dialogo, true);
+        this.controlador = new C_crear_cliente(this.modelo, this.vista);
     }
 
     public void mostrarVista() {
         this.controlador.mostrarVista();
+    }
+
+    public void setInterfaceNotificarCambio(InterfaceNotificarCambio interfaceNotificarCambio) {
+        this.controlador.setInterfaceNotificarCambio(interfaceNotificarCambio);
     }
 }

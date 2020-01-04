@@ -8,6 +8,7 @@ package Producto;
 import DB.DB_Producto;
 import DB.DB_manager;
 import Entities.M_producto;
+import java.util.Objects;
 import java.util.Vector;
 import javax.swing.JOptionPane;
 
@@ -59,5 +60,19 @@ public class M_modificar_producto {
         producto.setIdMarca(id_marca);
         producto.setId(this.producto.getId());
         return DB_Producto.modificarProducto(producto) == 1;
+    }
+
+    public boolean existeNombreProducto(String productoActual) {
+        /*M_producto productoNuevo = DB_Producto.obtenerProductoPorDescripcion(productoActual.getDescripcion());
+        if (!Objects.equals(productoNuevo.getDescripcion(), productoActual.getDescripcion())) {
+            return false;
+        }
+        return true;*/
+        System.out.println("Producto.M_modificar_producto.existeNombreProducto().productoActual:" + productoActual);
+        return DB_Producto.existeProducto(productoActual);
+    }
+
+    public boolean productoEnUso(int idProducto) {
+        return DB_Producto.productoEnUso(idProducto);
     }
 }

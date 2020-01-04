@@ -66,6 +66,22 @@ public class V_crear_cliente extends javax.swing.JDialog {
         initComponents();
     }
 
+    public V_crear_cliente(javax.swing.JDialog dialogo, boolean isCreate) {
+        super(dialogo, true);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        if (isCreate) {
+            setTitle("Crear cliente");
+            setName("jdCrearCliente");
+        } else {
+            setTitle("Modificar cliente");
+            setName("jdModificarCliente");
+        }
+        setAlwaysOnTop(false);
+        setPreferredSize(new java.awt.Dimension(870, 400));
+        setResizable(false);
+        initComponents();
+    }
+
     private void initComponents() {
         initPaneNorth();
         initDatosGenerales();

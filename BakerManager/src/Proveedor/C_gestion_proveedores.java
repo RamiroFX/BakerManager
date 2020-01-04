@@ -8,6 +8,7 @@ import DB.DB_Proveedor;
 import Entities.M_contacto;
 import Entities.M_menu_item;
 import Entities.M_proveedor;
+import Interface.InterfaceNotificarCambio;
 import MenuPrincipal.DatosUsuario;
 import bakermanager.C_inicio;
 import java.awt.AlphaComposite;
@@ -28,9 +29,9 @@ import javax.imageio.ImageIO;
 
 /**
  *
- * @author Usuario
+ * @author Ramiro Ferreira
  */
-class C_gestion_proveedores extends MouseAdapter implements ActionListener, KeyListener {
+class C_gestion_proveedores extends MouseAdapter implements ActionListener, KeyListener, InterfaceNotificarCambio {
 
     public C_inicio c_inicio;
     private M_proveedor m_proveedor;
@@ -145,7 +146,8 @@ class C_gestion_proveedores extends MouseAdapter implements ActionListener, KeyL
 
     public void actionPerformed(ActionEvent ae) {
         if (ae.getSource() == this.vista.jbCrearProveedor) {
-            Crear_proveedor crearProveedor = new Crear_proveedor(this);
+            Crear_proveedor crearProveedor = new Crear_proveedor(this.c_inicio.vista);
+            crearProveedor.setInterface(this);
             crearProveedor.mostrarVista();
         }
         if (ae.getSource() == this.vista.jbModificarProveedor) {
@@ -332,5 +334,10 @@ class C_gestion_proveedores extends MouseAdapter implements ActionListener, KeyL
         if (this.vista.jtProveedor.hasFocus()) {
             completarCampos();
         }
+    }
+
+    @Override
+    public void notificarCambio() {
+        this.vista.jtProveedor.setModel(DB_Proveedor.consultarProveedor("", true, true, false));
     }
 }

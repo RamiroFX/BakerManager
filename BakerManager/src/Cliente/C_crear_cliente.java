@@ -9,6 +9,7 @@ import Entities.M_cliente;
 import Entities.M_cliente_contacto;
 import Entities.M_sucursal;
 import Entities.M_telefono;
+import Interface.InterfaceNotificarCambio;
 import Proveedor.C_crear_sucursal;
 import Proveedor.C_crear_telefono;
 import Proveedor.C_modificar_sucursal;
@@ -31,14 +32,17 @@ public class C_crear_cliente extends MouseAdapter implements ActionListener, Key
 
     public V_crear_cliente vista;
     public M_crear_cliente modelo;
-    C_gestion_cliente padre;
+    private InterfaceNotificarCambio interfaceNotificarCambio;
 
-    public C_crear_cliente(M_crear_cliente modelo, V_crear_cliente vista, C_gestion_cliente padre) {
-        this.padre = padre;
+    public C_crear_cliente(M_crear_cliente modelo, V_crear_cliente vista) {
         this.modelo = modelo;
         this.vista = vista;
         inicializarVista();
         agregarListeners();
+    }
+
+    public void setInterfaceNotificarCambio(InterfaceNotificarCambio interfaceNotificarCambio) {
+        this.interfaceNotificarCambio = interfaceNotificarCambio;
     }
 
     public void mostrarVista() {
@@ -332,7 +336,8 @@ public class C_crear_cliente extends MouseAdapter implements ActionListener, Key
     }
 
     private void actualizarTablaClientes() {
-        this.padre.vista.jtCliente.setModel(modelo.consultarCliente("", false, true, true));
+        //this.padre.vista.jtCliente.setModel(modelo.consultarCliente("", false, true, true));
+        interfaceNotificarCambio.notificarCambio();
     }
 
     private void cerrar() {
