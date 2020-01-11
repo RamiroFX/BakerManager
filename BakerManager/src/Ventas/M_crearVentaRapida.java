@@ -197,9 +197,13 @@ public class M_crearVentaRapida {
     }
 
     public int getNroFactura() {
-        int nroFactura;
-        nroFactura = DB_Ingreso.obtenerUltimoNroFactura() + 1;
-        return nroFactura;
+        int nroFactura = DB_Ingreso.obtenerUltimoNroFactura() + 1;
+        int nroFacturacion = DB_Ingreso.obtenerUltimoNroFacturacion() + 1;
+        if (nroFactura >= nroFacturacion) {
+            return nroFactura;
+        } else {
+            return nroFacturacion;
+        }
     }
 
     public boolean nroFacturaEnUso(int nroFactura) {

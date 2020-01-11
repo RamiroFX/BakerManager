@@ -55,9 +55,6 @@ public class M_facturacion {
     public int getNroFactura() {
         int nroFactura = DB_Ingreso.obtenerUltimoNroFactura() + 1;
         int nroFacturacion = DB_Ingreso.obtenerUltimoNroFacturacion() + 1;
-        System.out.println("Ventas.M_facturacion.getNroFactura()");
-        System.out.println("nroFactura: " + nroFactura);
-        System.out.println("nroFacturacion: " + nroFacturacion);
         if (nroFactura >= nroFacturacion) {
             return nroFactura;
         } else {

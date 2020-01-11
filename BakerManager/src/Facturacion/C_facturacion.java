@@ -189,7 +189,7 @@ public class C_facturacion implements ActionListener, KeyListener, InterfaceSele
     }
 
     @Override
-    public void notificarCambio() {
+    public void notificarCambioFacturaDetalle() {
     }
 
     @Override

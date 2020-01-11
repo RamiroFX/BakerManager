@@ -11,5 +11,5 @@ package Interface;
  */
 public interface InterfaceFacturaDetalle {
     
-    public void notificarCambio();
+    public void notificarCambioFacturaDetalle();
 }

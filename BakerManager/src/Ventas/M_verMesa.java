@@ -188,4 +188,14 @@ public class M_verMesa {
     public ArrayList<E_impresionTipo> obtenerTipoVenta() {
         return DB_Preferencia.obtenerImpresionTipo();
     }
+
+    public int getNroFactura() {
+        int nroFactura = DB_Ingreso.obtenerUltimoNroFactura() + 1;
+        int nroFacturacion = DB_Ingreso.obtenerUltimoNroFacturacion() + 1;
+        if (nroFactura >= nroFacturacion) {
+            return nroFactura;
+        } else {
+            return nroFacturacion;
+        }
+    }
 }

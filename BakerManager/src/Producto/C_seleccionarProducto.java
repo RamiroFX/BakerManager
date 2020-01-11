@@ -149,6 +149,7 @@ public class C_seleccionarProducto extends MouseAdapter implements ActionListene
         for (int i = 0; i < estado.size(); i++) {
             this.vista.jcbEstado.addItem(estado.get(i));
         }
+        this.vista.jcbEstado.setSelectedIndex(1);
         this.vista.jcbBusqueda.addItem("Exclusiva");
         this.vista.jcbBusqueda.addItem("Inclusiva");
     }

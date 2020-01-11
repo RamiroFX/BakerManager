@@ -436,6 +436,6 @@ public class Resumen_ingreso extends JDialog implements ActionListener, KeyListe
     }
 
     @Override
-    public void notificarCambio() {
+    public void notificarCambioFacturaDetalle() {
     }
 }

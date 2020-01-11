@@ -6,6 +6,7 @@ package Ventas;
 
 import Cliente.Seleccionar_cliente;
 import DB.DB_Cliente;
+import Entities.E_facturacionCabecera;
 import Entities.E_impresionTipo;
 import Entities.M_cliente;
 import Entities.M_facturaDetalle;
@@ -19,6 +20,8 @@ import Parametros.TipoOperacion;
 import Producto.SeleccionarCantidadProduducto;
 import Producto.SeleccionarProducto;
 import Impresora.Impresora;
+import Interface.InterfaceConfirmarFacturacion;
+import Interface.InterfaceNotificarCambio;
 import Interface.RecibirClienteCallback;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
@@ -32,15 +35,15 @@ import javax.swing.JOptionPane;
  *
  * @author Ramiro Ferreira
  */
-public class C_crearVentaRapida implements GestionInterface, InterfaceFacturaDetalle, RecibirClienteCallback {
+public class C_crearVentaRapida implements GestionInterface, InterfaceFacturaDetalle, RecibirClienteCallback, InterfaceNotificarCambio {
 
     private static final String TITULO_ERROR = "Error";
     private static final String PRODUCTO_NO_EXISTE = "El producto no existe";
-    private static final String SELECCIONE_POR_LO_MENOS_UN_ARTICULO = "Seleccione por lo menos un artículo.";
+    private static final String VENTA_VACIA = "Seleccione por lo menos un artículo.";
     private static final String CONFIRMAR = "Confirmar";
     private static final String ATENCION = "Atención";
     private static final String IMPRIMIR_VENTA = "¿Desea imprimir la venta?";
-    private static final String ESTA_SEGURO_QUE_DESEA_CONFIRMAR_LA_VENTA = "¿Está seguro que desea confirmar la venta?";
+    private static final String CONFIRMAR_VENTA = "¿Está seguro que desea confirmar la venta?";
 
     public M_crearVentaRapida modelo;
     public V_crearVentaRapida vista;
@@ -318,16 +321,7 @@ public class C_crearVentaRapida implements GestionInterface, InterfaceFacturaDet
         EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
-                if (modelo.isTableEmpty()) {
-                    JOptionPane.showConfirmDialog(vista, SELECCIONE_POR_LO_MENOS_UN_ARTICULO, ATENCION, JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
-                    return;
-                }
-                int response = JOptionPane.showConfirmDialog(vista, ESTA_SEGURO_QUE_DESEA_CONFIRMAR_LA_VENTA, CONFIRMAR, JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-                if (response == JOptionPane.YES_OPTION) {
-                    modelo.guardarVenta();
-                } else {
-                    return;
-                }
+                modelo.guardarVenta();
                 int opcion = JOptionPane.showConfirmDialog(vista, IMPRIMIR_VENTA, ATENCION, JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
                 if (opcion == JOptionPane.YES_OPTION) {
                     modelo.imprimirVenta();
@@ -342,6 +336,20 @@ public class C_crearVentaRapida implements GestionInterface, InterfaceFacturaDet
                 vista.jtfCodProd.setText("");
             }
         });
+    }
+
+    private void confirmarVenta() {
+        if (modelo.isTableEmpty()) {
+            JOptionPane.showConfirmDialog(vista, VENTA_VACIA, ATENCION, JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        if (!checkearNroFactura()) {
+            return;
+        }
+        ConfirmarVenta cv = new ConfirmarVenta(vista);
+        cv.inicializarVista(this.vista.jftTotal.getValue()+"");
+        cv.setInterface(this);
+        cv.mostrarVista();
     }
 
     private void establecerCondicionVenta() {
@@ -390,6 +398,7 @@ public class C_crearVentaRapida implements GestionInterface, InterfaceFacturaDet
                     //SELECCIONAR CANTIDAD DE PRODUCTO
                     M_producto unProducto = modelo.obtenerProductoPorCodigo(codigoProducto);
                     SeleccionarCantidadProduducto scp = new SeleccionarCantidadProduducto(aThis, unProducto);
+                    scp.mostrarPrecioAdicional();
                     scp.setVisible(true);
                     vista.jtfCodProd.setText("");
                 } else {
@@ -401,17 +410,11 @@ public class C_crearVentaRapida implements GestionInterface, InterfaceFacturaDet
 
     private boolean checkearNroFactura() {
         Integer nroFactura = null;
-        if (this.vista.jtfNroFactura.getText().isEmpty()) {
-            javax.swing.JOptionPane.showMessageDialog(this.vista, "Verifique en uno de los campos el parametro: "
-                    + "Asegurese de colocar un numero valido\n"
-                    + "en el campo Nro. factura.",
-                    "Parametros incorrectos",
-                    javax.swing.JOptionPane.OK_OPTION);
-            this.vista.jtfNroFactura.setText(modelo.getNroFactura() + "");
-            return false;
+        if (this.vista.jtfNroFactura.getText().trim().isEmpty()) {
+            return true;
         }
         try {
-            String cantidad = this.vista.jtfNroFactura.getText();
+            String cantidad = this.vista.jtfNroFactura.getText().trim();
             nroFactura = Integer.valueOf(cantidad);
         } catch (Exception e) {
             javax.swing.JOptionPane.showMessageDialog(this.vista, "Verifique en uno de los campos el parametro:"
@@ -431,6 +434,7 @@ public class C_crearVentaRapida implements GestionInterface, InterfaceFacturaDet
             this.vista.jtfNroFactura.setText(modelo.getNroFactura() + "");
             return false;
         }
+        modelo.getCabecera().setNroFactura(nroFactura);
         return true;
     }
 
@@ -440,7 +444,7 @@ public class C_crearVentaRapida implements GestionInterface, InterfaceFacturaDet
             cerrar();
         }
         if (e.getSource().equals(this.vista.jbAceptar)) {
-            guardarVenta();
+            confirmarVenta();
         }
         if (e.getSource().equals(this.vista.jtfCodProd)) {
             agregarProductoPorCodigo();
@@ -518,7 +522,7 @@ public class C_crearVentaRapida implements GestionInterface, InterfaceFacturaDet
     public void keyReleased(KeyEvent e) {
         switch (e.getKeyCode()) {
             case KeyEvent.VK_F1: {
-                guardarVenta();
+                confirmarVenta();
                 break;
             }
             case KeyEvent.VK_F2: {
@@ -540,11 +544,16 @@ public class C_crearVentaRapida implements GestionInterface, InterfaceFacturaDet
     }
 
     @Override
-    public void notificarCambio() {
+    public void notificarCambioFacturaDetalle() {
         sumarTotal();
     }
 
     private void establecerNroFactura() {
         this.vista.jtfNroFactura.setText(this.modelo.getNroFactura() + "");
+    }
+
+    @Override
+    public void notificarCambio() {
+        //guardarVenta();
     }
 }

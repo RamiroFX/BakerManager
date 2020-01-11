@@ -57,13 +57,10 @@ public class C_verMesa extends MouseAdapter implements ActionListener, KeyListen
         this.vista.setTitle("Mesa " + this.modelo.getMesa().getNumeroMesa());
         String nombre = this.modelo.getMesa().getCliente().getNombre();
         String entidad = this.modelo.getMesa().getCliente().getEntidad();
-        M_funcionario f = this.modelo.getMesa().getFuncionario();
         this.vista.jtfCliente.setText(nombre + " (" + entidad + ")");
         this.vista.jtfClieDireccion.setText(this.modelo.getMesa().getCliente().getDireccion());
         this.vista.jtfClieRuc.setText(this.modelo.getMesa().getCliente().getRuc() + "-" + this.modelo.getMesa().getCliente().getRucId());
-        this.vista.jtfClieTelefono.setText("");
-        this.vista.jtfNroFactura.setText(f.getAlias());
-
+        
         Vector condCompra = modelo.obtenerTipoOperacion();
         for (int i = 0; i < condCompra.size(); i++) {
             this.vista.jcbCondVenta.addItem(condCompra.get(i));
@@ -77,21 +74,6 @@ public class C_verMesa extends MouseAdapter implements ActionListener, KeyListen
         } else {
             this.vista.jcbCondVenta.setSelectedIndex(1);
         }
-        /*switch (this.modelo.getMesa().getIdCondVenta()) {
-            
-            case (TipoOperacion.CONTADO): {
-                //contado
-                this.vista.jrbContado.setSelected(true);
-                this.vista.jrbCredito.setSelected(false);
-                break;
-            }
-            case (TipoOperacion.CREDITO): {
-                //credito
-                this.vista.jrbContado.setSelected(false);
-                this.vista.jrbCredito.setSelected(true);
-                break;
-            }
-        }*/
         if (null != this.modelo.getRstm()) {
             this.vista.jtFacturaDetalle.setModel(this.modelo.getRstm());
             Utilities.c_packColumn.packColumns(this.vista.jtFacturaDetalle, 1);
@@ -99,6 +81,22 @@ public class C_verMesa extends MouseAdapter implements ActionListener, KeyListen
         }
         this.vista.jbEliminarDetalle.setEnabled(false);
         this.vista.jbModificarDetalle.setEnabled(false);
+        java.awt.Font fuente = new java.awt.Font("Times New Roman", 0, 18);
+        javax.swing.text.DefaultFormatterFactory dff = new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(java.text.NumberFormat.getCurrencyInstance()));
+        this.vista.jftExenta.setFormatterFactory(dff);
+        this.vista.jftExenta.setFont(fuente); // NOI18N
+        this.vista.jftIva5.setFormatterFactory(dff);
+        this.vista.jftIva5.setFont(fuente); // NOI18N
+        this.vista.jftImpIva5.setFormatterFactory(dff);
+        this.vista.jftImpIva5.setFont(fuente); // NOI18N
+        this.vista.jftIva10.setFormatterFactory(dff);
+        this.vista.jftIva10.setFont(fuente); // NOI18N
+        this.vista.jftImpIva10.setFormatterFactory(dff);
+        this.vista.jftImpIva10.setFont(fuente); // NOI18N
+        this.vista.jftTotal.setFormatterFactory(dff);
+        this.vista.jftTotal.setFont(fuente); // NOI18N
+        this.vista.jftIvaTotal.setFormatterFactory(dff);
+        this.vista.jftIvaTotal.setFont(fuente); // NOI18N
     }
 
     private void agregarListeners() {
@@ -247,19 +245,26 @@ public class C_verMesa extends MouseAdapter implements ActionListener, KeyListen
 
     private void sumarTotal() {
         Integer exenta = 0;
-        Integer iva5 = 0;
-        Integer iva10 = 0;
+        Integer total5 = 0;
+        Integer total10 = 0;
+        Integer totalIva5 = 0;
+        Integer totalIva10 = 0;
         Integer total = 0;
         for (int i = 0; i < this.modelo.getRstm().getRowCount(); i++) {
-            exenta = exenta + Integer.valueOf(String.valueOf(this.modelo.getRstm().getValueAt(i, 6)));
-            iva5 = iva5 + Integer.valueOf(String.valueOf(this.modelo.getRstm().getValueAt(i, 7)));
-            iva10 = iva10 + Integer.valueOf(String.valueOf(this.modelo.getRstm().getValueAt(i, 8)));
+            exenta = exenta + Integer.valueOf(String.valueOf(this.modelo.getRstm().getValueAt(i, 5)));
+            total5 = total5 + Integer.valueOf(String.valueOf(this.modelo.getRstm().getValueAt(i, 6)));
+            total10 = total10 + Integer.valueOf(String.valueOf(this.modelo.getRstm().getValueAt(i, 7)));
         }
-        total = exenta + iva5 + iva10;
+        total = exenta + total5 + total10;
+        totalIva5 = total5 / 21;
+        totalIva10 = total10 / 11;
         this.vista.jftExenta.setValue(exenta);
-        this.vista.jftIva5.setValue(iva5);
-        this.vista.jftIva10.setValue(iva10);
+        this.vista.jftIva5.setValue(total5);
+        this.vista.jftImpIva5.setValue(totalIva5);
+        this.vista.jftIva10.setValue(total10);
+        this.vista.jftImpIva10.setValue(totalIva10);
         this.vista.jftTotal.setValue(total);
+        this.vista.jftIvaTotal.setValue(totalIva5 + totalIva10);
     }
 
     @Override

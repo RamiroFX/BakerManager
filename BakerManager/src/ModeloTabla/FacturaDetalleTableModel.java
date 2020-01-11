@@ -140,7 +140,7 @@ public class FacturaDetalleTableModel extends AbstractTableModel {
                 break;
             }
         }
-        interfaceFacturaDetalle.notificarCambio();
+        interfaceFacturaDetalle.notificarCambioFacturaDetalle();
         fireTableCellUpdated(row, column);
         fireTableDataChanged();
     }

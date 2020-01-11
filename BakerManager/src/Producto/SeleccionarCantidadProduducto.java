@@ -42,8 +42,10 @@ public class SeleccionarCantidadProduducto extends javax.swing.JDialog implement
     public static final int AGREGAR_MESA_DETALLE = 13;
     private javax.swing.JButton jbCancel;
     private javax.swing.JButton jbOK;
-    private javax.swing.JLabel jlCantidad, jlDescuento, jlPrecio, jlObservacion;
-    private javax.swing.JTextField jtfCantidad, jtfDescuento, jtfObservacion, jtfPrecio;
+    private javax.swing.JLabel jlCantidad, jlDescuento, jlPrecio, jlObservacion,
+            jlPrecioCosto, jlPrecioMayorista;
+    private javax.swing.JTextField jtfCantidad, jtfDescuento, jtfObservacion, jtfPrecio,
+            jtfPrecioCosto, jtfPrecioMayotista;
     C_seleccionarProducto selecProd;
     C_crear_egreso crear_egreso;
     C_crearVentaRapida crear_ingreso;
@@ -212,6 +214,27 @@ public class SeleccionarCantidadProduducto extends javax.swing.JDialog implement
         }
     }
 
+    public void mostrarPrecioAdicional() {
+        setSize(new java.awt.Dimension(300, 310));
+        getContentPane().removeAll();
+        getContentPane().add(jlCantidad);
+        getContentPane().add(jtfCantidad, "width :200:,grow,wrap");
+        getContentPane().add(jlPrecio);
+        getContentPane().add(jtfPrecio, "width :200:,grow,wrap");
+        getContentPane().add(jlPrecioCosto);
+        getContentPane().add(jtfPrecioCosto, "width :200:,grow,wrap");
+        getContentPane().add(jlPrecioMayorista);
+        getContentPane().add(jtfPrecioMayotista, "width :200:,grow,wrap");
+        getContentPane().add(jlDescuento);
+        getContentPane().add(jtfDescuento, "width :200:,grow,wrap");
+        getContentPane().add(jlTotal);
+        getContentPane().add(jtfTotal, "width :200:,grow,wrap");
+        getContentPane().add(jlObservacion);
+        getContentPane().add(jtfObservacion, "width :200:,grow,wrap");
+        getContentPane().add(jbOK);
+        getContentPane().add(jbCancel);
+    }
+
     private void initComponents() {
         getContentPane().setLayout(new MigLayout());
         jbOK = new javax.swing.JButton();
@@ -219,8 +242,16 @@ public class SeleccionarCantidadProduducto extends javax.swing.JDialog implement
         jlCantidad = new javax.swing.JLabel("Cantidad");
         jlDescuento = new javax.swing.JLabel("Descuento");
         jlPrecio = new javax.swing.JLabel("Precio");
+        jlPrecioCosto = new javax.swing.JLabel("Precio Costo");
+        jlPrecioMayorista = new javax.swing.JLabel("Precio Mayorista");
         jlTotal = new javax.swing.JLabel("Total");
         jlObservacion = new javax.swing.JLabel("Observación");
+        jtfPrecioCosto = new javax.swing.JTextField(producto.getPrecioCosto() + "");
+        jtfPrecioCosto.setEditable(false);
+        jtfPrecioCosto.setEnabled(false);
+        jtfPrecioMayotista = new javax.swing.JTextField(producto.getPrecioMayorista() + "");
+        jtfPrecioMayotista.setEditable(false);
+        jtfPrecioMayotista.setEnabled(false);
         switch (tipo) {
             case C_seleccionarProducto.CREAR_INGRESO_POR_CODIGO: {
                 jtfCantidad = new javax.swing.JTextField("1.0");
