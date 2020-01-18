@@ -6,7 +6,9 @@ package Ventas;
 
 import Entities.E_facturacionCabecera;
 import Interface.InterfaceNotificarCambio;
+import java.awt.Color;
 import java.awt.EventQueue;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -15,6 +17,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.text.DecimalFormat;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import net.miginfocom.swing.MigLayout;
@@ -30,6 +33,9 @@ public class ConfirmarVenta extends javax.swing.JDialog implements ActionListene
             S_VUELTO = "Vuelto:",
             S_TOTAL_PAGAR = "Monto a pagar:",
             S_MONTO = "Condición de venta:";
+
+    Font font = new Font(Font.SANS_SERIF, Font.PLAIN, 20);
+    Font fontError = new Font(Font.SANS_SERIF, Font.PLAIN, 20);
     private javax.swing.JButton jbCancel;
     private javax.swing.JButton jbOK;
     private javax.swing.JLabel jlTotalPagar, jlMonto, jlVuelto, jtfMensaje;
@@ -42,7 +48,7 @@ public class ConfirmarVenta extends javax.swing.JDialog implements ActionListene
     public ConfirmarVenta(JDialog vista) {
         super(vista, true);
         setTitle(TITULO);
-        setSize(new java.awt.Dimension(350, 220));
+        setSize(new java.awt.Dimension(380, 220));
         setLocationRelativeTo(vista);
         initComponents();
         agregarListeners();
@@ -71,6 +77,7 @@ public class ConfirmarVenta extends javax.swing.JDialog implements ActionListene
         int totalPagarVal = Integer.valueOf(totalPagar);
         jtfTotalPagar.setValue(totalPagarVal);
         jtfMonto.setText(totalPagarVal + "");
+        calcularVuelto();
     }
 
     public void setInterface(InterfaceNotificarCambio interfaceNotificarCambio) {
@@ -84,17 +91,24 @@ public class ConfirmarVenta extends javax.swing.JDialog implements ActionListene
         jbCancel = new javax.swing.JButton("Cancel");
         jtfMensaje = new javax.swing.JLabel(S_ALERTA);
         jlTotalPagar = new javax.swing.JLabel(S_TOTAL_PAGAR);
+        jlTotalPagar.setFont(font);
         jlMonto = new javax.swing.JLabel(S_MONTO);
+        jlMonto.setFont(font);
         jlVuelto = new javax.swing.JLabel(S_VUELTO);
+        jlVuelto.setFont(font);
         jtfTotalPagar = new javax.swing.JFormattedTextField();
+        jtfTotalPagar.setFont(font);
         jtfTotalPagar.setEditable(false);
         jtfTotalPagar.setFormatterFactory(dff);
+        //DecimalFormat format = new DecimalFormat("#");
         jtfVuelto = new javax.swing.JFormattedTextField();
+        jtfVuelto.setFont(font);
         jtfVuelto.setFormatterFactory(dff);
         jtfMonto = new javax.swing.JTextField();
+        jtfMonto.setFont(font);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        getContentPane().add(jtfMensaje, "span,grow,wrap");
+        getContentPane().add(jtfMensaje, "spanx,growx,wrap");
         getContentPane().add(jlTotalPagar);
         getContentPane().add(jtfTotalPagar, "width :200:,grow,wrap");
         getContentPane().add(jlMonto);
@@ -144,7 +158,7 @@ public class ConfirmarVenta extends javax.swing.JDialog implements ActionListene
 
     /*
     TODO
-    */
+     */
     private void calcularVuelto() {
         EventQueue.invokeLater(new Runnable() {
             @Override
@@ -164,7 +178,12 @@ public class ConfirmarVenta extends javax.swing.JDialog implements ActionListene
                     return;
                 }
                 int totalPagar = (int) jtfTotalPagar.getValue();
-                int vuelto = monto - totalPagar;
+                Integer vuelto = monto - totalPagar;
+                if (vuelto < 0) {
+                    jtfVuelto.setForeground(Color.RED);
+                } else {
+                    jtfVuelto.setForeground(Color.BLACK);
+                }
                 System.out.println(".totalPagar(): " + totalPagar);
                 System.out.println(".monto(): " + monto);
                 System.out.println(".vuelto(): " + vuelto);

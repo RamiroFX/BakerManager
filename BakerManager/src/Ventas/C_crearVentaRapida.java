@@ -554,6 +554,6 @@ public class C_crearVentaRapida implements GestionInterface, InterfaceFacturaDet
 
     @Override
     public void notificarCambio() {
-        //guardarVenta();
+        guardarVenta();
     }
 }

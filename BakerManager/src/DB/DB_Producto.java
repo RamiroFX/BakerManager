@@ -261,7 +261,8 @@ public class DB_Producto {
                     + fromQuery
                     + "WHERE "
                     + prov
-                    + "LOWER(PROD.DESCRIPCION) LIKE ? "
+                    + "(LOWER(PROD.DESCRIPCION) LIKE ? "
+                    + "OR LOWER(PROD.CODIGO) LIKE ? )"
                     + marc
                     + imp
                     + rubr
@@ -271,6 +272,7 @@ public class DB_Producto {
             //se crea una sentencia
             pst = DB_manager.getConection().prepareStatement(Query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             pst.setString(1, descripcion + "%");
+            pst.setString(2, descripcion + "%");
             // se ejecuta el query y se obtienen los resultados en un ResultSet
             rs = pst.executeQuery();
             rstm = new ResultSetTableModel(rs);
