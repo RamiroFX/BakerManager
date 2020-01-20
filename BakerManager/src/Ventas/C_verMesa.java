@@ -251,9 +251,9 @@ public class C_verMesa extends MouseAdapter implements ActionListener, KeyListen
         Integer totalIva10 = 0;
         Integer total = 0;
         for (int i = 0; i < this.modelo.getRstm().getRowCount(); i++) {
-            exenta = exenta + Integer.valueOf(String.valueOf(this.modelo.getRstm().getValueAt(i, 5)));
-            total5 = total5 + Integer.valueOf(String.valueOf(this.modelo.getRstm().getValueAt(i, 6)));
-            total10 = total10 + Integer.valueOf(String.valueOf(this.modelo.getRstm().getValueAt(i, 7)));
+            exenta = exenta + Integer.valueOf(String.valueOf(this.modelo.getRstm().getValueAt(i, 6)));
+            total5 = total5 + Integer.valueOf(String.valueOf(this.modelo.getRstm().getValueAt(i, 7)));
+            total10 = total10 + Integer.valueOf(String.valueOf(this.modelo.getRstm().getValueAt(i, 8)));
         }
         total = exenta + total5 + total10;
         totalIva5 = total5 / 21;

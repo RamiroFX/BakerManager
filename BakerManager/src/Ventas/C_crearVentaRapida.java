@@ -328,6 +328,7 @@ public class C_crearVentaRapida implements GestionInterface, InterfaceFacturaDet
                 }
                 modelo.limpiarCampos();
                 vista.jtFacturaDetalle.setModel(modelo.getTableModel());
+                vista.jcbTipoVenta.setSelectedIndex(0);
                 recibirCliente(modelo.getCabecera().getCliente());
                 establecerNroFactura();
                 establecerCondicionVenta();
@@ -522,6 +523,10 @@ public class C_crearVentaRapida implements GestionInterface, InterfaceFacturaDet
     public void keyReleased(KeyEvent e) {
         switch (e.getKeyCode()) {
             case KeyEvent.VK_F1: {
+                if(modelo.isTableEmpty()){
+                    e.consume();
+                    return;
+                }
                 confirmarVenta();
                 break;
             }
