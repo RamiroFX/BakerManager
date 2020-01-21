@@ -15,11 +15,7 @@ import javax.swing.table.AbstractTableModel;
  * @author Ramiro Ferreira
  */
 public class ProduccionDetalleTableModel extends AbstractTableModel {
-
-    private static final String SOLO_DECIMAL = "Ingrese solo números decimales (Ej. 3.14)";
-    private static final String SOLO_ENTERO = "Ingrese solo números enteros (Ej. 13)";
-    private static final String ATENCION = "Atención";
-
+    
     private List<E_produccionDetalle> produccionList;
     private final String[] colNames = {"Cantidad", "Código", "Descripcion"};
 

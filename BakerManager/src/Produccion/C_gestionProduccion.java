@@ -69,6 +69,8 @@ public class C_gestionProduccion implements GestionInterface, RecibirEmpleadoCal
         this.vista.jbRegistroMateriaPrima.addActionListener(this);
         this.vista.jbEmpleado.addActionListener(this);
         this.vista.jbBuscar.addActionListener(this);
+        this.vista.jtProduccionCabecera.addMouseListener(this);
+        this.vista.jtProduccionCabecera.addKeyListener(this);
     }
 
     private void verificarPermiso() {
@@ -93,7 +95,7 @@ public class C_gestionProduccion implements GestionInterface, RecibirEmpleadoCal
         EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
-                if (validarFechas()) {
+                if (!validarFechas()) {
                     return;
                 }
                 if (!validarOrdenTrabajo()) {
@@ -107,8 +109,8 @@ public class C_gestionProduccion implements GestionInterface, RecibirEmpleadoCal
                 }
                 E_produccionTipo conVenta = vista.jcbTipoProduccion.getItemAt(vista.jcbTipoProduccion.getSelectedIndex());
                 Estado estado = vista.jcbEstado.getItemAt(vista.jcbEstado.getSelectedIndex());
-                vista.jtProduccion.setModel(modelo.consultarProduccion(fecha_inicio, fecha_fin, conVenta, nroOrdenTrabajo, estado));
-                Utilities.c_packColumn.packColumns(vista.jtProduccion, 1);
+                vista.jtProduccionCabecera.setModel(modelo.consultarProduccion(fecha_inicio, fecha_fin, conVenta, nroOrdenTrabajo, estado));
+                Utilities.c_packColumn.packColumns(vista.jtProduccionCabecera, 1);
                 vista.jbDetalle.setEnabled(false);
 
             }
@@ -148,6 +150,29 @@ public class C_gestionProduccion implements GestionInterface, RecibirEmpleadoCal
         }
         return true;
     }
+    
+    private void verDetalle(){
+        
+    }
+
+    private void obtenerPedidoDetalle(MouseEvent e) {
+        int fila = this.vista.jtProduccionCabecera.rowAtPoint(e.getPoint());
+        int columna = this.vista.jtProduccionCabecera.columnAtPoint(e.getPoint());
+        Integer idProduccion = Integer.valueOf(String.valueOf(this.vista.jtProduccionCabecera.getValueAt(fila, 0)));
+        //this.modelo.setPedido(modelo.obtenerPedido(idPedido));
+        //controlarTablaPedido();
+        /**/
+        if ((fila > -1) && (columna > -1)) {
+            this.vista.jbAnular.setEnabled(true);
+            this.vista.jtProduccionDetalle.setModel(modelo.obtenerProduccionDetalle(idProduccion));
+            Utilities.c_packColumn.packColumns(this.vista.jtProduccionDetalle, 1);
+        }
+        if (e.getClickCount() == 2) {
+            if (vista.jbDetalle.isEnabled()) {
+                verDetalle();
+            }
+        }
+    }
 
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -169,6 +194,9 @@ public class C_gestionProduccion implements GestionInterface, RecibirEmpleadoCal
 
     @Override
     public void mouseClicked(MouseEvent e) {
+        if (e.getSource().equals(this.vista.jtProduccionCabecera)) {
+            obtenerPedidoDetalle(e);
+        }
     }
 
     @Override

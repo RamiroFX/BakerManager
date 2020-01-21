@@ -38,7 +38,7 @@ public class V_gestionProduccion extends JInternalFrame {
     public JComboBox<E_produccionTipo> jcbTipoProduccion;
     public JComboBox<Estado> jcbEstado;
     private JPanel jpTop, jpBotonesTop, jpBot;
-    public JTable jtProduccion, jtPedidoDetalle;
+    public JTable jtProduccionCabecera, jtProduccionDetalle;
     private JScrollPane jspEgresoCabecera, jspEgresoDetalle;
     private JSplitPane jspMid;
     public JDateChooser jddInicio, jddFinal;
@@ -105,14 +105,14 @@ public class V_gestionProduccion extends JInternalFrame {
 
     private void initMid() {
         //Panel medio izquierda
-        jtProduccion = new JTable();
-        this.jtProduccion.getTableHeader().setReorderingAllowed(false);
-        jspEgresoCabecera = new JScrollPane(jtProduccion);
+        jtProduccionCabecera = new JTable();
+        this.jtProduccionCabecera.getTableHeader().setReorderingAllowed(false);
+        jspEgresoCabecera = new JScrollPane(jtProduccionCabecera);
 
         //panel medio derecha
-        jtPedidoDetalle = new JTable();
-        this.jtPedidoDetalle.getTableHeader().setReorderingAllowed(false);
-        jspEgresoDetalle = new JScrollPane(jtPedidoDetalle);
+        jtProduccionDetalle = new JTable();
+        this.jtProduccionDetalle.getTableHeader().setReorderingAllowed(false);
+        jspEgresoDetalle = new JScrollPane(jtProduccionDetalle);
         //creamos nuestro splitpane y agregamos los dos paneles del medio
         jspMid = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, jspEgresoCabecera, jspEgresoDetalle);
         jspMid.setDividerLocation(this.getWidth() / 2);

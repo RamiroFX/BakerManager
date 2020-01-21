@@ -10,6 +10,7 @@ import Entities.E_produccionDetalle;
 import Entities.E_produccionTipo;
 import Entities.Estado;
 import Entities.M_funcionario;
+import Entities.M_producto;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -172,12 +173,10 @@ public class DB_Produccion {
                 + "id_estado, "
                 + "(SELECT PRTI.DESCRIPCION FROM PRODUCCION_TIPO PRTI WHERE PRTI.ID_PRODUCCION_TIPO = PC.id_produccion_tipo) \"TIPO_PRODUCCION\", "
                 + "(SELECT ESTA.DESCRIPCION FROM ESTADO ESTA WHERE ESTA.ID_ESTADO = PC.ID_ESTADO) \"ESTADO\", "
-                + "(SELECT PERS.NOMBRE || ' '|| PERS.APELLIDO WHERE PERS.ID_PERSONA = FUNC.ID_PERSONA AND FUNC.ID_FUNCIONARIO = id_funcionario_responsable)\"RESPONSABLE\", "
-                + "(SELECT PERS.NOMBRE || ' '|| PERS.APELLIDO WHERE PERS.ID_PERSONA = FUNC.ID_PERSONA AND FUNC.ID_FUNCIONARIO = id_funcionario_usuario)\"USUARIO\" "
-                + "FROM produccion_cabecera PC,FUNCIONARIO F, PERSONA P "
-                + "WHERE  PC.TIEMPO BETWEEN ?  AND ? "
-                + "AND PC.ID_FUNCIONARIO = F.ID_FUNCIONARIO "
-                + "AND F.ID_PERSONA = P.ID_PERSONA ";
+                + "(SELECT P.NOMBRE || ' '|| P.APELLIDO FROM FUNCIONARIO F, PERSONA P WHERE P.ID_PERSONA = F.ID_PERSONA AND F.ID_FUNCIONARIO = PC.id_funcionario_responsable )\"RESPONSABLE\", "
+                + "(SELECT P.NOMBRE || ' '|| P.APELLIDO FROM FUNCIONARIO F, PERSONA P WHERE P.ID_PERSONA = F.ID_PERSONA AND F.ID_FUNCIONARIO = PC.id_funcionario_usuario)\"USUARIO\" "
+                + "FROM produccion_cabecera PC "
+                + "WHERE  PC.fecha_produccion BETWEEN ?  AND ? ";
 
         if (idProdTipo > -1) {
             Query = Query + " AND PC.ID_PRODUCCION_TIPO = ? ";
@@ -186,9 +185,9 @@ public class DB_Produccion {
             Query = Query + " AND PC.ID_ESTADO = ? ";
         }
         if (idFuncionario > -1) {
-            Query = Query + " AND PC.ID_FUNCIONARIO = ? ";
+            Query = Query + " AND PC.id_funcionario_usuario = ? ";
         }
-        Query = Query + " ORDER BY \"ID\"";
+        Query = Query + " ORDER BY fecha_produccion ;";
         try {
             pst = DB_manager.getConection().prepareStatement(Query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             pst.setTimestamp(pos, new Timestamp(inicio.getTime()));
@@ -233,7 +232,39 @@ public class DB_Produccion {
                 list.add(pc);
             }
         } catch (SQLException ex) {
-            Logger lgr = Logger.getLogger(DB_Ingreso.class.getName());
+            Logger lgr = Logger.getLogger(DB_Produccion.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        }
+        return list;
+    }
+
+    public static List<E_produccionDetalle> consultarProduccionDetalle(Integer idProduccion) {
+        List<E_produccionDetalle> list = new ArrayList<>();
+        String QUERY = "SELECT ID_PRODUCCION_DETALLE, "
+                + "ID_PRODUCTO, "
+                + "CANTIDAD, "
+                + "(SELECT P.DESCRIPCION FROM PRODUCTO P WHERE P.ID_PRODUCTO = PRODUCCION_DETALLE.ID_PRODUCTO )\"PRODUCTO\", "
+                + "(SELECT P.CODIGO FROM PRODUCTO P WHERE P.ID_PRODUCTO = PRODUCCION_DETALLE.ID_PRODUCTO )\"CODIGO\" "
+                + "FROM PRODUCCION_DETALLE "
+                + "WHERE ID_PRODUCCION_CABECERA = ?;";
+
+        try {
+            pst = DB_manager.getConection().prepareStatement(QUERY, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            pst.setInt(1, idProduccion);
+            rs = pst.executeQuery();
+            while (rs.next()) {
+                M_producto producto = new M_producto();
+                producto.setId(rs.getInt("ID_PRODUCTO"));
+                producto.setDescripcion(rs.getString("PRODUCTO"));
+                producto.setCodigo(rs.getString("CODIGO"));
+                E_produccionDetalle pd = new E_produccionDetalle();
+                pd.setId(rs.getInt("ID_PRODUCCION_DETALLE"));
+                pd.setCantidad(rs.getDouble("CANTIDAD"));
+                pd.setProducto(producto);
+                list.add(pd);
+            }
+        } catch (SQLException ex) {
+            Logger lgr = Logger.getLogger(DB_Egreso.class.getName());
             lgr.log(Level.SEVERE, ex.getMessage(), ex);
         }
         return list;
