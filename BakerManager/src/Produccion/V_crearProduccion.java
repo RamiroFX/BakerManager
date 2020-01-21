@@ -6,6 +6,7 @@
 package Produccion;
 
 import Entities.E_impresionTipo;
+import Entities.E_produccionTipo;
 import com.toedter.calendar.JDateChooser;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -37,7 +38,7 @@ class V_crearProduccion extends JDialog {
     public JTextField jtfFuncionario, jtfNroOrdenTrabajo;
     public JButton jbFuncionario;
     public JLabel jlNroOrdenTrabajo, jlFechaProduccion;
-    public JComboBox jcbCondVenta;
+    public JComboBox<E_produccionTipo> jcbTipoProduccion;
     public JDateChooser jdcFechaEntrega;
     //CENTRO
     JPanel jpCenter;
@@ -75,16 +76,16 @@ class V_crearProduccion extends JDialog {
         jlNroOrdenTrabajo = new JLabel("Nro. Orden de trabajo");
         jlFechaProduccion = new JLabel("Fecha");
         jtfNroOrdenTrabajo = new JTextField(30);
-        jcbCondVenta = new JComboBox();
+        jcbTipoProduccion = new JComboBox();
 
         jdcFechaEntrega = new JDateChooser();
         jdcFechaEntrega.setPreferredSize(new Dimension(150, 20));
         jpNorth1.add(jbFuncionario);
         jpNorth1.add(jtfFuncionario);
         jpNorth1.add(jlNroOrdenTrabajo);
-        jpNorth1.add(jtfNroOrdenTrabajo,"wrap");
-        jpNorth1.add(new JLabel("Tipo operación"));
-        jpNorth1.add(jcbCondVenta);
+        jpNorth1.add(jtfNroOrdenTrabajo, "wrap");
+        jpNorth1.add(new JLabel("Tipo producción"));
+        jpNorth1.add(jcbTipoProduccion);
         jpNorth1.add(jlFechaProduccion);
         jpNorth1.add(jdcFechaEntrega);
     }

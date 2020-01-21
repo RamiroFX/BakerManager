@@ -7,7 +7,7 @@ package Produccion;
 
 import Entities.E_produccionDetalle;
 import Entities.M_producto;
-import ModeloTabla.ProduccionTableModel;
+import ModeloTabla.ProduccionDetalleTableModel;
 
 /**
  *
@@ -15,17 +15,17 @@ import ModeloTabla.ProduccionTableModel;
  */
 class M_utilizarMateriaPrima {
 
-    ProduccionTableModel tm;
+    ProduccionDetalleTableModel tm;
 
     public M_utilizarMateriaPrima() {
-        this.tm = new ProduccionTableModel();
+        this.tm = new ProduccionDetalleTableModel();
     }
 
-    public void setTm(ProduccionTableModel tm) {
+    public void setTm(ProduccionDetalleTableModel tm) {
         this.tm = tm;
     }
 
-    public ProduccionTableModel getTm() {
+    public ProduccionDetalleTableModel getTm() {
         return tm;
     }
 

@@ -4,6 +4,7 @@
  */
 package Produccion;
 
+import Entities.E_produccionTipo;
 import Entities.Estado;
 import Interface.CommonFormat;
 import com.toedter.calendar.JDateChooser;
@@ -33,10 +34,11 @@ public class V_gestionProduccion extends JInternalFrame {
             jbRegistroMateriaPrima, jbDetalle,
             jbResumen, jbEmpleado, jbAnular;
     public JTextField jtfNroOrdenTrabajo, jtfEmpleado;
-    public JComboBox jcbEmpleado, jcbCondVenta;
+    public JComboBox jcbEmpleado;
+    public JComboBox<E_produccionTipo> jcbTipoProduccion;
     public JComboBox<Estado> jcbEstado;
     private JPanel jpTop, jpBotonesTop, jpBot;
-    public JTable jtPedido, jtPedidoDetalle;
+    public JTable jtProduccion, jtPedidoDetalle;
     private JScrollPane jspEgresoCabecera, jspEgresoDetalle;
     private JSplitPane jspMid;
     public JDateChooser jddInicio, jddFinal;
@@ -66,7 +68,7 @@ public class V_gestionProduccion extends JInternalFrame {
         jtfEmpleado = new JTextField();
         jtfEmpleado.setPreferredSize(new Dimension(250, 10));
         jtfEmpleado.setEditable(false);
-        jcbCondVenta = new JComboBox();
+        jcbTipoProduccion = new JComboBox();
         jcbEstado = new JComboBox();
         jtfNroOrdenTrabajo = new JTextField();
         jddInicio = new JDateChooser();
@@ -77,8 +79,8 @@ public class V_gestionProduccion extends JInternalFrame {
         jpFiltros.add(jtfEmpleado, "growx");
         jpFiltros.add(new JLabel("Fecha inicio:"));
         jpFiltros.add(jddInicio, "growx");
-        jpFiltros.add(new JLabel("Cond. compra:"));
-        jpFiltros.add(jcbCondVenta, "wrap");
+        jpFiltros.add(new JLabel("Tipo producción:"));
+        jpFiltros.add(jcbTipoProduccion, "wrap");
         jpFiltros.add(new JLabel("Estado:"));
         jpFiltros.add(jcbEstado);
         jpFiltros.add(new JLabel("Fecha final:"));
@@ -103,9 +105,9 @@ public class V_gestionProduccion extends JInternalFrame {
 
     private void initMid() {
         //Panel medio izquierda
-        jtPedido = new JTable();
-        this.jtPedido.getTableHeader().setReorderingAllowed(false);
-        jspEgresoCabecera = new JScrollPane(jtPedido);
+        jtProduccion = new JTable();
+        this.jtProduccion.getTableHeader().setReorderingAllowed(false);
+        jspEgresoCabecera = new JScrollPane(jtProduccion);
 
         //panel medio derecha
         jtPedidoDetalle = new JTable();
