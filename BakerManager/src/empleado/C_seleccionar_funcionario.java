@@ -36,8 +36,8 @@ public class C_seleccionar_funcionario extends MouseAdapter implements ActionLis
 
     private void inicializarVista() {
         this.vista.jbAceptar.setEnabled(false);
-        this.vista.jtCliente.setModel(DB_Funcionario.consultarFuncionario("", false, true, true));
-        Utilities.c_packColumn.packColumns(this.vista.jtCliente, 1);
+        this.vista.jtFuncionario.setModel(DB_Funcionario.consultarFuncionario("", false, true, true));
+        Utilities.c_packColumn.packColumns(this.vista.jtFuncionario, 1);
     }
 
     private void agregarListeners() {
@@ -47,7 +47,7 @@ public class C_seleccionar_funcionario extends MouseAdapter implements ActionLis
         this.vista.jckbCi.addActionListener(this);
         this.vista.jrbExclusivo.addActionListener(this);
         this.vista.jrbInclusivo.addActionListener(this);
-        this.vista.jtCliente.addMouseListener(this);
+        this.vista.jtFuncionario.addMouseListener(this);
         this.vista.jtfBuscar.addKeyListener(this);
     }
 
@@ -73,7 +73,7 @@ public class C_seleccionar_funcionario extends MouseAdapter implements ActionLis
                 boolean entidad = vista.jckbEntidadNombre.isSelected();
                 boolean ruc = vista.jckbCi.isSelected();
                 boolean exclusivo = vista.jrbExclusivo.isSelected();
-                vista.jtCliente.setModel(DB_Cliente.consultarCliente(cliente.toLowerCase(), entidad, ruc, exclusivo));
+                vista.jtFuncionario.setModel(DB_Funcionario.consultarFuncionario(cliente.toLowerCase(), entidad, ruc, exclusivo));
             }
         });
     }
@@ -99,9 +99,9 @@ public class C_seleccionar_funcionario extends MouseAdapter implements ActionLis
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        int fila = this.vista.jtCliente.rowAtPoint(e.getPoint());
-        int columna = this.vista.jtCliente.columnAtPoint(e.getPoint());
-        idFuncionario = Integer.valueOf(String.valueOf(this.vista.jtCliente.getValueAt(fila, 0)));
+        int fila = this.vista.jtFuncionario.rowAtPoint(e.getPoint());
+        int columna = this.vista.jtFuncionario.columnAtPoint(e.getPoint());
+        idFuncionario = Integer.valueOf(String.valueOf(this.vista.jtFuncionario.getValueAt(fila, 0)));
         funcionario = DB_Funcionario.obtenerDatosFuncionarioID(idFuncionario);
         if ((fila > -1) && (columna > -1)) {
             this.vista.jbAceptar.setEnabled(true);

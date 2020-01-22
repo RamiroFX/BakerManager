@@ -30,11 +30,10 @@ import net.miginfocom.swing.MigLayout;
  */
 public class V_gestionProduccion extends JInternalFrame {
 
-    public JButton jbBuscar, jbBuscarDetalle, jbBorrar, jbCrearProduccion,
+    public JButton jbBuscar, jbBorrar, jbCrearProduccion,
             jbRegistroMateriaPrima, jbDetalle,
             jbResumen, jbEmpleado, jbAnular;
     public JTextField jtfNroOrdenTrabajo, jtfEmpleado;
-    public JComboBox jcbEmpleado;
     public JComboBox<E_produccionTipo> jcbTipoProduccion;
     public JComboBox<Estado> jcbEstado;
     private JPanel jpTop, jpBotonesTop, jpBot;
@@ -94,10 +93,10 @@ public class V_gestionProduccion extends JInternalFrame {
         jbBuscar = new JButton("Buscar");
         jbBuscar.setName("buscar produccion");
         jbBorrar = new JButton("Borrar");
-        jbBuscarDetalle = new JButton("Buscar por detalle");
+        //jbBuscarDetalle = new JButton("Buscar por detalle");
         jpBotonesTop.add(jbBuscar, "span, growx, wrap");
-        jpBotonesTop.add(jbBorrar, "growx");
-        jpBotonesTop.add(jbBuscarDetalle, "span, growx");
+        jpBotonesTop.add(jbBorrar, "span, growx");
+        //jpBotonesTop.add(jbBuscarDetalle, "span, growx");
         jpTop.add(jpFiltros);
         jpTop.add(jpBotonesTop);
         jpTop.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED), "Filtro de busqueda"));

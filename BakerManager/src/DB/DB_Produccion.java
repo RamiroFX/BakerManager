@@ -121,11 +121,11 @@ public class DB_Produccion {
                 pst.executeUpdate();
                 pst.close();
             }
-            //se resta del stock lo que se vende
+            //se suma al stock lo que se produce
             for (int i = 0; i < detalle.size(); i++) {
                 String query = "UPDATE PRODUCTO SET "
                         + "CANT_ACTUAL = "
-                        + "((SELECT CANT_ACTUAL FROM PRODUCTO WHERE ID_PRODUCTO = " + detalle.get(i).getProducto().getId() + ")-" + detalle.get(i).getCantidad() + ") "
+                        + "((SELECT CANT_ACTUAL FROM PRODUCTO WHERE ID_PRODUCTO = " + detalle.get(i).getProducto().getId() + ")+" + detalle.get(i).getCantidad() + ") "
                         + "WHERE ID_PRODUCTO =" + detalle.get(i).getProducto().getId();
                 st = DB_manager.getConection().createStatement();
                 st.executeUpdate(query);
@@ -185,7 +185,7 @@ public class DB_Produccion {
             Query = Query + " AND PC.ID_ESTADO = ? ";
         }
         if (idFuncionario > -1) {
-            Query = Query + " AND PC.id_funcionario_usuario = ? ";
+            Query = Query + " AND PC.id_funcionario_responsable = ? ";
         }
         Query = Query + " ORDER BY fecha_produccion ;";
         try {
@@ -268,5 +268,98 @@ public class DB_Produccion {
             lgr.log(Level.SEVERE, ex.getMessage(), ex);
         }
         return list;
+    }
+
+    public static E_produccionCabecera obtenerProduccionCabecera(int idProduccion) {
+        E_produccionCabecera pc = null;
+        String Query = "SELECT id_produccion_cabecera, "
+                + "nro_orden_trabajo, "
+                + "fecha_registro, "
+                + "fecha_produccion, "
+                + "fecha_vencimiento, "
+                + "id_funcionario_responsable, "
+                + "id_funcionario_usuario, "
+                + "id_produccion_tipo, "
+                + "id_estado, "
+                + "(SELECT PRTI.DESCRIPCION FROM PRODUCCION_TIPO PRTI WHERE PRTI.ID_PRODUCCION_TIPO = PC.id_produccion_tipo) \"TIPO_PRODUCCION\", "
+                + "(SELECT ESTA.DESCRIPCION FROM ESTADO ESTA WHERE ESTA.ID_ESTADO = PC.ID_ESTADO) \"ESTADO\", "
+                + "(SELECT P.NOMBRE || ' '|| P.APELLIDO FROM FUNCIONARIO F, PERSONA P WHERE P.ID_PERSONA = F.ID_PERSONA AND F.ID_FUNCIONARIO = PC.id_funcionario_responsable )\"RESPONSABLE\", "
+                + "(SELECT P.NOMBRE || ' '|| P.APELLIDO FROM FUNCIONARIO F, PERSONA P WHERE P.ID_PERSONA = F.ID_PERSONA AND F.ID_FUNCIONARIO = PC.id_funcionario_usuario)\"USUARIO\" "
+                + "FROM produccion_cabecera PC "
+                + "WHERE  PC.id_produccion_cabecera = ? ;";
+        try {
+            pst = DB_manager.getConection().prepareStatement(Query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            pst.setInt(1, idProduccion);
+            rs = pst.executeQuery();
+            while (rs.next()) {
+                M_funcionario responsable = new M_funcionario();
+                responsable.setId_funcionario(rs.getInt("id_funcionario_responsable"));
+                responsable.setNombre(rs.getString("RESPONSABLE"));
+                M_funcionario usuario = new M_funcionario();
+                usuario.setId_funcionario(rs.getInt("id_funcionario_usuario"));
+                usuario.setNombre(rs.getString("USUARIO"));
+                Estado estado = new Estado();
+                estado.setId(rs.getInt("id_estado"));
+                estado.setDescripcion(rs.getString("ESTADO"));
+                E_produccionTipo pt = new E_produccionTipo();
+                pt.setId(rs.getInt("id_produccion_tipo"));
+                pt.setDescripcion(rs.getString("TIPO_PRODUCCION"));
+                pc = new E_produccionCabecera();
+                pc.setFuncionarioProduccion(responsable);
+                pc.setFuncionarioSistema(usuario);
+                pc.setTipo(pt);
+                pc.setEstado(estado);
+                pc.setId(rs.getInt("id_produccion_cabecera"));
+                pc.setNroOrdenTrabajo(rs.getInt("nro_orden_trabajo"));
+                pc.setFechaProduccion(rs.getTimestamp("fecha_produccion"));
+                pc.setFechaRegistro(rs.getTimestamp("fecha_registro"));
+                pc.setFechaVencimiento(rs.getTimestamp("fecha_vencimiento"));;
+            }
+        } catch (SQLException ex) {
+            Logger lgr = Logger.getLogger(DB_Produccion.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        }
+        return pc;
+    }
+
+    public static void anularProduccion(int idProduccion, List<E_produccionDetalle> detalle) {
+
+        String UPDATE_PRODUCCION = "UPDATE PRODUCCION_CABECERA SET "
+                + "ID_ESTADO = 2, "
+                + "NRO_ORDEN_TRABAJO = NULL "
+                + "WHERE ID_PRODUCCION_CABECERA = ?; ";
+        try {
+            DB_manager.habilitarTransaccionManual();
+            pst = DB_manager.getConection().prepareStatement(UPDATE_PRODUCCION);
+            pst.setInt(1, idProduccion);
+            pst.executeUpdate();
+            pst.close();
+
+            //se suma al stock lo que se produce
+            for (int i = 0; i < detalle.size(); i++) {
+                String query = "UPDATE PRODUCTO SET "
+                        + "CANT_ACTUAL = "
+                        + "((SELECT CANT_ACTUAL FROM PRODUCTO WHERE ID_PRODUCTO = " + detalle.get(i).getProducto().getId() + ")-" + detalle.get(i).getCantidad() + ") "
+                        + "WHERE ID_PRODUCTO =" + detalle.get(i).getProducto().getId();
+                pst = DB_manager.getConection().prepareStatement(query);
+                pst.executeUpdate();
+                pst.close();
+            }
+            DB_manager.establecerTransaccion();
+        } catch (SQLException ex) {
+            System.out.println(ex.getNextException());
+            if (DB_manager.getConection() != null) {
+                try {
+                    DB_manager.getConection().rollback();
+                } catch (SQLException ex1) {
+                    Logger lgr = Logger.getLogger(DB_Produccion.class
+                            .getName());
+                    lgr.log(Level.WARNING, ex1.getMessage(), ex1);
+                }
+            }
+            Logger lgr = Logger.getLogger(DB_Produccion.class
+                    .getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        }
     }
 }

@@ -4,20 +4,20 @@
  */
 package Produccion;
 
-import DB.ResultSetTableModel;
 import Empleado.Seleccionar_funcionario;
+import Entities.E_produccionCabecera;
 import Entities.E_produccionTipo;
 import Entities.Estado;
 import Entities.M_funcionario;
 import Interface.GestionInterface;
 import Interface.RecibirEmpleadoCallback;
+import Utilities.ProductionCellRenderer;
 import bakermanager.C_inicio;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.beans.PropertyVetoException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -31,7 +31,9 @@ public class C_gestionProduccion implements GestionInterface, RecibirEmpleadoCal
 
     private static final String VALIDAR_ORDEN_TRABAJO_MSG_2 = "Ingrese solo números enteros en orden de trabajo",
             VALIDAR_ORDEN_TRABAJO_MSG_3 = "Ingrese solo números enteros y positivos en orden de trabajo",
-            VALIDAR_TITULO = "Atención";
+            PRODUCTION_ANULATED_MSG = "La producción seleccionada ya esta anulada",
+            VALIDAR_TITULO = "Atención",
+            CONFIRMAR_MSG = "¿Desea confirmas esta operación?";
     public M_gestionProduccion modelo;
     public V_gestionProduccion vista;
     public C_inicio c_inicio;
@@ -60,6 +62,9 @@ public class C_gestionProduccion implements GestionInterface, RecibirEmpleadoCal
         Date date = Calendar.getInstance().getTime();
         this.vista.jddFinal.setDate(date);
         this.vista.jddInicio.setDate(date);
+        this.vista.jbDetalle.setEnabled(false);
+        this.vista.jbAnular.setEnabled(false);
+        this.vista.jtProduccionCabecera.setDefaultRenderer(Object.class, new ProductionCellRenderer(0));
     }
 
     @Override
@@ -69,6 +74,12 @@ public class C_gestionProduccion implements GestionInterface, RecibirEmpleadoCal
         this.vista.jbRegistroMateriaPrima.addActionListener(this);
         this.vista.jbEmpleado.addActionListener(this);
         this.vista.jbBuscar.addActionListener(this);
+        this.vista.jbBorrar.addActionListener(this);
+        this.vista.jbBorrar.addKeyListener(this);
+        this.vista.jbAnular.addActionListener(this);
+        this.vista.jbAnular.addKeyListener(this);
+        this.vista.jbDetalle.addActionListener(this);
+        this.vista.jbDetalle.addKeyListener(this);
         this.vista.jtProduccionCabecera.addMouseListener(this);
         this.vista.jtProduccionCabecera.addKeyListener(this);
     }
@@ -112,9 +123,29 @@ public class C_gestionProduccion implements GestionInterface, RecibirEmpleadoCal
                 vista.jtProduccionCabecera.setModel(modelo.consultarProduccion(fecha_inicio, fecha_fin, conVenta, nroOrdenTrabajo, estado));
                 Utilities.c_packColumn.packColumns(vista.jtProduccionCabecera, 1);
                 vista.jbDetalle.setEnabled(false);
-
+                vista.jbAnular.setEnabled(false);
             }
         });
+    }
+
+    private void obtenerPedidoDetalle(MouseEvent e) {
+        int fila = this.vista.jtProduccionCabecera.rowAtPoint(e.getPoint());
+        int columna = this.vista.jtProduccionCabecera.columnAtPoint(e.getPoint());
+        Integer idProduccion = Integer.valueOf(String.valueOf(this.vista.jtProduccionCabecera.getValueAt(fila, 0)));
+        //this.modelo.setPedido(modelo.obtenerPedido(idPedido));
+        //controlarTablaPedido();
+        /**/
+        if ((fila > -1) && (columna > -1)) {
+            this.vista.jbAnular.setEnabled(true);
+            this.vista.jbDetalle.setEnabled(true);
+            this.vista.jtProduccionDetalle.setModel(modelo.obtenerProduccionDetalle(idProduccion));
+            Utilities.c_packColumn.packColumns(this.vista.jtProduccionDetalle, 1);
+        }
+        if (e.getClickCount() == 2) {
+            if (vista.jbDetalle.isEnabled()) {
+                verDetalle();
+            }
+        }
     }
 
     private boolean validarFechas() {
@@ -150,28 +181,42 @@ public class C_gestionProduccion implements GestionInterface, RecibirEmpleadoCal
         }
         return true;
     }
-    
-    private void verDetalle(){
-        
+
+    private void verDetalle() {
+        int row = this.vista.jtProduccionCabecera.getSelectedRow();
+        int idProduccion = Integer.valueOf(String.valueOf(this.vista.jtProduccionCabecera.getValueAt(row, 0)));
+        VerProduccion vp = new VerProduccion(c_inicio);
+        vp.verPedidoRegistrado(idProduccion);
+        vp.mostrarVista();
+        this.vista.jbDetalle.setEnabled(false);
+        this.vista.jbAnular.setEnabled(false);
+
     }
 
-    private void obtenerPedidoDetalle(MouseEvent e) {
-        int fila = this.vista.jtProduccionCabecera.rowAtPoint(e.getPoint());
-        int columna = this.vista.jtProduccionCabecera.columnAtPoint(e.getPoint());
-        Integer idProduccion = Integer.valueOf(String.valueOf(this.vista.jtProduccionCabecera.getValueAt(fila, 0)));
-        //this.modelo.setPedido(modelo.obtenerPedido(idPedido));
-        //controlarTablaPedido();
-        /**/
-        if ((fila > -1) && (columna > -1)) {
-            this.vista.jbAnular.setEnabled(true);
-            this.vista.jtProduccionDetalle.setModel(modelo.obtenerProduccionDetalle(idProduccion));
-            Utilities.c_packColumn.packColumns(this.vista.jtProduccionDetalle, 1);
+    private void borrarParametros() {
+        modelo.borrarDatos();
+        this.vista.jtfEmpleado.setText("");
+        this.vista.jtfNroOrdenTrabajo.setText("");
+        this.vista.jcbEstado.setSelectedIndex(0);
+        this.vista.jcbTipoProduccion.setSelectedIndex(0);
+    }
+
+    private void anularProduccion() {
+        int fila = this.vista.jtProduccionCabecera.getSelectedRow();
+        if (modelo.getProduccionEstado(fila).getId() == Estado.INACTIVO) {
+            JOptionPane.showMessageDialog(vista, PRODUCTION_ANULATED_MSG, VALIDAR_TITULO, JOptionPane.ERROR_MESSAGE);
+            return;
         }
-        if (e.getClickCount() == 2) {
-            if (vista.jbDetalle.isEnabled()) {
-                verDetalle();
-            }
+        int opcion = JOptionPane.showConfirmDialog(vista, CONFIRMAR_MSG, VALIDAR_TITULO, JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+        if (opcion == JOptionPane.YES_OPTION) {
+            Integer idProduccion = Integer.valueOf(String.valueOf(this.vista.jtProduccionCabecera.getValueAt(fila, 0)));
+            this.modelo.anularProduccion(idProduccion);
+            ConsultarProduccion();
+            Utilities.c_packColumn.packColumns(this.vista.jtProduccionCabecera, 1);
+            this.vista.jbDetalle.setEnabled(false);
+            this.vista.jbAnular.setEnabled(false);
         }
+
     }
 
     @Override
@@ -189,6 +234,12 @@ public class C_gestionProduccion implements GestionInterface, RecibirEmpleadoCal
             sf.mostrarVista();
         } else if (source.equals(this.vista.jbBuscar)) {
             ConsultarProduccion();
+        } else if (source.equals(this.vista.jbBorrar)) {
+            borrarParametros();
+        } else if (source.equals(this.vista.jbDetalle)) {
+            verDetalle();
+        } else if (source.equals(this.vista.jbAnular)) {
+            anularProduccion();
         }
     }
 

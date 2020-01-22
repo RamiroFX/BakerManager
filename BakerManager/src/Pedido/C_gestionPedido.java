@@ -77,7 +77,7 @@ public class C_gestionPedido implements GestionInterface, RecibirEmpleadoCallbac
         //this.vista.jbPagoPedido.setEnabled(false);
         this.vista.jbDetalle.setEnabled(false);
         //this.vista.jtPedido.getColumnModel().getColumn(6).setCellRenderer(new MyColorCellRenderer());
-        this.vista.jtPedido.setDefaultRenderer(Object.class, new MyColorCellRenderer(6));
+        this.vista.jtPedido.setDefaultRenderer(Object.class, new MyColorCellRenderer(1));
     }
 
     @Override

@@ -291,4 +291,5 @@ class C_crearProduccion extends MouseAdapter implements ActionListener, KeyListe
     public void modificarProducto(int posicion, double cantidad, int precio, double descuento, M_producto producto, String observacion) {
         modelo.modificarDetalle(posicion, cantidad);
     }
+
 }

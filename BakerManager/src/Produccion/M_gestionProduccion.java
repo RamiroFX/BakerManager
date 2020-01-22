@@ -7,6 +7,7 @@ package Produccion;
 import DB.DB_Egreso;
 import DB.DB_Produccion;
 import DB.DB_manager;
+import Entities.E_produccionDetalle;
 import Entities.E_produccionTipo;
 import Entities.Estado;
 import Entities.M_funcionario;
@@ -15,6 +16,7 @@ import ModeloTabla.ProduccionDetalleTableModel;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Vector;
 
 /**
@@ -70,9 +72,8 @@ public class M_gestionProduccion {
     }
 
     public ArrayList<Estado> obtenerEstados() {
-        ArrayList<Estado> estados = new ArrayList<>();
+        ArrayList<Estado> estados = DB_manager.obtenerEstados();
         estados.add(new Estado(-1, "Todos"));
-        estados.addAll(DB_manager.obtenerEstados());
         return estados;
     }
 
@@ -89,6 +90,7 @@ public class M_gestionProduccion {
         calendarFinal.set(Calendar.MINUTE, 59);
         calendarFinal.set(Calendar.SECOND, 59);
         calendarFinal.set(Calendar.MILLISECOND, 999);
+        System.out.println("Produccion.M_gestionProduccion.consultarProduccion().estado: " + estado);
         getProduccionCabeceraTM().setList(DB_Produccion.consultarProduccion(calendarInicio.getTime(), calendarFinal.getTime(), prodTipo.getId(), nroPedido, estado.getId(), funcionario.getId_funcionario()));
         return getProduccionCabeceraTM();
     }
@@ -105,4 +107,13 @@ public class M_gestionProduccion {
         return getProduccionDetalleTM();
     }
 
+    public void anularProduccion(int idProduccion) {
+        List<E_produccionDetalle> detalle = DB_Produccion.consultarProduccionDetalle(idProduccion);
+        DB_Produccion.anularProduccion(idProduccion, detalle);
+    }
+
+    public Estado getProduccionEstado(int idProduccion) {
+        Estado estado = getProduccionCabeceraTM().getList().get(idProduccion).getEstado();
+        return estado;
+    }
 }

@@ -22,7 +22,7 @@ public class E_produccionCabecera {
     private M_funcionario funcionarioProduccion;
     private E_produccionTipo tipo;
     private Estado estado;
-    
+
     /**
      * @return the id
      */

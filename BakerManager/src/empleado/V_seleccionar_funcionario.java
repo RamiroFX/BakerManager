@@ -23,8 +23,8 @@ import net.miginfocom.swing.MigLayout;
 public class V_seleccionar_funcionario extends JDialog {
 
     JButton jbAceptar, jbCancelar;
-    JScrollPane jspCliente;
-    JTable jtCliente;
+    JScrollPane jspFuncionario;
+    JTable jtFuncionario;
     JPanel jpBotones, jpNorth;
     JTextField jtfBuscar;
     JCheckBox jckbEntidadNombre, jckbCi;
@@ -37,7 +37,7 @@ public class V_seleccionar_funcionario extends JDialog {
         initComp();
         getContentPane().setLayout(new BorderLayout());
         getContentPane().add(jpNorth, BorderLayout.NORTH);
-        getContentPane().add(jspCliente, BorderLayout.CENTER);
+        getContentPane().add(jspFuncionario, BorderLayout.CENTER);
         getContentPane().add(jpBotones, BorderLayout.SOUTH);
     }
 
@@ -48,14 +48,14 @@ public class V_seleccionar_funcionario extends JDialog {
         initComp();
         getContentPane().setLayout(new BorderLayout());
         getContentPane().add(jpNorth, BorderLayout.NORTH);
-        getContentPane().add(jspCliente, BorderLayout.CENTER);
+        getContentPane().add(jspFuncionario, BorderLayout.CENTER);
         getContentPane().add(jpBotones, BorderLayout.SOUTH);
     }
 
     private void initComp() {
-        jtCliente = new JTable();
-        jtCliente.getTableHeader().setReorderingAllowed(false);
-        jspCliente = new JScrollPane(jtCliente);
+        jtFuncionario = new JTable();
+        jtFuncionario.getTableHeader().setReorderingAllowed(false);
+        jspFuncionario = new JScrollPane(jtFuncionario);
         jbAceptar = new JButton("Aceptar");
         jbCancelar = new JButton("Cancelar");
         jpBotones = new JPanel();

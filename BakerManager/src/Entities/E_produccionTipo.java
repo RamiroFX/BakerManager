@@ -49,6 +49,25 @@ public class E_produccionTipo {
     public void setDescripcion(String descripcion) {
         this.descripcion = descripcion;
     }
+    @Override
+    public boolean equals(Object o) {
+        // If the object is compared with itself then return true   
+        if (o == this) {
+            return true;
+        }
+
+        /* Check if o is an instance of Complex or not 
+          "null instanceof [type]" also returns false */
+        if (!(o instanceof E_produccionTipo)) {
+            return false;
+        }
+
+        // typecast o to Complex so that we can compare data members  
+        E_produccionTipo c = (E_produccionTipo) o;
+
+        // Compare the data members and return accordingly  
+        return this.getDescripcion().equals(c.getDescripcion());
+    }
 
     @Override
     public String toString() {

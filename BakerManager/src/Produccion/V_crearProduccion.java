@@ -5,16 +5,13 @@
  */
 package Produccion;
 
-import Entities.E_impresionTipo;
 import Entities.E_produccionTipo;
 import com.toedter.calendar.JDateChooser;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.GridLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
-import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -28,7 +25,7 @@ import net.miginfocom.swing.MigLayout;
 
 /**
  *
- * @author Ramiro
+ * @author Ramiro Ferreira
  */
 class V_crearProduccion extends JDialog {
 
