@@ -187,6 +187,9 @@ public class DB_Produccion {
         if (idFuncionario > -1) {
             Query = Query + " AND PC.id_funcionario_responsable = ? ";
         }
+        if (nroPedido > -1) {
+            Query = Query + " AND PC.nro_orden_trabajo = ? ";
+        }
         Query = Query + " ORDER BY fecha_produccion ;";
         try {
             pst = DB_manager.getConection().prepareStatement(Query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
@@ -204,6 +207,10 @@ public class DB_Produccion {
             }
             if (idFuncionario > -1) {
                 pst.setInt(pos, idFuncionario);
+                pos++;
+            }
+            if (nroPedido > -1) {
+                pst.setInt(pos, nroPedido);
             }
             rs = pst.executeQuery();
             while (rs.next()) {

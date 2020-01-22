@@ -29,6 +29,7 @@ public class ProduccionCabeceraTableModel extends AbstractTableModel {
 
     public void setList(List<E_produccionCabecera> produccionList) {
         this.produccionList = produccionList;
+        fireTableDataChanged();
     }
 
     @Override

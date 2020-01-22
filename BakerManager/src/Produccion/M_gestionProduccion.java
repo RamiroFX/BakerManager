@@ -90,7 +90,6 @@ public class M_gestionProduccion {
         calendarFinal.set(Calendar.MINUTE, 59);
         calendarFinal.set(Calendar.SECOND, 59);
         calendarFinal.set(Calendar.MILLISECOND, 999);
-        System.out.println("Produccion.M_gestionProduccion.consultarProduccion().estado: " + estado);
         getProduccionCabeceraTM().setList(DB_Produccion.consultarProduccion(calendarInicio.getTime(), calendarFinal.getTime(), prodTipo.getId(), nroPedido, estado.getId(), funcionario.getId_funcionario()));
         return getProduccionCabeceraTM();
     }
