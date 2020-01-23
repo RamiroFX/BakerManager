@@ -7,8 +7,6 @@ package Excel;
 
 import Entities.E_facturaCabeceraFX;
 import Entities.E_facturaDetalleFX;
-import Entities.Estado;
-import Entities.M_facturaDetalle;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;

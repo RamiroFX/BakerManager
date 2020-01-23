@@ -5,27 +5,34 @@
  */
 package Produccion;
 
-import Entities.E_facturacionCabecera;
-import Entities.E_produccionTipo;
-import Entities.Estado;
-import Entities.M_funcionario;
+import DB.DB_Produccion;
+import Entities.E_produccionCabecera;
+import Excel.ExportarProduccion;
 import Interface.InterfaceFacturaDetalle;
 import ModeloTabla.ProduccionCabeceraTableModel;
+import ModeloTabla.ProduccionDetalleTableModel;
+import java.awt.BorderLayout;
 import static java.awt.Dialog.DEFAULT_MODALITY_TYPE;
+import java.awt.EventQueue;
+import java.awt.FlowLayout;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.ArrayList;
 import java.util.Date;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
-import javax.swing.table.TableModel;
+import javax.swing.SwingConstants;
 
 /**
  *
@@ -35,43 +42,95 @@ public class ResumenProduccion extends JDialog implements ActionListener, KeyLis
 
     JScrollPane jspEgreso, jspDetalle;
     JTable jtEgreso, jtDetalle;
-    JButton jbSalir, jbImportarXLS, jbImprimirFacturacion;
+    JButton jbSalir, jbImportarXLS;
     JLabel jlContado, jlCredito, jlTotal;
     JFormattedTextField jftTotalEgreso, jftTotalEgCont, jftTotalEgCred;
     Date inicio, fin;
-    M_funcionario funcionario;
-    E_produccionTipo tipoProduccion;
-    Integer nroOrdenProd;
     JTabbedPane jtpPanel;
-    E_facturacionCabecera facturacionCabecera;
-    Estado estado;
+    ProduccionCabeceraTableModel tm;
 
-    public ResumenProduccion(JFrame frame, ProduccionCabeceraTableModel tm, Integer nroOrdenProd, 
-            M_funcionario funcionario, Date inicio, Date fin,
-            E_produccionTipo tipoProduccion, Estado estado) {
+    public ResumenProduccion(JFrame frame, ProduccionCabeceraTableModel tm) {
         super(frame, DEFAULT_MODALITY_TYPE);
         setTitle("Resumen de producción");
         setSize(800, 600);
         setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(frame);
-        this.inicio = inicio;
-        this.fin = fin;
-        this.funcionario = funcionario;
-        this.tipoProduccion = tipoProduccion;
-        this.nroOrdenProd = nroOrdenProd;
-        this.estado = estado;
+        this.tm = tm;
         inicializarComponentes();
-        inicializarVista(tm, inicio, fin);
+        inicializarDatos(tm);
         agregarListener();
     }
 
-    public void inicializarDatos(E_facturacionCabecera facturacionCabecera) {
+    public ResumenProduccion(JFrame frame, ProduccionCabeceraTableModel tm, Date inicio, Date fin) {
+        super(frame, DEFAULT_MODALITY_TYPE);
+        setTitle("Resumen de producción");
+        setSize(800, 600);
+        setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+        setLocationRelativeTo(frame);
+        this.tm = tm;
+        this.inicio = inicio;
+        this.fin = fin;
+        inicializarComponentes();
+        inicializarDatos(tm);
+        agregarListener();
+    }
+
+    private void inicializarDatos(ProduccionCabeceraTableModel tm) {
+        jtEgreso.setModel(tm);
+        ProduccionDetalleTableModel tmDetalle = new ProduccionDetalleTableModel();
+        tmDetalle.setList(DB_Produccion.consultarProduccionDetalleAgrupado(tm.getList()));
+        jtDetalle.setModel(tmDetalle);
+        Utilities.c_packColumn.packColumns(jtEgreso, 1);
+        Utilities.c_packColumn.packColumns(jtDetalle, 1);
+    }
+
+    public void mostrarVista() {
+        this.setVisible(true);
     }
 
     private void inicializarComponentes() {
-    }
+        jtEgreso = new JTable();
+        jtEgreso.getTableHeader().setReorderingAllowed(false);
+        jspEgreso = new JScrollPane(jtEgreso);
+        jtDetalle = new JTable();
+        jtDetalle.getTableHeader().setReorderingAllowed(false);
+        jspDetalle = new JScrollPane(jtDetalle);
+        JPanel jpTotalEgreso = new JPanel(new GridLayout(3, 2));
+        jftTotalEgreso = new JFormattedTextField();
+        jftTotalEgreso.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("¤#,##0"))));
+        jftTotalEgCont = new JFormattedTextField();
+        jftTotalEgCont.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("¤#,##0"))));
+        jftTotalEgCred = new JFormattedTextField();
+        jftTotalEgCred.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("¤#,##0"))));
+        jlContado = new JLabel("Ingresos al contado");
+        jlContado.setHorizontalAlignment(SwingConstants.CENTER);
+        jlCredito = new JLabel("Ingresos a crédito");
+        jlCredito.setHorizontalAlignment(SwingConstants.CENTER);
+        jlTotal = new JLabel("Total ingresos");
+        jlTotal.setHorizontalAlignment(SwingConstants.CENTER);
+        jpTotalEgreso.add(jlContado);
+        jpTotalEgreso.add(jftTotalEgCont);
+        jpTotalEgreso.add(jlCredito);
+        jpTotalEgreso.add(jftTotalEgCred);
+        jpTotalEgreso.add(jlTotal);
+        jpTotalEgreso.add(jftTotalEgreso);
+        jbSalir = new JButton("Salir");
+        jbImportarXLS = new JButton("Importar a excel");
+        jbImportarXLS.setName("exportar produccion");
+        jtpPanel = new JTabbedPane();
+        jtpPanel.addKeyListener(this);
 
-    private void inicializarVista(TableModel tm, Date inicio, Date fin) {
+        JPanel jpCenter = new JPanel(new BorderLayout());
+        JPanel jpSouth = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        jpSouth.add(jbImportarXLS);
+        jpSouth.add(jbSalir);
+        jpCenter.add(jspEgreso, BorderLayout.CENTER);
+        jpCenter.add(jpTotalEgreso, BorderLayout.SOUTH);
+
+        jtpPanel.addTab("Resumen", jpCenter);
+        jtpPanel.addTab("Detalle", jspDetalle);
+        getContentPane().add(jtpPanel, BorderLayout.CENTER);
+        getContentPane().add(jpSouth, BorderLayout.SOUTH);
     }
 
     private void agregarListener() {
@@ -79,9 +138,63 @@ public class ResumenProduccion extends JDialog implements ActionListener, KeyLis
         jbImportarXLS.addActionListener(this);
     }
 
+    private void exportHandler() {
+        Object[] options = {"Individual",
+            "Agrupado"};
+        int n = JOptionPane.showOptionDialog(this,
+                "Eliga tipo de reporte",
+                "Atención",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                null, //do not use a custom Icon
+                options, //the titles of buttons
+                options[0]); //default button title
+        switch (n) {
+            case 0: {
+                //Individual
+                EventQueue.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        ExportarProduccion ep = new ExportarProduccion("Produccion", inicio, fin, new ArrayList<E_produccionCabecera>(tm.getList()));
+                        ep.exportacionIndividual();
+                    }
+                });
+                break;
+            }
+            case 1: {
+                //Agrupado
+                EventQueue.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        ExportarProduccion ep = new ExportarProduccion("Produccion", inicio, fin, new ArrayList<E_produccionCabecera>(tm.getList()));
+                        ep.exportacionAgrupada();
+                    }
+                });
+                break;
+            }
+        }
+    }
+
+    private void keyPressedHandler(final KeyEvent e) {
+        EventQueue.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                switch (e.getKeyCode()) {
+                    case KeyEvent.VK_ESCAPE: {
+                        cerrar();
+                    }
+                }
+            }
+        });
+    }
 
     @Override
     public void actionPerformed(ActionEvent ae) {
+        if (ae.getSource().equals(jbSalir)) {
+            dispose();
+        } else if (ae.getSource().equals(jbImportarXLS)) {
+            exportHandler();
+        }
     }
 
     @Override
@@ -90,6 +203,7 @@ public class ResumenProduccion extends JDialog implements ActionListener, KeyLis
 
     @Override
     public void keyPressed(KeyEvent e) {
+        keyPressedHandler(e);
     }
 
     @Override

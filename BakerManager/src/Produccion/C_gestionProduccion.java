@@ -5,7 +5,6 @@
 package Produccion;
 
 import Empleado.Seleccionar_funcionario;
-import Entities.E_produccionCabecera;
 import Entities.E_produccionTipo;
 import Entities.Estado;
 import Entities.M_funcionario;
@@ -80,6 +79,8 @@ public class C_gestionProduccion implements GestionInterface, RecibirEmpleadoCal
         this.vista.jbAnular.addKeyListener(this);
         this.vista.jbDetalle.addActionListener(this);
         this.vista.jbDetalle.addKeyListener(this);
+        this.vista.jbResumen.addActionListener(this);
+        this.vista.jbResumen.addKeyListener(this);
         this.vista.jtProduccionCabecera.addMouseListener(this);
         this.vista.jtProduccionCabecera.addKeyListener(this);
     }
@@ -132,9 +133,6 @@ public class C_gestionProduccion implements GestionInterface, RecibirEmpleadoCal
         int fila = this.vista.jtProduccionCabecera.rowAtPoint(e.getPoint());
         int columna = this.vista.jtProduccionCabecera.columnAtPoint(e.getPoint());
         Integer idProduccion = Integer.valueOf(String.valueOf(this.vista.jtProduccionCabecera.getValueAt(fila, 0)));
-        //this.modelo.setPedido(modelo.obtenerPedido(idPedido));
-        //controlarTablaPedido();
-        /**/
         if ((fila > -1) && (columna > -1)) {
             this.vista.jbAnular.setEnabled(true);
             this.vista.jbDetalle.setEnabled(true);
@@ -216,7 +214,13 @@ public class C_gestionProduccion implements GestionInterface, RecibirEmpleadoCal
             this.vista.jbDetalle.setEnabled(false);
             this.vista.jbAnular.setEnabled(false);
         }
+    }
 
+    private void resumenProduccion() {
+        Date fecha_inicio = vista.jddInicio.getDate();
+        Date fecha_fin = vista.jddFinal.getDate();
+        ResumenProduccion rp = new ResumenProduccion(this.c_inicio.vista, this.modelo.getProduccionCabeceraTM(), fecha_inicio, fecha_fin);
+        rp.mostrarVista();
     }
 
     @Override
@@ -240,6 +244,8 @@ public class C_gestionProduccion implements GestionInterface, RecibirEmpleadoCal
             verDetalle();
         } else if (source.equals(this.vista.jbAnular)) {
             anularProduccion();
+        } else if (source.equals(this.vista.jbResumen)) {
+            resumenProduccion();
         }
     }
 

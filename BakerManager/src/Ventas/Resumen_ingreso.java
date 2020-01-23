@@ -8,7 +8,6 @@ package Ventas;
 import DB.DB_Ingreso;
 import Entities.E_facturaDetalleFX;
 import Entities.E_facturacionCabecera;
-import Entities.E_tipoOperacion;
 import Entities.Estado;
 import Entities.M_cliente;
 import Entities.M_facturaCabecera;

@@ -330,7 +330,6 @@ public class DB_Produccion {
     }
 
     public static void anularProduccion(int idProduccion, List<E_produccionDetalle> detalle) {
-
         String UPDATE_PRODUCCION = "UPDATE PRODUCCION_CABECERA SET "
                 + "ID_ESTADO = 2, "
                 + "NRO_ORDEN_TRABAJO = NULL "
@@ -368,5 +367,53 @@ public class DB_Produccion {
                     .getName());
             lgr.log(Level.SEVERE, ex.getMessage(), ex);
         }
+    }
+
+    public static List<E_produccionDetalle> consultarProduccionDetalleAgrupado(List<E_produccionCabecera> cadenaCabeceras) {
+        List<E_produccionDetalle> list = new ArrayList<>();
+        boolean b = true;
+        StringBuilder builder = new StringBuilder();
+        for (E_produccionCabecera seleccionVenta : cadenaCabeceras) {
+            builder.append("?,");
+            b = false;
+        }
+        //para controlar que la lista contenga por lo menos una venta seleccionada
+        if (b) {
+            return list;
+        }
+        String QUERY = "SELECT PROD.CODIGO \"Codigo\", "
+                + "PROD.DESCRIPCION \"Producto\", "
+                + "SUM(PRDE.CANTIDAD) \"Cantidad\" "
+                + "FROM PRODUCCION_DETALLE PRDE, PRODUCCION_CABECERA PRCA, PRODUCTO PROD "
+                + "WHERE PRDE.ID_PRODUCCION_CABECERA = PRCA.ID_PRODUCCION_CABECERA "
+                + "AND PRDE.ID_PRODUCTO = PROD.ID_PRODUCTO "
+                + "AND PRCA.ID_PRODUCCION_CABECERA IN ("
+                + builder.substring(0, builder.length() - 1) + ")";
+
+        String PIE = "GROUP BY PROD.DESCRIPCION, PROD.CODIGO "
+                + "ORDER BY PROD.DESCRIPCION";
+        QUERY = QUERY + PIE;
+        try {
+            pst = DB_manager.getConection().prepareStatement(QUERY, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            int index = 1;
+            for (E_produccionCabecera seleccionVenta : cadenaCabeceras) {
+                pst.setInt(index, seleccionVenta.getId());
+                index++;
+            }
+            rs = pst.executeQuery();
+            while (rs.next()) {
+                E_produccionDetalle prde = new E_produccionDetalle();
+                M_producto producto = new M_producto();
+                producto.setCodBarra(rs.getString("Codigo"));
+                producto.setDescripcion(rs.getString("Producto"));
+                prde.setProducto(producto);
+                prde.setCantidad(rs.getDouble("Cantidad"));
+                list.add(prde);
+            }
+        } catch (SQLException ex) {
+            Logger lgr = Logger.getLogger(DB_Produccion.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        }
+        return list;
     }
 }
