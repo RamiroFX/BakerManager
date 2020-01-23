@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package Produccion;
+package UsoMateriaPrima;
 
 import Entities.E_produccionTipo;
 import Entities.Estado;
@@ -28,12 +28,12 @@ import net.miginfocom.swing.MigLayout;
  *
  * @author Ramiro Ferreira
  */
-public class V_gestionProduccion extends JInternalFrame {
+public class V_gestionMateriaPrima extends JInternalFrame {
 
-    public JButton jbBuscar, jbBorrar, jbCrearProduccion,
-            jbDetalle,jbResumen, jbEmpleado, jbAnular;
+    public JButton jbBuscar, jbBorrar, 
+            jbRegistroMateriaPrima, jbDetalle,
+            jbResumen, jbEmpleado, jbAnular;
     public JTextField jtfNroOrdenTrabajo, jtfEmpleado;
-    public JComboBox<E_produccionTipo> jcbTipoProduccion;
     public JComboBox<Estado> jcbEstado;
     private JPanel jpTop, jpBotonesTop, jpBot;
     public JTable jtProduccionCabecera, jtProduccionDetalle;
@@ -41,12 +41,12 @@ public class V_gestionProduccion extends JInternalFrame {
     private JSplitPane jspMid;
     public JDateChooser jddInicio, jddFinal;
 
-    public V_gestionProduccion(JFrame frame) {
-        super("Gesión de producción", true, true, true, true);
+    public V_gestionMateriaPrima(JFrame frame) {
+        super("Gesión de uso de materia prima", true, true, true, true);
         //super(frame, "Gestión de pedidos", true);
         //setPreferredSize(new Dimension(950, 600));
         setSize(1200, 600);
-        setName("jifGestionProduccion");
+        setName("jifGestionUsoMateriaPrima");
         //setLocationRelativeTo(frame);
         initTop();
         initMid();
@@ -66,9 +66,8 @@ public class V_gestionProduccion extends JInternalFrame {
         jtfEmpleado = new JTextField();
         jtfEmpleado.setPreferredSize(new Dimension(250, 10));
         jtfEmpleado.setEditable(false);
-        jcbTipoProduccion = new JComboBox();
         jcbEstado = new JComboBox();
-        jtfNroOrdenTrabajo = new JTextField();
+        jtfNroOrdenTrabajo = new JTextField(15);
         jddInicio = new JDateChooser();
         jddInicio.setPreferredSize(new Dimension(150, 10));
         jddFinal = new JDateChooser();
@@ -77,14 +76,12 @@ public class V_gestionProduccion extends JInternalFrame {
         jpFiltros.add(jtfEmpleado, "growx");
         jpFiltros.add(new JLabel("Fecha inicio:"));
         jpFiltros.add(jddInicio, "growx");
-        jpFiltros.add(new JLabel("Tipo producción:"));
-        jpFiltros.add(jcbTipoProduccion, "wrap");
+        jpFiltros.add(new JLabel("Nro. Orden trabajo:"));
+        jpFiltros.add(jtfNroOrdenTrabajo, "wrap");
         jpFiltros.add(new JLabel("Estado:"));
         jpFiltros.add(jcbEstado);
         jpFiltros.add(new JLabel("Fecha final:"));
         jpFiltros.add(jddFinal, "growx");
-        jpFiltros.add(new JLabel("Nro. Orden trabajo:"));
-        jpFiltros.add(jtfNroOrdenTrabajo, "growx");
         jpFiltros.add(new JLabel(), "growx");
         jpFiltros.add(new JLabel(), "growx");
         jpBotonesTop = new JPanel(new MigLayout());
@@ -120,23 +117,23 @@ public class V_gestionProduccion extends JInternalFrame {
     private void initBot() {
         jpBot = new JPanel();
         Insets inset = new Insets(10, 10, 10, 10);
-        jbCrearProduccion = new JButton("Crear produccion [F1]");
-        jbCrearProduccion.setName("crear produccion");
-        jbCrearProduccion.setMargin(inset);
-        jbCrearProduccion.setFont(CommonFormat.fuente);
-        jbAnular = new JButton("Cancelar produccion");
-        jbAnular.setName("cancelar produccion");
+        jbRegistroMateriaPrima = new JButton("Utilizar Materia Prima [F1]");
+        jbRegistroMateriaPrima.setName("utilizar materia prima");
+        jbRegistroMateriaPrima.setMargin(inset);
+        jbRegistroMateriaPrima.setFont(CommonFormat.fuente);
+        jbAnular = new JButton("Anular registro");
+        jbAnular.setName("cancelar uso materia prima");
         jbAnular.setMargin(inset);
         jbAnular.setFont(CommonFormat.fuente);
         jbDetalle = new JButton("Ver detalle");
-        jbDetalle.setName("modificar produccion");
+        jbDetalle.setName("ver detalle mp");
         jbDetalle.setMargin(inset);
         jbDetalle.setFont(CommonFormat.fuente);
         jbResumen = new JButton("Ver resumen [F3]");
-        jbResumen.setName("resumen produccion");
+        jbResumen.setName("resumen uso materia prima");
         jbResumen.setMargin(inset);
         jbResumen.setFont(CommonFormat.fuente);
-        jpBot.add(jbCrearProduccion);
+        jpBot.add(jbRegistroMateriaPrima);
         jpBot.add(jbAnular);
         jpBot.add(jbDetalle);
         jpBot.add(jbResumen);

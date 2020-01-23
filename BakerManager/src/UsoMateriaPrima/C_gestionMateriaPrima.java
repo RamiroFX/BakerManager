@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package Produccion;
+package UsoMateriaPrima;
 
 import Empleado.Seleccionar_funcionario;
 import Entities.E_produccionTipo;
@@ -26,18 +26,18 @@ import javax.swing.JOptionPane;
  *
  * @author Ramiro Ferreira
  */
-public class C_gestionProduccion implements GestionInterface, RecibirEmpleadoCallback {
+public class C_gestionMateriaPrima implements GestionInterface, RecibirEmpleadoCallback {
 
     private static final String VALIDAR_ORDEN_TRABAJO_MSG_2 = "Ingrese solo números enteros en orden de trabajo",
             VALIDAR_ORDEN_TRABAJO_MSG_3 = "Ingrese solo números enteros y positivos en orden de trabajo",
             PRODUCTION_ANULATED_MSG = "La producción seleccionada ya esta anulada",
             VALIDAR_TITULO = "Atención",
             CONFIRMAR_MSG = "¿Desea confirmas esta operación?";
-    public M_gestionProduccion modelo;
-    public V_gestionProduccion vista;
+    public M_gestionMateriaPrima modelo;
+    public V_gestionMateriaPrima vista;
     public C_inicio c_inicio;
 
-    public C_gestionProduccion(M_gestionProduccion modelo, V_gestionProduccion vista, C_inicio c_inicio) {
+    public C_gestionMateriaPrima(M_gestionMateriaPrima modelo, V_gestionMateriaPrima vista, C_inicio c_inicio) {
         this.modelo = modelo;
         this.vista = vista;
         this.c_inicio = c_inicio;
@@ -49,10 +49,6 @@ public class C_gestionProduccion implements GestionInterface, RecibirEmpleadoCal
     public final void inicializarVista() {
         //E_productoClasificacion pc1 = new E_productoClasificacion(E_productoClasificacion.MATERIA_PRIMA, "Materia prima");
         //E_productoClasificacion pc2 = new E_productoClasificacion(E_productoClasificacion.PRODUCTO_TERMINADO, "Producto terminado");
-        ArrayList<E_produccionTipo> tipoProduccion = modelo.obtenerProduccionTipo();
-        for (int i = 0; i < tipoProduccion.size(); i++) {
-            this.vista.jcbTipoProduccion.addItem(tipoProduccion.get(i));
-        }
         ArrayList<Estado> estados = modelo.obtenerEstados();
         for (int i = 0; i < estados.size(); i++) {
             Estado get = estados.get(i);
@@ -69,7 +65,7 @@ public class C_gestionProduccion implements GestionInterface, RecibirEmpleadoCal
     @Override
     public final void concederPermisos() {
         //TODO add access
-        this.vista.jbCrearProduccion.addActionListener(this);
+        this.vista.jbRegistroMateriaPrima.addActionListener(this);
         this.vista.jbEmpleado.addActionListener(this);
         this.vista.jbBuscar.addActionListener(this);
         this.vista.jbBorrar.addActionListener(this);
@@ -118,9 +114,8 @@ public class C_gestionProduccion implements GestionInterface, RecibirEmpleadoCal
                 if (!vista.jtfNroOrdenTrabajo.getText().trim().isEmpty()) {
                     nroOrdenTrabajo = Integer.valueOf(vista.jtfNroOrdenTrabajo.getText().trim());
                 }
-                E_produccionTipo conVenta = vista.jcbTipoProduccion.getItemAt(vista.jcbTipoProduccion.getSelectedIndex());
                 Estado estado = vista.jcbEstado.getItemAt(vista.jcbEstado.getSelectedIndex());
-                vista.jtProduccionCabecera.setModel(modelo.consultarProduccion(fecha_inicio, fecha_fin, conVenta, nroOrdenTrabajo, estado));
+                vista.jtProduccionCabecera.setModel(modelo.consultarProduccion(fecha_inicio, fecha_fin, nroOrdenTrabajo, estado));
                 Utilities.c_packColumn.packColumns(vista.jtProduccionCabecera, 1);
                 vista.jbDetalle.setEnabled(false);
                 vista.jbAnular.setEnabled(false);
@@ -135,7 +130,7 @@ public class C_gestionProduccion implements GestionInterface, RecibirEmpleadoCal
         if ((fila > -1) && (columna > -1)) {
             this.vista.jbAnular.setEnabled(true);
             this.vista.jbDetalle.setEnabled(true);
-            this.vista.jtProduccionDetalle.setModel(modelo.obtenerProduccionDetalle(idProduccion));
+            this.vista.jtProduccionDetalle.setModel(modelo.obtenerRegistroMateriaPrimaDetalle(idProduccion));
             Utilities.c_packColumn.packColumns(this.vista.jtProduccionDetalle, 1);
         }
         if (e.getClickCount() == 2) {
@@ -182,9 +177,9 @@ public class C_gestionProduccion implements GestionInterface, RecibirEmpleadoCal
     private void verDetalle() {
         int row = this.vista.jtProduccionCabecera.getSelectedRow();
         int idProduccion = Integer.valueOf(String.valueOf(this.vista.jtProduccionCabecera.getValueAt(row, 0)));
-        VerProduccion vp = new VerProduccion(c_inicio);
+        /*VerProduccion vp = new VerProduccion(c_inicio);
         vp.verPedidoRegistrado(idProduccion);
-        vp.mostrarVista();
+        vp.mostrarVista();*/
         this.vista.jbDetalle.setEnabled(false);
         this.vista.jbAnular.setEnabled(false);
 
@@ -195,19 +190,18 @@ public class C_gestionProduccion implements GestionInterface, RecibirEmpleadoCal
         this.vista.jtfEmpleado.setText("");
         this.vista.jtfNroOrdenTrabajo.setText("");
         this.vista.jcbEstado.setSelectedIndex(0);
-        this.vista.jcbTipoProduccion.setSelectedIndex(0);
     }
 
     private void anularProduccion() {
         int fila = this.vista.jtProduccionCabecera.getSelectedRow();
-        if (modelo.getProduccionEstado(fila).getId() == Estado.INACTIVO) {
+        if (modelo.getUsoMateriPrimaEstado(fila).getId() == Estado.INACTIVO) {
             JOptionPane.showMessageDialog(vista, PRODUCTION_ANULATED_MSG, VALIDAR_TITULO, JOptionPane.ERROR_MESSAGE);
             return;
         }
         int opcion = JOptionPane.showConfirmDialog(vista, CONFIRMAR_MSG, VALIDAR_TITULO, JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
         if (opcion == JOptionPane.YES_OPTION) {
             Integer idProduccion = Integer.valueOf(String.valueOf(this.vista.jtProduccionCabecera.getValueAt(fila, 0)));
-            this.modelo.anularProduccion(idProduccion);
+            this.modelo.anularUsoMateriaPrima(idProduccion);
             ConsultarProduccion();
             Utilities.c_packColumn.packColumns(this.vista.jtProduccionCabecera, 1);
             this.vista.jbDetalle.setEnabled(false);
@@ -218,16 +212,16 @@ public class C_gestionProduccion implements GestionInterface, RecibirEmpleadoCal
     private void resumenProduccion() {
         Date fecha_inicio = vista.jddInicio.getDate();
         Date fecha_fin = vista.jddFinal.getDate();
-        ResumenProduccion rp = new ResumenProduccion(this.c_inicio.vista, this.modelo.getProduccionCabeceraTM(), fecha_inicio, fecha_fin);
-        rp.mostrarVista();
+        /*ResumenProduccion rp = new ResumenProduccion(this.c_inicio.vista, this.modelo.getProduccionCabeceraTM(), fecha_inicio, fecha_fin);
+        rp.mostrarVista();*/
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         Object source = e.getSource();
-        if (source.equals(this.vista.jbCrearProduccion)) {
-            CrearProduccion cp = new CrearProduccion(c_inicio);
-            cp.mostrarVista();
+        if (source.equals(this.vista.jbRegistroMateriaPrima)) {
+            UtilizarMateriaPrima ump = new UtilizarMateriaPrima(c_inicio);
+            ump.mostrarVista();
         } else if (source.equals(this.vista.jbEmpleado)) {
             Seleccionar_funcionario sf = new Seleccionar_funcionario(this.c_inicio.vista);
             sf.setCallback(this);

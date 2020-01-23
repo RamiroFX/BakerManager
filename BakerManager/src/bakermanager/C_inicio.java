@@ -11,6 +11,7 @@ import Empresa.Empresa;
 import Entities.M_rol_usuario;
 import Login.Login;
 import Produccion.GestionProduccion;
+import UsoMateriaPrima.GestionMateriaPrima;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Toolkit;
@@ -57,6 +58,7 @@ public class C_inicio implements ActionListener {
         vista.getJMenuBar().jmiEmpresa.addActionListener(this);
         //TODO remove
         vista.getJMenuBar().jmiProduccion.addActionListener(this);
+        vista.getJMenuBar().jmiMateriaPrima.addActionListener(this);
         vista.addWindowListener(wa);
     }
 
@@ -156,6 +158,9 @@ public class C_inicio implements ActionListener {
             empresa.mostrarVista();
         } else if (fuente == vista.getJMenuBar().jmiProduccion) {
             GestionProduccion gp = new GestionProduccion(this);
+            gp.mostrarVista();
+        }else if (fuente == vista.getJMenuBar().jmiMateriaPrima) {
+            GestionMateriaPrima gp = new GestionMateriaPrima(this);
             gp.mostrarVista();
         }
     }

@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Produccion;
+package UsoMateriaPrima;
 
 import Entities.E_produccionDetalle;
 import Entities.M_producto;
