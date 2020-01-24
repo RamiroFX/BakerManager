@@ -12,6 +12,7 @@ import Interface.RecibirEmpleadoCallback;
 import Interface.RecibirProductoCallback;
 import Producto.SeleccionarCantidadProduducto;
 import Producto.SeleccionarProducto;
+import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -19,6 +20,8 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Calendar;
+import java.util.Date;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -26,6 +29,15 @@ import java.util.Calendar;
  */
 class C_utilizarMateriaPrima extends MouseAdapter implements ActionListener, KeyListener, RecibirEmpleadoCallback, RecibirProductoCallback {
 
+    private static final String VALIDAR_RESPONSABLE_MSG = "Seleccione un responsable de producción",
+            VALIDAR_ORDEN_TRABAJO_MSG_1 = "Ingrese una orden de trabajo",
+            VALIDAR_ORDEN_TRABAJO_MSG_2 = "Ingrese solo números enteros en orden de trabajo",
+            VALIDAR_ORDEN_TRABAJO_MSG_3 = "Ingrese solo números enteros y positivos en orden de trabajo",
+            VALIDAR_ORDEN_TRABAJO_MSG_4 = "El número de orden de trabajo ingresado ya se encuentra en uso.",
+            VALIDAR_FECHA_PRODUCCION_MSG_1 = "La fecha seleccionada no es valida.",
+            VALIDAR_CANT_PRODUCTOS_MSG = "Seleccione por lo menos un producto.",
+            CONFIRMAR_SALIR_MSG = "¿Cancelar producción?",
+            VALIDAR_TITULO = "Atención";
     public M_utilizarMateriaPrima modelo;
     public V_utilizarMateriaPrima vista;
 
@@ -41,8 +53,19 @@ class C_utilizarMateriaPrima extends MouseAdapter implements ActionListener, Key
     }
 
     private void cerrar() {
-        //TODO controlar que no existan productos cargados antes de cerrar la ventana
-        this.vista.dispose();
+        EventQueue.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                if (modelo.getTm().getList().isEmpty()) {
+                    vista.dispose();
+                } else {
+                    int opcion = JOptionPane.showConfirmDialog(vista, CONFIRMAR_SALIR_MSG, VALIDAR_TITULO, JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+                    if (opcion == JOptionPane.YES_OPTION) {
+                        vista.dispose();
+                    }
+                }
+            }
+        });
     }
 
     private void inicializarVista() {
@@ -84,6 +107,84 @@ class C_utilizarMateriaPrima extends MouseAdapter implements ActionListener, Key
     }
 
     private void guardar() {
+        if (!validarOrdenTrabajo()) {
+            return;
+        }
+        if (!validarResponsable()) {
+            return;
+        }
+        if (!validarFechaUtilizacion()) {
+            return;
+        }
+        if (!validarCantidadProductos()) {
+            return;
+        }
+        Date fechaUtilizacion = vista.jdcFechaEntrega.getDate();
+        int ordenTrabajo = Integer.valueOf(this.vista.jtfNroOrdenTrabajo.getText().trim());
+        modelo.getCabecera().setFechaUtilizacion(fechaUtilizacion);
+        modelo.getCabecera().setNroOrdenTrabajo(ordenTrabajo);
+        modelo.guardarUtilizacionMP();
+        limpiarCampos();
+        cerrar();
+    }
+
+    private boolean validarFechaUtilizacion() {
+        //Date now = Calendar.getInstance().getTime();
+        Date entrega = null;
+        try {
+            entrega = vista.jdcFechaEntrega.getDate();
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(vista, VALIDAR_FECHA_PRODUCCION_MSG_1, "Fecha inválida", JOptionPane.WARNING_MESSAGE);
+            return false;
+        }
+        return true;
+    }
+
+    private boolean validarResponsable() {
+        if (this.vista.jtfFuncionario.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(vista, VALIDAR_RESPONSABLE_MSG, VALIDAR_TITULO, JOptionPane.WARNING_MESSAGE);
+            return false;
+        }
+        return true;
+    }
+
+    private boolean validarOrdenTrabajo() {
+        int ordenTrabajo = -1;
+        if (this.vista.jtfNroOrdenTrabajo.getText().trim().isEmpty()) {
+            JOptionPane.showMessageDialog(vista, VALIDAR_ORDEN_TRABAJO_MSG_1, VALIDAR_TITULO, JOptionPane.WARNING_MESSAGE);
+            return false;
+        }
+        try {
+            ordenTrabajo = Integer.valueOf(this.vista.jtfNroOrdenTrabajo.getText().trim());
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(vista, VALIDAR_ORDEN_TRABAJO_MSG_2, VALIDAR_TITULO, JOptionPane.WARNING_MESSAGE);
+            return false;
+        }
+        if (ordenTrabajo < 0) {
+            JOptionPane.showMessageDialog(vista, VALIDAR_ORDEN_TRABAJO_MSG_3, VALIDAR_TITULO, JOptionPane.WARNING_MESSAGE);
+            return false;
+        }
+        if (modelo.existeOrdenTrabajo(ordenTrabajo)) {
+            JOptionPane.showMessageDialog(vista, VALIDAR_ORDEN_TRABAJO_MSG_4, VALIDAR_TITULO, JOptionPane.WARNING_MESSAGE);
+            return false;
+        }
+        return true;
+    }
+
+    private boolean validarCantidadProductos() {
+        if (modelo.getTm().getList().isEmpty()) {
+            JOptionPane.showMessageDialog(vista, VALIDAR_CANT_PRODUCTOS_MSG, VALIDAR_TITULO, JOptionPane.WARNING_MESSAGE);
+            return false;
+        }
+        return true;
+    }
+
+    private void limpiarCampos() {
+        this.modelo.limpiarCampos();
+        this.vista.jtfFuncionario.setText("");
+        this.vista.jtfNroOrdenTrabajo.setText("");
+        Calendar calendar = Calendar.getInstance();
+        this.vista.jdcFechaEntrega.setDate(calendar.getTime());
     }
 
     @Override
@@ -160,6 +261,7 @@ class C_utilizarMateriaPrima extends MouseAdapter implements ActionListener, Key
 
     @Override
     public void recibirFuncionario(M_funcionario funcionario) {
+        modelo.getCabecera().setFuncionarioProduccion(funcionario);
         this.vista.jtfFuncionario.setText(funcionario.getNombre());
     }
 }

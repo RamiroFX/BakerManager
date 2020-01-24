@@ -4,7 +4,6 @@
  */
 package UsoMateriaPrima;
 
-import Entities.E_produccionTipo;
 import Entities.Estado;
 import Interface.CommonFormat;
 import com.toedter.calendar.JDateChooser;
@@ -30,14 +29,14 @@ import net.miginfocom.swing.MigLayout;
  */
 public class V_gestionMateriaPrima extends JInternalFrame {
 
-    public JButton jbBuscar, jbBorrar, 
+    public JButton jbBuscar, jbBorrar,
             jbRegistroMateriaPrima, jbDetalle,
             jbResumen, jbEmpleado, jbAnular;
     public JTextField jtfNroOrdenTrabajo, jtfEmpleado;
     public JComboBox<Estado> jcbEstado;
     private JPanel jpTop, jpBotonesTop, jpBot;
-    public JTable jtProduccionCabecera, jtProduccionDetalle;
-    private JScrollPane jspEgresoCabecera, jspEgresoDetalle;
+    public JTable jtUtilizacionMPCabecera, jtUtilizacionMPDetalle;
+    private JScrollPane jspUtilizacionMPCabecera, jspUtilizacionMPDetalle;
     private JSplitPane jspMid;
     public JDateChooser jddInicio, jddFinal;
 
@@ -100,16 +99,16 @@ public class V_gestionMateriaPrima extends JInternalFrame {
 
     private void initMid() {
         //Panel medio izquierda
-        jtProduccionCabecera = new JTable();
-        this.jtProduccionCabecera.getTableHeader().setReorderingAllowed(false);
-        jspEgresoCabecera = new JScrollPane(jtProduccionCabecera);
+        jtUtilizacionMPCabecera = new JTable();
+        this.jtUtilizacionMPCabecera.getTableHeader().setReorderingAllowed(false);
+        jspUtilizacionMPCabecera = new JScrollPane(jtUtilizacionMPCabecera);
 
         //panel medio derecha
-        jtProduccionDetalle = new JTable();
-        this.jtProduccionDetalle.getTableHeader().setReorderingAllowed(false);
-        jspEgresoDetalle = new JScrollPane(jtProduccionDetalle);
+        jtUtilizacionMPDetalle = new JTable();
+        this.jtUtilizacionMPDetalle.getTableHeader().setReorderingAllowed(false);
+        jspUtilizacionMPDetalle = new JScrollPane(jtUtilizacionMPDetalle);
         //creamos nuestro splitpane y agregamos los dos paneles del medio
-        jspMid = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, jspEgresoCabecera, jspEgresoDetalle);
+        jspMid = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, jspUtilizacionMPCabecera, jspUtilizacionMPDetalle);
         jspMid.setDividerLocation(this.getWidth() / 2);
         jspMid.setOneTouchExpandable(true);
     }

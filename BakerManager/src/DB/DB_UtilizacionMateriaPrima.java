@@ -31,9 +31,36 @@ public class DB_UtilizacionMateriaPrima {
     private static PreparedStatement pst = null;
     private static ResultSet rs = null;
 
+    public static boolean existeOrdenTrabajo(int ordenTrabajo) {
+        String Query = "SELECT nro_orden_trabajo FROM UTILIZACION_MATERIA_PRIMA_CABECERA WHERE nro_orden_trabajo = ?";
+        try {
+            pst = DB_manager.getConection().prepareStatement(Query);
+            pst.setInt(1, ordenTrabajo);
+            rs = pst.executeQuery();
+            return rs.next();
+        } catch (SQLException ex) {
+            Logger lgr = Logger.getLogger(DB_UtilizacionMateriaPrima.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (st != null) {
+                    st.close();
+                }
+            } catch (SQLException ex) {
+                Logger lgr = Logger.getLogger(DB_UtilizacionMateriaPrima.class.getName());
+                lgr.log(Level.WARNING, ex.getMessage(), ex);
+            }
+        }
+        return false;
+    }
+
     public static int insertarUtilizcionMateriaPrima(E_utilizacionMateriaPrimaCabecera utilizacionCabecera, List<E_utilizacionMateriaPrimaDetalle> detalle) {
 
-        String INSERT_CABECERA = "INSERT INTO utilizacion_materia_prima_cabecera(nro_orden_trabajo, fecha_utilizacion, id_funcionario_responsable, id_funcionario_usuario)VALUES (?, ?, ?, ?, ?, ?);";
+        String INSERT_CABECERA = "INSERT INTO utilizacion_materia_prima_cabecera(nro_orden_trabajo, fecha_utilizacion, id_funcionario_responsable, id_funcionario_usuario)VALUES (?, ?, ?, ?);";
         //LA SGBD SE ENCARGA DE INSERTAR EL TIMESTAMP.
         String INSERT_DETALLE = "INSERT INTO utilizacion_materia_prima_detalle(id_utilizacion_materia_prima_cabecera, id_producto, cantidad)VALUES (?, ?, ?);";
         long sq_cabecera = -1L;
@@ -79,7 +106,7 @@ public class DB_UtilizacionMateriaPrima {
                     lgr.log(Level.WARNING, ex1.getMessage(), ex1);
                 }
             }
-            Logger lgr = Logger.getLogger(DB_Ingreso.class.getName());
+            Logger lgr = Logger.getLogger(DB_UtilizacionMateriaPrima.class.getName());
             lgr.log(Level.SEVERE, ex.getMessage(), ex);
         } finally {
             try {
@@ -111,7 +138,7 @@ public class DB_UtilizacionMateriaPrima {
                 + "(SELECT P.NOMBRE || ' '|| P.APELLIDO FROM FUNCIONARIO F, PERSONA P WHERE P.ID_PERSONA = F.ID_PERSONA AND F.ID_FUNCIONARIO = UC.id_funcionario_responsable )\"RESPONSABLE\", "
                 + "(SELECT P.NOMBRE || ' '|| P.APELLIDO FROM FUNCIONARIO F, PERSONA P WHERE P.ID_PERSONA = F.ID_PERSONA AND F.ID_FUNCIONARIO = UC.id_funcionario_usuario)\"USUARIO\" "
                 + "FROM utilizacion_materia_prima_cabecera UC "
-                + "WHERE  UC.fecha_produccion BETWEEN ?  AND ? ";
+                + "WHERE  UC.fecha_utilizacion BETWEEN ?  AND ? ";
 
         if (idEstado > -1) {
             Query = Query + " AND UC.ID_ESTADO = ? ";
@@ -168,7 +195,7 @@ public class DB_UtilizacionMateriaPrima {
         return list;
     }
 
-    public static List<E_utilizacionMateriaPrimaDetalle> consultarProduccionDetalle(Integer idUtilizacionCabecera) {
+    public static List<E_utilizacionMateriaPrimaDetalle> consultarUtilizacionMateriaPrimaDetalle(Integer idUtilizacionCabecera) {
         List<E_utilizacionMateriaPrimaDetalle> list = new ArrayList<>();
         String QUERY = "SELECT ID_UTILIZACION_MATERIA_PRIMA_DETALLE, "
                 + "ID_PRODUCTO, "
@@ -188,7 +215,7 @@ public class DB_UtilizacionMateriaPrima {
                 producto.setDescripcion(rs.getString("PRODUCTO"));
                 producto.setCodigo(rs.getString("CODIGO"));
                 E_utilizacionMateriaPrimaDetalle pd = new E_utilizacionMateriaPrimaDetalle();
-                pd.setId(rs.getInt("ID_PRODUCCION_DETALLE"));
+                pd.setId(rs.getInt("ID_UTILIZACION_MATERIA_PRIMA_DETALLE"));
                 pd.setCantidad(rs.getDouble("CANTIDAD"));
                 pd.setProducto(producto);
                 list.add(pd);
@@ -212,8 +239,8 @@ public class DB_UtilizacionMateriaPrima {
                 + "(SELECT ESTA.DESCRIPCION FROM ESTADO ESTA WHERE ESTA.ID_ESTADO = PC.ID_ESTADO) \"ESTADO\", "
                 + "(SELECT P.NOMBRE || ' '|| P.APELLIDO FROM FUNCIONARIO F, PERSONA P WHERE P.ID_PERSONA = F.ID_PERSONA AND F.ID_FUNCIONARIO = PC.id_funcionario_responsable )\"RESPONSABLE\", "
                 + "(SELECT P.NOMBRE || ' '|| P.APELLIDO FROM FUNCIONARIO F, PERSONA P WHERE P.ID_PERSONA = F.ID_PERSONA AND F.ID_FUNCIONARIO = PC.id_funcionario_usuario)\"USUARIO\" "
-                + "FROM produccion_cabecera PC "
-                + "WHERE  PC.id_produccion_cabecera = ? ;";
+                + "FROM utilizacion_materia_prima_cabecera PC "
+                + "WHERE  PC.id_utilizacion_materia_prima_cabecera = ? ;";
         try {
             pst = DB_manager.getConection().prepareStatement(Query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             pst.setInt(1, idUtilizacionCabecera);
@@ -232,7 +259,7 @@ public class DB_UtilizacionMateriaPrima {
                 pc.setFuncionarioProduccion(responsable);
                 pc.setFuncionarioSistema(usuario);
                 pc.setEstado(estado);
-                pc.setId(rs.getInt("id_produccion_cabecera"));
+                pc.setId(rs.getInt("id_utilizacion_materia_prima_cabecera"));
                 pc.setNroOrdenTrabajo(rs.getInt("nro_orden_trabajo"));
                 pc.setFechaUtilizacion(rs.getTimestamp("fecha_utilizacion"));
                 pc.setFechaRegistro(rs.getTimestamp("fecha_registro"));
@@ -284,7 +311,7 @@ public class DB_UtilizacionMateriaPrima {
         }
     }
 
-    public static List<E_utilizacionMateriaPrimaDetalle> consultarProduccionDetalleAgrupado(List<E_utilizacionMateriaPrimaCabecera> cadenaCabeceras) {
+    public static List<E_utilizacionMateriaPrimaDetalle> consultarUtilizacionMateriaPrimaDetalleAgrupado(List<E_utilizacionMateriaPrimaCabecera> cadenaCabeceras) {
         List<E_utilizacionMateriaPrimaDetalle> list = new ArrayList<>();
         boolean b = true;
         StringBuilder builder = new StringBuilder();

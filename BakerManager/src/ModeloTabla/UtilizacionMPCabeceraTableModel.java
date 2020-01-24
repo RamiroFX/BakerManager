@@ -5,31 +5,31 @@
  */
 package ModeloTabla;
 
-import Entities.M_facturaCabecera;
+import Entities.E_utilizacionMateriaPrimaCabecera;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.table.AbstractTableModel;
 
 /**
  *
- * @author Ramiro Ferreira
+ * @author Ramiro
  */
-public class FacturaCabeceraTableModel extends AbstractTableModel {
+public class UtilizacionMPCabeceraTableModel extends AbstractTableModel {
 
-    private List<M_facturaCabecera> facturaCabeceraList;
-    private final String[] colNames = {"Id.", "Nro Factura", "Cliente", "Funcionario", "Tiempo", "Total"};
+    private List<E_utilizacionMateriaPrimaCabecera> list;
+    private final String[] colNames = {"ID", "O.T.", "Fecha utilizacion", "Responsable"};
 
-    public FacturaCabeceraTableModel() {
-        this.facturaCabeceraList = new ArrayList<>();
+    public UtilizacionMPCabeceraTableModel() {
+        this.list = new ArrayList<>();
     }
 
-    public void setFacturaCabeceraList(List<M_facturaCabecera> facturaCabeceraList) {
-        this.facturaCabeceraList = facturaCabeceraList;
-        updateTable();
+    public List<E_utilizacionMateriaPrimaCabecera> getList() {
+        return list;
     }
 
-    public List<M_facturaCabecera> getFacturaCabeceraList() {
-        return facturaCabeceraList;
+    public void setList(List<E_utilizacionMateriaPrimaCabecera> produccionList) {
+        this.list = produccionList;
+        fireTableDataChanged();
     }
 
     @Override
@@ -49,7 +49,7 @@ public class FacturaCabeceraTableModel extends AbstractTableModel {
 
     @Override
     public int getRowCount() {
-        return this.facturaCabeceraList.size();
+        return this.list.size();
     }
 
     @Override
@@ -59,25 +59,19 @@ public class FacturaCabeceraTableModel extends AbstractTableModel {
 
     @Override
     public Object getValueAt(int rowIndex, int colIndex) {
-        M_facturaCabecera fc = this.facturaCabeceraList.get(rowIndex);
+        E_utilizacionMateriaPrimaCabecera utilizacionMP = this.list.get(rowIndex);
         switch (colIndex) {
             case 0: {
-                return fc.getIdFacturaCabecera();
+                return utilizacionMP.getId();
             }
             case 1: {
-                return fc.getNroFactura();
+                return utilizacionMP.getNroOrdenTrabajo();
             }
             case 2: {
-                return fc.getCliente().getEntidad();
+                return utilizacionMP.getFechaUtilizacion();
             }
             case 3: {
-                return fc.getFuncionario().getAlias();
-            }
-            case 4: {
-                return fc.getTiempo();
-            }
-            case 5: {
-                return fc.getTotal();
+                return utilizacionMP.getFuncionarioProduccion().getNombre();
             }
             default: {
                 return null;
@@ -85,18 +79,18 @@ public class FacturaCabeceraTableModel extends AbstractTableModel {
         }
     }
 
-    public void agregarDatos(M_facturaCabecera fc) {
-        this.facturaCabeceraList.add(fc);
+    public void agregarDetalle(E_utilizacionMateriaPrimaCabecera utilizacion) {
+        this.list.add(utilizacion);
         fireTableDataChanged();
     }
 
-    public void quitarDatos(int index) {
-        this.facturaCabeceraList.remove(index);
+    public void quitarDetalle(int index) {
+        this.list.remove(index);
         fireTableDataChanged();
     }
 
     public void vaciarLista() {
-        this.facturaCabeceraList.clear();
+        this.list.clear();
         fireTableDataChanged();
     }
 

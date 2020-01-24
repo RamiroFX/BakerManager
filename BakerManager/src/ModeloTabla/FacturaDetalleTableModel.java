@@ -116,7 +116,7 @@ public class FacturaDetalleTableModel extends AbstractTableModel {
                 return 0;
             }
             case 8: {
-               return fd.getObservacion();
+                return fd.getObservacion();
             }
             default: {
                 return null;
@@ -147,6 +147,7 @@ public class FacturaDetalleTableModel extends AbstractTableModel {
 
     public void setFacturaDetalleList(List<M_facturaDetalle> facturaDetalleList) {
         this.facturaDetalleList = facturaDetalleList;
+        updateTable();
     }
 
     public void agregarDetalle(M_facturaDetalle fd) {

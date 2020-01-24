@@ -5,12 +5,11 @@
 package UsoMateriaPrima;
 
 import Empleado.Seleccionar_funcionario;
-import Entities.E_produccionTipo;
 import Entities.Estado;
 import Entities.M_funcionario;
 import Interface.GestionInterface;
 import Interface.RecibirEmpleadoCallback;
-import Utilities.ProductionCellRenderer;
+import Utilities.UtilizacionMPCellRenderer;
 import bakermanager.C_inicio;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
@@ -30,7 +29,7 @@ public class C_gestionMateriaPrima implements GestionInterface, RecibirEmpleadoC
 
     private static final String VALIDAR_ORDEN_TRABAJO_MSG_2 = "Ingrese solo números enteros en orden de trabajo",
             VALIDAR_ORDEN_TRABAJO_MSG_3 = "Ingrese solo números enteros y positivos en orden de trabajo",
-            PRODUCTION_ANULATED_MSG = "La producción seleccionada ya esta anulada",
+            PRODUCTION_ANULATED_MSG = "El registro seleccionado ya esta anulado",
             VALIDAR_TITULO = "Atención",
             CONFIRMAR_MSG = "¿Desea confirmas esta operación?";
     public M_gestionMateriaPrima modelo;
@@ -47,8 +46,6 @@ public class C_gestionMateriaPrima implements GestionInterface, RecibirEmpleadoC
 
     @Override
     public final void inicializarVista() {
-        //E_productoClasificacion pc1 = new E_productoClasificacion(E_productoClasificacion.MATERIA_PRIMA, "Materia prima");
-        //E_productoClasificacion pc2 = new E_productoClasificacion(E_productoClasificacion.PRODUCTO_TERMINADO, "Producto terminado");
         ArrayList<Estado> estados = modelo.obtenerEstados();
         for (int i = 0; i < estados.size(); i++) {
             Estado get = estados.get(i);
@@ -59,7 +56,7 @@ public class C_gestionMateriaPrima implements GestionInterface, RecibirEmpleadoC
         this.vista.jddInicio.setDate(date);
         this.vista.jbDetalle.setEnabled(false);
         this.vista.jbAnular.setEnabled(false);
-        this.vista.jtProduccionCabecera.setDefaultRenderer(Object.class, new ProductionCellRenderer(0));
+        this.vista.jtUtilizacionMPCabecera.setDefaultRenderer(Object.class, new UtilizacionMPCellRenderer(0));
     }
 
     @Override
@@ -76,8 +73,8 @@ public class C_gestionMateriaPrima implements GestionInterface, RecibirEmpleadoC
         this.vista.jbDetalle.addKeyListener(this);
         this.vista.jbResumen.addActionListener(this);
         this.vista.jbResumen.addKeyListener(this);
-        this.vista.jtProduccionCabecera.addMouseListener(this);
-        this.vista.jtProduccionCabecera.addKeyListener(this);
+        this.vista.jtUtilizacionMPCabecera.addMouseListener(this);
+        this.vista.jtUtilizacionMPCabecera.addKeyListener(this);
     }
 
     private void verificarPermiso() {
@@ -98,7 +95,7 @@ public class C_gestionMateriaPrima implements GestionInterface, RecibirEmpleadoC
         }
     }
 
-    private void ConsultarProduccion() {
+    private void ConsultarUtilizacionMP() {
         EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
@@ -115,23 +112,23 @@ public class C_gestionMateriaPrima implements GestionInterface, RecibirEmpleadoC
                     nroOrdenTrabajo = Integer.valueOf(vista.jtfNroOrdenTrabajo.getText().trim());
                 }
                 Estado estado = vista.jcbEstado.getItemAt(vista.jcbEstado.getSelectedIndex());
-                vista.jtProduccionCabecera.setModel(modelo.consultarProduccion(fecha_inicio, fecha_fin, nroOrdenTrabajo, estado));
-                Utilities.c_packColumn.packColumns(vista.jtProduccionCabecera, 1);
+                vista.jtUtilizacionMPCabecera.setModel(modelo.consultarUtilizacionMP(fecha_inicio, fecha_fin, nroOrdenTrabajo, estado));
+                Utilities.c_packColumn.packColumns(vista.jtUtilizacionMPCabecera, 1);
                 vista.jbDetalle.setEnabled(false);
                 vista.jbAnular.setEnabled(false);
             }
         });
     }
 
-    private void obtenerPedidoDetalle(MouseEvent e) {
-        int fila = this.vista.jtProduccionCabecera.rowAtPoint(e.getPoint());
-        int columna = this.vista.jtProduccionCabecera.columnAtPoint(e.getPoint());
-        Integer idProduccion = Integer.valueOf(String.valueOf(this.vista.jtProduccionCabecera.getValueAt(fila, 0)));
+    private void obtenerUtilizacionMPDetalle(MouseEvent e) {
+        int fila = this.vista.jtUtilizacionMPCabecera.rowAtPoint(e.getPoint());
+        int columna = this.vista.jtUtilizacionMPCabecera.columnAtPoint(e.getPoint());
+        Integer idUtilizacionMP = Integer.valueOf(String.valueOf(this.vista.jtUtilizacionMPCabecera.getValueAt(fila, 0)));
         if ((fila > -1) && (columna > -1)) {
             this.vista.jbAnular.setEnabled(true);
             this.vista.jbDetalle.setEnabled(true);
-            this.vista.jtProduccionDetalle.setModel(modelo.obtenerRegistroMateriaPrimaDetalle(idProduccion));
-            Utilities.c_packColumn.packColumns(this.vista.jtProduccionDetalle, 1);
+            this.vista.jtUtilizacionMPDetalle.setModel(modelo.obtenerRegistroMateriaPrimaDetalle(idUtilizacionMP));
+            Utilities.c_packColumn.packColumns(this.vista.jtUtilizacionMPDetalle, 1);
         }
         if (e.getClickCount() == 2) {
             if (vista.jbDetalle.isEnabled()) {
@@ -175,11 +172,11 @@ public class C_gestionMateriaPrima implements GestionInterface, RecibirEmpleadoC
     }
 
     private void verDetalle() {
-        int row = this.vista.jtProduccionCabecera.getSelectedRow();
-        int idProduccion = Integer.valueOf(String.valueOf(this.vista.jtProduccionCabecera.getValueAt(row, 0)));
-        /*VerProduccion vp = new VerProduccion(c_inicio);
-        vp.verPedidoRegistrado(idProduccion);
-        vp.mostrarVista();*/
+        int row = this.vista.jtUtilizacionMPCabecera.getSelectedRow();
+        int idUtilizacionMP = Integer.valueOf(String.valueOf(this.vista.jtUtilizacionMPCabecera.getValueAt(row, 0)));
+        VerUtilizacion vp = new VerUtilizacion(c_inicio);
+        vp.verRegistro(idUtilizacionMP);
+        vp.mostrarVista();
         this.vista.jbDetalle.setEnabled(false);
         this.vista.jbAnular.setEnabled(false);
 
@@ -192,18 +189,18 @@ public class C_gestionMateriaPrima implements GestionInterface, RecibirEmpleadoC
         this.vista.jcbEstado.setSelectedIndex(0);
     }
 
-    private void anularProduccion() {
-        int fila = this.vista.jtProduccionCabecera.getSelectedRow();
+    private void anularRegistroMateriaPrima() {
+        int fila = this.vista.jtUtilizacionMPCabecera.getSelectedRow();
         if (modelo.getUsoMateriPrimaEstado(fila).getId() == Estado.INACTIVO) {
             JOptionPane.showMessageDialog(vista, PRODUCTION_ANULATED_MSG, VALIDAR_TITULO, JOptionPane.ERROR_MESSAGE);
             return;
         }
         int opcion = JOptionPane.showConfirmDialog(vista, CONFIRMAR_MSG, VALIDAR_TITULO, JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
         if (opcion == JOptionPane.YES_OPTION) {
-            Integer idProduccion = Integer.valueOf(String.valueOf(this.vista.jtProduccionCabecera.getValueAt(fila, 0)));
-            this.modelo.anularUsoMateriaPrima(idProduccion);
-            ConsultarProduccion();
-            Utilities.c_packColumn.packColumns(this.vista.jtProduccionCabecera, 1);
+            Integer idUtilizacionMP = Integer.valueOf(String.valueOf(this.vista.jtUtilizacionMPCabecera.getValueAt(fila, 0)));
+            this.modelo.anularUsoMateriaPrima(idUtilizacionMP);
+            ConsultarUtilizacionMP();
+            Utilities.c_packColumn.packColumns(this.vista.jtUtilizacionMPCabecera, 1);
             this.vista.jbDetalle.setEnabled(false);
             this.vista.jbAnular.setEnabled(false);
         }
@@ -212,8 +209,8 @@ public class C_gestionMateriaPrima implements GestionInterface, RecibirEmpleadoC
     private void resumenProduccion() {
         Date fecha_inicio = vista.jddInicio.getDate();
         Date fecha_fin = vista.jddFinal.getDate();
-        /*ResumenProduccion rp = new ResumenProduccion(this.c_inicio.vista, this.modelo.getProduccionCabeceraTM(), fecha_inicio, fecha_fin);
-        rp.mostrarVista();*/
+        ResumenUtilizacionMP rump = new ResumenUtilizacionMP(this.c_inicio.vista, this.modelo.getUtilizacionMPCabeceraTM(), fecha_inicio, fecha_fin);
+        rump.mostrarVista();
     }
 
     @Override
@@ -227,13 +224,13 @@ public class C_gestionMateriaPrima implements GestionInterface, RecibirEmpleadoC
             sf.setCallback(this);
             sf.mostrarVista();
         } else if (source.equals(this.vista.jbBuscar)) {
-            ConsultarProduccion();
+            ConsultarUtilizacionMP();
         } else if (source.equals(this.vista.jbBorrar)) {
             borrarParametros();
         } else if (source.equals(this.vista.jbDetalle)) {
             verDetalle();
         } else if (source.equals(this.vista.jbAnular)) {
-            anularProduccion();
+            anularRegistroMateriaPrima();
         } else if (source.equals(this.vista.jbResumen)) {
             resumenProduccion();
         }
@@ -241,8 +238,8 @@ public class C_gestionMateriaPrima implements GestionInterface, RecibirEmpleadoC
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        if (e.getSource().equals(this.vista.jtProduccionCabecera)) {
-            obtenerPedidoDetalle(e);
+        if (e.getSource().equals(this.vista.jtUtilizacionMPCabecera)) {
+            obtenerUtilizacionMPDetalle(e);
         }
     }
 

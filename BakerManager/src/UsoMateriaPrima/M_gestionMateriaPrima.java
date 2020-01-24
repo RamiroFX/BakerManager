@@ -4,20 +4,17 @@
  */
 package UsoMateriaPrima;
 
-import DB.DB_Egreso;
-import DB.DB_Produccion;
+import DB.DB_UtilizacionMateriaPrima;
 import DB.DB_manager;
-import Entities.E_produccionDetalle;
-import Entities.E_produccionTipo;
+import Entities.E_utilizacionMateriaPrimaDetalle;
 import Entities.Estado;
 import Entities.M_funcionario;
-import ModeloTabla.ProduccionCabeceraTableModel;
-import ModeloTabla.ProduccionDetalleTableModel;
+import ModeloTabla.UtilizacionMPCabeceraTableModel;
+import ModeloTabla.UtilizacionMPDetalleTableModel;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.Vector;
 
 /**
  *
@@ -26,14 +23,14 @@ import java.util.Vector;
 public class M_gestionMateriaPrima {
 
     M_funcionario funcionario;
-    private ProduccionCabeceraTableModel produccionCabeceraTM;
-    private ProduccionDetalleTableModel produccionDetalleTM;
+    private UtilizacionMPCabeceraTableModel utilizacionMPCabeceraTM;
+    private UtilizacionMPDetalleTableModel utilizacionMPDetalleTM;
 
     public M_gestionMateriaPrima() {
         this.funcionario = new M_funcionario();
         this.funcionario.setId_funcionario(-1);
-        this.produccionCabeceraTM = new ProduccionCabeceraTableModel();
-        this.produccionDetalleTM = new ProduccionDetalleTableModel();
+        this.utilizacionMPCabeceraTM = new UtilizacionMPCabeceraTableModel();
+        this.utilizacionMPDetalleTM = new UtilizacionMPDetalleTableModel();
     }
 
     public void setFuncionario(M_funcionario funcionario) {
@@ -44,26 +41,26 @@ public class M_gestionMateriaPrima {
         return funcionario;
     }
 
-    public ProduccionCabeceraTableModel getProduccionCabeceraTM() {
-        return produccionCabeceraTM;
+    public UtilizacionMPCabeceraTableModel getUtilizacionMPCabeceraTM() {
+        return utilizacionMPCabeceraTM;
     }
 
-    public void setProduccionCabeceraTM(ProduccionCabeceraTableModel dtm) {
-        this.produccionCabeceraTM = dtm;
+    public void setUtilizacionMPCabeceraTM(UtilizacionMPCabeceraTableModel dtm) {
+        this.utilizacionMPCabeceraTM = dtm;
     }
 
-    public ProduccionDetalleTableModel getProduccionDetalleTM() {
-        return produccionDetalleTM;
+    public UtilizacionMPDetalleTableModel getUtilizacionMPDetalleTM() {
+        return utilizacionMPDetalleTM;
     }
 
-    public void setProduccionDetalleTM(ProduccionDetalleTableModel produccionDetalleTM) {
-        this.produccionDetalleTM = produccionDetalleTM;
+    public void setUtilizacionMPDetalleTM(UtilizacionMPDetalleTableModel produccionDetalleTM) {
+        this.utilizacionMPDetalleTM = produccionDetalleTM;
     }
 
     public void borrarDatos() {
         this.funcionario.setId_funcionario(-1);
-        getProduccionDetalleTM().vaciarLista();
-        getProduccionCabeceraTM().vaciarLista();
+        getUtilizacionMPDetalleTM().vaciarLista();
+        getUtilizacionMPCabeceraTM().vaciarLista();
 
     }
 
@@ -73,7 +70,7 @@ public class M_gestionMateriaPrima {
         return estados;
     }
 
-    public ProduccionCabeceraTableModel consultarProduccion(Date fechaInicio, Date fechaFin, int nroPedido, Estado estado) {
+    public UtilizacionMPCabeceraTableModel consultarUtilizacionMP(Date fechaInicio, Date fechaFin, int nroPedido, Estado estado) {
         Calendar calendarInicio = Calendar.getInstance();
         calendarInicio.setTime(fechaInicio);
         calendarInicio.set(Calendar.HOUR_OF_DAY, 0);
@@ -86,22 +83,22 @@ public class M_gestionMateriaPrima {
         calendarFinal.set(Calendar.MINUTE, 59);
         calendarFinal.set(Calendar.SECOND, 59);
         calendarFinal.set(Calendar.MILLISECOND, 999);
-        //getProduccionCabeceraTM().setList(DB_Produccion.consultarProduccion(calendarInicio.getTime(), calendarFinal.getTime(), prodTipo.getId(), nroPedido, estado.getId(), funcionario.getId_funcionario()));
-        return getProduccionCabeceraTM();
+        getUtilizacionMPCabeceraTM().setList(DB_UtilizacionMateriaPrima.consultarUtilizacionMateriaCabeceras(calendarInicio.getTime(), calendarFinal.getTime(), nroPedido, estado.getId(), funcionario.getId_funcionario()));
+        return getUtilizacionMPCabeceraTM();
     }
 
-    public ProduccionDetalleTableModel obtenerRegistroMateriaPrimaDetalle(Integer idProduccion) {
-        getProduccionDetalleTM().setList(DB_Produccion.consultarProduccionDetalle(idProduccion));
-        return getProduccionDetalleTM();
+    public UtilizacionMPDetalleTableModel obtenerRegistroMateriaPrimaDetalle(Integer idUtilizacionMPCabecera) {
+        getUtilizacionMPDetalleTM().setList(DB_UtilizacionMateriaPrima.consultarUtilizacionMateriaPrimaDetalle(idUtilizacionMPCabecera));
+        return getUtilizacionMPDetalleTM();
     }
 
-    public void anularUsoMateriaPrima(int idProduccion) {
-        /*List<E_produccionDetalle> detalle = DB_Produccion.consultarProduccionDetalle(idProduccion);
-        DB_Produccion.anularUsoMateriaPrima(idProduccion, detalle);*/
+    public void anularUsoMateriaPrima(int idUtilizacionMPCabecera) {
+        List<E_utilizacionMateriaPrimaDetalle> detalle = DB_UtilizacionMateriaPrima.consultarUtilizacionMateriaPrimaDetalle(idUtilizacionMPCabecera);
+        DB_UtilizacionMateriaPrima.anularUtilizacionMateriaPrima(idUtilizacionMPCabecera, detalle);
     }
 
-    public Estado getUsoMateriPrimaEstado(int idProduccion) {
-        Estado estado = getProduccionCabeceraTM().getList().get(idProduccion).getEstado();
+    public Estado getUsoMateriPrimaEstado(int idUtilizacionMPCabecera) {
+        Estado estado = getUtilizacionMPCabeceraTM().getList().get(idUtilizacionMPCabecera).getEstado();
         return estado;
     }
 }
