@@ -71,6 +71,11 @@ public class M_facturaDetalle {
         this.total = total;
     }
 
+    public Integer calcularSubTotal() {
+        Integer Precio = getPrecio() - Math.round(Math.round(((getPrecio() * getDescuento()) / 100)));
+        return Math.round(Math.round((getCantidad() * Precio)));
+    }
+
     public Integer calcularTotal() {
         Integer totalAux = 0;
         Integer Precio = getPrecio() - Math.round(Math.round(((getPrecio() * getDescuento()) / 100)));

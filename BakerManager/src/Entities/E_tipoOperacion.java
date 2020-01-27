@@ -11,6 +11,8 @@ package Entities;
  */
 public class E_tipoOperacion {
 
+    public static final int CONTADO = 1, CREDITO_30 = 2;
+
     private int id;
     private int duracion;
     private String descripcion;

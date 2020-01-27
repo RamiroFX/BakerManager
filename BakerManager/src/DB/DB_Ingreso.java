@@ -4,6 +4,7 @@
  */
 package DB;
 
+import Entities.E_cuentaCorrienteConcepto;
 import Entities.E_facturaCabeceraFX;
 import Entities.E_facturaDetalleFX;
 import Entities.E_facturacionCabecera;
@@ -340,6 +341,7 @@ public class DB_Ingreso {
         String INSERT_DETALLE = "INSERT INTO FACTURA_DETALLE(ID_FACTURA_CABECERA, ID_PRODUCTO, CANTIDAD, PRECIO, DESCUENTO, OBSERVACION)VALUES (?, ?, ?, ?, ?, ?);";
         //LA SGBD SE ENCARGA DE INSERTAR EL TIMESTAMP.
         String INSERT_CABECERA = "INSERT INTO FACTURA_CABECERA(ID_FUNCIONARIO, ID_CLIENTE, ID_COND_VENTA, NRO_FACTURA)VALUES (?, ?, ?, ?);";
+        String INSERT_CTA_CTE = "INSERT INTO cuenta_corriente(id_cliente, id_factura_cabecera, id_cta_cte_concepto, debito)VALUES (?, ?, ?, ?);";
         long sq_cabecera = -1L;
         try {
             DB_manager.getConection().setAutoCommit(false);
@@ -392,6 +394,21 @@ public class DB_Ingreso {
                         + "WHERE ID_PRODUCTO =" + detalle.get(i).getProducto().getId();
                 st = DB_manager.getConection().createStatement();
                 st.executeUpdate(query);
+            }
+            //CONTROLAR SI ES VENTA A CREDITO PARA INSERTAR REGISTRO EN CUENTA CORRIENTE
+            if (cabecera.getIdCondVenta() != E_tipoOperacion.CONTADO) {
+                int total = 0;
+                for (int i = 0; i < detalle.size(); i++) {
+                    M_facturaDetalle get = detalle.get(i);
+                    total = total + get.calcularSubTotal();
+                }
+                pst = DB_manager.getConection().prepareStatement(INSERT_CTA_CTE);
+                pst.setInt(1, cabecera.getIdCliente());
+                pst.setInt(2, (int) sq_cabecera);
+                pst.setDouble(3, E_cuentaCorrienteConcepto.COMPRAS);
+                pst.setInt(4, total);
+                pst.executeUpdate();
+                pst.close();
             }
             DB_manager.establecerTransaccion();
         } catch (SQLException ex) {
