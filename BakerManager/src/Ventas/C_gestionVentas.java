@@ -15,6 +15,7 @@ import Interface.GestionInterface;
 import MenuPrincipal.DatosUsuario;
 import bakermanager.C_inicio;
 import Empleado.Seleccionar_funcionario;
+import Entities.E_tipoOperacion;
 import Entities.Estado;
 import Facturacion.HistorialFacturacion;
 import Interface.RecibirClienteCallback;
@@ -37,6 +38,8 @@ import javax.swing.JOptionPane;
  */
 public class C_gestionVentas implements GestionInterface, RecibirEmpleadoCallback, RecibirClienteCallback {
 
+    private static final String VALIDAR_NRO_FACTURA_1 = "Ingrese solo números enteros en número de factura",
+            VALIDAR_NRO_FACTURA_2 = "Ingrese solo números enteros y positivos en número de factura";
     public M_gestionVentas modelo;
     public V_gestionVentas vista;
     public C_inicio c_inicio;
@@ -54,10 +57,9 @@ public class C_gestionVentas implements GestionInterface, RecibirEmpleadoCallbac
     @Override
     public final void inicializarVista() {
         this.vista.jbDetalle.setEnabled(false);
-        Vector condCompra = DB_Egreso.obtenerTipoOperacion();
-        this.vista.jcbCondVenta.addItem("Todos");
-        for (int i = 0; i < condCompra.size(); i++) {
-            this.vista.jcbCondVenta.addItem(condCompra.get(i));
+        ArrayList<E_tipoOperacion> condVenta = modelo.obtenerTipoOperaciones();
+        for (int i = 0; i < condVenta.size(); i++) {
+            this.vista.jcbCondVenta.addItem(condVenta.get(i));
         }
         ArrayList<Estado> estados = modelo.getEstados();
         for (int i = 0; i < estados.size(); i++) {
@@ -77,6 +79,7 @@ public class C_gestionVentas implements GestionInterface, RecibirEmpleadoCallbac
         this.vista.jbAnular.setEnabled(false);
         this.vista.jbFacturar.setEnabled(false);
         this.vista.jbHistorialFacturacion.setEnabled(false);
+        this.vista.jtIngresoCabecera.setModel(modelo.getTm());
     }
 
     @Override
@@ -168,29 +171,28 @@ public class C_gestionVentas implements GestionInterface, RecibirEmpleadoCallbac
         EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
-                try {
-                    if (!vista.jtfNroFactura.getText().trim().isEmpty()) {
-                        int nroFac = Integer.valueOf(vista.jtfNroFactura.getText());
-                        modelo.getCabecera().setNroFactura(nroFac);
-                    } else {
-                        modelo.getCabecera().setIdFacturaCabecera(null);
-                    }
-                } catch (Exception e) {
-                    JOptionPane.showMessageDialog(vista, "Ingrese un número entero válido para Nro. factura", "Atención", JOptionPane.WARNING_MESSAGE);
+                if (!validarFechas()) {
                     return;
                 }
-                if (modelo.validarFechas(vista.jddInicio.getDate(), vista.jddFinal.getDate())) {
-                    Estado estado = vista.jcbEstado.getItemAt(vista.jcbEstado.getSelectedIndex());
-                    Date fechaInicio = vista.jddInicio.getDate();
-                    Date fechaFinal = vista.jddFinal.getDate();
-                    String condCompra = vista.jcbCondVenta.getSelectedItem().toString();
-                    vista.jtIngresoCabecera.setModel(modelo.obtenerVentas(fechaInicio, fechaFinal, condCompra, estado.getId()));
-                    Utilities.c_packColumn.packColumns(vista.jtIngresoCabecera, 1);
-                } else {
-                    vista.jddFinal.setDate(vista.jddInicio.getDate());
-                    vista.jddFinal.updateUI();
-                    JOptionPane.showMessageDialog(vista, "La fecha inicio debe ser menor que fecha final", "Atención", JOptionPane.WARNING_MESSAGE);
+                if (!validarNroFactura()) {
+                    return;
                 }
+                int nroFactura = -1;
+                if (!vista.jtfNroFactura.getText().trim().isEmpty()) {
+                    nroFactura = Integer.valueOf(vista.jtfNroFactura.getText().trim());
+                }
+                Estado estado = vista.jcbEstado.getItemAt(vista.jcbEstado.getSelectedIndex());
+                Date fechaInicio = vista.jddInicio.getDate();
+                Date fechaFinal = vista.jddFinal.getDate();
+                E_tipoOperacion condVenta = vista.jcbCondVenta.getItemAt(vista.jcbCondVenta.getSelectedIndex());
+
+                M_cliente cliente = modelo.getCabecera().getCliente();
+                M_funcionario funcionario = modelo.getCabecera().getFuncionario();
+                long startTime = System.nanoTime();
+                modelo.getTm().setFacturaCabeceraList(modelo.obtenerVentas(cliente, funcionario, fechaInicio, fechaFinal, condVenta, nroFactura, estado));
+                long elapsedTime = System.nanoTime() - startTime;
+                System.out.println("ventas: Tiempo total de busqueda  in millis: " + elapsedTime / 1000000);
+                Utilities.c_packColumn.packColumns(vista.jtIngresoCabecera, 1);
             }
         });
     }
@@ -207,6 +209,40 @@ public class C_gestionVentas implements GestionInterface, RecibirEmpleadoCallbac
     public void recibirFuncionario(M_funcionario funcionario) {
         this.modelo.cabecera.setFuncionario(funcionario);
         this.vista.jtfEmpleado.setText(this.modelo.obtenerNombreFuncionario());
+    }
+
+    private boolean validarFechas() {
+        Date inicio = vista.jddInicio.getDate();
+        Date fin = vista.jddFinal.getDate();
+        if (inicio != null && fin != null) {
+            int dateValue = inicio.compareTo(fin);
+            if (dateValue <= 0) {
+                return true;
+            }
+        }
+        vista.jddFinal.setDate(vista.jddInicio.getDate());
+        vista.jddFinal.updateUI();
+        JOptionPane.showMessageDialog(vista, "La fecha inicio debe ser menor que fecha final", "Atención", JOptionPane.WARNING_MESSAGE);
+        return false;
+    }
+
+    private boolean validarNroFactura() {
+        int nroFactura = -1;
+        if (this.vista.jtfNroFactura.getText().trim().isEmpty()) {
+            return true;
+        } else {
+            try {
+                nroFactura = Integer.valueOf(this.vista.jtfNroFactura.getText().trim());
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(vista, VALIDAR_NRO_FACTURA_1, "Atención", JOptionPane.WARNING_MESSAGE);
+                return false;
+            }
+            if (nroFactura < 0) {
+                JOptionPane.showMessageDialog(vista, VALIDAR_NRO_FACTURA_2, "Atención", JOptionPane.WARNING_MESSAGE);
+                return false;
+            }
+        }
+        return true;
     }
 
     private void borrarDatos() {

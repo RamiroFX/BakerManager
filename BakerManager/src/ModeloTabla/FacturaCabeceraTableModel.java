@@ -17,7 +17,7 @@ import javax.swing.table.AbstractTableModel;
 public class FacturaCabeceraTableModel extends AbstractTableModel {
 
     private List<M_facturaCabecera> facturaCabeceraList;
-    private final String[] colNames = {"Id.", "Nro Factura", "Cliente", "Funcionario", "Tiempo", "Total"};
+    private final String[] colNames = {"Id.", "Nro Factura", "Cliente", "Funcionario", "Tiempo", "Total", "Cond. venta"};
 
     public FacturaCabeceraTableModel() {
         this.facturaCabeceraList = new ArrayList<>();
@@ -78,6 +78,9 @@ public class FacturaCabeceraTableModel extends AbstractTableModel {
             }
             case 5: {
                 return fc.getTotal();
+            }
+            case 6: {
+                return fc.getCondVenta().getDescripcion();
             }
             default: {
                 return null;

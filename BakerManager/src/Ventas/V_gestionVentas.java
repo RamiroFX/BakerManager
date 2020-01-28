@@ -4,6 +4,7 @@
  */
 package Ventas;
 
+import Entities.E_tipoOperacion;
 import Entities.Estado;
 import Interface.CommonFormat;
 import com.toedter.calendar.JDateChooser;
@@ -32,7 +33,7 @@ public class V_gestionVentas extends JInternalFrame {
     public JButton jbBuscar, jbBuscarDetalle, jbBorrar, jbAgregar, jbDetalle,
             jbResumen, jbCliente, jbEmpleado, jbAnular, jbFacturar, jbHistorialFacturacion;
     public JTextField jtfNroFactura, jtfCliente, jtfEmpleado;
-    public JComboBox jcbEmpleado, jcbCondVenta;
+    public JComboBox<E_tipoOperacion> jcbCondVenta;
     public JComboBox<Estado> jcbEstado;
     private JPanel jpTop, jpBotonesTop, jpBot;
     public JTable jtIngresoDetalle, jtIngresoCabecera;

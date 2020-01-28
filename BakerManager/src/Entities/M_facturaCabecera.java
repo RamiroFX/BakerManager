@@ -17,6 +17,13 @@ public class M_facturaCabecera {
     private Timestamp tiempo;
     private M_cliente cliente;
     private M_funcionario funcionario;
+    private E_tipoOperacion condVenta;
+
+    public M_facturaCabecera() {
+        this.funcionario = new M_funcionario();
+        this.cliente = new M_cliente();
+        this.condVenta = new E_tipoOperacion();
+    }
 
     public M_funcionario getFuncionario() {
         return funcionario;
@@ -108,6 +115,10 @@ public class M_facturaCabecera {
         this.total = total;
     }
 
+    public void setTotalFromDouble(Double total) {
+        this.total = Math.round(Math.round(total));
+    }
+
     @Override
     public String toString() {
         return getClass().getName() + "{"
@@ -117,6 +128,20 @@ public class M_facturaCabecera {
                 + "nroFactura:" + getNroFactura() + ","
                 + "tiempo:" + getTiempo()
                 + "}";
+    }
+
+    /**
+     * @return the condVenta
+     */
+    public E_tipoOperacion getCondVenta() {
+        return condVenta;
+    }
+
+    /**
+     * @param condVenta the condVenta to set
+     */
+    public void setCondVenta(E_tipoOperacion condVenta) {
+        this.condVenta = condVenta;
     }
 
 }

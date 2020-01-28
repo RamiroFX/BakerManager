@@ -27,6 +27,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 import javax.swing.JOptionPane;
 
 /**
@@ -64,6 +65,7 @@ public class C_gestionCobroPago implements GestionInterface, RecibirEmpleadoCall
         for (int i = 0; i < tipoOperaciones.size(); i++) {
             this.vista.jcbCondVenta.addItem(tipoOperaciones.get(i));
         }
+        this.vista.jtCobroCabecera.setModel(this.modelo.getTm());
 
     }
 
@@ -158,10 +160,14 @@ public class C_gestionCobroPago implements GestionInterface, RecibirEmpleadoCall
                 Date fechaInicio = vista.jddInicioCobro.getDate();
                 Date fechaFinal = vista.jddFinalCobro.getDate();
                 E_tipoOperacion condCompra = vista.jcbCondVenta.getItemAt(vista.jcbCondVenta.getSelectedIndex());
-                String nroFactura = vista.jtfNroFactura.getText().trim();
+                int nroFactura = -1;
+                if (!vista.jtfNroFactura.getText().trim().isEmpty()) {
+                    nroFactura = Integer.valueOf(vista.jtfNroFactura.getText().trim());
+                }
                 M_cliente cliente = modelo.getCliente();
                 M_funcionario funcionario = modelo.getFuncionario();
-                vista.jtCobroCabecera.setModel(modelo.obtenerCobro(cliente, funcionario, fechaInicio, fechaFinal, condCompra, nroFactura));
+
+                modelo.getTm().setFacturaCabeceraList(modelo.obtenerCobro(cliente, funcionario, fechaInicio, fechaFinal, condCompra, nroFactura));
                 Utilities.c_packColumn.packColumns(vista.jtCobroCabecera, 1);
             }
         });
@@ -173,7 +179,7 @@ public class C_gestionCobroPago implements GestionInterface, RecibirEmpleadoCall
             public void run() {
                 E_tipoOperacion condCompra = new E_tipoOperacion(-1, 0, "Todos");
                 M_cliente cliente = modelo.getCliente();
-                vista.jtCobroCabecera.setModel(modelo.obtenerCobroPendiente(cliente, condCompra));
+                modelo.getTm().setFacturaCabeceraList(modelo.obtenerCobroPendiente(cliente, condCompra));
                 Utilities.c_packColumn.packColumns(vista.jtCobroCabecera, 1);
             }
         });
@@ -201,7 +207,6 @@ public class C_gestionCobroPago implements GestionInterface, RecibirEmpleadoCall
 
     @Override
     public void recibirFuncionario(M_funcionario funcionario) {
-        System.out.println("Cobros_Pagos.C_gestionCobroPago.recibirFuncionario()");
         this.modelo.setFuncionario(funcionario);
         this.vista.jtfEmpCobro.setText(this.modelo.obtenerNombreFuncionario());
     }
@@ -252,6 +257,11 @@ public class C_gestionCobroPago implements GestionInterface, RecibirEmpleadoCall
             return false;
         }
         return true;
+    }
+
+    private boolean validarCliente() {
+
+        return false;
     }
 
     @Override
