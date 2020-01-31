@@ -6,7 +6,7 @@ package MenuPrincipal;
 
 import Caja.GestionCaja;
 import Cliente.Gestion_cliente;
-import Cobros_Pagos.GestionCobroPago;
+import Cobros.GestionCobroPago;
 import Egresos.Gestion_Egreso;
 import Entities.M_menu_item;
 import Pedido.GestionPedidos;

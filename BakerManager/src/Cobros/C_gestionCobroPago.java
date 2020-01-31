@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Cobros_Pagos;
+package Cobros;
 
 import Cliente.Seleccionar_cliente;
 import Empleado.Seleccionar_funcionario;
@@ -186,13 +186,15 @@ public class C_gestionCobroPago implements GestionInterface, RecibirEmpleadoCall
     }
 
     private void invocarVistaCobrar() {
-        int fila = this.vista.jtCobroCabecera.getSelectedRow();
+        /*int fila = this.vista.jtCobroCabecera.getSelectedRow();
         int idFactura = Integer.valueOf(String.valueOf(this.vista.jtCobroCabecera.getValueAt(fila, 0)));
         int totalFactura = Integer.valueOf(String.valueOf(this.vista.jtCobroCabecera.getValueAt(fila, 5)));
         ReciboPago rp = new ReciboPago(this.c_inicio);
         rp.inicializarVista(idFactura, totalFactura);
         rp.setInterface(this);
-        rp.mostrarVista();
+        rp.mostrarVista();*/
+        CrearCobro cc = new CrearCobro(c_inicio);
+        cc.mostrarVista();
     }
 
     private void invocarVistaVerCaja() {

@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Cobros_Pagos;
+package Cobros;
 
 import Entities.E_tipoOperacion;
 import Interface.CommonFormat;
@@ -139,7 +139,6 @@ public class V_gestionCobroPago extends JInternalFrame {
         jbCobro = new JButton("Cobrar");
         jbCobro.setName("cobrar venta");
         jbCobro.setFont(CommonFormat.fuente);
-        jbCobro.setEnabled(false);
         jbCobro.setMargin(insets);
 
         jbDetalleCobro = new JButton("Ver detalle");

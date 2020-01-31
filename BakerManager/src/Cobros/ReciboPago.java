@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Cobros_Pagos;
+package Cobros;
 
 import DB.DB_Ingreso;
 import DB.DB_manager;
@@ -59,8 +59,8 @@ public class ReciboPago extends javax.swing.JDialog implements ActionListener, K
             S_NRO_CHEQUE = "Nro. de cheque",
             S_CHEQUE_FECHA_DIFERIDA = "Fecha diferida";
     private javax.swing.JButton jbCancel, jbOK, jbFuncionario;
-    private javax.swing.JLabel jlFecha, jlCliente, jlFormaPago, jlNroRecibo,
-            jlImporte, jlObservacion, jlDivisa;
+    private javax.swing.JLabel jlFecha, jlCliente, jlFormaPago,jlTotalPagar
+            , jlNroRecibo, jlImporte, jlObservacion, jlDivisa;
     private javax.swing.JTextField jtfCliente, jtfFuncionario,
             jtfNroRecibo, jtfObservacion;
     private javax.swing.JFormattedTextField jftFecha, jftImporte;

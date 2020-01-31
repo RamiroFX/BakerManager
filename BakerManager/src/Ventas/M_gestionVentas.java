@@ -102,7 +102,7 @@ public class M_gestionVentas {
 
     public ArrayList<Estado> getEstados() {
         ArrayList<Estado> estados = DB_manager.obtenerEstados();
-        estados.add(new Estado(3, "Todos"));
+        estados.add(new Estado(-1, "Todos"));
         return estados;
     }
 

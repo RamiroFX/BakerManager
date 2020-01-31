@@ -5,7 +5,6 @@
 package DB;
 
 import Entities.E_cuentaCorrienteConcepto;
-import Entities.E_facturaCabecera;
 import Entities.E_facturaCabeceraFX;
 import Entities.E_facturaDetalleFX;
 import Entities.E_facturacionCabecera;
@@ -125,52 +124,6 @@ public class DB_Ingreso {
             }
         }
         return (int) nroFactura;
-    }
-
-    public static ResultSetTableModel obtenerIngreso(String inicio, String fin, String tipo_operacion, M_facturaCabecera factura_cabecera, int idEstado) {
-        ResultSetTableModel rstm = null;
-        String Query = "SELECT ID_FACTURA_CABECERA \"ID\", "
-                + "NRO_FACTURA \"Nro. Factura\", "
-                + "(SELECT NOMBRE || ' '|| APELLIDO WHERE F.ID_PERSONA = P.ID_PERSONA)\"Empleado\", "
-                + "(SELECT ENTIDAD FROM CLIENTE C WHERE FC.ID_CLIENTE = C.ID_CLIENTE) \"Cliente\", "
-                + "to_char(TIEMPO,'DD/MM/YYYY HH24:MI:SS:MS') \"Tiempo\", "
-                + "ROUND((SELECT SUM (CANTIDAD*(PRECIO-(PRECIO*DESCUENTO)/100)) FROM FACTURA_DETALLE FCC WHERE FCC.ID_FACTURA_CABECERA = FC.ID_FACTURA_CABECERA))\"Total\", "
-                + "(SELECT TIOP.DESCRIPCION FROM TIPO_OPERACION TIOP WHERE TIOP.ID_TIPO_OPERACION = FC.ID_COND_VENTA) \"Cond. venta\" "
-                + "FROM FACTURA_CABECERA FC ,FUNCIONARIO F, PERSONA P "
-                + "WHERE  FC.TIEMPO BETWEEN '" + inicio + "'::timestamp  "
-                + "AND '" + fin + "'::timestamp "
-                + "AND FC.ID_FUNCIONARIO = F.ID_FUNCIONARIO "
-                + "AND F.ID_PERSONA = P.ID_PERSONA ";
-        if (null != factura_cabecera) {
-            if (null != factura_cabecera.getNroFactura()) {
-                Query = Query + " AND FC.NRO_FACTURA= " + factura_cabecera.getNroFactura();
-            }
-        }
-        if (!"Todos".equals(tipo_operacion)) {
-            Query = Query + " AND FC.ID_COND_VENTA = (SELECT TIOP.ID_TIPO_OPERACION FROM TIPO_OPERACION TIOP WHERE TIOP.DESCRIPCION LIKE'" + tipo_operacion + "')";
-        }
-        if (null != factura_cabecera) {
-            if (null != factura_cabecera.getCliente()) {
-                Query = Query + " AND FC.ID_CLIENTE = " + factura_cabecera.getCliente().getIdCliente();
-            }
-            if (null != factura_cabecera.getFuncionario()) {
-                Query = Query + " AND FC.ID_FUNCIONARIO = " + factura_cabecera.getFuncionario().getId_funcionario();
-            }
-        }
-        if (idEstado != Estado.TODOS) {
-            Query = Query + " AND FC.ID_ESTADO = " + idEstado;
-        }
-        Query = Query + " ORDER BY \"ID\"";
-        try {
-            st = DB_manager.getConection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-            // se ejecuta el query y se obtienen los resultados en un ResultSet
-            rs = st.executeQuery(Query);
-            rstm = new ResultSetTableModel(rs);
-        } catch (SQLException ex) {
-            Logger lgr = Logger.getLogger(DB_Ingreso.class.getName());
-            lgr.log(Level.SEVERE, ex.getMessage(), ex);
-        }
-        return rstm;
     }
 
     public static List<M_facturaCabecera> obtenerIngreso2(Date fechaInicio, Date fechaFinal, int idCliente, int idFuncionario, int idCondVenta, int nroFactura, int idEstado, boolean conFechas) {

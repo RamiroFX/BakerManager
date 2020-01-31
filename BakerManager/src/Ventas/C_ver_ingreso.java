@@ -113,11 +113,11 @@ public class C_ver_ingreso implements ActionListener, KeyListener {
         this.vista.jftTotal.setFont(fuente); // NOI18N
         switch (faca.getIdCondVenta()) {
             case Parametros.TipoOperacion.CONTADO: {
-                this.vista.jcbCondVenta.setSelectedIndex(1);
+                this.vista.jcbCondVenta.setSelectedIndex(0);
                 break;
             }
             case Parametros.TipoOperacion.CREDITO: {
-                this.vista.jcbCondVenta.setSelectedIndex(2);
+                this.vista.jcbCondVenta.setSelectedIndex(1);
                 break;
             }
         }
