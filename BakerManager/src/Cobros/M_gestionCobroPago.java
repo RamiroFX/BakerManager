@@ -9,17 +9,14 @@ import DB.DB_Ingreso;
 import DB.DB_manager;
 import DB.ResultSetTableModel;
 import Entities.E_tipoOperacion;
-import Entities.M_campoImpresion;
 import Entities.M_cliente;
 import Entities.M_facturaCabecera;
 import Entities.M_funcionario;
 import ModeloTabla.FacturaCabeceraTableModel;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import javax.swing.table.TableModel;
 
 /**
  *

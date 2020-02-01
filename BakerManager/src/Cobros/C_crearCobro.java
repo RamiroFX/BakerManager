@@ -5,14 +5,13 @@
  */
 package Cobros;
 
+import Cliente.Seleccionar_cliente;
 import Empleado.Seleccionar_funcionario;
+import Entities.M_cliente;
 import Entities.M_funcionario;
-import Entities.M_producto;
+import Interface.RecibirClienteCallback;
 import Interface.RecibirEmpleadoCallback;
-import Interface.RecibirProductoCallback;
-import Producto.SeleccionarCantidadProduducto;
-import Producto.SeleccionarProducto;
-import java.awt.EventQueue;
+import bakermanager.C_inicio;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -27,7 +26,7 @@ import javax.swing.JOptionPane;
  *
  * @author Ramiro Ferreira
  */
-public class C_crearCobro extends MouseAdapter implements ActionListener, KeyListener, RecibirEmpleadoCallback {
+public class C_crearCobro extends MouseAdapter implements ActionListener, KeyListener, RecibirEmpleadoCallback, RecibirClienteCallback {
 
     private static final String VALIDAR_RESPONSABLE_MSG = "Seleccione un cobrador",
             VALIDAR_NRO_RECIBO_MSG_1 = "Ingrese un Número de recibo",
@@ -40,10 +39,12 @@ public class C_crearCobro extends MouseAdapter implements ActionListener, KeyLis
             VALIDAR_TITULO = "Atención";
     public M_crearCobro modelo;
     public V_crearCobro vista;
+    private C_inicio inicio;
 
-    public C_crearCobro(M_crearCobro modelo, V_crearCobro vista) {
+    public C_crearCobro(M_crearCobro modelo, V_crearCobro vista, C_inicio inicio) {
         this.modelo = modelo;
         this.vista = vista;
+        this.inicio = inicio;
         inicializarVista();
         agregarListeners();
     }
@@ -80,11 +81,13 @@ public class C_crearCobro extends MouseAdapter implements ActionListener, KeyLis
         this.vista.jtReciboDetalle.addMouseListener(this);
         this.vista.jbAceptar.addActionListener(this);
         this.vista.jbAgregarFactura.addActionListener(this);
+        this.vista.jbCliente.addActionListener(this);
         this.vista.jbFuncionario.addActionListener(this);
         this.vista.jbEliminarDetalle.addActionListener(this);
         this.vista.jbModificarDetalle.addActionListener(this);
         this.vista.jbSalir.addActionListener(this);
         this.vista.jbAgregarFactura.addKeyListener(this);
+        this.vista.jbCliente.addKeyListener(this);
         this.vista.jbFuncionario.addKeyListener(this);
         this.vista.jbAceptar.addKeyListener(this);
         this.vista.jbSalir.addKeyListener(this);
@@ -193,7 +196,13 @@ public class C_crearCobro extends MouseAdapter implements ActionListener, KeyLis
         if (source.equals(this.vista.jbAceptar)) {
             guardar();
         } else if (source.equals(this.vista.jbAgregarFactura)) {
-
+            SeleccionarFacturaPendiente sc = new SeleccionarFacturaPendiente(this.vista);
+            //sc.setCallback(this);
+            sc.mostrarVista();
+        } else if (source.equals(this.vista.jbCliente)) {
+            Seleccionar_cliente sc = new Seleccionar_cliente(inicio.vista);
+            sc.setCallback(this);
+            sc.mostrarVista();
         } else if (source.equals(this.vista.jbFuncionario)) {
             Seleccionar_funcionario sf = new Seleccionar_funcionario(this.vista);
             sf.setCallback(this);
@@ -227,6 +236,12 @@ public class C_crearCobro extends MouseAdapter implements ActionListener, KeyLis
                 break;
             }
             case KeyEvent.VK_F3: {
+                Seleccionar_cliente sc = new Seleccionar_cliente(inicio.vista);
+                sc.setCallback(this);
+                sc.mostrarVista();
+                break;
+            }
+            case KeyEvent.VK_F5: {
                 Seleccionar_funcionario sf = new Seleccionar_funcionario(this.vista);
                 sf.setCallback(this);
                 sf.mostrarVista();
@@ -251,5 +266,11 @@ public class C_crearCobro extends MouseAdapter implements ActionListener, KeyLis
     public void recibirFuncionario(M_funcionario funcionario) {
         //modelo.getCabecera().setFuncionarioProduccion(funcionario);
         this.vista.jtfFuncionario.setText(funcionario.getNombre());
+    }
+
+    @Override
+    public void recibirCliente(M_cliente cliente) {
+        //modelo.getCabecera().setCliente(cliente);
+        this.vista.jtfCliente.setText(cliente.getEntidad() + "(" + cliente.getRuc() + "-" + cliente.getRucId() + ")");
     }
 }

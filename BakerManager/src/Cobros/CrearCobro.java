@@ -20,7 +20,7 @@ public class CrearCobro {
     public CrearCobro(C_inicio inicio) {
         this.modelo = new M_crearCobro();
         this.vista = new V_crearCobro(inicio.vista);
-        this.controlador = new C_crearCobro(modelo, vista);
+        this.controlador = new C_crearCobro(modelo, vista, inicio);
     }
 
     public void mostrarVista() {
