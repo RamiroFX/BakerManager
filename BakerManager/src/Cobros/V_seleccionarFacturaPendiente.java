@@ -4,10 +4,8 @@
  */
 package Cobros;
 
-import Entities.E_tipoOperacion;
 import java.awt.BorderLayout;
 import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -23,12 +21,11 @@ import net.miginfocom.swing.MigLayout;
  */
 public class V_seleccionarFacturaPendiente extends JDialog {
 
-    JButton jbAceptar, jbSalir, jbBuscar, jbBorrar, jbFuncionario;
+    JButton jbAceptar, jbSalir, jbBuscar, jbBorrar;
     JScrollPane jspFacturaPendiente;
     JTable jtFacturaPendiente;
     JPanel jpBotones, jpTop, jpBotonesTop, jpJtextFieldTop;
-    public JComboBox<E_tipoOperacion> jcbCondVenta;
-    public JTextField jtfBuscar, jtfFuncionario;
+    public JTextField jtfBuscar;
 
     public V_seleccionarFacturaPendiente(JDialog main) {
         super(main, "Seleccionar factura pendiente", true);
@@ -43,10 +40,10 @@ public class V_seleccionarFacturaPendiente extends JDialog {
 
     private void initTop() {
         jpTop = new JPanel(new MigLayout("", "[fill][fill]", "[fill][]"));
-        jcbCondVenta = new JComboBox();
+        /*jcbCondVenta = new JComboBox();
         jbFuncionario = new JButton("Funcionario");
         jtfFuncionario = new JTextField(20);
-        jtfFuncionario.setEditable(false);
+        jtfFuncionario.setEditable(false);*/
         jpBotonesTop = new JPanel();
         jpJtextFieldTop = new JPanel(new BorderLayout());
         jtfBuscar = new JTextField();
@@ -58,10 +55,10 @@ public class V_seleccionarFacturaPendiente extends JDialog {
         jbBorrar = new JButton("Borrar");
         jpBotonesTop.add(jbBuscar);
         jpBotonesTop.add(jbBorrar);
-        jpTop.add(jbFuncionario);
+        /*jpTop.add(jbFuncionario);
         jpTop.add(jtfFuncionario);
         jpTop.add(new JLabel("Cond. venta:"));
-        jpTop.add(jcbCondVenta);
+        jpTop.add(jcbCondVenta);*/
         jpTop.add(jpJtextFieldTop, "push x");
         jpTop.add(jpBotonesTop, "wrap");
         jpTop.setBorder(new EtchedBorder(EtchedBorder.RAISED));

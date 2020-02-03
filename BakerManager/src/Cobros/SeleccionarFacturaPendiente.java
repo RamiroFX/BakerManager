@@ -5,6 +5,7 @@
  */
 package Cobros;
 
+import Interface.RecibirCtaCteDetalleCallback;
 import bakermanager.C_inicio;
 import javax.swing.JDialog;
 
@@ -18,13 +19,17 @@ public class SeleccionarFacturaPendiente {
     private V_seleccionarFacturaPendiente vista;
     private C_seleccionarFacturaPendiente controlador;
 
-    public SeleccionarFacturaPendiente(JDialog jdialog) {
-        this.modelo = new M_seleccionarFacturaPendiente();
+    public SeleccionarFacturaPendiente(JDialog jdialog, int idCliente) {
+        this.modelo = new M_seleccionarFacturaPendiente(idCliente);
         this.vista = new V_seleccionarFacturaPendiente(jdialog);
         this.controlador = new C_seleccionarFacturaPendiente(modelo, vista);
     }
 
     public void mostrarVista() {
         this.controlador.mostrarVista();
+    }
+
+    public void setCallback(RecibirCtaCteDetalleCallback callback) {
+        this.controlador.setCallback(callback);
     }
 }

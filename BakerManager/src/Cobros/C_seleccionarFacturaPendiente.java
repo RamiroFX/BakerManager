@@ -5,8 +5,10 @@
 package Cobros;
 
 import Empleado.Seleccionar_funcionario;
+import Entities.E_facturaSinPago;
 import Entities.E_tipoOperacion;
 import Entities.M_funcionario;
+import Interface.RecibirCtaCteDetalleCallback;
 import Interface.RecibirEmpleadoCallback;
 import Interface.RecibirProductoCallback;
 import java.awt.event.ActionEvent;
@@ -27,13 +29,12 @@ import javax.swing.SwingUtilities;
  *
  * @author Ramiro Ferreira
  */
-public class C_seleccionarFacturaPendiente extends MouseAdapter implements ActionListener, KeyListener, RecibirEmpleadoCallback {
+public class C_seleccionarFacturaPendiente extends MouseAdapter implements ActionListener, KeyListener {
 
     private static final String ENTER_KEY = "Entrar";
     public M_seleccionarFacturaPendiente modelo;
     public V_seleccionarFacturaPendiente vista;
-
-    private RecibirProductoCallback callback;
+    RecibirCtaCteDetalleCallback callback;
 
     public C_seleccionarFacturaPendiente(M_seleccionarFacturaPendiente modelo, V_seleccionarFacturaPendiente vista) {
         this.modelo = modelo;
@@ -45,25 +46,29 @@ public class C_seleccionarFacturaPendiente extends MouseAdapter implements Actio
     void mostrarVista() {
         this.vista.setVisible(true);
         this.vista.requestFocus();
+        displayQueryResults();
     }
 
     private void inicializarVista() {
         this.vista.jbAceptar.setEnabled(false);
-        ArrayList<E_tipoOperacion> tipoOperaciones = modelo.obtenerTipoOperacion();
+        /*ArrayList<E_tipoOperacion> tipoOperaciones = modelo.obtenerTipoOperacion();
         for (int i = 0; i < tipoOperaciones.size(); i++) {
             this.vista.jcbCondVenta.addItem(tipoOperaciones.get(i));
-        }
-        //this.vista.jtFacturaPendiente.setModel(modelo.getTm());
+        }*/
+        this.vista.jtFacturaPendiente.setModel(modelo.getTableModel());
         KeyStroke enter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
         this.vista.jtFacturaPendiente.getInputMap(JTable.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(enter, ENTER_KEY);
         this.vista.jtFacturaPendiente.getActionMap().put(ENTER_KEY, new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                seleccionarProducto();
+                seleccionarFacturaPendiente();
             }
         });
         Utilities.c_packColumn.packColumns(this.vista.jtFacturaPendiente, 1);
+    }
 
+    public void setCallback(RecibirCtaCteDetalleCallback callback) {
+        this.callback = callback;
     }
 
     private void agregarListeners() {
@@ -72,7 +77,7 @@ public class C_seleccionarFacturaPendiente extends MouseAdapter implements Actio
         this.vista.jbSalir.addActionListener(this);
         this.vista.jbBuscar.addActionListener(this);
         this.vista.jbBorrar.addActionListener(this);
-        this.vista.jbFuncionario.addActionListener(this);
+        //this.vista.jbFuncionario.addActionListener(this);
         this.vista.jtfBuscar.addActionListener(this);
         //MOUSE LISTENERS
         this.vista.jtFacturaPendiente.addMouseListener(this);
@@ -96,8 +101,7 @@ public class C_seleccionarFacturaPendiente extends MouseAdapter implements Actio
                     JOptionPane.showMessageDialog(vista, "El texto ingresado supera el máximo permitido de 30 caracteres.", "Atención", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
-
-                //vista.jtFacturaPendiente.setModel(modelo.consultarFacturasPendiente());
+                modelo.consultarFacturasPendiente();
                 Utilities.c_packColumn.packColumns(vista.jtFacturaPendiente, 1);
             }
         });
@@ -109,22 +113,22 @@ public class C_seleccionarFacturaPendiente extends MouseAdapter implements Actio
     }
 
     private void borrarParametros() {
-        this.vista.jtfFuncionario.setText("");
+        //this.vista.jtfFuncionario.setText("");
         this.vista.jtfBuscar.setText("");
         this.vista.jtfBuscar.requestFocusInWindow();
-        this.vista.jcbCondVenta.setSelectedIndex(0);
+        //this.vista.jcbCondVenta.setSelectedIndex(0);
     }
 
-    private void seleccionarProducto() {
+    private void seleccionarFacturaPendiente() {
         int fila = vista.jtFacturaPendiente.getSelectedRow();
         int columna = vista.jtFacturaPendiente.getSelectedColumn();
         if ((fila > -1) && (columna > -1)) {
-            int idFacturaPendiente = Integer.valueOf(String.valueOf(vista.jtFacturaPendiente.getValueAt(fila, 0)));
-            //M_facturaCabecera cabecera = modelo.obtenerFacturaCabecera(idFacturaPendiente);
+            E_facturaSinPago cabecera = modelo.getTableModel().getList().get(fila);
             vista.jbAceptar.setEnabled(true);
-            /*SeleccionarCantidadProduducto scp = new SeleccionarCantidadProduducto(this, cabecera);
-            scp.setCallback(callback);
-            scp.setVisible(true);*/
+            SeleccionarMontoFacturaPendiente scp = new SeleccionarMontoFacturaPendiente(this.vista);
+            scp.setCallback(this.callback);
+            scp.inicializarVista(cabecera);
+            scp.mostrarVista();
             vista.jtfBuscar.requestFocusInWindow();
         }
     }
@@ -132,9 +136,7 @@ public class C_seleccionarFacturaPendiente extends MouseAdapter implements Actio
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == this.vista.jbAceptar) {
-            /*SeleccionarCantidadProduducto scp = new SeleccionarCantidadProduducto(this, producto);
-            scp.setCallback(callback);
-            scp.setVisible(true);*/
+            seleccionarFacturaPendiente();
             this.vista.jtfBuscar.requestFocusInWindow();
             SwingUtilities.invokeLater(new Runnable() {
                 @Override
@@ -142,11 +144,6 @@ public class C_seleccionarFacturaPendiente extends MouseAdapter implements Actio
                     vista.jtfBuscar.selectAll();
                 }
             });
-        }
-        if (e.getSource() == this.vista.jbFuncionario) {
-            Seleccionar_funcionario sp = new Seleccionar_funcionario(this.vista);
-            sp.setCallback(this);
-            sp.mostrarVista();
         }
         if (e.getSource() == this.vista.jtfBuscar) {
             displayQueryResults();
@@ -163,14 +160,10 @@ public class C_seleccionarFacturaPendiente extends MouseAdapter implements Actio
     public void mouseClicked(MouseEvent e) {
         int fila = this.vista.jtFacturaPendiente.rowAtPoint(e.getPoint());
         int columna = this.vista.jtFacturaPendiente.columnAtPoint(e.getPoint());
-        int idFacturaCabecera = Integer.valueOf(String.valueOf(this.vista.jtFacturaPendiente.getValueAt(fila, 0)));
-        //M_facturaCabecera cabecera = modelo.obtenerFactura(idFacturaCabecera);
         if ((fila > -1) && (columna > -1)) {
             this.vista.jbAceptar.setEnabled(true);
             if (e.getClickCount() == 2) {
-                /*SeleccionarCantidadProduducto scp = new SeleccionarCantidadProduducto(this, producto);
-                scp.setCallback(callback);
-                scp.setVisible(true);*/
+                seleccionarFacturaPendiente();
                 this.vista.jtfBuscar.requestFocusInWindow();
             }
         }
@@ -201,11 +194,5 @@ public class C_seleccionarFacturaPendiente extends MouseAdapter implements Actio
 
     @Override
     public void keyReleased(KeyEvent e) {
-    }
-
-    @Override
-    public void recibirFuncionario(M_funcionario funcionario) {
-        //this.modelo.setFuncionario(funcionario);
-        this.vista.jtfFuncionario.setText(funcionario.getNombre());
     }
 }

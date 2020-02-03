@@ -7,9 +7,11 @@ package Cobros;
 
 import Cliente.Seleccionar_cliente;
 import Empleado.Seleccionar_funcionario;
+import Entities.E_cuentaCorrienteDetalle;
 import Entities.M_cliente;
 import Entities.M_funcionario;
 import Interface.RecibirClienteCallback;
+import Interface.RecibirCtaCteDetalleCallback;
 import Interface.RecibirEmpleadoCallback;
 import bakermanager.C_inicio;
 import java.awt.event.ActionEvent;
@@ -26,15 +28,17 @@ import javax.swing.JOptionPane;
  *
  * @author Ramiro Ferreira
  */
-public class C_crearCobro extends MouseAdapter implements ActionListener, KeyListener, RecibirEmpleadoCallback, RecibirClienteCallback {
+public class C_crearCobro extends MouseAdapter implements ActionListener, KeyListener,
+        RecibirEmpleadoCallback, RecibirClienteCallback, RecibirCtaCteDetalleCallback {
 
     private static final String VALIDAR_RESPONSABLE_MSG = "Seleccione un cobrador",
+            VALIDAR_CLIENTE_MSG = "Seleccione un cliente",
             VALIDAR_NRO_RECIBO_MSG_1 = "Ingrese un Número de recibo",
             VALIDAR_NRO_RECIBO_MSG_2 = "Ingrese solo números enteros en Número de recibo",
             VALIDAR_NRO_RECIBO_MSG_3 = "Ingrese solo números enteros y positivos en Número de recibo",
             VALIDAR_NRO_RECIBO_MSG_4 = "El Número de recibo ingresado ya se encuentra en uso.",
             VALIDAR_FECHA_RECIBO_MSG_1 = "La fecha seleccionada no es valida.",
-            VALIDAR_CANT_FACTURAS_MSG = "Seleccione por lo menos una factura de venta.",
+            VALIDAR_MONTO_A_PAGAR = "El saldo a pagar no puede ser mayor al total",
             CONFIRMAR_SALIR_MSG = "¿Cancelar cobro?",
             VALIDAR_TITULO = "Atención";
     public M_crearCobro modelo;
@@ -70,7 +74,7 @@ public class C_crearCobro extends MouseAdapter implements ActionListener, KeyLis
     }
 
     private void inicializarVista() {
-        //this.vista.jtReciboDetalle.setModel(modelo.getTm());
+        this.vista.jtReciboDetalle.setModel(modelo.getCtaCteDetalleTm());
         this.vista.jbModificarDetalle.setEnabled(false);
         this.vista.jbEliminarDetalle.setEnabled(false);
         Calendar calendar = Calendar.getInstance();
@@ -110,6 +114,9 @@ public class C_crearCobro extends MouseAdapter implements ActionListener, KeyLis
     }
 
     private void guardar() {
+        if (!validarCliente()) {
+            return;
+        }
         if (!validarNroRecibo()) {
             return;
         }
@@ -151,6 +158,14 @@ public class C_crearCobro extends MouseAdapter implements ActionListener, KeyLis
         return true;
     }
 
+    private boolean validarCliente() {
+        if (this.vista.jtfCliente.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(vista, VALIDAR_CLIENTE_MSG, VALIDAR_TITULO, JOptionPane.WARNING_MESSAGE);
+            return false;
+        }
+        return true;
+    }
+
     private boolean validarNroRecibo() {
         int nroRecibo = -1;
         if (this.vista.jtfNroRecibo.getText().trim().isEmpty()) {
@@ -183,11 +198,26 @@ public class C_crearCobro extends MouseAdapter implements ActionListener, KeyLis
     }
 
     private void limpiarCampos() {
-        //this.modelo.limpiarCampos();
+        this.modelo.limpiarCampos();
         this.vista.jtfFuncionario.setText("");
         this.vista.jtfNroRecibo.setText("");
         Calendar calendar = Calendar.getInstance();
         this.vista.jdcFechaCobro.setDate(calendar.getTime());
+    }
+
+    private void invocarVistaSeleccionFacturaPendiente() {
+        if (!validarCliente()) {
+            return;
+        }
+        int idCliente = modelo.getCabecera().getCliente().getIdCliente();
+        SeleccionarFacturaPendiente sc = new SeleccionarFacturaPendiente(this.vista, idCliente);
+        sc.setCallback(this);
+        sc.mostrarVista();
+
+    }
+
+    private void sumarTotal() {
+        this.vista.jftTotal.setValue(modelo.getTotal());
     }
 
     @Override
@@ -196,9 +226,7 @@ public class C_crearCobro extends MouseAdapter implements ActionListener, KeyLis
         if (source.equals(this.vista.jbAceptar)) {
             guardar();
         } else if (source.equals(this.vista.jbAgregarFactura)) {
-            SeleccionarFacturaPendiente sc = new SeleccionarFacturaPendiente(this.vista);
-            //sc.setCallback(this);
-            sc.mostrarVista();
+            invocarVistaSeleccionFacturaPendiente();
         } else if (source.equals(this.vista.jbCliente)) {
             Seleccionar_cliente sc = new Seleccionar_cliente(inicio.vista);
             sc.setCallback(this);
@@ -270,7 +298,23 @@ public class C_crearCobro extends MouseAdapter implements ActionListener, KeyLis
 
     @Override
     public void recibirCliente(M_cliente cliente) {
-        //modelo.getCabecera().setCliente(cliente);
+        modelo.getCabecera().setCliente(cliente);
         this.vista.jtfCliente.setText(cliente.getEntidad() + "(" + cliente.getRuc() + "-" + cliente.getRucId() + ")");
+    }
+
+    @Override
+    public void recibirCtaCteDetalle(E_cuentaCorrienteDetalle detalle, int montoTotalPendiente) {
+        if (this.modelo.controlarMontoIngresado(detalle.getIdFacturaCabecera(), (int) detalle.getMonto(), montoTotalPendiente)) {
+            this.modelo.agregarDatos(detalle);
+        } else {
+            JOptionPane.showMessageDialog(vista, VALIDAR_MONTO_A_PAGAR, VALIDAR_TITULO, JOptionPane.WARNING_MESSAGE);
+        }
+        sumarTotal();
+    }
+
+    @Override
+    public void modificarCtaCteDetalle(int index, E_cuentaCorrienteDetalle detalle, int montoTotalPendiente) {
+        //this.modelo.getCtaCteDetalleTm().(detalle);
+        sumarTotal();
     }
 }

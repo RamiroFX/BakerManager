@@ -5,12 +5,11 @@
  */
 package Cobros;
 
+import DB.DB_Cobro;
 import DB.DB_manager;
 import Entities.E_tipoOperacion;
-import Entities.M_cliente;
 import Entities.M_facturaCabecera;
-import Entities.M_funcionario;
-import ModeloTabla.FacturaCabeceraTableModel;
+import ModeloTabla.FacturaSinPagoTableModel;
 import java.util.ArrayList;
 
 /**
@@ -20,14 +19,13 @@ import java.util.ArrayList;
 public class M_seleccionarFacturaPendiente {
 
     private M_facturaCabecera facturaCabecera;
-    private FacturaCabeceraTableModel tm;
+    private FacturaSinPagoTableModel tm;
 
-    public M_seleccionarFacturaPendiente() {
+    public M_seleccionarFacturaPendiente(int idCliente) {
         this.facturaCabecera = new M_facturaCabecera();
         this.facturaCabecera.getFuncionario().setId_funcionario(-1);
-        this.facturaCabecera.getCliente().setIdCliente(-1);
-        this.facturaCabecera = new M_facturaCabecera();
-        this.tm = new FacturaCabeceraTableModel();
+        this.facturaCabecera.getCliente().setIdCliente(idCliente);
+        this.tm = new FacturaSinPagoTableModel();
     }
 
     public String obtenerNombreFuncionario() {
@@ -69,6 +67,25 @@ public class M_seleccionarFacturaPendiente {
             tipoOperacionesList.add(get);
         }
         return tipoOperacionesList;
+    }
+
+    /**
+     * @return the tm
+     */
+    public FacturaSinPagoTableModel getTableModel() {
+        return tm;
+    }
+
+    /**
+     * @param tm the tm to set
+     */
+    public void setTableModel(FacturaSinPagoTableModel tm) {
+        this.tm = tm;
+    }
+
+    public void consultarFacturasPendiente() {
+        int idCliente = this.facturaCabecera.getCliente().getIdCliente();
+        getTableModel().setList(DB_Cobro.consultarFacturasPendiente(idCliente));
     }
 
 }
