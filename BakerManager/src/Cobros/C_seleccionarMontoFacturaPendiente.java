@@ -5,32 +5,12 @@
  */
 package Cobros;
 
-import DB.DB_Producto;
-import Egresos.C_crear_egreso;
 import Entities.E_facturaSinPago;
-import Entities.M_facturaDetalle;
-import Entities.M_menu_item;
-import Entities.M_pedidoDetalle;
-import Entities.M_producto;
 import Interface.RecibirCtaCteDetalleCallback;
-import Interface.RecibirProductoCallback;
-import MenuPrincipal.DatosUsuario;
-import Pedido.C_crearPedido;
-import Pedido.C_verPedido;
-import Producto.C_seleccionarProducto;
-import Ventas.C_crearVentaRapida;
-import Ventas.C_verMesa;
-import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.math.RoundingMode;
-import java.text.DecimalFormat;
-import java.util.ArrayList;
-import javax.swing.JDialog;
-import javax.swing.JOptionPane;
-import net.miginfocom.swing.MigLayout;
 
 /**
  *

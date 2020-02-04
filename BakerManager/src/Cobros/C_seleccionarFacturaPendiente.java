@@ -4,13 +4,8 @@
  */
 package Cobros;
 
-import Empleado.Seleccionar_funcionario;
 import Entities.E_facturaSinPago;
-import Entities.E_tipoOperacion;
-import Entities.M_funcionario;
 import Interface.RecibirCtaCteDetalleCallback;
-import Interface.RecibirEmpleadoCallback;
-import Interface.RecibirProductoCallback;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -18,7 +13,6 @@ import java.awt.event.MouseEvent;
 import java.awt.EventQueue;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.util.ArrayList;
 import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
@@ -41,20 +35,16 @@ public class C_seleccionarFacturaPendiente extends MouseAdapter implements Actio
         this.vista = vista;
         inicializarVista();
         agregarListeners();
+        displayQueryResults();
     }
 
     void mostrarVista() {
         this.vista.setVisible(true);
         this.vista.requestFocus();
-        displayQueryResults();
     }
 
     private void inicializarVista() {
         this.vista.jbAceptar.setEnabled(false);
-        /*ArrayList<E_tipoOperacion> tipoOperaciones = modelo.obtenerTipoOperacion();
-        for (int i = 0; i < tipoOperaciones.size(); i++) {
-            this.vista.jcbCondVenta.addItem(tipoOperaciones.get(i));
-        }*/
         this.vista.jtFacturaPendiente.setModel(modelo.getTableModel());
         KeyStroke enter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
         this.vista.jtFacturaPendiente.getInputMap(JTable.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(enter, ENTER_KEY);
@@ -125,10 +115,14 @@ public class C_seleccionarFacturaPendiente extends MouseAdapter implements Actio
         if ((fila > -1) && (columna > -1)) {
             E_facturaSinPago cabecera = modelo.getTableModel().getList().get(fila);
             vista.jbAceptar.setEnabled(true);
-            SeleccionarMontoFacturaPendiente scp = new SeleccionarMontoFacturaPendiente(this.vista);
+            /*SeleccionarMontoFacturaPendiente scp = new SeleccionarMontoFacturaPendiente(this.vista);
             scp.setCallback(this.callback);
             scp.inicializarVista(cabecera);
-            scp.mostrarVista();
+            scp.mostrarVista();*/
+            ReciboPago rp = new ReciboPago(this.vista);
+            rp.inicializarVista(cabecera);
+            rp.setInterface(callback);
+            rp.mostrarVista();
             vista.jtfBuscar.requestFocusInWindow();
         }
     }

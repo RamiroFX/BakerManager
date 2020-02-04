@@ -18,7 +18,8 @@ import javax.swing.table.AbstractTableModel;
 public class CtaCteDetalleTableModel extends AbstractTableModel {
 
     private List<E_cuentaCorrienteDetalle> list;
-    private final String[] colNames = {"Monto a pagar", "Id venta", "Nro Factura"};
+    private final String[] colNames2 = {"Monto a pagar", "Id venta", "Nro Factura"};
+    private final String[] colNames = {"Monto a pagar", "Id venta", "Nro Factura", "Nro Cheque", "Banco", "Fecha cheque", "Fecha diferida"};
 
     public CtaCteDetalleTableModel() {
         this.list = new ArrayList<>();
@@ -61,6 +62,7 @@ public class CtaCteDetalleTableModel extends AbstractTableModel {
     @Override
     public Object getValueAt(int rowIndex, int colIndex) {
         E_cuentaCorrienteDetalle row = this.list.get(rowIndex);
+        //{"Nro Cheque", "Banco", "Fecha cheque", "Fecha diferida"};
         switch (colIndex) {
             case 0: {
                 return row.getMonto();
@@ -70,6 +72,34 @@ public class CtaCteDetalleTableModel extends AbstractTableModel {
             }
             case 2: {
                 return row.getNroFactura();
+            }
+            case 3: {
+                if (row.getNroCheque() > 0) {
+                    return row.getNroCheque();
+                } else {
+                    return "";
+                }
+            }
+            case 4: {
+                if (row.getBanco() != null) {
+                    return row.getBanco().getDescripcion();
+                } else {
+                    return "";
+                }
+            }
+            case 5: {
+                if (row.getFechaCheque() != null) {
+                    return row.getFechaCheque();
+                } else {
+                    return "";
+                }
+            }
+            case 6: {
+                if (row.getFechaDiferidaCheque() != null) {
+                    return row.getFechaCheque();
+                } else {
+                    return "";
+                }
             }
             default: {
                 return null;
