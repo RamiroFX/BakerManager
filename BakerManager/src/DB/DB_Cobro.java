@@ -8,10 +8,14 @@ package DB;
 import Entities.E_cuentaCorrienteCabecera;
 import Entities.E_cuentaCorrienteDetalle;
 import Entities.E_facturaSinPago;
+import Entities.E_produccionCabecera;
+import Entities.E_produccionDetalle;
+import Entities.Estado;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -121,6 +125,80 @@ public class DB_Cobro {
             lgr.log(Level.SEVERE, ex.getMessage(), ex);
         }
         return list;
+    }
+
+    public static void guardarCobro(E_cuentaCorrienteCabecera cabecera, ArrayList<E_cuentaCorrienteDetalle> detalle) {
+        String INSERT_CABECERA = "INSERT INTO cuenta_corriente_cabecera(id_cliente, id_funcionario_cobrador, "
+                + "id_funcionario_registro, nro_recibo, id_estado, fecha_cobro, control, id_caja_y)"
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?);";
+        //LA SGBD SE ENCARGA DE INSERTAR EL TIMESTAMP.
+        String INSERT_DETALLE = "INSERT INTO produccion_detalle(id_produccion_cabecera, id_producto, cantidad)VALUES (?, ?, ?);";
+        long sq_cabecera = -1L;
+        try {
+            DB_manager.getConection().setAutoCommit(false);
+            pst = DB_manager.getConection().prepareStatement(INSERT_CABECERA, PreparedStatement.RETURN_GENERATED_KEYS);
+            /*
+            id_cliente, id_funcionario_cobrador, id_funcionario_registro, nro_recibo, id_estado, fecha_cobro, control, id_caja_y
+            */
+            pst.setInt(1, cabecera.getCliente().getIdCliente());
+            pst.setInt(2, cabecera.getCobrador().getId_funcionario());
+            pst.setInt(3, cabecera.getFuncionario().getId_funcionario());
+            pst.setInt(4, cabecera.getNroRecibo());
+            pst.setInt(5, Estado.ACTIVO);//ESTADO ACTIVO
+            pst.setTimestamp(6, new Timestamp(cabecera.getFechaPago().getTime()));
+            pst.setInt(7, 1);//TODO
+            pst.setInt(8, 1);//TODO
+            pst.executeUpdate();
+            rs = pst.getGeneratedKeys();
+            if (rs != null && rs.next()) {
+                sq_cabecera = rs.getLong(1);
+            }
+            pst.close();
+            rs.close();
+            for (int i = 0; i < detalle.size(); i++) {
+                pst = DB_manager.getConection().prepareStatement(INSERT_DETALLE);
+                pst.setInt(1, (int) sq_cabecera);
+                pst.setInt(2, detalle.get(i).getProducto().getId());
+                pst.setDouble(3, detalle.get(i).getCantidad());
+                pst.executeUpdate();
+                pst.close();
+            }
+            //se suma al stock lo que se produce
+            for (int i = 0; i < detalle.size(); i++) {
+                String query = "UPDATE PRODUCTO SET "
+                        + "CANT_ACTUAL = "
+                        + "((SELECT CANT_ACTUAL FROM PRODUCTO WHERE ID_PRODUCTO = " + detalle.get(i).getProducto().getId() + ")+" + detalle.get(i).getCantidad() + ") "
+                        + "WHERE ID_PRODUCTO =" + detalle.get(i).getProducto().getId();
+                st = DB_manager.getConection().createStatement();
+                st.executeUpdate(query);
+            }
+            DB_manager.establecerTransaccion();
+        } catch (SQLException ex) {
+            System.out.println(ex.getNextException());
+            if (DB_manager.getConection() != null) {
+                try {
+                    DB_manager.getConection().rollback();
+                } catch (SQLException ex1) {
+                    Logger lgr = Logger.getLogger(DB_Ingreso.class.getName());
+                    lgr.log(Level.WARNING, ex1.getMessage(), ex1);
+                }
+            }
+            Logger lgr = Logger.getLogger(DB_Ingreso.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        } finally {
+            try {
+                if (pst != null) {
+                    pst.close();
+                }
+                if (rs != null) {
+                    rs.close();
+                }
+            } catch (SQLException ex) {
+                Logger lgr = Logger.getLogger(DB_Ingreso.class.getName());
+                lgr.log(Level.WARNING, ex.getMessage(), ex);
+            }
+        }
+        return (int) sq_cabecera;
     }
 
 }

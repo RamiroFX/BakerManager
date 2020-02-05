@@ -15,6 +15,7 @@ import Interface.RecibirClienteCallback;
 import Interface.RecibirCtaCteDetalleCallback;
 import Interface.RecibirEmpleadoCallback;
 import bakermanager.C_inicio;
+import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -60,10 +61,10 @@ public class C_crearCobro extends MouseAdapter implements ActionListener, KeyLis
     }
 
     private void cerrar() {
-        /* EventQueue.invokeLater(new Runnable() {
+        EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
-                if (modelo.getTm().getList().isEmpty()) {
+                if (modelo.getCtaCteDetalleTm().getList().isEmpty()) {
                     vista.dispose();
                 } else {
                     int opcion = JOptionPane.showConfirmDialog(vista, CONFIRMAR_SALIR_MSG, VALIDAR_TITULO, JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
@@ -72,7 +73,7 @@ public class C_crearCobro extends MouseAdapter implements ActionListener, KeyLis
                     }
                 }
             }
-        });*/
+        });
     }
 
     private void inicializarVista() {
@@ -143,13 +144,12 @@ public class C_crearCobro extends MouseAdapter implements ActionListener, KeyLis
         int nroRecibo = Integer.valueOf(this.vista.jtfNroRecibo.getText().trim());
         modelo.getCabecera().setFechaPago(fechaPago);
         modelo.getCabecera().setNroRecibo(nroRecibo);
-        //modelo.guardarRecibo();
+        modelo.guardarCobro();
         limpiarCampos();
         cerrar();
     }
 
     private boolean validarFechaUtilizacion() {
-        //Date now = Calendar.getInstance().getTime();
         Date entrega = null;
         try {
             entrega = vista.jdcFechaCobro.getDate();

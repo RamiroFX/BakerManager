@@ -11,6 +11,7 @@ import Entities.E_cuentaCorrienteDetalle;
 import Entities.E_formaPago;
 import MenuPrincipal.DatosUsuario;
 import ModeloTabla.CtaCteDetalleTableModel;
+import java.util.ArrayList;
 
 /**
  *
@@ -116,5 +117,10 @@ public class M_crearCobro {
 
     boolean existeRecibo(int nroRecibo) {
         return DB_Cobro.existeNroRecibo(nroRecibo);
+    }
+
+    public void guardarCobro() {
+        ArrayList<E_cuentaCorrienteDetalle> detalles = new ArrayList<>(getCtaCteDetalleTm().getList());
+        DB_Cobro.guardarCobro(getCabecera(), detalles);
     }
 }
