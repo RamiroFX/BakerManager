@@ -6,6 +6,9 @@
 package ModeloTabla;
 
 import Entities.E_cuentaCorrienteDetalle;
+import Entities.E_formaPago;
+import Entities.E_tipoCheque;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JOptionPane;
@@ -17,8 +20,8 @@ import javax.swing.table.AbstractTableModel;
  */
 public class CtaCteDetalleTableModel extends AbstractTableModel {
 
+    SimpleDateFormat dateFormater = new SimpleDateFormat("dd/MM/YYYY");
     private List<E_cuentaCorrienteDetalle> list;
-    private final String[] colNames2 = {"Monto a pagar", "Id venta", "Nro Factura"};
     private final String[] colNames = {"Monto a pagar", "Id venta", "Nro Factura", "Nro Cheque", "Banco", "Fecha cheque", "Fecha diferida"};
 
     public CtaCteDetalleTableModel() {
@@ -89,14 +92,14 @@ public class CtaCteDetalleTableModel extends AbstractTableModel {
             }
             case 5: {
                 if (row.getFechaCheque() != null) {
-                    return row.getFechaCheque();
+                    return dateFormater.format(row.getFechaCheque());
                 } else {
                     return "";
                 }
             }
             case 6: {
                 if (row.getFechaDiferidaCheque() != null) {
-                    return row.getFechaCheque();
+                    return dateFormater.format(row.getFechaCheque());
                 } else {
                     return "";
                 }
@@ -119,6 +122,24 @@ public class CtaCteDetalleTableModel extends AbstractTableModel {
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, "Error al modificar monto a pagar", "Atención", JOptionPane.WARNING_MESSAGE);
         }
+    }
+
+    public void modificarDatos(int index, E_cuentaCorrienteDetalle data) {
+        this.list.get(index).setMonto(data.getMonto());
+        switch (data.getFormaPago().getId()) {
+            case E_formaPago.CHEQUE: {
+                this.list.get(index).setBanco(data.getBanco());
+                this.list.get(index).setFechaCheque(data.getFechaCheque());
+                if (data.getTipoCheque().getId() == E_tipoCheque.DIFERIDO) {
+                    this.list.get(index).setFechaDiferidaCheque(data.getFechaDiferidaCheque());
+                } else {
+                    this.list.get(index).setFechaDiferidaCheque(null);
+                }
+                this.list.get(index).setNroCheque(data.getNroCheque());
+                break;
+            }
+        }
+        fireTableDataChanged();
     }
 
     public void quitarDatos(int index) {

@@ -19,12 +19,16 @@ public class E_cuentaCorrienteDetalle {
     private int nroFactura;
     private int nroRecibo;
     private double monto;
+    private E_formaPago formaPago;
+    private E_tipoCheque tipoCheque;
     private int nroCheque;//opcional
     private E_banco banco;//opcional
     private Date fechaCheque;//opcional
     private Date fechaDiferidaCheque;//opcional
 
     public E_cuentaCorrienteDetalle() {
+        this.formaPago = new E_formaPago();
+        this.tipoCheque = new E_tipoCheque();
     }
 
     /**
@@ -165,5 +169,33 @@ public class E_cuentaCorrienteDetalle {
      */
     public void setNroFactura(int nroFactura) {
         this.nroFactura = nroFactura;
+    }
+
+    /**
+     * @return the formaPago
+     */
+    public E_formaPago getFormaPago() {
+        return formaPago;
+    }
+
+    /**
+     * @param formaPago the formaPago to set
+     */
+    public void setFormaPago(E_formaPago formaPago) {
+        this.formaPago = formaPago;
+    }
+
+    /**
+     * @return the tipoCheque
+     */
+    public E_tipoCheque getTipoCheque() {
+        return tipoCheque;
+    }
+
+    /**
+     * @param tipoCheque the tipoCheque to set
+     */
+    public void setTipoCheque(E_tipoCheque tipoCheque) {
+        this.tipoCheque = tipoCheque;
     }
 }

@@ -5,8 +5,11 @@
  */
 package Cobros;
 
+import DB.DB_Cobro;
 import Entities.E_cuentaCorrienteCabecera;
 import Entities.E_cuentaCorrienteDetalle;
+import Entities.E_formaPago;
+import MenuPrincipal.DatosUsuario;
 import ModeloTabla.CtaCteDetalleTableModel;
 
 /**
@@ -20,7 +23,8 @@ public class M_crearCobro {
 
     public M_crearCobro() {
         this.ctaCteCabecera = new E_cuentaCorrienteCabecera();
-        this.ctaCteCabecera.getFuncionario().setId_funcionario(-1);
+        this.ctaCteCabecera.getCobrador().setId_funcionario(-1);
+        this.ctaCteCabecera.setFuncionario(DatosUsuario.getRol_usuario().getFuncionario());
         this.ctaCteCabecera.getCliente().setIdCliente(-1);
         this.ctaCteDetalleTm = new CtaCteDetalleTableModel();
     }
@@ -53,25 +57,42 @@ public class M_crearCobro {
 
     public void limpiarCampos() {
         getCabecera().getCliente().setIdCliente(-1);
-        getCabecera().getFuncionario().setId_funcionario(-1);
+        getCabecera().getCobrador().setId_funcionario(-1);
     }
 
     public void agregarDatos(E_cuentaCorrienteDetalle data) {
         for (int i = 0; i < getCtaCteDetalleTm().getList().size(); i++) {
             E_cuentaCorrienteDetalle get = getCtaCteDetalleTm().getList().get(i);
             if (get.getIdFacturaCabecera() == data.getIdFacturaCabecera()) {
-                getCtaCteDetalleTm().modificarMontoPagar((int) (get.getMonto() + data.getMonto()), i);
-                return;
+                if (get.getFormaPago().getId() == data.getFormaPago().getId()
+                        && data.getFormaPago().getId() == E_formaPago.EFECTIVO
+                        && get.getFormaPago().getId() == E_formaPago.EFECTIVO) {
+                    getCtaCteDetalleTm().modificarMontoPagar((int) (get.getMonto() + data.getMonto()), i);
+                    return;
+                }
             }
         }
         getCtaCteDetalleTm().agregarDatos(data);
     }
 
+    public void eliminarDatos(int index) {
+        getCtaCteDetalleTm().quitarDatos(index);
+    }
+
     public boolean controlarMontoIngresado(int idFacturaCabecera, int aPagar, int totalPendiente) {
+        //OBTENER EL TOTAL DE LA FACTURA ACUMULADO EN LA OPERACION DE COBRO
+        int totalFactura = 0;
+        for (E_cuentaCorrienteDetalle ctaCteDetalle : getCtaCteDetalleTm().getList()) {
+            if (ctaCteDetalle.getIdFacturaCabecera() == idFacturaCabecera) {
+                totalFactura = totalFactura + (int) ctaCteDetalle.getMonto();
+            }
+        }
+        //VERIFICAR QUE EL NUEVO MONTO INGRESADO PARA LA MISMA FACTURA NO PASE
+        //EL MONTO TOTAL
         for (int i = 0; i < getCtaCteDetalleTm().getList().size(); i++) {
             E_cuentaCorrienteDetalle get = getCtaCteDetalleTm().getList().get(i);
             if (get.getIdFacturaCabecera() == idFacturaCabecera) {
-                int subTotalApagar = (int) get.getMonto() + aPagar;
+                int subTotalApagar = totalFactura + aPagar;
                 if (subTotalApagar > totalPendiente) {
                     return false;
                 }
@@ -89,4 +110,11 @@ public class M_crearCobro {
         return total;
     }
 
+    public void modificarDetalle(int index, E_cuentaCorrienteDetalle detalle) {
+        getCtaCteDetalleTm().modificarDatos(index, detalle);
+    }
+
+    boolean existeRecibo(int nroRecibo) {
+        return DB_Cobro.existeNroRecibo(nroRecibo);
+    }
 }

@@ -115,12 +115,8 @@ public class C_seleccionarFacturaPendiente extends MouseAdapter implements Actio
         if ((fila > -1) && (columna > -1)) {
             E_facturaSinPago cabecera = modelo.getTableModel().getList().get(fila);
             vista.jbAceptar.setEnabled(true);
-            /*SeleccionarMontoFacturaPendiente scp = new SeleccionarMontoFacturaPendiente(this.vista);
-            scp.setCallback(this.callback);
-            scp.inicializarVista(cabecera);
-            scp.mostrarVista();*/
             ReciboPago rp = new ReciboPago(this.vista);
-            rp.inicializarVista(cabecera);
+            rp.nuevoPago(cabecera);
             rp.setInterface(callback);
             rp.mostrarVista();
             vista.jtfBuscar.requestFocusInWindow();

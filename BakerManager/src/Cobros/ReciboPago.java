@@ -13,6 +13,7 @@ import Entities.E_cuentaCorrienteDetalle;
 import Entities.E_facturaSinPago;
 import Entities.E_formaPago;
 import Entities.E_tipoCheque;
+import Entities.M_facturaDetalle;
 import Interface.RecibirCtaCteDetalleCallback;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -22,6 +23,7 @@ import java.awt.event.KeyListener;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import javax.swing.JDialog;
 import javax.swing.JFormattedTextField;
 import javax.swing.JOptionPane;
@@ -57,7 +59,7 @@ public class ReciboPago extends javax.swing.JDialog implements ActionListener, K
     private static final String S_BANCO = "Banco",
             S_TIPO_CHEQUE = "Tipo de cheque",
             S_NRO_CHEQUE = "Nro. de cheque",
-            S_FECHA_CHEQUE = "Fecha diferida",
+            S_FECHA_CHEQUE = "Fecha del cheque",
             S_CHEQUE_FECHA_DIFERIDA = "Fecha diferida";
     private javax.swing.JButton jbCancel, jbOK;
     private javax.swing.JLabel jlFecha, jlCliente, jlNroFactura, jlFormaPago, jlTotalFactura,
@@ -80,25 +82,23 @@ public class ReciboPago extends javax.swing.JDialog implements ActionListener, K
 
     private RecibirCtaCteDetalleCallback callback;
     private E_facturaSinPago facturaCabecera;
+    private boolean modificarDetalle;
 
     public ReciboPago(JDialog vista) {
         super(vista, TITULO, true);
         setTitle(TITULO);
-        setSize(new java.awt.Dimension(775, 450));
+        setSize(new java.awt.Dimension(800, 450));
         setLocationRelativeTo(vista);
         initComponents();
+        inicializarVista();
     }
 
     public void mostrarVista() {
         this.setVisible(true);
     }
 
-    public void inicializarVista(E_facturaSinPago fsp) {
-        facturaCabecera = fsp;
-        jtfCliente.setText(facturaCabecera.getClienteEntidad());
-        jtfIdVenta.setText(facturaCabecera.getIdCabecera() + "");
-        jtfNroFactura.setText(facturaCabecera.getNroFactura() + "");
-        jtfTotalFactura.setText(facturaCabecera.getMonto() + "");
+    private void inicializarVista() {
+        modificarDetalle = false;
         jftFecha.setValue(Calendar.getInstance().getTime());
         ArrayList<E_formaPago> formaPagoList = DB_manager.obtenerFormaPagos();
         for (int i = 0; i < formaPagoList.size(); i++) {
@@ -122,6 +122,61 @@ public class ReciboPago extends javax.swing.JDialog implements ActionListener, K
         }
     }
 
+    public void nuevoPago(E_facturaSinPago fsp) {
+        modificarDetalle = false;
+        facturaCabecera = fsp;
+        jtfCliente.setText(facturaCabecera.getClienteEntidad());
+        jtfIdVenta.setText(facturaCabecera.getIdCabecera() + "");
+        jtfNroFactura.setText(facturaCabecera.getNroFactura() + "");
+        jtfTotalFactura.setText(facturaCabecera.getMonto() + "");
+    }
+
+    public void modificarDetalle(int index, E_facturaSinPago fsp, E_cuentaCorrienteDetalle detalle) {
+        modificarDetalle = true;
+        /*
+        ACTUALIZAR VISTA CON LOS DATOS
+         */
+        facturaCabecera = fsp;
+        facturaCabecera.setMonto(this.totalFactura(fsp.getIdCabecera()));
+        jtfCliente.setText(facturaCabecera.getClienteEntidad());
+        jtfIdVenta.setText(facturaCabecera.getIdCabecera() + "");
+        jtfNroFactura.setText(facturaCabecera.getNroFactura() + "");
+        jtfTotalFactura.setText(facturaCabecera.getMonto() + "");
+        E_formaPago fp = detalle.getFormaPago();
+        jcbFormaPago.setSelectedItem(fp);
+        jcbFormaPago.setEnabled(false);
+        switch (fp.getId()) {
+            case E_formaPago.CHEQUE: {
+                jdcChequeFecha.setDate(detalle.getFechaCheque());
+                jcbBanco.setSelectedItem(detalle.getBanco());
+                jtfNroCheque.setText(detalle.getNroCheque() + "");
+                jcbTipoCheque.setSelectedItem(detalle.getTipoCheque());
+                jftImporteCheque.setText(detalle.getMonto() + "");
+                jftImporteEfectivo.setEnabled(false);
+                break;
+            }
+            case E_formaPago.EFECTIVO: {
+                jcbBanco.setEnabled(false);
+                jtfNroCheque.setEnabled(false);
+                jcbTipoCheque.setEnabled(false);
+                jdcChequeFechaDiferida.setEnabled(false);
+                jdcChequeFecha.setEnabled(false);
+                jftImporteCheque.setEnabled(false);
+                jftImporteEfectivo.setText(((int) detalle.getMonto()) + "");
+                break;
+            }
+            case E_formaPago.TARJETA: {
+                break;
+            }
+        }
+        /*
+        REMOVER LISTENERS DE LOS COMBOBOX
+         */
+
+        jcbFormaPago.removeKeyListener(this);
+        jcbFormaPago.removeActionListener(this);
+    }
+
     public void setInterface(RecibirCtaCteDetalleCallback interfaceNotificarCambio) {
         this.callback = interfaceNotificarCambio;
     }
@@ -129,6 +184,7 @@ public class ReciboPago extends javax.swing.JDialog implements ActionListener, K
     private void initComponents() {
         getContentPane().setLayout(new MigLayout());
         //FECHA
+        Calendar calendar = Calendar.getInstance();
         jlFecha = new javax.swing.JLabel(S_FECHA);
         jftFecha = new JFormattedTextField(
                 new DefaultFormatterFactory(
@@ -167,8 +223,10 @@ public class ReciboPago extends javax.swing.JDialog implements ActionListener, K
         jlNroCheque = new javax.swing.JLabel(S_NRO_CHEQUE);
         jlTipoCheque = new javax.swing.JLabel(S_TIPO_CHEQUE);
         jdcChequeFecha = new com.toedter.calendar.JDateChooser();
+        jdcChequeFecha.setDate(calendar.getTime());
         jdcChequeFecha.setEnabled(false);
         jdcChequeFechaDiferida = new com.toedter.calendar.JDateChooser();
+        jdcChequeFechaDiferida.setDate(calendar.getTime());
         jdcChequeFechaDiferida.setEnabled(false);
         jtfNroCheque = new javax.swing.JTextField();
         jcbBanco = new javax.swing.JComboBox<>();
@@ -242,11 +300,20 @@ public class ReciboPago extends javax.swing.JDialog implements ActionListener, K
         if (!isValidPayAmount()) {
             return;
         }
-        //TODO validar nro cheque
+        if (!validarNroCheque()) {
+            return;
+        }
+        if (!validarFechaCheque()) {
+            return;
+        }
+        if (!validarFechaChequeDiferida()) {
+            return;
+        }
         E_cuentaCorrienteDetalle detalle = new E_cuentaCorrienteDetalle();
         detalle.setIdFacturaCabecera(facturaCabecera.getIdCabecera());
         detalle.setNroFactura(facturaCabecera.getNroFactura());
         E_formaPago fp = jcbFormaPago.getItemAt(jcbFormaPago.getSelectedIndex());
+        detalle.setFormaPago(fp);
         switch (fp.getId()) {
             case E_formaPago.CHEQUE: {
                 int importeCheque = Integer.valueOf(jftImporteCheque.getText());
@@ -258,6 +325,7 @@ public class ReciboPago extends javax.swing.JDialog implements ActionListener, K
                 detalle.setFechaCheque(jdcChequeFecha.getDate());
                 E_tipoCheque tc = jcbTipoCheque.getItemAt(jcbTipoCheque.getSelectedIndex());
                 if (tc.getId() == E_tipoCheque.DIFERIDO) {
+
                     detalle.setFechaDiferidaCheque(jdcChequeFechaDiferida.getDate());
                 }
                 break;
@@ -271,7 +339,11 @@ public class ReciboPago extends javax.swing.JDialog implements ActionListener, K
                 break;
             }
         }
-        callback.recibirCtaCteDetalle(detalle, facturaCabecera.getMonto());
+        if (modificarDetalle) {
+            callback.modificarCtaCteDetalle(1, detalle, facturaCabecera.getMonto());
+        } else {
+            callback.recibirCtaCteDetalle(detalle, facturaCabecera.getMonto());
+        }
         dispose();
     }
 
@@ -281,19 +353,21 @@ public class ReciboPago extends javax.swing.JDialog implements ActionListener, K
         switch (fp.getId()) {
             case E_formaPago.EFECTIVO: {
                 try {
-                    importe = Integer.valueOf(String.valueOf(jftImporteEfectivo.getText()));
+                    importe = Integer.valueOf(jftImporteEfectivo.getText());
                 } catch (NumberFormatException e) {
-                    JOptionPane.showMessageDialog(this, "Inserte un valor válido para el importe", "Atención", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(this, "Inserte un número válido para el importe", "Atención", JOptionPane.ERROR_MESSAGE);
                     return false;
                 }
+                break;
             }
             case E_formaPago.CHEQUE: {
                 try {
-                    importe = Integer.valueOf(String.valueOf(jftImporteCheque.getText()));
+                    importe = Integer.valueOf(jftImporteCheque.getText());
                 } catch (NumberFormatException e) {
-                    JOptionPane.showMessageDialog(this, "Inserte un valor válido para el importe", "Atención", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(this, "Inserte un número válido para el importe", "Atención", JOptionPane.ERROR_MESSAGE);
                     return false;
                 }
+                break;
             }
         }
         if (importe <= 0) {
@@ -307,15 +381,70 @@ public class ReciboPago extends javax.swing.JDialog implements ActionListener, K
         return true;
     }
 
-    /*
-    private boolean isValidObservation() {
-        if (jtfObservacion.getText().trim().length() > 120) {
-            JOptionPane.showMessageDialog(this, "El número de caracteres ingresados supera el limite(120)", "Atención", JOptionPane.WARNING_MESSAGE);
-            return false;
+    private boolean validarNroCheque() {
+        E_formaPago fp = jcbFormaPago.getItemAt(jcbFormaPago.getSelectedIndex());
+        if (fp.getId() == E_formaPago.CHEQUE) {
+            int nroCheque = 0;
+            try {
+                nroCheque = Integer.valueOf(jtfNroCheque.getText().trim());
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(this, "Inserte un número de cheque válido", "Atención", JOptionPane.ERROR_MESSAGE);
+                return false;
+            }
+            if (nroCheque <= 0) {
+                JOptionPane.showMessageDialog(this, "El número de cheque debe ser mayor a 0 (cero)", "Atención", JOptionPane.ERROR_MESSAGE);
+                return false;
+            }
         }
         return true;
     }
-     */
+
+    private boolean validarFechaCheque() {
+        E_formaPago fp = jcbFormaPago.getItemAt(jcbFormaPago.getSelectedIndex());
+        if (fp.getId() == E_formaPago.CHEQUE) {
+            Date entrega = null;
+            try {
+                entrega = jdcChequeFecha.getDate();
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(this, "La fecha del cheque no es válida. Intente nuevamente", "Fecha de cheque inválida", JOptionPane.WARNING_MESSAGE);
+                return false;
+            }
+            if (entrega == null) {
+                JOptionPane.showMessageDialog(this, "La fecha del cheque no es válida. Intente nuevamente", "Fecha de cheque inválida", JOptionPane.WARNING_MESSAGE);
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private boolean validarFechaChequeDiferida() {
+        E_formaPago fp = jcbFormaPago.getItemAt(jcbFormaPago.getSelectedIndex());
+        if (fp.getId() == E_formaPago.CHEQUE) {
+            E_tipoCheque tc = jcbTipoCheque.getItemAt(jcbTipoCheque.getSelectedIndex());
+            if (tc.getId() == E_tipoCheque.DIFERIDO) {
+                Date entrega = null;
+                try {
+                    entrega = jdcChequeFechaDiferida.getDate();
+                } catch (Exception ex) {
+                    JOptionPane.showMessageDialog(this, "La fecha del cheque diferido no es válida. Intente nuevamente", "Fecha de cheque diferido inválida", JOptionPane.WARNING_MESSAGE);
+                    return false;
+                }
+                if (entrega == null) {
+                    JOptionPane.showMessageDialog(this, "La fecha del cheque diferido no es válida. Intente nuevamente", "Fecha de cheque diferido inválida", JOptionPane.WARNING_MESSAGE);
+                    return false;
+                }
+                if (!validarFechaCheque()) {
+                    return false;
+                }
+                if (entrega.before(jdcChequeFecha.getDate())) {
+                    JOptionPane.showMessageDialog(this, "La fecha del cheque diferido no puede ser menor a la fecha de cheque. Intente nuevamente", "Fecha de cheque diferido inválida", JOptionPane.WARNING_MESSAGE);
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
     private void formaPagoHandler() {
         E_formaPago fp = jcbFormaPago.getItemAt(jcbFormaPago.getSelectedIndex());
         switch (fp.getId()) {
@@ -364,6 +493,22 @@ public class ReciboPago extends javax.swing.JDialog implements ActionListener, K
 
     public int getNroRecibo() {
         return DB_Ingreso.obtenerUltimoNroFactura() + 1;
+    }
+
+    /**
+     * Funcion que retorna el total de la factura pendiente, utilizado cuando se
+     * modifica un cobro ya que no se guarda la factura sin pagar duante la
+     * seleccion de cada detalle
+     */
+    private int totalFactura(int idFacturaCabecera) {
+        int total = 0;
+        ArrayList<M_facturaDetalle> fade = DB_Ingreso.obtenerVentaDetalles(idFacturaCabecera);
+        for (M_facturaDetalle detalle : fade) {
+            Integer Precio = detalle.getPrecio() - Math.round(Math.round(((detalle.getPrecio() * detalle.getDescuento()) / 100)));
+            Integer subTotal = Math.round(Math.round((detalle.getCantidad() * Precio)));
+            total = total + subTotal;
+        }
+        return total;
     }
 
     @Override

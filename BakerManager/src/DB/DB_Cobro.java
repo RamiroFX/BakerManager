@@ -8,9 +8,6 @@ package DB;
 import Entities.E_cuentaCorrienteCabecera;
 import Entities.E_cuentaCorrienteDetalle;
 import Entities.E_facturaSinPago;
-import Entities.E_utilizacionMateriaPrimaCabecera;
-import Entities.Estado;
-import Entities.M_funcionario;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -29,7 +26,34 @@ public class DB_Cobro {
     private static Statement st = null;
     private static PreparedStatement pst = null;
     private static ResultSet rs = null;
-    
+
+    public static boolean existeNroRecibo(int nroRecibo) {
+        String Query = "SELECT nro_recibo  FROM cuenta_corriente_cabecera WHERE nro_recibo = ?";
+        try {
+            pst = DB_manager.getConection().prepareStatement(Query);
+            pst.setInt(1, nroRecibo);
+            rs = pst.executeQuery();
+            return rs.next();
+        } catch (SQLException ex) {
+            Logger lgr = Logger.getLogger(DB_Cobro.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (st != null) {
+                    st.close();
+                }
+            } catch (SQLException ex) {
+                Logger lgr = Logger.getLogger(DB_Cobro.class.getName());
+                lgr.log(Level.WARNING, ex.getMessage(), ex);
+            }
+        }
+        return false;
+    }
+
     public static List<E_facturaSinPago> consultarFacturasPendiente(int idCliente) {
         List<E_facturaSinPago> list = new ArrayList<>();
         String Query = "SELECT * FROM v_facturas_sin_pago WHERE id_cliente = ? ;";
@@ -57,6 +81,7 @@ public class DB_Cobro {
         }
         return list;
     }
+
     public static List<E_cuentaCorrienteDetalle> consultarCobroDetalleAgrupado(List<E_cuentaCorrienteCabecera> cadenaCabeceras) {
         List<E_cuentaCorrienteDetalle> list = new ArrayList<>();
         boolean b = true;
