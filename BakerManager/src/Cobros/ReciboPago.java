@@ -78,8 +78,8 @@ public class ReciboPago extends javax.swing.JDialog implements ActionListener, K
     private javax.swing.JComboBox<E_banco> jcbBanco;
     private javax.swing.JComboBox<E_tipoCheque> jcbTipoCheque;
     private javax.swing.JTextField jftImporteCheque;
-    //VARIABLES TARJETA
-
+    //VARIABLES TARJETA TODO
+    
     private RecibirCtaCteDetalleCallback callback;
     private E_facturaSinPago facturaCabecera;
     private boolean modificarDetalle;
@@ -324,8 +324,8 @@ public class ReciboPago extends javax.swing.JDialog implements ActionListener, K
                 detalle.setNroCheque(nroCheque);
                 detalle.setFechaCheque(jdcChequeFecha.getDate());
                 E_tipoCheque tc = jcbTipoCheque.getItemAt(jcbTipoCheque.getSelectedIndex());
+                detalle.setTipoCheque(tc);
                 if (tc.getId() == E_tipoCheque.DIFERIDO) {
-
                     detalle.setFechaDiferidaCheque(jdcChequeFechaDiferida.getDate());
                 }
                 break;

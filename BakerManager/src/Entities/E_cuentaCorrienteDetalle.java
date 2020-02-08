@@ -198,4 +198,14 @@ public class E_cuentaCorrienteDetalle {
     public void setTipoCheque(E_tipoCheque tipoCheque) {
         this.tipoCheque = tipoCheque;
     }
+
+    public boolean esChequeDiferido() {
+        System.out.println("esChequeDiferido().getTipoCheque().getId(): " + getTipoCheque().getId());
+        System.out.println("esChequeDiferido().getTipoCheque().getDescripcion(): " + getTipoCheque().getDescripcion());
+        if (getTipoCheque().getId() == E_tipoCheque.DIFERIDO) {
+            System.out.println("esChequeDiferido()");
+            return true;
+        }
+        return false;
+    }
 }

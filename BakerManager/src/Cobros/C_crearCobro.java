@@ -266,6 +266,7 @@ public class C_crearCobro extends MouseAdapter implements ActionListener, KeyLis
         } else if (source.equals(this.vista.jbCliente)) {
             invocarVistaSeleccionCliente();
         } else if (source.equals(this.vista.jbFuncionario)) {
+            invocarVistaSeleccionFuncionario();
         } else if (source.equals(this.vista.jbEliminarDetalle)) {
             eliminarDetalle();
         } else if (source.equals(this.vista.jbModificarDetalle)) {

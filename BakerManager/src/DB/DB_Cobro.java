@@ -8,8 +8,7 @@ package DB;
 import Entities.E_cuentaCorrienteCabecera;
 import Entities.E_cuentaCorrienteDetalle;
 import Entities.E_facturaSinPago;
-import Entities.E_produccionCabecera;
-import Entities.E_produccionDetalle;
+import Entities.E_formaPago;
 import Entities.Estado;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -127,19 +126,18 @@ public class DB_Cobro {
         return list;
     }
 
-    public static void guardarCobro(E_cuentaCorrienteCabecera cabecera, ArrayList<E_cuentaCorrienteDetalle> detalle) {
+    public static int guardarCobro(E_cuentaCorrienteCabecera cabecera, ArrayList<E_cuentaCorrienteDetalle> detalle) {
         String INSERT_CABECERA = "INSERT INTO cuenta_corriente_cabecera(id_cliente, id_funcionario_cobrador, "
                 + "id_funcionario_registro, nro_recibo, id_estado, fecha_cobro, control, id_caja_y)"
                 + "VALUES (?, ?, ?, ?, ?, ?, ?, ?);";
         //LA SGBD SE ENCARGA DE INSERTAR EL TIMESTAMP.
-        String INSERT_DETALLE = "INSERT INTO produccion_detalle(id_produccion_cabecera, id_producto, cantidad)VALUES (?, ?, ?);";
+        String INSERT_DETALLE_CHEQUE_DIFERIDO = "INSERT INTO cuenta_corriente_detalle(id_cta_cte_cabecera, id_factura_cabecera, nro_recibo, monto, nro_cheque, id_banco, cheque_fecha, cheque_fecha_diferida)VALUES (?, ?, ?, ?, ?, ?, ?, ?);";
+        String INSERT_DETALLE_CHEQUE = "INSERT INTO cuenta_corriente_detalle(id_cta_cte_cabecera, id_factura_cabecera, nro_recibo, monto, nro_cheque, id_banco, cheque_fecha)VALUES (?, ?, ?, ?, ?, ?, ?);";
+        String INSERT_DETALLE_EFECTIVO = "INSERT INTO cuenta_corriente_detalle(id_cta_cte_cabecera, id_factura_cabecera, nro_recibo, monto)VALUES (?, ?, ?, ?);";
         long sq_cabecera = -1L;
         try {
             DB_manager.getConection().setAutoCommit(false);
             pst = DB_manager.getConection().prepareStatement(INSERT_CABECERA, PreparedStatement.RETURN_GENERATED_KEYS);
-            /*
-            id_cliente, id_funcionario_cobrador, id_funcionario_registro, nro_recibo, id_estado, fecha_cobro, control, id_caja_y
-            */
             pst.setInt(1, cabecera.getCliente().getIdCliente());
             pst.setInt(2, cabecera.getCobrador().getId_funcionario());
             pst.setInt(3, cabecera.getFuncionario().getId_funcionario());
@@ -155,22 +153,47 @@ public class DB_Cobro {
             }
             pst.close();
             rs.close();
-            for (int i = 0; i < detalle.size(); i++) {
-                pst = DB_manager.getConection().prepareStatement(INSERT_DETALLE);
-                pst.setInt(1, (int) sq_cabecera);
-                pst.setInt(2, detalle.get(i).getProducto().getId());
-                pst.setDouble(3, detalle.get(i).getCantidad());
-                pst.executeUpdate();
-                pst.close();
-            }
-            //se suma al stock lo que se produce
-            for (int i = 0; i < detalle.size(); i++) {
-                String query = "UPDATE PRODUCTO SET "
-                        + "CANT_ACTUAL = "
-                        + "((SELECT CANT_ACTUAL FROM PRODUCTO WHERE ID_PRODUCTO = " + detalle.get(i).getProducto().getId() + ")+" + detalle.get(i).getCantidad() + ") "
-                        + "WHERE ID_PRODUCTO =" + detalle.get(i).getProducto().getId();
-                st = DB_manager.getConection().createStatement();
-                st.executeUpdate(query);
+            for (E_cuentaCorrienteDetalle unDetalle : detalle) {
+                int idFormaPago = unDetalle.getFormaPago().getId();
+                switch (idFormaPago) {
+                    case E_formaPago.EFECTIVO: {
+                        pst = DB_manager.getConection().prepareStatement(INSERT_DETALLE_EFECTIVO);
+                        pst.setInt(1, (int) sq_cabecera);
+                        pst.setInt(2, unDetalle.getIdFacturaCabecera());
+                        pst.setInt(3, unDetalle.getNroRecibo());
+                        pst.setInt(4, (int) unDetalle.getMonto());
+                        pst.executeUpdate();
+                        pst.close();
+                        break;
+                    }
+                    case E_formaPago.CHEQUE: {
+                        if (unDetalle.esChequeDiferido()) {
+                            pst = DB_manager.getConection().prepareStatement(INSERT_DETALLE_CHEQUE_DIFERIDO);
+                            pst.setInt(1, (int) sq_cabecera);
+                            pst.setInt(2, unDetalle.getIdFacturaCabecera());
+                            pst.setInt(3, cabecera.getNroRecibo());
+                            pst.setInt(4, (int) unDetalle.getMonto());
+                            pst.setInt(5, unDetalle.getNroCheque());
+                            pst.setInt(6, unDetalle.getBanco().getId());
+                            pst.setTimestamp(7, new Timestamp(unDetalle.getFechaCheque().getTime()));
+                            pst.setTimestamp(8, new Timestamp(unDetalle.getFechaDiferidaCheque().getTime()));
+                            pst.executeUpdate();
+                            pst.close();
+                        } else {
+                            pst = DB_manager.getConection().prepareStatement(INSERT_DETALLE_CHEQUE);
+                            pst.setInt(1, (int) sq_cabecera);
+                            pst.setInt(2, unDetalle.getIdFacturaCabecera());
+                            pst.setInt(3, cabecera.getNroRecibo());
+                            pst.setInt(4, (int) unDetalle.getMonto());
+                            pst.setInt(5, unDetalle.getNroCheque());
+                            pst.setInt(6, unDetalle.getBanco().getId());
+                            pst.setTimestamp(7, new Timestamp(unDetalle.getFechaCheque().getTime()));
+                            pst.executeUpdate();
+                            pst.close();
+                        }
+                        break;
+                    }
+                }
             }
             DB_manager.establecerTransaccion();
         } catch (SQLException ex) {
@@ -179,11 +202,11 @@ public class DB_Cobro {
                 try {
                     DB_manager.getConection().rollback();
                 } catch (SQLException ex1) {
-                    Logger lgr = Logger.getLogger(DB_Ingreso.class.getName());
+                    Logger lgr = Logger.getLogger(DB_Cobro.class.getName());
                     lgr.log(Level.WARNING, ex1.getMessage(), ex1);
                 }
             }
-            Logger lgr = Logger.getLogger(DB_Ingreso.class.getName());
+            Logger lgr = Logger.getLogger(DB_Cobro.class.getName());
             lgr.log(Level.SEVERE, ex.getMessage(), ex);
         } finally {
             try {
@@ -194,7 +217,7 @@ public class DB_Cobro {
                     rs.close();
                 }
             } catch (SQLException ex) {
-                Logger lgr = Logger.getLogger(DB_Ingreso.class.getName());
+                Logger lgr = Logger.getLogger(DB_Cobro.class.getName());
                 lgr.log(Level.WARNING, ex.getMessage(), ex);
             }
         }
