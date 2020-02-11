@@ -101,14 +101,30 @@ public class DB_Cobro {
         if (b) {
             return list;
         }
-        String QUERY = "SELECT * "
-                + "FROM CUENTA_CORRIENTE_CABECERA CCC, CUENTA_CORRIENTE_DETALLE CCD, BANCO B "
+        String QUERY = "SELECT "
+                + "CCD.ID_CTA_CTE_DETALLE, "//1
+                + "CCD.ID_CTA_CTE_CABECERA, "//2
+                + "CCD.ID_FACTURA_CABECERA, "//3
+                + "CCD.NRO_RECIBO, "//4
+                + "SUM(CCD.MONTO), "//5
+                + "CCD.NRO_CHEQUE, "//6
+                + "CCD.ID_BANCO, "//7
+                + "CCD.CHEQUE_FECHA, "//8
+                + "CCD.CHEQUE_FECHA_DIFERIDA, "//9
+                + "(SELECT B.DESCRIPCION FROM BANCO B WHERE B.ID_BANCO = CCD.ID_BANCO) \"BANCO\" "//10
+                + "FROM CUENTA_CORRIENTE_CABECERA CCC, CUENTA_CORRIENTE_DETALLE CCD "
                 + "WHERE CCC.ID_CTA_CTE_CABECERA = CCD.ID_CTA_CTE_CABECERA "
-                + "AND CCD.ID_BANCO = B.ID_BANCO "
-                + "AND PRCA.ID_CTA_CTE_CABECERA IN ("
+                + "AND CCD.ID_CTA_CTE_CABECERA IN ("
                 + builder.substring(0, builder.length() - 1) + ")";
 
-        String PIE = "  "
+        String PIE = "GROUP BY CCD.ID_CTA_CTE_DETALLE, "
+                + "CCD.ID_CTA_CTE_CABECERA, "
+                + "CCD.ID_FACTURA_CABECERA, "
+                + "CCD.NRO_RECIBO, "
+                + "CCD.NRO_CHEQUE, "
+                + "CCD.ID_BANCO, "
+                + "CCD.CHEQUE_FECHA, "
+                + "CCD.CHEQUE_FECHA_DIFERIDA  "
                 + "ORDER BY CCD.ID_CTA_CTE_DETALLE";
         QUERY = QUERY + PIE;
         try {
@@ -121,6 +137,18 @@ public class DB_Cobro {
             rs = pst.executeQuery();
             while (rs.next()) {
                 E_cuentaCorrienteDetalle ctaCteDetalle = new E_cuentaCorrienteDetalle();
+                E_banco banco = new E_banco();
+                banco.setId(rs.getInt(7));
+                banco.setDescripcion(rs.getString(10));
+                ctaCteDetalle.setId(rs.getInt(1));
+                ctaCteDetalle.setIdCuentaCorrienteCabecera(rs.getInt(2));
+                ctaCteDetalle.setIdFacturaCabecera(rs.getInt(3));
+                ctaCteDetalle.setNroRecibo(rs.getInt(4));
+                ctaCteDetalle.setMonto(rs.getInt(5));
+                ctaCteDetalle.setNroCheque(rs.getInt(6));
+                ctaCteDetalle.setFechaCheque(rs.getTimestamp(8));
+                ctaCteDetalle.setFechaDiferidaCheque(rs.getTimestamp(9));
+                ctaCteDetalle.setBanco(banco);
                 list.add(ctaCteDetalle);
             }
         } catch (SQLException ex) {

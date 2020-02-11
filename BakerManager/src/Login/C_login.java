@@ -94,7 +94,7 @@ public class C_login implements ActionListener, KeyListener {
                     return;
                 }
                 //se conecta contra la base de datos
-                if (modelo.conectar("postgres", "postgresql")) {
+                if (modelo.conectar("postgres", "postgres")) {
                     if (modelo.verificarUsuario(user, password)) {
                         Config.setUser(user);
                         c_inicio.modelo.getRol_usuario().setFuncionario(modelo.funcionario);

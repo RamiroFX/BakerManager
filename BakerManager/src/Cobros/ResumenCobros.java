@@ -6,9 +6,14 @@
 package Cobros;
 
 import DB.DB_Cobro;
-import Entities.E_cuentaCorrienteDetalle;
+import DB.DB_UtilizacionMateriaPrima;
+import Entities.E_utilizacionMateriaPrimaCabecera;
+import Excel.ExportarUtilizacionMP;
+import Interface.InterfaceFacturaDetalle;
 import ModeloTabla.CtaCteCabeceraTableModel;
 import ModeloTabla.CtaCteDetalleTableModel;
+import ModeloTabla.UtilizacionMPCabeceraTableModel;
+import ModeloTabla.UtilizacionMPDetalleTableModel;
 import java.awt.BorderLayout;
 import static java.awt.Dialog.DEFAULT_MODALITY_TYPE;
 import java.awt.EventQueue;
@@ -18,6 +23,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.ArrayList;
+import java.util.Date;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFormattedTextField;
@@ -34,73 +41,85 @@ import javax.swing.SwingConstants;
  *
  * @author Ramiro Ferreira
  */
-public class ResumenCobro extends JDialog implements ActionListener, KeyListener {
+public class ResumenCobros extends JDialog implements ActionListener, KeyListener, InterfaceFacturaDetalle {
 
-    JScrollPane jspCobros, jspDetalle;
-    JTable jtCobros, jtDetalle;
+    JScrollPane jspCabecera, jspDetalle;
+    JTable jtCabecera, jtDetalle;
     JButton jbSalir, jbImportarXLS;
     JLabel jlEfectivo, jlCheque, jlTotal;
-    JFormattedTextField jftTotalCobrado, jftTotalCheque, jftTotalEfectivo;
+    JFormattedTextField jftTotalCobrado, jftTotalEfectivo, jftTotalCheque;
+    Date inicio, fin;
     JTabbedPane jtpPanel;
+    CtaCteCabeceraTableModel tm;
 
-    //DATOS DE MODELO
-    CtaCteCabeceraTableModel cabeceraTableModel;
-    CtaCteDetalleTableModel detalleTableModel;
-
-    public ResumenCobro(JFrame vista, CtaCteCabeceraTableModel tm) {
-        super(vista, DEFAULT_MODALITY_TYPE);
+    public ResumenCobros(JFrame frame, CtaCteCabeceraTableModel tm) {
+        super(frame, DEFAULT_MODALITY_TYPE);
         setTitle("Resumen de cobros");
         setSize(800, 600);
         setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-        setLocationRelativeTo(vista);
-        inicializarDatos();
+        setLocationRelativeTo(frame);
+        this.tm = tm;
         inicializarComponentes();
-        inicializarVista(tm);
+        inicializarDatos(tm);
         agregarListener();
+    }
+
+    public ResumenCobros(JFrame frame, CtaCteCabeceraTableModel tm, Date inicio, Date fin) {
+        super(frame, DEFAULT_MODALITY_TYPE);
+        setTitle("Resumen de cobros");
+        setSize(800, 600);
+        setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+        setLocationRelativeTo(frame);
+        this.tm = tm;
+        this.inicio = inicio;
+        this.fin = fin;
+        inicializarComponentes();
+        inicializarDatos(tm);
+        agregarListener();
+    }
+
+    private void inicializarDatos(CtaCteCabeceraTableModel tm) {
+        jtCabecera.setModel(tm);
+        CtaCteDetalleTableModel tmDetalle = new CtaCteDetalleTableModel();
+        tmDetalle.setList(DB_Cobro.consultarCobroDetalleAgrupado(tm.getList()));
+        jtDetalle.setModel(tmDetalle);
+        Utilities.c_packColumn.packColumns(jtCabecera, 1);
+        Utilities.c_packColumn.packColumns(jtDetalle, 1);
     }
 
     public void mostrarVista() {
         this.setVisible(true);
     }
 
-    private void cerrar() {
-        this.dispose();
-    }
-
-    private void inicializarDatos() {
-        detalleTableModel = new CtaCteDetalleTableModel();
-    }
-
     private void inicializarComponentes() {
-        jtCobros = new JTable();
-        jtCobros.getTableHeader().setReorderingAllowed(false);
-        jspCobros = new JScrollPane(jtCobros);
+        jtCabecera = new JTable();
+        jtCabecera.getTableHeader().setReorderingAllowed(false);
+        jspCabecera = new JScrollPane(jtCabecera);
         jtDetalle = new JTable();
         jtDetalle.getTableHeader().setReorderingAllowed(false);
-        jtDetalle.setModel(detalleTableModel);
         jspDetalle = new JScrollPane(jtDetalle);
-        JPanel jpTotalCobrado = new JPanel(new GridLayout(3, 2));
+        JPanel jpTotalEgreso = new JPanel(new GridLayout(3, 2));
         jftTotalCobrado = new JFormattedTextField();
         jftTotalCobrado.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("¤#,##0"))));
-        jftTotalCheque = new JFormattedTextField();
-        jftTotalCheque.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("¤#,##0"))));
         jftTotalEfectivo = new JFormattedTextField();
         jftTotalEfectivo.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("¤#,##0"))));
-        jlEfectivo = new JLabel("Cobros en efectivo");
+        jftTotalCheque = new JFormattedTextField();
+        jftTotalCheque.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("¤#,##0"))));
+        jlEfectivo = new JLabel("Cobro en efectivo");
         jlEfectivo.setHorizontalAlignment(SwingConstants.CENTER);
-        jlCheque = new JLabel("Cobros en cheque");
+        jlCheque = new JLabel("Cobro en cheque");
         jlCheque.setHorizontalAlignment(SwingConstants.CENTER);
-        jlTotal = new JLabel("Total");
+        jlTotal = new JLabel("Total cobrado");
         jlTotal.setHorizontalAlignment(SwingConstants.CENTER);
-        jpTotalCobrado.add(jlEfectivo);
-        jpTotalCobrado.add(jftTotalEfectivo);
-        jpTotalCobrado.add(jlCheque);
-        jpTotalCobrado.add(jftTotalCheque);
-        jpTotalCobrado.add(jlTotal);
-        jpTotalCobrado.add(jftTotalCobrado);
+        jpTotalEgreso.add(jlEfectivo);
+        jpTotalEgreso.add(jftTotalEfectivo);
+        jpTotalEgreso.add(jlCheque);
+        jpTotalEgreso.add(jftTotalCheque);
+        jpTotalEgreso.add(jlTotal);
+        jpTotalEgreso.add(jftTotalCobrado);
         jbSalir = new JButton("Salir");
         jbImportarXLS = new JButton("Importar a excel");
-        jbImportarXLS.setName("exportar cobro");
+        jbImportarXLS.setName("exportar cobros");
         jtpPanel = new JTabbedPane();
         jtpPanel.addKeyListener(this);
 
@@ -108,8 +127,8 @@ public class ResumenCobro extends JDialog implements ActionListener, KeyListener
         JPanel jpSouth = new JPanel(new FlowLayout(FlowLayout.CENTER));
         jpSouth.add(jbImportarXLS);
         jpSouth.add(jbSalir);
-        jpCenter.add(jspCobros, BorderLayout.CENTER);
-        jpCenter.add(jpTotalCobrado, BorderLayout.SOUTH);
+        jpCenter.add(jspCabecera, BorderLayout.CENTER);
+        jpCenter.add(jpTotalEgreso, BorderLayout.SOUTH);
 
         jtpPanel.addTab("Resumen", jpCenter);
         jtpPanel.addTab("Detalle", jspDetalle);
@@ -117,44 +136,14 @@ public class ResumenCobro extends JDialog implements ActionListener, KeyListener
         getContentPane().add(jpSouth, BorderLayout.SOUTH);
     }
 
-    private void inicializarVista(CtaCteCabeceraTableModel tm) {
-        this.cabeceraTableModel = tm;
-        jtCobros.setModel(tm);
-        detalleTableModel.setList(DB_Cobro.consultarCobroDetalleAgrupado(cabeceraTableModel.getList()));
-        Utilities.c_packColumn.packColumns(jtCobros, 1);
-        Utilities.c_packColumn.packColumns(jtDetalle, 1);
-        Integer total = 0;
-        Integer totalCheque = 0;
-        Integer totalEfectivo = 0;
-        for (E_cuentaCorrienteDetalle ctaCteDetalle : detalleTableModel.getList()) {
-            if (ctaCteDetalle.getNroCheque() > 0) {
-                totalCheque = totalCheque + (int) ctaCteDetalle.getMonto();
-            } else {
-                totalEfectivo = totalEfectivo + (int) ctaCteDetalle.getMonto();
-            }
-        }
-        total = totalEfectivo + totalCheque;
-        jftTotalEfectivo.setValue(totalEfectivo);
-        jftTotalCheque.setValue(totalCheque);
-        jftTotalCobrado.setValue(total);
-    }
-
     private void agregarListener() {
         jbSalir.addActionListener(this);
         jbImportarXLS.addActionListener(this);
     }
 
-    private void importarExcelCompleto() {
-        //TODO
-    }
-
-    private void importarExcelResumido() {
-        //TODO
-    }
-
     private void exportHandler() {
-        Object[] options = {"Completo",
-            "Resumido"};
+        Object[] options = {"Individual",
+            "Agrupado"};
         int n = JOptionPane.showOptionDialog(this,
                 "Eliga tipo de reporte",
                 "Atención",
@@ -165,21 +154,21 @@ public class ResumenCobro extends JDialog implements ActionListener, KeyListener
                 options[0]); //default button title
         switch (n) {
             case 0: {
-                //Completo
+                //Individual
                 EventQueue.invokeLater(new Runnable() {
                     @Override
                     public void run() {
-                        importarExcelCompleto();
+                        
                     }
                 });
                 break;
             }
             case 1: {
-                //Minimalista
+                //Agrupado
                 EventQueue.invokeLater(new Runnable() {
                     @Override
                     public void run() {
-                        importarExcelResumido();
+                        
                     }
                 });
                 break;
@@ -222,4 +211,11 @@ public class ResumenCobro extends JDialog implements ActionListener, KeyListener
     public void keyReleased(KeyEvent e) {
     }
 
+    private void cerrar() {
+        this.dispose();
+    }
+
+    @Override
+    public void notificarCambioFacturaDetalle() {
+    }
 }

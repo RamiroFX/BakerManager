@@ -7,6 +7,7 @@ package Cobros;
 
 import DB.DB_Cobro;
 import Entities.E_cuentaCorrienteCabecera;
+import Entities.E_cuentaCorrienteDetalle;
 import ModeloTabla.CtaCteDetalleTableModel;
 
 /**
@@ -53,5 +54,14 @@ public class M_verCobro {
 
     public void actualizarDetalle(Integer idCabecera) {
         getTmDetalle().setList(DB_Cobro.obtenerCobroDetalle(idCabecera));
+    }
+
+    public int getTotal() {
+        int total = 0;
+        for (int i = 0; i < getTmDetalle().getList().size(); i++) {
+            E_cuentaCorrienteDetalle get = getTmDetalle().getList().get(i);
+            total = total + (int) get.getMonto();
+        }
+        return total;
     }
 }

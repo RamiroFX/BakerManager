@@ -35,8 +35,8 @@ public class V_gestionCobroPago extends JInternalFrame {
 
     //NORTH VARIABLES
     //COBRO
-    public JButton jbBuscarCobro, jbBorrarCobro, jbDetalleCobro,
-            jbCliente, jbEmpCobro, jbCobro, jbCobroPendientes;
+    public JButton jbBuscarCobro, jbBorrarCobro, jbDetalleCobro, jbAnular,
+            jbCliente, jbEmpCobro, jbCobro, jbCobroPendientes, jbResumen;
     public JTextField jtfNroRecibo, jtfCliente, jtfEmpCobro;
     public JComboBox jcbEmpleado, jcbEstadoPedido;
     public JComboBox<Estado> jcbEstado;
@@ -140,6 +140,14 @@ public class V_gestionCobroPago extends JInternalFrame {
         jbCobro.setName("cobrar venta");
         jbCobro.setFont(CommonFormat.fuente);
         jbCobro.setMargin(insets);
+        jbAnular = new JButton("Anular");
+        jbAnular.setName("anular cobro");
+        jbAnular.setFont(CommonFormat.fuente);
+        jbAnular.setMargin(insets);
+        jbResumen = new JButton("Resumen");
+        jbResumen.setName("resumen cobro");
+        jbResumen.setFont(CommonFormat.fuente);
+        jbResumen.setMargin(insets);
 
         jbDetalleCobro = new JButton("Ver detalle");
         jbDetalleCobro.setName("detalle cobro");
@@ -156,6 +164,8 @@ public class V_gestionCobroPago extends JInternalFrame {
         jpCobroBot.setBorder(optionBorder);
         jpCobroBot.add(jbCobro);
         jpCobroBot.add(jbDetalleCobro);
+        jpCobroBot.add(jbAnular);
+        jpCobroBot.add(jbResumen);
         jpCobros = new JPanel(new BorderLayout());
         jpCobros.add(jpCobroTop, BorderLayout.NORTH);
         jpCobros.add(jspCobroMid, BorderLayout.CENTER);

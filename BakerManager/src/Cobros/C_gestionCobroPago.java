@@ -107,6 +107,8 @@ public class C_gestionCobroPago implements GestionInterface, RecibirEmpleadoCall
         }*/
         //TODO conceder permisos
         this.vista.jbCobro.addActionListener(this);
+        this.vista.jbResumen.addActionListener(this);
+        this.vista.jbAnular.addActionListener(this);
         this.vista.jbDetalleCobro.addActionListener(this);
         this.vista.jbBuscarCobro.addActionListener(this);
         this.vista.jbCliente.addActionListener(this);
@@ -123,6 +125,8 @@ public class C_gestionCobroPago implements GestionInterface, RecibirEmpleadoCall
          */
         //cobro
         this.vista.jbCobro.addKeyListener(this);
+        this.vista.jbResumen.addKeyListener(this);
+        this.vista.jbAnular.addKeyListener(this);
         this.vista.jbDetalleCobro.addKeyListener(this);
         this.vista.jbBuscarCobro.addKeyListener(this);
         this.vista.jbEmpCobro.addKeyListener(this);
@@ -188,14 +192,12 @@ public class C_gestionCobroPago implements GestionInterface, RecibirEmpleadoCall
     }
 
     private void invocarVistaCobrar() {
-        /*int fila = this.vista.jtCobroCabecera.getSelectedRow();
-        int idFactura = Integer.valueOf(String.valueOf(this.vista.jtCobroCabecera.getValueAt(fila, 0)));
-        int totalFactura = Integer.valueOf(String.valueOf(this.vista.jtCobroCabecera.getValueAt(fila, 5)));
-        ReciboPago rp = new ReciboPago(this.c_inicio);
-        rp.inicializarVista(idFactura, totalFactura);
-        rp.setInterface(this);
-        rp.mostrarVista();*/
         CrearCobro cc = new CrearCobro(c_inicio);
+        cc.mostrarVista();
+    }
+
+    private void invocarVistaResumen() {
+        ResumenCobro cc = new ResumenCobro(c_inicio.vista, modelo.getTm());
         cc.mostrarVista();
     }
 
@@ -289,6 +291,8 @@ public class C_gestionCobroPago implements GestionInterface, RecibirEmpleadoCall
             borrarDatos();
         } else if (src.equals(this.vista.jbDetalleCobro)) {
             invocarVistaVerDetalle();
+        } else if (src.equals(this.vista.jbResumen)) {
+            invocarVistaResumen();
         } else if (src.equals(this.vista.jbCobroPendientes)) {
             consultarCobrosPendiente();
         }
