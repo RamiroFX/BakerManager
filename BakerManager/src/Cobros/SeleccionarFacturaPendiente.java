@@ -6,7 +6,6 @@
 package Cobros;
 
 import Interface.RecibirCtaCteDetalleCallback;
-import bakermanager.C_inicio;
 import javax.swing.JDialog;
 
 /**

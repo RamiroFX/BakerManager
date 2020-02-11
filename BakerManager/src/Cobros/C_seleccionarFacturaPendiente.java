@@ -38,7 +38,7 @@ public class C_seleccionarFacturaPendiente extends MouseAdapter implements Actio
         displayQueryResults();
     }
 
-    void mostrarVista() {
+    public void mostrarVista() {
         this.vista.setVisible(true);
         this.vista.requestFocus();
     }

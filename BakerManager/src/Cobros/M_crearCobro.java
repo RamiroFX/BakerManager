@@ -59,6 +59,7 @@ public class M_crearCobro {
     public void limpiarCampos() {
         getCabecera().getCliente().setIdCliente(-1);
         getCabecera().getCobrador().setId_funcionario(-1);
+        getCtaCteDetalleTm().vaciarLista();
     }
 
     public void agregarDatos(E_cuentaCorrienteDetalle data) {

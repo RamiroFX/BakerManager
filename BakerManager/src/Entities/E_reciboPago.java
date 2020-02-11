@@ -18,10 +18,8 @@ public class E_reciboPago {
     private int nroRecibo;
     private int importe;
     private Date fechaPago;
-    private E_formaPago formaPago;
     private M_cliente cliente;
     private M_funcionario funcionario;
-    private E_banco banco;
     private String observacion;
 
     public E_reciboPago() {
@@ -59,10 +57,6 @@ public class E_reciboPago {
         this.importe = importe;
     }
 
-    public void setFormaPago(E_formaPago formaPago) {
-        this.formaPago = formaPago;
-    }
-
     public Date getFechaPago() {
         return fechaPago;
     }
@@ -85,18 +79,6 @@ public class E_reciboPago {
 
     public void setFuncionario(M_funcionario funcionario) {
         this.funcionario = funcionario;
-    }
-
-    public E_formaPago getFormaPago() {
-        return formaPago;
-    }
-
-    public void setBanco(E_banco banco) {
-        this.banco = banco;
-    }
-
-    public E_banco getBanco() {
-        return banco;
     }
 
     public String getObservacion() {

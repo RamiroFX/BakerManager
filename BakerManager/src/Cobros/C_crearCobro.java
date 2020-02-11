@@ -104,6 +104,7 @@ public class C_crearCobro extends MouseAdapter implements ActionListener, KeyLis
         int fila = this.vista.jtReciboDetalle.getSelectedRow();
         if (fila > -1) {
             modelo.eliminarDatos(fila);
+            sumarTotal();
         }
     }
 
@@ -222,6 +223,7 @@ public class C_crearCobro extends MouseAdapter implements ActionListener, KeyLis
     private void limpiarCampos() {
         this.modelo.limpiarCampos();
         this.vista.jtfFuncionario.setText("");
+        this.vista.jtfCliente.setText("");
         this.vista.jtfNroRecibo.setText("");
         Calendar calendar = Calendar.getInstance();
         this.vista.jdcFechaCobro.setDate(calendar.getTime());

@@ -61,12 +61,12 @@ public class C_gestionCobroPago implements GestionInterface, RecibirEmpleadoCall
 
         this.vista.jddInicioPago.setDate(date);
         this.vista.jddFinalPago.setDate(date);
-        ArrayList<E_tipoOperacion> tipoOperaciones = modelo.obtenerTipoOperacion();
-        for (int i = 0; i < tipoOperaciones.size(); i++) {
-            this.vista.jcbCondVenta.addItem(tipoOperaciones.get(i));
+        ArrayList<Estado> estados = modelo.obtenerEstados();
+        for (int i = 0; i < estados.size(); i++) {
+            this.vista.jcbEstado.addItem(estados.get(i));
         }
         this.vista.jtCobroCabecera.setModel(this.modelo.getTm());
-
+        this.vista.jtCobroDetalle.setModel(this.modelo.getTmDetalle());
     }
 
     @Override
@@ -107,6 +107,7 @@ public class C_gestionCobroPago implements GestionInterface, RecibirEmpleadoCall
         }*/
         //TODO conceder permisos
         this.vista.jbCobro.addActionListener(this);
+        this.vista.jbDetalleCobro.addActionListener(this);
         this.vista.jbBuscarCobro.addActionListener(this);
         this.vista.jbCliente.addActionListener(this);
         this.vista.jbEmpCobro.addActionListener(this);
@@ -159,22 +160,23 @@ public class C_gestionCobroPago implements GestionInterface, RecibirEmpleadoCall
                 }
                 Date fechaInicio = vista.jddInicioCobro.getDate();
                 Date fechaFinal = vista.jddFinalCobro.getDate();
-                E_tipoOperacion condCompra = vista.jcbCondVenta.getItemAt(vista.jcbCondVenta.getSelectedIndex());
-                int nroFactura = -1;
-                if (!vista.jtfNroFactura.getText().trim().isEmpty()) {
-                    nroFactura = Integer.valueOf(vista.jtfNroFactura.getText().trim());
+                Estado condCompra = vista.jcbEstado.getItemAt(vista.jcbEstado.getSelectedIndex());
+                int nroRecibo = -1;
+                if (!vista.jtfNroRecibo.getText().trim().isEmpty()) {
+                    nroRecibo = Integer.valueOf(vista.jtfNroRecibo.getText().trim());
                 }
                 M_cliente cliente = modelo.getCliente();
                 M_funcionario funcionario = modelo.getFuncionario();
 
-                modelo.getTm().setFacturaCabeceraList(modelo.obtenerCobro(cliente, funcionario, fechaInicio, fechaFinal, condCompra, nroFactura));
+                modelo.getTm().setList(modelo.obtenerCobro(cliente, funcionario, fechaInicio, fechaFinal, condCompra, nroRecibo));
                 Utilities.c_packColumn.packColumns(vista.jtCobroCabecera, 1);
+                modelo.limpiarDetalle();
             }
         });
     }
 
     private void consultarCobrosPendiente() {
-        EventQueue.invokeLater(new Runnable() {
+        /*EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
                 E_tipoOperacion condCompra = new E_tipoOperacion(-1, 0, "Todos");
@@ -182,7 +184,7 @@ public class C_gestionCobroPago implements GestionInterface, RecibirEmpleadoCall
                 modelo.getTm().setFacturaCabeceraList(modelo.obtenerCobroPendiente(cliente, condCompra));
                 Utilities.c_packColumn.packColumns(vista.jtCobroCabecera, 1);
             }
-        });
+        });*/
     }
 
     private void invocarVistaCobrar() {
@@ -197,12 +199,14 @@ public class C_gestionCobroPago implements GestionInterface, RecibirEmpleadoCall
         cc.mostrarVista();
     }
 
-    private void invocarVistaVerCaja() {
+    private void invocarVistaVerDetalle() {
         int fila = this.vista.jtCobroCabecera.getSelectedRow();
         int columna = this.vista.jtCobroCabecera.getSelectedColumn();
         if ((fila > -1) && (columna > -1)) {
-            int idCaja = Integer.valueOf(String.valueOf(this.vista.jtCobroCabecera.getValueAt(fila, 0)));
-            ////TO DO
+            int index = this.vista.jtCobroCabecera.getSelectedRow();
+            VerCobro vc = new VerCobro(this.c_inicio.vista);
+            vc.setCtaCteCabecera(modelo.getTm().getList().get(index));
+            vc.mostrarVista();
         }
         this.vista.jbDetalleCobro.setEnabled(false);
     }
@@ -248,8 +252,8 @@ public class C_gestionCobroPago implements GestionInterface, RecibirEmpleadoCall
 
     private boolean validarNroFactura() {
         try {
-            if (!vista.jtfNroFactura.getText().trim().isEmpty()) {
-                int nroFac = Integer.valueOf(vista.jtfNroFactura.getText());
+            if (!vista.jtfNroRecibo.getText().trim().isEmpty()) {
+                int nroFac = Integer.valueOf(vista.jtfNroRecibo.getText());
                 modelo.getFacturaCabecera().setNroFactura(nroFac);
             } else {
                 modelo.getFacturaCabecera().setIdFacturaCabecera(null);
@@ -284,7 +288,7 @@ public class C_gestionCobroPago implements GestionInterface, RecibirEmpleadoCall
         } else if (src.equals(this.vista.jbBorrarCobro)) {
             borrarDatos();
         } else if (src.equals(this.vista.jbDetalleCobro)) {
-            invocarVistaVerCaja();
+            invocarVistaVerDetalle();
         } else if (src.equals(this.vista.jbCobroPendientes)) {
             consultarCobrosPendiente();
         }
@@ -295,10 +299,12 @@ public class C_gestionCobroPago implements GestionInterface, RecibirEmpleadoCall
         int fila = this.vista.jtCobroCabecera.rowAtPoint(e.getPoint());
         int columna = this.vista.jtCobroCabecera.columnAtPoint(e.getPoint());
         if ((fila > -1) && (columna > -1)) {
+            Integer idCabecera = Integer.valueOf(String.valueOf(this.vista.jtCobroCabecera.getValueAt(fila, 0)));
             this.vista.jbCobro.setEnabled(true);
             this.vista.jbDetalleCobro.setEnabled(true);
+            this.modelo.actualizarDetalle(idCabecera);
             if (e.getClickCount() == 2) {
-                invocarVistaVerCaja();
+                invocarVistaVerDetalle();
             }
         }
     }

@@ -65,10 +65,9 @@ public class CtaCteDetalleTableModel extends AbstractTableModel {
     @Override
     public Object getValueAt(int rowIndex, int colIndex) {
         E_cuentaCorrienteDetalle row = this.list.get(rowIndex);
-        //{"Nro Cheque", "Banco", "Fecha cheque", "Fecha diferida"};
         switch (colIndex) {
             case 0: {
-                return row.getMonto();
+                return (int) row.getMonto();
             }
             case 1: {
                 return row.getIdFacturaCabecera();
@@ -85,7 +84,11 @@ public class CtaCteDetalleTableModel extends AbstractTableModel {
             }
             case 4: {
                 if (row.getBanco() != null) {
-                    return row.getBanco().getDescripcion();
+                    if (row.getBanco().getDescripcion() != null) {
+                        return row.getBanco().getDescripcion();
+                    } else {
+                        return "";
+                    }
                 } else {
                     return "";
                 }

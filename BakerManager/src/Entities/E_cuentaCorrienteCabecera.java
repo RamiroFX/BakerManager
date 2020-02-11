@@ -20,15 +20,14 @@ public class E_cuentaCorrienteCabecera {
     private M_cliente cliente;
     private M_funcionario cobrador;
     private M_funcionario funcionario;
-    private M_facturaCabecera facturaCabecera;
     private E_cuentaCorrienteConcepto concepto;
     private Date fechaPago;
     private Date fechaOperacion;
 
     public E_cuentaCorrienteCabecera() {
         this.cliente = new M_cliente();
+        this.funcionario = new M_funcionario();
         this.cobrador = new M_funcionario();
-        this.facturaCabecera = new M_facturaCabecera();
         this.concepto = new E_cuentaCorrienteConcepto();
     }
 
@@ -92,28 +91,14 @@ public class E_cuentaCorrienteCabecera {
      * @return the funcionario
      */
     public M_funcionario getFuncionario() {
-        return getCobrador();
+        return funcionario;
     }
 
     /**
      * @param funcionario the funcionario to set
      */
     public void setFuncionario(M_funcionario funcionario) {
-        this.setCobrador(funcionario);
-    }
-
-    /**
-     * @return the facturaCabecera
-     */
-    public M_facturaCabecera getFacturaCabecera() {
-        return facturaCabecera;
-    }
-
-    /**
-     * @param facturaCabecera the facturaCabecera to set
-     */
-    public void setFacturaCabecera(M_facturaCabecera facturaCabecera) {
-        this.facturaCabecera = facturaCabecera;
+        this.funcionario = funcionario;
     }
 
     /**

@@ -5,7 +5,7 @@
  */
 package Cobros;
 
-import Entities.E_tipoOperacion;
+import Entities.Estado;
 import Interface.CommonFormat;
 import com.toedter.calendar.JDateChooser;
 import java.awt.BorderLayout;
@@ -37,9 +37,9 @@ public class V_gestionCobroPago extends JInternalFrame {
     //COBRO
     public JButton jbBuscarCobro, jbBorrarCobro, jbDetalleCobro,
             jbCliente, jbEmpCobro, jbCobro, jbCobroPendientes;
-    public JTextField jtfNroFactura, jtfCliente, jtfEmpCobro;
+    public JTextField jtfNroRecibo, jtfCliente, jtfEmpCobro;
     public JComboBox jcbEmpleado, jcbEstadoPedido;
-    public JComboBox<E_tipoOperacion> jcbCondVenta;
+    public JComboBox<Estado> jcbEstado;
     private JPanel jpCobros, jpCobroTop, jpCobroBotonesTop, jpCobroBot;
     public JTable jtCobroCabecera, jtCobroDetalle;
     private JScrollPane jspCobroCabecera, jspCobroDetalle;
@@ -95,20 +95,20 @@ public class V_gestionCobroPago extends JInternalFrame {
         jddInicioCobro.setPreferredSize(new Dimension(150, 10));
         jddFinalCobro = new JDateChooser();
         jddFinalCobro.setPreferredSize(new Dimension(150, 10));
-        jcbCondVenta = new JComboBox<E_tipoOperacion>();
-        jtfNroFactura = new JFormattedTextField();
+        jcbEstado = new JComboBox<Estado>();
+        jtfNroRecibo = new JFormattedTextField();
         jpFiltrosCobro.add(jbCliente, "growx");
         jpFiltrosCobro.add(jtfCliente, "growx");
         jpFiltrosCobro.add(new JLabel("Fecha inicio:"));
         jpFiltrosCobro.add(jddInicioCobro, "growx");
-        jpFiltrosCobro.add(new JLabel("Cond. compra:"));
-        jpFiltrosCobro.add(jcbCondVenta, "wrap");
+        jpFiltrosCobro.add(new JLabel("Estado:"));
+        jpFiltrosCobro.add(jcbEstado, "wrap");
         jpFiltrosCobro.add(jbEmpCobro);
         jpFiltrosCobro.add(jtfEmpCobro, "growx");
         jpFiltrosCobro.add(new JLabel("Fecha final:"));
         jpFiltrosCobro.add(jddFinalCobro, "growx");
-        jpFiltrosCobro.add(new JLabel("Nro. factura:"));
-        jpFiltrosCobro.add(jtfNroFactura, "growx");
+        jpFiltrosCobro.add(new JLabel("Nro. recibo:"));
+        jpFiltrosCobro.add(jtfNroRecibo, "growx");
         jpFiltrosCobro.add(new JComponent() {
         }, "growx");
         jpFiltrosCobro.add(new JComponent() {

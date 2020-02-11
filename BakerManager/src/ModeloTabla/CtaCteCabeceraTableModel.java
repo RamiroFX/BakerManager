@@ -17,7 +17,7 @@ import javax.swing.table.AbstractTableModel;
 public class CtaCteCabeceraTableModel extends AbstractTableModel {
 
     private List<E_cuentaCorrienteCabecera> list;
-    private final String[] colNames = {"Id venta", "Nro Factura", "Cliente", "Fecha venta", "Fecha pago", "Monto"};
+    private final String[] colNames = {"Id", "Nro Recibo", "Cliente", "Cobrador", "Fecha pago", "Monto"};
 
     public CtaCteCabeceraTableModel() {
         this.list = new ArrayList<>();
@@ -62,16 +62,16 @@ public class CtaCteCabeceraTableModel extends AbstractTableModel {
         E_cuentaCorrienteCabecera row = this.list.get(rowIndex);
         switch (colIndex) {
             case 0: {
-                return row.getFacturaCabecera().getIdFacturaCabecera();
+                return row.getId();
             }
             case 1: {
-                return row.getFacturaCabecera().getNroFactura();
+                return row.getNroRecibo();
             }
             case 2: {
                 return row.getCliente().getEntidad();
             }
             case 3: {
-                return row.getFechaOperacion();
+                return row.getCobrador().getNombre();
             }
             case 4: {
                 return row.getFechaPago();

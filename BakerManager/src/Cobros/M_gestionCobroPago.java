@@ -5,14 +5,17 @@
  */
 package Cobros;
 
-import DB.DB_Ingreso;
+import DB.DB_Cobro;
 import DB.DB_manager;
 import DB.ResultSetTableModel;
+import Entities.E_cuentaCorrienteCabecera;
 import Entities.E_tipoOperacion;
+import Entities.Estado;
 import Entities.M_cliente;
 import Entities.M_facturaCabecera;
 import Entities.M_funcionario;
-import ModeloTabla.FacturaCabeceraTableModel;
+import ModeloTabla.CtaCteCabeceraTableModel;
+import ModeloTabla.CtaCteDetalleTableModel;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -27,7 +30,8 @@ public class M_gestionCobroPago {
     private M_funcionario funcionario;
     private M_cliente cliente;
     private M_facturaCabecera facturaCabecera;
-    private FacturaCabeceraTableModel tm;
+    private CtaCteCabeceraTableModel tmCabecera;
+    private CtaCteDetalleTableModel tmDetalle;
 
     public M_gestionCobroPago() {
         this.funcionario = new M_funcionario();
@@ -35,7 +39,8 @@ public class M_gestionCobroPago {
         this.cliente = new M_cliente();
         this.cliente.setIdCliente(-1);
         this.facturaCabecera = new M_facturaCabecera();
-        this.tm = new FacturaCabeceraTableModel();
+        this.tmCabecera = new CtaCteCabeceraTableModel();
+        this.tmDetalle = new CtaCteDetalleTableModel();
     }
 
     public M_gestionCobroPago(M_funcionario funcionario) {
@@ -112,6 +117,12 @@ public class M_gestionCobroPago {
         return tipoOperacionesList;
     }
 
+    public ArrayList<Estado> obtenerEstados() {
+        ArrayList<Estado> estados = DB_manager.obtenerEstados();
+        estados.add(new Estado(-1, "Todos"));
+        return estados;
+    }
+
     /**
      * @return the facturaCabecera
      */
@@ -126,7 +137,7 @@ public class M_gestionCobroPago {
         this.facturaCabecera = facturaCabecera;
     }
 
-    public List<M_facturaCabecera> obtenerCobro(M_cliente cliente, M_funcionario funcionario, Date fechaInicio, Date fechaFin, E_tipoOperacion condCompra, int nroFactura) {
+    public List<E_cuentaCorrienteCabecera> obtenerCobro(M_cliente cliente, M_funcionario funcionario, Date fechaInicio, Date fechaFin, Estado estado, int nroFactura) {
         Calendar calendarInicio = Calendar.getInstance();
         calendarInicio.setTime(fechaInicio);
         calendarInicio.set(Calendar.HOUR_OF_DAY, 0);
@@ -139,25 +150,40 @@ public class M_gestionCobroPago {
         calendarFinal.set(Calendar.MINUTE, 59);
         calendarFinal.set(Calendar.SECOND, 59);
         calendarFinal.set(Calendar.MILLISECOND, 999);
-        return DB_Ingreso.obtenerCobro(cliente.getIdCliente(), funcionario.getId_funcionario(), calendarInicio.getTime(), calendarFinal.getTime(), condCompra.getId(), nroFactura, true);
+        return DB_Cobro.obtenerCobro(cliente.getIdCliente(), funcionario.getId_funcionario(), calendarInicio.getTime(), calendarFinal.getTime(), nroFactura);
     }
 
+    /*
     public List<M_facturaCabecera> obtenerCobroPendiente(M_cliente cliente, E_tipoOperacion condCompra) {
         return DB_Ingreso.obtenerCobro(cliente.getIdCliente(), -1, null, null, condCompra.getId(), -1, false);
-    }
-
+    }*/
     /**
      * @return the tm
      */
-    public FacturaCabeceraTableModel getTm() {
-        return tm;
+    public CtaCteCabeceraTableModel getTm() {
+        return tmCabecera;
     }
 
     /**
      * @param tm the tm to set
      */
-    public void setTm(FacturaCabeceraTableModel tm) {
-        this.tm = tm;
+    public void setTm(CtaCteCabeceraTableModel tm) {
+        this.tmCabecera = tm;
     }
 
+    public CtaCteDetalleTableModel getTmDetalle() {
+        return tmDetalle;
+    }
+
+    public void setTmDetalle(CtaCteDetalleTableModel tmDetalle) {
+        this.tmDetalle = tmDetalle;
+    }
+
+    public void actualizarDetalle(Integer idCabecera) {
+        getTmDetalle().setList(DB_Cobro.obtenerCobroDetalle(idCabecera));
+    }
+
+    public void limpiarDetalle() {
+        getTmDetalle().vaciarLista();
+    }
 }

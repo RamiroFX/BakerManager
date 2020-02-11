@@ -45,6 +45,7 @@ public class ReciboPago extends javax.swing.JDialog implements ActionListener, K
             S_ID_VENTA = "ID venta",
             S_NRO_FACTURA = "Nro Factura",
             S_TOTAL_FACTURA = "Total factura",
+            S_TOTAL_PENDIENTE = "Total pendiente",
             S_CLIENTE = "Cliente:",
             S_FORMA_PAGO = "Forma de pago:",
             S_FUNCIONARIO = "Cobrador",
@@ -63,8 +64,8 @@ public class ReciboPago extends javax.swing.JDialog implements ActionListener, K
             S_CHEQUE_FECHA_DIFERIDA = "Fecha diferida";
     private javax.swing.JButton jbCancel, jbOK;
     private javax.swing.JLabel jlFecha, jlCliente, jlNroFactura, jlFormaPago, jlTotalFactura,
-            jlIdVenta, jlImporteEfectivo, jlImporteCheque, jlObservacion, jlDivisa;
-    private javax.swing.JTextField jtfIdVenta, jtfCliente, jtfNroFactura, jtfTotalFactura;
+            jlTotalPendiente,jlIdVenta, jlImporteEfectivo, jlImporteCheque, jlObservacion, jlDivisa;
+    private javax.swing.JTextField jtfIdVenta, jtfCliente, jtfNroFactura, jtfTotalFactura,jtfTotalPendiente;
     private javax.swing.JTextField jftImporteEfectivo;
     //private javax.swing.JTextField jtfObservacion;
     private javax.swing.JFormattedTextField jftFecha;
@@ -129,6 +130,7 @@ public class ReciboPago extends javax.swing.JDialog implements ActionListener, K
         jtfIdVenta.setText(facturaCabecera.getIdCabecera() + "");
         jtfNroFactura.setText(facturaCabecera.getNroFactura() + "");
         jtfTotalFactura.setText(facturaCabecera.getMonto() + "");
+        jtfTotalPendiente.setText(facturaCabecera.getSaldo() + "");
     }
 
     public void modificarDetalle(int index, E_facturaSinPago fsp, E_cuentaCorrienteDetalle detalle) {
@@ -142,6 +144,7 @@ public class ReciboPago extends javax.swing.JDialog implements ActionListener, K
         jtfIdVenta.setText(facturaCabecera.getIdCabecera() + "");
         jtfNroFactura.setText(facturaCabecera.getNroFactura() + "");
         jtfTotalFactura.setText(facturaCabecera.getMonto() + "");
+        jtfTotalPendiente.setText(facturaCabecera.getSaldo() + "");
         E_formaPago fp = detalle.getFormaPago();
         jcbFormaPago.setSelectedItem(fp);
         jcbFormaPago.setEnabled(false);
@@ -200,6 +203,7 @@ public class ReciboPago extends javax.swing.JDialog implements ActionListener, K
         jlCliente = new javax.swing.JLabel(S_CLIENTE);
         jlNroFactura = new javax.swing.JLabel(S_NRO_FACTURA);
         jlTotalFactura = new javax.swing.JLabel(S_TOTAL_FACTURA);
+        jlTotalPendiente = new javax.swing.JLabel(S_TOTAL_PENDIENTE);
         jlFormaPago = new javax.swing.JLabel(S_FORMA_PAGO);
         jlIdVenta = new javax.swing.JLabel(S_ID_VENTA);
         jlDivisa = new javax.swing.JLabel(S_DIVISA);
@@ -211,6 +215,8 @@ public class ReciboPago extends javax.swing.JDialog implements ActionListener, K
         jtfCliente.setEditable(false);
         jtfTotalFactura = new javax.swing.JTextField();
         jtfTotalFactura.setEditable(false);
+        jtfTotalPendiente = new javax.swing.JTextField();
+        jtfTotalPendiente.setEditable(false);
         jcbFormaPago = new javax.swing.JComboBox();
         //jtfObservacion = new javax.swing.JTextField();
         jcbDivisa = new javax.swing.JComboBox<>();
@@ -259,6 +265,8 @@ public class ReciboPago extends javax.swing.JDialog implements ActionListener, K
         jpDatosGenerales.add(jtfCliente, "width :300:,grow,wrap");
         jpDatosGenerales.add(jlTotalFactura);
         jpDatosGenerales.add(jtfTotalFactura, "width :300:,grow,wrap");
+        jpDatosGenerales.add(jlTotalPendiente);
+        jpDatosGenerales.add(jtfTotalPendiente, "width :300:,grow,wrap");
         jpDatosGenerales.add(jlFormaPago);
         jpDatosGenerales.add(jcbFormaPago, "width :300:,grow,wrap");
         jpDatosGenerales.add(jlDivisa);
@@ -376,6 +384,10 @@ public class ReciboPago extends javax.swing.JDialog implements ActionListener, K
         }
         if (importe > facturaCabecera.getMonto()) {
             JOptionPane.showMessageDialog(this, "El importe ingresado supera al total a pagar", "Atención", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+        if (importe > facturaCabecera.getSaldo()) {
+            JOptionPane.showMessageDialog(this, "El importe ingresado supera al saldo pendiente", "Atención", JOptionPane.ERROR_MESSAGE);
             return false;
         }
         return true;
