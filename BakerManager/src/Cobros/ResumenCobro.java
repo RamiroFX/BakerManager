@@ -6,7 +6,9 @@
 package Cobros;
 
 import DB.DB_Cobro;
+import Entities.E_cuentaCorrienteCabecera;
 import Entities.E_cuentaCorrienteDetalle;
+import Excel.ExportarReciboCobro;
 import ModeloTabla.CtaCteCabeceraTableModel;
 import ModeloTabla.CtaCteDetalleAgrupadoTableModel;
 import java.awt.BorderLayout;
@@ -18,6 +20,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.ArrayList;
+import java.util.Date;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFormattedTextField;
@@ -146,16 +150,20 @@ public class ResumenCobro extends JDialog implements ActionListener, KeyListener
         jbImportarXLS.addActionListener(this);
     }
 
-    private void importarExcelCompleto() {
-        //TODO
+    private void importarExcelIndividual() {
+        ArrayList<E_cuentaCorrienteCabecera> cabeceraList = new ArrayList<>(cabeceraTableModel.getList());
+        ExportarReciboCobro erc = new ExportarReciboCobro("Resumen de cobro", cabeceraList);
+        erc.exportacionIndividual();
     }
 
     private void importarExcelResumido() {
-        //TODO
+        ArrayList<E_cuentaCorrienteCabecera> cabeceraList = new ArrayList<>(cabeceraTableModel.getList());
+        ExportarReciboCobro erc = new ExportarReciboCobro("Resumen de cobro", cabeceraList);
+        erc.exportacionResumida();
     }
 
     private void exportHandler() {
-        Object[] options = {"Completo",
+        Object[] options = {"Individual",
             "Resumido"};
         int n = JOptionPane.showOptionDialog(this,
                 "Eliga tipo de reporte",
@@ -167,17 +175,17 @@ public class ResumenCobro extends JDialog implements ActionListener, KeyListener
                 options[0]); //default button title
         switch (n) {
             case 0: {
-                //Completo
+                //Individual
                 EventQueue.invokeLater(new Runnable() {
                     @Override
                     public void run() {
-                        importarExcelCompleto();
+                        importarExcelIndividual();
                     }
                 });
                 break;
             }
             case 1: {
-                //Minimalista
+                //Resumido
                 EventQueue.invokeLater(new Runnable() {
                     @Override
                     public void run() {

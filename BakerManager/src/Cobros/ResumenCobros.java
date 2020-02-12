@@ -7,7 +7,9 @@ package Cobros;
 
 import DB.DB_Cobro;
 import DB.DB_UtilizacionMateriaPrima;
+import Entities.E_cuentaCorrienteCabecera;
 import Entities.E_utilizacionMateriaPrimaCabecera;
+import Excel.ExportarReciboCobro;
 import Excel.ExportarUtilizacionMP;
 import Interface.InterfaceFacturaDetalle;
 import ModeloTabla.CtaCteCabeceraTableModel;
@@ -158,7 +160,6 @@ public class ResumenCobros extends JDialog implements ActionListener, KeyListene
                 EventQueue.invokeLater(new Runnable() {
                     @Override
                     public void run() {
-                        
                     }
                 });
                 break;
@@ -168,7 +169,6 @@ public class ResumenCobros extends JDialog implements ActionListener, KeyListene
                 EventQueue.invokeLater(new Runnable() {
                     @Override
                     public void run() {
-                        
                     }
                 });
                 break;
