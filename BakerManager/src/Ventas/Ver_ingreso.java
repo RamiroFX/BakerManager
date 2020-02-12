@@ -5,6 +5,7 @@
 package Ventas;
 
 import bakermanager.C_inicio;
+import javax.swing.JDialog;
 
 /**
  *
@@ -17,6 +18,11 @@ public class Ver_ingreso {
 
     public Ver_ingreso(C_inicio c_inicio, Integer idIngresoCabecera) {
         this.vista = new V_crearVentaRapida(c_inicio.vista);
+        this.controlador = new C_ver_ingreso(idIngresoCabecera, this.vista);
+    }
+
+    public Ver_ingreso(JDialog c_inicio, Integer idIngresoCabecera) {
+        this.vista = new V_crearVentaRapida(c_inicio);
         this.controlador = new C_ver_ingreso(idIngresoCabecera, this.vista);
     }
 

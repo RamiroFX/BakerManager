@@ -6,9 +6,16 @@
 package Cobros;
 
 import DB.DB_Cobro;
+import DB.DB_Ingreso;
 import Entities.E_cuentaCorrienteDetalle;
+import Entities.E_facturaSinPago;
+import Entities.M_campoImpresion;
+import Entities.M_facturaCabecera;
+import Entities.M_facturaDetalle;
 import ModeloTabla.CtaCteCabeceraTableModel;
 import ModeloTabla.CtaCteDetalleAgrupadoTableModel;
+import ModeloTabla.FacturaDetalleTableModel;
+import ModeloTabla.FacturaSinPagoTableModel;
 import java.awt.BorderLayout;
 import static java.awt.Dialog.DEFAULT_MODALITY_TYPE;
 import java.awt.EventQueue;
@@ -18,6 +25,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.ArrayList;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFormattedTextField;
@@ -34,22 +42,22 @@ import javax.swing.SwingConstants;
  *
  * @author Ramiro Ferreira
  */
-public class ResumenCobro extends JDialog implements ActionListener, KeyListener {
+public class ResumenCobroPendiente extends JDialog implements ActionListener, KeyListener {
 
     JScrollPane jspCobros, jspDetalle;
     JTable jtCobros, jtDetalle;
     JButton jbSalir, jbImportarXLS;
-    JLabel jlEfectivo, jlCheque, jlTotal;
-    JFormattedTextField jftTotalCobrado, jftTotalCheque, jftTotalEfectivo;
+    JLabel jlTotal;
+    JFormattedTextField jftTotalCobrado;
     JTabbedPane jtpPanel;
 
     //DATOS DE MODELO
-    CtaCteCabeceraTableModel cabeceraTableModel;
-    CtaCteDetalleAgrupadoTableModel detalleTableModel;
+    FacturaSinPagoTableModel cabeceraTableModel;
+    FacturaDetalleTableModel detalleTableModel;
 
-    public ResumenCobro(JFrame vista, CtaCteCabeceraTableModel tm) {
+    public ResumenCobroPendiente(JDialog vista, FacturaSinPagoTableModel tm) {
         super(vista, DEFAULT_MODALITY_TYPE);
-        setTitle("Resumen de cobros");
+        setTitle("Resumen de cobros pendientes");
         setSize(800, 600);
         setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(vista);
@@ -68,7 +76,7 @@ public class ResumenCobro extends JDialog implements ActionListener, KeyListener
     }
 
     private void inicializarDatos() {
-        detalleTableModel = new CtaCteDetalleAgrupadoTableModel();
+        detalleTableModel = new FacturaDetalleTableModel();
     }
 
     private void inicializarComponentes() {
@@ -79,23 +87,12 @@ public class ResumenCobro extends JDialog implements ActionListener, KeyListener
         jtDetalle.getTableHeader().setReorderingAllowed(false);
         jtDetalle.setModel(detalleTableModel);
         jspDetalle = new JScrollPane(jtDetalle);
-        JPanel jpTotalCobrado = new JPanel(new GridLayout(3, 2));
+        JPanel jpTotalCobrado = new JPanel(new GridLayout(1, 2));
         jftTotalCobrado = new JFormattedTextField();
-        jftTotalCobrado.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("¤#,##0"))));
-        jftTotalCheque = new JFormattedTextField();
-        jftTotalCheque.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("¤#,##0"))));
-        jftTotalEfectivo = new JFormattedTextField();
-        jftTotalEfectivo.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("¤#,##0"))));
-        jlEfectivo = new JLabel("Cobros en efectivo");
-        jlEfectivo.setHorizontalAlignment(SwingConstants.CENTER);
-        jlCheque = new JLabel("Cobros en cheque");
-        jlCheque.setHorizontalAlignment(SwingConstants.CENTER);
+        //jftTotalCobrado.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("¤#,##0"))));
+
         jlTotal = new JLabel("Total");
         jlTotal.setHorizontalAlignment(SwingConstants.CENTER);
-        jpTotalCobrado.add(jlEfectivo);
-        jpTotalCobrado.add(jftTotalEfectivo);
-        jpTotalCobrado.add(jlCheque);
-        jpTotalCobrado.add(jftTotalCheque);
         jpTotalCobrado.add(jlTotal);
         jpTotalCobrado.add(jftTotalCobrado);
         jbSalir = new JButton("Salir");
@@ -117,27 +114,23 @@ public class ResumenCobro extends JDialog implements ActionListener, KeyListener
         getContentPane().add(jpSouth, BorderLayout.SOUTH);
     }
 
-    private void inicializarVista(CtaCteCabeceraTableModel tm) {
+    private void inicializarVista(FacturaSinPagoTableModel tm) {
         this.cabeceraTableModel = tm;
         jtCobros.setModel(tm);
-        detalleTableModel.setList(DB_Cobro.consultarCobroDetalleAgrupado(cabeceraTableModel.getList()));
+        Integer total = 0;
+        ArrayList<M_facturaCabecera> cadenaCabeceras = new ArrayList<>();
+        for (E_facturaSinPago e_facturaSinPago : cabeceraTableModel.getList()) {
+            M_facturaCabecera faca = new M_facturaCabecera();
+            faca.setIdFacturaCabecera(e_facturaSinPago.getIdCabecera());
+            total = total + e_facturaSinPago.getSaldo();
+            cadenaCabeceras.add(faca);
+        }
+        if (cadenaCabeceras.isEmpty()) {
+            return;
+        }
+        detalleTableModel.setFacturaDetalleList(DB_Ingreso.consultarIngresoDetalleAgrupado(cadenaCabeceras));
         Utilities.c_packColumn.packColumns(jtCobros, 1);
         Utilities.c_packColumn.packColumns(jtDetalle, 1);
-        Integer total = 0;
-        Integer totalCheque = 0;
-        Integer totalEfectivo = 0;
-        for (E_cuentaCorrienteDetalle ctaCteDetalle : detalleTableModel.getList()) {
-            if (ctaCteDetalle.getBanco() != null) {
-                if (ctaCteDetalle.getBanco().getDescripcion() == null) {
-                    totalEfectivo = totalEfectivo + (int) ctaCteDetalle.getMonto();
-                } else {
-                    totalCheque = totalCheque + (int) ctaCteDetalle.getMonto();
-                }
-            }
-        }
-        total = totalEfectivo + totalCheque;
-        jftTotalEfectivo.setValue(totalEfectivo);
-        jftTotalCheque.setValue(totalCheque);
         jftTotalCobrado.setValue(total);
     }
 

@@ -7,21 +7,22 @@ package Cobros;
 
 import Cliente.Seleccionar_cliente;
 import Empleado.Seleccionar_funcionario;
-import Entities.Estado;
+import Entities.E_tipoOperacion;
 import Entities.M_cliente;
 import Entities.M_funcionario;
 import Entities.M_menu_item;
-import Interface.GestionInterface;
 import Interface.InterfaceNotificarCambio;
 import Interface.RecibirClienteCallback;
 import Interface.RecibirEmpleadoCallback;
 import MenuPrincipal.DatosUsuario;
-import bakermanager.C_inicio;
+import Ventas.Ver_ingreso;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.beans.PropertyVetoException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -31,17 +32,14 @@ import javax.swing.JOptionPane;
  *
  * @author Ramiro Ferreira
  */
-public class C_gestionCobroPago implements GestionInterface, RecibirEmpleadoCallback, RecibirClienteCallback, InterfaceNotificarCambio {
+public class C_cobroPendiente extends MouseAdapter implements ActionListener, KeyListener, RecibirEmpleadoCallback, RecibirClienteCallback, InterfaceNotificarCambio {
 
-    V_gestionCobroPago vista;
-    M_gestionCobroPago modelo;
-    public C_inicio c_inicio;
+    V_cobroPendiente vista;
+    M_cobroPendiente modelo;
 
-    public C_gestionCobroPago(V_gestionCobroPago vista, M_gestionCobroPago modelo, C_inicio c_inicio) {
+    public C_cobroPendiente(M_cobroPendiente modelo, V_cobroPendiente vista) {
         this.vista = vista;
         this.modelo = modelo;
-        this.c_inicio = c_inicio;
-        this.vista.setLocation(c_inicio.centrarPantalla(this.vista));
         callMethods();
     }
 
@@ -50,23 +48,22 @@ public class C_gestionCobroPago implements GestionInterface, RecibirEmpleadoCall
         concederPermisos();
     }
 
-    @Override
     public void inicializarVista() {
         Date date = Calendar.getInstance().getTime();
         this.vista.jddInicioCobro.setDate(date);
         this.vista.jddFinalCobro.setDate(date);
-//
-//        this.vista.jddInicioPago.setDate(date);
-//        this.vista.jddFinalPago.setDate(date);
-        ArrayList<Estado> estados = modelo.obtenerEstados();
+        /*ArrayList<E_tipoOperacion> estados = modelo.obtenerTipoOperacion();
         for (int i = 0; i < estados.size(); i++) {
-            this.vista.jcbEstado.addItem(estados.get(i));
-        }
+            this.vista.jcbTipoOperacion.addItem(estados.get(i));
+        }*/
         this.vista.jtCobroCabecera.setModel(this.modelo.getTm());
         this.vista.jtCobroDetalle.setModel(this.modelo.getTmDetalle());
     }
 
-    @Override
+    public void mostraVista() {
+        this.vista.setVisible(true);
+    }
+
     public void concederPermisos() {
         ArrayList<M_menu_item> accesos = DatosUsuario.getRol_usuario().getAccesos();
         /*for (M_menu_item acceso : accesos) {
@@ -103,15 +100,12 @@ public class C_gestionCobroPago implements GestionInterface, RecibirEmpleadoCall
             }
         }*/
         //TODO conceder permisos
-        this.vista.jbCobro.addActionListener(this);
         this.vista.jbResumen.addActionListener(this);
-        this.vista.jbAnular.addActionListener(this);
         this.vista.jbDetalleCobro.addActionListener(this);
         this.vista.jbBuscarCobro.addActionListener(this);
+        this.vista.jbBuscarPendiente.addActionListener(this);
         this.vista.jbCliente.addActionListener(this);
-        this.vista.jbEmpCobro.addActionListener(this);
         this.vista.jbBorrarCobro.addActionListener(this);
-        this.vista.jbCobroPendientes.addActionListener(this);
         //END TODO
         this.vista.jtCobroCabecera.addMouseListener(this);
         this.vista.jtCobroCabecera.addKeyListener(this);
@@ -119,27 +113,15 @@ public class C_gestionCobroPago implements GestionInterface, RecibirEmpleadoCall
         /**
          * **ESCAPE HOTKEY/
          */
-        //cobro
-        this.vista.jbCobro.addKeyListener(this);
         this.vista.jbResumen.addKeyListener(this);
-        this.vista.jbAnular.addKeyListener(this);
         this.vista.jbDetalleCobro.addKeyListener(this);
         this.vista.jbBuscarCobro.addKeyListener(this);
-        this.vista.jbEmpCobro.addKeyListener(this);
+        this.vista.jbBuscarPendiente.addKeyListener(this);
         this.vista.jbBorrarCobro.addKeyListener(this);
     }
 
-    @Override
-    public void mostrarVista() {
-        this.c_inicio.agregarVentana(vista);
-    }
-
-    @Override
     public void cerrar() {
-        try {
-            this.vista.setClosed(true);
-        } catch (PropertyVetoException ex) {
-        }
+        this.vista.dispose();
     }
 
     private void consultarCobros() {
@@ -154,15 +136,15 @@ public class C_gestionCobroPago implements GestionInterface, RecibirEmpleadoCall
                 }
                 Date fechaInicio = vista.jddInicioCobro.getDate();
                 Date fechaFinal = vista.jddFinalCobro.getDate();
-                int nroRecibo = -1;
-                if (!vista.jtfNroRecibo.getText().trim().isEmpty()) {
-                    nroRecibo = Integer.valueOf(vista.jtfNroRecibo.getText().trim());
+                //E_tipoOperacion condCompra = vista.jcbTipoOperacion.getItemAt(vista.jcbTipoOperacion.getSelectedIndex());
+                int nroFactura = -1;
+                if (!vista.jtfNroFactura.getText().trim().isEmpty()) {
+                    nroFactura = Integer.valueOf(vista.jtfNroFactura.getText().trim());
                 }
-                M_cliente cliente = modelo.getCliente();
-                M_funcionario funcionario = modelo.getFuncionario();
-                Estado estado = vista.jcbEstado.getItemAt(vista.jcbEstado.getSelectedIndex());
+                M_cliente cliente = modelo.getFacturaCabecera().getCliente();
+                //M_funcionario funcionario = modelo.getFacturaCabecera().getFuncionario();
 
-                modelo.getTm().setList(modelo.obtenerCobro(cliente, funcionario, fechaInicio, fechaFinal, estado, nroRecibo));
+                modelo.getTm().setList(modelo.obtenerCobroPendiente(cliente, fechaInicio, fechaFinal, nroFactura, true));
                 Utilities.c_packColumn.packColumns(vista.jtCobroCabecera, 1);
                 modelo.limpiarDetalle();
             }
@@ -170,35 +152,23 @@ public class C_gestionCobroPago implements GestionInterface, RecibirEmpleadoCall
     }
 
     private void consultarCobrosPendiente() {
-        CobroPendiente cp = new CobroPendiente(this.c_inicio.vista);
-        cp.mostrarVista();
-    }
+        EventQueue.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                Date fechaInicio = vista.jddInicioCobro.getDate();
+                Date fechaFinal = vista.jddFinalCobro.getDate();
+                int nroFactura = -1;
+                M_cliente cliente = modelo.getFacturaCabecera().getCliente();
 
-    private void invocarVistaCobrar() {
-        CrearCobro cc = new CrearCobro(c_inicio);
-        cc.mostrarVista();
-    }
-
-    private void anularCobro() {
-        int fila = this.vista.jtCobroCabecera.getSelectedRow();
-        if (modelo.getCobroEstado(fila).getId() == Estado.INACTIVO) {
-            JOptionPane.showMessageDialog(vista, "El cobro ya se encuentra anulado", "Atenciòn", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-        int opcion = JOptionPane.showConfirmDialog(vista, "¿Esta seguro que desea continuar?", "Atenciòn", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-        if (opcion == JOptionPane.YES_OPTION) {
-            Integer idCabecera = Integer.valueOf(String.valueOf(this.vista.jtCobroCabecera.getValueAt(fila, 0)));
-            this.modelo.anularCobro(idCabecera);
-            consultarCobros();
-            modelo.limpiarDetalle();
-            Utilities.c_packColumn.packColumns(this.vista.jtCobroCabecera, 1);
-            this.vista.jbDetalleCobro.setEnabled(false);
-            this.vista.jbAnular.setEnabled(false);
-        }
+                modelo.getTm().setList(modelo.obtenerCobroPendiente(cliente, fechaInicio, fechaFinal, nroFactura, false));
+                Utilities.c_packColumn.packColumns(vista.jtCobroCabecera, 1);
+                modelo.limpiarDetalle();
+            }
+        });
     }
 
     private void invocarVistaResumen() {
-        ResumenCobro cc = new ResumenCobro(c_inicio.vista, modelo.getTm());
+        ResumenCobroPendiente cc = new ResumenCobroPendiente(vista, modelo.getTm());
         cc.mostrarVista();
     }
 
@@ -206,9 +176,8 @@ public class C_gestionCobroPago implements GestionInterface, RecibirEmpleadoCall
         int fila = this.vista.jtCobroCabecera.getSelectedRow();
         int columna = this.vista.jtCobroCabecera.getSelectedColumn();
         if ((fila > -1) && (columna > -1)) {
-            int index = this.vista.jtCobroCabecera.getSelectedRow();
-            VerCobro vc = new VerCobro(this.c_inicio.vista);
-            vc.setCtaCteCabecera(modelo.getTm().getList().get(index));
+            int idFactura = (int) this.vista.jtCobroCabecera.getValueAt(fila, 0);
+            Ver_ingreso vc = new Ver_ingreso(this.vista, idFactura);
             vc.mostrarVista();
         }
         this.vista.jbDetalleCobro.setEnabled(false);
@@ -216,20 +185,20 @@ public class C_gestionCobroPago implements GestionInterface, RecibirEmpleadoCall
 
     @Override
     public void recibirFuncionario(M_funcionario funcionario) {
-        this.modelo.setFuncionario(funcionario);
-        this.vista.jtfEmpCobro.setText(this.modelo.obtenerNombreFuncionario());
+        /*this.modelo.getFacturaCabecera().setFuncionario(funcionario);
+        this.vista.jtfEmpCobro.setText(this.modelo.obtenerNombreFuncionario());*/
     }
 
     @Override
     public void recibirCliente(M_cliente cliente) {
-        this.modelo.setCliente(cliente);
+        this.modelo.getFacturaCabecera().setCliente(cliente);
         this.vista.jtfCliente.setText(this.modelo.obtenerNombreCliente());
     }
 
     private void borrarDatos() {
         Date date = Calendar.getInstance().getTime();
         this.modelo.borrarDatos();
-        this.vista.jtfEmpCobro.setText("");
+        this.modelo.limpiarDetalle();
         this.vista.jtfCliente.setText("");
         this.vista.jddInicioCobro.setDate(date);
         this.vista.jddFinalCobro.setDate(date);
@@ -255,8 +224,8 @@ public class C_gestionCobroPago implements GestionInterface, RecibirEmpleadoCall
 
     private boolean validarNroFactura() {
         try {
-            if (!vista.jtfNroRecibo.getText().trim().isEmpty()) {
-                int nroFac = Integer.valueOf(vista.jtfNroRecibo.getText());
+            if (!vista.jtfNroFactura.getText().trim().isEmpty()) {
+                int nroFac = Integer.valueOf(vista.jtfNroFactura.getText());
                 modelo.getFacturaCabecera().setNroFactura(nroFac);
             } else {
                 modelo.getFacturaCabecera().setIdFacturaCabecera(null);
@@ -276,18 +245,12 @@ public class C_gestionCobroPago implements GestionInterface, RecibirEmpleadoCall
     @Override
     public void actionPerformed(ActionEvent e) {
         Object src = e.getSource();
-        if (src.equals(this.vista.jbCobro)) {
-            invocarVistaCobrar();
-        } else if (src.equals(this.vista.jbBuscarCobro)) {
+        if (src.equals(this.vista.jbBuscarCobro)) {
             consultarCobros();
-        } else if (src.equals(this.vista.jbAnular)) {
-            anularCobro();
-        } else if (src.equals(this.vista.jbEmpCobro)) {
-            Seleccionar_funcionario sf = new Seleccionar_funcionario(this.c_inicio.vista);
-            sf.setCallback(this);
-            sf.mostrarVista();
+        } else if (src.equals(this.vista.jbBuscarPendiente)) {
+            consultarCobrosPendiente();
         } else if (src.equals(this.vista.jbCliente)) {
-            Seleccionar_cliente sc = new Seleccionar_cliente(this.c_inicio.vista);
+            Seleccionar_cliente sc = new Seleccionar_cliente(this.vista);
             sc.setCallback(this);
             sc.mostrarVista();
         } else if (src.equals(this.vista.jbBorrarCobro)) {
@@ -296,8 +259,6 @@ public class C_gestionCobroPago implements GestionInterface, RecibirEmpleadoCall
             invocarVistaVerDetalle();
         } else if (src.equals(this.vista.jbResumen)) {
             invocarVistaResumen();
-        } else if (src.equals(this.vista.jbCobroPendientes)) {
-            consultarCobrosPendiente();
         }
     }
 
@@ -307,9 +268,7 @@ public class C_gestionCobroPago implements GestionInterface, RecibirEmpleadoCall
         int columna = this.vista.jtCobroCabecera.columnAtPoint(e.getPoint());
         if ((fila > -1) && (columna > -1)) {
             Integer idCabecera = Integer.valueOf(String.valueOf(this.vista.jtCobroCabecera.getValueAt(fila, 0)));
-            this.vista.jbCobro.setEnabled(true);
             this.vista.jbDetalleCobro.setEnabled(true);
-            this.vista.jbAnular.setEnabled(true);
             this.modelo.actualizarDetalle(idCabecera);
             if (e.getClickCount() == 2) {
                 invocarVistaVerDetalle();
@@ -342,12 +301,6 @@ public class C_gestionCobroPago implements GestionInterface, RecibirEmpleadoCall
         switch (e.getKeyCode()) {
             case KeyEvent.VK_ESCAPE: {
                 cerrar();
-                break;
-            }
-            case KeyEvent.VK_F1: {
-                if (vista.jbCobro.isEnabled()) {
-                    invocarVistaCobrar();
-                }
                 break;
             }
         }

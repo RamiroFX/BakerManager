@@ -23,11 +23,13 @@ public class E_cuentaCorrienteCabecera {
     private E_cuentaCorrienteConcepto concepto;
     private Date fechaPago;
     private Date fechaOperacion;
+    private Estado estado;
 
     public E_cuentaCorrienteCabecera() {
         this.cliente = new M_cliente();
         this.funcionario = new M_funcionario();
         this.cobrador = new M_funcionario();
+        this.estado = new Estado();
         this.concepto = new E_cuentaCorrienteConcepto();
     }
 
@@ -169,6 +171,20 @@ public class E_cuentaCorrienteCabecera {
      */
     public void setCobrador(M_funcionario cobrador) {
         this.cobrador = cobrador;
+    }
+
+    /**
+     * @return the estado
+     */
+    public Estado getEstado() {
+        return estado;
+    }
+
+    /**
+     * @param estado the estado to set
+     */
+    public void setEstado(Estado estado) {
+        this.estado = estado;
     }
 
 }

@@ -72,6 +72,23 @@ public class V_crearVentaRapida extends JDialog {
             }
         });
     }
+    
+        public V_crearVentaRapida(JDialog frame) {
+        super(frame, "Crear venta", JDialog.ModalityType.APPLICATION_MODAL);
+        setSize(950, 700);
+        setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+        initComponents();
+        setLocationRelativeTo(frame);
+        getContentPane().setLayout(new BorderLayout());
+        getContentPane().add(jpNorth, BorderLayout.NORTH);
+        getContentPane().add(jpCenter, BorderLayout.CENTER);
+        getContentPane().add(jpSouth, BorderLayout.SOUTH);
+        addWindowListener(new WindowAdapter() {
+            public void windowOpened(WindowEvent e) {
+                jtfCodProd.requestFocus();
+            }
+        });
+    }
 
     private void initComponents() {
         initNorth();

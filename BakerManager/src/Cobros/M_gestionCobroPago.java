@@ -75,11 +75,6 @@ public class M_gestionCobroPago {
         this.cliente.setIdCliente(-1);
     }
 
-    ResultSetTableModel consultarCajas(int idFuncionario, String fecha_inicio, String fecha_fin) {
-        //TODO
-        return null;
-    }
-
     /**
      * @return the cliente
      */
@@ -150,7 +145,7 @@ public class M_gestionCobroPago {
         calendarFinal.set(Calendar.MINUTE, 59);
         calendarFinal.set(Calendar.SECOND, 59);
         calendarFinal.set(Calendar.MILLISECOND, 999);
-        return DB_Cobro.obtenerCobro(cliente.getIdCliente(), funcionario.getId_funcionario(), calendarInicio.getTime(), calendarFinal.getTime(), nroFactura);
+        return DB_Cobro.obtenerCobro(cliente.getIdCliente(), funcionario.getId_funcionario(), calendarInicio.getTime(), calendarFinal.getTime(), nroFactura, estado.getId());
     }
 
     /*
@@ -185,5 +180,13 @@ public class M_gestionCobroPago {
 
     public void limpiarDetalle() {
         getTmDetalle().vaciarLista();
+    }
+
+    public Estado getCobroEstado(int fila) {
+        return getTm().getList().get(fila).getEstado();
+    }
+
+    public void anularCobro(Integer idCabecera) {
+        DB_Cobro.anularCobro(idCabecera, false);
     }
 }

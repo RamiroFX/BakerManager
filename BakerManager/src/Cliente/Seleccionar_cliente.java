@@ -15,6 +15,7 @@ import Ventas.C_verMesa;
 import Ventas.ConfigurarMesa;
 import bakermanager.C_inicio;
 import bakermanager.V_inicio;
+import javax.swing.JDialog;
 
 /**
  *
@@ -26,6 +27,11 @@ public class Seleccionar_cliente {
     C_seleccionar_cliente controlador;
 
     public Seleccionar_cliente(V_inicio v_inicio) {
+        this.vista = new V_seleccionar_cliente(v_inicio);
+        this.controlador = new C_seleccionar_cliente(vista);
+    }
+
+    public Seleccionar_cliente(JDialog v_inicio) {
         this.vista = new V_seleccionar_cliente(v_inicio);
         this.controlador = new C_seleccionar_cliente(vista);
     }

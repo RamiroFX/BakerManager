@@ -89,6 +89,56 @@ public class DB_Cobro {
         return list;
     }
 
+    public static List<E_facturaSinPago> consultarFacturasPendiente(Date fechaInicio, Date fechaFin, int idCliente, int nroFactura, boolean conFecha) {
+        List<E_facturaSinPago> list = new ArrayList<>();
+        String Query = "SELECT * FROM v_facturas_sin_pago WHERE 1=1 ";
+        if (conFecha) {
+            Query = Query + "AND FECHA BETWEEN ? AND ? ";
+        }
+        if (idCliente > 0) {
+            Query = Query + " AND ID_CLIENTE = ? ";
+        }
+        if (nroFactura > 0) {
+            Query = Query + " AND NRO_FACTURA = ? ";
+        }
+        int pos = 1;
+        try {
+            pst = DB_manager.getConection().prepareStatement(Query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            if (conFecha) {
+                pst.setTimestamp(pos, new Timestamp(fechaInicio.getTime()));
+                pos++;
+                pst.setTimestamp(pos, new Timestamp(fechaFin.getTime()));
+                pos++;
+            }
+            if (idCliente > 0) {
+                pst.setInt(pos, idCliente);
+                pos++;
+            }
+            if (nroFactura > 0) {
+                pst.setInt(pos, nroFactura);
+            }
+            rs = pst.executeQuery();
+            while (rs.next()) {
+                E_facturaSinPago fsp = new E_facturaSinPago();
+                fsp.setIdCabecera(rs.getInt("id_cabecera"));
+                fsp.setIdCliente(rs.getInt("id_cliente"));
+                fsp.setNroFactura(rs.getInt("nro_factura"));
+                fsp.setClienteEntidad(rs.getString("cliente"));
+                fsp.setFecha(rs.getTimestamp("fecha"));
+                fsp.setMonto(rs.getInt("monto"));
+                fsp.setPago(rs.getInt("pago"));
+                fsp.setSaldo(rs.getInt("saldo"));
+                fsp.setRuc(rs.getString("ruc"));
+                fsp.setRuc(rs.getString("ruc_identificador"));
+                list.add(fsp);
+            }
+        } catch (SQLException ex) {
+            Logger lgr = Logger.getLogger(DB_Cobro.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        }
+        return list;
+    }
+
     public static List<E_cuentaCorrienteDetalle> consultarCobroDetalleAgrupado(List<E_cuentaCorrienteCabecera> cadenaCabeceras) {
         List<E_cuentaCorrienteDetalle> list = new ArrayList<>();
         boolean b = true;
@@ -102,30 +152,17 @@ public class DB_Cobro {
             return list;
         }
         String QUERY = "SELECT "
-                + "CCD.ID_CTA_CTE_DETALLE, "//1
-                + "CCD.ID_CTA_CTE_CABECERA, "//2
-                + "CCD.ID_FACTURA_CABECERA, "//3
-                + "CCD.NRO_RECIBO, "//4
-                + "SUM(CCD.MONTO), "//5
-                + "CCD.NRO_CHEQUE, "//6
-                + "CCD.ID_BANCO, "//7
-                + "CCD.CHEQUE_FECHA, "//8
-                + "CCD.CHEQUE_FECHA_DIFERIDA, "//9
-                + "(SELECT B.DESCRIPCION FROM BANCO B WHERE B.ID_BANCO = CCD.ID_BANCO) \"BANCO\" "//10
+                + "SUM(CCD.MONTO), "//1
+                + "CCD.ID_BANCO, "//2
+                + "(SELECT B.DESCRIPCION FROM BANCO B WHERE B.ID_BANCO = CCD.ID_BANCO) \"BANCO\" "//3
                 + "FROM CUENTA_CORRIENTE_CABECERA CCC, CUENTA_CORRIENTE_DETALLE CCD "
                 + "WHERE CCC.ID_CTA_CTE_CABECERA = CCD.ID_CTA_CTE_CABECERA "
                 + "AND CCD.ID_CTA_CTE_CABECERA IN ("
                 + builder.substring(0, builder.length() - 1) + ")";
 
-        String PIE = "GROUP BY CCD.ID_CTA_CTE_DETALLE, "
-                + "CCD.ID_CTA_CTE_CABECERA, "
-                + "CCD.ID_FACTURA_CABECERA, "
-                + "CCD.NRO_RECIBO, "
-                + "CCD.NRO_CHEQUE, "
-                + "CCD.ID_BANCO, "
-                + "CCD.CHEQUE_FECHA, "
-                + "CCD.CHEQUE_FECHA_DIFERIDA  "
-                + "ORDER BY CCD.ID_CTA_CTE_DETALLE";
+        String PIE = "GROUP BY CCD.ID_BANCO  "
+                + "ORDER BY CCD.ID_BANCO";
+
         QUERY = QUERY + PIE;
         try {
             pst = DB_manager.getConection().prepareStatement(QUERY, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
@@ -138,16 +175,9 @@ public class DB_Cobro {
             while (rs.next()) {
                 E_cuentaCorrienteDetalle ctaCteDetalle = new E_cuentaCorrienteDetalle();
                 E_banco banco = new E_banco();
-                banco.setId(rs.getInt(7));
-                banco.setDescripcion(rs.getString(10));
-                ctaCteDetalle.setId(rs.getInt(1));
-                ctaCteDetalle.setIdCuentaCorrienteCabecera(rs.getInt(2));
-                ctaCteDetalle.setIdFacturaCabecera(rs.getInt(3));
-                ctaCteDetalle.setNroRecibo(rs.getInt(4));
-                ctaCteDetalle.setMonto(rs.getInt(5));
-                ctaCteDetalle.setNroCheque(rs.getInt(6));
-                ctaCteDetalle.setFechaCheque(rs.getTimestamp(8));
-                ctaCteDetalle.setFechaDiferidaCheque(rs.getTimestamp(9));
+                banco.setId(rs.getInt(2));
+                banco.setDescripcion(rs.getString(3));
+                ctaCteDetalle.setMonto(rs.getInt(1));
                 ctaCteDetalle.setBanco(banco);
                 list.add(ctaCteDetalle);
             }
@@ -158,7 +188,7 @@ public class DB_Cobro {
         return list;
     }
 
-    public static List<E_cuentaCorrienteCabecera> obtenerCobro(int idCliente, int idFuncionario, Date fechaInicio, Date fechaFinal, int nroRecibo) {
+    public static List<E_cuentaCorrienteCabecera> obtenerCobro(int idCliente, int idFuncionario, Date fechaInicio, Date fechaFinal, int nroRecibo, int idEstado) {
         List<E_cuentaCorrienteCabecera> list = new ArrayList();
         String query = "SELECT "
                 + "CCC.ID_CTA_CTE_CABECERA, "//1
@@ -193,6 +223,9 @@ public class DB_Cobro {
         if (nroRecibo > 0) {
             query = query + " AND CCC.NRO_RECIBO = ? ";
         }
+        if (idEstado > 0) {
+            query = query + " AND CCC.ID_ESTADO = ? ";
+        }
         query = query + groupBy + orderBy;
         int pos = 1;
         try {
@@ -213,6 +246,9 @@ public class DB_Cobro {
             if (nroRecibo > 0) {
                 pst.setInt(pos, nroRecibo);
                 pos++;
+            }
+            if (idEstado > 0) {
+                pst.setInt(pos, idEstado);
             }
             rs = pst.executeQuery();
             while (rs.next()) {
@@ -235,6 +271,7 @@ public class DB_Cobro {
                 ccc.setNroRecibo(rs.getInt(5));
                 ccc.setCliente(cliente);
                 ccc.setFuncionario(usuario);
+                ccc.setEstado(estado);
                 ccc.setCobrador(cobrador);
                 ccc.setDebito(rs.getInt(12));
                 list.add(ccc);
@@ -408,6 +445,45 @@ public class DB_Cobro {
             }
         }
         return (int) sq_cabecera;
+    }
+
+    public static void anularCobro(int idUtilizacionCabecera, boolean anularNroRecibo) {
+        String UPDATE_COBRO_NRO_RECIBO = "UPDATE cuenta_corriente_cabecera SET "
+                + "ID_ESTADO = 2, "
+                + "NRO_RECIBO = 0 "
+                + "WHERE id_cta_cte_cabecera = ?; ";
+
+        String UPDATE_COBRO = "UPDATE cuenta_corriente_cabecera SET "
+                + "ID_ESTADO = 2 "
+                + "WHERE id_cta_cte_cabecera = ?; ";
+        String QUERY = "";
+        if (anularNroRecibo) {
+            QUERY = UPDATE_COBRO_NRO_RECIBO;
+        } else {
+            QUERY = UPDATE_COBRO;
+        }
+        try {
+            DB_manager.habilitarTransaccionManual();
+            pst = DB_manager.getConection().prepareStatement(QUERY);
+            pst.setInt(1, idUtilizacionCabecera);
+            pst.executeUpdate();
+            pst.close();
+            DB_manager.establecerTransaccion();
+        } catch (SQLException ex) {
+            System.out.println(ex.getNextException());
+            if (DB_manager.getConection() != null) {
+                try {
+                    DB_manager.getConection().rollback();
+                } catch (SQLException ex1) {
+                    Logger lgr = Logger.getLogger(DB_Cobro.class
+                            .getName());
+                    lgr.log(Level.WARNING, ex1.getMessage(), ex1);
+                }
+            }
+            Logger lgr = Logger.getLogger(DB_Cobro.class
+                    .getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        }
     }
 
 }
