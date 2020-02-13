@@ -95,7 +95,7 @@ public class V_gestionCobroPago extends JInternalFrame {
         jbBuscarCobro = new JButton("Buscar");
         jbBuscarCobro.setName("buscar cobro");
         jbCobroPendientes = new JButton("Cobro pendiente");
-        jbCobroPendientes.setName("cobro pendiente");
+        jbCobroPendientes.setName("buscar cobro pendiente");
         jbBorrarCobro = new JButton("Borrar");
         jpCobroBotonesTop.add(jbBorrarCobro);
         jpCobroBotonesTop.add(jbBuscarCobro);
@@ -113,7 +113,7 @@ public class V_gestionCobroPago extends JInternalFrame {
         jspCobroMid.setOneTouchExpandable(true);
         //SOUTH VARIABLES
         jbCobro = new JButton("Cobrar");
-        jbCobro.setName("cobrar venta");
+        jbCobro.setName("crear cobro");
         jbCobro.setFont(CommonFormat.fuente);
         jbCobro.setMargin(insets);
         jbAnular = new JButton("Anular");
@@ -155,7 +155,7 @@ public class V_gestionCobroPago extends JInternalFrame {
 
     private void constructWindows() {
         setSize(950, 600);
-        setName("jifGestionCobroPago");
+        setName("jifGestionCobro");
     }
 
     private void constructLayout() {

@@ -69,7 +69,7 @@ public class C_gestionCobroPago implements GestionInterface, RecibirEmpleadoCall
     @Override
     public void concederPermisos() {
         ArrayList<M_menu_item> accesos = DatosUsuario.getRol_usuario().getAccesos();
-        /*for (M_menu_item acceso : accesos) {
+        for (M_menu_item acceso : accesos) {
             if (this.vista.jbCobro.getName().equals(acceso.getItemDescripcion())) {
                 this.vista.jbCobro.setEnabled(true);
                 this.vista.jbCobro.addActionListener(this);
@@ -83,36 +83,37 @@ public class C_gestionCobroPago implements GestionInterface, RecibirEmpleadoCall
                 this.vista.jddInicioCobro.setEnabled(true);
                 this.vista.jbBuscarCobro.addActionListener(this);
                 this.vista.jbEmpCobro.addActionListener(this);
+                this.vista.jbCliente.addActionListener(this);
+                this.vista.jbBorrarCobro.addActionListener(this);
                 this.vista.jbBorrarCobro.addActionListener(this);
             }
             //PAGO
-            if (this.vista.jbPago.getName().equals(acceso.getItemDescripcion())) {
-                this.vista.jbPago.setEnabled(true);
-                this.vista.jbPago.addActionListener(this);
+            if (this.vista.jbAnular.getName().equals(acceso.getItemDescripcion())) {
+                this.vista.jbAnular.addActionListener(this);
             }
-            if (this.vista.jbDetallePago.getName().equals(acceso.getItemDescripcion())) {
-                this.vista.jbDetallePago.addActionListener(this);
+            if (this.vista.jbResumen.getName().equals(acceso.getItemDescripcion())) {
+                this.vista.jbResumen.addActionListener(this);
             }
-            if (this.vista.jbBuscarPago.getName().equals(acceso.getItemDescripcion())) {
-                this.vista.jbBuscarPago.setEnabled(true);
-                this.vista.jddFinalPago.setEnabled(true);
-                this.vista.jddInicioPago.setEnabled(true);
-                this.vista.jbBuscarPago.addActionListener(this);
-                this.vista.jbEmpPago.addActionListener(this);
-                this.vista.jbBorrarPago.addActionListener(this);
+            if (this.vista.jbCobroPendientes.getName().equals(acceso.getItemDescripcion())) {
+                this.vista.jbCobroPendientes.setEnabled(true);
+                this.vista.jbCobroPendientes.addActionListener(this);
             }
-        }*/
+            if (this.vista.jbBanco.getName().equals(acceso.getItemDescripcion())) {
+                this.vista.jbBanco.setEnabled(true);
+                this.vista.jbBanco.addActionListener(this);
+            }
+        }
         //TODO conceder permisos
-        this.vista.jbCobro.addActionListener(this);
-        this.vista.jbResumen.addActionListener(this);
-        this.vista.jbBanco.addActionListener(this);
-        this.vista.jbAnular.addActionListener(this);
-        this.vista.jbDetalleCobro.addActionListener(this);
-        this.vista.jbBuscarCobro.addActionListener(this);
-        this.vista.jbCliente.addActionListener(this);
-        this.vista.jbEmpCobro.addActionListener(this);
-        this.vista.jbBorrarCobro.addActionListener(this);
-        this.vista.jbCobroPendientes.addActionListener(this);
+        //this.vista.jbCobro.addActionListener(this);
+        //this.vista.jbDetalleCobro.addActionListener(this);
+        //this.vista.jbBuscarCobro.addActionListener(this);
+        //this.vista.jbCliente.addActionListener(this);
+        //this.vista.jbEmpCobro.addActionListener(this);
+        //this.vista.jbAnular.addActionListener(this);
+        //this.vista.jbResumen.addActionListener(this);
+        //this.vista.jbBorrarCobro.addActionListener(this);
+        //this.vista.jbBanco.addActionListener(this);
+        //this.vista.jbCobroPendientes.addActionListener(this);
         //END TODO
         this.vista.jtCobroCabecera.addMouseListener(this);
         this.vista.jtCobroCabecera.addKeyListener(this);
@@ -129,6 +130,21 @@ public class C_gestionCobroPago implements GestionInterface, RecibirEmpleadoCall
         this.vista.jbBuscarCobro.addKeyListener(this);
         this.vista.jbEmpCobro.addKeyListener(this);
         this.vista.jbBorrarCobro.addKeyListener(this);
+    }
+
+    private void verificarPermiso() {
+        ArrayList<M_menu_item> accesos = DatosUsuario.getRol_usuario().getAccesos();
+        for (int i = 0; i < accesos.size(); i++) {
+            if (this.vista.jbCobro.getName().equals(accesos.get(i).getItemDescripcion())) {
+                this.vista.jbCobro.setEnabled(true);
+            }
+            if (this.vista.jbDetalleCobro.getName().equals(accesos.get(i).getItemDescripcion())) {
+                this.vista.jbDetalleCobro.setEnabled(true);
+            }
+            if (this.vista.jbAnular.getName().equals(accesos.get(i).getItemDescripcion())) {
+                this.vista.jbAnular.setEnabled(true);
+            }
+        }
     }
 
     @Override
@@ -319,9 +335,10 @@ public class C_gestionCobroPago implements GestionInterface, RecibirEmpleadoCall
         int columna = this.vista.jtCobroCabecera.columnAtPoint(e.getPoint());
         if ((fila > -1) && (columna > -1)) {
             Integer idCabecera = Integer.valueOf(String.valueOf(this.vista.jtCobroCabecera.getValueAt(fila, 0)));
-            this.vista.jbCobro.setEnabled(true);
+            /*this.vista.jbCobro.setEnabled(true);
             this.vista.jbDetalleCobro.setEnabled(true);
-            this.vista.jbAnular.setEnabled(true);
+            this.vista.jbAnular.setEnabled(true);*/
+            verificarPermiso();
             this.modelo.actualizarDetalle(idCabecera);
             if (e.getClickCount() == 2) {
                 invocarVistaVerDetalle();

@@ -83,7 +83,10 @@ public class C_MenuPrincipal implements ActionListener, KeyListener {
             }
             if (this.vista.jbReportes.getName().equals(accesos.get(i).getMenuDescripcion())) {
                 this.vista.jbReportes.setEnabled(true);
-            }
+            }            
+            if (this.vista.jbCobro.getName().equals(accesos.get(i).getMenuDescripcion())) {
+                this.vista.jbCobro.setEnabled(true);
+            }            
             if (this.c_inicio.vista.getJMenuBar().jmiConfigImpresion.getName().equals(accesos.get(i).getItemDescripcion())) {
                 this.c_inicio.vista.getJMenuBar().jmiConfigImpresion.setEnabled(true);
             }
@@ -98,6 +101,12 @@ public class C_MenuPrincipal implements ActionListener, KeyListener {
             }
             if (this.c_inicio.vista.getJMenuBar().jmiPersonalizar.getName().equals(accesos.get(i).getItemDescripcion())) {
                 this.c_inicio.vista.getJMenuBar().jmiPersonalizar.setEnabled(true);
+            }
+            if (this.c_inicio.vista.getJMenuBar().jmiProduccion.getName().equals(accesos.get(i).getMenuDescripcion())) {
+                this.c_inicio.vista.getJMenuBar().jmiProduccion.setEnabled(true);
+            }
+            if (this.c_inicio.vista.getJMenuBar().jmiMateriaPrima.getName().equals(accesos.get(i).getMenuDescripcion())) {
+                this.c_inicio.vista.getJMenuBar().jmiMateriaPrima.setEnabled(true);
             }
         }
     }

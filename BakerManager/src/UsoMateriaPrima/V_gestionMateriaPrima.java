@@ -86,7 +86,7 @@ public class V_gestionMateriaPrima extends JInternalFrame {
         jpBotonesTop = new JPanel(new MigLayout());
         jpBotonesTop.setBorder(new EtchedBorder(EtchedBorder.RAISED));
         jbBuscar = new JButton("Buscar");
-        jbBuscar.setName("buscar produccion");
+        jbBuscar.setName("buscar uso materia prima");
         jbBorrar = new JButton("Borrar");
         //jbBuscarDetalle = new JButton("Buscar por detalle");
         jpBotonesTop.add(jbBuscar, "span, growx, wrap");
@@ -120,12 +120,12 @@ public class V_gestionMateriaPrima extends JInternalFrame {
         jbRegistroMateriaPrima.setName("utilizar materia prima");
         jbRegistroMateriaPrima.setMargin(inset);
         jbRegistroMateriaPrima.setFont(CommonFormat.fuente);
-        jbAnular = new JButton("Anular registro");
-        jbAnular.setName("cancelar uso materia prima");
+        jbAnular = new JButton("Anular");
+        jbAnular.setName("anular uso materia prima");
         jbAnular.setMargin(inset);
         jbAnular.setFont(CommonFormat.fuente);
         jbDetalle = new JButton("Ver detalle");
-        jbDetalle.setName("ver detalle mp");
+        jbDetalle.setName("detalle uso materia prima");
         jbDetalle.setMargin(inset);
         jbDetalle.setFont(CommonFormat.fuente);
         jbResumen = new JButton("Ver resumen [F3]");
