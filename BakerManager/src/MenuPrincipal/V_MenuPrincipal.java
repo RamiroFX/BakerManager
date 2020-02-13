@@ -27,7 +27,7 @@ class V_MenuPrincipal extends JInternalFrame {
 
     JPanel jpSouth, jpCenter, jpNorth;
     JButton jbSalir, jbProveedores, jbProductos, jbVentas, jbEmpleados,
-            jbClientes, jbPedidos, jbCompras, jbCaja, jbReportes, jbCobroPago;
+            jbClientes, jbPedidos, jbCompras, jbCaja, jbReportes, jbCobro;
     JFormattedTextField jftFecha;
 
     public V_MenuPrincipal() {
@@ -93,8 +93,8 @@ class V_MenuPrincipal extends JInternalFrame {
         jbReportes = new JButton("Reportes [F9]");
         jbReportes.setName("Gestión reporte");
         //jbReportes.setPreferredSize(dim);
-        jbCobroPago = new JButton("Cobros/Pagos [F10]");
-        jbCobroPago.setName("Gestión CobroPago");
+        jbCobro = new JButton("Cobros [F10]");
+        jbCobro.setName("Gestión cobro");
         //jbCobroPago.setPreferredSize(dim);
         jbSalir = new JButton("Salir [ESC]");
         jftFecha = new JFormattedTextField(
@@ -114,7 +114,7 @@ class V_MenuPrincipal extends JInternalFrame {
         jpCenter.add(jbEmpleados);
         jpCenter.add(jbReportes);
         //jpCenter.add(new JComponent() {});
-        jpCenter.add(jbCobroPago);
+        jpCenter.add(jbCobro);
         jpNorth.add(jftFecha);
         jpSouth.add(jbSalir);
     }

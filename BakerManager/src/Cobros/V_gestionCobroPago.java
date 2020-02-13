@@ -35,7 +35,7 @@ public class V_gestionCobroPago extends JInternalFrame {
     //NORTH VARIABLES
     //COBRO
     public JButton jbBuscarCobro, jbBorrarCobro, jbDetalleCobro, jbAnular,
-            jbCliente, jbEmpCobro, jbCobro, jbCobroPendientes, jbResumen;
+            jbCliente, jbEmpCobro, jbCobro, jbCobroPendientes, jbResumen, jbBanco;
     public JTextField jtfNroRecibo, jtfCliente, jtfEmpCobro;
     public JComboBox jcbEmpleado, jcbEstadoPedido;
     public JComboBox<Estado> jcbEstado;
@@ -124,6 +124,10 @@ public class V_gestionCobroPago extends JInternalFrame {
         jbResumen.setName("resumen cobro");
         jbResumen.setFont(CommonFormat.fuente);
         jbResumen.setMargin(insets);
+        jbBanco = new JButton("Bancos");
+        jbBanco.setName("gestion bancos");
+        jbBanco.setFont(CommonFormat.fuente);
+        jbBanco.setMargin(insets);
 
         jbDetalleCobro = new JButton("Ver detalle");
         jbDetalleCobro.setName("detalle cobro");
@@ -142,6 +146,7 @@ public class V_gestionCobroPago extends JInternalFrame {
         jpCobroBot.add(jbDetalleCobro);
         jpCobroBot.add(jbAnular);
         jpCobroBot.add(jbResumen);
+        jpCobroBot.add(jbBanco);
         jpCobros = new JPanel(new BorderLayout());
         jpCobros.add(jpCobroTop, BorderLayout.NORTH);
         jpCobros.add(jspCobroMid, BorderLayout.CENTER);

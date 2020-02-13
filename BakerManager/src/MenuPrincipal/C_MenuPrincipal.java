@@ -112,7 +112,7 @@ public class C_MenuPrincipal implements ActionListener, KeyListener {
         this.vista.jbSalir.addActionListener(this);
         this.vista.jbEmpleados.addActionListener(this);
         this.vista.jbCaja.addActionListener(this);
-        this.vista.jbCobroPago.addActionListener(this);
+        this.vista.jbCobro.addActionListener(this);
         this.vista.jbReportes.addActionListener(this);
         //////
 
@@ -125,7 +125,7 @@ public class C_MenuPrincipal implements ActionListener, KeyListener {
         this.vista.jbSalir.addKeyListener(this);
         this.vista.jbEmpleados.addKeyListener(this);
         this.vista.jbCaja.addKeyListener(this);
-        this.vista.jbCobroPago.addKeyListener(this);
+        this.vista.jbCobro.addKeyListener(this);
         this.vista.jbReportes.addKeyListener(this);
     }
 
@@ -171,7 +171,7 @@ public class C_MenuPrincipal implements ActionListener, KeyListener {
         } else if (src.equals(this.vista.jbCaja)) {
             GestionCaja gestionCaja = new GestionCaja(c_inicio);
             gestionCaja.mostrarVista();
-        } else if (src.equals(this.vista.jbCobroPago)) {
+        } else if (src.equals(this.vista.jbCobro)) {
             GestionCobroPago gestionCobroPago = new GestionCobroPago(c_inicio);
             gestionCobroPago.mostrarVista();
         } else if (src.equals(this.vista.jbReportes)) {
@@ -269,7 +269,7 @@ public class C_MenuPrincipal implements ActionListener, KeyListener {
                 break;
             }
             case (KeyEvent.VK_F10): {
-                if (vista.jbCobroPago.isEnabled()) {
+                if (vista.jbCobro.isEnabled()) {
                     GestionCobroPago gestionCobroPago = new GestionCobroPago(c_inicio);
                     gestionCobroPago.mostrarVista();
                 }

@@ -105,6 +105,7 @@ public class C_gestionCobroPago implements GestionInterface, RecibirEmpleadoCall
         //TODO conceder permisos
         this.vista.jbCobro.addActionListener(this);
         this.vista.jbResumen.addActionListener(this);
+        this.vista.jbBanco.addActionListener(this);
         this.vista.jbAnular.addActionListener(this);
         this.vista.jbDetalleCobro.addActionListener(this);
         this.vista.jbBuscarCobro.addActionListener(this);
@@ -123,6 +124,7 @@ public class C_gestionCobroPago implements GestionInterface, RecibirEmpleadoCall
         this.vista.jbCobro.addKeyListener(this);
         this.vista.jbResumen.addKeyListener(this);
         this.vista.jbAnular.addKeyListener(this);
+        this.vista.jbBanco.addKeyListener(this);
         this.vista.jbDetalleCobro.addKeyListener(this);
         this.vista.jbBuscarCobro.addKeyListener(this);
         this.vista.jbEmpCobro.addKeyListener(this);
@@ -181,6 +183,9 @@ public class C_gestionCobroPago implements GestionInterface, RecibirEmpleadoCall
 
     private void anularCobro() {
         int fila = this.vista.jtCobroCabecera.getSelectedRow();
+        if (fila < 0) {
+            return;
+        }
         if (modelo.getCobroEstado(fila).getId() == Estado.INACTIVO) {
             JOptionPane.showMessageDialog(vista, "El cobro ya se encuentra anulado", "Atenciòn", JOptionPane.ERROR_MESSAGE);
             return;
@@ -200,6 +205,11 @@ public class C_gestionCobroPago implements GestionInterface, RecibirEmpleadoCall
     private void invocarVistaResumen() {
         ResumenCobro cc = new ResumenCobro(c_inicio.vista, modelo.getTm());
         cc.mostrarVista();
+    }
+
+    private void invocarVistaBancos() {
+        BancosParametros bp = new BancosParametros(this.c_inicio.vista);
+        bp.setVisible(true);
     }
 
     private void invocarVistaVerDetalle() {
@@ -282,6 +292,8 @@ public class C_gestionCobroPago implements GestionInterface, RecibirEmpleadoCall
             consultarCobros();
         } else if (src.equals(this.vista.jbAnular)) {
             anularCobro();
+        } else if (src.equals(this.vista.jbBanco)) {
+            invocarVistaBancos();
         } else if (src.equals(this.vista.jbEmpCobro)) {
             Seleccionar_funcionario sf = new Seleccionar_funcionario(this.c_inicio.vista);
             sf.setCallback(this);

@@ -595,6 +595,20 @@ public class DB_manager {
         }
         return impuesto;
     }
+    
+    public static ResultSetTableModel consultarBanco() {
+        ResultSetTableModel impuesto = null;
+        String q = "SELECT id_banco \"ID\" ,descripcion \"Descripcion\" "
+                + "FROM banco ";
+        try {
+            st = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            rs = st.executeQuery(q);
+            impuesto = new ResultSetTableModel(rs);
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return impuesto;
+    }
 
     public static Vector obtenerMarca() {
         Vector impuesto = null;
@@ -737,6 +751,53 @@ public class DB_manager {
         return idMarca;
     }
 
+    public static Integer obtenerIdBanco(String banco) {
+        Integer idMarca = null;
+        String q = "SELECT ID_BANCO "
+                + "FROM BANCO "
+                + " WHERE LOWER(DESCRIPCION) LIKE ?;";
+        try {
+            pst = con.prepareStatement(q, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            pst.setString(1, banco);
+            rs = pst.executeQuery();
+            while (rs.next()) {
+                idMarca = (rs.getInt("ID_BANCO"));
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return idMarca;
+    }
+
+    public static void modificarBanco(int idBanco, String descripcion) {
+        String updateMarca = "UPDATE BANCO SET "
+                + "DESCRIPCION = ? "
+                + "WHERE ID_BANCO = ? ;";
+        try {
+            DB_manager.habilitarTransaccionManual();
+            pst = DB_manager.getConection().prepareStatement(updateMarca);
+            pst.setString(1, descripcion);
+            pst.setInt(2, idBanco);
+            pst.executeUpdate();
+            pst.close();
+            DB_manager.establecerTransaccion();
+        } catch (SQLException ex) {
+            System.out.println(ex.getNextException());
+            if (DB_manager.getConection() != null) {
+                try {
+                    DB_manager.getConection().rollback();
+                } catch (SQLException ex1) {
+                    Logger lgr = Logger.getLogger(DB_manager.class
+                            .getName());
+                    lgr.log(Level.WARNING, ex1.getMessage(), ex1);
+                }
+            }
+            Logger lgr = Logger.getLogger(DB_manager.class
+                    .getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        }
+    }
+
     public static boolean marcaEnUso(int idMarca) {
         boolean enUso = false;
         String q = "SELECT DISTINCT ID_MARCA "
@@ -751,6 +812,46 @@ public class DB_manager {
             ex.printStackTrace();
         }
         return enUso;
+    }
+
+    public static boolean bancoEnUso(int idBanco) {
+        boolean enUso = false;
+        String q = "SELECT DISTINCT ID_BANCO "
+                + "FROM cuenta_corriente_detalle "
+                + "WHERE ID_BANCO = ? ;";
+        try {
+            pst = con.prepareStatement(q);
+            pst.setInt(1, idBanco);
+            rs = pst.executeQuery();
+            return !rs.isBeforeFirst();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return enUso;
+    }
+
+    public static void eliminarBanco(int idBanco) {
+        String delete = "DELETE FROM BANCO WHERE ID_BANCO =" + idBanco;
+        try {
+            DB_manager.habilitarTransaccionManual();
+            st = DB_manager.getConection().createStatement();
+            st.executeUpdate(delete);
+            DB_manager.establecerTransaccion();
+        } catch (SQLException ex) {
+            if (DB_manager.getConection() != null) {
+                try {
+                    DB_manager.getConection().rollback();
+                } catch (SQLException ex1) {
+                    Logger lgr = Logger.getLogger(DB_manager.class
+                            .getName());
+                    lgr.log(Level.WARNING, ex1.getMessage(), ex1);
+                }
+            }
+            Logger lgr = Logger.getLogger(DB_manager.class
+                    .getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        }
+
     }
 
     public static Integer obtenerIdProductoCategoria(String categoria) {
@@ -1643,6 +1744,33 @@ public class DB_manager {
             ex.printStackTrace();
         }
         return tipoCheques;
+    }
+
+    public static void insertarBanco(String banco) {
+        String insert = "INSERT INTO BANCO("
+                + "DESCRIPCION"
+                + ")VALUES (?);";
+        try {
+            DB_manager.habilitarTransaccionManual();
+            pst = DB_manager.getConection().prepareStatement(insert);
+            pst.setString(1, banco);
+            pst.executeUpdate();
+            DB_manager.establecerTransaccion();
+        } catch (SQLException ex) {
+            System.out.println(ex.getNextException());
+            if (DB_manager.getConection() != null) {
+                try {
+                    DB_manager.getConection().rollback();
+                } catch (SQLException ex1) {
+                    Logger lgr = Logger.getLogger(DB_Proveedor.class
+                            .getName());
+                    lgr.log(Level.WARNING, ex1.getMessage(), ex1);
+                }
+            }
+            Logger lgr = Logger.getLogger(DB_Proveedor.class
+                    .getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        }
     }
 
 }

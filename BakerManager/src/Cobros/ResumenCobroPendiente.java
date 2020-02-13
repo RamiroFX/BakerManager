@@ -5,15 +5,10 @@
  */
 package Cobros;
 
-import DB.DB_Cobro;
 import DB.DB_Ingreso;
-import Entities.E_cuentaCorrienteDetalle;
 import Entities.E_facturaSinPago;
-import Entities.M_campoImpresion;
 import Entities.M_facturaCabecera;
-import Entities.M_facturaDetalle;
-import ModeloTabla.CtaCteCabeceraTableModel;
-import ModeloTabla.CtaCteDetalleAgrupadoTableModel;
+import Excel.ExportarFacturaPendiente;
 import ModeloTabla.FacturaDetalleTableModel;
 import ModeloTabla.FacturaSinPagoTableModel;
 import java.awt.BorderLayout;
@@ -29,7 +24,6 @@ import java.util.ArrayList;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFormattedTextField;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -140,11 +134,15 @@ public class ResumenCobroPendiente extends JDialog implements ActionListener, Ke
     }
 
     private void importarExcelCompleto() {
-        //TODO
+        ArrayList<E_facturaSinPago> pagosPendientes = new ArrayList<>(cabeceraTableModel.getList());
+        ExportarFacturaPendiente efp = new ExportarFacturaPendiente("Resumen cobro pendiente", pagosPendientes);
+        efp.exportacionResumida();
     }
 
     private void importarExcelResumido() {
-        //TODO
+        ArrayList<E_facturaSinPago> pagosPendientes = new ArrayList<>(cabeceraTableModel.getList());
+        ExportarFacturaPendiente efp = new ExportarFacturaPendiente("Resumen cobro pendiente", pagosPendientes);
+        efp.exportacionIndividual();
     }
 
     private void exportHandler() {
