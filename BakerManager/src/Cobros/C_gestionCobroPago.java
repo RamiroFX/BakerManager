@@ -102,6 +102,10 @@ public class C_gestionCobroPago implements GestionInterface, RecibirEmpleadoCall
                 this.vista.jbBanco.setEnabled(true);
                 this.vista.jbBanco.addActionListener(this);
             }
+            if (this.vista.jbCheques.getName().equals(acceso.getItemDescripcion())) {
+                this.vista.jbCheques.setEnabled(true);
+                this.vista.jbCheques.addActionListener(this);
+            }
         }
         //TODO conceder permisos
         //this.vista.jbCobro.addActionListener(this);
@@ -143,6 +147,9 @@ public class C_gestionCobroPago implements GestionInterface, RecibirEmpleadoCall
             }
             if (this.vista.jbAnular.getName().equals(accesos.get(i).getItemDescripcion())) {
                 this.vista.jbAnular.setEnabled(true);
+            }
+            if (this.vista.jbCheques.getName().equals(accesos.get(i).getItemDescripcion())) {
+                this.vista.jbCheques.setEnabled(true);
             }
         }
     }
@@ -228,6 +235,11 @@ public class C_gestionCobroPago implements GestionInterface, RecibirEmpleadoCall
         bp.setVisible(true);
     }
 
+    private void invocarVistaChequesPendientes() {
+        ChequesPendientes bp = new ChequesPendientes(this.c_inicio.vista);
+        bp.setVisible(true);
+    }
+
     private void invocarVistaVerDetalle() {
         int fila = this.vista.jtCobroCabecera.getSelectedRow();
         int columna = this.vista.jtCobroCabecera.getSelectedColumn();
@@ -310,6 +322,8 @@ public class C_gestionCobroPago implements GestionInterface, RecibirEmpleadoCall
             anularCobro();
         } else if (src.equals(this.vista.jbBanco)) {
             invocarVistaBancos();
+        } else if (src.equals(this.vista.jbCheques)) {
+            invocarVistaChequesPendientes();
         } else if (src.equals(this.vista.jbEmpCobro)) {
             Seleccionar_funcionario sf = new Seleccionar_funcionario(this.c_inicio.vista);
             sf.setCallback(this);

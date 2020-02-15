@@ -8,7 +8,9 @@ package ModeloTabla;
 import Entities.E_cuentaCorrienteDetalle;
 import Entities.E_formaPago;
 import Entities.E_tipoCheque;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -116,8 +118,7 @@ public class ChequesPendienteTableModel extends AbstractTableModel {
             case 7: {
                 if (row.getFechaDiferidaCheque() != null) {
                     Date date2 = Calendar.getInstance().getTime();
-                    ReadableInstant asd = new Instant();
-                    return Days.daysBetween(row.getFechaDiferidaCheque().toInstant(), date2.toInstant()).getDays();
+                    return betweenDates(date2, row.getFechaDiferidaCheque());
                 } else {
                     return "";
                 }
@@ -126,6 +127,15 @@ public class ChequesPendienteTableModel extends AbstractTableModel {
                 return null;
             }
         }
+    }
+
+    public static long betweenDates(Date firstDate, Date secondDate) {
+        long days = -1;
+        try {
+            days = ChronoUnit.DAYS.between(firstDate.toInstant(), secondDate.toInstant());
+        } catch (Exception e) {
+        }
+        return days;
     }
 
     public void agregarDatos(E_cuentaCorrienteDetalle data) {

@@ -348,7 +348,7 @@ public class DB_Cobro {
         }
         return list;
     }
-    
+
     public static List<E_cuentaCorrienteDetalle> obtenerChequesPendientes() {
         List<E_cuentaCorrienteDetalle> list = new ArrayList();
         String query = "SELECT "
@@ -362,7 +362,7 @@ public class DB_Cobro {
                 + "CCD.CHEQUE_FECHA, "//8
                 + "CCD.CHEQUE_FECHA_DIFERIDA, "//9
                 + "(SELECT B.DESCRIPCION FROM BANCO B WHERE B.ID_BANCO = CCD.ID_BANCO) \"BANCO\", "//10
-                + "CCD.ID_ESTADO_CHEQUE, "//11
+                + "CCD.ID_ESTADO_CHEQUE "//11
                 + "FROM CUENTA_CORRIENTE_DETALLE CCD "
                 + "WHERE cheque_fecha_diferida >= now() "
                 + "AND id_estado_cheque = 2 "
@@ -410,7 +410,7 @@ public class DB_Cobro {
                 + "id_funcionario_registro, nro_recibo, id_estado, fecha_cobro, control, id_caja_y)"
                 + "VALUES (?, ?, ?, ?, ?, ?, ?, ?);";
         //LA SGBD SE ENCARGA DE INSERTAR EL TIMESTAMP.
-        String INSERT_DETALLE_CHEQUE_DIFERIDO = "INSERT INTO cuenta_corriente_detalle(id_cta_cte_cabecera, id_factura_cabecera, nro_recibo, monto, nro_cheque, id_banco, cheque_fecha, cheque_fecha_diferida)VALUES (?, ?, ?, ?, ?, ?, ?, ?);";
+        String INSERT_DETALLE_CHEQUE_DIFERIDO = "INSERT INTO cuenta_corriente_detalle(id_cta_cte_cabecera, id_factura_cabecera, nro_recibo, monto, nro_cheque, id_banco, cheque_fecha, cheque_fecha_diferida, id_estado_cheque)VALUES (?, ?, ?, ?, ?, ?, ?, ?);";
         String INSERT_DETALLE_CHEQUE = "INSERT INTO cuenta_corriente_detalle(id_cta_cte_cabecera, id_factura_cabecera, nro_recibo, monto, nro_cheque, id_banco, cheque_fecha)VALUES (?, ?, ?, ?, ?, ?, ?);";
         String INSERT_DETALLE_EFECTIVO = "INSERT INTO cuenta_corriente_detalle(id_cta_cte_cabecera, id_factura_cabecera, nro_recibo, monto)VALUES (?, ?, ?, ?);";
         long sq_cabecera = -1L;
@@ -456,6 +456,7 @@ public class DB_Cobro {
                             pst.setInt(6, unDetalle.getBanco().getId());
                             pst.setTimestamp(7, new Timestamp(unDetalle.getFechaCheque().getTime()));
                             pst.setTimestamp(8, new Timestamp(unDetalle.getFechaDiferidaCheque().getTime()));
+                            pst.setInt(9, Estado.INACTIVO);
                             pst.executeUpdate();
                             pst.close();
                         } else {
@@ -522,6 +523,35 @@ public class DB_Cobro {
             DB_manager.habilitarTransaccionManual();
             pst = DB_manager.getConection().prepareStatement(QUERY);
             pst.setInt(1, idUtilizacionCabecera);
+            pst.executeUpdate();
+            pst.close();
+            DB_manager.establecerTransaccion();
+        } catch (SQLException ex) {
+            System.out.println(ex.getNextException());
+            if (DB_manager.getConection() != null) {
+                try {
+                    DB_manager.getConection().rollback();
+                } catch (SQLException ex1) {
+                    Logger lgr = Logger.getLogger(DB_Cobro.class
+                            .getName());
+                    lgr.log(Level.WARNING, ex1.getMessage(), ex1);
+                }
+            }
+            Logger lgr = Logger.getLogger(DB_Cobro.class
+                    .getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        }
+    }
+
+    public static void cobrarCheque(int idCtaCteDetalle) {
+        String UPDATE_COBRO = "UPDATE cuenta_corriente_detalle SET "
+                + "id_estado_cheque = 1 "
+                + "WHERE id_cta_cte_detalle = ?; ";
+
+        try {
+            DB_manager.habilitarTransaccionManual();
+            pst = DB_manager.getConection().prepareStatement(UPDATE_COBRO);
+            pst.setInt(1, idCtaCteDetalle);
             pst.executeUpdate();
             pst.close();
             DB_manager.establecerTransaccion();
