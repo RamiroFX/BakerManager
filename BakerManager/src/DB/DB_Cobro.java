@@ -348,6 +348,62 @@ public class DB_Cobro {
         }
         return list;
     }
+    
+    public static List<E_cuentaCorrienteDetalle> obtenerChequesPendientes() {
+        List<E_cuentaCorrienteDetalle> list = new ArrayList();
+        String query = "SELECT "
+                + "CCD.ID_CTA_CTE_DETALLE, "//1
+                + "CCD.ID_CTA_CTE_CABECERA, "//2
+                + "CCD.ID_FACTURA_CABECERA, "//3
+                + "CCD.NRO_RECIBO, "//4
+                + "CCD.MONTO, "//5
+                + "CCD.NRO_CHEQUE, "//6
+                + "CCD.ID_BANCO, "//7
+                + "CCD.CHEQUE_FECHA, "//8
+                + "CCD.CHEQUE_FECHA_DIFERIDA, "//9
+                + "(SELECT B.DESCRIPCION FROM BANCO B WHERE B.ID_BANCO = CCD.ID_BANCO) \"BANCO\", "//10
+                + "CCD.ID_ESTADO_CHEQUE, "//11
+                + "FROM CUENTA_CORRIENTE_DETALLE CCD "
+                + "WHERE cheque_fecha_diferida >= now() "
+                + "AND id_estado_cheque = 2 "
+                + "ORDER BY cheque_fecha_diferida;";
+        try {
+            pst = DB_manager.getConection().prepareStatement(query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            rs = pst.executeQuery();
+            while (rs.next()) {
+                E_cuentaCorrienteDetalle detalle = new E_cuentaCorrienteDetalle();
+                E_banco banco = new E_banco();
+                banco.setId(rs.getInt(7));
+                banco.setDescripcion(rs.getString(10));
+                detalle.setId(rs.getInt(1));
+                detalle.setIdCuentaCorrienteCabecera(rs.getInt(2));
+                detalle.setIdFacturaCabecera(rs.getInt(3));
+                detalle.setNroRecibo(rs.getInt(4));
+                detalle.setMonto(rs.getInt(5));
+                detalle.setNroCheque(rs.getInt(6));
+                detalle.setFechaCheque(rs.getTimestamp(8));
+                detalle.setFechaDiferidaCheque(rs.getTimestamp(9));
+                detalle.setBanco(banco);
+                list.add(detalle);
+            }
+        } catch (SQLException ex) {
+            Logger lgr = Logger.getLogger(DB_Cobro.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (st != null) {
+                    st.close();
+                }
+            } catch (SQLException ex) {
+                Logger lgr = Logger.getLogger(DB_Cobro.class.getName());
+                lgr.log(Level.WARNING, ex.getMessage(), ex);
+            }
+        }
+        return list;
+    }
 
     public static int guardarCobro(E_cuentaCorrienteCabecera cabecera, ArrayList<E_cuentaCorrienteDetalle> detalle) {
         String INSERT_CABECERA = "INSERT INTO cuenta_corriente_cabecera(id_cliente, id_funcionario_cobrador, "

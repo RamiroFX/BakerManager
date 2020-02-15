@@ -91,7 +91,9 @@ public class V_BarraMenu extends JMenuBar {
             jmiEmpresa = new JMenuItem("Empresa");
             //TODO remove
             jmiProduccion= new JMenuItem("Produccion");
+            jmiProduccion.setName("Gestión producción");
             jmiMateriaPrima= new JMenuItem("Materia Prima");
+            jmiMateriaPrima.setName("Gestión uso materia prima");
             jmiEmpresa.setEnabled(false);
             jmiEmpresa.setName("configuracion empresa");
             jmOpciones.add(jmiEmpresa);

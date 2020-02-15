@@ -35,7 +35,8 @@ public class V_gestionCobroPago extends JInternalFrame {
     //NORTH VARIABLES
     //COBRO
     public JButton jbBuscarCobro, jbBorrarCobro, jbDetalleCobro, jbAnular,
-            jbCliente, jbEmpCobro, jbCobro, jbCobroPendientes, jbResumen, jbBanco;
+            jbCliente, jbEmpCobro, jbCobro, jbCobroPendientes, jbResumen, jbBanco,
+            jbCheques;
     public JTextField jtfNroRecibo, jtfCliente, jtfEmpCobro;
     public JComboBox jcbEmpleado, jcbEstadoPedido;
     public JComboBox<Estado> jcbEstado;
@@ -125,9 +126,13 @@ public class V_gestionCobroPago extends JInternalFrame {
         jbResumen.setFont(CommonFormat.fuente);
         jbResumen.setMargin(insets);
         jbBanco = new JButton("Bancos");
-        jbBanco.setName("gestion bancos");
+        jbBanco.setName("gestión bancos");
         jbBanco.setFont(CommonFormat.fuente);
         jbBanco.setMargin(insets);
+        jbCheques = new JButton("Cheques pendientes");
+        jbCheques.setName("cheques pendientes");
+        jbCheques.setFont(CommonFormat.fuente);
+        jbCheques.setMargin(insets);
 
         jbDetalleCobro = new JButton("Ver detalle");
         jbDetalleCobro.setName("detalle cobro");
@@ -147,6 +152,7 @@ public class V_gestionCobroPago extends JInternalFrame {
         jpCobroBot.add(jbAnular);
         jpCobroBot.add(jbResumen);
         jpCobroBot.add(jbBanco);
+        jpCobroBot.add(jbCheques);
         jpCobros = new JPanel(new BorderLayout());
         jpCobros.add(jpCobroTop, BorderLayout.NORTH);
         jpCobros.add(jspCobroMid, BorderLayout.CENTER);
