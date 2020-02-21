@@ -6,6 +6,7 @@
 package Ventas;
 
 import DB.DB_Ingreso;
+import Entities.E_facturaCabeceraFX;
 import Entities.E_facturaDetalleFX;
 import Entities.E_facturacionCabecera;
 import Entities.Estado;
@@ -52,7 +53,7 @@ import javax.swing.table.TableModel;
 public class Resumen_ingreso extends JDialog implements ActionListener, KeyListener, InterfaceFacturaDetalle {
 
     JScrollPane jspEgreso, jspDetalle;
-    JTable jtEgreso, jtDetalle;
+    JTable jtIngreso, jtDetalle;
     JButton jbSalir, jbImportarXLS, jbImprimirFacturacion;
     JLabel jlContado, jlCredito, jlTotal;
     JFormattedTextField jftTotalEgreso, jftTotalEgCont, jftTotalEgCred;
@@ -62,9 +63,10 @@ public class Resumen_ingreso extends JDialog implements ActionListener, KeyListe
     JTabbedPane jtpPanel;
     M_cliente cliente;
     E_facturacionCabecera facturacionCabecera;
+    FacturaCabeceraTableModel tm;
     Estado estado;
 
-    public Resumen_ingreso(C_inicio c_inicio, TableModel tm, M_cliente cliente_entidad,
+    public Resumen_ingreso(C_inicio c_inicio, FacturaCabeceraTableModel tm, M_cliente cliente_entidad,
             Integer nro_factura, String idEmpleado, Date inicio, Date fin,
             String tipo_operacion, Estado estado) {
         super(c_inicio.vista, DEFAULT_MODALITY_TYPE);
@@ -80,6 +82,7 @@ public class Resumen_ingreso extends JDialog implements ActionListener, KeyListe
         this.nro_factura = nro_factura;
         this.estado = estado;
         inicializarComponentes();
+        this.tm = tm;
         inicializarVista(tm, inicio, fin);
         agregarListener();
     }
@@ -98,8 +101,8 @@ public class Resumen_ingreso extends JDialog implements ActionListener, KeyListe
         this.facturacionCabecera = facturacionCabecera;
         FacturaCabeceraTableModel tm = new FacturaCabeceraTableModel();
         tm.setFacturaCabeceraList(DB_Ingreso.obtenerVentasPorFacturacion(facturacionCabecera.getId()));
-        jtEgreso.setModel(tm);
-        Utilities.c_packColumn.packColumns(jtEgreso, 1);
+        jtIngreso.setModel(tm);
+        Utilities.c_packColumn.packColumns(jtIngreso, 1);
         Integer total = 0;
         Integer totalContado = 0;
         Integer totalCredito = 0;
@@ -129,9 +132,9 @@ public class Resumen_ingreso extends JDialog implements ActionListener, KeyListe
     }
 
     private void inicializarComponentes() {
-        jtEgreso = new JTable();
-        jtEgreso.getTableHeader().setReorderingAllowed(false);
-        jspEgreso = new JScrollPane(jtEgreso);
+        jtIngreso = new JTable();
+        jtIngreso.getTableHeader().setReorderingAllowed(false);
+        jspEgreso = new JScrollPane(jtIngreso);
         jtDetalle = new JTable();
         jtDetalle.getTableHeader().setReorderingAllowed(false);
         jspDetalle = new JScrollPane(jtDetalle);
@@ -178,18 +181,18 @@ public class Resumen_ingreso extends JDialog implements ActionListener, KeyListe
     }
 
     private void inicializarVista(TableModel tm, Date inicio, Date fin) {
-        jtEgreso.setModel(tm);
-        Utilities.c_packColumn.packColumns(jtEgreso, 1);
+        jtIngreso.setModel(tm);
+        Utilities.c_packColumn.packColumns(jtIngreso, 1);
         Integer total = 0;
         Integer totalContado = 0;
         Integer totalCredito = 0;
-        int cantFilas = jtEgreso.getRowCount();
+        int cantFilas = jtIngreso.getRowCount();
         for (int i = 0; i < cantFilas; i++) {
-            total = total + Integer.valueOf(String.valueOf(jtEgreso.getValueAt(i, 5)));
-            if (jtEgreso.getValueAt(i, 6).equals("Contado")) {
-                totalContado = totalContado + Integer.valueOf(String.valueOf(jtEgreso.getValueAt(i, 5)));
+            total = total + Integer.valueOf(String.valueOf(jtIngreso.getValueAt(i, 5)));
+            if (jtIngreso.getValueAt(i, 6).equals("Contado")) {
+                totalContado = totalContado + Integer.valueOf(String.valueOf(jtIngreso.getValueAt(i, 5)));
             } else {
-                totalCredito = totalCredito + Integer.valueOf(String.valueOf(jtEgreso.getValueAt(i, 5)));
+                totalCredito = totalCredito + Integer.valueOf(String.valueOf(jtIngreso.getValueAt(i, 5)));
             }
         }
         SimpleDateFormat sdfs = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -219,73 +222,15 @@ public class Resumen_ingreso extends JDialog implements ActionListener, KeyListe
     }
 
     private void importarExcelCompleto(M_cliente cliente, Integer nro_factura, String idEmpleado, String tipo_operacion, Estado estado) {
-        String fechaInicio = "";
-        String fechaFinal = "";
-        try {
-            fechaInicio = new Timestamp(this.inicio.getTime()).toString().substring(0, 11);
-            fechaInicio = fechaInicio + "00:00:00.000";
-        } catch (Exception e) {
-            fechaInicio = "Todos";
-        }
-        try {
-            fechaFinal = new Timestamp(this.fin.getTime()).toString().substring(0, 11);
-            fechaFinal = fechaFinal + "23:59:59.000";
-        } catch (Exception e) {
-            fechaFinal = "Todos";
-        }
-
-        String entidad = "Todos";
-        if (cliente != null) {
-            if (cliente.getEntidad() != null) {
-                entidad = cliente.getEntidad();
-            }
-        }
-        ArrayList<E_facturaDetalleFX> ed = DB_Ingreso.obtenerVentaDetalles(entidad, nro_factura, idEmpleado, fechaInicio, fechaFinal, tipo_operacion, estado);
-        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
-        sdf.format(Calendar.getInstance().getTime());
-        String nombreHoja = null;
-        try {
-            nombreHoja = new Timestamp(this.inicio.getTime()).toString().substring(0, 11);
-        } catch (Exception e) {
-            nombreHoja = sdf.format(Calendar.getInstance().getTime());
-        }
-        ExportarVentas ce = new ExportarVentas(nombreHoja, ed, this.inicio, this.fin, 1);
-        ce.initComp();
+        ArrayList<M_facturaCabecera> ed = new ArrayList(this.tm.getFacturaCabeceraList());
+        ExportarVentas ce = new ExportarVentas("Resumen de ingresos", ed);
+        ce.exportacionCompleta();
     }
 
     private void importarExcelResumido(M_cliente cliente, Integer nro_factura, String idEmpleado, String tipo_operacion, Estado estado) {
-        String fechaInicio = "";
-        String fechaFinal = "";
-        try {
-            fechaInicio = new Timestamp(this.inicio.getTime()).toString().substring(0, 11);
-            fechaInicio = fechaInicio + "00:00:00.000";
-        } catch (Exception e) {
-            fechaInicio = "Todos";
-        }
-        try {
-            fechaFinal = new Timestamp(this.fin.getTime()).toString().substring(0, 11);
-            fechaFinal = fechaFinal + "23:59:59.000";
-        } catch (Exception e) {
-            fechaFinal = "Todos";
-        }
-
-        String entidad = "Todos";
-        if (cliente != null) {
-            if (cliente.getEntidad() != null) {
-                entidad = cliente.getEntidad();
-            }
-        }
-        ArrayList<E_facturaDetalleFX> ed = DB_Ingreso.obtenerVentaDetalles(entidad, nro_factura, idEmpleado, fechaInicio, fechaFinal, tipo_operacion, estado);
-        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
-        sdf.format(Calendar.getInstance().getTime());
-        String nombreHoja = null;
-        try {
-            nombreHoja = new Timestamp(this.inicio.getTime()).toString().substring(0, 11);
-        } catch (Exception e) {
-            nombreHoja = sdf.format(Calendar.getInstance().getTime());
-        }
-        ExportarVentas ce = new ExportarVentas(nombreHoja, ed, this.inicio, this.fin, 1);
-        ce.initCompResumidoFX();
+        ArrayList<M_facturaCabecera> ed = new ArrayList(this.tm.getFacturaCabeceraList());
+        ExportarVentas ce = new ExportarVentas("Resumen de ingresos", ed);
+        ce.exportacionResumida();
     }
 
     private void exportHandler() {
@@ -351,7 +296,7 @@ public class Resumen_ingreso extends JDialog implements ActionListener, KeyListe
                 EventQueue.invokeLater(new Runnable() {
                     @Override
                     public void run() {
-                        FacturaCabeceraTableModel tmCabecera = (FacturaCabeceraTableModel) jtEgreso.getModel();
+                        FacturaCabeceraTableModel tmCabecera = (FacturaCabeceraTableModel) jtIngreso.getModel();
                         FacturaDetalleTableModel tmDetalle = (FacturaDetalleTableModel) jtDetalle.getModel();
                         if (tmCabecera.getFacturaCabeceraList().isEmpty()) {
                             JOptionPane.showMessageDialog(null, "No hay datos para impirmir");
@@ -371,7 +316,7 @@ public class Resumen_ingreso extends JDialog implements ActionListener, KeyListe
                 EventQueue.invokeLater(new Runnable() {
                     @Override
                     public void run() {
-                        FacturaCabeceraTableModel tmCabecera = (FacturaCabeceraTableModel) jtEgreso.getModel();
+                        FacturaCabeceraTableModel tmCabecera = (FacturaCabeceraTableModel) jtIngreso.getModel();
                         FacturaDetalleTableModel tmDetalle = (FacturaDetalleTableModel) jtDetalle.getModel();
                         if (tmCabecera.getFacturaCabeceraList().isEmpty()) {
                             JOptionPane.showMessageDialog(null, "No hay datos para impirmir");
@@ -389,7 +334,7 @@ public class Resumen_ingreso extends JDialog implements ActionListener, KeyListe
                 EventQueue.invokeLater(new Runnable() {
                     @Override
                     public void run() {
-                        FacturaCabeceraTableModel tmCabecera = (FacturaCabeceraTableModel) jtEgreso.getModel();
+                        FacturaCabeceraTableModel tmCabecera = (FacturaCabeceraTableModel) jtIngreso.getModel();
                         FacturaDetalleTableModel tmDetalle = (FacturaDetalleTableModel) jtDetalle.getModel();
                         if (tmCabecera.getFacturaCabeceraList().isEmpty()) {
                             JOptionPane.showMessageDialog(null, "No hay datos para impirmir");

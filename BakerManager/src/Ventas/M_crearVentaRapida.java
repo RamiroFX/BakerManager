@@ -42,7 +42,7 @@ public class M_crearVentaRapida {
     private static final String ESTA_SEGURO_QUE_DESEA_CONFIRMAR_LA_VENTA = "¿Está seguro que desea confirmar la venta?";
 
     private M_facturaCabecera cabecera;
-    private M_facturaDetalle detalle;
+    //private M_facturaDetalle detalle;
     private M_telefono telefono;
     private FacturaDetalleTableModel dtm;
     private E_impresionTipo tipoVenta;
@@ -59,7 +59,7 @@ public class M_crearVentaRapida {
         } catch (Exception e) {
             this.telefono = null;
         }
-        this.detalle = new M_facturaDetalle();
+        //this.detalle = new M_facturaDetalle();
         dtm = new FacturaDetalleTableModel(interfaceFacturaDetalle);
         pi = DB_Preferencia.obtenerPreferenciaImpresionFactura();
         maxProdCant = pi.getMaxProducts();
@@ -72,14 +72,14 @@ public class M_crearVentaRapida {
     public void setCabecera(M_facturaCabecera cabecera) {
         this.cabecera = cabecera;
     }
-
+/*
     public M_facturaDetalle getDetalle() {
         return detalle;
     }
 
     public void setDetalle(M_facturaDetalle detalle) {
         this.detalle = detalle;
-    }
+    }*/
 
     /**
      * @return the dtm
@@ -183,7 +183,7 @@ public class M_crearVentaRapida {
         } catch (Exception e) {
             this.telefono = null;
         }
-        this.detalle = new M_facturaDetalle();
+//        this.detalle = new M_facturaDetalle();
         this.dtm.vaciarLista();
     }
 

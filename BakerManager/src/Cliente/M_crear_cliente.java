@@ -60,19 +60,20 @@ class M_crear_cliente {
     }
 
     public boolean insertarCliente(M_cliente cliente, M_telefono[] telefono, M_sucursal[] sucursal) {
-        M_cliente prov = DB_Cliente.obtenerDatosCliente(cliente.getEntidad());
+        //M_cliente prov = DB_Cliente.obtenerDatosCliente(cliente.getEntidad());
         boolean b = DB_Cliente.existeRuc(cliente.getRuc());
         if (b) {
             JOptionPane.showMessageDialog(null, "El R.U.C. seleccionado se encuentra en uso", "Atención", JOptionPane.ERROR_MESSAGE);
             return false;
         }
-        if (prov == null) {
-            DB_Cliente.insertarCliente(cliente, telefono, sucursal, contactos);
+        DB_Cliente.insertarCliente(cliente, telefono, sucursal, contactos);
+        /*if (prov == null) {
             return true;
         } else {
             JOptionPane.showMessageDialog(null, "Cliente existente", "Atención", JOptionPane.ERROR_MESSAGE);
             return false;
-        }
+        }*/
+        return true;
     }
 
     public ResultSetTableModel consultarCliente(String string, boolean b, boolean b0, boolean b1) {

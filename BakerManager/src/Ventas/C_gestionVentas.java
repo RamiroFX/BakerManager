@@ -321,7 +321,7 @@ public class C_gestionVentas implements GestionInterface, RecibirEmpleadoCallbac
         M_cliente cliente = cliente();
         String tiop = tipoOperacion();
         Estado estado = vista.jcbEstado.getItemAt(vista.jcbEstado.getSelectedIndex());
-        Resumen_ingreso re = new Resumen_ingreso(c_inicio, this.vista.jtIngresoCabecera.getModel(), cliente, nro_factura, empleado, vista.jddInicio.getDate(), vista.jddFinal.getDate(), tiop, estado);
+        Resumen_ingreso re = new Resumen_ingreso(c_inicio, this.modelo.getTm(), cliente, nro_factura, empleado, vista.jddInicio.getDate(), vista.jddFinal.getDate(), tiop, estado);
         re.setVisible(true);
     }
 
