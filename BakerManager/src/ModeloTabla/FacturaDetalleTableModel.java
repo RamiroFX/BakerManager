@@ -5,6 +5,7 @@
  */
 package ModeloTabla;
 
+import Entities.E_impuesto;
 import Interface.InterfaceFacturaDetalle;
 import Entities.M_facturaDetalle;
 import Parametros.Impuesto;
@@ -103,21 +104,21 @@ public class FacturaDetalleTableModel extends AbstractTableModel {
                 return fd.getDescuento();
             }
             case 5: {
-                if (fd.getProducto().getIdImpuesto() == 1) {
+                if (fd.getProducto().getIdImpuesto() == E_impuesto.EXENTA) {
                     Integer Precio = fd.getPrecio() - Math.round(Math.round(((fd.getPrecio() * fd.getDescuento()) / 100)));
                     return Math.round(Math.round((fd.getCantidad() * Precio)));
                 }
                 return 0;
             }
             case 6: {
-                if (fd.getProducto().getIdImpuesto() == 2) {
+                if (fd.getProducto().getIdImpuesto() == E_impuesto.IVA5) {
                     Integer Precio = fd.getPrecio() - Math.round(Math.round(((fd.getPrecio() * fd.getDescuento()) / 100)));
                     return Math.round(Math.round((fd.getCantidad() * Precio)));
                 }
                 return 0;
             }
             case 7: {
-                if (fd.getProducto().getIdImpuesto() == 3) {
+                if (fd.getProducto().getIdImpuesto() == E_impuesto.IVA10) {
                     Integer Precio = fd.getPrecio() - Math.round(Math.round(((fd.getPrecio() * fd.getDescuento()) / 100)));
                     return Math.round(Math.round((fd.getCantidad() * Precio)));
                 }

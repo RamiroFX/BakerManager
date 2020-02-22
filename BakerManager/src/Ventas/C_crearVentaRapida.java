@@ -170,44 +170,18 @@ public class C_crearVentaRapida implements GestionInterface, InterfaceFacturaDet
 
     public void recibirDetalle(M_facturaDetalle detalle) {
         System.out.println("getRowCount; " + this.vista.jtFacturaDetalle.getRowCount());
-        if (this.vista.jtFacturaDetalle.getRowCount() < modelo.getMaxProdCant()) {
-            Integer impExenta = null;
-            Integer imp5 = null;
-            Integer imp10 = null;
-            Integer Precio = detalle.getPrecio() - Math.round(Math.round(((detalle.getPrecio() * detalle.getDescuento()) / 100)));
-            Integer total = Math.round(Math.round((detalle.getCantidad() * Precio)));
-            switch (detalle.getProducto().getImpuesto()) {
-                case Impuesto.EXENTA:
-                    impExenta = total;
-                    imp5 = 0;
-                    imp10 = 0;
-                    break;
-                case Impuesto.IVA5:
-                    impExenta = 0;
-                    imp5 = total;
-                    imp10 = 0;
-                    break;
-                case Impuesto.IVA10:
-                    impExenta = 0;
-                    imp5 = 0;
-                    imp10 = total;
-                    break;
-            }
-            if (null == detalle.getObservacion()) {
-                detalle.setObservacion("");
-            }
-            detalle.setExenta(impExenta);
-            detalle.setIva5(imp5);
-            detalle.setIva10(imp10);
-            this.modelo.agregarDetalle(detalle);
-            Utilities.c_packColumn.packColumns(this.vista.jtFacturaDetalle, 1);
-            sumarTotal();
-        } else {
-            javax.swing.JOptionPane.showMessageDialog(this.vista, "Solo puede cargar un máximo de "
-                    + modelo.getMaxProdCant() + " productos por venta\n",
+        if (this.vista.jtFacturaDetalle.getRowCount() > modelo.getMaxProdCant()) {
+            javax.swing.JOptionPane.showMessageDialog(this.vista, "La cantidad de productos supera el máximo de "
+                    + modelo.getMaxProdCant() + " productos por venta. Se generará otra factura adicional \n",
                     "Atención",
                     javax.swing.JOptionPane.OK_OPTION);
+            modelo.setVentaMultiple(true);
+        } else {
+            modelo.setVentaMultiple(false);
         }
+        this.modelo.agregarDetalle(detalle);
+        Utilities.c_packColumn.packColumns(this.vista.jtFacturaDetalle, 1);
+        sumarTotal();
     }
 
     private void eliminarDetalle() {
@@ -348,7 +322,7 @@ public class C_crearVentaRapida implements GestionInterface, InterfaceFacturaDet
             return;
         }
         ConfirmarVenta cv = new ConfirmarVenta(vista);
-        cv.inicializarVista(this.vista.jftTotal.getValue()+"");
+        cv.inicializarVista(this.vista.jftTotal.getValue() + "");
         cv.setInterface(this);
         cv.mostrarVista();
     }
@@ -523,7 +497,7 @@ public class C_crearVentaRapida implements GestionInterface, InterfaceFacturaDet
     public void keyReleased(KeyEvent e) {
         switch (e.getKeyCode()) {
             case KeyEvent.VK_F1: {
-                if(modelo.isTableEmpty()){
+                if (modelo.isTableEmpty()) {
                     e.consume();
                     return;
                 }

@@ -48,6 +48,13 @@ public class M_crearVentaRapida {
     private E_impresionTipo tipoVenta;
     private Integer maxProdCant;
     private M_preferenciasImpresion pi;
+    /*
+    ventaMultiple:
+        en caso de que la cantidad de filas de productos supere el maximo 
+        permitido, se genera multiples facturaCabeceras
+     */
+    private boolean ventaMultiple = false;
+    private ArrayList<Integer> idVentas;
 
     public M_crearVentaRapida(InterfaceFacturaDetalle interfaceFacturaDetalle) {
         this.cabecera = new M_facturaCabecera();
@@ -63,6 +70,7 @@ public class M_crearVentaRapida {
         dtm = new FacturaDetalleTableModel(interfaceFacturaDetalle);
         pi = DB_Preferencia.obtenerPreferenciaImpresionFactura();
         maxProdCant = pi.getMaxProducts();
+        idVentas = new ArrayList<>();
     }
 
     public M_facturaCabecera getCabecera() {
@@ -72,7 +80,8 @@ public class M_crearVentaRapida {
     public void setCabecera(M_facturaCabecera cabecera) {
         this.cabecera = cabecera;
     }
-/*
+
+    /*
     public M_facturaDetalle getDetalle() {
         return detalle;
     }
@@ -80,7 +89,6 @@ public class M_crearVentaRapida {
     public void setDetalle(M_facturaDetalle detalle) {
         this.detalle = detalle;
     }*/
-
     /**
      * @return the dtm
      */
@@ -144,12 +152,58 @@ public class M_crearVentaRapida {
     }
 
     public void guardarVenta() {
+        System.out.println("Ventas.M_crearVentaRapida.guardarVenta()");
         //INICIO GUARDAR VENTA
-        if (!"factura".equals(tipoVenta.getDescripcion())) {
-            this.cabecera.setNroFactura(null);
+        if (isVentaMultiple()) {
+            int totalRows = getTableModel().getFacturaDetalleList().size();
+            float maxProds = getMaxProdCant();
+            int cantVentas = (int) Math.ceil(totalRows / maxProds);
+            int currentIndex = 0;
+            int lastPos = 0;
+            ArrayList<M_facturaDetalle> totalList = (ArrayList<M_facturaDetalle>) getTableModel().getFacturaDetalleList();
+            ArrayList<M_facturaDetalle> currentList = new ArrayList();
+
+            System.out.println("totalRows: " + totalRows);
+            System.out.println("maxProds: " + maxProds);
+            System.out.println("cantVentas: " + cantVentas);
+            for (int i = 0; i < cantVentas; i++) {
+                /*for (M_facturaDetalle m_facturaDetalle : totalList) {
+                    if (currentIndex >= lastPos) {
+                        currentList.add(m_facturaDetalle);
+                        currentIndex++;
+                    }
+                    if (currentIndex >= getMaxProdCant()) {
+                        System.out.println("breaking: " + currentIndex);
+                        lastPos = currentIndex;
+                        break;
+                    }
+                }*/
+                int auxCurrentPos = 0, auxLastPos = 0, aux;
+
+                for (int j = auxLastPos; j < totalRows; j++) {
+                    System.out.println("j: " + j);
+                    currentList.add(totalList.get(j));
+                    auxCurrentPos++;
+                    if (auxCurrentPos >= getMaxProdCant()) {
+                        System.out.println("breaking: " + j);
+                        auxLastPos = j;
+                        break;
+                    }
+                }
+                //int nroTicket = DB_Ingreso.insertarIngreso(getCabecera(), currentList);
+                int nroTicket = 1;
+                idVentas.add(nroTicket);
+                getCabecera().setIdFacturaCabecera(nroTicket);
+                auxCurrentPos = 0;
+                currentList.clear();
+            }
+        } else {
+            if (!"factura".equals(tipoVenta.getDescripcion())) {
+                this.cabecera.setNroFactura(null);
+            }
+            int nroTicket = DB_Ingreso.insertarIngreso(getCabecera(), (ArrayList<M_facturaDetalle>) getTableModel().getFacturaDetalleList());
+            getCabecera().setIdFacturaCabecera(nroTicket);
         }
-        int nroTicket = DB_Ingreso.insertarIngreso(getCabecera(), (ArrayList<M_facturaDetalle>) getTableModel().getFacturaDetalleList());
-        getCabecera().setIdFacturaCabecera(nroTicket);
         Calendar c = Calendar.getInstance();
         getCabecera().setTiempo(new Timestamp(c.getTimeInMillis()));
         //FIN GUARDAR VENTA
@@ -232,6 +286,20 @@ public class M_crearVentaRapida {
             div = "-" + this.getCabecera().getCliente().getRucId();
         }
         return ruc + div;
+    }
+
+    /**
+     * @return the ventaMultiple
+     */
+    public boolean isVentaMultiple() {
+        return ventaMultiple;
+    }
+
+    /**
+     * @param ventaMultiple the ventaMultiple to set
+     */
+    public void setVentaMultiple(boolean ventaMultiple) {
+        this.ventaMultiple = ventaMultiple;
     }
 
 }
