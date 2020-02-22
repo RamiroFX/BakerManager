@@ -170,7 +170,7 @@ public class C_crearVentaRapida implements GestionInterface, InterfaceFacturaDet
 
     public void recibirDetalle(M_facturaDetalle detalle) {
         System.out.println("getRowCount; " + this.vista.jtFacturaDetalle.getRowCount());
-        if (this.vista.jtFacturaDetalle.getRowCount() > modelo.getMaxProdCant()) {
+        if (this.vista.jtFacturaDetalle.getRowCount() >= modelo.getMaxProdCant()) {
             javax.swing.JOptionPane.showMessageDialog(this.vista, "La cantidad de productos supera el máximo de "
                     + modelo.getMaxProdCant() + " productos por venta. Se generará otra factura adicional \n",
                     "Atención",
