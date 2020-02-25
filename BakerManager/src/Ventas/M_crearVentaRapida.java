@@ -10,7 +10,6 @@ import DB.DB_Ingreso;
 import DB.DB_Preferencia;
 import DB.DB_Producto;
 import Entities.E_impresionTipo;
-import Entities.E_tipoOperacion;
 import Entities.M_facturaCabecera;
 import Entities.M_facturaDetalle;
 import Entities.M_preferenciasImpresion;
@@ -44,7 +43,7 @@ public class M_crearVentaRapida {
     private FacturaDetalleTableModel dtm;
     private E_impresionTipo tipoVenta;
     private Integer maxProdCant;
-    private M_preferenciasImpresion pi;
+    private M_preferenciasImpresion preferenciaFactura;
     /*
     ventaMultiple:
         en caso de que la cantidad de filas de productos supere el maximo 
@@ -65,8 +64,8 @@ public class M_crearVentaRapida {
         }
         //this.detalle = new M_facturaDetalle();
         dtm = new FacturaDetalleTableModel(interfaceFacturaDetalle);
-        pi = DB_Preferencia.obtenerPreferenciaImpresionFactura();
-        maxProdCant = pi.getMaxProducts();
+        preferenciaFactura = DB_Preferencia.obtenerPreferenciaImpresionFactura();
+        maxProdCant = preferenciaFactura.getMaxProducts();
         cabeceraMultiple = new ArrayList<>();
     }
 
@@ -149,60 +148,30 @@ public class M_crearVentaRapida {
     }
 
     public void guardarVenta() {
-        System.out.println("Ventas.M_crearVentaRapida.guardarVenta()");
         //INICIO GUARDAR VENTA
         if (isVentaMultiple()) {
             //TIPO DE IMPRESION
             E_impresionTipo tipoImpresion = new E_impresionTipo();
             tipoImpresion.setId(getTipoVenta().getId());
             tipoImpresion.setDescripcion(getTipoVenta().getDescripcion());
-            System.out.println("tipoImpresion.getId: " + tipoImpresion.getId());
-            System.out.println("tipoImpresion: " + tipoImpresion);
-            //COND VENTA
-            Integer idCondVenta = getCabecera().getIdCondVenta();
-            System.out.println("idCondVenta: " + idCondVenta);
-
             int totalRows = getTableModel().getFacturaDetalleList().size();
             float maxProdsAux = getMaxProdCant();
             int cantVentas = (int) Math.ceil(totalRows / maxProdsAux);
             ArrayList<M_facturaDetalle> totalList = (ArrayList<M_facturaDetalle>) getTableModel().getFacturaDetalleList();
             ArrayList<M_facturaDetalle> currentList;
-            System.out.println("totalRows: " + totalRows);
-            System.out.println("maxProds: " + maxProdsAux);
-            System.out.println("cantVentas: " + cantVentas);
             int index1 = 0;
             int index2 = getMaxProdCant();
             for (int i = 0; i < cantVentas; i++) {
-                /*System.out.println("tipoImpresion: " + tipoImpresion);
-                System.out.println("idCondVenta: " + idCondVenta);
-                System.out.println("index1: " + index1);
-                System.out.println("index2: " + index2);*/
                 currentList = new ArrayList<>(totalList.subList(index1, index2));
-                System.out.println("currentList: " + currentList);
-                System.out.println("currentList.size: " + currentList.size());
-                System.out.println("tipoImpresion.getId: " + tipoImpresion.getId());
-                System.out.println("tipoImpresion: " + tipoImpresion);
-                System.out.println("idCondVenta: " + idCondVenta);
                 if (tipoImpresion.getId() == E_impresionTipo.FACTURA) {
-                    System.err.println("ES FACTURA LEGAL");
                     getCabecera().setNroFactura(getNroFactura());//para la siguiente venta
                 } else {
-                    System.err.println("VENTA ILEGAL");
                     this.cabecera.setNroFactura(null);
                 }
                 int nroTicket = DB_Ingreso.insertarIngreso(getCabecera(), currentList);
                 getCabecera().setIdFacturaCabecera(nroTicket);
                 M_facturaCabecera faca = new M_facturaCabecera();
                 faca.setIdFacturaCabecera(nroTicket);
-                /*faca.setCliente(getCabecera().getCliente());
-                faca.setFuncionario(getCabecera().getFuncionario());
-                faca.setCondVenta(new E_tipoOperacion(idCondVenta, 0, ""));
-                faca.setTiempo(getCabecera().getTiempo());
-                faca.setNroFactura(getCabecera().getNroFactura());
-                faca.setIdNotaRemision(getCabecera().getIdNotaRemision());
-                System.out.println("faca.id: " + faca.getIdFacturaCabecera());
-                System.out.println("faca: " + faca);
-                System.out.println("getCabecera: " + getCabecera());*/
                 cabeceraMultiple.add(nroTicket);
                 currentList.clear();
                 index1 = index2;
@@ -229,7 +198,6 @@ public class M_crearVentaRapida {
             switch (getTipoVenta().getDescripcion()) {
                 case "ticket": {
                     for (Integer m_facturaCabecera : cabeceraMultiple) {
-                        System.out.println("m_facturaCabecera.getIdFacturaCabecera(): " + m_facturaCabecera);
                         M_facturaCabecera facturaCabecera = DB_Ingreso.obtenerIngresoCabeceraCompleto(m_facturaCabecera);
                         Impresora.imprimirTicketVentaGuardada(DatosUsuario.getRol_usuario(), facturaCabecera);
                     }
@@ -237,7 +205,6 @@ public class M_crearVentaRapida {
                 }
                 case "factura": {
                     for (Integer m_facturaCabecera : cabeceraMultiple) {
-                        System.out.println("m_facturaCabecera.getIdFacturaCabecera(): " + m_facturaCabecera);
                         M_facturaCabecera facturaCabecera = DB_Ingreso.obtenerIngresoCabeceraCompleto(m_facturaCabecera);
                         ArrayList<M_facturaDetalle> detalles = DB_Ingreso.obtenerVentaDetalles(m_facturaCabecera);
                         Impresora.imprimirFacturaVenta(facturaCabecera, detalles);
@@ -246,7 +213,6 @@ public class M_crearVentaRapida {
                 }
                 case "boleta": {
                     for (Integer m_facturaCabecera : cabeceraMultiple) {
-                        System.out.println("m_facturaCabecera.getIdFacturaCabecera(): " + m_facturaCabecera);
                         M_facturaCabecera facturaCabecera = DB_Ingreso.obtenerIngresoCabeceraCompleto(m_facturaCabecera);
                         ArrayList<M_facturaDetalle> detalles = DB_Ingreso.obtenerVentaDetalles(m_facturaCabecera);
                         Impresora.imprimirBoletaVenta(facturaCabecera, detalles);
