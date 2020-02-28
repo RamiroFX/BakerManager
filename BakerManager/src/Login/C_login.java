@@ -20,6 +20,8 @@ import javax.swing.JOptionPane;
  */
 public class C_login implements ActionListener, KeyListener {
 
+    protected static final String USER = "postgres", PASS = "postgres";
+
     M_login modelo;
     V_login vista;
     C_inicio c_inicio;
@@ -94,7 +96,7 @@ public class C_login implements ActionListener, KeyListener {
                     return;
                 }
                 //se conecta contra la base de datos
-                if (modelo.conectar("postgres", "postgresql")) {
+                if (modelo.conectar(USER, PASS)) {
                     if (modelo.verificarUsuario(user, password)) {
                         Config.setUser(user);
                         c_inicio.modelo.getRol_usuario().setFuncionario(modelo.funcionario);

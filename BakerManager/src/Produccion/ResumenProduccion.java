@@ -7,6 +7,7 @@ package Produccion;
 
 import DB.DB_Produccion;
 import Entities.E_produccionCabecera;
+import Entities.E_produccionDetalle;
 import Excel.ExportarProduccion;
 import Interface.InterfaceFacturaDetalle;
 import ModeloTabla.ProduccionCabeceraTableModel;
@@ -33,6 +34,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
+import net.miginfocom.swing.MigLayout;
 
 /**
  *
@@ -43,8 +45,8 @@ public class ResumenProduccion extends JDialog implements ActionListener, KeyLis
     JScrollPane jspEgreso, jspDetalle;
     JTable jtEgreso, jtDetalle;
     JButton jbSalir, jbImportarXLS;
-    JLabel jlContado, jlCredito, jlTotal;
-    JFormattedTextField jftTotalEgreso, jftTotalEgCont, jftTotalEgCred;
+    JLabel jlTotal;
+    JFormattedTextField jftTotalProducido;
     Date inicio, fin;
     JTabbedPane jtpPanel;
     ProduccionCabeceraTableModel tm;
@@ -79,7 +81,12 @@ public class ResumenProduccion extends JDialog implements ActionListener, KeyLis
         jtEgreso.setModel(tm);
         ProduccionDetalleTableModel tmDetalle = new ProduccionDetalleTableModel();
         tmDetalle.setList(DB_Produccion.consultarProduccionDetalleAgrupado(tm.getList()));
+        double totalProducido = 0;
+        for (E_produccionDetalle e_produccionDetalle : tmDetalle.getList()) {
+            totalProducido = totalProducido + e_produccionDetalle.getCantidad();
+        }
         jtDetalle.setModel(tmDetalle);
+        jftTotalProducido.setValue(totalProducido);
         Utilities.c_packColumn.packColumns(jtEgreso, 1);
         Utilities.c_packColumn.packColumns(jtDetalle, 1);
     }
@@ -95,25 +102,13 @@ public class ResumenProduccion extends JDialog implements ActionListener, KeyLis
         jtDetalle = new JTable();
         jtDetalle.getTableHeader().setReorderingAllowed(false);
         jspDetalle = new JScrollPane(jtDetalle);
-        JPanel jpTotalEgreso = new JPanel(new GridLayout(3, 2));
-        jftTotalEgreso = new JFormattedTextField();
-        jftTotalEgreso.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("¤#,##0"))));
-        jftTotalEgCont = new JFormattedTextField();
-        jftTotalEgCont.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("¤#,##0"))));
-        jftTotalEgCred = new JFormattedTextField();
-        jftTotalEgCred.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("¤#,##0"))));
-        jlContado = new JLabel("Ingresos al contado");
-        jlContado.setHorizontalAlignment(SwingConstants.CENTER);
-        jlCredito = new JLabel("Ingresos a crédito");
-        jlCredito.setHorizontalAlignment(SwingConstants.CENTER);
-        jlTotal = new JLabel("Total ingresos");
+        JPanel jpTotalProducido = new JPanel(new MigLayout());
+        jftTotalProducido = new JFormattedTextField();
+        //jftTotalEgreso.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("¤#,##0"))));
+        jlTotal = new JLabel("Total producido");
         jlTotal.setHorizontalAlignment(SwingConstants.CENTER);
-        jpTotalEgreso.add(jlContado);
-        jpTotalEgreso.add(jftTotalEgCont);
-        jpTotalEgreso.add(jlCredito);
-        jpTotalEgreso.add(jftTotalEgCred);
-        jpTotalEgreso.add(jlTotal);
-        jpTotalEgreso.add(jftTotalEgreso);
+        jpTotalProducido.add(jlTotal);
+        jpTotalProducido.add(jftTotalProducido, "span, grow, pushx");
         jbSalir = new JButton("Salir");
         jbImportarXLS = new JButton("Importar a excel");
         jbImportarXLS.setName("exportar produccion");
@@ -125,7 +120,7 @@ public class ResumenProduccion extends JDialog implements ActionListener, KeyLis
         jpSouth.add(jbImportarXLS);
         jpSouth.add(jbSalir);
         jpCenter.add(jspEgreso, BorderLayout.CENTER);
-        jpCenter.add(jpTotalEgreso, BorderLayout.SOUTH);
+        jpCenter.add(jpTotalProducido, BorderLayout.SOUTH);
 
         jtpPanel.addTab("Resumen", jpCenter);
         jtpPanel.addTab("Detalle", jspDetalle);
