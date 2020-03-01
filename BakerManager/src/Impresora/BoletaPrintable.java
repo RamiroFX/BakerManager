@@ -72,7 +72,7 @@ public class BoletaPrintable implements Printable {
         int espacioPeque = 10;
         int ancho = preferencia.getAnchoPagina();
         int alturaCabecera = 130;
-        int alturaDetalle = 130;
+        int alturaDetalle = 195;
         int alturaSubtotal = 20;
         int alturaTotal = 20;
         int alturaLiquidacion = 20;

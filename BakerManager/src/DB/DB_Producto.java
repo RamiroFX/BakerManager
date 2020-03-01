@@ -170,7 +170,8 @@ public class DB_Producto {
                     + "AND PROD.ID_CATEGORIA = PRCA.ID_PRODUCTO_CATEGORIA "
                     + "AND PROD.ID_ESTADO = ESTA.ID_ESTADO "
                     + prov
-                    + "AND LOWER(PROD.DESCRIPCION) LIKE ? "
+                    + "AND (LOWER(PROD.DESCRIPCION) LIKE ? "
+                    + "OR LOWER(PROD.CODIGO) LIKE ? ) "
                     + marc
                     + imp
                     + categ
@@ -179,6 +180,7 @@ public class DB_Producto {
             //se crea una sentencia
             pst = DB_manager.getConection().prepareStatement(FINAL_QUERY, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             pst.setString(1, busqueda_);
+            pst.setString(2, busqueda_);
             rs = pst.executeQuery();
             rstm = new ResultSetTableModel(rs);
         } catch (SQLException ex) {

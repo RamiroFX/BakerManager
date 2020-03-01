@@ -197,10 +197,13 @@ public class M_crearVentaRapida {
         if (isVentaMultiple()) {
             switch (getTipoVenta().getDescripcion()) {
                 case "ticket": {
-                    for (Integer m_facturaCabecera : cabeceraMultiple) {
+                    //IMPRIMIR LAS VENTAS DE ACUERDO A LA CANTIDAD DE ITEMS EN EL DETALLE
+                    /*for (Integer m_facturaCabecera : cabeceraMultiple) {
                         M_facturaCabecera facturaCabecera = DB_Ingreso.obtenerIngresoCabeceraCompleto(m_facturaCabecera);
                         Impresora.imprimirTicketVentaGuardada(DatosUsuario.getRol_usuario(), facturaCabecera);
-                    }
+                    }*/
+                    //IMPRIME EN UN SOLO TICKET TODAS LAS VENTAS REALIZADAS EN EL PROCESO
+                    Impresora.imprimirTicketVenta(DatosUsuario.getRol_usuario(), getCabecera(), (ArrayList<M_facturaDetalle>) getTableModel().getFacturaDetalleList());
                     break;
                 }
                 case "factura": {

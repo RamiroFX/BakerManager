@@ -82,7 +82,7 @@ public class C_configuracionBoleta extends MouseAdapter implements ActionListene
         for (int i = 0; i < modelo.getFormatoFechas().length; i++) {
             this.vista.jcbFormatoFecha.addItem(modelo.getFormatoFechas()[i]);
         }
-        for (int i = 1; i < modelo.getMaxProducts(); i++) {
+        for (int i = 1; i < modelo.getMaxProducts() + 1; i++) {
             this.vista.jcbCantProd.addItem(i);
         }
         for (int i = 1; i < modelo.getMaxLetterSize(); i++) {

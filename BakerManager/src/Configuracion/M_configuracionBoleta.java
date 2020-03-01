@@ -22,7 +22,7 @@ import javax.swing.JOptionPane;
 public class M_configuracionBoleta {
 
     private static final String ERROR_MESSAGE_NAME_ALREADY_EXIST = "El parametro ya existe", ERROR_TITLE = "Atención";
-    private final int MAX_PRODUCT = 20, MAX_LETTER_SIZE = 30;
+    private final int MAX_PRODUCT = 15, MAX_LETTER_SIZE = 30;
     private ImpresionTableModel impresionBoletaTM;
     private boolean isVisible;
     private M_preferenciasImpresion preferenciasBoleta;
@@ -47,7 +47,7 @@ public class M_configuracionBoleta {
 
     void modificarParametro(M_campoImpresion ci) {
         if (DB_manager.existeCampoParametro(TipoVenta.BOLETA, ci.getCampo())) {
-            M_campoImpresion ciAux = DB_manager.obtenerCampoParametro(TipoVenta.BOLETA,ci.getCampo());
+            M_campoImpresion ciAux = DB_manager.obtenerCampoParametro(TipoVenta.BOLETA, ci.getCampo());
             if (ciAux.getId() == ci.getId()) {
                 DB_manager.modificarCampoImpresion(ci);
             } else {
