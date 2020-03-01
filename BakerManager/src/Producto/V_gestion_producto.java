@@ -35,7 +35,7 @@ public class V_gestion_producto extends JInternalFrame {
     public JTextField jtfBuscar, jtfProducto, jtfCodigo, jtfPrecioCosto,
             jtfPrecioVta, jtfPrecioMayorista, jtfImpuesto, jtfMarca,
             jtfSuspendido, jtfRubro, jtfCantActual, jtfObservacion, jtfProveedor;
-    public JComboBox jcbImpuesto, jcbMarca, jcbEstado, jcbRubro;
+    public JComboBox jcbImpuesto, jcbMarca, jcbEstado, jcbRubro, jcbOrderBy;
     private JPanel jpTop, jpBotonesTop, jpJtextFieldTop, jpMid, jpBot, jpMid1;
     public JTable jtProducto;
     private JSplitPane jspMid;
@@ -64,6 +64,7 @@ public class V_gestion_producto extends JInternalFrame {
         jcbImpuesto = new JComboBox();
         jcbMarca = new JComboBox();
         jcbEstado = new JComboBox();
+        jcbOrderBy = new JComboBox();
         jcbRubro = new JComboBox();
         jpFiltros.add(jbProveedor);
         jpFiltros.add(jtfProveedor);
@@ -75,6 +76,8 @@ public class V_gestion_producto extends JInternalFrame {
         jpFiltros.add(jcbImpuesto);
         jpFiltros.add(new JLabel("Estado:"));
         jpFiltros.add(jcbEstado);
+        jpFiltros.add(new JLabel("Ordenar por:"));
+        jpFiltros.add(jcbOrderBy);
         jpBotonesTop = new JPanel();
         jpJtextFieldTop = new JPanel(new BorderLayout());
         jtfBuscar = new JTextField();

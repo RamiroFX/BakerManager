@@ -214,13 +214,18 @@ public class DB_Producto {
         return rstm;
     }
 
-    public static ResultSetTableModel consultaSimpleProducto(String descripcion, String proveedor, String marca, String rubro, String impuesto, String estado) {
+    public static ResultSetTableModel consultaSimpleProducto(String descripcion, String proveedor, String marca, String rubro, String impuesto, String estado, String ordenarPor) {
         ResultSetTableModel rstm = null;
         try {
             if (DB_manager.getConection() == null) {
                 throw new IllegalStateException("Connection already closed.");
             }
             String finalQuery = "ORDER BY PROD.DESCRIPCION ";
+            if (ordenarPor.equals("Descripción")) {
+                finalQuery = "ORDER BY PROD.DESCRIPCION ";
+            } else if (ordenarPor.equals("ID")) {
+                finalQuery = "ORDER BY PROD.ID_PRODUCTO ";
+            }
             String fromQuery = "FROM PRODUCTO PROD ";
             String prov;
             if ("Todos".equals(proveedor)) {
@@ -285,13 +290,18 @@ public class DB_Producto {
         return rstm;
     }
 
-    public static ArrayList<M_producto> consultaSimpleProductos(String descripcion, String proveedor, String marca, String rubro, String impuesto, String estado) {
+    public static ArrayList<M_producto> consultaSimpleProductos(String descripcion, String proveedor, String marca, String rubro, String impuesto, String estado, String ordenarPor) {
         ArrayList productos = null;
         try {
             if (DB_manager.getConection() == null) {
                 throw new IllegalStateException("Connection already closed.");
             }
             String finalQuery = "ORDER BY PROD.DESCRIPCION ";
+            if (ordenarPor.equals("Descripción")) {
+                finalQuery = "ORDER BY PROD.DESCRIPCION ";
+            } else if (ordenarPor.equals("ID")) {
+                finalQuery = "ORDER BY PROD.ID_PRODUCTO ";
+            }
             String fromQuery = "FROM PRODUCTO PROD ";
             String prov;
             if ("Todos".equals(proveedor)) {

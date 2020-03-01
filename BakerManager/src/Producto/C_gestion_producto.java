@@ -81,6 +81,8 @@ public class C_gestion_producto implements ActionListener, KeyListener, MouseLis
         for (int i = 0; i < estado.size(); i++) {
             this.vista.jcbEstado.addItem(estado.get(i));
         }
+        this.vista.jcbOrderBy.addItem("Descripción");
+        this.vista.jcbOrderBy.addItem("ID");
     }
 
     public void mostrarVista() {
@@ -161,13 +163,14 @@ public class C_gestion_producto implements ActionListener, KeyListener, MouseLis
                 String rubro = vista.jcbRubro.getSelectedItem().toString();
                 String impuesto = vista.jcbImpuesto.getSelectedItem().toString();
                 String estado = vista.jcbEstado.getSelectedItem().toString();
+                String orderBy = vista.jcbOrderBy.getSelectedItem().toString();
                 String proveedor = proveedor();
                 /*
                  * Se utiliza el objeto factory para obtener un TableModel
                  * para los resultados del query.
                  */
 
-                vista.jtProducto.setModel(DB_Producto.consultaSimpleProducto(desc.toLowerCase(), proveedor, marca, rubro, impuesto, estado));
+                vista.jtProducto.setModel(DB_Producto.consultaSimpleProducto(desc.toLowerCase(), proveedor, marca, rubro, impuesto, estado, orderBy));
                 Utilities.c_packColumn.packColumns(vista.jtProducto, 1);
             }
         });
@@ -258,8 +261,9 @@ public class C_gestion_producto implements ActionListener, KeyListener, MouseLis
                 String rubro = vista.jcbRubro.getSelectedItem().toString();
                 String impuesto = vista.jcbImpuesto.getSelectedItem().toString();
                 String estado = vista.jcbEstado.getSelectedItem().toString();
+                String orderBy = vista.jcbOrderBy.getSelectedItem().toString();
                 String proveedor = proveedor();
-                ArrayList<M_producto> productos = DB_Producto.consultaSimpleProductos(desc.toLowerCase(), proveedor, marca, rubro, impuesto, estado);
+                ArrayList<M_producto> productos = DB_Producto.consultaSimpleProductos(desc.toLowerCase(), proveedor, marca, rubro, impuesto, estado, orderBy);
                 ExportarProducto ep = new ExportarProducto(productos);
                 ep.exportar();
             }
