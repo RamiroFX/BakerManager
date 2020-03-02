@@ -101,9 +101,11 @@ class C_crearRollo extends MouseAdapter implements ActionListener, KeyListener,
     public void modificarDetalle() {
         int fila = this.vista.jtProduccionDetalle.getSelectedRow();
         if (fila > -1) {
-            M_producto producto = modelo.getTm().getProductoList().get(fila).getProducto();
-            /*SeleccionarCantidadProduducto scp = new SeleccionarCantidadProduducto(this.vista, producto, this, fila);
-            scp.setVisible(true);*/
+            E_produccionFilm producto = modelo.getTm().getProductoList().get(fila);
+            CrearFilm crearFilm = new CrearFilm(this.vista);
+            crearFilm.setCallback(this);
+            crearFilm.modificarRollo(fila, producto);
+            crearFilm.mostrarVista();
         }
     }
 
@@ -270,11 +272,13 @@ class C_crearRollo extends MouseAdapter implements ActionListener, KeyListener,
     @Override
     public void recibirFilm(E_produccionFilm detalle) {
         modelo.agregarDetalle(detalle);
+        Utilities.c_packColumn.packColumns(vista.jtProduccionDetalle, 1);
     }
 
     @Override
     public void modificarFilm(int index, E_produccionFilm detalle) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        modelo.modificarDetalle(index, detalle);
+        Utilities.c_packColumn.packColumns(vista.jtProduccionDetalle, 1);
     }
 
 }

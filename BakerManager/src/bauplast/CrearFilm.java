@@ -5,6 +5,7 @@
  */
 package bauplast;
 
+import Entities.E_produccionFilm;
 import Entities.M_producto;
 import Interface.InterfaceRecibirProduccionFilm;
 import javax.swing.JDialog;
@@ -32,9 +33,13 @@ public class CrearFilm {
     public void setCallback(InterfaceRecibirProduccionFilm callback) {
         this.controlador.setInterface(callback);
     }
-    
-    public void rellenarVista(M_producto rollo){
+
+    public void rellenarVista(M_producto rollo) {
         this.controlador.rellenarVista(rollo);
+    }
+
+    public void modificarRollo(int index, E_produccionFilm rollo) {
+        this.controlador.modificarRollo(index, rollo);
     }
 
 }

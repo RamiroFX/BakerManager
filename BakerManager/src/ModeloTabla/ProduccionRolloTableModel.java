@@ -6,7 +6,6 @@
 package ModeloTabla;
 
 import Entities.E_produccionFilm;
-import Entities.M_producto;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.table.AbstractTableModel;
@@ -92,6 +91,25 @@ public class ProduccionRolloTableModel extends AbstractTableModel {
 
     public void agregarDatos(E_produccionFilm film) {
         this.list.add(film);
+        fireTableDataChanged();
+    }
+
+    public void modificarDatos(int index, E_produccionFilm pf) {
+        this.list.get(index).setCono(pf.getCono());
+        this.list.get(index).setEstado(pf.getEstado());
+        this.list.get(index).setMedida(pf.getMedida());
+        this.list.get(index).setMicron(pf.getMicron());
+        this.list.get(index).setNroFilm(pf.getNroFilm());
+        this.list.get(index).setPeso(pf.getPeso());
+        this.list.get(index).setProducto(pf.getProducto());
+        this.list.get(index).setProductoClasificacion(pf.getProductoClasificacion());
+        fireTableCellUpdated(index, 0);
+        fireTableCellUpdated(index, 1);
+        fireTableCellUpdated(index, 2);
+        fireTableCellUpdated(index, 3);
+        fireTableCellUpdated(index, 4);
+        fireTableCellUpdated(index, 5);
+        fireTableCellUpdated(index, 6);
         fireTableDataChanged();
     }
 

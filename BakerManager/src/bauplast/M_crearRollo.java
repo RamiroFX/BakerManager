@@ -7,14 +7,10 @@ package bauplast;
 
 import DB.DB_Produccion;
 import Entities.E_produccionCabecera;
-import Entities.E_produccionDetalle;
 import Entities.E_produccionFilm;
 import Entities.E_produccionTipo;
-import Entities.M_producto;
 import MenuPrincipal.DatosUsuario;
-import ModeloTabla.ProduccionDetalleTableModel;
 import ModeloTabla.ProduccionRolloTableModel;
-import ModeloTabla.SeleccionarProductoRolloTableModel;
 import java.util.ArrayList;
 
 /**
@@ -52,7 +48,8 @@ public class M_crearRollo {
         getTm().agregarDatos(producto);
     }
 
-    public void modificarDetalle(int index, double cantidad) {
+    public void modificarDetalle(int index, E_produccionFilm pf) {
+        getTm().modificarDatos(index, pf);
     }
 
     public void removerDetalle(int index) {

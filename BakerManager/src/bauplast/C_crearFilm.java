@@ -27,10 +27,14 @@ public class C_crearFilm implements ActionListener, KeyListener {
     private M_crearFilm modelo;
     public V_crearFilm vista;
     private InterfaceRecibirProduccionFilm interfaceRecibirProduccionFilm;
+    boolean modificar;
+    int index;
 
     public C_crearFilm(M_crearFilm modelo, V_crearFilm vista) {
         this.modelo = modelo;
         this.vista = vista;
+        this.modificar = false;
+        this.index = -1;
         inicializarVista();
         agregarListeners();
     }
@@ -105,7 +109,11 @@ public class C_crearFilm implements ActionListener, KeyListener {
         pf.setProductoClasificacion(productoClasificacion);
         pf.setEstado(estado);
         pf.setProducto(modelo.getProducto());
-        interfaceRecibirProduccionFilm.recibirFilm(pf);
+        if (modificar) {
+            interfaceRecibirProduccionFilm.modificarFilm(index, pf);
+        } else {
+            interfaceRecibirProduccionFilm.recibirFilm(pf);
+        }
         cerrar();
     }
 
@@ -218,5 +226,18 @@ public class C_crearFilm implements ActionListener, KeyListener {
 
     @Override
     public void keyReleased(KeyEvent e) {
+    }
+
+    public void modificarRollo(int index, E_produccionFilm rollo) {
+        this.index = index;
+        this.modificar = true;
+        this.modelo.setProducto(rollo.getProducto());
+        this.vista.jtfProducto.setText(rollo.getProducto().getDescripcion());
+        this.vista.jtfNroFilm.setText(rollo.getNroFilm() + "");
+        this.vista.jtfCono.setText(rollo.getCono() + "");
+        this.vista.jtfMedida.setText(rollo.getMedida() + "");
+        this.vista.jtfMicron.setText(rollo.getMicron() + "");
+        this.vista.jtfPeso.setText(rollo.getPeso() + "");
+        vista.jcbTipoMateriaPrima.setSelectedItem(rollo.getProductoClasificacion());
     }
 }
