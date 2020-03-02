@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Produccion;
+package Entities;
 
 /**
  *
@@ -11,7 +11,6 @@ package Produccion;
  */
 public class E_productoClasificacion {
 
-    public static final int MATERIA_PRIMA = 1, PRODUCTO_TERMINADO = 2;
     int id;
     String descripcion;
 

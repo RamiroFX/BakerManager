@@ -240,7 +240,7 @@ public class SeleccionarCantidadProduducto extends javax.swing.JDialog implement
         jbOK = new javax.swing.JButton();
         jbCancel = new javax.swing.JButton();
         jlCantidad = new javax.swing.JLabel("Cantidad");
-        jlDescuento = new javax.swing.JLabel("Descuento");
+        jlDescuento = new javax.swing.JLabel("Descuento(%)");
         jlPrecio = new javax.swing.JLabel("Precio");
         jlPrecioCosto = new javax.swing.JLabel("Precio Costo");
         jlPrecioMayorista = new javax.swing.JLabel("Precio Mayorista");

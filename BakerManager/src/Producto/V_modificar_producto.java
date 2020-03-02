@@ -4,7 +4,6 @@
  */
 package Producto;
 
-import bakermanager.C_inicio;
 import bakermanager.V_inicio;
 import java.awt.BorderLayout;
 import java.awt.Font;

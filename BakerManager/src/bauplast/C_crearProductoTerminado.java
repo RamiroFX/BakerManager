@@ -3,16 +3,14 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Produccion;
+package bauplast;
 
 import Empleado.Seleccionar_funcionario;
-import Entities.E_produccionTipo;
+import Entities.E_produccionFilm;
 import Entities.M_funcionario;
 import Entities.M_producto;
+import Interface.InterfaceRecibirProduccionFilm;
 import Interface.RecibirEmpleadoCallback;
-import Interface.RecibirProductoCallback;
-import Producto.SeleccionarCantidadProduducto;
-import Producto.SeleccionarProducto;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -20,16 +18,16 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import javax.swing.JOptionPane;
 
 /**
  *
- * @author Ramiro
+ * @author Ramiro Ferreira
  */
-class C_crearProduccion2 extends MouseAdapter implements ActionListener, KeyListener, RecibirEmpleadoCallback, RecibirProductoCallback {
+class C_crearProductoTerminado extends MouseAdapter implements ActionListener, KeyListener,
+        RecibirEmpleadoCallback, InterfaceRecibirProduccionFilm {
 
     private static final String VALIDAR_RESPONSABLE_MSG = "Seleccione un responsable de producción",
             VALIDAR_ORDEN_TRABAJO_MSG_1 = "Ingrese una orden de trabajo",
@@ -41,10 +39,10 @@ class C_crearProduccion2 extends MouseAdapter implements ActionListener, KeyList
             CONFIRMAR_SALIR_MSG = "¿Cancelar producción?",
             VALIDAR_TITULO = "Atención";
 
-    public M_crearProduccion modelo;
-    public V_crearProduccion vista;
+    public M_crearRollo modelo;
+    public V_crearProductoTerminado vista;
 
-    public C_crearProduccion2(M_crearProduccion modelo, V_crearProduccion vista) {
+    public C_crearProductoTerminado(M_crearRollo modelo, V_crearProductoTerminado vista) {
         this.modelo = modelo;
         this.vista = vista;
         inicializarVista();
@@ -59,7 +57,7 @@ class C_crearProduccion2 extends MouseAdapter implements ActionListener, KeyList
         EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
-                if (modelo.getTm().getList().isEmpty()) {
+                if (modelo.getTm().getProductoList().isEmpty()) {
                     vista.dispose();
                 } else {
                     int opcion = JOptionPane.showConfirmDialog(vista, CONFIRMAR_SALIR_MSG, VALIDAR_TITULO, JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
@@ -73,22 +71,14 @@ class C_crearProduccion2 extends MouseAdapter implements ActionListener, KeyList
 
     private void inicializarVista() {
         this.vista.jtProduccionDetalle.setModel(modelo.getTm());
-        //E_productoClasificacion pc1 = new E_productoClasificacion(E_productoClasificacion.MATERIA_PRIMA, "Productos terminados");
-        //E_productoClasificacion pc2 = new E_productoClasificacion(E_productoClasificacion.PRODUCTO_TERMINADO, "Rollos");
-        ArrayList<E_produccionTipo> tipoProduccion = modelo.obtenerProduccionTipo();
-        for (int i = 0; i < tipoProduccion.size(); i++) {
-            this.vista.jcbTipoProduccion.addItem(tipoProduccion.get(i));
-        }
         this.vista.jbModificarDetalle.setEnabled(false);
         this.vista.jbEliminarDetalle.setEnabled(false);
         Calendar calendar = Calendar.getInstance();
         this.vista.jdcFechaEntrega.setDate(calendar.getTime());
-        establecerTipoProduccion();
     }
 
     private void agregarListeners() {
         this.vista.jtProduccionDetalle.addMouseListener(this);
-        this.vista.jcbTipoProduccion.addActionListener(this);
         this.vista.jbAceptar.addActionListener(this);
         this.vista.jbSeleccionarProducto.addActionListener(this);
         this.vista.jbFuncionario.addActionListener(this);
@@ -99,13 +89,6 @@ class C_crearProduccion2 extends MouseAdapter implements ActionListener, KeyList
         this.vista.jbFuncionario.addKeyListener(this);
         this.vista.jbAceptar.addKeyListener(this);
         this.vista.jbSalir.addKeyListener(this);
-        this.vista.jcbTipoProduccion.addKeyListener(this);
-    }
-
-    private void establecerTipoProduccion() {
-        int selectedIndex = this.vista.jcbTipoProduccion.getSelectedIndex();
-        E_produccionTipo tipo = this.vista.jcbTipoProduccion.getItemAt(selectedIndex);
-        modelo.getProduccionCabecera().setTipo(tipo);
     }
 
     private void eliminarDetalle() {
@@ -118,9 +101,9 @@ class C_crearProduccion2 extends MouseAdapter implements ActionListener, KeyList
     public void modificarDetalle() {
         int fila = this.vista.jtProduccionDetalle.getSelectedRow();
         if (fila > -1) {
-            M_producto producto = modelo.getTm().getList().get(fila).getProducto();
-            SeleccionarCantidadProduducto scp = new SeleccionarCantidadProduducto(this.vista, producto, this, fila);
-            scp.setVisible(true);
+            M_producto producto = modelo.getTm().getProductoList().get(fila).getProducto();
+            /*SeleccionarCantidadProduducto scp = new SeleccionarCantidadProduducto(this.vista, producto, this, fila);
+            scp.setVisible(true);*/
         }
     }
 
@@ -190,7 +173,7 @@ class C_crearProduccion2 extends MouseAdapter implements ActionListener, KeyList
     }
 
     private boolean validarCantidadProductos() {
-        if (modelo.getTm().getList().isEmpty()) {
+        if (modelo.getTm().getProductoList().isEmpty()) {
             JOptionPane.showMessageDialog(vista, VALIDAR_CANT_PRODUCTOS_MSG, VALIDAR_TITULO, JOptionPane.WARNING_MESSAGE);
             return false;
         }
@@ -208,16 +191,19 @@ class C_crearProduccion2 extends MouseAdapter implements ActionListener, KeyList
     private void imprimir() {
     }
 
+    private void invocarSeleccionarRollo() {
+        SeleccionarRollo sp = new SeleccionarRollo(vista);
+        sp.setCallback(this);
+        sp.mostrarVista();
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         Object source = e.getSource();
         if (source.equals(this.vista.jbAceptar)) {
             guardarProduccion();
-        } else if (source.equals(this.vista.jcbTipoProduccion)) {
-            establecerTipoProduccion();
         } else if (source.equals(this.vista.jbSeleccionarProducto)) {
-            SeleccionarProducto sp = new SeleccionarProducto(vista, this);
-            sp.mostrarVista();
+            invocarSeleccionarRollo();
         } else if (source.equals(this.vista.jbFuncionario)) {
             Seleccionar_funcionario sf = new Seleccionar_funcionario(this.vista);
             sf.setCallback(this);
@@ -261,8 +247,7 @@ class C_crearProduccion2 extends MouseAdapter implements ActionListener, KeyList
                 break;
             }
             case KeyEvent.VK_F4: {
-                SeleccionarProducto sp = new SeleccionarProducto(vista, this);
-                sp.mostrarVista();
+                invocarSeleccionarRollo();
                 break;
             }
             case KeyEvent.VK_ESCAPE: {
@@ -277,19 +262,19 @@ class C_crearProduccion2 extends MouseAdapter implements ActionListener, KeyList
     }
 
     @Override
-    public void recibirProducto(double cantidad, int precio, double descuento, M_producto producto, String observacion) {
-        modelo.agregarDetalle(cantidad, producto);
-    }
-
-    @Override
     public void recibirFuncionario(M_funcionario funcionario) {
         this.vista.jtfFuncionario.setText(funcionario.getNombre());
         this.modelo.getProduccionCabecera().setFuncionarioProduccion(funcionario);
     }
 
     @Override
-    public void modificarProducto(int posicion, double cantidad, int precio, double descuento, M_producto producto, String observacion) {
-        modelo.modificarDetalle(posicion, cantidad);
+    public void recibirFilm(E_produccionFilm detalle) {
+        modelo.agregarDetalle(detalle);
+    }
+
+    @Override
+    public void modificarFilm(int index, E_produccionFilm detalle) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
 }

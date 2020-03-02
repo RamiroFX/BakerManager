@@ -3,14 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Produccion;
+package bauplast;
 
-import Entities.E_produccionTipo;
 import com.toedter.calendar.JDateChooser;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -27,7 +25,7 @@ import net.miginfocom.swing.MigLayout;
  *
  * @author Ramiro Ferreira
  */
-class V_crearProduccion2 extends JDialog {
+class V_crearRollo extends JDialog {
 
     //NORTE
     //norte 1
@@ -35,7 +33,6 @@ class V_crearProduccion2 extends JDialog {
     public JTextField jtfFuncionario, jtfNroOrdenTrabajo;
     public JButton jbFuncionario;
     public JLabel jlNroOrdenTrabajo, jlFechaProduccion;
-    public JComboBox<E_produccionTipo> jcbTipoProduccion;
     public JDateChooser jdcFechaEntrega;
     //CENTRO
     JPanel jpCenter;
@@ -46,8 +43,8 @@ class V_crearProduccion2 extends JDialog {
     public JPanel jpSouth;
     public JButton jbAceptar, jbSalir;
 
-    public V_crearProduccion2(JFrame frame) {
-        super(frame, "Crear producción", JDialog.ModalityType.APPLICATION_MODAL);
+    public V_crearRollo(JFrame frame) {
+        super(frame, "Crear Rollo", JDialog.ModalityType.APPLICATION_MODAL);
         setSize(900, 700);
         setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
         initComponents();
@@ -73,7 +70,6 @@ class V_crearProduccion2 extends JDialog {
         jlNroOrdenTrabajo = new JLabel("Nro. Orden de trabajo");
         jlFechaProduccion = new JLabel("Fecha");
         jtfNroOrdenTrabajo = new JTextField(30);
-        jcbTipoProduccion = new JComboBox();
 
         jdcFechaEntrega = new JDateChooser();
         jdcFechaEntrega.setPreferredSize(new Dimension(150, 20));
@@ -81,8 +77,6 @@ class V_crearProduccion2 extends JDialog {
         jpNorth1.add(jtfFuncionario);
         jpNorth1.add(jlNroOrdenTrabajo);
         jpNorth1.add(jtfNroOrdenTrabajo, "wrap");
-        jpNorth1.add(new JLabel("Tipo producción"));
-        jpNorth1.add(jcbTipoProduccion);
         jpNorth1.add(jlFechaProduccion);
         jpNorth1.add(jdcFechaEntrega);
     }

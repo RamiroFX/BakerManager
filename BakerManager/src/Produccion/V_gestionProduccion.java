@@ -30,8 +30,8 @@ import net.miginfocom.swing.MigLayout;
  */
 public class V_gestionProduccion extends JInternalFrame {
 
-    public JButton jbBuscar, jbBorrar, jbCrearProduccion,
-            jbDetalle,jbResumen, jbEmpleado, jbAnular;
+    public JButton jbBuscar, jbBorrar, jbCrearRollo, jbCrearProductoTerminado,
+            jbDetalle, jbResumen, jbEmpleado, jbAnular;
     public JTextField jtfNroOrdenTrabajo, jtfEmpleado;
     public JComboBox<E_produccionTipo> jcbTipoProduccion;
     public JComboBox<Estado> jcbEstado;
@@ -120,10 +120,14 @@ public class V_gestionProduccion extends JInternalFrame {
     private void initBot() {
         jpBot = new JPanel();
         Insets inset = new Insets(10, 10, 10, 10);
-        jbCrearProduccion = new JButton("Crear produccion [F1]");
-        jbCrearProduccion.setName("crear produccion");
-        jbCrearProduccion.setMargin(inset);
-        jbCrearProduccion.setFont(CommonFormat.fuente);
+        jbCrearRollo = new JButton("Crear Rollo [F1]");
+        jbCrearRollo.setName("crear produccion");
+        jbCrearRollo.setMargin(inset);
+        jbCrearRollo.setFont(CommonFormat.fuente);
+        jbCrearProductoTerminado = new JButton("Crear Producto terminado [F2]");
+        jbCrearProductoTerminado.setName("crear produccion");
+        jbCrearProductoTerminado.setMargin(inset);
+        jbCrearProductoTerminado.setFont(CommonFormat.fuente);
         jbAnular = new JButton("Cancelar produccion");
         jbAnular.setName("anular produccion");
         jbAnular.setMargin(inset);
@@ -136,7 +140,8 @@ public class V_gestionProduccion extends JInternalFrame {
         jbResumen.setName("resumen produccion");
         jbResumen.setMargin(inset);
         jbResumen.setFont(CommonFormat.fuente);
-        jpBot.add(jbCrearProduccion);
+        jpBot.add(jbCrearRollo);
+        jpBot.add(jbCrearProductoTerminado);
         jpBot.add(jbAnular);
         jpBot.add(jbDetalle);
         jpBot.add(jbResumen);

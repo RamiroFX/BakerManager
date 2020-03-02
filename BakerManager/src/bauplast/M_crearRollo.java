@@ -3,30 +3,33 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Produccion;
+package bauplast;
 
 import DB.DB_Produccion;
 import Entities.E_produccionCabecera;
 import Entities.E_produccionDetalle;
+import Entities.E_produccionFilm;
 import Entities.E_produccionTipo;
 import Entities.M_producto;
 import MenuPrincipal.DatosUsuario;
 import ModeloTabla.ProduccionDetalleTableModel;
+import ModeloTabla.ProduccionRolloTableModel;
+import ModeloTabla.SeleccionarProductoRolloTableModel;
 import java.util.ArrayList;
 
 /**
  *
  * @author Ramiro Ferreira
  */
-public class M_crearProduccion2 {
+public class M_crearRollo {
 
     E_produccionCabecera produccionCabecera;
-    ProduccionDetalleTableModel tm;
+    ProduccionRolloTableModel tm;
 
-    public M_crearProduccion2() {
+    public M_crearRollo() {
         this.produccionCabecera = new E_produccionCabecera();
         this.produccionCabecera.setFuncionarioSistema(DatosUsuario.getRol_usuario().getFuncionario());
-        this.tm = new ProduccionDetalleTableModel();
+        this.tm = new ProduccionRolloTableModel();
     }
 
     public E_produccionCabecera getProduccionCabecera() {
@@ -37,27 +40,23 @@ public class M_crearProduccion2 {
         this.produccionCabecera = produccionCabecera;
     }
 
-    public void setTm(ProduccionDetalleTableModel tm) {
+    public void setTm(ProduccionRolloTableModel tm) {
         this.tm = tm;
     }
 
-    public ProduccionDetalleTableModel getTm() {
+    public ProduccionRolloTableModel getTm() {
         return tm;
     }
 
-    public void agregarDetalle(double cantidad, M_producto producto) {
-        E_produccionDetalle produccion = new E_produccionDetalle();
-        produccion.setCantidad(cantidad);
-        produccion.setProducto(producto);
-        getTm().agregarDetalle(produccion);
+    public void agregarDetalle(E_produccionFilm producto) {
+        getTm().agregarDatos(producto);
     }
 
     public void modificarDetalle(int index, double cantidad) {
-        getTm().modificarCantidadDetalle(index, cantidad);
     }
 
     public void removerDetalle(int index) {
-        getTm().quitarDetalle(index);
+        getTm().quitarDatos(index);
     }
 
     boolean existeOrdenTrabajo(int ordenTrabajo) {
@@ -69,7 +68,7 @@ public class M_crearProduccion2 {
     }
 
     public void guardarProduccion() {
-        DB_Produccion.insertarProduccion(getProduccionCabecera(), getTm().getList());
+        //DB_Produccion.insertarProduccion(getProduccionCabecera(), getTm().getList());
     }
 
     public void limpiarCampos() {

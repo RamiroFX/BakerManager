@@ -189,12 +189,12 @@ public class Crear_producto_proveedor extends JDialog implements ActionListener,
                 String impuesto = jcbImpuesto.getSelectedItem().toString();
                 String estado = jcbEstado.getSelectedItem().toString();
                 String proveedor = "Todos";
+
                 /*
                  * Se utiliza el objeto factory para obtener un TableModel
                  * para los resultados del query.
                  */
-
-                jtProducto.setModel(DB_Producto.consultaSimpleProducto(desc, proveedor, marca, rubro, impuesto, estado));
+                jtProducto.setModel(DB_Producto.consultaSimpleProducto(desc, proveedor, marca, rubro, impuesto, estado, "Descripción"));
                 Utilities.c_packColumn.packColumns(jtProducto, 1);
             }
         });
@@ -337,7 +337,7 @@ public class Crear_producto_proveedor extends JDialog implements ActionListener,
     public void recibirProveedor(M_proveedor proveedor) {
         this.proveedor = proveedor;
         this.jtfProveedor.setText(this.proveedor.getNombre());
-        this.jtProveedor.setModel(DB_Producto.consultaSimpleProducto("", this.proveedor.getEntidad(), "Todos", "Todos", "Todos", "Todos"));
+        this.jtProveedor.setModel(DB_Producto.consultaSimpleProducto("", this.proveedor.getEntidad(), "Todos", "Todos", "Todos", "Todos", "Descripción"));
         int cantRow = this.jtProveedor.getRowCount();
         boolean b = true;
         for (int i = 0; i < cantRow; i++) {

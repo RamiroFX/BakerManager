@@ -5,6 +5,8 @@
 package DB;
 
 import Entities.M_producto;
+import Entities.E_productoClasificacion;
+import Entities.Estado;
 import java.sql.CallableStatement;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -833,5 +835,104 @@ public class DB_Producto {
             }
         }
         return result;
+    }
+
+    public static ArrayList<E_productoClasificacion> obtenerProductoClasificacion() {
+        ArrayList<E_productoClasificacion> list = null;
+        String q = "SELECT *  "
+                + "FROM PRODUCTO_CLASIFICACION;";
+        try {
+            st = DB_manager.getConection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            rs = st.executeQuery(q);
+            list = new ArrayList();
+            while (rs.next()) {
+                E_productoClasificacion tiop = new E_productoClasificacion();
+                tiop.setId(rs.getInt("id_producto_clasificacion"));
+                tiop.setDescripcion(rs.getString("descripcion"));
+                list.add(tiop);
+            }
+        } catch (SQLException ex) {
+            Logger lgr = Logger.getLogger(DB_Producto.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (st != null) {
+                    st.close();
+                }
+            } catch (SQLException ex) {
+                Logger lgr = Logger.getLogger(DB_Producto.class.getName());
+                lgr.log(Level.WARNING, ex.getMessage(), ex);
+            }
+        }
+        return list;
+    }
+
+    public static ArrayList<M_producto> consultarRollos(String descripcion, Estado estado,
+            String ordenarPor) {
+        ArrayList productos = null;
+        try {
+            if (DB_manager.getConection() == null) {
+                throw new IllegalStateException("Connection already closed.");
+            }
+            switch(ordenarPor){
+                case "ID":{
+                    break;
+                }
+            }
+            String finalQuery = "ORDER BY PROD.DESCRIPCION ";
+            if (ordenarPor.equals("Descripción")) {
+                finalQuery = "ORDER BY PROD.DESCRIPCION ";
+            } else if (ordenarPor.equals("ID")) {
+                finalQuery = "ORDER BY PROD.ID_PRODUCTO ";
+            }
+            String fromQuery = "FROM PRODUCTO PROD ";
+
+            String estad;
+            if ("Todos".equals(estado)) {
+                estad = "";
+            } else {
+                estad = "AND PROD.ID_ESTADO = (SELECT ESTA.ID_ESTADO FROM ESTADO ESTA WHERE ESTA.DESCRIPCION LIKE '" + estado + "') ";
+            }
+
+            String Query = "SELECT PROD.ID_PRODUCTO \"id_producto\", "
+                    + "PROD.CODIGO \"codigo\", "
+                    + "PROD.DESCRIPCION \"descripcion\", "
+                    + "PROD.CANT_ACTUAL \"cant_actual\", "
+                    + "PROD.ID_ESTADO \"id_estado\", "
+                    + "PROD.ID_CATEGORIA \"id_categoria\", "
+                    + "(SELECT ESTA.DESCRIPCION FROM ESTADO ESTA WHERE ESTA.ID_ESTADO = PROD.ID_ESTADO) \"estado\", "
+                    + "(SELECT PRCA.DESCRIPCION FROM PRODUCTO_CATEGORIA PRCA WHERE PRCA.ID_PRODUCTO_CATEGORIA = PROD.ID_CATEGORIA) \"categoria\" "
+                    + fromQuery
+                    + "WHERE "
+                    + "LOWER(PROD.DESCRIPCION) LIKE ? "
+                    + estad
+                    + finalQuery;
+
+            pst = DB_manager.getConection().prepareStatement(Query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            pst.setString(1, descripcion + "%");
+            rs = pst.executeQuery();
+            productos = new ArrayList();
+            while (rs.next()) {
+                M_producto producto = new M_producto();
+                producto.setId(rs.getInt("id_producto"));
+                producto.setCodBarra(rs.getString("codigo"));
+                producto.setDescripcion(rs.getString("descripcion"));
+                
+                producto.setEstado(rs.getString("estado"));
+                
+                producto.setCategoria(rs.getString("categoria"));
+                producto.setIdCategoria(rs.getInt("id_categoria"));
+                producto.setIdEstado(rs.getInt("id_estado"));
+                producto.setCantActual(rs.getDouble("cant_actual"));
+                productos.add(producto);
+            }
+        } catch (SQLException ex) {
+            Logger lgr = Logger.getLogger(DB_Producto.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        }
+        return productos;
     }
 }

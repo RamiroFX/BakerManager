@@ -12,6 +12,8 @@ import Interface.GestionInterface;
 import Interface.RecibirEmpleadoCallback;
 import Utilities.ProductionCellRenderer;
 import bakermanager.C_inicio;
+import bauplast.CrearProductoTerminado;
+import bauplast.CrearRollo;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -69,7 +71,8 @@ public class C_gestionProduccion implements GestionInterface, RecibirEmpleadoCal
     @Override
     public final void concederPermisos() {
         //TODO add access
-        this.vista.jbCrearProduccion.addActionListener(this);
+        this.vista.jbCrearRollo.addActionListener(this);
+        this.vista.jbCrearProductoTerminado.addActionListener(this);
         this.vista.jbEmpleado.addActionListener(this);
         this.vista.jbBuscar.addActionListener(this);
         this.vista.jbBorrar.addActionListener(this);
@@ -222,12 +225,23 @@ public class C_gestionProduccion implements GestionInterface, RecibirEmpleadoCal
         rp.mostrarVista();
     }
 
+    private void invocarCrearRolloMenu() {
+        CrearRollo cp = new CrearRollo(c_inicio);
+        cp.mostrarVista();
+    }
+
+    private void invocarCrearProductoTerminadonMenu() {
+        CrearProductoTerminado cp = new CrearProductoTerminado(c_inicio);
+        cp.mostrarVista();
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         Object source = e.getSource();
-        if (source.equals(this.vista.jbCrearProduccion)) {
-            CrearProduccion cp = new CrearProduccion(c_inicio);
-            cp.mostrarVista();
+        if (source.equals(this.vista.jbCrearRollo)) {
+            invocarCrearRolloMenu();
+        } else if (source.equals(this.vista.jbCrearProductoTerminado)) {
+            invocarCrearProductoTerminadonMenu();
         } else if (source.equals(this.vista.jbEmpleado)) {
             Seleccionar_funcionario sf = new Seleccionar_funcionario(this.c_inicio.vista);
             sf.setCallback(this);
