@@ -58,7 +58,7 @@ class C_crearProductoTerminado extends MouseAdapter implements ActionListener, K
         EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
-                if (modelo.getTm().getProductoList().isEmpty()) {
+                if (modelo.getTm().getList().isEmpty()) {
                     vista.dispose();
                 } else {
                     int opcion = JOptionPane.showConfirmDialog(vista, CONFIRMAR_SALIR_MSG, VALIDAR_TITULO, JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
@@ -102,7 +102,7 @@ class C_crearProductoTerminado extends MouseAdapter implements ActionListener, K
     public void modificarDetalle() {
         int fila = this.vista.jtProduccionDetalle.getSelectedRow();
         if (fila > -1) {
-            M_producto producto = modelo.getTm().getProductoList().get(fila).getProducto();
+            M_producto producto = modelo.getTm().getList().get(fila).getProducto();
             /*SeleccionarCantidadProduducto scp = new SeleccionarCantidadProduducto(this.vista, producto, this, fila);
             scp.setVisible(true);*/
         }
@@ -174,7 +174,7 @@ class C_crearProductoTerminado extends MouseAdapter implements ActionListener, K
     }
 
     private boolean validarCantidadProductos() {
-        if (modelo.getTm().getProductoList().isEmpty()) {
+        if (modelo.getTm().getList().isEmpty()) {
             JOptionPane.showMessageDialog(vista, VALIDAR_CANT_PRODUCTOS_MSG, VALIDAR_TITULO, JOptionPane.WARNING_MESSAGE);
             return false;
         }

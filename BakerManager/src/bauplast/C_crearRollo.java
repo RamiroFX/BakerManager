@@ -57,7 +57,7 @@ class C_crearRollo extends MouseAdapter implements ActionListener, KeyListener,
         EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
-                if (modelo.getTm().getProductoList().isEmpty()) {
+                if (modelo.getTm().getList().isEmpty()) {
                     vista.dispose();
                 } else {
                     int opcion = JOptionPane.showConfirmDialog(vista, CONFIRMAR_SALIR_MSG, VALIDAR_TITULO, JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
@@ -101,7 +101,7 @@ class C_crearRollo extends MouseAdapter implements ActionListener, KeyListener,
     public void modificarDetalle() {
         int fila = this.vista.jtProduccionDetalle.getSelectedRow();
         if (fila > -1) {
-            E_produccionFilm producto = modelo.getTm().getProductoList().get(fila);
+            E_produccionFilm producto = modelo.getTm().getList().get(fila);
             CrearFilm crearFilm = new CrearFilm(this.vista);
             crearFilm.setCallback(this);
             crearFilm.modificarRollo(fila, producto);
@@ -175,7 +175,7 @@ class C_crearRollo extends MouseAdapter implements ActionListener, KeyListener,
     }
 
     private boolean validarCantidadProductos() {
-        if (modelo.getTm().getProductoList().isEmpty()) {
+        if (modelo.getTm().getList().isEmpty()) {
             JOptionPane.showMessageDialog(vista, VALIDAR_CANT_PRODUCTOS_MSG, VALIDAR_TITULO, JOptionPane.WARNING_MESSAGE);
             return false;
         }

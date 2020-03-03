@@ -65,7 +65,7 @@ public class M_crearRollo {
     }
 
     public void guardarProduccion() {
-        //DB_Produccion.insertarProduccion(getProduccionCabecera(), getTm().getList());
+        DB_Produccion.insertarProduccionFilm(getProduccionCabecera(), getTm().getList());
     }
 
     public void limpiarCampos() {

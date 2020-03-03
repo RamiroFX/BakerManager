@@ -85,7 +85,7 @@ public class ProduccionRolloTableModel extends AbstractTableModel {
         updateTable();
     }
 
-    public List<E_produccionFilm> getProductoList() {
+    public List<E_produccionFilm> getList() {
         return list;
     }
 

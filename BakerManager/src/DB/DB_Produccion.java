@@ -425,6 +425,7 @@ public class DB_Produccion {
         String INSERT_FILM = "INSERT INTO produccion_film(nro_film, id_produccion_cabecera, id_produccion_detalle, peso, fecha_creacion, id_funcionario_responsable, cono, medida, micron, id_producto_clasifiacion, id_estado)VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
         String INSERT_PROD_FILM_PROD = "INSERT INTO produccion_film_producto(id_produccion_film, id_producto)VALUES (?, ?);";
         long sq_cabecera = -1L;
+        ArrayList<Integer> prodFilmKeys = new ArrayList<>();
         try {
             DB_manager.getConection().setAutoCommit(false);
             pst = DB_manager.getConection().prepareStatement(INSERT_CABECERA, PreparedStatement.RETURN_GENERATED_KEYS);
@@ -432,7 +433,7 @@ public class DB_Produccion {
             pst.setTimestamp(2, new Timestamp(produccionCabecera.getFechaProduccion().getTime()));
             pst.setInt(3, produccionCabecera.getFuncionarioProduccion().getId_funcionario());
             pst.setInt(4, produccionCabecera.getFuncionarioSistema().getId_funcionario());
-            pst.setInt(5, produccionCabecera.getTipo().getId());
+            pst.setInt(5, E_produccionTipo.ROLLO);
             pst.executeUpdate();
             rs = pst.getGeneratedKeys();
             if (rs != null && rs.next()) {
@@ -454,24 +455,30 @@ public class DB_Produccion {
             }
             for (int i = 0; i < detalle.size(); i++) {
                 E_produccionFilm prodFilm = detalle.get(i);
-                pst = DB_manager.getConection().prepareStatement(INSERT_FILM);
+                pst = DB_manager.getConection().prepareStatement(INSERT_FILM, PreparedStatement.RETURN_GENERATED_KEYS);
                 pst.setInt(1, prodFilm.getNroFilm());
                 pst.setInt(2, (int) sq_cabecera);
                 pst.setInt(3, prodFilm.getId());
                 pst.setDouble(4, prodFilm.getPeso());
-                pst.setTimestamp(5, new Timestamp(prodFilm.getFechaCreacion().getTime()));
-                pst.setInt(6, prodFilm.getResponsable().getId_funcionario());
+                pst.setTimestamp(5, new Timestamp(produccionCabecera.getFechaProduccion().getTime()));
+                pst.setInt(6, produccionCabecera.getFuncionarioProduccion().getId_funcionario());
                 pst.setInt(7, prodFilm.getCono());
                 pst.setInt(8, prodFilm.getMedida());
                 pst.setInt(9, prodFilm.getMicron());
                 pst.setInt(10, prodFilm.getProductoClasificacion().getId());
                 pst.setInt(11, prodFilm.getEstado().getId());
                 pst.executeUpdate();
+                rs = pst.getGeneratedKeys();
+                if (rs != null && rs.next()) {
+                    prodFilmKeys.add((int) rs.getLong(1));
+                }
                 pst.close();
             }
+            int prodFilmIndex = 0;
             for (E_produccionFilm e_produccionFilm : detalle) {
                 pst = DB_manager.getConection().prepareStatement(INSERT_PROD_FILM_PROD);
-                pst.setInt(1, e_produccionFilm.getId());
+                pst.setInt(1, prodFilmKeys.get(prodFilmIndex));
+                prodFilmIndex++;
                 pst.setInt(2, e_produccionFilm.getProducto().getId());
                 pst.executeUpdate();
                 pst.close();

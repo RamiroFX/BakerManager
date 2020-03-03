@@ -16,14 +16,12 @@ import java.util.ArrayList;
  *
  * @author Ramiro Ferreira
  */
-public class M_seleccionarProductoPorClasif {
+public class M_seleccionarFilm {
 
     private SeleccionarProductoRolloTableModel tm;
-    private E_productoClasificacion pc;
 
-    public M_seleccionarProductoPorClasif() {
+    public M_seleccionarFilm() {
         this.tm = new SeleccionarProductoRolloTableModel();
-        this.pc = new E_productoClasificacion();
     }
 
     public SeleccionarProductoRolloTableModel getTm() {
@@ -34,15 +32,12 @@ public class M_seleccionarProductoPorClasif {
         this.tm = tm;
     }
 
-    public void setPc(E_productoClasificacion pc) {
-        this.pc = pc;
-    }
 
     public ArrayList<Estado> obtenerEstado() {
         return DB_manager.obtenerEstados();
     }
 
     public void consultarRollos(String descripcion, Estado estado, String ordenarPor) {
-        this.tm.setList(DB_Producto.consultarProductoPorClasificacion(descripcion, estado, ordenarPor, pc));
+//        this.tm.setList(DB_Producto.consultarProductoPorClasificacion(descripcion, estado, ordenarPor, pc));
     }
 }

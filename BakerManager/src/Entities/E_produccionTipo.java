@@ -11,6 +11,8 @@ package Entities;
  */
 public class E_produccionTipo {
 
+    public static final int PRODUCTO_TERMINADO = 1, ROLLO = 2;
+
     private int id;
     private String descripcion;
 
@@ -49,6 +51,7 @@ public class E_produccionTipo {
     public void setDescripcion(String descripcion) {
         this.descripcion = descripcion;
     }
+
     @Override
     public boolean equals(Object o) {
         // If the object is compared with itself then return true   
