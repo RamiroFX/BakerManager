@@ -11,6 +11,8 @@ package Entities;
  */
 public class E_productoClasificacion {
 
+    public static final int PROD_TERMINADO = 4, MATERIA_PRIMA = 5;
+
     int id;
     String descripcion;
 

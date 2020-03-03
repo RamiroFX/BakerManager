@@ -7,6 +7,7 @@ package DB;
 
 import Entities.E_produccionCabecera;
 import Entities.E_produccionDetalle;
+import Entities.E_produccionFilm;
 import Entities.E_produccionTipo;
 import Entities.Estado;
 import Entities.M_funcionario;
@@ -415,5 +416,103 @@ public class DB_Produccion {
             lgr.log(Level.SEVERE, ex.getMessage(), ex);
         }
         return list;
+    }
+
+    public static int insertarProduccionFilm(E_produccionCabecera produccionCabecera, List<E_produccionFilm> detalle) {
+        String INSERT_CABECERA = "INSERT INTO produccion_cabecera(nro_orden_trabajo, fecha_produccion, id_funcionario_responsable, id_funcionario_usuario, id_produccion_tipo)VALUES( ?, ?, ?, ?, ?);";
+        //LA SGBD SE ENCARGA DE INSERTAR EL TIMESTAMP.
+        String INSERT_DETALLE = "INSERT INTO produccion_detalle(id_produccion_cabecera, id_producto, cantidad)VALUES (?, ?, ?);";
+        String INSERT_FILM = "INSERT INTO produccion_film(nro_film, id_produccion_cabecera, id_produccion_detalle, peso, fecha_creacion, id_funcionario_responsable, cono, medida, micron, id_producto_clasifiacion, id_estado)VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
+        String INSERT_PROD_FILM_PROD = "INSERT INTO produccion_film_producto(id_produccion_film, id_producto)VALUES (?, ?);";
+        long sq_cabecera = -1L;
+        try {
+            DB_manager.getConection().setAutoCommit(false);
+            pst = DB_manager.getConection().prepareStatement(INSERT_CABECERA, PreparedStatement.RETURN_GENERATED_KEYS);
+            pst.setInt(1, produccionCabecera.getNroOrdenTrabajo());
+            pst.setTimestamp(2, new Timestamp(produccionCabecera.getFechaProduccion().getTime()));
+            pst.setInt(3, produccionCabecera.getFuncionarioProduccion().getId_funcionario());
+            pst.setInt(4, produccionCabecera.getFuncionarioSistema().getId_funcionario());
+            pst.setInt(5, produccionCabecera.getTipo().getId());
+            pst.executeUpdate();
+            rs = pst.getGeneratedKeys();
+            if (rs != null && rs.next()) {
+                sq_cabecera = rs.getLong(1);
+            }
+            pst.close();
+            rs.close();
+            for (int i = 0; i < detalle.size(); i++) {
+                pst = DB_manager.getConection().prepareStatement(INSERT_DETALLE, PreparedStatement.RETURN_GENERATED_KEYS);
+                pst.setInt(1, (int) sq_cabecera);
+                pst.setInt(2, detalle.get(i).getProducto().getId());
+                pst.setDouble(3, detalle.get(i).getPeso());
+                pst.executeUpdate();
+                rs = pst.getGeneratedKeys();
+                if (rs != null && rs.next()) {
+                    detalle.get(i).setId((int) rs.getLong(1));
+                }
+                pst.close();
+            }
+            for (int i = 0; i < detalle.size(); i++) {
+                E_produccionFilm prodFilm = detalle.get(i);
+                pst = DB_manager.getConection().prepareStatement(INSERT_FILM);
+                pst.setInt(1, prodFilm.getNroFilm());
+                pst.setInt(2, (int) sq_cabecera);
+                pst.setInt(3, prodFilm.getId());
+                pst.setDouble(4, prodFilm.getPeso());
+                pst.setTimestamp(5, new Timestamp(prodFilm.getFechaCreacion().getTime()));
+                pst.setInt(6, prodFilm.getResponsable().getId_funcionario());
+                pst.setInt(7, prodFilm.getCono());
+                pst.setInt(8, prodFilm.getMedida());
+                pst.setInt(9, prodFilm.getMicron());
+                pst.setInt(10, prodFilm.getProductoClasificacion().getId());
+                pst.setInt(11, prodFilm.getEstado().getId());
+                pst.executeUpdate();
+                pst.close();
+            }
+            for (E_produccionFilm e_produccionFilm : detalle) {
+                pst = DB_manager.getConection().prepareStatement(INSERT_PROD_FILM_PROD);
+                pst.setInt(1, e_produccionFilm.getId());
+                pst.setInt(2, e_produccionFilm.getProducto().getId());
+                pst.executeUpdate();
+                pst.close();
+            }
+            //se suma al stock lo que se produce
+            for (int i = 0; i < detalle.size(); i++) {
+                int idProducto = detalle.get(i).getProducto().getId();
+                double cantidad = detalle.get(i).getPeso();
+                String query = "UPDATE PRODUCTO SET "
+                        + "CANT_ACTUAL = "
+                        + "((SELECT CANT_ACTUAL FROM PRODUCTO WHERE ID_PRODUCTO = " + idProducto + ")+" + cantidad + ") "
+                        + "WHERE ID_PRODUCTO =" + idProducto;
+                st = DB_manager.getConection().createStatement();
+                st.executeUpdate(query);
+            }
+            DB_manager.establecerTransaccion();
+        } catch (SQLException ex) {
+            System.out.println(ex.getNextException());
+            if (DB_manager.getConection() != null) {
+                try {
+                    DB_manager.getConection().rollback();
+                } catch (SQLException ex1) {
+                    Logger lgr = Logger.getLogger(DB_Ingreso.class.getName());
+                    lgr.log(Level.WARNING, ex1.getMessage(), ex1);
+                }
+            }
+            Logger lgr = Logger.getLogger(DB_Ingreso.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        } finally {
+            try {
+                if (pst != null) {
+                    pst.close();
+                }
+                if (rs != null) {
+                    rs.close();
+                }
+            } catch (SQLException ex) {
+                Logger lgr = Logger.getLogger(DB_Ingreso.class.getName());
+                lgr.log(Level.WARNING, ex.getMessage(), ex);
+            }
+        }
+        return (int) sq_cabecera;
     }
 }

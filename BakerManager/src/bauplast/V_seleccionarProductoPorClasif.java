@@ -22,7 +22,7 @@ import net.miginfocom.swing.MigLayout;
  *
  * @author Ramiro Ferreira
  */
-public class V_seleccionarRollo extends JDialog {
+public class V_seleccionarProductoPorClasif extends JDialog {
 
     JButton jbAceptar, jbSalir, jbBuscar, jbBorrar, jbCrearProducto;
     JScrollPane jspProducto;
@@ -32,7 +32,7 @@ public class V_seleccionarRollo extends JDialog {
     public JComboBox jcbOrdenarPor;
     public JTextField jtfBuscar;
 
-    public V_seleccionarRollo(JDialog main) {
+    public V_seleccionarProductoPorClasif(JDialog main) {
         super(main, "Seleccionar rollo", true);
         setSize(1200, 400);
         setLocationRelativeTo(main);

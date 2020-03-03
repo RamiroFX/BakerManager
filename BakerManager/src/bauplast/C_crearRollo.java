@@ -7,8 +7,8 @@ package bauplast;
 
 import Empleado.Seleccionar_funcionario;
 import Entities.E_produccionFilm;
+import Entities.E_productoClasificacion;
 import Entities.M_funcionario;
-import Entities.M_producto;
 import Interface.InterfaceRecibirProduccionFilm;
 import Interface.RecibirEmpleadoCallback;
 import java.awt.EventQueue;
@@ -194,7 +194,9 @@ class C_crearRollo extends MouseAdapter implements ActionListener, KeyListener,
     }
 
     private void invocarSeleccionarRollo() {
-        SeleccionarRollo sp = new SeleccionarRollo(vista);
+        SeleccionarProductoPorClasif sp = new SeleccionarProductoPorClasif(vista);
+        E_productoClasificacion pc = new E_productoClasificacion(E_productoClasificacion.MATERIA_PRIMA, "");
+        sp.setProductoClasificacion(pc);
         sp.setCallback(this);
         sp.mostrarVista();
     }

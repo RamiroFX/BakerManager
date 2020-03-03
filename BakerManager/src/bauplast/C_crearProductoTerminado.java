@@ -7,6 +7,7 @@ package bauplast;
 
 import Empleado.Seleccionar_funcionario;
 import Entities.E_produccionFilm;
+import Entities.E_productoClasificacion;
 import Entities.M_funcionario;
 import Entities.M_producto;
 import Interface.InterfaceRecibirProduccionFilm;
@@ -192,7 +193,9 @@ class C_crearProductoTerminado extends MouseAdapter implements ActionListener, K
     }
 
     private void invocarSeleccionarRollo() {
-        SeleccionarRollo sp = new SeleccionarRollo(vista);
+        SeleccionarProductoPorClasif sp = new SeleccionarProductoPorClasif(vista);
+        E_productoClasificacion pc = new E_productoClasificacion(E_productoClasificacion.PROD_TERMINADO, "");
+        sp.setProductoClasificacion(pc);
         sp.setCallback(this);
         sp.mostrarVista();
     }

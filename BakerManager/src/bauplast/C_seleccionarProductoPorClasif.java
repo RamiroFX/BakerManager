@@ -39,15 +39,15 @@ import javax.swing.SwingUtilities;
  *
  * @author Ramiro Ferreira
  */
-public class C_seleccionarRollo extends MouseAdapter implements ActionListener, KeyListener {
+public class C_seleccionarProductoPorClasif extends MouseAdapter implements ActionListener, KeyListener {
 
     private static final String ENTER_KEY = "Entrar";
 
-    private M_seleccionarRollo modelo;
-    private V_seleccionarRollo vista;
+    private M_seleccionarProductoPorClasif modelo;
+    private V_seleccionarProductoPorClasif vista;
     private InterfaceRecibirProduccionFilm callback;
 
-    public C_seleccionarRollo(M_seleccionarRollo modelo, V_seleccionarRollo vista) {
+    public C_seleccionarProductoPorClasif(M_seleccionarProductoPorClasif modelo, V_seleccionarProductoPorClasif vista) {
         this.vista = vista;
         this.modelo = modelo;
         inicializarVista();

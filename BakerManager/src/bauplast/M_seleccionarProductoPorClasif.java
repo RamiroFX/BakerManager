@@ -7,6 +7,7 @@ package bauplast;
 
 import DB.DB_Producto;
 import DB.DB_manager;
+import Entities.E_productoClasificacion;
 import Entities.Estado;
 import ModeloTabla.SeleccionarProductoRolloTableModel;
 import java.util.ArrayList;
@@ -15,12 +16,14 @@ import java.util.ArrayList;
  *
  * @author Ramiro Ferreira
  */
-public class M_seleccionarRollo {
+public class M_seleccionarProductoPorClasif {
 
-    SeleccionarProductoRolloTableModel tm;
+    private SeleccionarProductoRolloTableModel tm;
+    private E_productoClasificacion pc;
 
-    public M_seleccionarRollo() {
+    public M_seleccionarProductoPorClasif() {
         this.tm = new SeleccionarProductoRolloTableModel();
+        this.pc = new E_productoClasificacion();
         inicializarModelo();
     }
 
@@ -37,11 +40,15 @@ public class M_seleccionarRollo {
         this.tm = tm;
     }
 
+    public void setPc(E_productoClasificacion pc) {
+        this.pc = pc;
+    }
+
     public ArrayList<Estado> obtenerEstado() {
         return DB_manager.obtenerEstados();
     }
 
     public void consultarRollos(String descripcion, Estado estado, String ordenarPor) {
-        this.tm.setList(DB_Producto.consultarRollos(descripcion, estado, ordenarPor));
+        this.tm.setList(DB_Producto.consultarProductoPorClasificacion(descripcion, estado, ordenarPor, pc));
     }
 }

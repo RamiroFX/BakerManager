@@ -870,31 +870,50 @@ public class DB_Producto {
         return list;
     }
 
-    public static ArrayList<M_producto> consultarRollos(String descripcion, Estado estado,
-            String ordenarPor) {
+    public static ArrayList<M_producto> consultarProductoPorClasificacion(String descripcion, Estado estado, String ordenarPor, E_productoClasificacion clasificacion) {
         ArrayList productos = null;
         try {
             if (DB_manager.getConection() == null) {
                 throw new IllegalStateException("Connection already closed.");
             }
-            switch(ordenarPor){
-                case "ID":{
+
+            String fromQuery = "FROM PRODUCTO PROD ";
+            String finalQuery = "ORDER BY PROD.DESCRIPCION ";
+            switch (ordenarPor) {
+                case "ID": {
+                    finalQuery = "ORDER BY PROD.ID_PRODUCTO ";
+                    break;
+                }
+                case "Código": {
+                    finalQuery = "ORDER BY PROD.CODIGO ";
+                    break;
+                }
+                case "ID_PRODUCTO": {
+                    finalQuery = "ORDER BY PROD.ID_PRODUCTO ";
                     break;
                 }
             }
-            String finalQuery = "ORDER BY PROD.DESCRIPCION ";
-            if (ordenarPor.equals("Descripción")) {
-                finalQuery = "ORDER BY PROD.DESCRIPCION ";
-            } else if (ordenarPor.equals("ID")) {
-                finalQuery = "ORDER BY PROD.ID_PRODUCTO ";
-            }
-            String fromQuery = "FROM PRODUCTO PROD ";
 
             String estad;
             if ("Todos".equals(estado)) {
                 estad = "";
             } else {
                 estad = "AND PROD.ID_ESTADO = (SELECT ESTA.ID_ESTADO FROM ESTADO ESTA WHERE ESTA.DESCRIPCION LIKE '" + estado + "') ";
+            }
+            String productoClasificacion;
+            switch (clasificacion.getId()) {
+                case E_productoClasificacion.PROD_TERMINADO: {
+                    productoClasificacion = "AND PROD.ID_CATEGORIA = " + E_productoClasificacion.PROD_TERMINADO + " ";
+                    break;
+                }
+                case E_productoClasificacion.MATERIA_PRIMA: {
+                    productoClasificacion = "AND PROD.ID_CATEGORIA = " + E_productoClasificacion.MATERIA_PRIMA + " ";
+                    break;
+                }
+                default: {
+                    productoClasificacion = "";
+                    break;
+                }
             }
 
             String Query = "SELECT PROD.ID_PRODUCTO \"id_producto\", "
@@ -909,6 +928,7 @@ public class DB_Producto {
                     + "WHERE "
                     + "LOWER(PROD.DESCRIPCION) LIKE ? "
                     + estad
+                    + productoClasificacion
                     + finalQuery;
 
             pst = DB_manager.getConection().prepareStatement(Query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
@@ -920,9 +940,9 @@ public class DB_Producto {
                 producto.setId(rs.getInt("id_producto"));
                 producto.setCodBarra(rs.getString("codigo"));
                 producto.setDescripcion(rs.getString("descripcion"));
-                
+
                 producto.setEstado(rs.getString("estado"));
-                
+
                 producto.setCategoria(rs.getString("categoria"));
                 producto.setIdCategoria(rs.getInt("id_categoria"));
                 producto.setIdEstado(rs.getInt("id_estado"));
