@@ -28,7 +28,6 @@ public class V_seleccionarFilm extends JDialog {
     JScrollPane jspProducto;
     JTable jtProducto;
     JPanel jpBotones, jpTop, jpBotonesTop, jpJtextFieldTop;
-    public JComboBox<Estado> jcbEstado;
     public JComboBox jcbOrdenarPor;
     public JTextField jtfBuscar;
 
@@ -47,12 +46,9 @@ public class V_seleccionarFilm extends JDialog {
         jpTop = new JPanel(new MigLayout("", "[fill][fill]", "[fill][]"));
         JPanel jpFiltros = new JPanel(new FlowLayout(FlowLayout.CENTER));
 
-        jcbEstado = new JComboBox();
         jcbOrdenarPor = new JComboBox();
         jpFiltros.add(new JLabel("Ordenar por:"));
         jpFiltros.add(jcbOrdenarPor);
-        jpFiltros.add(new JLabel("Estado:"));
-        jpFiltros.add(jcbEstado);
         jpBotonesTop = new JPanel();
         jpJtextFieldTop = new JPanel(new BorderLayout());
         jtfBuscar = new JTextField();

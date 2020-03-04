@@ -7,6 +7,7 @@ package bauplast;
 import DB.DB_Producto;
 import DB.DB_manager;
 import Egresos.C_crear_egreso;
+import Entities.E_produccionFilm;
 import Entities.Estado;
 import Entities.M_menu_item;
 import Entities.M_producto;
@@ -16,6 +17,7 @@ import Interface.RecibirProductoCallback;
 import MenuPrincipal.DatosUsuario;
 import Pedido.C_crearPedido;
 import Pedido.C_verPedido;
+import Produccion.SeleccionCantidadProductoSimple;
 import Producto.C_crear_producto;
 import Proveedor.Seleccionar_proveedor;
 import Ventas.C_crearVentaRapida;
@@ -84,13 +86,9 @@ public class C_seleccionarFilm extends MouseAdapter implements ActionListener, K
         });
         Utilities.c_packColumn.packColumns(this.vista.jtProducto, 1);
 
-        ArrayList<Estado> estado = modelo.obtenerEstado();
-        for (int i = 0; i < estado.size(); i++) {
-            this.vista.jcbEstado.addItem(estado.get(i));
-        }
-        this.vista.jcbOrdenarPor.addItem("ID");
-        this.vista.jcbOrdenarPor.addItem("Descripción");
-        this.vista.jcbOrdenarPor.addItem("Código");
+        this.vista.jcbOrdenarPor.addItem("OT");
+        this.vista.jcbOrdenarPor.addItem("Fecha");
+        this.vista.jcbOrdenarPor.addItem("Producto");
     }
 
     private void agregarListeners() {
@@ -123,10 +121,8 @@ public class C_seleccionarFilm extends MouseAdapter implements ActionListener, K
                     JOptionPane.showMessageDialog(vista, "El texto ingresado supera el máximo permitido de 50 caracteres.", "Atención", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
-                int jcbEstadoIndex = vista.jcbEstado.getSelectedIndex();
-                Estado estado = vista.jcbEstado.getItemAt(jcbEstadoIndex);
                 String ordenarPor = vista.jcbOrdenarPor.getSelectedItem().toString();
-                modelo.consultarRollos(desc, estado, ordenarPor);
+                modelo.consultarRollos(desc.toLowerCase(), ordenarPor);
                 Utilities.c_packColumn.packColumns(vista.jtProducto, 1);
             }
         });
@@ -140,19 +136,17 @@ public class C_seleccionarFilm extends MouseAdapter implements ActionListener, K
     private void borrarParametros() {
         this.vista.jtfBuscar.setText("");
         this.vista.jtfBuscar.requestFocusInWindow();
-        this.vista.jcbEstado.setSelectedIndex(1);
     }
 
     private void seleccionarRollo() {
         int fila = vista.jtProducto.getSelectedRow();
         if (fila > -1) {
-            M_producto producto = modelo.getTm().getProductoList().get(fila);
-            vista.jbAceptar.setEnabled(true);
-            CrearFilm crearFilm = new CrearFilm(this.vista);
-            crearFilm.setCallback(callback);
-            crearFilm.rellenarVista(producto);
-            crearFilm.mostrarVista();
-            vista.jtfBuscar.requestFocusInWindow();
+            E_produccionFilm pf = modelo.getTm().getList().get(fila);
+            SeleccionCantidadProductoSimple scp = new SeleccionCantidadProductoSimple(vista, -1);
+            scp.setFilm(pf);
+            scp.setFilmCallback(callback);
+            scp.inicializarVista();
+            scp.setVisible(true);
         }
     }
 
@@ -193,14 +187,15 @@ public class C_seleccionarFilm extends MouseAdapter implements ActionListener, K
         int columna = this.vista.jtProducto.columnAtPoint(e.getPoint());
         if ((fila > -1) && (columna > -1)) {
             int index = this.vista.jtProducto.getSelectedRow();
-            M_producto producto = modelo.getTm().getProductoList().get(index);
+            E_produccionFilm producto = modelo.getTm().getList().get(index);
             this.vista.jbAceptar.setEnabled(true);
             if (e.getClickCount() == 2) {
-                vista.jbAceptar.setEnabled(true);
-                CrearFilm crearFilm = new CrearFilm(this.vista);
-                crearFilm.setCallback(callback);
-                crearFilm.rellenarVista(producto);
-                crearFilm.mostrarVista();
+                E_produccionFilm pf = modelo.getTm().getList().get(fila);
+                SeleccionCantidadProductoSimple scp = new SeleccionCantidadProductoSimple(vista, -1);
+                scp.setFilm(pf);
+                scp.setFilmCallback(callback);
+                scp.inicializarVista();
+                scp.setVisible(true);
                 this.vista.jtfBuscar.requestFocusInWindow();
             }
         }

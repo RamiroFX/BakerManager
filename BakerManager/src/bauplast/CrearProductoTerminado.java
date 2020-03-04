@@ -14,11 +14,11 @@ import bakermanager.C_inicio;
 public class CrearProductoTerminado {
 
     private V_crearProductoTerminado vista;
-    private M_crearRollo modelo;
+    private M_crearProductoTerminado modelo;
     private C_crearProductoTerminado controlador;
 
     public CrearProductoTerminado(C_inicio c_inicio) {
-        this.modelo = new M_crearRollo();
+        this.modelo = new M_crearProductoTerminado();
         this.vista = new V_crearProductoTerminado(c_inicio.vista);
         this.controlador = new C_crearProductoTerminado(modelo, vista);
     }

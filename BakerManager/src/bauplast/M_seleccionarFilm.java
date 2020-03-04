@@ -5,11 +5,10 @@
  */
 package bauplast;
 
-import DB.DB_Producto;
+import DB.DB_Produccion;
 import DB.DB_manager;
-import Entities.E_productoClasificacion;
 import Entities.Estado;
-import ModeloTabla.SeleccionarProductoRolloTableModel;
+import ModeloTabla.RolloProducidoTableModel;
 import java.util.ArrayList;
 
 /**
@@ -18,26 +17,25 @@ import java.util.ArrayList;
  */
 public class M_seleccionarFilm {
 
-    private SeleccionarProductoRolloTableModel tm;
+    private RolloProducidoTableModel tm;
 
     public M_seleccionarFilm() {
-        this.tm = new SeleccionarProductoRolloTableModel();
+        this.tm = new RolloProducidoTableModel();
     }
 
-    public SeleccionarProductoRolloTableModel getTm() {
+    public RolloProducidoTableModel getTm() {
         return tm;
     }
 
-    public void setTm(SeleccionarProductoRolloTableModel tm) {
+    public void setTm(RolloProducidoTableModel tm) {
         this.tm = tm;
     }
-
 
     public ArrayList<Estado> obtenerEstado() {
         return DB_manager.obtenerEstados();
     }
 
-    public void consultarRollos(String descripcion, Estado estado, String ordenarPor) {
-//        this.tm.setList(DB_Producto.consultarProductoPorClasificacion(descripcion, estado, ordenarPor, pc));
+    public void consultarRollos(String descripcion, String ordenarPor) {
+        this.tm.setList(DB_Produccion.consultarFilmDisponible(descripcion, ordenarPor));
     }
 }

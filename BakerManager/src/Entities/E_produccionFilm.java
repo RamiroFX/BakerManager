@@ -21,6 +21,8 @@ public class E_produccionFilm {
     private int medida;
     private int micron;
     private Double peso;
+    private Double pesoUtilizado;//no obligatorio(auxiliar)
+    private Double pesoActual;//no obligatorio(auxiliar)
     private Date fechaCreacion;
     private M_producto producto;
     private M_funcionario responsable;
@@ -208,6 +210,34 @@ public class E_produccionFilm {
 
     public M_producto getProducto() {
         return producto;
+    }
+
+    /**
+     * @return the pesoUtilizado
+     */
+    public Double getPesoUtilizado() {
+        return pesoUtilizado;
+    }
+
+    /**
+     * @param pesoUtilizado the pesoUtilizado to set
+     */
+    public void setPesoUtilizado(Double pesoUtilizado) {
+        this.pesoUtilizado = pesoUtilizado;
+    }
+
+    /**
+     * @return the pesoActual
+     */
+    public Double getPesoActual() {
+        return pesoActual;
+    }
+
+    /**
+     * @param pesoActual the pesoActual to set
+     */
+    public void setPesoActual(Double pesoActual) {
+        this.pesoActual = pesoActual;
     }
 
 }

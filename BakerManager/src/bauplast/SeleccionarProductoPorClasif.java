@@ -7,6 +7,7 @@ package bauplast;
 
 import Entities.E_productoClasificacion;
 import Interface.InterfaceRecibirProduccionFilm;
+import Interface.RecibirProductoCallback;
 import javax.swing.JDialog;
 
 /**
@@ -35,5 +36,9 @@ public class SeleccionarProductoPorClasif {
 
     public void setCallback(InterfaceRecibirProduccionFilm callback) {
         this.controlador.setCallback(callback);
+    }
+
+    public void setProductoCallback(RecibirProductoCallback callback) {
+        this.controlador.setProductoCallback(callback);
     }
 }
