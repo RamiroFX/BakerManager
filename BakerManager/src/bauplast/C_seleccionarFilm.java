@@ -209,6 +209,11 @@ public class C_seleccionarFilm extends MouseAdapter implements ActionListener, K
                 }
             }
         }
+        if (this.vista.jtProducto.hasFocus()) {
+            if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+                cerrar();
+            }
+        }
     }
 
     @Override

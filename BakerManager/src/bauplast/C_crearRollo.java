@@ -60,7 +60,7 @@ class C_crearRollo extends MouseAdapter implements ActionListener, KeyListener,
         EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
-                if (modelo.getTm().getList().isEmpty() && esModoCreacion) {
+                if (modelo.getTm().getList().isEmpty() || !esModoCreacion) {
                     vista.dispose();
                 } else {
                     int opcion = JOptionPane.showConfirmDialog(vista, CONFIRMAR_SALIR_MSG, VALIDAR_TITULO, JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);

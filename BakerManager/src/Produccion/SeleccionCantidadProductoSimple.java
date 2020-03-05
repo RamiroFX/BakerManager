@@ -25,13 +25,13 @@ public class SeleccionCantidadProductoSimple extends javax.swing.JDialog impleme
 
     private javax.swing.JButton jbCancel;
     private javax.swing.JButton jbOK;
-    private javax.swing.JLabel jlProducto, jlCantidad, jlObservacion;
-    private javax.swing.JTextField jtfProducto, jtfCantidad, jtfObservacion;
+    private javax.swing.JLabel jlProducto, jlCantidad;
+    private javax.swing.JTextField jtfProducto, jtfCantidad;
     int row;
     M_producto producto;
     E_produccionFilm film;
     Double cantidad;
-    String observacion;
+    //String observacion;
     private RecibirProductoCallback productoCallback;
     private InterfaceRecibirProduccionFilm filmCallback;
     boolean isProductoTerminado;// productoTerminado=true;rollo=false
@@ -39,7 +39,7 @@ public class SeleccionCantidadProductoSimple extends javax.swing.JDialog impleme
     public SeleccionCantidadProductoSimple(JDialog vista, int index) {
         super(vista, true);
         setTitle("Seleccione una cantidad");
-        setSize(new java.awt.Dimension(300, 250));
+        setSize(new java.awt.Dimension(350, 150));
         setLocationRelativeTo(vista);
         this.row = index;//row > -1 si es para modificar
         this.isProductoTerminado = false;
@@ -78,11 +78,12 @@ public class SeleccionCantidadProductoSimple extends javax.swing.JDialog impleme
         jbCancel = new javax.swing.JButton();
         jlProducto = new javax.swing.JLabel("Producto");
         jlCantidad = new javax.swing.JLabel("Cantidad");
-        jlObservacion = new javax.swing.JLabel("Observación");
+        //jlObservacion = new javax.swing.JLabel("Observación");
         jtfProducto = new javax.swing.JTextField();
         jtfProducto.setEditable(false);
+        jtfProducto.setFocusable(false);
         jtfCantidad = new javax.swing.JTextField();
-        jtfObservacion = new javax.swing.JTextField();
+        //jtfObservacion = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         jbOK.setText("OK");
@@ -91,13 +92,13 @@ public class SeleccionCantidadProductoSimple extends javax.swing.JDialog impleme
         jbCancel.setText("Cancel");
         jbCancel.addActionListener(this);
         jtfCantidad.addKeyListener(this);
-        jtfObservacion.addKeyListener(this);
+        //jtfObservacion.addKeyListener(this);
         getContentPane().add(jlProducto);
-        getContentPane().add(jtfProducto, "width :200:,grow,wrap");
+        getContentPane().add(jtfProducto, "width :250:,grow,wrap");
         getContentPane().add(jlCantidad);
-        getContentPane().add(jtfCantidad, "width :200:,grow,wrap");
-        getContentPane().add(jlObservacion);
-        getContentPane().add(jtfObservacion, "width :200:,grow,wrap");
+        getContentPane().add(jtfCantidad, "width :250:,grow,wrap");
+        //getContentPane().add(jlObservacion);
+        //getContentPane().add(jtfObservacion, "width :200:,grow,wrap");
         getContentPane().add(jbOK);
         getContentPane().add(jbCancel);
 
@@ -109,19 +110,19 @@ public class SeleccionCantidadProductoSimple extends javax.swing.JDialog impleme
             return;
         }
         cantidad = Double.valueOf(String.valueOf(jtfCantidad.getText().trim()));
-        observacion = String.valueOf(jtfObservacion.getText().trim());
-        if (observacion.length() > 120) {
+        //observacion = String.valueOf(jtfObservacion.getText().trim());
+        /*if (observacion.length() > 120) {
             JOptionPane.showMessageDialog(null, "Observacion sobrepaso el máximo de 120 caracteres permitidos.", "Atención", JOptionPane.ERROR_MESSAGE);
             return;
         }
         if (observacion.isEmpty()) {
             observacion = null;
-        }
+        }*/
         if (isProductoTerminado) {
             if (row > -1) {
-                productoCallback.modificarProducto(row, cantidad, 0, 0, producto, observacion);
+                productoCallback.modificarProducto(row, cantidad, 0, 0, producto, "");
             } else {
-                productoCallback.recibirProducto(cantidad, 0, 0, producto, observacion);
+                productoCallback.recibirProducto(cantidad, 0, 0, producto, "");
             }
         } else {
             if (!validarPeso()) {
@@ -192,7 +193,7 @@ public class SeleccionCantidadProductoSimple extends javax.swing.JDialog impleme
 
     @Override
     public void keyTyped(KeyEvent ke) {
-        if (jtfCantidad.hasFocus() || jtfObservacion.hasFocus()) {
+        if (jtfCantidad.hasFocus()) {
             if (ke.getKeyChar() == '\n') {
                 enviarCantidad();
             }

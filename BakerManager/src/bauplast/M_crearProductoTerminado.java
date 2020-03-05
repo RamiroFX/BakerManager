@@ -77,8 +77,8 @@ public class M_crearProductoTerminado {
         getProductosTerminadosTM().agregarDetalle(produccion);
     }
 
-    public void modificarProductoTerminado(int index, E_produccionFilm pf) {
-        getProductosTerminadosTM().modificarCantidadDetalle(index, pf.getPeso());
+    public void modificarProductoTerminado(int index, double peso) {
+        getProductosTerminadosTM().modificarCantidadDetalle(index, peso);
     }
 
     public void removerProductoTerminado(int index) {
