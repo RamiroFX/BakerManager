@@ -14,6 +14,7 @@ import Entities.M_producto;
 import MenuPrincipal.DatosUsuario;
 import ModeloTabla.ProduccionDetalleTableModel;
 import ModeloTabla.ProduccionRolloTableModel;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 /**
@@ -22,9 +23,9 @@ import java.util.ArrayList;
  */
 public class M_crearProductoTerminado {
 
-    E_produccionCabecera produccionCabecera;
+    private E_produccionCabecera produccionCabecera;
     private ProduccionDetalleTableModel productosTerminadosTM;
-    ProduccionRolloTableModel rolloUtilizadoTM;
+    private ProduccionRolloTableModel rolloUtilizadoTM;
 
     public M_crearProductoTerminado() {
         this.produccionCabecera = new E_produccionCabecera();
@@ -49,16 +50,39 @@ public class M_crearProductoTerminado {
         return rolloUtilizadoTM;
     }
 
+    public ProduccionDetalleTableModel getProductosTerminadosTM() {
+        return productosTerminadosTM;
+    }
+
+    public void setProductosTerminadosTM(ProduccionDetalleTableModel productosTerminadosTM) {
+        this.productosTerminadosTM = productosTerminadosTM;
+    }
+
     public void agregarRolloUtilizado(E_produccionFilm producto) {
         getRolloUtilizadoTm().agregarDatos(producto);
     }
 
-    public void modificarDetalle(int index, E_produccionFilm pf) {
-        getRolloUtilizadoTm().modificarDatos(index, pf);
+    public void modifacarRolloUtilizado(int index, E_produccionFilm producto) {
+        getRolloUtilizadoTm().modificarDatos(index, producto);
     }
 
-    public void removerDetalle(int index) {
+    public void removerRolloUtilizado(int index) {
         getRolloUtilizadoTm().quitarDatos(index);
+    }
+
+    public void agregarProductoTerminado(double cantidad, M_producto producto) {
+        E_produccionDetalle produccion = new E_produccionDetalle();
+        produccion.setCantidad(cantidad);
+        produccion.setProducto(producto);
+        getProductosTerminadosTM().agregarDetalle(produccion);
+    }
+
+    public void modificarProductoTerminado(int index, E_produccionFilm pf) {
+        getProductosTerminadosTM().modificarCantidadDetalle(index, pf.getPeso());
+    }
+
+    public void removerProductoTerminado(int index) {
+        getProductosTerminadosTM().quitarDetalle(index);
     }
 
     boolean existeOrdenTrabajo(int ordenTrabajo) {
@@ -78,24 +102,13 @@ public class M_crearProductoTerminado {
         getRolloUtilizadoTm().vaciarLista();
     }
 
-    /**
-     * @return the productosTerminadosTM
-     */
-    public ProduccionDetalleTableModel getProductosTerminadosTM() {
-        return productosTerminadosTM;
+    public void consultarProduccion() {
+        getProductosTerminadosTM().setList(DB_Produccion.consultarProduccionDetalle(getProduccionCabecera().getId()));
+        getRolloUtilizadoTm().setList(DB_Produccion.consultarProduccionFilmBaja(getProduccionCabecera().getId()));
     }
 
-    /**
-     * @param productosTerminadosTM the productosTerminadosTM to set
-     */
-    public void setProductosTerminadosTM(ProduccionDetalleTableModel productosTerminadosTM) {
-        this.productosTerminadosTM = productosTerminadosTM;
-    }
-
-    public void agregarProductoTerminado(double cantidad, M_producto producto) {
-        E_produccionDetalle produccion = new E_produccionDetalle();
-        produccion.setCantidad(cantidad);
-        produccion.setProducto(producto);
-        getProductosTerminadosTM().agregarDetalle(produccion);
+    public String getFechaProduccionFormateada() {
+        SimpleDateFormat sdfs = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+        return sdfs.format(getProduccionCabecera().getFechaRegistro());
     }
 }

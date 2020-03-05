@@ -5,6 +5,7 @@
 package Produccion;
 
 import Empleado.Seleccionar_funcionario;
+import Entities.E_produccionCabecera;
 import Entities.E_produccionTipo;
 import Entities.Estado;
 import Entities.M_funcionario;
@@ -184,13 +185,32 @@ public class C_gestionProduccion implements GestionInterface, RecibirEmpleadoCal
 
     private void verDetalle() {
         int row = this.vista.jtProduccionCabecera.getSelectedRow();
-        int idProduccion = Integer.valueOf(String.valueOf(this.vista.jtProduccionCabecera.getValueAt(row, 0)));
-        VerProduccion vp = new VerProduccion(c_inicio);
-        vp.verPedidoRegistrado(idProduccion);
-        vp.mostrarVista();
-        this.vista.jbDetalle.setEnabled(false);
-        this.vista.jbAnular.setEnabled(false);
-
+        if (row > -1) {
+            E_produccionCabecera pc = modelo.getProduccionCabeceraTM().getList().get(row);
+            /*int idProduccion = Integer.valueOf(String.valueOf(this.vista.jtProduccionCabecera.getValueAt(row, 0)));
+            VerProduccion vp = new VerProduccion(c_inicio);
+            vp.verPedidoRegistrado(idProduccion);
+            vp.mostrarVista();
+            this.vista.jbDetalle.setEnabled(false);
+            this.vista.jbAnular.setEnabled(false);*/
+            ///BAUPLAST MOD
+            switch (pc.getTipo().getId()) {
+                case E_produccionTipo.PRODUCTO_TERMINADO: {
+                    CrearProductoTerminado cpt = new CrearProductoTerminado(c_inicio);
+                    cpt.cargarDatos(pc);
+                    cpt.mostrarVista();
+                    break;
+                }
+                case E_produccionTipo.ROLLO: {
+                    CrearRollo cr = new CrearRollo(c_inicio);
+                    cr.cargarDatos(pc);
+                    cr.mostrarVista();
+                    break;
+                }
+            }
+            this.vista.jbDetalle.setEnabled(false);
+            this.vista.jbAnular.setEnabled(false);
+        }
     }
 
     private void borrarParametros() {

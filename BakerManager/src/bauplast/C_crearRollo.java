@@ -6,6 +6,7 @@
 package bauplast;
 
 import Empleado.Seleccionar_funcionario;
+import Entities.E_produccionCabecera;
 import Entities.E_produccionFilm;
 import Entities.E_productoClasificacion;
 import Entities.M_funcionario;
@@ -41,10 +42,12 @@ class C_crearRollo extends MouseAdapter implements ActionListener, KeyListener,
 
     public M_crearRollo modelo;
     public V_crearRollo vista;
+    private boolean esModoCreacion;
 
     public C_crearRollo(M_crearRollo modelo, V_crearRollo vista) {
         this.modelo = modelo;
         this.vista = vista;
+        this.esModoCreacion = true;
         inicializarVista();
         agregarListeners();
     }
@@ -57,7 +60,7 @@ class C_crearRollo extends MouseAdapter implements ActionListener, KeyListener,
         EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
-                if (modelo.getTm().getList().isEmpty()) {
+                if (modelo.getTm().getList().isEmpty() && esModoCreacion) {
                     vista.dispose();
                 } else {
                     int opcion = JOptionPane.showConfirmDialog(vista, CONFIRMAR_SALIR_MSG, VALIDAR_TITULO, JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
@@ -67,6 +70,30 @@ class C_crearRollo extends MouseAdapter implements ActionListener, KeyListener,
                 }
             }
         });
+    }
+
+    public void cargarDatos(E_produccionCabecera pc) {
+        modelo.setProduccionCabecera(pc);
+        //CAMBIAR TITULO DE LA VENTANA
+        this.vista.setTitle("Ver detalle de producción" + " (Tiempo de registro: " + modelo.getFechaProduccionFormateada() + ") - (Registrado por: " + modelo.getProduccionCabecera().getFuncionarioSistema().getNombre() + ")");
+        //ESTABLECER MODO LECTURA DE DATOS
+        this.esModoCreacion = false;
+        //INABILITAR LOS CONTROLES
+        this.vista.jtProduccionDetalle.removeMouseListener(this);
+        this.vista.jbAceptar.setEnabled(false);
+        this.vista.jbSeleccionarProducto.setEnabled(false);
+        this.vista.jbEliminarDetalle.setEnabled(false);
+        this.vista.jbModificarDetalle.setEnabled(false);
+        this.vista.jbFuncionario.setEnabled(false);
+        this.vista.jdcFechaEntrega.setEnabled(false);
+        this.vista.jtfNroOrdenTrabajo.setEditable(false);
+        //CARGAR DATOS EN LA VISTA 
+        this.vista.jtProduccionDetalle.setModel(modelo.getTm());
+        this.vista.jdcFechaEntrega.setDate(pc.getFechaProduccion());
+        this.vista.jtfFuncionario.setText(pc.getFuncionarioProduccion().getNombre());
+        this.vista.jtfNroOrdenTrabajo.setText(pc.getNroOrdenTrabajo() + "");
+        this.modelo.consultarProduccion();
+        Utilities.c_packColumn.packColumns(this.vista.jtProduccionDetalle, 1);
     }
 
     private void inicializarVista() {

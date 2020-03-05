@@ -4,24 +4,12 @@
  */
 package bauplast;
 
-import DB.DB_Producto;
-import DB.DB_manager;
-import Egresos.C_crear_egreso;
 import Entities.E_produccionFilm;
-import Entities.Estado;
 import Entities.M_menu_item;
-import Entities.M_producto;
-import Entities.M_proveedor;
 import Interface.InterfaceRecibirProduccionFilm;
-import Interface.RecibirProductoCallback;
 import MenuPrincipal.DatosUsuario;
-import Pedido.C_crearPedido;
-import Pedido.C_verPedido;
 import Produccion.SeleccionCantidadProductoSimple;
 import Producto.C_crear_producto;
-import Proveedor.Seleccionar_proveedor;
-import Ventas.C_crearVentaRapida;
-import Ventas.C_verMesa;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -30,7 +18,6 @@ import java.awt.EventQueue;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.ArrayList;
-import java.util.Vector;
 import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;

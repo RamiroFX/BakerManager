@@ -128,7 +128,7 @@ public class V_gestionProduccion extends JInternalFrame {
         jbCrearProductoTerminado.setName("crear produccion");
         jbCrearProductoTerminado.setMargin(inset);
         jbCrearProductoTerminado.setFont(CommonFormat.fuente);
-        jbAnular = new JButton("Cancelar produccion");
+        jbAnular = new JButton("Anular");
         jbAnular.setName("anular produccion");
         jbAnular.setMargin(inset);
         jbAnular.setFont(CommonFormat.fuente);

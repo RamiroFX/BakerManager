@@ -11,6 +11,7 @@ import Entities.E_produccionFilm;
 import Entities.E_produccionTipo;
 import MenuPrincipal.DatosUsuario;
 import ModeloTabla.ProduccionRolloTableModel;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 /**
@@ -72,4 +73,14 @@ public class M_crearRollo {
         setProduccionCabecera(new E_produccionCabecera());
         getTm().vaciarLista();
     }
+
+    public String getFechaProduccionFormateada() {
+        SimpleDateFormat sdfs = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+        return sdfs.format(getProduccionCabecera().getFechaRegistro());
+    }
+
+    public void consultarProduccion() {
+        getTm().setList(DB_Produccion.consultarProduccionFilm(getProduccionCabecera().getId()));
+    }
+
 }

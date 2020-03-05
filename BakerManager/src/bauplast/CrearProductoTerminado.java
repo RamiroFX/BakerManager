@@ -5,6 +5,7 @@
  */
 package bauplast;
 
+import Entities.E_produccionCabecera;
 import bakermanager.C_inicio;
 
 /**
@@ -21,6 +22,10 @@ public class CrearProductoTerminado {
         this.modelo = new M_crearProductoTerminado();
         this.vista = new V_crearProductoTerminado(c_inicio.vista);
         this.controlador = new C_crearProductoTerminado(modelo, vista);
+    }
+
+    public void cargarDatos(E_produccionCabecera pc) {
+        this.controlador.cargarDatos(pc);
     }
 
     public void mostrarVista() {

@@ -15,6 +15,7 @@ import Proveedor.Gestion_proveedores;
 import Ventas.Gestion_Ventas;
 import bakermanager.C_inicio;
 import Empleado.Gestion_empleado;
+import Produccion.GestionProduccion;
 import Reportes.GestionReporte;
 import java.awt.Dimension;
 import java.awt.Point;
@@ -83,10 +84,16 @@ public class C_MenuPrincipal implements ActionListener, KeyListener {
             }
             if (this.vista.jbReportes.getName().equals(accesos.get(i).getMenuDescripcion())) {
                 this.vista.jbReportes.setEnabled(true);
-            }            
+            }
             if (this.vista.jbCobro.getName().equals(accesos.get(i).getMenuDescripcion())) {
                 this.vista.jbCobro.setEnabled(true);
-            }            
+            }
+            if (this.vista.jbProduccion.getName().equals(accesos.get(i).getMenuDescripcion())) {
+                this.vista.jbProduccion.setEnabled(true);
+            }
+            if (this.vista.jbPago.getName().equals(accesos.get(i).getMenuDescripcion())) {
+                this.vista.jbPago.setEnabled(true);
+            }
             if (this.c_inicio.vista.getJMenuBar().jmiConfigImpresion.getName().equals(accesos.get(i).getItemDescripcion())) {
                 this.c_inicio.vista.getJMenuBar().jmiConfigImpresion.setEnabled(true);
             }
@@ -123,6 +130,8 @@ public class C_MenuPrincipal implements ActionListener, KeyListener {
         this.vista.jbCaja.addActionListener(this);
         this.vista.jbCobro.addActionListener(this);
         this.vista.jbReportes.addActionListener(this);
+        this.vista.jbProduccion.addActionListener(this);
+        this.vista.jbPago.addActionListener(this);
         //////
 
         this.vista.jbClientes.addKeyListener(this);
@@ -136,6 +145,8 @@ public class C_MenuPrincipal implements ActionListener, KeyListener {
         this.vista.jbCaja.addKeyListener(this);
         this.vista.jbCobro.addKeyListener(this);
         this.vista.jbReportes.addKeyListener(this);
+        this.vista.jbProduccion.addKeyListener(this);
+        this.vista.jbPago.addKeyListener(this);
     }
 
     void mostrarVista() {
@@ -181,8 +192,11 @@ public class C_MenuPrincipal implements ActionListener, KeyListener {
             GestionCaja gestionCaja = new GestionCaja(c_inicio);
             gestionCaja.mostrarVista();
         } else if (src.equals(this.vista.jbCobro)) {
-            GestionCobroPago gestionCobroPago = new GestionCobroPago(c_inicio);
-            gestionCobroPago.mostrarVista();
+            GestionCobroPago gestionCobro = new GestionCobroPago(c_inicio);
+            gestionCobro.mostrarVista();
+        } else if (src.equals(this.vista.jbProduccion)) {
+            GestionProduccion gestionProduccion = new GestionProduccion(c_inicio);
+            gestionProduccion.mostrarVista();
         } else if (src.equals(this.vista.jbReportes)) {
             /*POSTTS POS = new POSTTS();
              POS.setVisible(true);
@@ -243,41 +257,48 @@ public class C_MenuPrincipal implements ActionListener, KeyListener {
                 break;
             }
             case (KeyEvent.VK_F5): {
+                if (vista.jbProduccion.isEnabled()) {
+                    GestionProduccion gestionProduccion = new GestionProduccion(c_inicio);
+                    gestionProduccion.mostrarVista();
+                }
+                break;
+            }
+            case (KeyEvent.VK_F6): {
                 if (vista.jbCaja.isEnabled()) {
                     GestionCaja gestionCaja = new GestionCaja(c_inicio);
                     gestionCaja.mostrarVista();
                 }
                 break;
             }
-            case (KeyEvent.VK_F6): {
+            case (KeyEvent.VK_F7): {
                 if (vista.jbProveedores.isEnabled()) {
                     Gestion_proveedores gestionProveedor = new Gestion_proveedores(c_inicio);
                     gestionProveedor.mostrarVista();
                 }
                 break;
             }
-            case (KeyEvent.VK_F7): {
+            case (KeyEvent.VK_F8): {
                 if (vista.jbClientes.isEnabled()) {
                     Gestion_cliente gestionCliente = new Gestion_cliente(c_inicio);
                     gestionCliente.mostrarVista();
                 }
                 break;
             }
-            case (KeyEvent.VK_F8): {
+            case (KeyEvent.VK_F9): {
                 if (vista.jbEmpleados.isEnabled()) {
                     Gestion_empleado ges_usuario = new Gestion_empleado(c_inicio);
                     ges_usuario.mostrarVista();
                 }
                 break;
             }
-            case (KeyEvent.VK_F9): {
+            case (KeyEvent.VK_F10): {
                 if (vista.jbReportes.isEnabled()) {
                     GestionReporte gestionReportes = new GestionReporte(c_inicio);
                     gestionReportes.mostrarVista();
                 }
                 break;
             }
-            case (KeyEvent.VK_F10): {
+            case (KeyEvent.VK_F11): {
                 if (vista.jbCobro.isEnabled()) {
                     GestionCobroPago gestionCobroPago = new GestionCobroPago(c_inicio);
                     gestionCobroPago.mostrarVista();

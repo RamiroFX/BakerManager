@@ -41,7 +41,7 @@ class V_crearProductoTerminado extends JDialog {
     //PRODUCTOS TERMINADOS
     public JTable jtProduccionDetalle;
     public JScrollPane jspProduccionDetalle;
-    public JButton jbSeleccionarProducto, jbModificarDetalle, jbEliminarDetalle;
+    public JButton jbSeleccionarProducto, jbModificarProducto, jbEliminarProducto;
     //ROLLOS UTILIZADOS
     public JTable jtRolloUtilizado;
     public JScrollPane jspRolloUtilizado;
@@ -99,15 +99,15 @@ class V_crearProductoTerminado extends JDialog {
         jspProduccionDetalle = new JScrollPane(jtProduccionDetalle);
         jbSeleccionarProducto = new JButton("Agregar producto[F4]");
         jbSeleccionarProducto.setSize(new Dimension(width, height));
-        jbModificarDetalle = new JButton("Modificar detalle");
-        jbModificarDetalle.setSize(new Dimension(width, height));
-        jbEliminarDetalle = new JButton("Eliminar detalle");
-        jbEliminarDetalle.setSize(new Dimension(width, height));
+        jbModificarProducto = new JButton("Modificar detalle");
+        jbModificarProducto.setSize(new Dimension(width, height));
+        jbEliminarProducto = new JButton("Eliminar detalle");
+        jbEliminarProducto.setSize(new Dimension(width, height));
         JPanel jpSouthAuxProdTerminados = new JPanel(new MigLayout());
         jpSouthAuxProdTerminados.setBorder(new EtchedBorder(EtchedBorder.LOWERED));
         jpSouthAuxProdTerminados.add(jbSeleccionarProducto, "wrap");
-        jpSouthAuxProdTerminados.add(jbModificarDetalle, "growx, wrap");
-        jpSouthAuxProdTerminados.add(jbEliminarDetalle, "growx");
+        jpSouthAuxProdTerminados.add(jbModificarProducto, "growx, wrap");
+        jpSouthAuxProdTerminados.add(jbEliminarProducto, "growx");
 
         //ROLLOS UTILIZADOS        
         jtRolloUtilizado = new JTable();

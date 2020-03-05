@@ -560,12 +560,12 @@ public class DB_Produccion {
                 pst.close();
             }
             for (int i = 0; i < rollosList.size(); i++) {
-  //id_produccion_film, id_produccion_cabecera, peso_utilizado, fecha_utilizado, id_produccion_tipo_baja
+                //id_produccion_film, id_produccion_cabecera, peso_utilizado, fecha_utilizado, id_produccion_tipo_baja
                 E_produccionFilm prodFilm = rollosList.get(i);
                 pst = DB_manager.getConection().prepareStatement(INSERT_PRODUCCION_FILM_BAJA);
                 pst.setInt(1, prodFilm.getId());
                 pst.setInt(2, (int) sq_cabecera);
-                pst.setDouble(3, prodFilm.getPesoUtilizado());
+                pst.setDouble(3, prodFilm.getPeso());
                 pst.setTimestamp(4, new Timestamp(produccionCabecera.getFechaProduccion().getTime()));
                 pst.setInt(5, E_produccionTipoBaja.PRODUCCION);
                 pst.executeUpdate();
@@ -634,7 +634,7 @@ public class DB_Produccion {
             String finalQuery = "ORDER BY V.producto ";
             switch (ordenarPor) {
                 case "OT": {
-                    //finalQuery = "ORDER BY V.nro_orden_trabajo ";
+                    finalQuery = "ORDER BY V.nro_orden_trabajo ";
                     break;
                 }
                 case "Fecha": {
@@ -647,7 +647,7 @@ public class DB_Produccion {
                 }
             }
 
-            String Query = "SELECT id_cabecera, nro_film, fecha, "
+            String Query = "SELECT id_cabecera, nro_orden_trabajo, nro_film, fecha, "
                     + "producto, cono, medida, micron, peso, peso_utilizado, peso_actual,"
                     + "id_categoria, categoria "
                     + fromQuery
@@ -662,7 +662,7 @@ public class DB_Produccion {
             while (rs.next()) {
                 E_produccionFilm film = new E_produccionFilm();
                 film.setId(rs.getInt("id_cabecera"));
-                //film.setOrdenTrabajoCabecera(rs.getInt("nro_orden_trabajo"));
+                film.setOrdenTrabajoCabecera(rs.getInt("nro_orden_trabajo"));
                 film.setNroFilm(rs.getInt("nro_film"));
                 film.setFechaCreacion(rs.getDate("fecha"));
                 M_producto prod = new M_producto();
@@ -685,5 +685,81 @@ public class DB_Produccion {
             lgr.log(Level.SEVERE, ex.getMessage(), ex);
         }
         return filmList;
+    }
+
+    public static List<E_produccionFilm> consultarProduccionFilmBaja(Integer idProduccion) {
+        List<E_produccionFilm> list = new ArrayList<>();
+        String QUERY = "SELECT id_cabecera, id_produccion_cabecera,nro_orden_trabajo, nro_film, fecha, "
+                + "producto, id_categoria, categoria, peso, cono, medida, micron "
+                + "FROM v_produccion_film_baja WHERE id_produccion_cabecera = ?;";
+
+        try {
+            pst = DB_manager.getConection().prepareStatement(QUERY, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            pst.setInt(1, idProduccion);
+            rs = pst.executeQuery();
+            while (rs.next()) {
+                M_producto producto = new M_producto();
+                producto.setDescripcion(rs.getString("producto"));
+                E_productoClasificacion pc = new E_productoClasificacion();
+                pc.setId(rs.getInt("id_categoria"));
+                pc.setDescripcion(rs.getString("categoria"));
+                E_produccionFilm pd = new E_produccionFilm();
+                pd.setId(rs.getInt("id_cabecera"));
+                pd.setOrdenTrabajoCabecera(rs.getInt("nro_orden_trabajo"));
+                pd.setNroFilm(rs.getInt("nro_film"));
+                pd.setFechaCreacion(rs.getDate("fecha"));
+                pd.setProducto(producto);
+                pd.setPeso(rs.getDouble("peso"));
+                pd.setCono(rs.getInt("cono"));
+                pd.setMedida(rs.getInt("medida"));
+                pd.setMicron(rs.getInt("micron"));
+                pd.setProducto(producto);
+                pd.setProductoClasificacion(pc);
+                list.add(pd);
+            }
+        } catch (SQLException ex) {
+            Logger lgr = Logger.getLogger(DB_Produccion.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        }
+        return list;
+    }
+
+    public static List<E_produccionFilm> consultarProduccionFilm(Integer idProduccion) {
+        List<E_produccionFilm> list = new ArrayList<>();
+        String QUERY = "SELECT id_produccion_film, nro_film, id_produccion_cabecera, "
+                + "id_produccion_detalle, producto, peso, fecha_creacion, cono, medida, "
+                + "micron, id_producto_clasifiacion, categoria "
+                + "FROM v_produccion_film WHERE id_produccion_cabecera = ?;";
+
+        try {
+            pst = DB_manager.getConection().prepareStatement(QUERY, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            pst.setInt(1, idProduccion);
+            rs = pst.executeQuery();
+            while (rs.next()) {
+                M_producto producto = new M_producto();
+                producto.setDescripcion(rs.getString("producto"));
+                E_productoClasificacion pc = new E_productoClasificacion();
+                pc.setId(rs.getInt("id_producto_clasifiacion"));
+                pc.setDescripcion(rs.getString("categoria"));
+                E_produccionFilm pd = new E_produccionFilm();
+                pd.setId(rs.getInt("id_produccion_film"));
+                pd.setOrdenTrabajoCabecera(rs.getInt("id_produccion_cabecera"));
+                pd.setOrdenTrabajoDetalle(rs.getInt("id_produccion_detalle"));
+                pd.setNroFilm(rs.getInt("nro_film"));
+                pd.setFechaCreacion(rs.getDate("fecha_creacion"));
+                pd.setProducto(producto);
+                pd.setPeso(rs.getDouble("peso"));
+                pd.setCono(rs.getInt("cono"));
+                pd.setMedida(rs.getInt("medida"));
+                pd.setMicron(rs.getInt("micron"));
+                pd.setProducto(producto);
+                pd.setProductoClasificacion(pc);
+                list.add(pd);
+            }
+        } catch (SQLException ex) {
+            Logger lgr = Logger.getLogger(DB_Produccion.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        }
+        return list;
     }
 }

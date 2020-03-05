@@ -51,37 +51,37 @@ public class RolloProducidoTableModel extends AbstractTableModel {
     @Override
     public Object getValueAt(int rowIndex, int colIndex) {
 //"OT","Fecha Producción","Nro. Film", "Peso", "Descripción", "Cono", "Medida", "Micron", "Tipo MP"
-        E_produccionFilm producto = this.list.get(rowIndex);
+        E_produccionFilm produccion = this.list.get(rowIndex);
         switch (colIndex) {
             case 0: {
-                return producto.getOrdenTrabajoCabecera();
+                return produccion.getOrdenTrabajoCabecera();
             }
             case 1: {
-                return producto.getFechaCreacion();
+                return produccion.getFechaCreacion();
             }
             case 2: {
-                return producto.getNroFilm();
+                return produccion.getNroFilm();
             }
             case 3: {
-                return producto.getProducto().getDescripcion();
+                return produccion.getProducto().getDescripcion();
             }
             case 4: {
-                return producto.getCono();
+                return produccion.getCono();
             }
             case 5: {
-                return producto.getMedida();
+                return produccion.getMedida();
             }
             case 6: {
-                return producto.getMicron();
+                return produccion.getMicron();
             }
             case 7: {
-                return producto.getPeso();
+                return produccion.getPeso();
             }
             case 8: {
-                return producto.getPesoUtilizado();
+                return produccion.getPesoUtilizado();
             }
             case 9: {
-                return producto.getPesoActual();
+                return produccion.getPesoActual();
             }
             default: {
                 return null;
