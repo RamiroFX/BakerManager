@@ -47,7 +47,7 @@ public class V_gestionCobroPago extends JInternalFrame {
     public JDateChooser jddInicioCobro, jddFinalCobro;
 
     public V_gestionCobroPago() {
-        super("Cobros", true, true, true, true);
+        super("Cobros a clientes", true, true, true, true);
         initializeCobroVariables();
         constructWindows();
         constructLayout();

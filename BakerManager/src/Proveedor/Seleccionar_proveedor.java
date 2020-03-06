@@ -7,11 +7,13 @@ package Proveedor;
 import Egresos.C_buscar_detalle;
 import Egresos.C_crear_egreso;
 import Egresos.C_gestionEgresos;
+import Interface.RecibirProveedorCallback;
 import Producto.C_crear_producto;
 import Producto.C_gestion_producto;
 import Producto.C_seleccionarProducto;
 import Producto.Crear_producto_proveedor;
 import javax.swing.JDialog;
+import javax.swing.JFrame;
 
 /**
  *
@@ -60,6 +62,20 @@ public class Seleccionar_proveedor {
     public Seleccionar_proveedor(C_seleccionarProducto seleccionarProducto) {
         vista = new V_seleccionar_proveedor(seleccionarProducto.vista);
         controlador = new C_seleccionar_proveedor(vista, seleccionarProducto);
+    }
+
+    public Seleccionar_proveedor(JFrame main) {
+        vista = new V_seleccionar_proveedor(main);
+        controlador = new C_seleccionar_proveedor(vista);
+    }
+
+    public Seleccionar_proveedor(JDialog main) {
+        vista = new V_seleccionar_proveedor(main);
+        controlador = new C_seleccionar_proveedor(vista);
+    }
+
+    public void setCallback(RecibirProveedorCallback callback) {
+        this.controlador.setCallback(callback);
     }
 
     public void mostrarVista() {

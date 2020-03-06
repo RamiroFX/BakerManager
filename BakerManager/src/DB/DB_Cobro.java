@@ -307,7 +307,8 @@ public class DB_Cobro {
                 + "CCD.ID_BANCO, "//7
                 + "CCD.CHEQUE_FECHA, "//8
                 + "CCD.CHEQUE_FECHA_DIFERIDA, "//9
-                + "(SELECT B.DESCRIPCION FROM BANCO B WHERE B.ID_BANCO = CCD.ID_BANCO) \"BANCO\" "//10
+                + "(SELECT B.DESCRIPCION FROM BANCO B WHERE B.ID_BANCO = CCD.ID_BANCO) \"BANCO\", "//10
+                + "(SELECT FC.NRO_FACTURA FROM FACTURA_CABECERA FC WHERE FC.ID_FACTURA_CABECERA = CCD.ID_FACTURA_CABECERA) \"NRO_FACTURA\" "//11
                 + "FROM CUENTA_CORRIENTE_DETALLE CCD "
                 + "WHERE CCD.ID_CTA_CTE_CABECERA = ?;";
         try {
@@ -322,6 +323,7 @@ public class DB_Cobro {
                 detalle.setId(rs.getInt(1));
                 detalle.setIdCuentaCorrienteCabecera(rs.getInt(2));
                 detalle.setIdFacturaCabecera(rs.getInt(3));
+                detalle.setNroFactura(rs.getInt(11));
                 detalle.setNroRecibo(rs.getInt(4));
                 detalle.setMonto(rs.getInt(5));
                 detalle.setNroCheque(rs.getInt(6));
@@ -362,10 +364,13 @@ public class DB_Cobro {
                 + "CCD.CHEQUE_FECHA, "//8
                 + "CCD.CHEQUE_FECHA_DIFERIDA, "//9
                 + "(SELECT B.DESCRIPCION FROM BANCO B WHERE B.ID_BANCO = CCD.ID_BANCO) \"BANCO\", "//10
-                + "CCD.ID_ESTADO_CHEQUE "//11
-                + "FROM CUENTA_CORRIENTE_DETALLE CCD "
+                + "CCD.ID_ESTADO_CHEQUE, "//11
+                + "(SELECT FC.NRO_FACTURA FROM FACTURA_CABECERA FC WHERE FC.ID_FACTURA_CABECERA = CCD.ID_FACTURA_CABECERA) \"NRO_FACTURA\" "//12
+                + "FROM CUENTA_CORRIENTE_DETALLE CCD, CUENTA_CORRIENTE_CABECERA CCC "
                 + "WHERE cheque_fecha_diferida >= now() "
+                + "AND CCC.ID_CTA_CTE_CABECERA = CCD.ID_CTA_CTE_CABECERA "
                 + "AND id_estado_cheque = 2 "
+                + "AND CCC.ID_ESTADO = 1 "
                 + "ORDER BY cheque_fecha_diferida;";
         try {
             pst = DB_manager.getConection().prepareStatement(query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
@@ -378,6 +383,7 @@ public class DB_Cobro {
                 detalle.setId(rs.getInt(1));
                 detalle.setIdCuentaCorrienteCabecera(rs.getInt(2));
                 detalle.setIdFacturaCabecera(rs.getInt(3));
+                detalle.setNroFactura(rs.getInt(12));
                 detalle.setNroRecibo(rs.getInt(4));
                 detalle.setMonto(rs.getInt(5));
                 detalle.setNroCheque(rs.getInt(6));

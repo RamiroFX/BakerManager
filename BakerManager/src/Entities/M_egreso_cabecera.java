@@ -23,6 +23,8 @@ public class M_egreso_cabecera {
     private M_funcionario funcionario;
 
     public M_egreso_cabecera() {
+        this.proveedor = new M_proveedor();
+        this.funcionario = new M_funcionario();
     }
 
     /**

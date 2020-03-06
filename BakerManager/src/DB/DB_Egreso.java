@@ -7,6 +7,8 @@ package DB;
 import Entities.M_egreso_cabecera;
 import Entities.M_egreso_detalle;
 import Entities.M_egreso_detalleFX;
+import Entities.M_facturaCabecera;
+import Entities.M_facturaDetalle;
 import Entities.M_funcionario;
 import Entities.M_producto;
 import Entities.M_proveedor;
@@ -17,6 +19,7 @@ import java.sql.Statement;
 import java.sql.Timestamp;
 import java.sql.Types;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -598,6 +601,7 @@ public class DB_Egreso {
                 + "ID_EGRESO_CABECERA, ID_PRODUCTO,"
                 + "(SELECT P.DESCRIPCION FROM PRODUCTO P WHERE P.ID_PRODUCTO = ED.ID_PRODUCTO)\"PRODUCTO\", "
                 + "(SELECT P.ID_IMPUESTO FROM PRODUCTO P WHERE P.ID_PRODUCTO = ED.ID_PRODUCTO)\"ID_IMPUESTO\", "
+                + "(SELECT P.CODIGO FROM PRODUCTO P WHERE P.ID_PRODUCTO = ED.ID_PRODUCTO)\"CODIGO\", "
                 + "CANTIDAD, "
                 + "PRECIO, "
                 + "DESCUENTO, "
@@ -619,6 +623,7 @@ public class DB_Egreso {
                 M_producto producto = new M_producto();
                 producto.setId(rs.getInt("ID_PRODUCTO"));
                 producto.setDescripcion(rs.getString("PRODUCTO"));
+                producto.setCodigo(rs.getString("CODIGO"));
                 producto.setIdImpuesto(rs.getInt("ID_IMPUESTO"));
                 detalle.setProducto(producto);
                 detalles.add(detalle);
@@ -931,5 +936,57 @@ public class DB_Egreso {
             JOptionPane.showMessageDialog(null, "Problema verificando existencia de compra", "Error interno", JOptionPane.ERROR_MESSAGE);
         }
         return false;
+    }
+
+    public static List<M_egreso_detalle> consultarEgresoDetalleAgrupado(List<M_egreso_cabecera> cadenaCabeceras) {
+        List<M_egreso_detalle> list = new ArrayList<>();
+        boolean b = true;
+        List<M_egreso_cabecera> possibleValues = cadenaCabeceras;
+        StringBuilder builder = new StringBuilder();
+
+        for (M_egreso_cabecera seleccionVenta : possibleValues) {
+            builder.append("?,");
+        }
+        String QUERY = "SELECT PROD.CODIGO \"Codigo\", "
+                + "(SELECT IMPU.DESCRIPCION FROM IMPUESTO IMPU WHERE IMPU.ID_IMPUESTO = PROD.ID_IMPUESTO)\"IMPUESTO\","
+                + "PROD.DESCRIPCION \"Producto\", SUM(FADE.CANTIDAD) \"Cantidad\", "
+                + "PROD.ID_IMPUESTO \"ID_IMPUESTO\","
+                + "FADE.PRECIO \"Precio\", "
+                + "FADE.DESCUENTO \"Descuento\" "
+                + "FROM EGRESO_DETALLE FADE, EGRESO_CABECERA FACA, PRODUCTO PROD "
+                + "WHERE FADE.ID_EGRESO_CABECERA = FACA.ID_EGRESO_CABECERA "
+                + "AND FADE.ID_PRODUCTO = PROD.ID_PRODUCTO "
+                + "AND FACA.ID_EGRESO_CABECERA IN ("
+                + builder.substring(0, builder.length() - 1) + ")";
+
+        String PIE = "GROUP BY PROD.DESCRIPCION, PROD.CODIGO, PROD.ID_IMPUESTO, FADE.PRECIO, FADE.DESCUENTO,PROD.ID_IMPUESTO  "
+                + "ORDER BY PROD.DESCRIPCION";
+        QUERY = QUERY + PIE;
+        try {
+            pst = DB_manager.getConection().prepareStatement(QUERY, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            int index = 1;
+            for (M_egreso_cabecera ventaCabecera : possibleValues) {
+                pst.setInt(index++, ventaCabecera.getId_cabecera());
+            }
+            rs = pst.executeQuery();
+            while (rs.next()) {
+                M_egreso_detalle fade = new M_egreso_detalle();
+                M_producto producto = new M_producto();
+                producto.setCodBarra(rs.getString("Codigo"));
+                producto.setDescripcion(rs.getString("Producto"));
+                producto.setImpuesto(rs.getInt("IMPUESTO"));
+                producto.setIdImpuesto(rs.getInt("ID_IMPUESTO"));
+                fade.setProducto(producto);
+                fade.setCantidad(rs.getDouble("Cantidad"));
+                fade.setPrecio(rs.getInt("Precio"));
+                fade.setDescuento(rs.getDouble("Descuento"));
+                fade.setObservacion("");
+                list.add(fade);
+            }
+        } catch (SQLException ex) {
+            Logger lgr = Logger.getLogger(DB_Egreso.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        }
+        return list;
     }
 }

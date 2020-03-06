@@ -3,17 +3,14 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Cobros;
+package Pagos;
 
-import Cliente.Seleccionar_cliente;
-import Empleado.Seleccionar_funcionario;
-import Entities.E_cuentaCorrienteDetalle;
-import Entities.E_facturaSinPago;
-import Entities.M_cliente;
-import Entities.M_funcionario;
-import Interface.RecibirClienteCallback;
-import Interface.RecibirCtaCteDetalleCallback;
-import Interface.RecibirEmpleadoCallback;
+import Entities.E_egresoSinPago;
+import Entities.E_reciboPagoDetalle;
+import Entities.M_proveedor;
+import Interface.RecibirProveedorCallback;
+import Interface.RecibirReciboPagoDetalleCallback;
+import Proveedor.Seleccionar_proveedor;
 import bakermanager.C_inicio;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
@@ -30,25 +27,25 @@ import javax.swing.JOptionPane;
  *
  * @author Ramiro Ferreira
  */
-public class C_crearCobro extends MouseAdapter implements ActionListener, KeyListener,
-        RecibirEmpleadoCallback, RecibirClienteCallback, RecibirCtaCteDetalleCallback {
+public class C_crearPago extends MouseAdapter implements ActionListener, KeyListener,
+        RecibirProveedorCallback, RecibirReciboPagoDetalleCallback {
 
     private static final String VALIDAR_RESPONSABLE_MSG = "Seleccione un cobrador",
-            VALIDAR_CLIENTE_MSG = "Seleccione un cliente",
+            VALIDAR_CLIENTE_MSG = "Seleccione un proveedor",
             VALIDAR_NRO_RECIBO_MSG_1 = "Ingrese un Número de recibo",
             VALIDAR_NRO_RECIBO_MSG_2 = "Ingrese solo números enteros en Número de recibo",
             VALIDAR_NRO_RECIBO_MSG_3 = "Ingrese solo números enteros y positivos en Número de recibo",
             VALIDAR_NRO_RECIBO_MSG_4 = "El Número de recibo ingresado ya se encuentra en uso.",
             VALIDAR_FECHA_RECIBO_MSG_1 = "La fecha seleccionada no es valida.",
             VALIDAR_MONTO_A_PAGAR = "El saldo a pagar no puede ser mayor al total",
-            VALIDAR_DETALLE_RECIBO = "Existen detalles de cobros pendiente. Vacíe la lista para seleccionar otro cliente",
-            CONFIRMAR_SALIR_MSG = "¿Cancelar cobro?",
+            VALIDAR_DETALLE_RECIBO = "Existen detalles de cobros pendiente. Vacíe la lista para seleccionar otro proveedor",
+            CONFIRMAR_SALIR_MSG = "¿Cancelar pago?",
             VALIDAR_TITULO = "Atención";
-    public M_crearCobro modelo;
-    public V_crearCobro vista;
+    public M_crearPago modelo;
+    public V_crearPago vista;
     private C_inicio inicio;
 
-    public C_crearCobro(M_crearCobro modelo, V_crearCobro vista, C_inicio inicio) {
+    public C_crearPago(M_crearPago modelo, V_crearPago vista, C_inicio inicio) {
         this.modelo = modelo;
         this.vista = vista;
         this.inicio = inicio;
@@ -64,7 +61,7 @@ public class C_crearCobro extends MouseAdapter implements ActionListener, KeyLis
         EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
-                if (modelo.getCtaCteDetalleTm().getList().isEmpty()) {
+                if (modelo.getDetalleTm().getList().isEmpty()) {
                     vista.dispose();
                 } else {
                     int opcion = JOptionPane.showConfirmDialog(vista, CONFIRMAR_SALIR_MSG, VALIDAR_TITULO, JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
@@ -77,7 +74,7 @@ public class C_crearCobro extends MouseAdapter implements ActionListener, KeyLis
     }
 
     private void inicializarVista() {
-        this.vista.jtReciboDetalle.setModel(modelo.getCtaCteDetalleTm());
+        this.vista.jtReciboDetalle.setModel(modelo.getDetalleTm());
         this.vista.jbModificarDetalle.setEnabled(false);
         this.vista.jbEliminarDetalle.setEnabled(false);
         Calendar calendar = Calendar.getInstance();
@@ -88,14 +85,12 @@ public class C_crearCobro extends MouseAdapter implements ActionListener, KeyLis
         this.vista.jtReciboDetalle.addMouseListener(this);
         this.vista.jbAceptar.addActionListener(this);
         this.vista.jbAgregarFactura.addActionListener(this);
-        this.vista.jbCliente.addActionListener(this);
-        this.vista.jbFuncionario.addActionListener(this);
+        this.vista.jbProveedor.addActionListener(this);
         this.vista.jbEliminarDetalle.addActionListener(this);
         this.vista.jbModificarDetalle.addActionListener(this);
         this.vista.jbSalir.addActionListener(this);
         this.vista.jbAgregarFactura.addKeyListener(this);
-        this.vista.jbCliente.addKeyListener(this);
-        this.vista.jbFuncionario.addKeyListener(this);
+        this.vista.jbProveedor.addKeyListener(this);
         this.vista.jbAceptar.addKeyListener(this);
         this.vista.jbSalir.addKeyListener(this);
     }
@@ -111,28 +106,25 @@ public class C_crearCobro extends MouseAdapter implements ActionListener, KeyLis
     public void modificarDetalle() {
         int fila = this.vista.jtReciboDetalle.getSelectedRow();
         if (fila > -1) {
-            E_cuentaCorrienteDetalle ctaCteDet = modelo.getCtaCteDetalleTm().getList().get(fila);
-            E_facturaSinPago cabecera = new E_facturaSinPago();
-            cabecera.setClienteEntidad(modelo.getCabecera().getCliente().getEntidad());
-            cabecera.setIdCabecera(ctaCteDet.getIdFacturaCabecera());
-            cabecera.setNroFactura(ctaCteDet.getNroFactura());
-            cabecera.setMonto((int) ctaCteDet.getMonto());
+            E_reciboPagoDetalle pagoDetalle = modelo.getDetalleTm().getList().get(fila);
+            E_egresoSinPago cabecera = new E_egresoSinPago();
+            cabecera.setProveedorEntidad(modelo.getCabecera().getProveedor().getEntidad());
+            cabecera.setIdCabecera(pagoDetalle.getIdFacturaCabecera());
+            cabecera.setNroFactura(pagoDetalle.getNroFactura());
+            cabecera.setMonto((int) pagoDetalle.getMonto());
             vista.jbAceptar.setEnabled(true);
-            ReciboCobro rp = new ReciboCobro(this.vista);
-            rp.modificarDetalle(fila, cabecera, ctaCteDet);
+            ReciboPago rp = new ReciboPago(this.vista);
+            rp.modificarDetalle(fila, cabecera, pagoDetalle);
             rp.setInterface(this);
             rp.mostrarVista();
         }
     }
 
     private void guardar() {
-        if (!validarCliente()) {
+        if (!validarProveedor()) {
             return;
         }
         if (!validarNroRecibo()) {
-            return;
-        }
-        if (!validarResponsable()) {
             return;
         }
         if (!validarFechaUtilizacion()) {
@@ -165,16 +157,8 @@ public class C_crearCobro extends MouseAdapter implements ActionListener, KeyLis
         return true;
     }
 
-    private boolean validarResponsable() {
-        if (this.vista.jtfFuncionario.getText().isEmpty()) {
-            JOptionPane.showMessageDialog(vista, VALIDAR_RESPONSABLE_MSG, VALIDAR_TITULO, JOptionPane.WARNING_MESSAGE);
-            return false;
-        }
-        return true;
-    }
-
-    private boolean validarCliente() {
-        if (this.vista.jtfCliente.getText().isEmpty()) {
+    private boolean validarProveedor() {
+        if (this.vista.jtfProveedor.getText().isEmpty()) {
             JOptionPane.showMessageDialog(vista, VALIDAR_CLIENTE_MSG, VALIDAR_TITULO, JOptionPane.WARNING_MESSAGE);
             return false;
         }
@@ -182,7 +166,7 @@ public class C_crearCobro extends MouseAdapter implements ActionListener, KeyLis
     }
 
     private boolean validarDetalleReciboVacio() {
-        if (!this.modelo.getCtaCteDetalleTm().getList().isEmpty()) {
+        if (!this.modelo.getDetalleTm().getList().isEmpty()) {
             JOptionPane.showMessageDialog(vista, VALIDAR_DETALLE_RECIBO, VALIDAR_TITULO, JOptionPane.WARNING_MESSAGE);
             return false;
         }
@@ -222,36 +206,29 @@ public class C_crearCobro extends MouseAdapter implements ActionListener, KeyLis
 
     private void limpiarCampos() {
         this.modelo.limpiarCampos();
-        this.vista.jtfFuncionario.setText("");
-        this.vista.jtfCliente.setText("");
+        this.vista.jtfProveedor.setText("");
         this.vista.jtfNroRecibo.setText("");
         Calendar calendar = Calendar.getInstance();
         this.vista.jdcFechaCobro.setDate(calendar.getTime());
     }
 
     private void invocarVistaSeleccionFacturaPendiente() {
-        if (!validarCliente()) {
+        if (!validarProveedor()) {
             return;
         }
-        int idCliente = modelo.getCabecera().getCliente().getIdCliente();
-        SeleccionarFacturaPendiente sc = new SeleccionarFacturaPendiente(this.vista, idCliente);
-        sc.setCallback(this);
-        sc.mostrarVista();
+        int idProveedor = modelo.getCabecera().getProveedor().getId();
+        SeleccionarPagoPendiente spp = new SeleccionarPagoPendiente(this.vista, idProveedor);
+        spp.setCallback(this);
+        spp.mostrarVista();
     }
 
-    private void invocarVistaSeleccionCliente() {
+    private void invocarVistaSeleccionProveedor() {
         if (!validarDetalleReciboVacio()) {
             return;
         }
-        Seleccionar_cliente sc = new Seleccionar_cliente(inicio.vista);
+        Seleccionar_proveedor sc = new Seleccionar_proveedor(this.vista);
         sc.setCallback(this);
         sc.mostrarVista();
-    }
-
-    private void invocarVistaSeleccionFuncionario() {
-        Seleccionar_funcionario sf = new Seleccionar_funcionario(this.vista);
-        sf.setCallback(this);
-        sf.mostrarVista();
     }
 
     private void sumarTotal() {
@@ -265,10 +242,8 @@ public class C_crearCobro extends MouseAdapter implements ActionListener, KeyLis
             guardar();
         } else if (source.equals(this.vista.jbAgregarFactura)) {
             invocarVistaSeleccionFacturaPendiente();
-        } else if (source.equals(this.vista.jbCliente)) {
-            invocarVistaSeleccionCliente();
-        } else if (source.equals(this.vista.jbFuncionario)) {
-            invocarVistaSeleccionFuncionario();
+        } else if (source.equals(this.vista.jbProveedor)) {
+            invocarVistaSeleccionProveedor();
         } else if (source.equals(this.vista.jbEliminarDetalle)) {
             eliminarDetalle();
         } else if (source.equals(this.vista.jbModificarDetalle)) {
@@ -298,11 +273,7 @@ public class C_crearCobro extends MouseAdapter implements ActionListener, KeyLis
                 break;
             }
             case KeyEvent.VK_F3: {
-                invocarVistaSeleccionCliente();
-                break;
-            }
-            case KeyEvent.VK_F5: {
-                invocarVistaSeleccionFuncionario();
+                invocarVistaSeleccionProveedor();
                 break;
             }
             case KeyEvent.VK_F4: {
@@ -321,19 +292,13 @@ public class C_crearCobro extends MouseAdapter implements ActionListener, KeyLis
     }
 
     @Override
-    public void recibirFuncionario(M_funcionario funcionario) {
-        modelo.getCabecera().setCobrador(funcionario);
-        this.vista.jtfFuncionario.setText(funcionario.getNombre());
+    public void recibirProveedor(M_proveedor proveedor) {
+        modelo.getCabecera().setProveedor(proveedor);
+        this.vista.jtfProveedor.setText(proveedor.getEntidad() + "(" + proveedor.getRuc() + "-" + proveedor.getRuc_id() + ")");
     }
 
     @Override
-    public void recibirCliente(M_cliente cliente) {
-        modelo.getCabecera().setCliente(cliente);
-        this.vista.jtfCliente.setText(cliente.getEntidad() + "(" + cliente.getRuc() + "-" + cliente.getRucId() + ")");
-    }
-
-    @Override
-    public void recibirCtaCteDetalle(E_cuentaCorrienteDetalle detalle, int montoTotalPendiente) {
+    public void recibirReciboPagoDetalle(E_reciboPagoDetalle detalle, int montoTotalPendiente) {
         if (this.modelo.controlarMontoIngresado(detalle.getIdFacturaCabecera(), (int) detalle.getMonto(), montoTotalPendiente)) {
             this.modelo.agregarDatos(detalle);
         } else {
@@ -344,7 +309,7 @@ public class C_crearCobro extends MouseAdapter implements ActionListener, KeyLis
     }
 
     @Override
-    public void modificarCtaCteDetalle(int index, E_cuentaCorrienteDetalle detalle, int montoTotalPendiente) {
+    public void modificarReciboPagoDetalle(int index, E_reciboPagoDetalle detalle, int montoTotalPendiente) {
         if (this.modelo.controlarMontoIngresado(detalle.getIdFacturaCabecera(), (int) detalle.getMonto(), montoTotalPendiente)) {
             this.modelo.modificarDetalle(index, detalle);
         } else {

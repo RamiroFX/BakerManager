@@ -54,6 +54,20 @@ class V_Ver_Egresos extends JDialog {
         getContentPane().add(jpSouth, BorderLayout.SOUTH);
     }
 
+    public V_Ver_Egresos(javax.swing.JDialog parent) {
+        super(parent, true);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("Egresos");
+        setModalityType(java.awt.Dialog.ModalityType.APPLICATION_MODAL);
+        setSize(new java.awt.Dimension(800, 600));
+        initComponents();
+        setLocationRelativeTo(parent);
+        getContentPane().setLayout(new BorderLayout());
+        getContentPane().add(jpNorth, BorderLayout.NORTH);
+        getContentPane().add(jpCenter, BorderLayout.CENTER);
+        getContentPane().add(jpSouth, BorderLayout.SOUTH);
+    }
+
     private void initNorth() {
         jpNorth = new JPanel(new MigLayout());
         jtfProveedor = new JTextField(30);

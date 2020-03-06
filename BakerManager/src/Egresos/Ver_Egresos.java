@@ -5,12 +5,14 @@
 package Egresos;
 
 import bakermanager.C_inicio;
+import javax.swing.JDialog;
 
 /**
  *
  * @author Usuario
  */
 public class Ver_Egresos {
+
     M_Egresos modelo;
     V_Ver_Egresos vista;
     C_ver_egreso controlador;
@@ -18,10 +20,16 @@ public class Ver_Egresos {
     public Ver_Egresos(C_inicio c_inicio, int IdEgresoCabecera) {
         modelo = new M_Egresos();
         vista = new V_Ver_Egresos(c_inicio.vista);
-        controlador = new C_ver_egreso(IdEgresoCabecera,vista, modelo);
+        controlador = new C_ver_egreso(IdEgresoCabecera, vista, modelo);
     }
-    
-    public void mostrarVista(){
+
+    public Ver_Egresos(JDialog jdialog, int IdEgresoCabecera) {
+        modelo = new M_Egresos();
+        vista = new V_Ver_Egresos(jdialog);
+        controlador = new C_ver_egreso(IdEgresoCabecera, vista, modelo);
+    }
+
+    public void mostrarVista() {
         this.controlador.mostrarVista();
     }
 }

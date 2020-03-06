@@ -14,6 +14,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import Entities.M_proveedor;
 import Interface.InterfaceNotificarCambio;
+import Interface.RecibirProveedorCallback;
 import Producto.C_crear_producto;
 import Producto.C_gestion_producto;
 import Producto.C_seleccionarProducto;
@@ -49,6 +50,14 @@ public class C_seleccionar_proveedor extends MouseAdapter implements ActionListe
     private C_crear_producto crear_producto;
     private C_buscar_detalle buscarDetalleEgreso;
     private C_seleccionarProducto seleccionarProducto;
+    private RecibirProveedorCallback callback;
+
+    public C_seleccionar_proveedor(V_seleccionar_proveedor vista) {
+        this.vista = vista;
+        this.tipo = -1;//TODO remove
+        inicializarVista();
+        agregarListeners();
+    }
 
     public C_seleccionar_proveedor(V_seleccionar_proveedor vista, C_gestionEgresos gestion_egreso) {
         this.gestion_egreso = gestion_egreso;
@@ -90,7 +99,11 @@ public class C_seleccionar_proveedor extends MouseAdapter implements ActionListe
         agregarListeners();
     }
 
-    void mostrarVista() {
+    public void setCallback(RecibirProveedorCallback callback) {
+        this.callback = callback;
+    }
+
+    public void mostrarVista() {
         this.vista.setVisible(true);
         this.vista.requestFocus();
     }
@@ -181,6 +194,10 @@ public class C_seleccionar_proveedor extends MouseAdapter implements ActionListe
             }
             case SELECCIONAR_PRODUCTO: {
                 this.seleccionarProducto.recibirProveedor(proveedor);
+                break;
+            }
+            case -1: {
+                this.callback.recibirProveedor(proveedor);
                 break;
             }
             default: {

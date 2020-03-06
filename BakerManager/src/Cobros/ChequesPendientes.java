@@ -5,7 +5,8 @@
 package Cobros;
 
 import DB.DB_Cobro;
-import DB.DB_manager;
+import DB.DB_Pago;
+import Entities.E_cuentaCorrienteConcepto;
 import Entities.E_cuentaCorrienteDetalle;
 import ModeloTabla.ChequesPendienteTableModel;
 import Utilities.c_packColumn;
@@ -34,22 +35,25 @@ public class ChequesPendientes extends javax.swing.JDialog implements ActionList
     JScrollPane jspCheques;
     JTable jtCheques;
     ChequesPendienteTableModel tm;
+    private int concepto;
 
-    public ChequesPendientes(JFrame vista) {
+    public ChequesPendientes(JFrame vista, int tipoConcepto) {
         super(vista, true);
         setTitle("Cheques diferidos pendientes");
         setSize(new java.awt.Dimension(700, 300));
         setLocationRelativeTo(vista);
+        this.concepto = tipoConcepto;
         initComponents();
         inicializarVista();
         agregarListener();
     }
 
-    public ChequesPendientes(JDialog vista) {
+    public ChequesPendientes(JDialog vista, int tipoConcepto) {
         super(vista, true);
         setTitle("Cheques diferidos pendientes");
         setSize(new java.awt.Dimension(700, 300));
         setLocationRelativeTo(vista);
+        this.concepto = tipoConcepto;
         initComponents();
         inicializarVista();
         agregarListener();
@@ -57,7 +61,16 @@ public class ChequesPendientes extends javax.swing.JDialog implements ActionList
 
     private void inicializarVista() {
         jbCobrar.setEnabled(false);
-        tm.setList(DB_Cobro.obtenerChequesPendientes());
+        switch (this.concepto) {
+            case E_cuentaCorrienteConcepto.COMPRAS: {
+                tm.setList(DB_Pago.obtenerChequesPendientes());
+                break;
+            }
+            case E_cuentaCorrienteConcepto.VENTAS: {
+                tm.setList(DB_Cobro.obtenerChequesPendientes());
+                break;
+            }
+        }
         jtCheques.setModel(tm);
         c_packColumn.packColumns(jtCheques, 1);
     }
@@ -95,7 +108,18 @@ public class ChequesPendientes extends javax.swing.JDialog implements ActionList
     }
 
     private void cobrarCheque() {
-        int opcion = JOptionPane.showConfirmDialog(this, "¿Está seguro que desea cobrar el cheque seleccionado?", "Atención", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+        String mensaje = "";
+        switch (this.concepto) {
+            case E_cuentaCorrienteConcepto.COMPRAS: {
+                mensaje = "¿Está seguro que desea pagar el cheque seleccionado?";
+                break;
+            }
+            case E_cuentaCorrienteConcepto.VENTAS: {
+                mensaje = "¿Está seguro que desea cobrar el cheque seleccionado?";
+                break;
+            }
+        }
+        int opcion = JOptionPane.showConfirmDialog(this, mensaje, "Atención", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
         if (opcion != JOptionPane.YES_OPTION) {
             return;
         }
@@ -105,7 +129,18 @@ public class ChequesPendientes extends javax.swing.JDialog implements ActionList
         }
         E_cuentaCorrienteDetalle ccd = tm.getList().get(selectedRow);
         DB_Cobro.cobrarCheque(ccd.getId());
-        tm.setList(DB_Cobro.obtenerChequesPendientes());
+        switch (this.concepto) {
+            case E_cuentaCorrienteConcepto.COMPRAS: {
+                DB_Pago.cobrarCheque(ccd.getId());
+                tm.setList(DB_Pago.obtenerChequesPendientes());
+                break;
+            }
+            case E_cuentaCorrienteConcepto.VENTAS: {
+                DB_Cobro.cobrarCheque(ccd.getId());
+                tm.setList(DB_Cobro.obtenerChequesPendientes());
+                break;
+            }
+        }
         c_packColumn.packColumns(jtCheques, 1);
     }
 

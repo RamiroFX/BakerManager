@@ -15,6 +15,7 @@ import Proveedor.Gestion_proveedores;
 import Ventas.Gestion_Ventas;
 import bakermanager.C_inicio;
 import Empleado.Gestion_empleado;
+import Pagos.GestionPago;
 import Produccion.GestionProduccion;
 import Reportes.GestionReporte;
 import java.awt.Dimension;
@@ -197,6 +198,9 @@ public class C_MenuPrincipal implements ActionListener, KeyListener {
         } else if (src.equals(this.vista.jbProduccion)) {
             GestionProduccion gestionProduccion = new GestionProduccion(c_inicio);
             gestionProduccion.mostrarVista();
+        } else if (src.equals(this.vista.jbPago)) {
+            GestionPago gestionPago = new GestionPago(c_inicio);
+            gestionPago.mostrarVista();
         } else if (src.equals(this.vista.jbReportes)) {
             /*POSTTS POS = new POSTTS();
              POS.setVisible(true);
@@ -302,6 +306,13 @@ public class C_MenuPrincipal implements ActionListener, KeyListener {
                 if (vista.jbCobro.isEnabled()) {
                     GestionCobroPago gestionCobroPago = new GestionCobroPago(c_inicio);
                     gestionCobroPago.mostrarVista();
+                }
+                break;
+            }
+            case (KeyEvent.VK_F12): {
+                if (vista.jbPago.isEnabled()) {
+                    GestionPago gestionPago = new GestionPago(c_inicio);
+                    gestionPago.mostrarVista();
                 }
                 break;
             }

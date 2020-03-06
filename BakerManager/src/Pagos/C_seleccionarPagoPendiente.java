@@ -2,10 +2,10 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package Cobros;
+package Pagos;
 
-import Entities.E_facturaSinPago;
-import Interface.RecibirCtaCteDetalleCallback;
+import Entities.E_egresoSinPago;
+import Interface.RecibirReciboPagoDetalleCallback;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -23,14 +23,14 @@ import javax.swing.SwingUtilities;
  *
  * @author Ramiro Ferreira
  */
-public class C_seleccionarFacturaPendiente extends MouseAdapter implements ActionListener, KeyListener {
+public class C_seleccionarPagoPendiente extends MouseAdapter implements ActionListener, KeyListener {
 
     private static final String ENTER_KEY = "Entrar";
-    public M_seleccionarFacturaPendiente modelo;
-    public V_seleccionarFacturaPendiente vista;
-    RecibirCtaCteDetalleCallback callback;
+    public M_seleccionarPagoPendiente modelo;
+    public V_seleccionarPagoPendiente vista;
+    RecibirReciboPagoDetalleCallback callback;
 
-    public C_seleccionarFacturaPendiente(M_seleccionarFacturaPendiente modelo, V_seleccionarFacturaPendiente vista) {
+    public C_seleccionarPagoPendiente(M_seleccionarPagoPendiente modelo, V_seleccionarPagoPendiente vista) {
         this.modelo = modelo;
         this.vista = vista;
         inicializarVista();
@@ -57,7 +57,7 @@ public class C_seleccionarFacturaPendiente extends MouseAdapter implements Actio
         Utilities.c_packColumn.packColumns(this.vista.jtFacturaPendiente, 1);
     }
 
-    public void setCallback(RecibirCtaCteDetalleCallback callback) {
+    public void setCallback(RecibirReciboPagoDetalleCallback callback) {
         this.callback = callback;
     }
 
@@ -103,19 +103,17 @@ public class C_seleccionarFacturaPendiente extends MouseAdapter implements Actio
     }
 
     private void borrarParametros() {
-        //this.vista.jtfFuncionario.setText("");
         this.vista.jtfBuscar.setText("");
         this.vista.jtfBuscar.requestFocusInWindow();
-        //this.vista.jcbCondVenta.setSelectedIndex(0);
     }
 
     private void seleccionarFacturaPendiente() {
         int fila = vista.jtFacturaPendiente.getSelectedRow();
         int columna = vista.jtFacturaPendiente.getSelectedColumn();
         if ((fila > -1) && (columna > -1)) {
-            E_facturaSinPago cabecera = modelo.getTableModel().getList().get(fila);
+            E_egresoSinPago cabecera = modelo.getTableModel().getList().get(fila);
             vista.jbAceptar.setEnabled(true);
-            ReciboCobro rp = new ReciboCobro(this.vista);
+            ReciboPago rp = new ReciboPago(this.vista);
             rp.nuevoPago(cabecera);
             rp.setInterface(callback);
             rp.mostrarVista();

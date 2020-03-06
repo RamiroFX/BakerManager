@@ -3,12 +3,14 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Cobros;
+package Pagos;
 
-import DB.DB_Cobro;
+import DB.DB_Pago;
 import DB.DB_manager;
 import Entities.E_tipoOperacion;
+import Entities.M_egreso_cabecera;
 import Entities.M_facturaCabecera;
+import ModeloTabla.EgresoSinPagoTableModel;
 import ModeloTabla.FacturaSinPagoTableModel;
 import java.util.ArrayList;
 
@@ -16,16 +18,16 @@ import java.util.ArrayList;
  *
  * @author Ramiro Ferreira
  */
-public class M_seleccionarFacturaPendiente {
+public class M_seleccionarPagoPendiente {
 
-    private M_facturaCabecera facturaCabecera;
-    private FacturaSinPagoTableModel tm;
+    private M_egreso_cabecera facturaCabecera;
+    private EgresoSinPagoTableModel tm;
 
-    public M_seleccionarFacturaPendiente(int idCliente) {
-        this.facturaCabecera = new M_facturaCabecera();
+    public M_seleccionarPagoPendiente(int idProveedor) {
+        this.facturaCabecera = new M_egreso_cabecera();
         this.facturaCabecera.getFuncionario().setId_funcionario(-1);
-        this.facturaCabecera.getCliente().setIdCliente(idCliente);
-        this.tm = new FacturaSinPagoTableModel();
+        this.facturaCabecera.getProveedor().setId(idProveedor);
+        this.tm = new EgresoSinPagoTableModel();
     }
 
     public String obtenerNombreFuncionario() {
@@ -36,14 +38,14 @@ public class M_seleccionarFacturaPendiente {
     }
 
     public String obtenerNombreCliente() {
-        String razonSocial = this.facturaCabecera.getCliente().getEntidad();
-        String nombreFantasia = this.facturaCabecera.getCliente().getNombre();
+        String razonSocial = this.facturaCabecera.getProveedor().getEntidad();
+        String nombreFantasia = this.facturaCabecera.getProveedor().getNombre();
         return razonSocial + "-(" + nombreFantasia + ")";
     }
 
     public void borrarDatos() {
         this.facturaCabecera.getFuncionario().setId_funcionario(-1);
-        this.facturaCabecera.getCliente().setIdCliente(-1);
+        this.facturaCabecera.getProveedor().setId(-1);
     }
 
     /**
@@ -72,20 +74,20 @@ public class M_seleccionarFacturaPendiente {
     /**
      * @return the tm
      */
-    public FacturaSinPagoTableModel getTableModel() {
+    public EgresoSinPagoTableModel getTableModel() {
         return tm;
     }
 
     /**
      * @param tm the tm to set
      */
-    public void setTableModel(FacturaSinPagoTableModel tm) {
+    public void setTableModel(EgresoSinPagoTableModel tm) {
         this.tm = tm;
     }
 
     public void consultarFacturasPendiente() {
-        int idCliente = this.facturaCabecera.getCliente().getIdCliente();
-        getTableModel().setList(DB_Cobro.consultarFacturasPendiente(idCliente));
+        int idProveedor = this.facturaCabecera.getProveedor().getId();
+        getTableModel().setList(DB_Pago.consultarFacturasPendiente(idProveedor));
     }
 
 }

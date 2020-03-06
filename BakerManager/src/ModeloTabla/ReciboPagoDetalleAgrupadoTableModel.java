@@ -5,10 +5,9 @@
  */
 package ModeloTabla;
 
-import Entities.E_cuentaCorrienteDetalle;
 import Entities.E_formaPago;
+import Entities.E_reciboPagoDetalle;
 import Entities.E_tipoCheque;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JOptionPane;
@@ -18,22 +17,21 @@ import javax.swing.table.AbstractTableModel;
  *
  * @author Ramiro Ferreira
  */
-public class CtaCteDetalleTableModel extends AbstractTableModel {
+public class ReciboPagoDetalleAgrupadoTableModel extends AbstractTableModel {
 
-    SimpleDateFormat dateFormater = new SimpleDateFormat("dd/MM/YYYY");
-    private List<E_cuentaCorrienteDetalle> list;
-    private final String[] colNames = {"Monto a pagar", "Id venta", "Nro Factura", "Nro Cheque", "Banco", "Fecha cheque", "Fecha diferida"};
+    private List<E_reciboPagoDetalle> list;
+    private final String[] colNames = {"Monto a pagar", "Banco"};
 
-    public CtaCteDetalleTableModel() {
+    public ReciboPagoDetalleAgrupadoTableModel() {
         this.list = new ArrayList<>();
     }
 
-    public void setList(List<E_cuentaCorrienteDetalle> facturaCabeceraList) {
-        this.list = facturaCabeceraList;
+    public void setList(List<E_reciboPagoDetalle> list) {
+        this.list = list;
         updateTable();
     }
 
-    public List<E_cuentaCorrienteDetalle> getList() {
+    public List<E_reciboPagoDetalle> getList() {
         return list;
     }
 
@@ -64,25 +62,12 @@ public class CtaCteDetalleTableModel extends AbstractTableModel {
 
     @Override
     public Object getValueAt(int rowIndex, int colIndex) {
-        E_cuentaCorrienteDetalle row = this.list.get(rowIndex);
+        E_reciboPagoDetalle row = this.list.get(rowIndex);
         switch (colIndex) {
             case 0: {
                 return (int) row.getMonto();
             }
             case 1: {
-                return row.getIdFacturaCabecera();
-            }
-            case 2: {
-                return row.getNroFactura();
-            }
-            case 3: {
-                if (row.getNroCheque() > 0) {
-                    return row.getNroCheque();
-                } else {
-                    return "";
-                }
-            }
-            case 4: {
                 if (row.getBanco() != null) {
                     if (row.getBanco().getDescripcion() != null) {
                         return row.getBanco().getDescripcion();
@@ -93,27 +78,13 @@ public class CtaCteDetalleTableModel extends AbstractTableModel {
                     return "";
                 }
             }
-            case 5: {
-                if (row.getFechaCheque() != null) {
-                    return dateFormater.format(row.getFechaCheque());
-                } else {
-                    return "";
-                }
-            }
-            case 6: {
-                if (row.getFechaDiferidaCheque() != null) {
-                    return dateFormater.format(row.getFechaDiferidaCheque());
-                } else {
-                    return "";
-                }
-            }
             default: {
                 return null;
             }
         }
     }
 
-    public void agregarDatos(E_cuentaCorrienteDetalle data) {
+    public void agregarDatos(E_reciboPagoDetalle data) {
         this.list.add(data);
         fireTableDataChanged();
     }
@@ -127,7 +98,7 @@ public class CtaCteDetalleTableModel extends AbstractTableModel {
         }
     }
 
-    public void modificarDatos(int index, E_cuentaCorrienteDetalle data) {
+    public void modificarDatos(int index, E_reciboPagoDetalle data) {
         this.list.get(index).setMonto(data.getMonto());
         switch (data.getFormaPago().getId()) {
             case E_formaPago.CHEQUE: {

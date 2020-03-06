@@ -38,7 +38,7 @@ import net.miginfocom.swing.MigLayout;
  *
  * @author Ramiro Ferreira
  */
-public class ReciboPago extends javax.swing.JDialog implements ActionListener, KeyListener {
+public class ReciboCobro extends javax.swing.JDialog implements ActionListener, KeyListener {
 
     public static final String TITULO = "Confirmar cobro",
             S_ALERTA = "¿Está seguro que desea continuar?",
@@ -64,8 +64,8 @@ public class ReciboPago extends javax.swing.JDialog implements ActionListener, K
             S_CHEQUE_FECHA_DIFERIDA = "Fecha diferida";
     private javax.swing.JButton jbCancel, jbOK;
     private javax.swing.JLabel jlFecha, jlCliente, jlNroFactura, jlFormaPago, jlTotalFactura,
-            jlTotalPendiente,jlIdVenta, jlImporteEfectivo, jlImporteCheque, jlObservacion, jlDivisa;
-    private javax.swing.JTextField jtfIdVenta, jtfCliente, jtfNroFactura, jtfTotalFactura,jtfTotalPendiente;
+            jlTotalPendiente, jlIdVenta, jlImporteEfectivo, jlImporteCheque, jlObservacion, jlDivisa;
+    private javax.swing.JTextField jtfIdVenta, jtfCliente, jtfNroFactura, jtfTotalFactura, jtfTotalPendiente;
     private javax.swing.JTextField jftImporteEfectivo;
     //private javax.swing.JTextField jtfObservacion;
     private javax.swing.JFormattedTextField jftFecha;
@@ -80,12 +80,12 @@ public class ReciboPago extends javax.swing.JDialog implements ActionListener, K
     private javax.swing.JComboBox<E_tipoCheque> jcbTipoCheque;
     private javax.swing.JTextField jftImporteCheque;
     //VARIABLES TARJETA TODO
-    
+
     private RecibirCtaCteDetalleCallback callback;
     private E_facturaSinPago facturaCabecera;
     private boolean modificarDetalle;
 
-    public ReciboPago(JDialog vista) {
+    public ReciboCobro(JDialog vista) {
         super(vista, TITULO, true);
         setTitle(TITULO);
         setSize(new java.awt.Dimension(800, 450));
