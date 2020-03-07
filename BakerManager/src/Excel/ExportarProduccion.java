@@ -8,6 +8,8 @@ package Excel;
 import DB.DB_Produccion;
 import Entities.E_produccionCabecera;
 import Entities.E_produccionDetalle;
+import Entities.E_produccionFilm;
+import Entities.E_produccionTipo;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -36,7 +38,7 @@ public class ExportarProduccion {
     ArrayList<E_produccionCabecera> prodCabeceraList;
     HSSFWorkbook workbook;
     HSSFSheet sheet;
-    CellStyle style1, style2, style3, style4, style5;
+    CellStyle style1, style2, styleNumber1, styleNumber2, style5;
     HSSFCellStyle dateCellStyle;
 
     public ExportarProduccion(String nombreHoja, Date inicio, Date fin, ArrayList<E_produccionCabecera> prodCabeceraList) {
@@ -67,11 +69,11 @@ public class ExportarProduccion {
         //END STYLE
         // FORMAT STYLE
         DataFormat format = workbook.createDataFormat();
-        style3 = workbook.createCellStyle();
-        style3.setDataFormat(format.getFormat("0.0"));
+        styleNumber1 = workbook.createCellStyle();
+        styleNumber1.setDataFormat(format.getFormat("0.0"));
 
-        style4 = workbook.createCellStyle();
-        style4.setDataFormat(format.getFormat("#,##0"));
+        styleNumber2 = workbook.createCellStyle();
+        styleNumber2.setDataFormat(format.getFormat("#,##0"));
 
         dateCellStyle = workbook.createCellStyle();
         short df = workbook.createDataFormat().getFormat("dd-MM-yyyy");
@@ -158,6 +160,144 @@ public class ExportarProduccion {
         sheet.autoSizeColumn(0);
         sheet.autoSizeColumn(1);
         sheet.autoSizeColumn(2);
+        //FIN AJUSTAR COLUMNAS
+        try {
+            FileOutputStream out = new FileOutputStream(directory.getPath() + ".xls");
+            workbook.write(out);
+            out.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void exportacionIndividualBauplst() {
+        File directory = null;
+        String desktop = System.getProperty("user.home") + "\\Desktop";
+        JFileChooser chooser = new JFileChooser(desktop);
+        if (chooser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
+            directory = chooser.getSelectedFile();
+            directory.setWritable(true);
+            directory.setExecutable(true);
+            directory.setReadable(true);
+        } else {
+            return;
+        }
+        // Create a row and put some cells in it. Rows are 0 based.
+        int filaActual = 0;
+        for (int q = 0; q < prodCabeceraList.size(); q++) {
+            E_produccionCabecera prodCabecera = prodCabeceraList.get(q);
+
+            //INICIO PRODUCCION CABECERA
+            Row produccionCabeceraRowFecha = sheet.createRow(filaActual);
+            filaActual++;
+            produccionCabeceraRowFecha.createCell(0).setCellValue(new HSSFRichTextString("Fecha"));
+            produccionCabeceraRowFecha.createCell(1).setCellValue(prodCabecera.getFechaProduccion());
+            produccionCabeceraRowFecha.getCell(0).setCellStyle(style5);
+            produccionCabeceraRowFecha.getCell(1).setCellStyle(dateCellStyle);
+
+            Row produccionCabeceraRowResp = sheet.createRow(filaActual);
+            filaActual++;
+            produccionCabeceraRowResp.createCell(0).setCellValue(new HSSFRichTextString("Responsable"));
+            produccionCabeceraRowResp.createCell(1).setCellValue(prodCabecera.getFuncionarioProduccion().getNombre());
+            produccionCabeceraRowResp.getCell(0).setCellStyle(style5);
+
+            Row produccionCabeceraRowReg = sheet.createRow(filaActual);
+            filaActual++;
+            produccionCabeceraRowReg.createCell(0).setCellValue(new HSSFRichTextString("Registrado por"));
+            produccionCabeceraRowReg.createCell(1).setCellValue(prodCabecera.getFuncionarioSistema().getNombre());
+            produccionCabeceraRowReg.getCell(0).setCellStyle(style5);
+
+            Row produccionCabeceraRowOT = sheet.createRow(filaActual);
+            filaActual++;
+            produccionCabeceraRowOT.createCell(0).setCellValue(new HSSFRichTextString("Nro Orden trabajo"));
+            produccionCabeceraRowOT.createCell(1).setCellValue(prodCabecera.getNroOrdenTrabajo());
+            produccionCabeceraRowOT.getCell(0).setCellStyle(style5);
+            //FIN PRODUCCION CABECERA
+
+            //INICIO CABECERA PRODUCCION DETALLE
+            Row cabeceraProduccionDetalle = sheet.createRow(filaActual);
+            filaActual++;
+            cabeceraProduccionDetalle.createCell(0).setCellValue(new HSSFRichTextString("Cod."));
+            cabeceraProduccionDetalle.getCell(0).setCellStyle(style1);
+            cabeceraProduccionDetalle.createCell(1).setCellValue(new HSSFRichTextString("Producto"));
+            cabeceraProduccionDetalle.getCell(1).setCellStyle(style1);
+            cabeceraProduccionDetalle.createCell(2).setCellValue(new HSSFRichTextString("Cantidad"));
+            cabeceraProduccionDetalle.getCell(2).setCellStyle(style1);
+            //FIN CABECERA PRODUCCION DETALLE
+
+            //INICIO DETALLE PRODUCCION DETALLE
+            ArrayList<E_produccionDetalle> prodDetalleList;
+            prodDetalleList = new ArrayList<>(DB_Produccion.consultarProduccionDetalle(prodCabecera.getId()));
+            for (int i = 0; i < prodDetalleList.size(); i++) {
+                Row filaProdDetalle = sheet.createRow(filaActual);
+                filaActual++;
+                E_produccionDetalle get = prodDetalleList.get(i);
+                filaProdDetalle.createCell(0).setCellValue(get.getProducto().getCodigo());
+                filaProdDetalle.createCell(1).setCellValue(get.getProducto().getDescripcion());
+                filaProdDetalle.createCell(2).setCellValue(get.getCantidad());
+            }
+            if (prodCabecera.getTipo().getId() == E_produccionTipo.PRODUCTO_TERMINADO) {
+                //INICIO CABECERA PRODUCCION DETALLE (ROLLO UTILIZADO)
+                Row cabeceraProduccionDetalleRollo = sheet.createRow(filaActual);
+                filaActual++;
+                int col = 0;
+                cabeceraProduccionDetalleRollo.createCell(col).setCellValue(new HSSFRichTextString("Nro. Film"));
+                cabeceraProduccionDetalleRollo.getCell(col).setCellStyle(style1);
+                col++;
+                cabeceraProduccionDetalleRollo.createCell(col).setCellValue(new HSSFRichTextString("Cod."));
+                cabeceraProduccionDetalleRollo.getCell(col).setCellStyle(style1);
+                col++;
+                cabeceraProduccionDetalleRollo.createCell(col).setCellValue(new HSSFRichTextString("Rollo"));
+                cabeceraProduccionDetalleRollo.getCell(col).setCellStyle(style1);
+                col++;
+                cabeceraProduccionDetalleRollo.createCell(col).setCellValue(new HSSFRichTextString("Peso utilizado"));
+                cabeceraProduccionDetalleRollo.getCell(col).setCellStyle(style1);
+                col++;
+                cabeceraProduccionDetalleRollo.createCell(col).setCellValue(new HSSFRichTextString("Cono"));
+                cabeceraProduccionDetalleRollo.getCell(col).setCellStyle(style1);
+                col++;
+                cabeceraProduccionDetalleRollo.createCell(col).setCellValue(new HSSFRichTextString("Medida"));
+                cabeceraProduccionDetalleRollo.getCell(col).setCellStyle(style1);
+                col++;
+                cabeceraProduccionDetalleRollo.createCell(col).setCellValue(new HSSFRichTextString("Micron"));
+                cabeceraProduccionDetalleRollo.getCell(col).setCellStyle(style1);
+                col++;
+                cabeceraProduccionDetalleRollo.createCell(col).setCellValue(new HSSFRichTextString("Tipo materia prima"));
+                cabeceraProduccionDetalleRollo.getCell(col).setCellStyle(style1);
+                col++;
+                //FIN CABECERA PRODUCCION DETALLE
+
+                //INICIO DETALLE PRODUCCION DETALLE(ROLLO UTILIZADO)
+                ArrayList<E_produccionFilm> prodDetalleListRollo;
+                prodDetalleListRollo = new ArrayList<>(DB_Produccion.consultarProduccionFilmBaja(prodCabecera.getId()));
+                for (int i = 0; i < prodDetalleListRollo.size(); i++) {
+                    Row filaProdDetalle = sheet.createRow(filaActual);
+                    filaActual++;
+                    E_produccionFilm get = prodDetalleListRollo.get(i);
+                    filaProdDetalle.createCell(0).setCellValue(get.getNroFilm());
+                    filaProdDetalle.createCell(1).setCellValue(get.getProducto().getCodigo());
+                    filaProdDetalle.createCell(2).setCellValue(get.getProducto().getDescripcion());
+                    filaProdDetalle.createCell(3).setCellValue(get.getPeso());
+                    filaProdDetalle.createCell(4).setCellValue(get.getCono());
+                    filaProdDetalle.createCell(5).setCellValue(get.getMedida());
+                    filaProdDetalle.createCell(6).setCellValue(get.getMicron());
+                    filaProdDetalle.createCell(7).setCellValue(get.getProductoClasificacion().getDescripcion());
+                }
+            }
+            filaActual++;
+        }
+
+        //INICIO AJUSTAR COLUMNAS
+        sheet.autoSizeColumn(0);
+        sheet.autoSizeColumn(1);
+        sheet.autoSizeColumn(2);
+        sheet.autoSizeColumn(3);
+        sheet.autoSizeColumn(4);
+        sheet.autoSizeColumn(5);
+        sheet.autoSizeColumn(6);
+        sheet.autoSizeColumn(7);
         //FIN AJUSTAR COLUMNAS
         try {
             FileOutputStream out = new FileOutputStream(directory.getPath() + ".xls");

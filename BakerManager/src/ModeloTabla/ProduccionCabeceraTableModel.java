@@ -6,6 +6,7 @@
 package ModeloTabla;
 
 import Entities.E_produccionCabecera;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.table.AbstractTableModel;
@@ -16,6 +17,7 @@ import javax.swing.table.AbstractTableModel;
  */
 public class ProduccionCabeceraTableModel extends AbstractTableModel {
 
+    SimpleDateFormat dateFormater = new SimpleDateFormat("dd/MM/YYYY");
     private List<E_produccionCabecera> produccionList;
     private final String[] colNames = {"ID", "O.T.", "Fecha producción", "Responsable", "Tipo"};
 
@@ -68,7 +70,7 @@ public class ProduccionCabeceraTableModel extends AbstractTableModel {
                 return produccion.getNroOrdenTrabajo();
             }
             case 2: {
-                return produccion.getFechaProduccion();
+                return dateFormater.format(produccion.getFechaProduccion());
             }
             case 3: {
                 return produccion.getFuncionarioProduccion().getNombre();

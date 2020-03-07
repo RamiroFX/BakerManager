@@ -690,7 +690,7 @@ public class DB_Produccion {
     public static List<E_produccionFilm> consultarProduccionFilmBaja(Integer idProduccion) {
         List<E_produccionFilm> list = new ArrayList<>();
         String QUERY = "SELECT id_cabecera, id_produccion_cabecera,nro_orden_trabajo, nro_film, fecha, "
-                + "producto, id_categoria, categoria, peso, cono, medida, micron "
+                + "producto, id_categoria, categoria, peso, cono, medida, micron, producto_codigo "
                 + "FROM v_produccion_film_baja WHERE id_produccion_cabecera = ?;";
 
         try {
@@ -699,6 +699,7 @@ public class DB_Produccion {
             rs = pst.executeQuery();
             while (rs.next()) {
                 M_producto producto = new M_producto();
+                producto.setCodigo(rs.getString("producto_codigo"));
                 producto.setDescripcion(rs.getString("producto"));
                 E_productoClasificacion pc = new E_productoClasificacion();
                 pc.setId(rs.getInt("id_categoria"));

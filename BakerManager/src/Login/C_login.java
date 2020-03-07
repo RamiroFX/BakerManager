@@ -23,10 +23,10 @@ public class C_login implements ActionListener, KeyListener {
     protected static final String USER = "postgres", PASS = "postgres";
 
     M_login modelo;
-    V_login vista;
+    V_loginExtended vista;
     C_inicio c_inicio;
 
-    public C_login(M_login modelo, V_login vista, C_inicio c_inicio) {
+    public C_login(M_login modelo, V_loginExtended vista, C_inicio c_inicio) {
         this.c_inicio = c_inicio;
         this.modelo = modelo;
         this.vista = vista;

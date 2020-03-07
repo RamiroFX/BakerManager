@@ -151,7 +151,7 @@ public class ResumenProduccion extends JDialog implements ActionListener, KeyLis
                     @Override
                     public void run() {
                         ExportarProduccion ep = new ExportarProduccion("Produccion", inicio, fin, new ArrayList<E_produccionCabecera>(tm.getList()));
-                        ep.exportacionIndividual();
+                        ep.exportacionIndividualBauplst();
                     }
                 });
                 break;
