@@ -13,6 +13,7 @@ import Entities.E_tipoOperacion;
 import Entities.Estado;
 import Entities.M_campoImpresion;
 import Entities.ProductoCategoria;
+import Utilities.Config;
 import Utilities.MyConstants;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
@@ -45,7 +46,10 @@ public class DB_manager {
     public static boolean conectarBD(String usuario, String password) throws SQLException {
         try {
             Conexiones.cargarDriver(Conexiones.SGBD_POSTGRES);
-            con = Conexiones.obtenerConexion(Conexiones.SGBD_POSTGRES, usuario, password);
+            String port = Config.getPort();
+            String host = Config.getHost();
+            String url = "jdbc:postgresql://" + host + ":" + port + "/bakermanager2";
+            con = Conexiones.obtenerConexion(Conexiones.SGBD_POSTGRES, url, usuario, password);
             return true;
         } catch (ClassNotFoundException e) {
             System.out.println("Error al cargar driver: " + e);
@@ -595,7 +599,7 @@ public class DB_manager {
         }
         return impuesto;
     }
-    
+
     public static ResultSetTableModel consultarBanco() {
         ResultSetTableModel impuesto = null;
         String q = "SELECT id_banco \"ID\" ,descripcion \"Descripcion\" "

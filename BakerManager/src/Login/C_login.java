@@ -37,6 +37,8 @@ public class C_login implements ActionListener, KeyListener {
     private void inicializarVista() {
         this.vista.txtNombre.setText(Config.getUser());
         this.vista.txtPassword.setText("rferreira");
+        this.vista.jtfHost.setText(Config.getHost());
+        this.vista.jtfPort.setText(Config.getPort());
         this.vista.txtPassword.requestFocusInWindow();
     }
 
@@ -59,6 +61,7 @@ public class C_login implements ActionListener, KeyListener {
         vista.btnSalir.addKeyListener(this);
         vista.txtNombre.addActionListener(this);
         vista.txtPassword.addActionListener(this);
+        vista.jbSaveConfig.addActionListener(this);
     }
 
     private void crearSeleccionRol() {
@@ -123,6 +126,13 @@ public class C_login implements ActionListener, KeyListener {
         });
     }
 
+    private void saveConfig() {
+        String port = vista.jtfPort.getText().trim();
+        Config.setPort(port);
+        String host = vista.jtfHost.getText().trim();
+        Config.setHost(host);
+    }
+
     public void actionPerformed(ActionEvent e) {
         if (vista != null) {
             if (vista.btnAceptar == e.getSource()) {
@@ -132,6 +142,9 @@ public class C_login implements ActionListener, KeyListener {
             }
             if (e.getSource() == vista.txtNombre) {
                 vista.txtPassword.requestFocus();
+            }
+            if (e.getSource() == vista.jbSaveConfig) {
+                saveConfig();
             }
             if (e.getSource() == vista.txtPassword) {
                 logIn();

@@ -122,7 +122,7 @@ public class Config {
     }
 
     public static void setHost(String host) {
-        propiedades.setProperty("newproperties.usuario", host);
+        propiedades.setProperty("newproperties.host", host);
         try {
             w = new FileWriter(path);
             propiedades.store(w, host);
@@ -145,7 +145,7 @@ public class Config {
     }
 
     public static void setPort(String port) {
-        propiedades.setProperty("newproperties.usuario", port);
+        propiedades.setProperty("newproperties.port", port);
         try {
             w = new FileWriter(path);
             propiedades.store(w, port);

@@ -37,11 +37,11 @@ public class V_loginExtended extends JInternalFrame {
 
     public JTextField jtfPort, jtfHost;
     public JLabel jlPort, jlHost;
-    private JPanel jpConection;
+    public JButton jbSaveConfig;
+    public JPanel jpConection;
 
     public V_loginExtended(JFrame jframe) {
         super("Identificacion", true, true, false);
-        setName("Login");
         this.frame = jframe;
         inicializarVista();
         constructWindows();
@@ -56,13 +56,13 @@ public class V_loginExtended extends JInternalFrame {
     }
 
     private void constructWindows() {
-        getContentPane().setName("myContentPane");
-        //getContentPane().setLayout(new GridLayout(1, 1));
-        getContentPane().add(jtpPaneles);
+        setName("Login");
+        getContentPane().setLayout(new MigLayout());
+        getContentPane().add(jtpPaneles, "dock center");
     }
 
     public Dimension establecerTamañoPanel() {
-        return new Dimension((int) (this.frame.getWidth() * 0.3), (int) (this.frame.getHeight() * 0.30));
+        return new Dimension((int) (this.frame.getWidth() * 0.4), (int) (this.frame.getHeight() * 0.30));
     }
 
     //se sobrecarga este metodo para que el panel de Login mantenga
@@ -73,7 +73,6 @@ public class V_loginExtended extends JInternalFrame {
     }
 
     private void inicializarVista() {
-        jtpPaneles = new JTabbedPane();
         /*
         LOGIN 
          */
@@ -102,16 +101,18 @@ public class V_loginExtended extends JInternalFrame {
         CONECTION DATA
          */
         this.jtfPort = new JTextField();
-        this.jlPort = new JLabel();
+        this.jlPort = new JLabel("Port");
         this.jtfHost = new JTextField();
-        this.jlHost = new JLabel();
+        this.jlHost = new JLabel("Host");
+        this.jbSaveConfig = new JButton("Guardar");
         this.jpConection = new JPanel(new MigLayout());
-        this.jpConection.add(this);
         this.jpConection.add(jlPort);
-        this.jpConection.add(jtfPort, "wrap");
+        this.jpConection.add(jtfPort, "growx, pushx, wrap");
         this.jpConection.add(jlHost);
-        this.jpConection.add(jtfHost);
-        jtpPaneles.add(jpLogin);
-        jtpPaneles.add(jpConection);
+        this.jpConection.add(jtfHost, "growx, pushx, wrap");
+        this.jpConection.add(jbSaveConfig);
+        jtpPaneles = new JTabbedPane();
+        jtpPaneles.add("Ingreso", jpLogin);
+        jtpPaneles.add("Conexión", jpConection);
     }
 }

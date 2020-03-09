@@ -28,9 +28,6 @@ public class M_login {
     }
 
     public boolean conectar(String user, String password) {
-        System.out.println("Login.M_login.conectar()");
-        System.out.println("getHost: " + Config.getHost());
-        System.out.println("getPort: " + Config.getPort());
         try {
             return DB_manager.conectarBD(user, password);
         } catch (SQLException ex) {
