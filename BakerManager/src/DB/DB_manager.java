@@ -48,7 +48,7 @@ public class DB_manager {
             Conexiones.cargarDriver(Conexiones.SGBD_POSTGRES);
             String port = Config.getPort();
             String host = Config.getHost();
-            String url = "jdbc:postgresql://" + host + ":" + port + "/bakermanager2";
+            String url = "jdbc:postgresql://" + host + ":" + port + "/dbfrom2";
             con = Conexiones.obtenerConexion(Conexiones.SGBD_POSTGRES, url, usuario, password);
             return true;
         } catch (ClassNotFoundException e) {

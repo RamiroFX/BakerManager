@@ -20,6 +20,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -111,12 +112,12 @@ public class ResumenCobroPendiente extends JDialog implements ActionListener, Ke
     private void inicializarVista(FacturaSinPagoTableModel tm) {
         this.cabeceraTableModel = tm;
         jtCobros.setModel(tm);
-        Integer total = 0;
+        BigInteger total = new BigInteger("0");
         ArrayList<M_facturaCabecera> cadenaCabeceras = new ArrayList<>();
         for (E_facturaSinPago e_facturaSinPago : cabeceraTableModel.getList()) {
             M_facturaCabecera faca = new M_facturaCabecera();
             faca.setIdFacturaCabecera(e_facturaSinPago.getIdCabecera());
-            total = total + e_facturaSinPago.getSaldo();
+            total = total.add(new BigInteger(e_facturaSinPago.getSaldo() + ""));
             cadenaCabeceras.add(faca);
         }
         if (cadenaCabeceras.isEmpty()) {

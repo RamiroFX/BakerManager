@@ -5,16 +5,10 @@
  */
 package Pagos;
 
-import DB.DB_Cobro;
 import DB.DB_Pago;
-import Entities.E_cuentaCorrienteCabecera;
-import Entities.E_cuentaCorrienteDetalle;
 import Entities.E_reciboPagoCabecera;
 import Entities.E_reciboPagoDetalle;
-import Excel.ExportarReciboCobro;
 import Excel.ExportarReciboPago;
-import ModeloTabla.CtaCteCabeceraTableModel;
-import ModeloTabla.CtaCteDetalleAgrupadoTableModel;
 import ModeloTabla.ReciboPagoCabeceraTableModel;
 import ModeloTabla.ReciboPagoDetalleAgrupadoTableModel;
 import java.awt.BorderLayout;
@@ -26,6 +20,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -132,19 +127,19 @@ public class ResumenPago extends JDialog implements ActionListener, KeyListener 
         detalleTableModel.setList(DB_Pago.consultarPagoDetalleAgrupado(cabeceraTableModel.getList()));
         Utilities.c_packColumn.packColumns(jtPagos, 1);
         Utilities.c_packColumn.packColumns(jtDetalle, 1);
-        Integer total = 0;
-        Integer totalCheque = 0;
-        Integer totalEfectivo = 0;
+        BigInteger total = new BigInteger("0");
+        BigInteger totalCheque = new BigInteger("0");
+        BigInteger totalEfectivo = new BigInteger("0");
         for (E_reciboPagoDetalle ctaCteDetalle : detalleTableModel.getList()) {
             if (ctaCteDetalle.getBanco() != null) {
                 if (ctaCteDetalle.getBanco().getDescripcion() == null) {
-                    totalEfectivo = totalEfectivo + (int) ctaCteDetalle.getMonto();
+                    totalEfectivo = totalEfectivo.add(new BigInteger(Double.valueOf(ctaCteDetalle.getMonto()).intValue() + ""));
                 } else {
-                    totalCheque = totalCheque + (int) ctaCteDetalle.getMonto();
+                    totalCheque = totalCheque.add(new BigInteger(Double.valueOf(ctaCteDetalle.getMonto()).intValue() + ""));
                 }
             }
         }
-        total = totalEfectivo + totalCheque;
+        total = total.add(totalCheque).add(totalEfectivo);
         jftTotalEfectivo.setValue(totalEfectivo);
         jftTotalCheque.setValue(totalCheque);
         jftTotalCobrado.setValue(total);

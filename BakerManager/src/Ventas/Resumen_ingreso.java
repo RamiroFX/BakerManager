@@ -9,6 +9,7 @@ import DB.DB_Ingreso;
 import Entities.E_facturaCabeceraFX;
 import Entities.E_facturaDetalleFX;
 import Entities.E_facturacionCabecera;
+import Entities.E_tipoOperacion;
 import Entities.Estado;
 import Entities.M_cliente;
 import Entities.M_facturaCabecera;
@@ -29,6 +30,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.math.BigInteger;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -103,18 +105,22 @@ public class Resumen_ingreso extends JDialog implements ActionListener, KeyListe
         tm.setFacturaCabeceraList(DB_Ingreso.obtenerVentasPorFacturacion(facturacionCabecera.getId()));
         jtIngreso.setModel(tm);
         Utilities.c_packColumn.packColumns(jtIngreso, 1);
-        Integer total = 0;
-        Integer totalContado = 0;
-        Integer totalCredito = 0;
+        BigInteger total = new BigInteger("0");
+        BigInteger totalContado = new BigInteger("0");
+        BigInteger totalCredito = new BigInteger("0");
         for (M_facturaCabecera faca : tm.getFacturaCabeceraList()) {
-            total = total + faca.getTotal();
-            switch (faca.getIdCondVenta()) {
-                case 1: {//contado
-                    totalContado = totalContado + faca.getTotal();
+            total = total.add(new BigInteger(faca.getTotal().toString()));
+            switch (faca.getCondVenta().getId()) {
+                case E_tipoOperacion.CONTADO: {//contado
+                    totalContado = totalContado.add(new BigInteger(faca.getTotal().toString()));
+                    break;
+                }
+                case E_tipoOperacion.CREDITO_30: {//credito
+                    totalCredito = totalCredito.add(new BigInteger(faca.getTotal().toString()));
                     break;
                 }
                 default: {//credito
-                    totalCredito = totalCredito + faca.getTotal();
+                    totalCredito = totalCredito.add(new BigInteger(faca.getTotal().toString()));
                     break;
                 }
             }
@@ -180,19 +186,27 @@ public class Resumen_ingreso extends JDialog implements ActionListener, KeyListe
         getContentPane().add(jpSouth, BorderLayout.SOUTH);
     }
 
-    private void inicializarVista(TableModel tm, Date inicio, Date fin) {
+    private void inicializarVista(FacturaCabeceraTableModel tm, Date inicio, Date fin) {
         jtIngreso.setModel(tm);
         Utilities.c_packColumn.packColumns(jtIngreso, 1);
-        Integer total = 0;
-        Integer totalContado = 0;
-        Integer totalCredito = 0;
-        int cantFilas = jtIngreso.getRowCount();
-        for (int i = 0; i < cantFilas; i++) {
-            total = total + Integer.valueOf(String.valueOf(jtIngreso.getValueAt(i, 5)));
-            if (jtIngreso.getValueAt(i, 6).equals("Contado")) {
-                totalContado = totalContado + Integer.valueOf(String.valueOf(jtIngreso.getValueAt(i, 5)));
-            } else {
-                totalCredito = totalCredito + Integer.valueOf(String.valueOf(jtIngreso.getValueAt(i, 5)));
+        BigInteger total = new BigInteger("0");
+        BigInteger totalContado = new BigInteger("0");
+        BigInteger totalCredito = new BigInteger("0");
+        for (M_facturaCabecera faca : tm.getFacturaCabeceraList()) {
+            total = total.add(new BigInteger(faca.getTotal().toString()));
+            switch (faca.getCondVenta().getId()) {
+                case E_tipoOperacion.CONTADO: {//contado
+                    totalContado = totalContado.add(new BigInteger(faca.getTotal().toString()));
+                    break;
+                }
+                case E_tipoOperacion.CREDITO_30: {//credito
+                    totalCredito = totalCredito.add(new BigInteger(faca.getTotal().toString()));
+                    break;
+                }
+                default: {//credito
+                    totalCredito = totalCredito.add(new BigInteger(faca.getTotal().toString()));
+                    break;
+                }
             }
         }
         SimpleDateFormat sdfs = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
