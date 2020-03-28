@@ -35,7 +35,7 @@ public class M_seleccionarFilm {
         return DB_manager.obtenerEstados();
     }
 
-    public void consultarRollos(String descripcion, String ordenarPor) {
-        this.tm.setList(DB_Produccion.consultarFilmDisponible(descripcion, ordenarPor));
+    public void consultarRollos(String descripcion, String buscarPor, String ordenarPor) {
+        this.tm.setList(DB_Produccion.consultarFilmDisponible(descripcion, buscarPor, ordenarPor));
     }
 }

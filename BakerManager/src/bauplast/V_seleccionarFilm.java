@@ -4,7 +4,6 @@
  */
 package bauplast;
 
-import Entities.Estado;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import javax.swing.JButton;
@@ -28,7 +27,7 @@ public class V_seleccionarFilm extends JDialog {
     JScrollPane jspProducto;
     JTable jtProducto;
     JPanel jpBotones, jpTop, jpBotonesTop, jpJtextFieldTop;
-    public JComboBox jcbOrdenarPor;
+    public JComboBox jcbBuscarPor, jcbOrdenarPor;
     public JTextField jtfBuscar;
 
     public V_seleccionarFilm(JDialog main) {
@@ -46,7 +45,10 @@ public class V_seleccionarFilm extends JDialog {
         jpTop = new JPanel(new MigLayout("", "[fill][fill]", "[fill][]"));
         JPanel jpFiltros = new JPanel(new FlowLayout(FlowLayout.CENTER));
 
+        jcbBuscarPor = new JComboBox();
         jcbOrdenarPor = new JComboBox();
+        jpFiltros.add(new JLabel("Buscar por:"));
+        jpFiltros.add(jcbBuscarPor);
         jpFiltros.add(new JLabel("Ordenar por:"));
         jpFiltros.add(jcbOrdenarPor);
         jpBotonesTop = new JPanel();

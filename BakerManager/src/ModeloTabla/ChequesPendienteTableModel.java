@@ -110,7 +110,7 @@ public class ChequesPendienteTableModel extends AbstractTableModel {
             }
             case 6: {
                 if (row.getFechaDiferidaCheque() != null) {
-                    return dateFormater.format(row.getFechaCheque());
+                    return dateFormater.format(row.getFechaDiferidaCheque());
                 } else {
                     return "";
                 }

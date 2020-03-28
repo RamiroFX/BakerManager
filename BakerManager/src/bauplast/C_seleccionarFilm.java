@@ -73,9 +73,11 @@ public class C_seleccionarFilm extends MouseAdapter implements ActionListener, K
         });
         Utilities.c_packColumn.packColumns(this.vista.jtProducto, 1);
 
-        this.vista.jcbOrdenarPor.addItem("OT");
-        this.vista.jcbOrdenarPor.addItem("Fecha");
-        this.vista.jcbOrdenarPor.addItem("Producto");
+        this.vista.jcbBuscarPor.addItem("OT");
+        this.vista.jcbBuscarPor.addItem("Fecha");
+        this.vista.jcbBuscarPor.addItem("Producto");
+        this.vista.jcbOrdenarPor.addItem("Descendente");
+        this.vista.jcbOrdenarPor.addItem("Ascendente");
     }
 
     private void agregarListeners() {
@@ -108,8 +110,9 @@ public class C_seleccionarFilm extends MouseAdapter implements ActionListener, K
                     JOptionPane.showMessageDialog(vista, "El texto ingresado supera el máximo permitido de 50 caracteres.", "Atención", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
+                String buscarPor = vista.jcbBuscarPor.getSelectedItem().toString();
                 String ordenarPor = vista.jcbOrdenarPor.getSelectedItem().toString();
-                modelo.consultarRollos(desc.toLowerCase(), ordenarPor);
+                modelo.consultarRollos(desc.toLowerCase(), buscarPor, ordenarPor);
                 Utilities.c_packColumn.packColumns(vista.jtProducto, 1);
             }
         });
@@ -157,7 +160,9 @@ public class C_seleccionarFilm extends MouseAdapter implements ActionListener, K
         if (e.getSource() == this.vista.jtfBuscar) {
             displayQueryResults();
         }
-        if (e.getSource() == this.vista.jcbOrdenarPor) {
+        if (e.getSource() == this.vista.jcbBuscarPor) {
+            displayQueryResults();
+        } else if (e.getSource() == this.vista.jcbOrdenarPor) {
             displayQueryResults();
         } else if (e.getSource() == this.vista.jbBuscar) {
             displayQueryResults();

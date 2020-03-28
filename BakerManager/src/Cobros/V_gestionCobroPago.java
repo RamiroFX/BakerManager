@@ -126,11 +126,11 @@ public class V_gestionCobroPago extends JInternalFrame {
         jbResumen.setFont(CommonFormat.fuente);
         jbResumen.setMargin(insets);
         jbBanco = new JButton("Bancos");
-        jbBanco.setName("gestión bancos");
+        jbBanco.setName("gestión bancos cobro");
         jbBanco.setFont(CommonFormat.fuente);
         jbBanco.setMargin(insets);
         jbCheques = new JButton("Cheques pendientes");
-        jbCheques.setName("cheques pendientes");
+        jbCheques.setName("cheques pendientes cobro");
         jbCheques.setFont(CommonFormat.fuente);
         jbCheques.setMargin(insets);
 

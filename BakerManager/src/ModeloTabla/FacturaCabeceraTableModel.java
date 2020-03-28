@@ -6,6 +6,7 @@
 package ModeloTabla;
 
 import Entities.M_facturaCabecera;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.table.AbstractTableModel;
@@ -16,6 +17,7 @@ import javax.swing.table.AbstractTableModel;
  */
 public class FacturaCabeceraTableModel extends AbstractTableModel {
 
+    private SimpleDateFormat dateFormater = new SimpleDateFormat("dd/MM/YYYY hh:mm:ss");
     private List<M_facturaCabecera> facturaCabeceraList;
     private final String[] colNames = {"Id.", "Nro Factura", "Cliente", "Funcionario", "Tiempo", "Total", "Cond. venta"};
 
@@ -74,7 +76,7 @@ public class FacturaCabeceraTableModel extends AbstractTableModel {
                 return fc.getFuncionario().getAlias();
             }
             case 4: {
-                return fc.getTiempo();
+                return dateFormater.format(fc.getTiempo());
             }
             case 5: {
                 return fc.getTotal();

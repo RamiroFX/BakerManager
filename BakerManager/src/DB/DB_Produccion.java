@@ -623,7 +623,7 @@ public class DB_Produccion {
         return (int) sq_cabecera;
     }
 
-    public static ArrayList<E_produccionFilm> consultarFilmDisponible(String descripcion, String ordenarPor) {
+    public static ArrayList<E_produccionFilm> consultarFilmDisponible(String descripcion, String buscarPor, String ordenarPor) {
         ArrayList<E_produccionFilm> filmList = null;
         try {
             if (DB_manager.getConection() == null) {
@@ -632,7 +632,7 @@ public class DB_Produccion {
 
             String fromQuery = "FROM v_film_actual V ";
             String finalQuery = "ORDER BY V.producto ";
-            switch (ordenarPor) {
+            switch (buscarPor) {
                 case "OT": {
                     finalQuery = "ORDER BY V.nro_orden_trabajo ";
                     break;
@@ -643,6 +643,17 @@ public class DB_Produccion {
                 }
                 case "Producto": {
                     finalQuery = "ORDER BY V.producto ";
+                    break;
+                }
+            }
+
+            switch (ordenarPor) {
+                case "Ascendente": {
+                    finalQuery = finalQuery + "ASC ";
+                    break;
+                }
+                case "Descendente": {
+                    finalQuery = finalQuery + "DESC ";
                     break;
                 }
             }

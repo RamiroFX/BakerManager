@@ -109,8 +109,8 @@ public class V_crearFilm extends JDialog {
         jpPrincipal.add(jlProducto);
         jpPrincipal.add(jtfProducto);
 
-        jpPrincipal.add(jlIdFilm);
-        jpPrincipal.add(jtfIdFilm);
+        /*jpPrincipal.add(jlIdFilm);
+        jpPrincipal.add(jtfIdFilm);*/
 
         jpPrincipal.add(jlNroFilm);
         jpPrincipal.add(jtfNroFilm);
@@ -118,8 +118,8 @@ public class V_crearFilm extends JDialog {
         jpPrincipal.add(jlFechaCreacion);
         jpPrincipal.add(jtfFechaCreacion);
 
-        jpPrincipal.add(jlResponsable);
-        jpPrincipal.add(jtfResponsable);
+        /*jpPrincipal.add(jlResponsable);
+        jpPrincipal.add(jtfResponsable);*/
 
         jpPrincipal.add(jlMedida);
         jpPrincipal.add(jtfMedida);

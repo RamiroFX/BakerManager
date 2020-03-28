@@ -106,6 +106,7 @@ public class C_gestionCobroPago implements GestionInterface, RecibirEmpleadoCall
             if (this.vista.jbCheques.getName().equals(acceso.getItemDescripcion())) {
                 this.vista.jbCheques.setEnabled(true);
                 this.vista.jbCheques.addActionListener(this);
+                System.out.println("Cobros.C_gestionCobroPago.actionPerformed().jbCheques");
             }
         }
         //TODO conceder permisos
@@ -237,6 +238,7 @@ public class C_gestionCobroPago implements GestionInterface, RecibirEmpleadoCall
     }
 
     private void invocarVistaChequesPendientes() {
+        System.out.println("Cobros.C_gestionCobroPago.invocarVistaChequesPendientes()");
         ChequesPendientes bp = new ChequesPendientes(this.c_inicio.vista, E_cuentaCorrienteConcepto.VENTAS);
         bp.setVisible(true);
     }
@@ -324,6 +326,7 @@ public class C_gestionCobroPago implements GestionInterface, RecibirEmpleadoCall
         } else if (src.equals(this.vista.jbBanco)) {
             invocarVistaBancos();
         } else if (src.equals(this.vista.jbCheques)) {
+            System.out.println("Cobros.C_gestionCobroPago.actionPerformed().jbCheques");
             invocarVistaChequesPendientes();
         } else if (src.equals(this.vista.jbEmpCobro)) {
             Seleccionar_funcionario sf = new Seleccionar_funcionario(this.c_inicio.vista);
