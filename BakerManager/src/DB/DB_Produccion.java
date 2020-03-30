@@ -424,7 +424,7 @@ public class DB_Produccion {
         String INSERT_CABECERA = "INSERT INTO produccion_cabecera(nro_orden_trabajo, fecha_produccion, id_funcionario_responsable, id_funcionario_usuario, id_produccion_tipo)VALUES( ?, ?, ?, ?, ?);";
         //LA SGBD SE ENCARGA DE INSERTAR EL TIMESTAMP.
         String INSERT_DETALLE = "INSERT INTO produccion_detalle(id_produccion_cabecera, id_producto, cantidad)VALUES (?, ?, ?);";
-        String INSERT_FILM = "INSERT INTO produccion_film(nro_film, id_produccion_cabecera, id_produccion_detalle, peso, fecha_creacion, id_funcionario_responsable, cono, medida, micron, id_producto_clasifiacion, id_estado)VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
+        String INSERT_FILM = "INSERT INTO produccion_film(nro_film, id_produccion_cabecera, id_produccion_detalle, peso, fecha_creacion, id_funcionario_responsable, cono, medida, micron, id_producto_categoria, id_estado)VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
         String INSERT_PROD_FILM_PROD = "INSERT INTO produccion_film_producto(id_produccion_film, id_producto)VALUES (?, ?);";
         long sq_cabecera = -1L;
         ArrayList<Integer> prodFilmKeys = new ArrayList<>();
@@ -574,7 +574,7 @@ public class DB_Produccion {
             //ACTUALIZAR PESO DE ROLLOS UTILIZADOS
             for (int i = 0; i < rollosList.size(); i++) {
                 E_produccionFilm prodFilm = rollosList.get(i);
-                double pesoUtilizado = prodFilm.getPesoUtilizado();
+                double pesoUtilizado = prodFilm.getPeso();
                 double pesoActual = prodFilm.getPesoActual();
                 if ((pesoActual - pesoUtilizado) <= 0) {
                     int idProduccionFilm = rollosList.get(i).getId();
@@ -740,7 +740,7 @@ public class DB_Produccion {
         List<E_produccionFilm> list = new ArrayList<>();
         String QUERY = "SELECT id_produccion_film, nro_film, id_produccion_cabecera, "
                 + "id_produccion_detalle, producto, peso, fecha_creacion, cono, medida, "
-                + "micron, id_producto_clasifiacion, categoria "
+                + "micron, id_producto_categoria, categoria "
                 + "FROM v_produccion_film WHERE id_produccion_cabecera = ?;";
 
         try {
@@ -751,7 +751,7 @@ public class DB_Produccion {
                 M_producto producto = new M_producto();
                 producto.setDescripcion(rs.getString("producto"));
                 E_productoClasificacion pc = new E_productoClasificacion();
-                pc.setId(rs.getInt("id_producto_clasifiacion"));
+                pc.setId(rs.getInt("id_producto_categoria"));
                 pc.setDescripcion(rs.getString("categoria"));
                 E_produccionFilm pd = new E_produccionFilm();
                 pd.setId(rs.getInt("id_produccion_film"));

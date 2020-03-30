@@ -100,6 +100,7 @@ public class M_crearProductoTerminado {
     public void limpiarCampos() {
         setProduccionCabecera(new E_produccionCabecera());
         getRolloUtilizadoTm().vaciarLista();
+        getProductosTerminadosTM().vaciarLista();
     }
 
     public void consultarProduccion() {

@@ -30,10 +30,10 @@ public class V_crearFilm extends JDialog {
 
     private JLabel jlProducto;
     public JTextField jtfProducto;
-    private JLabel jlIdFilm, jlNroFilm, jlFechaCreacion, jlResponsable, jlMedida, jlMicron,
-            jlTipoMateriaPrima, jlPeso, jlCono, jlEstadoFilm;
+    private JLabel jlIdFilm, jlNroFilm, jlResponsable, jlMedida, jlMicron,
+            jlTipoMateriaPrima, jlPeso, jlCono, jlEstadoFilm;//jlFechaCreacion;
     public JTextField jtfIdFilm, jtfNroFilm, jtfMedida,
-            jtfFechaCreacion, jtfResponsable, jtfMicron, jtfCono, jtfPeso;
+            jtfResponsable, jtfMicron, jtfCono, jtfPeso;//jtfFechaCreacion
     public JComboBox<E_productoClasificacion> jcbTipoMateriaPrima;
     public JComboBox<Estado> jcbEstadoFilm;
     public JButton jbAceptar, jbCancelar;
@@ -61,7 +61,7 @@ public class V_crearFilm extends JDialog {
     }
 
     private void initializeComponents() {
-        jpPrincipal = new JPanel(new GridLayout(11, 2));
+        jpPrincipal = new JPanel(new GridLayout(10, 2));
         //Labels
         jlProducto = new JLabel("Producto");
         jlProducto.setHorizontalAlignment(JLabel.CENTER);
@@ -69,8 +69,8 @@ public class V_crearFilm extends JDialog {
         jlIdFilm.setHorizontalAlignment(JLabel.CENTER);
         jlNroFilm = new JLabel("Nro. Film");
         jlNroFilm.setHorizontalAlignment(JLabel.CENTER);
-        jlFechaCreacion = new JLabel("Fecha de creación");
-        jlFechaCreacion.setHorizontalAlignment(JLabel.CENTER);
+        /*jlFechaCreacion = new JLabel("Fecha de creación");
+        jlFechaCreacion.setHorizontalAlignment(JLabel.CENTER);*/
         jlResponsable = new JLabel("Responsable");
         jlResponsable.setHorizontalAlignment(JLabel.CENTER);
         jlMedida = new JLabel("Medida");
@@ -92,8 +92,8 @@ public class V_crearFilm extends JDialog {
         jtfIdFilm = new JTextField();
         jtfIdFilm.setEditable(false);
         jtfNroFilm = new JTextField();
-        jtfFechaCreacion = new JTextField();
-        jtfFechaCreacion.setEditable(false);
+        /*jtfFechaCreacion = new JTextField();
+        jtfFechaCreacion.setEditable(false);*/
         jtfResponsable = new JTextField();
         jtfResponsable.setEditable(false);
         jtfMedida = new JTextField();
@@ -111,16 +111,14 @@ public class V_crearFilm extends JDialog {
 
         /*jpPrincipal.add(jlIdFilm);
         jpPrincipal.add(jtfIdFilm);*/
-
         jpPrincipal.add(jlNroFilm);
         jpPrincipal.add(jtfNroFilm);
 
-        jpPrincipal.add(jlFechaCreacion);
-        jpPrincipal.add(jtfFechaCreacion);
+        /*jpPrincipal.add(jlFechaCreacion);
+        jpPrincipal.add(jtfFechaCreacion);*/
 
         /*jpPrincipal.add(jlResponsable);
         jpPrincipal.add(jtfResponsable);*/
-
         jpPrincipal.add(jlMedida);
         jpPrincipal.add(jtfMedida);
 

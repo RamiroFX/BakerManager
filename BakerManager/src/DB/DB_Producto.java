@@ -870,6 +870,39 @@ public class DB_Producto {
         return list;
     }
 
+    public static ArrayList<E_productoClasificacion> obtenerProductoCategoriaBauplast() {
+        ArrayList<E_productoClasificacion> list = null;
+        String q = "SELECT *  "
+                + "FROM PRODUCTO_CATEGORIA WHERE ID_PADRE = 23 ;";
+        try {
+            st = DB_manager.getConection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            rs = st.executeQuery(q);
+            list = new ArrayList();
+            while (rs.next()) {
+                E_productoClasificacion tiop = new E_productoClasificacion();
+                tiop.setId(rs.getInt("id_producto_categoria"));
+                tiop.setDescripcion(rs.getString("descripcion"));
+                list.add(tiop);
+            }
+        } catch (SQLException ex) {
+            Logger lgr = Logger.getLogger(DB_Producto.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (st != null) {
+                    st.close();
+                }
+            } catch (SQLException ex) {
+                Logger lgr = Logger.getLogger(DB_Producto.class.getName());
+                lgr.log(Level.WARNING, ex.getMessage(), ex);
+            }
+        }
+        return list;
+    }
+
     public static ArrayList<M_producto> consultarProductoPorClasificacion(String descripcion, Estado estado, String ordenarPor, E_productoClasificacion clasificacion) {
         ArrayList productos = null;
         try {

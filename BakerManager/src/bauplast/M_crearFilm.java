@@ -35,7 +35,7 @@ public class M_crearFilm {
     }
 
     public ArrayList<E_productoClasificacion> obtenerTipoMateriaPrima() {
-        return DB_Producto.obtenerProductoClasificacion();
+        return DB_Producto.obtenerProductoCategoriaBauplast();
     }
 
     public ArrayList<Estado> obtenerEstado() {
