@@ -6,8 +6,6 @@
 package Cobros;
 
 import Cliente.Seleccionar_cliente;
-import Empleado.Seleccionar_funcionario;
-import Entities.E_tipoOperacion;
 import Entities.M_cliente;
 import Entities.M_funcionario;
 import Entities.M_menu_item;

@@ -371,6 +371,34 @@ public class DB_Produccion {
             lgr.log(Level.SEVERE, ex.getMessage(), ex);
         }
     }
+    
+    public static void anularProduccionFilm(int idProduccion) {
+        String UPDATE_PRODUCCION = "UPDATE PRODUCCION_FILM SET "
+                + "ID_ESTADO = 2 "
+                + "WHERE ID_PRODUCCION_CABECERA = ?; ";
+        try {
+            DB_manager.habilitarTransaccionManual();
+            pst = DB_manager.getConection().prepareStatement(UPDATE_PRODUCCION);
+            pst.setInt(1, idProduccion);
+            pst.executeUpdate();
+            pst.close();
+            DB_manager.establecerTransaccion();
+        } catch (SQLException ex) {
+            System.out.println(ex.getNextException());
+            if (DB_manager.getConection() != null) {
+                try {
+                    DB_manager.getConection().rollback();
+                } catch (SQLException ex1) {
+                    Logger lgr = Logger.getLogger(DB_Produccion.class
+                            .getName());
+                    lgr.log(Level.WARNING, ex1.getMessage(), ex1);
+                }
+            }
+            Logger lgr = Logger.getLogger(DB_Produccion.class
+                    .getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        }
+    }
 
     public static List<E_produccionDetalle> consultarProduccionDetalleAgrupado(List<E_produccionCabecera> cadenaCabeceras) {
         List<E_produccionDetalle> list = new ArrayList<>();

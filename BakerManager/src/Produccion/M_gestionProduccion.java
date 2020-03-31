@@ -109,6 +109,7 @@ public class M_gestionProduccion {
     public void anularProduccion(int idProduccion) {
         List<E_produccionDetalle> detalle = DB_Produccion.consultarProduccionDetalle(idProduccion);
         DB_Produccion.anularProduccion(idProduccion, detalle);
+        DB_Produccion.anularProduccionFilm(idProduccion);
     }
 
     public Estado getProduccionEstado(int idProduccion) {
