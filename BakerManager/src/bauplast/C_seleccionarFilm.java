@@ -5,11 +5,8 @@
 package bauplast;
 
 import Entities.E_produccionFilm;
-import Entities.M_menu_item;
 import Interface.InterfaceRecibirProduccionFilm;
-import MenuPrincipal.DatosUsuario;
 import Produccion.SeleccionCantidadProductoSimple;
-import Producto.C_crear_producto;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -17,7 +14,6 @@ import java.awt.event.MouseEvent;
 import java.awt.EventQueue;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.util.ArrayList;
 import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
@@ -54,14 +50,7 @@ public class C_seleccionarFilm extends MouseAdapter implements ActionListener, K
     }
 
     private void inicializarVista() {
-        this.vista.jbCrearProducto.setEnabled(false);
         this.vista.jbAceptar.setEnabled(false);
-        ArrayList<M_menu_item> accesos = DatosUsuario.getRol_usuario().getAccesos();
-        for (int i = 0; i < accesos.size(); i++) {
-            if (this.vista.jbCrearProducto.getName().equals(accesos.get(i).getItemDescripcion())) {
-                this.vista.jbCrearProducto.setEnabled(true);
-            }
-        }
         this.vista.jtProducto.setModel(modelo.getTm());
         KeyStroke enter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
         this.vista.jtProducto.getInputMap(JTable.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(enter, ENTER_KEY);
@@ -73,8 +62,8 @@ public class C_seleccionarFilm extends MouseAdapter implements ActionListener, K
         });
         Utilities.c_packColumn.packColumns(this.vista.jtProducto, 1);
 
-        this.vista.jcbBuscarPor.addItem("OT");
         this.vista.jcbBuscarPor.addItem("Fecha");
+        this.vista.jcbBuscarPor.addItem("OT");
         this.vista.jcbBuscarPor.addItem("Producto");
         this.vista.jcbOrdenarPor.addItem("Descendente");
         this.vista.jcbOrdenarPor.addItem("Ascendente");
@@ -82,7 +71,7 @@ public class C_seleccionarFilm extends MouseAdapter implements ActionListener, K
 
     private void agregarListeners() {
         //ACTION LISTENERS
-        this.vista.jbCrearProducto.addActionListener(this);
+        //this.vista.jbCrearProducto.addActionListener(this);
         this.vista.jbAceptar.addActionListener(this);
         this.vista.jbSalir.addActionListener(this);
         this.vista.jbBuscar.addActionListener(this);
@@ -132,6 +121,9 @@ public class C_seleccionarFilm extends MouseAdapter implements ActionListener, K
         int fila = vista.jtProducto.getSelectedRow();
         if (fila > -1) {
             E_produccionFilm pf = modelo.getTm().getList().get(fila);
+            System.out.println("bauplast.C_seleccionarFilm.seleccionarRollo()");
+            System.out.println("pf: "+pf.getProductoClasificacion().getDescripcion());
+            System.out.println("pf.prod.getCategoria: "+pf.getProducto().getCategoria());
             SeleccionCantidadProductoSimple scp = new SeleccionCantidadProductoSimple(vista, -1);
             scp.setFilm(pf);
             scp.setFilmCallback(callback);
@@ -151,11 +143,6 @@ public class C_seleccionarFilm extends MouseAdapter implements ActionListener, K
                     vista.jtfBuscar.selectAll();
                 }
             });
-        }
-
-        if (e.getSource() == this.vista.jbCrearProducto) {
-            C_crear_producto sp = new C_crear_producto(vista);
-            sp.mostrarVista();
         }
         if (e.getSource() == this.vista.jtfBuscar) {
             displayQueryResults();

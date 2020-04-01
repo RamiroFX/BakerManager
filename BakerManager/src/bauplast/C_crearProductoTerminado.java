@@ -361,6 +361,8 @@ class C_crearProductoTerminado extends MouseAdapter implements ActionListener, K
 
     @Override
     public void recibirFilm(E_produccionFilm detalle) {
+        System.out.println("bauplast.C_crearProductoTerminado.recibirFilm()");
+        System.out.println("detalle: " + detalle.getProductoClasificacion().getDescripcion());
         modelo.agregarRolloUtilizado(detalle);
     }
 

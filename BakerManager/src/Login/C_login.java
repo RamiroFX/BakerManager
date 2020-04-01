@@ -8,6 +8,7 @@ import Utilities.Config;
 import bakermanager.C_inicio;
 import com.nitido.utils.toaster.Toaster;
 import java.awt.EventQueue;
+import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -127,10 +128,15 @@ public class C_login implements ActionListener, KeyListener {
     }
 
     private void saveConfig() {
-        String port = vista.jtfPort.getText().trim();
-        Config.setPort(port);
-        String host = vista.jtfHost.getText().trim();
-        Config.setHost(host);
+        try {
+            String port = vista.jtfPort.getText().trim();
+            Config.setPort(port);
+            String host = vista.jtfHost.getText().trim();
+            Config.setHost(host);
+            JOptionPane.showMessageDialog(vista, "Cambios guardados", "Atención", JOptionPane.INFORMATION_MESSAGE);
+        } catch (HeadlessException e) {
+            JOptionPane.showMessageDialog(vista, "Ocurrio un error al guardar cambios. Intente nuevamente", "Atención", JOptionPane.INFORMATION_MESSAGE);
+        }
     }
 
     public void actionPerformed(ActionEvent e) {

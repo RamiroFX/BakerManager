@@ -23,7 +23,7 @@ import net.miginfocom.swing.MigLayout;
  */
 public class V_seleccionarFilm extends JDialog {
 
-    JButton jbAceptar, jbSalir, jbBuscar, jbBorrar, jbCrearProducto;
+    JButton jbAceptar, jbSalir, jbBuscar, jbBorrar;
     JScrollPane jspProducto;
     JTable jtProducto;
     JPanel jpBotones, jpTop, jpBotonesTop, jpJtextFieldTop;
@@ -72,12 +72,9 @@ public class V_seleccionarFilm extends JDialog {
         jtProducto = new JTable();
         jtProducto.getTableHeader().setReorderingAllowed(false);
         jspProducto = new JScrollPane(jtProducto);
-        jbCrearProducto = new JButton("Crear producto");
-        jbCrearProducto.setName("crear producto");
         jbAceptar = new JButton("Seleccionar producto");
         jbSalir = new JButton("Cerrar");
         jpBotones = new JPanel();
-        jpBotones.add(jbCrearProducto);
         jpBotones.add(jbAceptar);
         jpBotones.add(jbSalir);
     }

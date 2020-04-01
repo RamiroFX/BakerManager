@@ -49,6 +49,7 @@ public class DB_manager {
             String port = Config.getPort();
             String host = Config.getHost();
             String url = "jdbc:postgresql://" + host + ":" + port + "/dbfrom2";
+            System.out.println("url: " + url);
             con = Conexiones.obtenerConexion(Conexiones.SGBD_POSTGRES, url, usuario, password);
             return true;
         } catch (ClassNotFoundException e) {
