@@ -9,6 +9,7 @@ import DB.DB_Producto;
 import DB.DB_manager;
 import Entities.E_productoClasificacion;
 import Entities.Estado;
+import Entities.ProductoCategoria;
 import ModeloTabla.SeleccionarProductoRolloTableModel;
 import java.util.ArrayList;
 
@@ -42,7 +43,12 @@ public class M_seleccionarProductoPorClasif {
         return DB_manager.obtenerEstados();
     }
 
-    public void consultarRollos(String descripcion, Estado estado, String ordenarPor) {
-        this.tm.setList(DB_Producto.consultarProductoPorClasificacion(descripcion, estado, ordenarPor, pc));
+    public ArrayList<ProductoCategoria> obtenerCategorias() {
+        return DB_manager.obtenerCategorias();
+    }
+
+    public void consultarRollos(String descripcion, Estado estado, String buscarPor, ProductoCategoria categoria) {
+        pc.setId(categoria.getId());
+        this.tm.setList(DB_Producto.consultarProductoPorClasificacion(descripcion, estado, buscarPor, pc));
     }
 }

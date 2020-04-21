@@ -5,6 +5,7 @@
 package bauplast;
 
 import Entities.Estado;
+import Entities.ProductoCategoria;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import javax.swing.JButton;
@@ -29,7 +30,8 @@ public class V_seleccionarProductoPorClasif extends JDialog {
     JTable jtProducto;
     JPanel jpBotones, jpTop, jpBotonesTop, jpJtextFieldTop;
     public JComboBox<Estado> jcbEstado;
-    public JComboBox jcbOrdenarPor;
+    public JComboBox<ProductoCategoria> jcbCategoria;
+    public JComboBox jcbBuscarPor;
     public JTextField jtfBuscar;
 
     public V_seleccionarProductoPorClasif(JDialog main) {
@@ -48,9 +50,12 @@ public class V_seleccionarProductoPorClasif extends JDialog {
         JPanel jpFiltros = new JPanel(new FlowLayout(FlowLayout.CENTER));
 
         jcbEstado = new JComboBox();
-        jcbOrdenarPor = new JComboBox();
-        jpFiltros.add(new JLabel("Ordenar por:"));
-        jpFiltros.add(jcbOrdenarPor);
+        jcbBuscarPor = new JComboBox();
+        jcbCategoria = new JComboBox();
+        jpFiltros.add(new JLabel("Buscar por:"));
+        jpFiltros.add(jcbBuscarPor);
+        jpFiltros.add(new JLabel("Categoría:"));
+        jpFiltros.add(jcbCategoria);
         jpFiltros.add(new JLabel("Estado:"));
         jpFiltros.add(jcbEstado);
         jpBotonesTop = new JPanel();

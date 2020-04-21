@@ -7,6 +7,7 @@ package bauplast;
 import Entities.Estado;
 import Entities.M_menu_item;
 import Entities.M_producto;
+import Entities.ProductoCategoria;
 import Interface.InterfaceRecibirProduccionFilm;
 import Interface.RecibirProductoCallback;
 import MenuPrincipal.DatosUsuario;
@@ -88,9 +89,14 @@ public class C_seleccionarProductoPorClasif extends MouseAdapter implements Acti
         for (int i = 0; i < estado.size(); i++) {
             this.vista.jcbEstado.addItem(estado.get(i));
         }
-        this.vista.jcbOrdenarPor.addItem("ID");
-        this.vista.jcbOrdenarPor.addItem("Descripción");
-        this.vista.jcbOrdenarPor.addItem("Código");
+        ArrayList<ProductoCategoria> categorias = modelo.obtenerCategorias();
+        this.vista.jcbCategoria.addItem(new ProductoCategoria(-1, "Todas"));
+        for (int i = 0; i < categorias.size(); i++) {
+            this.vista.jcbCategoria.addItem(categorias.get(i));
+        }
+        this.vista.jcbBuscarPor.addItem("Descripción");
+        this.vista.jcbBuscarPor.addItem("ID");
+        this.vista.jcbBuscarPor.addItem("Código");
     }
 
     private void agregarListeners() {
@@ -101,6 +107,9 @@ public class C_seleccionarProductoPorClasif extends MouseAdapter implements Acti
         this.vista.jbBuscar.addActionListener(this);
         this.vista.jbBorrar.addActionListener(this);
         this.vista.jtfBuscar.addActionListener(this);
+        this.vista.jcbCategoria.addActionListener(this);
+        this.vista.jcbBuscarPor.addActionListener(this);
+        this.vista.jcbEstado.addActionListener(this);
         //MOUSE LISTENERS
         this.vista.jtProducto.addMouseListener(this);
         //KEY LISTENERS
@@ -124,9 +133,11 @@ public class C_seleccionarProductoPorClasif extends MouseAdapter implements Acti
                     return;
                 }
                 int jcbEstadoIndex = vista.jcbEstado.getSelectedIndex();
+                int jcbCategoriaIndex = vista.jcbCategoria.getSelectedIndex();
                 Estado estado = vista.jcbEstado.getItemAt(jcbEstadoIndex);
-                String ordenarPor = vista.jcbOrdenarPor.getSelectedItem().toString();
-                modelo.consultarRollos(desc, estado, ordenarPor);
+                ProductoCategoria categoria = vista.jcbCategoria.getItemAt(jcbCategoriaIndex);
+                String buscarPor = vista.jcbBuscarPor.getSelectedItem().toString();
+                modelo.consultarRollos(desc, estado, buscarPor, categoria);
                 Utilities.c_packColumn.packColumns(vista.jtProducto, 1);
             }
         });
@@ -184,7 +195,13 @@ public class C_seleccionarProductoPorClasif extends MouseAdapter implements Acti
         if (e.getSource() == this.vista.jtfBuscar) {
             displayQueryResults();
         }
-        if (e.getSource() == this.vista.jcbOrdenarPor) {
+        if (e.getSource() == this.vista.jcbCategoria) {
+            displayQueryResults();
+        }
+        if (e.getSource() == this.vista.jcbEstado) {
+            displayQueryResults();
+        }
+        if (e.getSource() == this.vista.jcbBuscarPor) {
             displayQueryResults();
         } else if (e.getSource() == this.vista.jbBuscar) {
             displayQueryResults();

@@ -77,6 +77,8 @@ public class C_seleccionarFilm extends MouseAdapter implements ActionListener, K
         this.vista.jbBuscar.addActionListener(this);
         this.vista.jbBorrar.addActionListener(this);
         this.vista.jtfBuscar.addActionListener(this);
+        this.vista.jcbOrdenarPor.addActionListener(this);
+        this.vista.jcbBuscarPor.addActionListener(this);
         //MOUSE LISTENERS
         this.vista.jtProducto.addMouseListener(this);
         //KEY LISTENERS
@@ -122,8 +124,8 @@ public class C_seleccionarFilm extends MouseAdapter implements ActionListener, K
         if (fila > -1) {
             E_produccionFilm pf = modelo.getTm().getList().get(fila);
             System.out.println("bauplast.C_seleccionarFilm.seleccionarRollo()");
-            System.out.println("pf: "+pf.getProductoClasificacion().getDescripcion());
-            System.out.println("pf.prod.getCategoria: "+pf.getProducto().getCategoria());
+            System.out.println("pf: " + pf.getProductoClasificacion().getDescripcion());
+            System.out.println("pf.prod.getCategoria: " + pf.getProducto().getCategoria());
             SeleccionCantidadProductoSimple scp = new SeleccionCantidadProductoSimple(vista, -1);
             scp.setFilm(pf);
             scp.setFilmCallback(callback);

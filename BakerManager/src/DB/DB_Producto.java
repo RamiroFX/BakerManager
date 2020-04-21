@@ -912,17 +912,18 @@ public class DB_Producto {
 
             String fromQuery = "FROM PRODUCTO PROD ";
             String finalQuery = "ORDER BY PROD.DESCRIPCION ";
+            String buscarPor = "LOWER(PROD.DESCRIPCION) LIKE ? ";
             switch (ordenarPor) {
                 case "ID": {
-                    finalQuery = "ORDER BY PROD.ID_PRODUCTO ";
+                    buscarPor = "CAST(PROD.ID_PRODUCTO AS CHARACTER VARYING) LIKE ? ";
                     break;
                 }
                 case "Código": {
-                    finalQuery = "ORDER BY PROD.CODIGO ";
+                    buscarPor = "LOWER(PROD.CODIGO) LIKE ? ";
                     break;
                 }
-                case "ID_PRODUCTO": {
-                    finalQuery = "ORDER BY PROD.ID_PRODUCTO ";
+                case "Descripción": {
+                    buscarPor = "LOWER(PROD.DESCRIPCION) LIKE ? ";
                     break;
                 }
             }
@@ -935,6 +936,10 @@ public class DB_Producto {
             }
             String productoClasificacion;
             switch (clasificacion.getId()) {
+                case -1: {
+                    productoClasificacion = "";
+                    break;
+                }
                 case E_productoClasificacion.PROD_TERMINADO: {
                     productoClasificacion = "AND PROD.ID_CATEGORIA = " + E_productoClasificacion.PROD_TERMINADO + " ";
                     break;
@@ -944,7 +949,7 @@ public class DB_Producto {
                     break;
                 }
                 default: {
-                    productoClasificacion = "";
+                    productoClasificacion = "AND PROD.ID_CATEGORIA = " + clasificacion.getId() + " ";
                     break;
                 }
             }
@@ -959,13 +964,13 @@ public class DB_Producto {
                     + "(SELECT PRCA.DESCRIPCION FROM PRODUCTO_CATEGORIA PRCA WHERE PRCA.ID_PRODUCTO_CATEGORIA = PROD.ID_CATEGORIA) \"categoria\" "
                     + fromQuery
                     + "WHERE "
-                    + "LOWER(PROD.DESCRIPCION) LIKE ? "
+                    + buscarPor
                     + estad
                     + productoClasificacion
                     + finalQuery;
 
             pst = DB_manager.getConection().prepareStatement(Query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-            pst.setString(1, descripcion + "%");
+            pst.setString(1, "%" + descripcion.toLowerCase() + "%");
             rs = pst.executeQuery();
             productos = new ArrayList();
             while (rs.next()) {
