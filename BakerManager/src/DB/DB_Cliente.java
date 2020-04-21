@@ -48,7 +48,6 @@ public class DB_Cliente {
         } else if (!entidad && !ruc) {
             WHERE = WHERE + "LOWER(CLIE.NOMBRE) LIKE ? OR LOWER(CLIE.ENTIDAD) LIKE ? OR LOWER(CLIE.RUC) LIKE ? ";
         }
-
         String QUERY = SELECT + FROM + WHERE + ORDER_BY;
         try {
             DB_manager.habilitarTransaccionManual();
@@ -74,7 +73,8 @@ public class DB_Cliente {
             Logger lgr = Logger.getLogger(DB_Cliente.class.getName());
             lgr.log(Level.SEVERE, ex.getMessage(), ex);
 
-        } /*finally {
+        }
+        /*finally {
          try {
          if (rs != null) {
          rs.close();
@@ -467,7 +467,8 @@ public class DB_Cliente {
         } catch (SQLException ex) {
             Logger lgr = Logger.getLogger(DB_Cliente.class.getName());
             lgr.log(Level.SEVERE, ex.getMessage(), ex);
-        } /*finally {
+        }
+        /*finally {
          try {
          if (rs != null) {
          rs.close();
@@ -534,7 +535,8 @@ public class DB_Cliente {
         } catch (SQLException ex) {
             Logger lgr = Logger.getLogger(DB_Cliente.class.getName());
             lgr.log(Level.SEVERE, ex.getMessage(), ex);
-        } /*finally {
+        }
+        /*finally {
          try {
          if (rs != null) {
          rs.close();
@@ -1072,6 +1074,7 @@ public class DB_Cliente {
             lgr.log(Level.SEVERE, ex.getMessage(), ex);
         }
     }
+
     /*
      public static ResultSetTableModel consultarCliente(String toLowerCase, boolean entidad, boolean ruc, boolean exclusivo) {
      ResultSetTableModel rstm = null;
@@ -1105,7 +1108,6 @@ public class DB_Cliente {
      }
      return rstm;
      }*/
-
     public static ArrayList<M_telefono> obtenerTelefonoCliente(int idCliente) {
         ArrayList telefonos = null;
         String query = "SELECT TELE.ID_TELEFONO, TELE.NUMERO, TELE.ID_CATEGORIA, TELE.OBSERVACION  FROM TELEFONO TELE, CLIENTE CLIE, CLIENTE_TELEFONO CLTE WHERE CLIE.ID_CLIENTE = CLTE.ID_CLIENTE  AND CLTE.ID_TELEFONO = TELE.ID_TELEFONO"

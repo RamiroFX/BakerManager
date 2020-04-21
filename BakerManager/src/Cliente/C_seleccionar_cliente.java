@@ -8,14 +8,6 @@ import DB.DB_Cliente;
 import Entities.M_cliente;
 import Interface.InterfaceNotificarCambio;
 import Interface.RecibirClienteCallback;
-import Pedido.C_crearPedido;
-import Pedido.C_gestionPedido;
-import Pedido.C_verPedido;
-import Ventas.C_crearVentaRapida;
-import Ventas.C_gestionVentas;
-import Ventas.C_buscar_venta_detalle;
-import Ventas.C_verMesa;
-import Ventas.ConfigurarMesa;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -55,8 +47,9 @@ public class C_seleccionar_cliente extends MouseAdapter implements ActionListene
     }
 
     private void inicializarVista() {
+        this.vista.jrbInclusivo.setSelected(true);
         this.vista.jbAceptar.setEnabled(false);
-        this.vista.jtCliente.setModel(DB_Cliente.consultarCliente("", false, true, true));
+        this.vista.jtCliente.setModel(DB_Cliente.consultarCliente("", true, true, true));
         KeyStroke enter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
         this.vista.jtCliente.getInputMap(JTable.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(enter, ENTER_KEY);
         this.vista.jtCliente.getActionMap().put(ENTER_KEY, new AbstractAction() {
@@ -109,7 +102,7 @@ public class C_seleccionar_cliente extends MouseAdapter implements ActionListene
                 boolean entidad = vista.jckbEntidadNombre.isSelected();
                 boolean ruc = vista.jckbRUC.isSelected();
                 boolean exclusivo = vista.jrbExclusivo.isSelected();
-                vista.jtCliente.setModel(DB_Cliente.consultarCliente(cliente.toLowerCase(), entidad, ruc, exclusivo));
+                vista.jtCliente.setModel(DB_Cliente.consultarCliente(cliente.toLowerCase(), exclusivo, entidad, ruc));
             }
         });
     }
