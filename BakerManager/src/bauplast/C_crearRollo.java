@@ -8,6 +8,7 @@ package bauplast;
 import Empleado.Seleccionar_funcionario;
 import Entities.E_produccionCabecera;
 import Entities.E_produccionFilm;
+import Entities.E_produccionTipo;
 import Entities.E_productoClasificacion;
 import Entities.M_funcionario;
 import Interface.InterfaceRecibirProduccionFilm;
@@ -194,7 +195,8 @@ class C_crearRollo extends MouseAdapter implements ActionListener, KeyListener,
             JOptionPane.showMessageDialog(vista, VALIDAR_ORDEN_TRABAJO_MSG_3, VALIDAR_TITULO, JOptionPane.WARNING_MESSAGE);
             return false;
         }
-        if (modelo.existeOrdenTrabajo(ordenTrabajo)) {
+        E_produccionTipo pt = new E_produccionTipo(E_produccionTipo.ROLLO, "Rollo");
+        if (modelo.existeOrdenTrabajoPorProduccion(ordenTrabajo, pt)) {
             JOptionPane.showMessageDialog(vista, VALIDAR_ORDEN_TRABAJO_MSG_4, VALIDAR_TITULO, JOptionPane.WARNING_MESSAGE);
             return false;
         }

@@ -8,6 +8,7 @@ package bauplast;
 import Empleado.Seleccionar_funcionario;
 import Entities.E_produccionCabecera;
 import Entities.E_produccionFilm;
+import Entities.E_produccionTipo;
 import Entities.E_productoClasificacion;
 import Entities.M_funcionario;
 import Entities.M_producto;
@@ -231,7 +232,8 @@ class C_crearProductoTerminado extends MouseAdapter implements ActionListener, K
             JOptionPane.showMessageDialog(vista, VALIDAR_ORDEN_TRABAJO_MSG_3, VALIDAR_TITULO, JOptionPane.WARNING_MESSAGE);
             return false;
         }
-        if (modelo.existeOrdenTrabajo(ordenTrabajo)) {
+        E_produccionTipo pt = new E_produccionTipo(E_produccionTipo.PRODUCTO_TERMINADO, "Producto terminado");
+        if (modelo.existeOrdenTrabajoPorProduccion(ordenTrabajo, pt)) {
             JOptionPane.showMessageDialog(vista, VALIDAR_ORDEN_TRABAJO_MSG_4, VALIDAR_TITULO, JOptionPane.WARNING_MESSAGE);
             return false;
         }

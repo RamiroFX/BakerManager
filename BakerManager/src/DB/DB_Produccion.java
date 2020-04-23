@@ -62,6 +62,34 @@ public class DB_Produccion {
         return false;
     }
 
+    public static boolean existeOrdenTrabajo(int ordenTrabajo, E_produccionTipo tipoProduccion) {
+        String Query = "SELECT nro_orden_trabajo FROM PRODUCCION_CABECERA WHERE nro_orden_trabajo = ? AND id_produccion_tipo = ? ;";
+        try {
+            pst = DB_manager.getConection().prepareStatement(Query);
+            pst.setInt(1, ordenTrabajo);
+            pst.setInt(2, tipoProduccion.getId());
+            rs = pst.executeQuery();
+            return rs.next();
+        } catch (SQLException ex) {
+            Logger lgr = Logger.getLogger(DB_Produccion.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (st != null) {
+                    st.close();
+                }
+            } catch (SQLException ex) {
+                Logger lgr = Logger.getLogger(DB_Produccion.class.getName());
+                lgr.log(Level.WARNING, ex.getMessage(), ex);
+            }
+        }
+        return false;
+    }
+
     public static ArrayList<E_produccionTipo> obtenerTipoProduccion() {
         ArrayList<E_produccionTipo> list = null;
         String q = "SELECT *  "
@@ -371,7 +399,7 @@ public class DB_Produccion {
             lgr.log(Level.SEVERE, ex.getMessage(), ex);
         }
     }
-    
+
     public static void anularProduccionFilm(int idProduccion) {
         String UPDATE_PRODUCCION = "UPDATE PRODUCCION_FILM SET "
                 + "ID_ESTADO = 2 "

@@ -68,9 +68,15 @@ public class C_crearFilm implements ActionListener, KeyListener {
     private void agregarListeners() {
         this.vista.jbAceptar.addActionListener(this);
         this.vista.jbCancelar.addActionListener(this);
+        this.vista.jtfNroFilm.addActionListener(this);
+        this.vista.jtfMedida.addActionListener(this);
+        this.vista.jtfMicron.addActionListener(this);
+        this.vista.jtfPeso.addActionListener(this);
+        this.vista.jtfCono.addActionListener(this);
         /*
         KEYLISTENER
          */
+        this.vista.jcbTipoMateriaPrima.addKeyListener(this);
         this.vista.jbAceptar.addKeyListener(this);
         this.vista.jbCancelar.addKeyListener(this);
     }
@@ -207,7 +213,20 @@ public class C_crearFilm implements ActionListener, KeyListener {
             creaFilm();
         } else if (e.getSource() == this.vista.jbCancelar) {
             cerrar();
+        } else if (e.getSource() == this.vista.jtfNroFilm) {
+            this.vista.jtfMedida.requestFocusInWindow();
+        } else if (e.getSource() == this.vista.jtfMedida) {
+            this.vista.jtfMicron.requestFocusInWindow();
+        } else if (e.getSource() == this.vista.jtfMedida) {
+            this.vista.jtfMicron.requestFocusInWindow();
+        } else if (e.getSource() == this.vista.jtfMicron) {
+            this.vista.jcbTipoMateriaPrima.requestFocusInWindow();
+        } else if (e.getSource() == this.vista.jtfPeso) {
+            this.vista.jtfCono.requestFocusInWindow();
+        } else if (e.getSource() == this.vista.jtfCono) {
+            this.vista.jbAceptar.requestFocusInWindow();
         }
+
     }
 
     @Override
@@ -219,6 +238,15 @@ public class C_crearFilm implements ActionListener, KeyListener {
         switch (e.getKeyCode()) {
             case KeyEvent.VK_ESCAPE: {
                 cerrar();
+                break;
+            }
+            case KeyEvent.VK_ENTER: {
+                if (this.vista.jcbTipoMateriaPrima.hasFocus()) {
+                    this.vista.jtfPeso.requestFocusInWindow();
+                }
+                if (this.vista.jbAceptar.hasFocus()) {
+                    creaFilm();
+                }
                 break;
             }
         }

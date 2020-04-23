@@ -85,8 +85,8 @@ public class M_crearProductoTerminado {
         getProductosTerminadosTM().quitarDetalle(index);
     }
 
-    boolean existeOrdenTrabajo(int ordenTrabajo) {
-        return DB_Produccion.existeOrdenTrabajo(ordenTrabajo);
+    boolean existeOrdenTrabajoPorProduccion(int ordenTrabajo, E_produccionTipo tipoProduccion) {
+        return DB_Produccion.existeOrdenTrabajo(ordenTrabajo, tipoProduccion);
     }
 
     public ArrayList<E_produccionTipo> obtenerProduccionTipo() {

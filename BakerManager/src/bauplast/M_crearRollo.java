@@ -61,6 +61,10 @@ public class M_crearRollo {
         return DB_Produccion.existeOrdenTrabajo(ordenTrabajo);
     }
 
+    boolean existeOrdenTrabajoPorProduccion(int ordenTrabajo, E_produccionTipo tipoProduccion) {
+        return DB_Produccion.existeOrdenTrabajo(ordenTrabajo, tipoProduccion);
+    }
+
     public ArrayList<E_produccionTipo> obtenerProduccionTipo() {
         return DB_Produccion.obtenerTipoProduccion();
     }
