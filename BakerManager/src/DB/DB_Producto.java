@@ -216,11 +216,30 @@ public class DB_Producto {
         return rstm;
     }
 
-    public static ResultSetTableModel consultaSimpleProducto(String descripcion, String proveedor, String marca, String rubro, String impuesto, String estado, String ordenarPor) {
+    public static ResultSetTableModel consultaSimpleProducto(String descripcion, String proveedor, String marca, String rubro, String impuesto, String estado, String ordenarPor, String existencia) {
         ResultSetTableModel rstm = null;
         try {
             if (DB_manager.getConection() == null) {
                 throw new IllegalStateException("Connection already closed.");
+            }
+            String existenciaSQL = "";
+            switch (existencia) {
+                case "Todos": {
+                    existenciaSQL = "";
+                    break;
+                }
+                case "Positiva": {
+                    existenciaSQL = "AND PROD.CANT_ACTUAL > 0 ";
+                    break;
+                }
+                case "Negativa": {
+                    existenciaSQL = "AND PROD.CANT_ACTUAL <= 0 ";
+                    break;
+                }
+                default: {
+                    existenciaSQL = "";
+                    break;
+                }
             }
             String finalQuery = "ORDER BY PROD.DESCRIPCION ";
             if (ordenarPor.equals("Descripción")) {
@@ -276,6 +295,7 @@ public class DB_Producto {
                     + imp
                     + rubr
                     + estad
+                    + existenciaSQL
                     + finalQuery;
             //SELECT PROD.id_producto   "ID producto"  ,  PROD.descripcion  "Descripcion"   FROM producto
             //se crea una sentencia
@@ -292,11 +312,30 @@ public class DB_Producto {
         return rstm;
     }
 
-    public static ArrayList<M_producto> consultaSimpleProductos(String descripcion, String proveedor, String marca, String rubro, String impuesto, String estado, String ordenarPor) {
+    public static ArrayList<M_producto> consultaSimpleProductos(String descripcion, String proveedor, String marca, String rubro, String impuesto, String estado, String ordenarPor, String existencia) {
         ArrayList productos = null;
         try {
             if (DB_manager.getConection() == null) {
                 throw new IllegalStateException("Connection already closed.");
+            }
+            String existenciaSQL = "";
+            switch (existencia) {
+                case "Todos": {
+                    existenciaSQL = "";
+                    break;
+                }
+                case "Positiva": {
+                    existenciaSQL = "AND PROD.CANT_ACTUAL > 0 ";
+                    break;
+                }
+                case "Negativa": {
+                    existenciaSQL = "AND PROD.CANT_ACTUAL <= 0 ";
+                    break;
+                }
+                default: {
+                    existenciaSQL = "";
+                    break;
+                }
             }
             String finalQuery = "ORDER BY PROD.DESCRIPCION ";
             if (ordenarPor.equals("Descripción")) {
@@ -364,6 +403,7 @@ public class DB_Producto {
                     + imp
                     + rubr
                     + estad
+                    + existenciaSQL
                     + finalQuery;
 
             pst = DB_manager.getConection().prepareStatement(Query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);

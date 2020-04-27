@@ -35,7 +35,7 @@ public class V_seleccionarProductoPorClasif extends JDialog {
     public JTextField jtfBuscar;
 
     public V_seleccionarProductoPorClasif(JDialog main) {
-        super(main, "Seleccionar rollo", true);
+        super(main, "Seleccionar producto", true);
         setSize(1200, 400);
         setLocationRelativeTo(main);
         initComp();

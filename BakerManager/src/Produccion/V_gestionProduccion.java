@@ -31,7 +31,7 @@ import net.miginfocom.swing.MigLayout;
 public class V_gestionProduccion extends JInternalFrame {
 
     public JButton jbBuscar, jbBorrar, jbCrearRollo, jbCrearProductoTerminado,
-            jbDetalle, jbResumen, jbEmpleado, jbAnular;
+            jbDetalle, jbResumen, jbEmpleado, jbAnular, jbBuscarDetalle;
     public JTextField jtfNroOrdenTrabajo, jtfEmpleado;
     public JComboBox<E_produccionTipo> jcbTipoProduccion;
     public JComboBox<Estado> jcbEstado;
@@ -92,9 +92,12 @@ public class V_gestionProduccion extends JInternalFrame {
         jbBuscar = new JButton("Buscar");
         jbBuscar.setName("buscar produccion");
         jbBorrar = new JButton("Borrar");
+        jbBuscarDetalle = new JButton("Buscar producción");
+        jbBuscarDetalle.setName("buscar produccion");
         //jbBuscarDetalle = new JButton("Buscar por detalle");
-        jpBotonesTop.add(jbBuscar, "span, growx, wrap");
-        jpBotonesTop.add(jbBorrar, "span, growx");
+        jpBotonesTop.add(jbBuscar);
+        jpBotonesTop.add(jbBorrar, "wrap");
+        jpBotonesTop.add(jbBuscarDetalle, "span, growx");
         //jpBotonesTop.add(jbBuscarDetalle, "span, growx");
         jpTop.add(jpFiltros);
         jpTop.add(jpBotonesTop);

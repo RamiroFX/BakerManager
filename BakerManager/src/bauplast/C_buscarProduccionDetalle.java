@@ -1,5 +1,6 @@
 /*
- * To change this template, choose Tools | Templates
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
 package bauplast;
@@ -7,32 +8,31 @@ package bauplast;
 import Entities.E_produccionFilm;
 import Interface.InterfaceRecibirProduccionFilm;
 import Produccion.SeleccionCantidadProductoSimple;
+import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.EventQueue;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.KeyStroke;
-import javax.swing.SwingUtilities;
 
 /**
  *
  * @author Ramiro Ferreira
  */
-public class C_seleccionarFilm extends MouseAdapter implements ActionListener, KeyListener {
+public class C_buscarProduccionDetalle extends MouseAdapter implements ActionListener, KeyListener {
 
     private static final String ENTER_KEY = "Entrar";
 
-    private M_seleccionarFilm modelo;
-    private V_seleccionarFilm vista;
+    private M_buscarProduccionDetalle modelo;
+    private V_buscarProduccionDetalle vista;
     private InterfaceRecibirProduccionFilm callback;
 
-    public C_seleccionarFilm(M_seleccionarFilm modelo, V_seleccionarFilm vista) {
+    public C_buscarProduccionDetalle(M_buscarProduccionDetalle modelo, V_buscarProduccionDetalle vista) {
         this.vista = vista;
         this.modelo = modelo;
         inicializarVista();
@@ -50,7 +50,6 @@ public class C_seleccionarFilm extends MouseAdapter implements ActionListener, K
     }
 
     private void inicializarVista() {
-        this.vista.jbAceptar.setEnabled(false);
         this.vista.jtProducto.setModel(modelo.getTm());
         KeyStroke enter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
         this.vista.jtProducto.getInputMap(JTable.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(enter, ENTER_KEY);
@@ -62,7 +61,7 @@ public class C_seleccionarFilm extends MouseAdapter implements ActionListener, K
         });
         Utilities.c_packColumn.packColumns(this.vista.jtProducto, 1);
 
-                this.vista.jcbBuscarPor.addItem("Todos");
+        this.vista.jcbBuscarPor.addItem("Todos");
         this.vista.jcbBuscarPor.addItem("Nro. Film");
         this.vista.jcbBuscarPor.addItem("OT");
         this.vista.jcbBuscarPor.addItem("Producto");
@@ -80,7 +79,6 @@ public class C_seleccionarFilm extends MouseAdapter implements ActionListener, K
     private void agregarListeners() {
         //ACTION LISTENERS
         //this.vista.jbCrearProducto.addActionListener(this);
-        this.vista.jbAceptar.addActionListener(this);
         this.vista.jbSalir.addActionListener(this);
         this.vista.jbBuscar.addActionListener(this);
         this.vista.jbBorrar.addActionListener(this);
@@ -146,16 +144,7 @@ public class C_seleccionarFilm extends MouseAdapter implements ActionListener, K
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == this.vista.jbAceptar) {
-            seleccionarRollo();
-            this.vista.jtfBuscar.requestFocusInWindow();
-            SwingUtilities.invokeLater(new Runnable() {
-                @Override
-                public void run() {
-                    vista.jtfBuscar.selectAll();
-                }
-            });
-        }
+
         if (e.getSource() == this.vista.jtfBuscar) {
             displayQueryResults();
         }
@@ -179,7 +168,6 @@ public class C_seleccionarFilm extends MouseAdapter implements ActionListener, K
         if ((fila > -1) && (columna > -1)) {
             int index = this.vista.jtProducto.getSelectedRow();
             E_produccionFilm producto = modelo.getTm().getList().get(index);
-            this.vista.jbAceptar.setEnabled(true);
             if (e.getClickCount() == 2) {
                 E_produccionFilm pf = modelo.getTm().getList().get(fila);
                 SeleccionCantidadProductoSimple scp = new SeleccionCantidadProductoSimple(vista, -1);

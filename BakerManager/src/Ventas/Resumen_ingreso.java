@@ -6,8 +6,6 @@
 package Ventas;
 
 import DB.DB_Ingreso;
-import Entities.E_facturaCabeceraFX;
-import Entities.E_facturaDetalleFX;
 import Entities.E_facturacionCabecera;
 import Entities.E_tipoOperacion;
 import Entities.Estado;
@@ -46,7 +44,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
-import javax.swing.table.TableModel;
 
 /**
  *

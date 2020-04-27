@@ -35,7 +35,7 @@ public class V_gestion_producto extends JInternalFrame {
     public JTextField jtfBuscar, jtfProducto, jtfCodigo, jtfPrecioCosto,
             jtfPrecioVta, jtfPrecioMayorista, jtfImpuesto, jtfMarca,
             jtfSuspendido, jtfRubro, jtfCantActual, jtfObservacion, jtfProveedor;
-    public JComboBox jcbImpuesto, jcbMarca, jcbEstado, jcbRubro, jcbOrderBy;
+    public JComboBox jcbImpuesto, jcbMarca, jcbEstado, jcbRubro, jcbOrderBy, jcbExistence;
     private JPanel jpTop, jpBotonesTop, jpJtextFieldTop, jpMid, jpBot, jpMid1;
     public JTable jtProducto;
     private JSplitPane jspMid;
@@ -55,8 +55,9 @@ public class V_gestion_producto extends JInternalFrame {
     private void initTop() {
         jpTop = new JPanel(new MigLayout("", "[fill][fill]", "[fill][]"));
         JPanel jpFiltros = new JPanel(new MigLayout());
-        jbProveedor = new JButton("Proveedor");
-        jbProveedor.setEnabled(false);
+        jcbExistence = new JComboBox();
+        //jbProveedor = new JButton("Proveedor");
+        //jbProveedor.setEnabled(false);
         jtfProveedor = new JTextField();
         jtfProveedor.setPreferredSize(new Dimension(250, 10));
         jtfProveedor.setEditable(false);
@@ -66,8 +67,8 @@ public class V_gestion_producto extends JInternalFrame {
         jcbEstado = new JComboBox();
         jcbOrderBy = new JComboBox();
         jcbRubro = new JComboBox();
-        jpFiltros.add(jbProveedor);
-        jpFiltros.add(jtfProveedor);
+        jpFiltros.add(new JLabel("Existencia:"));
+        jpFiltros.add(jcbExistence);
         jpFiltros.add(new JLabel("Marca:"));
         jpFiltros.add(jcbMarca);
         jpFiltros.add(new JLabel("Rubro:"));

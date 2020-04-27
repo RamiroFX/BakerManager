@@ -21,6 +21,10 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.beans.PropertyVetoException;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.math.MathContext;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Vector;
 import javax.swing.JOptionPane;
@@ -83,6 +87,9 @@ public class C_gestion_producto implements ActionListener, KeyListener, MouseLis
         }
         this.vista.jcbOrderBy.addItem("Descripción");
         this.vista.jcbOrderBy.addItem("ID");
+        this.vista.jcbExistence.addItem("Todas");
+        this.vista.jcbExistence.addItem("Positiva");
+        this.vista.jcbExistence.addItem("Negativa");
     }
 
     public void mostrarVista() {
@@ -114,7 +121,7 @@ public class C_gestion_producto implements ActionListener, KeyListener, MouseLis
             if (this.vista.jtfBuscar.getName().equals(acceso.getItemDescripcion())) {
                 //this.vista.jtfBuscar.addKeyListener(this);
                 this.vista.jbBuscar.addActionListener(this);
-                this.vista.jbProveedor.addActionListener(this);
+                //this.vista.jbProveedor.addActionListener(this);
                 this.vista.jbBorrar.addActionListener(this);
                 this.vista.jtfBuscar.setEditable(true);
                 this.vista.jtfBuscar.setEnabled(true);
@@ -140,7 +147,7 @@ public class C_gestion_producto implements ActionListener, KeyListener, MouseLis
         this.vista.jtfBuscar.addKeyListener(this);
         this.vista.jbBuscar.addKeyListener(this);
         this.vista.jbBorrar.addKeyListener(this);
-        this.vista.jbProveedor.addKeyListener(this);
+        //this.vista.jbProveedor.addKeyListener(this);
         this.vista.jbAgregar.addKeyListener(this);
         this.vista.jbModificar.addKeyListener(this);
         this.vista.jbParametros.addKeyListener(this);
@@ -164,13 +171,14 @@ public class C_gestion_producto implements ActionListener, KeyListener, MouseLis
                 String impuesto = vista.jcbImpuesto.getSelectedItem().toString();
                 String estado = vista.jcbEstado.getSelectedItem().toString();
                 String orderBy = vista.jcbOrderBy.getSelectedItem().toString();
+                String existence = vista.jcbExistence.getSelectedItem().toString();
                 String proveedor = proveedor();
                 /*
                  * Se utiliza el objeto factory para obtener un TableModel
                  * para los resultados del query.
                  */
 
-                vista.jtProducto.setModel(DB_Producto.consultaSimpleProducto(desc.toLowerCase(), proveedor, marca, rubro, impuesto, estado, orderBy));
+                vista.jtProducto.setModel(DB_Producto.consultaSimpleProducto(desc.toLowerCase(), proveedor, marca, rubro, impuesto, estado, orderBy, existence));
                 Utilities.c_packColumn.packColumns(vista.jtProducto, 1);
             }
         });
@@ -262,8 +270,9 @@ public class C_gestion_producto implements ActionListener, KeyListener, MouseLis
                 String impuesto = vista.jcbImpuesto.getSelectedItem().toString();
                 String estado = vista.jcbEstado.getSelectedItem().toString();
                 String orderBy = vista.jcbOrderBy.getSelectedItem().toString();
+                String existence = vista.jcbExistence.getSelectedItem().toString();
                 String proveedor = proveedor();
-                ArrayList<M_producto> productos = DB_Producto.consultaSimpleProductos(desc.toLowerCase(), proveedor, marca, rubro, impuesto, estado, orderBy);
+                ArrayList<M_producto> productos = DB_Producto.consultaSimpleProductos(desc.toLowerCase(), proveedor, marca, rubro, impuesto, estado, orderBy, existence);
                 ExportarProducto ep = new ExportarProducto(productos);
                 ep.exportar();
             }
@@ -322,7 +331,8 @@ public class C_gestion_producto implements ActionListener, KeyListener, MouseLis
             this.vista.jtfImpuesto.setText(String.valueOf(getProducto().getImpuesto()));
             this.vista.jtfMarca.setText(getProducto().getMarca());
             this.vista.jtfSuspendido.setText(getProducto().getEstado());
-            this.vista.jtfCantActual.setText(String.valueOf(getProducto().getCantActual()));
+            MathContext c = new MathContext(9, RoundingMode.CEILING);
+            this.vista.jtfCantActual.setText(new BigDecimal(getProducto().getCantActual(), c) + "");
             String observacion = "";
             if (getProducto().getObservacion() != null) {
                 observacion = String.valueOf(getProducto().getObservacion());

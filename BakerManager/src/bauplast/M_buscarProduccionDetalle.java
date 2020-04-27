@@ -15,11 +15,11 @@ import java.util.ArrayList;
  *
  * @author Ramiro Ferreira
  */
-public class M_seleccionarFilm {
+public class M_buscarProduccionDetalle {
 
     private RolloProducidoTableModel tm;
 
-    public M_seleccionarFilm() {
+    public M_buscarProduccionDetalle() {
         this.tm = new RolloProducidoTableModel();
     }
 

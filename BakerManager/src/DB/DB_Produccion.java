@@ -679,7 +679,7 @@ public class DB_Produccion {
         return (int) sq_cabecera;
     }
 
-    public static ArrayList<E_produccionFilm> consultarFilmDisponible(String descripcion, String buscarPor, String ordenarPor) {
+    public static ArrayList<E_produccionFilm> consultarFilmDisponible(String descripcion, String buscarPor, String ordenarPor, String clasificarPor, String estado) {
         ArrayList<E_produccionFilm> filmList = null;
         try {
             if (DB_manager.getConection() == null) {
@@ -688,7 +688,30 @@ public class DB_Produccion {
 
             String fromQuery = "FROM v_film_actual V ";
             String finalQuery = "ORDER BY V.producto ";
+            String buscarSQL = "";
+            String estadoSQL = "";
+            //BUSCAR 
             switch (buscarPor) {
+                case "Todos": {
+                    buscarSQL = "((LOWER(CAST(v.nro_orden_trabajo AS CHARACTER VARYING)) LIKE ?) OR (LOWER(CAST(v.nro_film AS CHARACTER VARYING)) LIKE ?) "
+                            + "OR (LOWER(v.producto) LIKE ?) )";
+                    break;
+                }
+                case "OT": {
+                    buscarSQL = "LOWER(CAST(v.nro_orden_trabajo AS CHARACTER VARYING)) LIKE ? ";
+                    break;
+                }
+                case "Producto": {
+                    buscarSQL = "LOWER(v.producto) LIKE ? ";
+                    break;
+                }
+                case "Nro. Film": {
+                    buscarSQL = "LOWER(CAST(v.nro_film AS CHARACTER VARYING)) LIKE ? ";
+                    break;
+                }
+            }
+            //CLASIFICAR 
+            switch (clasificarPor) {
                 case "OT": {
                     finalQuery = "ORDER BY V.nro_orden_trabajo ";
                     break;
@@ -701,8 +724,12 @@ public class DB_Produccion {
                     finalQuery = "ORDER BY V.producto ";
                     break;
                 }
+                case "Nro. Film": {
+                    finalQuery = "ORDER BY V.nro_film ";
+                    break;
+                }
             }
-
+            //ORDENAR
             switch (ordenarPor) {
                 case "Ascendente": {
                     finalQuery = finalQuery + "ASC ";
@@ -713,17 +740,39 @@ public class DB_Produccion {
                     break;
                 }
             }
+            //ESTADO
+            switch (estado) {
+                case "Disponible": {
+                    estadoSQL = "AND peso_actual > 0 ";
+                    break;
+                }
+                case "Agotado": {
+                    estadoSQL = "AND peso_actual <= 0 ";
+                    break;
+                }
+                case "Todos": {
+                    estadoSQL = " ";
+                    break;
+                }
+            }
 
             String Query = "SELECT id_cabecera, nro_orden_trabajo, nro_film, fecha, "
                     + "producto, cono, medida, micron, peso, peso_utilizado, peso_actual,"
                     + "id_categoria, categoria "
                     + fromQuery
                     + "WHERE "
-                    + "LOWER(v.producto) LIKE ? "
+                    + buscarSQL
+                    + estadoSQL
                     + finalQuery;
 
             pst = DB_manager.getConection().prepareStatement(Query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-            pst.setString(1, descripcion + "%");
+            if (buscarPor.equals("Todos")) {
+                pst.setString(1, "%" + descripcion + "%");
+                pst.setString(2, "%" + descripcion + "%");
+                pst.setString(3, "%" + descripcion + "%");
+            } else {
+                pst.setString(1, "%" + descripcion + "%");
+            }
             rs = pst.executeQuery();
             filmList = new ArrayList();
             while (rs.next()) {

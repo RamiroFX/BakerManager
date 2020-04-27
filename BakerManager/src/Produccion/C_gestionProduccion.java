@@ -13,6 +13,7 @@ import Interface.GestionInterface;
 import Interface.RecibirEmpleadoCallback;
 import Utilities.ProductionCellRenderer;
 import bakermanager.C_inicio;
+import bauplast.BuscarProduccionDetalle;
 import bauplast.CrearProductoTerminado;
 import bauplast.CrearRollo;
 import java.awt.EventQueue;
@@ -76,6 +77,7 @@ public class C_gestionProduccion implements GestionInterface, RecibirEmpleadoCal
         this.vista.jbCrearProductoTerminado.addActionListener(this);
         this.vista.jbEmpleado.addActionListener(this);
         this.vista.jbBuscar.addActionListener(this);
+        this.vista.jbBuscarDetalle.addActionListener(this);
         this.vista.jbBorrar.addActionListener(this);
         this.vista.jbBorrar.addKeyListener(this);
         this.vista.jbAnular.addActionListener(this);
@@ -255,6 +257,11 @@ public class C_gestionProduccion implements GestionInterface, RecibirEmpleadoCal
         cp.mostrarVista();
     }
 
+    private void buscarProduccion() {
+        BuscarProduccionDetalle bpc = new BuscarProduccionDetalle(this.c_inicio.vista);
+        bpc.mostrarVista();
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         Object source = e.getSource();
@@ -276,6 +283,8 @@ public class C_gestionProduccion implements GestionInterface, RecibirEmpleadoCal
             anularProduccion();
         } else if (source.equals(this.vista.jbResumen)) {
             resumenProduccion();
+        } else if (source.equals(this.vista.jbBuscarDetalle)) {
+            buscarProduccion();
         }
     }
 

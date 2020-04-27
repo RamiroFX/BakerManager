@@ -1,5 +1,6 @@
 /*
- * To change this template, choose Tools | Templates
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
 package bauplast;
@@ -9,6 +10,7 @@ import java.awt.FlowLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -21,17 +23,28 @@ import net.miginfocom.swing.MigLayout;
  *
  * @author Ramiro Ferreira
  */
-public class V_seleccionarFilm extends JDialog {
+public class V_buscarProduccionDetalle extends JDialog {
 
-    JButton jbAceptar, jbSalir, jbBuscar, jbBorrar;
+    JButton jbSalir, jbBuscar, jbBorrar;
     JScrollPane jspProducto;
     JTable jtProducto;
     JPanel jpBotones, jpTop, jpBotonesTop, jpJtextFieldTop;
     public JComboBox jcbBuscarPor, jcbOrdenarPor, jcbClasificarPor, jcbEstado;
     public JTextField jtfBuscar;
 
-    public V_seleccionarFilm(JDialog main) {
-        super(main, "Seleccionar rollo", true);
+    public V_buscarProduccionDetalle(JDialog main) {
+        super(main, "Buscar producción por detalle", true);
+        setSize(1200, 400);
+        setLocationRelativeTo(main);
+        initComp();
+        getContentPane().setLayout(new BorderLayout());
+        getContentPane().add(jpTop, BorderLayout.NORTH);
+        getContentPane().add(jspProducto, BorderLayout.CENTER);
+        getContentPane().add(jpBotones, BorderLayout.SOUTH);
+    }
+
+    public V_buscarProduccionDetalle(JFrame main) {
+        super(main, "Buscar producción por detalle", true);
         setSize(1200, 400);
         setLocationRelativeTo(main);
         initComp();
@@ -77,10 +90,8 @@ public class V_seleccionarFilm extends JDialog {
         jtProducto = new JTable();
         jtProducto.getTableHeader().setReorderingAllowed(false);
         jspProducto = new JScrollPane(jtProducto);
-        jbAceptar = new JButton("Seleccionar producto");
         jbSalir = new JButton("Cerrar");
         jpBotones = new JPanel();
-        jpBotones.add(jbAceptar);
         jpBotones.add(jbSalir);
     }
 }
