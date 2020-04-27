@@ -5,9 +5,6 @@
  */
 package bauplast;
 
-import Entities.E_produccionFilm;
-import Interface.InterfaceRecibirProduccionFilm;
-import Produccion.SeleccionCantidadProductoSimple;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -15,7 +12,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.KeyStroke;
@@ -30,17 +26,12 @@ public class C_buscarProduccionDetalle extends MouseAdapter implements ActionLis
 
     private M_buscarProduccionDetalle modelo;
     private V_buscarProduccionDetalle vista;
-    private InterfaceRecibirProduccionFilm callback;
 
     public C_buscarProduccionDetalle(M_buscarProduccionDetalle modelo, V_buscarProduccionDetalle vista) {
         this.vista = vista;
         this.modelo = modelo;
         inicializarVista();
         agregarListeners();
-    }
-
-    public void setCallback(InterfaceRecibirProduccionFilm callback) {
-        this.callback = callback;
     }
 
     public void mostrarVista() {
@@ -53,12 +44,6 @@ public class C_buscarProduccionDetalle extends MouseAdapter implements ActionLis
         this.vista.jtProducto.setModel(modelo.getTm());
         KeyStroke enter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
         this.vista.jtProducto.getInputMap(JTable.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(enter, ENTER_KEY);
-        this.vista.jtProducto.getActionMap().put(ENTER_KEY, new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                seleccionarRollo();
-            }
-        });
         Utilities.c_packColumn.packColumns(this.vista.jtProducto, 1);
 
         this.vista.jcbBuscarPor.addItem("Todos");
@@ -85,10 +70,11 @@ public class C_buscarProduccionDetalle extends MouseAdapter implements ActionLis
         this.vista.jtfBuscar.addActionListener(this);
         this.vista.jcbOrdenarPor.addActionListener(this);
         this.vista.jcbBuscarPor.addActionListener(this);
-        //MOUSE LISTENERS
-        this.vista.jtProducto.addMouseListener(this);
+        this.vista.jbResumen.addActionListener(this);
         //KEY LISTENERS
         this.vista.jtfBuscar.addKeyListener(this);
+        this.vista.jbResumen.addKeyListener(this);
+        this.vista.jbSalir.addKeyListener(this);
         this.vista.jtProducto.addKeyListener(this);
     }
 
@@ -127,19 +113,8 @@ public class C_buscarProduccionDetalle extends MouseAdapter implements ActionLis
         this.vista.jtfBuscar.requestFocusInWindow();
     }
 
-    private void seleccionarRollo() {
-        int fila = vista.jtProducto.getSelectedRow();
-        if (fila > -1) {
-            E_produccionFilm pf = modelo.getTm().getList().get(fila);
-            System.out.println("bauplast.C_seleccionarFilm.seleccionarRollo()");
-            System.out.println("pf: " + pf.getProductoClasificacion().getDescripcion());
-            System.out.println("pf.prod.getCategoria: " + pf.getProducto().getCategoria());
-            SeleccionCantidadProductoSimple scp = new SeleccionCantidadProductoSimple(vista, -1);
-            scp.setFilm(pf);
-            scp.setFilmCallback(callback);
-            scp.inicializarVista();
-            scp.setVisible(true);
-        }
+    private void invocarResumen() {
+        ResumenProduccionDetalle rpd = new ResumenProduccionDetalle(vista, modelo.getTm());
     }
 
     @Override
@@ -156,6 +131,8 @@ public class C_buscarProduccionDetalle extends MouseAdapter implements ActionLis
             displayQueryResults();
         } else if (e.getSource() == this.vista.jbBorrar) {
             borrarParametros();
+        } else if (e.getSource() == this.vista.jbResumen) {
+            invocarResumen();
         } else if (e.getSource() == this.vista.jbSalir) {
             cerrar();
         }
@@ -163,21 +140,6 @@ public class C_buscarProduccionDetalle extends MouseAdapter implements ActionLis
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        int fila = this.vista.jtProducto.rowAtPoint(e.getPoint());
-        int columna = this.vista.jtProducto.columnAtPoint(e.getPoint());
-        if ((fila > -1) && (columna > -1)) {
-            int index = this.vista.jtProducto.getSelectedRow();
-            E_produccionFilm producto = modelo.getTm().getList().get(index);
-            if (e.getClickCount() == 2) {
-                E_produccionFilm pf = modelo.getTm().getList().get(fila);
-                SeleccionCantidadProductoSimple scp = new SeleccionCantidadProductoSimple(vista, -1);
-                scp.setFilm(pf);
-                scp.setFilmCallback(callback);
-                scp.inicializarVista();
-                scp.setVisible(true);
-                this.vista.jtfBuscar.requestFocusInWindow();
-            }
-        }
     }
 
     @Override

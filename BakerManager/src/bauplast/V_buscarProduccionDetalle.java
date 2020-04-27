@@ -25,7 +25,7 @@ import net.miginfocom.swing.MigLayout;
  */
 public class V_buscarProduccionDetalle extends JDialog {
 
-    JButton jbSalir, jbBuscar, jbBorrar;
+    JButton jbSalir, jbBuscar, jbBorrar, jbResumen;
     JScrollPane jspProducto;
     JTable jtProducto;
     JPanel jpBotones, jpTop, jpBotonesTop, jpJtextFieldTop;
@@ -91,7 +91,9 @@ public class V_buscarProduccionDetalle extends JDialog {
         jtProducto.getTableHeader().setReorderingAllowed(false);
         jspProducto = new JScrollPane(jtProducto);
         jbSalir = new JButton("Cerrar");
+        jbResumen = new JButton("Resumen");
         jpBotones = new JPanel();
         jpBotones.add(jbSalir);
+        jpBotones.add(jbResumen);
     }
 }
