@@ -12,8 +12,10 @@ import Entities.E_produccionTipo;
 import Entities.E_produccionTipoBaja;
 import Entities.E_productoClasificacion;
 import Entities.Estado;
+import Entities.M_facturaCabecera;
 import Entities.M_funcionario;
 import Entities.M_producto;
+import ModeloTabla.RolloProducidoTableModel;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -475,7 +477,7 @@ public class DB_Produccion {
         }
         return list;
     }
-    
+
     public static int insertarProduccionFilm(E_produccionCabecera produccionCabecera, List<E_produccionFilm> detalle) {
         String INSERT_CABECERA = "INSERT INTO produccion_cabecera(nro_orden_trabajo, fecha_produccion, id_funcionario_responsable, id_funcionario_usuario, id_produccion_tipo)VALUES( ?, ?, ?, ?, ?);";
         //LA SGBD SE ENCARGA DE INSERTAR EL TIMESTAMP.
@@ -772,6 +774,64 @@ public class DB_Produccion {
                 pst.setString(3, "%" + descripcion + "%");
             } else {
                 pst.setString(1, "%" + descripcion + "%");
+            }
+            rs = pst.executeQuery();
+            filmList = new ArrayList();
+            while (rs.next()) {
+                E_produccionFilm film = new E_produccionFilm();
+                film.setId(rs.getInt("id_cabecera"));
+                film.setOrdenTrabajoCabecera(rs.getInt("nro_orden_trabajo"));
+                film.setNroFilm(rs.getInt("nro_film"));
+                film.setFechaCreacion(rs.getDate("fecha"));
+                M_producto prod = new M_producto();
+                prod.setDescripcion(rs.getString("producto"));
+                film.setProducto(prod);
+                film.setCono(rs.getInt("cono"));
+                film.setMedida(rs.getInt("medida"));
+                film.setMicron(rs.getInt("micron"));
+                film.setPeso(rs.getDouble("peso"));
+                film.setPesoUtilizado(rs.getDouble("peso_utilizado"));
+                film.setPesoActual(rs.getDouble("peso_actual"));
+                E_productoClasificacion productoClasificacion = new E_productoClasificacion();
+                productoClasificacion.setId(rs.getInt("id_categoria"));
+                productoClasificacion.setDescripcion(rs.getString("categoria"));
+                film.setProductoClasificacion(productoClasificacion);
+                filmList.add(film);
+            }
+        } catch (SQLException ex) {
+            Logger lgr = Logger.getLogger(DB_Produccion.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        }
+        return filmList;
+    }
+
+    public static ArrayList<E_produccionFilm> consultarFilmDisponibleAgrupado(RolloProducidoTableModel cabecera) {
+        ArrayList<E_produccionFilm> filmList = null;
+        try {
+            if (DB_manager.getConection() == null) {
+                throw new IllegalStateException("Connection already closed.");
+            }
+            StringBuilder builder = new StringBuilder();
+
+            for (E_produccionFilm seleccionVenta : cabecera.getList()) {
+                builder.append("?,");
+            }
+            String fromQuery = "FROM v_film_actual V ";
+            String finalQuery = "ORDER BY V.producto ";
+            String Query = "SELECT  "
+                    + "producto, cono, medida, micron, peso, peso_utilizado, peso_actual,"
+                    + "id_categoria, categoria "
+                    + fromQuery
+                    + "WHERE "
+                    + "nro_orden_trabajo IN ("
+                    + builder.substring(0, builder.length() - 1) + ") "
+                    + finalQuery;
+
+            pst = DB_manager.getConection().prepareStatement(Query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            int index = 1;
+            for (E_produccionFilm ventaCabecera : cabecera.getList()) {
+                pst.setInt(index++, ventaCabecera.getOrdenTrabajoCabecera());
+                //PENDIENTE
             }
             rs = pst.executeQuery();
             filmList = new ArrayList();

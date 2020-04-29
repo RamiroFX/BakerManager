@@ -115,6 +115,7 @@ public class C_buscarProduccionDetalle extends MouseAdapter implements ActionLis
 
     private void invocarResumen() {
         ResumenProduccionDetalle rpd = new ResumenProduccionDetalle(vista, modelo.getTm());
+        rpd.mostrarVista();
     }
 
     @Override

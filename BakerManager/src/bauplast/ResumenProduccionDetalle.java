@@ -12,6 +12,7 @@ import Excel.ExportarProduccion;
 import Interface.InterfaceFacturaDetalle;
 import ModeloTabla.ProduccionCabeceraTableModel;
 import ModeloTabla.ProduccionDetalleTableModel;
+import ModeloTabla.ProduccionRolloTableModel;
 import ModeloTabla.RolloProducidoTableModel;
 import java.awt.BorderLayout;
 import static java.awt.Dialog.DEFAULT_MODALITY_TYPE;
@@ -42,8 +43,8 @@ import net.miginfocom.swing.MigLayout;
  */
 public class ResumenProduccionDetalle extends JDialog implements ActionListener, KeyListener, InterfaceFacturaDetalle {
 
-    JScrollPane jspEgreso, jspDetalle;
-    JTable jtEgreso, jtDetalle;
+    JScrollPane jspEgreso;
+    JTable jtEgreso;
     JButton jbSalir, jbImportarXLS;
     JLabel jlTotal;
     JFormattedTextField jftTotalProducido;
@@ -64,17 +65,13 @@ public class ResumenProduccionDetalle extends JDialog implements ActionListener,
     }
 
     private void inicializarDatos() {
+        ProduccionRolloTableModel model = new ProduccionRolloTableModel();
+        model.setList(DB_Produccion.consultarFilmDisponibleAgrupado(tm));
         jtEgreso.setModel(tm);
-        ProduccionDetalleTableModel tmDetalle = new ProduccionDetalleTableModel();
-        //tmDetalle.setList(DB_Produccion.consultarProduccionDetalleAgrupado(tm.getList()));
-        double totalProducido = 0;
-        for (E_produccionDetalle e_produccionDetalle : tmDetalle.getList()) {
-            totalProducido = totalProducido + e_produccionDetalle.getCantidad();
-        }
-        jtDetalle.setModel(tmDetalle);
+        int totalProducido = 0;
+
         jftTotalProducido.setValue(totalProducido);
         Utilities.c_packColumn.packColumns(jtEgreso, 1);
-        Utilities.c_packColumn.packColumns(jtDetalle, 1);
     }
 
     public void mostrarVista() {
@@ -85,9 +82,6 @@ public class ResumenProduccionDetalle extends JDialog implements ActionListener,
         jtEgreso = new JTable();
         jtEgreso.getTableHeader().setReorderingAllowed(false);
         jspEgreso = new JScrollPane(jtEgreso);
-        jtDetalle = new JTable();
-        jtDetalle.getTableHeader().setReorderingAllowed(false);
-        jspDetalle = new JScrollPane(jtDetalle);
         JPanel jpTotalProducido = new JPanel(new MigLayout());
         jftTotalProducido = new JFormattedTextField();
         //jftTotalEgreso.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("¤#,##0"))));
@@ -109,7 +103,6 @@ public class ResumenProduccionDetalle extends JDialog implements ActionListener,
         jpCenter.add(jpTotalProducido, BorderLayout.SOUTH);
 
         jtpPanel.addTab("Resumen", jpCenter);
-        jtpPanel.addTab("Detalle", jspDetalle);
         getContentPane().add(jtpPanel, BorderLayout.CENTER);
         getContentPane().add(jpSouth, BorderLayout.SOUTH);
     }
@@ -136,7 +129,7 @@ public class ResumenProduccionDetalle extends JDialog implements ActionListener,
                 EventQueue.invokeLater(new Runnable() {
                     @Override
                     public void run() {
-                       /* ExportarProduccion ep = new ExportarProduccion("Produccion", inicio, fin, new ArrayList<E_produccionCabecera>(tm.getList()));
+                        /* ExportarProduccion ep = new ExportarProduccion("Produccion", inicio, fin, new ArrayList<E_produccionCabecera>(tm.getList()));
                         ep.exportacionIndividualBauplst();*/
                     }
                 });
@@ -147,7 +140,7 @@ public class ResumenProduccionDetalle extends JDialog implements ActionListener,
                 EventQueue.invokeLater(new Runnable() {
                     @Override
                     public void run() {
-                       /* ExportarProduccion ep = new ExportarProduccion("Produccion", inicio, fin, new ArrayList<E_produccionCabecera>(tm.getList()));
+                        /* ExportarProduccion ep = new ExportarProduccion("Produccion", inicio, fin, new ArrayList<E_produccionCabecera>(tm.getList()));
                         ep.exportacionAgrupada();*/
                     }
                 });
