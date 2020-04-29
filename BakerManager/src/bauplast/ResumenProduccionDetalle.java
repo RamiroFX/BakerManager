@@ -35,6 +35,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
+import javax.swing.table.TableColumn;
 import net.miginfocom.swing.MigLayout;
 
 /**
@@ -51,26 +52,40 @@ public class ResumenProduccionDetalle extends JDialog implements ActionListener,
     Date inicio, fin;
     JTabbedPane jtpPanel;
     RolloProducidoTableModel tm;
+    String descripcion;
 
-    public ResumenProduccionDetalle(JDialog frame, RolloProducidoTableModel tm) {
+    public ResumenProduccionDetalle(JDialog frame, RolloProducidoTableModel tm, String descripcion) {
         super(frame, DEFAULT_MODALITY_TYPE);
         setTitle("Resumen de producción");
         setSize(800, 600);
         setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(frame);
         this.tm = tm;
+        this.descripcion = descripcion;
         inicializarComponentes();
         inicializarDatos();
         agregarListener();
     }
 
     private void inicializarDatos() {
-        ProduccionRolloTableModel model = new ProduccionRolloTableModel();
-        model.setList(DB_Produccion.consultarFilmDisponibleAgrupado(tm));
-        jtEgreso.setModel(tm);
+        //Kls. Rollo 40x50 Tr. S/color BD S/I
+        RolloProducidoTableModel model = new RolloProducidoTableModel();
+        model.setList(DB_Produccion.consultarFilmDisponibleAgrupado(tm, descripcion));
+        jtEgreso.setModel(model);
         int totalProducido = 0;
 
         jftTotalProducido.setValue(totalProducido);
+        
+        TableColumn tcol0 = jtEgreso.getColumnModel().getColumn(0);
+        TableColumn tcol1 = jtEgreso.getColumnModel().getColumn(1);
+        TableColumn tcol2 = jtEgreso.getColumnModel().getColumn(2);
+        TableColumn tcol7 = jtEgreso.getColumnModel().getColumn(7);
+        TableColumn tcol8 = jtEgreso.getColumnModel().getColumn(8);
+        jtEgreso.removeColumn(tcol0);
+        jtEgreso.removeColumn(tcol1);
+        jtEgreso.removeColumn(tcol2);
+        jtEgreso.removeColumn(tcol7);
+        jtEgreso.removeColumn(tcol8);
         Utilities.c_packColumn.packColumns(jtEgreso, 1);
     }
 

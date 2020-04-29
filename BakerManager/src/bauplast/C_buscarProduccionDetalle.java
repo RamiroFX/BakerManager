@@ -114,7 +114,8 @@ public class C_buscarProduccionDetalle extends MouseAdapter implements ActionLis
     }
 
     private void invocarResumen() {
-        ResumenProduccionDetalle rpd = new ResumenProduccionDetalle(vista, modelo.getTm());
+        String desc = vista.jtfBuscar.getText().toLowerCase();
+        ResumenProduccionDetalle rpd = new ResumenProduccionDetalle(vista, modelo.getTm(), desc);
         rpd.mostrarVista();
     }
 

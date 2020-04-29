@@ -22,6 +22,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
@@ -805,50 +806,47 @@ public class DB_Produccion {
         return filmList;
     }
 
-    public static ArrayList<E_produccionFilm> consultarFilmDisponibleAgrupado(RolloProducidoTableModel cabecera) {
+    public static ArrayList<E_produccionFilm> consultarFilmDisponibleAgrupado(RolloProducidoTableModel cabecera, String descripcion) {
         ArrayList<E_produccionFilm> filmList = null;
         try {
             if (DB_manager.getConection() == null) {
                 throw new IllegalStateException("Connection already closed.");
             }
             StringBuilder builder = new StringBuilder();
-
             for (E_produccionFilm seleccionVenta : cabecera.getList()) {
                 builder.append("?,");
             }
-            String fromQuery = "FROM v_film_actual V ";
-            String finalQuery = "ORDER BY V.producto ";
-            String Query = "SELECT  "
-                    + "producto, cono, medida, micron, peso, peso_utilizado, peso_actual,"
-                    + "id_categoria, categoria "
-                    + fromQuery
+            String Query = "SELECT producto, id_categoria, categoria, cono, medida, micron, peso_actual "
+                    + "FROM v_film_actual "
                     + "WHERE "
                     + "nro_orden_trabajo IN ("
                     + builder.substring(0, builder.length() - 1) + ") "
-                    + finalQuery;
+                    + "AND producto LIKE ?"
+                    + "GROUP BY producto, id_categoria, categoria, cono, medida, micron, peso_actual "
+                    + "ORDER BY producto ;";
 
             pst = DB_manager.getConection().prepareStatement(Query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             int index = 1;
             for (E_produccionFilm ventaCabecera : cabecera.getList()) {
                 pst.setInt(index++, ventaCabecera.getOrdenTrabajoCabecera());
-                //PENDIENTE
             }
+            pst.setString(index++, "%" + descripcion + "%");
             rs = pst.executeQuery();
             filmList = new ArrayList();
             while (rs.next()) {
                 E_produccionFilm film = new E_produccionFilm();
-                film.setId(rs.getInt("id_cabecera"));
-                film.setOrdenTrabajoCabecera(rs.getInt("nro_orden_trabajo"));
-                film.setNroFilm(rs.getInt("nro_film"));
-                film.setFechaCreacion(rs.getDate("fecha"));
+                film.setId(0);
+                film.setOrdenTrabajoCabecera(0);
+                film.setNroFilm(0);
+                film.setFechaCreacion(Calendar.getInstance().getTime());
                 M_producto prod = new M_producto();
                 prod.setDescripcion(rs.getString("producto"));
                 film.setProducto(prod);
                 film.setCono(rs.getInt("cono"));
                 film.setMedida(rs.getInt("medida"));
                 film.setMicron(rs.getInt("micron"));
-                film.setPeso(rs.getDouble("peso"));
-                film.setPesoUtilizado(rs.getDouble("peso_utilizado"));
+                film.setPeso(0.0);
+                film.setPesoUtilizado(0.0);
                 film.setPesoActual(rs.getDouble("peso_actual"));
                 E_productoClasificacion productoClasificacion = new E_productoClasificacion();
                 productoClasificacion.setId(rs.getInt("id_categoria"));
