@@ -8,6 +8,7 @@ package bauplast;
 import DB.DB_Produccion;
 import Entities.E_produccionCabecera;
 import Entities.E_produccionDetalle;
+import Entities.E_produccionFilm;
 import Excel.ExportarProduccion;
 import Interface.InterfaceFacturaDetalle;
 import ModeloTabla.ProduccionCabeceraTableModel;
@@ -47,8 +48,8 @@ public class ResumenProduccionDetalle extends JDialog implements ActionListener,
     JScrollPane jspEgreso;
     JTable jtEgreso;
     JButton jbSalir, jbImportarXLS;
-    JLabel jlTotal;
-    JFormattedTextField jftTotalProducido;
+    JLabel jlTotal, jlTotalUtilizado, jlTotalDisponible;
+    JFormattedTextField jftTotalProducido, jftTotalUtilizado, jftTotalDisponible;
     Date inicio, fin;
     JTabbedPane jtpPanel;
     RolloProducidoTableModel tm;
@@ -72,20 +73,27 @@ public class ResumenProduccionDetalle extends JDialog implements ActionListener,
         RolloProducidoTableModel model = new RolloProducidoTableModel();
         model.setList(DB_Produccion.consultarFilmDisponibleAgrupado(tm, descripcion));
         jtEgreso.setModel(model);
-        int totalProducido = 0;
-
+        double totalProducido = 0;
+        double totalUtilizado = 0;
+        double totalDisponible = 0;
+        for (int i = 0; i < tm.getList().size(); i++) {
+            E_produccionFilm get = tm.getList().get(i);
+            totalProducido = totalProducido + get.getPeso();
+            totalUtilizado = totalUtilizado + get.getPesoUtilizado();
+            totalDisponible = totalDisponible + get.getPesoActual();
+        }
         jftTotalProducido.setValue(totalProducido);
-        
+        jftTotalUtilizado.setValue(totalUtilizado);
+        jftTotalDisponible.setValue(totalDisponible);
+
         TableColumn tcol0 = jtEgreso.getColumnModel().getColumn(0);
         TableColumn tcol1 = jtEgreso.getColumnModel().getColumn(1);
         TableColumn tcol2 = jtEgreso.getColumnModel().getColumn(2);
-        TableColumn tcol7 = jtEgreso.getColumnModel().getColumn(7);
-        TableColumn tcol8 = jtEgreso.getColumnModel().getColumn(8);
         jtEgreso.removeColumn(tcol0);
         jtEgreso.removeColumn(tcol1);
-        jtEgreso.removeColumn(tcol2);
-        jtEgreso.removeColumn(tcol7);
-        jtEgreso.removeColumn(tcol8);
+        jtEgreso.removeColumn(tcol2);//nroFilm
+        //jtEgreso.removeColumn(tcol8);
+        //jtEgreso.removeColumn(tcol9);
         Utilities.c_packColumn.packColumns(jtEgreso, 1);
     }
 
@@ -99,11 +107,21 @@ public class ResumenProduccionDetalle extends JDialog implements ActionListener,
         jspEgreso = new JScrollPane(jtEgreso);
         JPanel jpTotalProducido = new JPanel(new MigLayout());
         jftTotalProducido = new JFormattedTextField();
+        jftTotalUtilizado = new JFormattedTextField();
+        jftTotalDisponible = new JFormattedTextField();
         //jftTotalEgreso.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("¤#,##0"))));
         jlTotal = new JLabel("Total producido");
         jlTotal.setHorizontalAlignment(SwingConstants.CENTER);
+        jlTotalUtilizado = new JLabel("Total utilizado");
+        jlTotalUtilizado.setHorizontalAlignment(SwingConstants.CENTER);
+        jlTotalDisponible = new JLabel("Total disponible");
+        jlTotalDisponible.setHorizontalAlignment(SwingConstants.CENTER);
         jpTotalProducido.add(jlTotal);
-        jpTotalProducido.add(jftTotalProducido, "span, grow, pushx");
+        jpTotalProducido.add(jftTotalProducido, "span, grow, pushx, wrap");
+        jpTotalProducido.add(jlTotalUtilizado);
+        jpTotalProducido.add(jftTotalUtilizado, "span, grow, pushx, wrap");
+        jpTotalProducido.add(jlTotalDisponible);
+        jpTotalProducido.add(jftTotalDisponible, "span, grow, pushx");
         jbSalir = new JButton("Salir");
         jbImportarXLS = new JButton("Importar a excel");
         jbImportarXLS.setName("exportar produccion");

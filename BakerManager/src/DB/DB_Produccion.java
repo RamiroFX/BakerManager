@@ -697,7 +697,7 @@ public class DB_Produccion {
             switch (buscarPor) {
                 case "Todos": {
                     buscarSQL = "((LOWER(CAST(v.nro_orden_trabajo AS CHARACTER VARYING)) LIKE ?) OR (LOWER(CAST(v.nro_film AS CHARACTER VARYING)) LIKE ?) "
-                            + "OR (LOWER(v.producto) LIKE ?) )";
+                            + "OR (LOWER(v.producto) LIKE ?) OR (LOWER(v.codigo) LIKE ?) )";
                     break;
                 }
                 case "OT": {
@@ -710,6 +710,10 @@ public class DB_Produccion {
                 }
                 case "Nro. Film": {
                     buscarSQL = "LOWER(CAST(v.nro_film AS CHARACTER VARYING)) LIKE ? ";
+                    break;
+                }
+                case "Código": {
+                    buscarSQL = "LOWER(v.codigo) LIKE ? ";
                     break;
                 }
             }
@@ -729,6 +733,10 @@ public class DB_Produccion {
                 }
                 case "Nro. Film": {
                     finalQuery = "ORDER BY V.nro_film ";
+                    break;
+                }
+                case "Código": {
+                    finalQuery = "ORDER BY v.codigo ";
                     break;
                 }
             }
@@ -759,7 +767,7 @@ public class DB_Produccion {
                 }
             }
 
-            String Query = "SELECT id_cabecera, nro_orden_trabajo, nro_film, fecha, "
+            String Query = "SELECT id_cabecera, nro_orden_trabajo, nro_film, fecha, codigo,"
                     + "producto, cono, medida, micron, peso, peso_utilizado, peso_actual,"
                     + "id_categoria, categoria "
                     + fromQuery
@@ -773,6 +781,7 @@ public class DB_Produccion {
                 pst.setString(1, "%" + descripcion + "%");
                 pst.setString(2, "%" + descripcion + "%");
                 pst.setString(3, "%" + descripcion + "%");
+                pst.setString(4, "%" + descripcion + "%");
             } else {
                 pst.setString(1, "%" + descripcion + "%");
             }
@@ -785,6 +794,7 @@ public class DB_Produccion {
                 film.setNroFilm(rs.getInt("nro_film"));
                 film.setFechaCreacion(rs.getDate("fecha"));
                 M_producto prod = new M_producto();
+                prod.setCodigo(rs.getString("codigo"));
                 prod.setDescripcion(rs.getString("producto"));
                 film.setProducto(prod);
                 film.setCono(rs.getInt("cono"));
@@ -816,21 +826,22 @@ public class DB_Produccion {
             for (E_produccionFilm seleccionVenta : cabecera.getList()) {
                 builder.append("?,");
             }
-            String Query = "SELECT producto, id_categoria, categoria, cono, medida, micron, peso_actual "
+            String Query = "SELECT codigo, producto, id_categoria, categoria, cono, medida, micron, "
+                    + "sum(peso)as peso , "
+                    + "sum(peso_utilizado)as peso_utilizado , "
+                    + "sum(peso_actual)as peso_actual "
                     + "FROM v_film_actual "
                     + "WHERE "
-                    + "nro_orden_trabajo IN ("
+                    + "v_film_actual.id_cabecera IN ("
                     + builder.substring(0, builder.length() - 1) + ") "
-                    + "AND producto LIKE ?"
-                    + "GROUP BY producto, id_categoria, categoria, cono, medida, micron, peso_actual "
+                    + "GROUP BY codigo, producto, id_categoria, categoria, cono, medida, micron "
                     + "ORDER BY producto ;";
 
             pst = DB_manager.getConection().prepareStatement(Query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             int index = 1;
             for (E_produccionFilm ventaCabecera : cabecera.getList()) {
-                pst.setInt(index++, ventaCabecera.getOrdenTrabajoCabecera());
+                pst.setInt(index++, ventaCabecera.getId());
             }
-            pst.setString(index++, "%" + descripcion + "%");
             rs = pst.executeQuery();
             filmList = new ArrayList();
             while (rs.next()) {
@@ -840,13 +851,14 @@ public class DB_Produccion {
                 film.setNroFilm(0);
                 film.setFechaCreacion(Calendar.getInstance().getTime());
                 M_producto prod = new M_producto();
+                prod.setCodigo(rs.getString("codigo"));
                 prod.setDescripcion(rs.getString("producto"));
                 film.setProducto(prod);
                 film.setCono(rs.getInt("cono"));
                 film.setMedida(rs.getInt("medida"));
                 film.setMicron(rs.getInt("micron"));
-                film.setPeso(0.0);
-                film.setPesoUtilizado(0.0);
+                film.setPeso(rs.getDouble("peso"));
+                film.setPesoUtilizado(rs.getDouble("peso_utilizado"));
                 film.setPesoActual(rs.getDouble("peso_actual"));
                 E_productoClasificacion productoClasificacion = new E_productoClasificacion();
                 productoClasificacion.setId(rs.getInt("id_categoria"));

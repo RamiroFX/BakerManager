@@ -17,7 +17,7 @@ import javax.swing.table.AbstractTableModel;
 public class RolloProducidoTableModel extends AbstractTableModel {
 
     List<E_produccionFilm> list;
-    private String[] colNames = {"OT", "Fecha Producción", "Nro. Film", "Descripción", "Cono", "Medida", "Micron", "Peso producido", "Peso utilizado", "Peso disponible"};
+    private String[] colNames = {"OT", "Fecha Producción", "Nro. Film", "Código", "Descripción", "Cono", "Medida", "Micron", "Peso producido", "Peso utilizado", "Peso disponible"};
 
     public RolloProducidoTableModel() {
         list = new ArrayList<>();
@@ -63,24 +63,27 @@ public class RolloProducidoTableModel extends AbstractTableModel {
                 return produccion.getNroFilm();
             }
             case 3: {
-                return produccion.getProducto().getDescripcion();
+                return produccion.getProducto().getCodigo();
             }
             case 4: {
-                return produccion.getCono();
+                return produccion.getProducto().getDescripcion();
             }
             case 5: {
-                return produccion.getMedida();
+                return produccion.getCono();
             }
             case 6: {
-                return produccion.getMicron();
+                return produccion.getMedida();
             }
             case 7: {
-                return produccion.getPeso();
+                return produccion.getMicron();
             }
             case 8: {
-                return produccion.getPesoUtilizado();
+                return produccion.getPeso();
             }
             case 9: {
+                return produccion.getPesoUtilizado();
+            }
+            case 10: {
                 return produccion.getPesoActual();
             }
             default: {

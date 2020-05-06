@@ -50,10 +50,12 @@ public class C_buscarProduccionDetalle extends MouseAdapter implements ActionLis
         this.vista.jcbBuscarPor.addItem("Nro. Film");
         this.vista.jcbBuscarPor.addItem("OT");
         this.vista.jcbBuscarPor.addItem("Producto");
+        this.vista.jcbBuscarPor.addItem("Código");
         this.vista.jcbClasificarPor.addItem("Fecha");
         this.vista.jcbClasificarPor.addItem("OT");
         this.vista.jcbClasificarPor.addItem("Producto");
         this.vista.jcbClasificarPor.addItem("Nro. Film");
+        this.vista.jcbClasificarPor.addItem("Código");
         this.vista.jcbOrdenarPor.addItem("Descendente");
         this.vista.jcbOrdenarPor.addItem("Ascendente");
         this.vista.jcbEstado.addItem("Disponible");
