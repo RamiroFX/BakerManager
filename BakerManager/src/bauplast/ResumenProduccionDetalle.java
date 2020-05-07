@@ -52,7 +52,7 @@ public class ResumenProduccionDetalle extends JDialog implements ActionListener,
     JFormattedTextField jftTotalProducido, jftTotalUtilizado, jftTotalDisponible;
     Date inicio, fin;
     JTabbedPane jtpPanel;
-    RolloProducidoTableModel tm;
+    RolloProducidoTableModel tm, tmAux;
     String descripcion;
 
     public ResumenProduccionDetalle(JDialog frame, RolloProducidoTableModel tm, String descripcion) {
@@ -70,9 +70,9 @@ public class ResumenProduccionDetalle extends JDialog implements ActionListener,
 
     private void inicializarDatos() {
         //Kls. Rollo 40x50 Tr. S/color BD S/I
-        RolloProducidoTableModel model = new RolloProducidoTableModel();
-        model.setList(DB_Produccion.consultarFilmDisponibleAgrupado(tm, descripcion));
-        jtEgreso.setModel(model);
+        tmAux = new RolloProducidoTableModel();
+        tmAux.setList(DB_Produccion.consultarFilmDisponibleAgrupado(tm, descripcion));
+        jtEgreso.setModel(tmAux);
         double totalProducido = 0;
         double totalUtilizado = 0;
         double totalDisponible = 0;
@@ -146,40 +146,13 @@ public class ResumenProduccionDetalle extends JDialog implements ActionListener,
     }
 
     private void exportHandler() {
-        Object[] options = {"Individual",
-            "Agrupado"};
-        int n = JOptionPane.showOptionDialog(this,
-                "Eliga tipo de reporte",
-                "Atención",
-                JOptionPane.YES_NO_OPTION,
-                JOptionPane.QUESTION_MESSAGE,
-                null, //do not use a custom Icon
-                options, //the titles of buttons
-                options[0]); //default button title
-        switch (n) {
-            case 0: {
-                //Individual
-                EventQueue.invokeLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        /* ExportarProduccion ep = new ExportarProduccion("Produccion", inicio, fin, new ArrayList<E_produccionCabecera>(tm.getList()));
-                        ep.exportacionIndividualBauplst();*/
-                    }
-                });
-                break;
+        EventQueue.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                ExportarProduccion ep = new ExportarProduccion("Produccion", new ArrayList<E_produccionFilm>(tmAux.getList()));
+                ep.exportacionAgrupadaPorDetalle();
             }
-            case 1: {
-                //Agrupado
-                EventQueue.invokeLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        /* ExportarProduccion ep = new ExportarProduccion("Produccion", inicio, fin, new ArrayList<E_produccionCabecera>(tm.getList()));
-                        ep.exportacionAgrupada();*/
-                    }
-                });
-                break;
-            }
-        }
+        });
     }
 
     private void keyPressedHandler(final KeyEvent e) {

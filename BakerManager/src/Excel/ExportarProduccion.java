@@ -36,6 +36,7 @@ public class ExportarProduccion {
     String nombreHoja;
     Date fechaInic, fechaFinal;
     ArrayList<E_produccionCabecera> prodCabeceraList;
+    ArrayList<E_produccionFilm> produccionFilmCabecera;
     HSSFWorkbook workbook;
     HSSFSheet sheet;
     CellStyle style1, style2, styleNumber1, styleNumber2, style5;
@@ -46,6 +47,13 @@ public class ExportarProduccion {
         this.fechaInic = inicio;
         this.prodCabeceraList = prodCabeceraList;
         this.fechaFinal = fin;
+        createWorkBook();
+        createCellStyles();
+    }
+
+    public ExportarProduccion(String nombreHoja, ArrayList<E_produccionFilm> produccionFilmCabecera) {
+        this.nombreHoja = nombreHoja;
+        this.produccionFilmCabecera = produccionFilmCabecera;
         createWorkBook();
         createCellStyles();
     }
@@ -374,4 +382,81 @@ public class ExportarProduccion {
         }
     }
 
+    /*
+    Funcion utilizado para buscar produccion de rollos 
+     */
+    public void exportacionAgrupadaPorDetalle() {
+        File directory = null;
+        String desktop = System.getProperty("user.home") + "\\Desktop";
+        JFileChooser chooser = new JFileChooser(desktop);
+        if (chooser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
+            directory = chooser.getSelectedFile();
+            directory.setWritable(true);
+            directory.setExecutable(true);
+            directory.setReadable(true);
+        } else {
+            return;
+        }
+        // Create a row and put some cells in it. Rows are 0 based.
+        int filaActual = 0;
+        //INICIO CABECERA PRODUCCION DETALLE
+        Row cabeceraProduccionDetalle = sheet.createRow(filaActual);
+        filaActual++;
+        cabeceraProduccionDetalle.createCell(0).setCellValue(new HSSFRichTextString("Cod."));
+        cabeceraProduccionDetalle.getCell(0).setCellStyle(style1);
+        cabeceraProduccionDetalle.createCell(1).setCellValue(new HSSFRichTextString("Producto"));
+        cabeceraProduccionDetalle.getCell(1).setCellStyle(style1);
+        cabeceraProduccionDetalle.createCell(2).setCellValue(new HSSFRichTextString("Cono"));
+        cabeceraProduccionDetalle.getCell(2).setCellStyle(style1);
+        cabeceraProduccionDetalle.createCell(3).setCellValue(new HSSFRichTextString("Medida"));
+        cabeceraProduccionDetalle.getCell(3).setCellStyle(style1);
+        cabeceraProduccionDetalle.createCell(4).setCellValue(new HSSFRichTextString("Micron"));
+        cabeceraProduccionDetalle.getCell(4).setCellStyle(style1);
+        cabeceraProduccionDetalle.createCell(5).setCellValue(new HSSFRichTextString("Peso producido"));
+        cabeceraProduccionDetalle.getCell(5).setCellStyle(style1);
+        cabeceraProduccionDetalle.createCell(6).setCellValue(new HSSFRichTextString("Peso utilizado"));
+        cabeceraProduccionDetalle.getCell(6).setCellStyle(style1);
+        cabeceraProduccionDetalle.createCell(7).setCellValue(new HSSFRichTextString("Peso disponible"));
+        cabeceraProduccionDetalle.getCell(7).setCellStyle(style1);
+        //FIN CABECERA PRODUCCION DETALLE
+
+        //INICIO DETALLE PRODUCCION DETALLE
+        for (int i = 0; i < produccionFilmCabecera.size(); i++) {
+            Row filaProdDetalle = sheet.createRow(filaActual);
+            filaActual++;
+            E_produccionFilm get = produccionFilmCabecera.get(i);
+            filaProdDetalle.createCell(0).setCellValue(get.getProducto().getCodigo());
+            filaProdDetalle.createCell(1).setCellValue(get.getProducto().getDescripcion());
+            filaProdDetalle.createCell(2).setCellValue(get.getCono());
+            filaProdDetalle.createCell(3).setCellValue(get.getMedida());
+            filaProdDetalle.createCell(4).setCellValue(get.getMicron());
+            filaProdDetalle.createCell(5).setCellValue(get.getPeso());
+            filaProdDetalle.createCell(6).setCellValue(get.getPesoUtilizado());
+            filaProdDetalle.createCell(7).setCellValue(get.getPesoActual());
+        }
+        filaActual++;
+        Row rowTotalProducido = sheet.createRow(filaActual);
+        filaActual++;
+        cabeceraProduccionDetalle.createCell(0).setCellValue(new HSSFRichTextString("Cod."));
+        cabeceraProduccionDetalle.getCell(0).setCellStyle(style1);
+        //INICIO AJUSTAR COLUMNAS
+        sheet.autoSizeColumn(0);
+        sheet.autoSizeColumn(1);
+        sheet.autoSizeColumn(2);
+        sheet.autoSizeColumn(3);
+        sheet.autoSizeColumn(4);
+        sheet.autoSizeColumn(5);
+        sheet.autoSizeColumn(6);
+        sheet.autoSizeColumn(7);
+        //FIN AJUSTAR COLUMNAS
+        try {
+            FileOutputStream out = new FileOutputStream(directory.getPath() + ".xls");
+            workbook.write(out);
+            out.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }
