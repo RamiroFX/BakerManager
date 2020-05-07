@@ -1868,6 +1868,16 @@ public class DB_Ingreso {
             pst.setInt(2, idVenta);
             pst.executeUpdate();
             pst.close();
+            //se devuelve al stock lo que se anuló
+            ArrayList<M_facturaDetalle> detalle=obtenerVentaDetalles(idVenta);
+            for (int i = 0; i < detalle.size(); i++) {
+                String query = "UPDATE PRODUCTO SET "
+                        + "CANT_ACTUAL = "
+                        + "((SELECT CANT_ACTUAL FROM PRODUCTO WHERE ID_PRODUCTO = " + detalle.get(i).getProducto().getId() + ")+" + detalle.get(i).getCantidad() + ") "
+                        + "WHERE ID_PRODUCTO =" + detalle.get(i).getProducto().getId();
+                st = DB_manager.getConection().createStatement();
+                st.executeUpdate(query);
+            }
             DB_manager.establecerTransaccion();
         } catch (SQLException ex) {
             System.out.println(ex.getNextException());
