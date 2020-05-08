@@ -7,8 +7,6 @@ package DB;
 import Entities.M_egreso_cabecera;
 import Entities.M_egreso_detalle;
 import Entities.M_egreso_detalleFX;
-import Entities.M_facturaCabecera;
-import Entities.M_facturaDetalle;
 import Entities.M_funcionario;
 import Entities.M_producto;
 import Entities.M_proveedor;
@@ -988,5 +986,45 @@ public class DB_Egreso {
             lgr.log(Level.SEVERE, ex.getMessage(), ex);
         }
         return list;
+    }
+
+    public static void anularCompra(int idCompra, int idEstado, boolean recuperarNroFact) {
+        String UPDATE_VENTA = "UPDATE EGRESO_CABECERA SET ID_ESTADO = ? WHERE ID_EGRESO_CABECERA = ?";
+        if (recuperarNroFact) {
+            UPDATE_VENTA = "UPDATE EGRESO_CABECERA SET ID_ESTADO = ?, NRO_FACTURA = NULL WHERE ID_EGRESO_CABECERA = ?";
+        }
+        try {
+            DB_manager.habilitarTransaccionManual();
+            pst = DB_manager.getConection().prepareStatement(UPDATE_VENTA);
+            pst.setInt(1, idEstado);
+            pst.setInt(2, idCompra);
+            pst.executeUpdate();
+            pst.close();
+            //se devuelve al stock lo que se anuló
+            ArrayList<M_egreso_detalle> detalle = obtenerEgresoDetalles(idCompra);
+            for (int i = 0; i < detalle.size(); i++) {
+                String query = "UPDATE PRODUCTO SET "
+                        + "CANT_ACTUAL = "
+                        + "((SELECT CANT_ACTUAL FROM PRODUCTO WHERE ID_PRODUCTO = " + detalle.get(i).getProducto().getId() + ")+" + detalle.get(i).getCantidad() + ") "
+                        + "WHERE ID_PRODUCTO =" + detalle.get(i).getProducto().getId();
+                st = DB_manager.getConection().createStatement();
+                st.executeUpdate(query);
+            }
+            DB_manager.establecerTransaccion();
+        } catch (SQLException ex) {
+            System.out.println(ex.getNextException());
+            if (DB_manager.getConection() != null) {
+                try {
+                    DB_manager.getConection().rollback();
+                } catch (SQLException ex1) {
+                    Logger lgr = Logger.getLogger(DB_Egreso.class
+                            .getName());
+                    lgr.log(Level.WARNING, ex1.getMessage(), ex1);
+                }
+            }
+            Logger lgr = Logger.getLogger(DB_Egreso.class
+                    .getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        }
     }
 }

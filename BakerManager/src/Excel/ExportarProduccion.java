@@ -421,6 +421,9 @@ public class ExportarProduccion {
         //FIN CABECERA PRODUCCION DETALLE
 
         //INICIO DETALLE PRODUCCION DETALLE
+        double totalProducido = 0;
+        double totalUtilizado = 0;
+        double totalDisponible = 0;
         for (int i = 0; i < produccionFilmCabecera.size(); i++) {
             Row filaProdDetalle = sheet.createRow(filaActual);
             filaActual++;
@@ -433,12 +436,38 @@ public class ExportarProduccion {
             filaProdDetalle.createCell(5).setCellValue(get.getPeso());
             filaProdDetalle.createCell(6).setCellValue(get.getPesoUtilizado());
             filaProdDetalle.createCell(7).setCellValue(get.getPesoActual());
+            totalProducido = totalProducido + get.getPeso();
+            totalUtilizado = totalUtilizado + get.getPesoUtilizado();
+            totalDisponible = totalDisponible + get.getPesoActual();
         }
         filaActual++;
+        /*
+        FILA TOTAL PRODUCIDO
+         */
         Row rowTotalProducido = sheet.createRow(filaActual);
         filaActual++;
-        cabeceraProduccionDetalle.createCell(0).setCellValue(new HSSFRichTextString("Cod."));
-        cabeceraProduccionDetalle.getCell(0).setCellStyle(style1);
+        rowTotalProducido.createCell(0).setCellValue(new HSSFRichTextString("Total producido"));
+        rowTotalProducido.getCell(0).setCellStyle(style2);
+        rowTotalProducido.createCell(1).setCellValue(totalProducido);
+        rowTotalProducido.getCell(1).setCellStyle(styleNumber1);
+        /*
+        FILA TOTAL PRODUCIDO
+         */
+        Row rowTotalUtilizado = sheet.createRow(filaActual);
+        filaActual++;
+        rowTotalUtilizado.createCell(0).setCellValue(new HSSFRichTextString("Total utilizado"));
+        rowTotalUtilizado.getCell(0).setCellStyle(style2);
+        rowTotalUtilizado.createCell(1).setCellValue(totalUtilizado);
+        rowTotalUtilizado.getCell(1).setCellStyle(styleNumber1);
+        /*
+        FILA TOTAL PRODUCIDO
+         */
+        Row rowTotalDisponible = sheet.createRow(filaActual);
+        filaActual++;
+        rowTotalDisponible.createCell(0).setCellValue(new HSSFRichTextString("Total disponible"));
+        rowTotalDisponible.getCell(0).setCellStyle(style2);
+        rowTotalDisponible.createCell(1).setCellValue(totalDisponible);
+        rowTotalDisponible.getCell(1).setCellStyle(styleNumber1);
         //INICIO AJUSTAR COLUMNAS
         sheet.autoSizeColumn(0);
         sheet.autoSizeColumn(1);

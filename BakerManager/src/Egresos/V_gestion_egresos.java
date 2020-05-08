@@ -29,7 +29,7 @@ import net.miginfocom.swing.MigLayout;
 public class V_gestion_egresos extends JInternalFrame {
 
     public JButton jbBuscar, jbBuscarDetalle, jbBorrar, jbAgregar, jbDetalle,
-            jbResumen, jbProveedor, jbFuncionario, jbGraficos;
+            jbResumen, jbProveedor, jbFuncionario, jbAnular, jbGraficos;
     public JTextField jtfNroFactura, jtfProveedor, jtfFuncionario;
     public JComboBox jcbCondCompra;
     private JPanel jpTop, jpBotonesTop, jpBot;
@@ -119,6 +119,10 @@ public class V_gestion_egresos extends JInternalFrame {
         jbDetalle.setName("detalle compra");
         jbDetalle.setMargin(insets);
         jbDetalle.setFont(CommonFormat.fuente);
+        jbAnular = new JButton("Anular");
+        jbAnular.setName("anular compra");
+        jbAnular.setMargin(insets);
+        jbAnular.setFont(CommonFormat.fuente);
         jbResumen = new JButton("Ver resumen [F2]");
         jbResumen.setName("resumen compra");
         jbResumen.setMargin(insets);

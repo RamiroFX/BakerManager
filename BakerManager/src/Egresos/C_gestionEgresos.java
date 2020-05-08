@@ -89,6 +89,9 @@ public class C_gestionEgresos extends MouseAdapter implements ActionListener, Ke
             if (this.vista.jbResumen.getName().equals(acceso.getItemDescripcion())) {
                 this.vista.jbResumen.addActionListener(this);
             }
+            if (this.vista.jbAnular.getName().equals(acceso.getItemDescripcion())) {
+                this.vista.jbAnular.addActionListener(this);
+            }
             if (this.vista.jbDetalle.getName().equals(acceso.getItemDescripcion())) {
                 this.vista.jbDetalle.addActionListener(this);
             }
@@ -317,6 +320,30 @@ public class C_gestionEgresos extends MouseAdapter implements ActionListener, Ke
         ge.setVisible(true);
     }
 
+    private void anularCompra() {
+        int opcion = JOptionPane.showConfirmDialog(vista, "¿Está seguro que desea continuar? Accion irreversible.", "Atención", JOptionPane.WARNING_MESSAGE, JOptionPane.YES_NO_OPTION);
+        if (opcion == JOptionPane.YES_OPTION) {
+            int fila = this.vista.jtEgresoCabecera.table.getSelectedRow();
+            if (fila > -1) {
+                Integer idIngresoCabecera = Integer.valueOf(String.valueOf(this.vista.jtEgresoCabecera.table.getValueAt(fila, 0)));
+                Object nroFactura = this.vista.jtEgresoCabecera.table.getValueAt(fila, 1);
+                if (nroFactura != null) {
+                    int opcion2 = JOptionPane.showConfirmDialog(vista, "¿Desea recuperar el número de factura?.", "Atención", JOptionPane.WARNING_MESSAGE, JOptionPane.YES_NO_OPTION);
+                    if (opcion2 == JOptionPane.YES_OPTION) {
+                        DB_Egreso.anularCompra(idIngresoCabecera, 2, true);
+                    } else {
+                        DB_Egreso.anularCompra(idIngresoCabecera, 2, false);
+                    }
+                } else {
+                    DB_Egreso.anularCompra(idIngresoCabecera, 2, false);
+                }
+            }
+        }
+        displayQueryResults();
+        this.vista.jbDetalle.setEnabled(false);
+        this.vista.jbAnular.setEnabled(false);
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == this.vista.jbBuscar) {
@@ -343,6 +370,8 @@ public class C_gestionEgresos extends MouseAdapter implements ActionListener, Ke
             verGraficos();
         } else if (e.getSource() == this.vista.jbDetalle) {
             verDetalle();
+        } else if (e.getSource() == this.vista.jbAnular) {
+            anularCompra();
         }
     }
 
