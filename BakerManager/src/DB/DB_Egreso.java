@@ -4,6 +4,7 @@
  */
 package DB;
 
+import Entities.Estado;
 import Entities.M_egreso_cabecera;
 import Entities.M_egreso_detalle;
 import Entities.M_egreso_detalleFX;
@@ -86,7 +87,7 @@ public class DB_Egreso {
         return rstm;
     }
 
-    public static ResultSetTableModel obtenerEgreso(String proveedor_entidad, Integer nro_factura, String idEmpleado, String inicio, String fin, String tipo_operacion) {
+    public static ResultSetTableModel obtenerEgreso(String proveedor_entidad, Integer nro_factura, String idEmpleado, String inicio, String fin, String tipo_operacion, int idEstado) {
         ResultSetTableModel rstm = null;
         String fromQuery = "FROM EGRESO_CABECERA EGCA ,FUNCIONARIO FUNC, PERSONA PERS ";
         String fInicio = "";
@@ -137,6 +138,10 @@ public class DB_Egreso {
         } catch (Exception e) {
             numero_fac = "";
         }
+        String estadoQuery = "";
+        if (idEstado > 0) {
+            estadoQuery = " AND EGCA.ID_ESTADO = " + idEstado;
+        }
         String Query = "SELECT EGCA.ID_EGRESO_CABECERA \"ID\", "
                 + "(SELECT PROV.ENTIDAD FROM PROVEEDOR PROV WHERE PROV.ID_PROVEEDOR = EGCA.ID_PROVEEDOR)\"Proveedor\", "
                 + "EGCA.NRO_FACTURA \"Nro. factura\", "
@@ -152,7 +157,8 @@ public class DB_Egreso {
                 + fFinal
                 + empleado
                 + tiop
-                + numero_fac;
+                + numero_fac
+                + estadoQuery;
         try {
             Query = Query + " ORDER BY EGCA.TIEMPO";
             st = DB_manager.getConection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
@@ -1005,7 +1011,7 @@ public class DB_Egreso {
             for (int i = 0; i < detalle.size(); i++) {
                 String query = "UPDATE PRODUCTO SET "
                         + "CANT_ACTUAL = "
-                        + "((SELECT CANT_ACTUAL FROM PRODUCTO WHERE ID_PRODUCTO = " + detalle.get(i).getProducto().getId() + ")+" + detalle.get(i).getCantidad() + ") "
+                        + "((SELECT CANT_ACTUAL FROM PRODUCTO WHERE ID_PRODUCTO = " + detalle.get(i).getProducto().getId() + ")-" + detalle.get(i).getCantidad() + ") "
                         + "WHERE ID_PRODUCTO =" + detalle.get(i).getProducto().getId();
                 st = DB_manager.getConection().createStatement();
                 st.executeUpdate(query);

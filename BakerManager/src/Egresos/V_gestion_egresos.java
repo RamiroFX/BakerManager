@@ -4,6 +4,8 @@
  */
 package Egresos;
 
+import Entities.E_tipoOperacion;
+import Entities.Estado;
 import Interface.CommonFormat;
 import Utilities.JTablePagination;
 import com.toedter.calendar.JDateChooser;
@@ -11,6 +13,7 @@ import java.awt.Dimension;
 import java.awt.Insets;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JInternalFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -31,11 +34,11 @@ public class V_gestion_egresos extends JInternalFrame {
     public JButton jbBuscar, jbBuscarDetalle, jbBorrar, jbAgregar, jbDetalle,
             jbResumen, jbProveedor, jbFuncionario, jbAnular, jbGraficos;
     public JTextField jtfNroFactura, jtfProveedor, jtfFuncionario;
+    public JComboBox<Estado> jcbEstado;
     public JComboBox jcbCondCompra;
     private JPanel jpTop, jpBotonesTop, jpBot;
-    public JTable jtEgresoDetalle;
-    public JTablePagination jtEgresoCabecera;
-    private JScrollPane jspEgresoDetalle;
+    public JTable jtEgresoDetalle, jtEgresoCabecera;
+    private JScrollPane jspEgresoDetalle, jspEgresoCabecera;
     private JSplitPane jspMid;
     public JDateChooser jddInicio, jddFinal;
 
@@ -61,6 +64,7 @@ public class V_gestion_egresos extends JInternalFrame {
         jtfProveedor = new JTextField();
         jtfProveedor.setEditable(false);
         jtfProveedor.setPreferredSize(new Dimension(250, 10));
+        jcbEstado = new JComboBox();
         jtfFuncionario = new JTextField();
         jtfFuncionario.setEditable(false);
         jtfFuncionario.setPreferredSize(new Dimension(250, 10));
@@ -79,7 +83,17 @@ public class V_gestion_egresos extends JInternalFrame {
         jpFiltros.add(new JLabel("Fecha final:"));
         jpFiltros.add(jddFinal, "growx");
         jpFiltros.add(new JLabel("Nro. factura:"));
-        jpFiltros.add(jtfNroFactura, "growx");
+        jpFiltros.add(jtfNroFactura, "growx, wrap");
+        jpFiltros.add(new JComponent() {
+        });
+        jpFiltros.add(new JComponent() {
+        });
+        jpFiltros.add(new JComponent() {
+        });
+        jpFiltros.add(new JComponent() {
+        });
+        jpFiltros.add(new JLabel("Estado"));
+        jpFiltros.add(jcbEstado, "growx");
         jpBotonesTop = new JPanel(new MigLayout());
         jpBotonesTop.setBorder(new EtchedBorder(EtchedBorder.RAISED));
         jbBuscar = new JButton("Buscar");
@@ -96,14 +110,15 @@ public class V_gestion_egresos extends JInternalFrame {
 
     private void initMid() {
         //Panel medio izquierda
-        jtEgresoCabecera = new JTablePagination(100);
+        jtEgresoCabecera = new JTable();
 
         //panel medio derecha
         jtEgresoDetalle = new JTable();
         this.jtEgresoDetalle.getTableHeader().setReorderingAllowed(false);
         jspEgresoDetalle = new JScrollPane(jtEgresoDetalle);
+        jspEgresoCabecera = new JScrollPane(jtEgresoCabecera);
         //creamos nuestro splitpane y agregamos los dos paneles del medio
-        jspMid = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, jtEgresoCabecera, jspEgresoDetalle);
+        jspMid = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, jspEgresoCabecera, jspEgresoDetalle);
         jspMid.setDividerLocation(this.getWidth() / 2);
         jspMid.setOneTouchExpandable(true);
     }
@@ -132,6 +147,7 @@ public class V_gestion_egresos extends JInternalFrame {
         jbGraficos.setFont(CommonFormat.fuente);
         jpBot.add(jbAgregar);
         jpBot.add(jbDetalle);
+        jpBot.add(jbAnular);
         jpBot.add(jbResumen);
         jpBot.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED), "Opciones"));
     }
