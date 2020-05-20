@@ -61,10 +61,10 @@ public class SaldarCaja extends JDialog implements ActionListener, KeyListener {
     public JDateChooser jddInicio, jddFinal;
     public JComboBox jcbHoraInicio, jcbMinutoInicio, jcbHoraFin, jcbMinutoFin;
     private JButton saveButton, cancelButton, jbFondoAnterior;
-    private JLabel jlFondoApertura, jlFondoCierre, jlEgresoTotal, jlDifCaja,
+    private JLabel jlFondoApertura, jlFondoCierre, jlEgresoTotal, //jlDifCaja,
             jlDepositar, jlEgresoCredito, jlEgresoContado, jlIngresoTotal,
             jlIngresoCredito, jlIngresoContado, jlTotalEgrIng1, jlTotalEgrIng2;
-    private JFormattedTextField jtfFondoApertura, jtfFondoCierre, jtfDifCaja, jtfDepositar, jtfEgresoTotal,
+    private JFormattedTextField jtfFondoApertura, jtfFondoCierre, jtfDepositar, jtfEgresoTotal, //jtfDifCaja,
             jtfEgresoCredito, jtfEgresoContado, jtfIngresoTotal,
             jtfIngresoCredito, jtfIngresoContado, jtfTotalEgrIng1, jtfTotalEgrIng2;
     //ARQUEO CAJA VARIABLES
@@ -96,8 +96,8 @@ public class SaldarCaja extends JDialog implements ActionListener, KeyListener {
         this.jlFondoApertura.setFont(CommonFormat.fuenteTitulo);
         this.jlFondoCierre = new JLabel("Fondo cierre");
         this.jlFondoCierre.setFont(CommonFormat.fuenteTitulo);
-        this.jlDifCaja = new JLabel("Dif. de Caja");
-        this.jlDifCaja.setFont(CommonFormat.fuenteSubTitulo);
+        //this.jlDifCaja = new JLabel("Dif. de Caja");
+        //this.jlDifCaja.setFont(CommonFormat.fuenteSubTitulo);
         this.jlDepositar = new JLabel("A depositar");
         this.jlDepositar.setFont(CommonFormat.fuenteTitulo);
         this.jlEgresoTotal = new JLabel("Egreso total");
@@ -122,8 +122,8 @@ public class SaldarCaja extends JDialog implements ActionListener, KeyListener {
         this.jtfFondoCierre = new JFormattedTextField();
         this.jtfFondoCierre.setColumns(prefCols);
         this.jtfFondoCierre.addKeyListener(this);
-        this.jtfDifCaja = new JFormattedTextField();
-        this.jtfDifCaja.setColumns(prefCols);
+        //this.jtfDifCaja = new JFormattedTextField();
+        //this.jtfDifCaja.setColumns(prefCols);
         this.jtfDepositar = new JFormattedTextField();
         this.jtfDepositar.setColumns(prefCols);
         this.jtfEgresoTotal = new JFormattedTextField();
@@ -149,7 +149,7 @@ public class SaldarCaja extends JDialog implements ActionListener, KeyListener {
 
         this.jtfFondoApertura.setEditable(false);
         this.jtfFondoCierre.setEditable(false);
-        this.jtfDifCaja.setEditable(false);
+        //this.jtfDifCaja.setEditable(false);
         this.jtfDepositar.setEditable(false);
         this.jtfTotalEgrIng1.setEditable(false);
         this.jtfTotalEgrIng2.setEditable(false);
@@ -239,15 +239,40 @@ public class SaldarCaja extends JDialog implements ActionListener, KeyListener {
         jpFiltros.add(jpFiltros1);
         jpFiltros.add(jpFiltros2);
 
-        JPanel studentInfoPanel = new JPanel();
+        JPanel jpEgresos = new JPanel(new MigLayout());
+        jpEgresos.setBorder(borde);
+        jpEgresos.add(jlEgresoTotal);
+        jpEgresos.add(jtfEgresoTotal, "wrap");
+        jpEgresos.add(jlEgresoContado);
+        jpEgresos.add(jtfEgresoContado, "wrap");
+        jpEgresos.add(jlEgresoCredito);
+        jpEgresos.add(jtfEgresoCredito, "wrap");
+        JPanel jpIngresos = new JPanel(new MigLayout());
+        jpIngresos.setBorder(borde);
+        jpIngresos.add(jlIngresoTotal);
+        jpIngresos.add(jtfIngresoTotal, "wrap");
+        jpIngresos.add(jlIngresoContado);
+        jpIngresos.add(jtfIngresoContado, "wrap");
+        jpIngresos.add(jlIngresoCredito);
+        jpIngresos.add(jtfIngresoCredito, "wrap");
+
+        JPanel studentInfoPanel = new JPanel(new MigLayout());
         JPanel buttonsPanel = new JPanel();
 
         int space = 15;
         Border spaceBorder = BorderFactory.createEmptyBorder(space, space, space, space);
 
-        studentInfoPanel.setBorder(spaceBorder);
+        //studentInfoPanel.setBorder(spaceBorder);
+        studentInfoPanel.add(jlFondoApertura);
+        studentInfoPanel.add(jtfFondoApertura, "wrap");
+        studentInfoPanel.add(jlFondoCierre);
+        studentInfoPanel.add(jtfFondoCierre, "wrap");
+        studentInfoPanel.add(jlDepositar);
+        studentInfoPanel.add(jtfDepositar, "wrap");
+        studentInfoPanel.add(jpEgresos, "spanx, wrap");
+        studentInfoPanel.add(jpIngresos, "spanx, wrap");
 
-        studentInfoPanel.setLayout(new GridBagLayout());
+        /*studentInfoPanel.setLayout(new GridBagLayout());
 
         GridBagConstraints gc = new GridBagConstraints();
 
@@ -289,22 +314,21 @@ public class SaldarCaja extends JDialog implements ActionListener, KeyListener {
         studentInfoPanel.add(jtfFondoCierre, gc);
 
         // ////// Next row ////////////////////////////
-        gc.gridy++;
-
-        gc.weightx = 1;
-        gc.weighty = 1;
-        gc.fill = GridBagConstraints.NONE;
-
-        gc.gridx = 0;
-        gc.anchor = GridBagConstraints.EAST;
-        gc.insets = rightPadding;
-        studentInfoPanel.add(jlDifCaja, gc);
-
-        gc.gridx++;
-        gc.anchor = GridBagConstraints.WEST;
-        gc.insets = noPadding;
-        studentInfoPanel.add(jtfDifCaja, gc);
-
+//        gc.gridy++;
+//
+//        gc.weightx = 1;
+//        gc.weighty = 1;
+//        gc.fill = GridBagConstraints.NONE;
+//
+//        gc.gridx = 0;
+//        gc.anchor = GridBagConstraints.EAST;
+//        gc.insets = rightPadding;
+//        studentInfoPanel.add(jlDifCaja, gc);
+//
+//        gc.gridx++;
+//        gc.anchor = GridBagConstraints.WEST;
+//        gc.insets = noPadding;
+//        studentInfoPanel.add(jtfDifCaja, gc);
         // ////// Next row ////////////////////////////
         gc.gridy++;
 
@@ -454,8 +478,7 @@ public class SaldarCaja extends JDialog implements ActionListener, KeyListener {
         gc.gridx++;
         gc.anchor = GridBagConstraints.WEST;
         gc.insets = noPadding;
-        studentInfoPanel.add(jtfTotalEgrIng2, gc);
-
+        studentInfoPanel.add(jtfTotalEgrIng2, gc);*/
         // ////////// Buttons Panel ///////////////
         buttonsPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
         buttonsPanel.add(saveButton);
@@ -777,7 +800,7 @@ public class SaldarCaja extends JDialog implements ActionListener, KeyListener {
                 fondoFinal = 0;
             }
         }
-        this.jtfDifCaja.setValue(fondoInicial - fondoFinal);
+        //this.jtfDifCaja.setValue(fondoInicial - fondoFinal);
     }
 
     @Override
