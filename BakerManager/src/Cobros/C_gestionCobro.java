@@ -32,13 +32,16 @@ import javax.swing.JOptionPane;
  *
  * @author Ramiro Ferreira
  */
-public class C_gestionCobroPago implements GestionInterface, RecibirEmpleadoCallback, RecibirClienteCallback, InterfaceNotificarCambio {
+public class C_gestionCobro implements GestionInterface, RecibirEmpleadoCallback,
+        RecibirClienteCallback, InterfaceNotificarCambio {
 
-    V_gestionCobroPago vista;
+    V_gestionCobro vista;
     M_gestionCobroPago modelo;
     public C_inicio c_inicio;
+    private int tipoCliente;//para utilizar en el buscado de clientes
+    private static final int TIPO_BUSCADOR = 1, TIPO_ESTADO_CUENTA = 2;
 
-    public C_gestionCobroPago(V_gestionCobroPago vista, M_gestionCobroPago modelo, C_inicio c_inicio) {
+    public C_gestionCobro(V_gestionCobro vista, M_gestionCobroPago modelo, C_inicio c_inicio) {
         this.vista = vista;
         this.modelo = modelo;
         this.c_inicio = c_inicio;
@@ -109,6 +112,7 @@ public class C_gestionCobroPago implements GestionInterface, RecibirEmpleadoCall
                 System.out.println("Cobros.C_gestionCobroPago.actionPerformed().jbCheques");
             }
         }
+        this.vista.jbMasOpciones.addActionListener(this);
         //TODO conceder permisos
         //this.vista.jbCobro.addActionListener(this);
         //this.vista.jbDetalleCobro.addActionListener(this);
@@ -128,6 +132,7 @@ public class C_gestionCobroPago implements GestionInterface, RecibirEmpleadoCall
          * **ESCAPE HOTKEY/
          */
         //cobro
+        this.vista.jbMasOpciones.addKeyListener(this);
         this.vista.jbCobro.addKeyListener(this);
         this.vista.jbResumen.addKeyListener(this);
         this.vista.jbAnular.addKeyListener(this);
@@ -263,8 +268,17 @@ public class C_gestionCobroPago implements GestionInterface, RecibirEmpleadoCall
 
     @Override
     public void recibirCliente(M_cliente cliente) {
-        this.modelo.setCliente(cliente);
-        this.vista.jtfCliente.setText(this.modelo.obtenerNombreCliente());
+        switch (tipoCliente) {
+            case TIPO_BUSCADOR: {
+                this.modelo.setCliente(cliente);
+                this.vista.jtfCliente.setText(this.modelo.obtenerNombreCliente());
+                break;
+            }
+            case TIPO_ESTADO_CUENTA: {
+                prepararReporteEstadoCuentas();
+                break;
+            }
+        }
     }
 
     private void borrarDatos() {
@@ -314,6 +328,70 @@ public class C_gestionCobroPago implements GestionInterface, RecibirEmpleadoCall
         return false;
     }
 
+    private void mostrarOpciones() {
+        Object[] options = {"Estado de cuenta"};
+        int n = JOptionPane.showOptionDialog(this.vista,
+                "Eliga su opción",
+                "Atención",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                null, //do not use a custom Icon
+                options, //the titles of buttons
+                options[0]); //default button title
+        switch (n) {
+            case 0: {
+                EventQueue.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        invocarEstadoCuentas();
+                    }
+                });
+                break;
+            }
+        }
+    }
+
+    private void invocarEstadoCuentas() {
+        this.tipoCliente = TIPO_ESTADO_CUENTA;
+        Seleccionar_cliente sc = new Seleccionar_cliente(this.c_inicio.vista);
+        sc.setCallback(this);
+        sc.mostrarVista();
+    }
+
+    private void prepararReporteEstadoCuentas() {
+        Object[] options = {"Histórico", "Resumido"};
+        int n = JOptionPane.showOptionDialog(this.vista,
+                "Eliga su opción",
+                "Atención",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                null, //do not use a custom Icon
+                options, //the titles of buttons
+                options[0]); //default button title
+        switch (n) {
+            //HISTORICO
+            case 0: {
+                EventQueue.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        //TODO REPORTE HISTORICO
+                    }
+                });
+                break;
+            }
+            //RESUMIDO
+            case 1: {
+                EventQueue.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        //TODO REPORTE RESUMIDO
+                    }
+                });
+                break;
+            }
+        }
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         Object src = e.getSource();
@@ -333,6 +411,7 @@ public class C_gestionCobroPago implements GestionInterface, RecibirEmpleadoCall
             sf.setCallback(this);
             sf.mostrarVista();
         } else if (src.equals(this.vista.jbCliente)) {
+            this.tipoCliente = TIPO_BUSCADOR;
             Seleccionar_cliente sc = new Seleccionar_cliente(this.c_inicio.vista);
             sc.setCallback(this);
             sc.mostrarVista();
@@ -344,6 +423,8 @@ public class C_gestionCobroPago implements GestionInterface, RecibirEmpleadoCall
             invocarVistaResumen();
         } else if (src.equals(this.vista.jbCobroPendientes)) {
             consultarCobrosPendiente();
+        } else if (src.equals(this.vista.jbMasOpciones)) {
+            mostrarOpciones();
         }
     }
 

@@ -13,14 +13,14 @@ import bakermanager.C_inicio;
  */
 public class GestionCobroPago {
 
-    C_gestionCobroPago controlador;
+    C_gestionCobro controlador;
     M_gestionCobroPago modelo;
-    V_gestionCobroPago vista;
+    V_gestionCobro vista;
 
     public GestionCobroPago(C_inicio inicio) {
         this.modelo = new M_gestionCobroPago();
-        this.vista = new V_gestionCobroPago();
-        this.controlador = new C_gestionCobroPago(vista, modelo, inicio);
+        this.vista = new V_gestionCobro();
+        this.controlador = new C_gestionCobro(vista, modelo, inicio);
     }
 
     public void mostrarVista() {

@@ -30,13 +30,13 @@ import net.miginfocom.swing.MigLayout;
  *
  * @author Ramiro Ferreira
  */
-public class V_gestionCobroPago extends JInternalFrame {
+public class V_gestionCobro extends JInternalFrame {
 
     //NORTH VARIABLES
     //COBRO
     public JButton jbBuscarCobro, jbBorrarCobro, jbDetalleCobro, jbAnular,
             jbCliente, jbEmpCobro, jbCobro, jbCobroPendientes, jbResumen, jbBanco,
-            jbCheques;
+            jbCheques, jbMasOpciones;
     public JTextField jtfNroRecibo, jtfCliente, jtfEmpCobro;
     public JComboBox jcbEmpleado, jcbEstadoPedido;
     public JComboBox<Estado> jcbEstado;
@@ -46,7 +46,7 @@ public class V_gestionCobroPago extends JInternalFrame {
     private JSplitPane jspCobroMid;
     public JDateChooser jddInicioCobro, jddFinalCobro;
 
-    public V_gestionCobroPago() {
+    public V_gestionCobro() {
         super("Cobros a clientes", true, true, true, true);
         initializeCobroVariables();
         constructWindows();
@@ -133,6 +133,9 @@ public class V_gestionCobroPago extends JInternalFrame {
         jbCheques.setName("cheques pendientes cobro");
         jbCheques.setFont(CommonFormat.fuente);
         jbCheques.setMargin(insets);
+        jbMasOpciones = new JButton("Más opciones");
+        jbMasOpciones.setFont(CommonFormat.fuente);
+        jbMasOpciones.setMargin(insets);
 
         jbDetalleCobro = new JButton("Ver detalle");
         jbDetalleCobro.setName("detalle cobro");
@@ -153,6 +156,7 @@ public class V_gestionCobroPago extends JInternalFrame {
         jpCobroBot.add(jbResumen);
         jpCobroBot.add(jbBanco);
         jpCobroBot.add(jbCheques);
+        jpCobroBot.add(jbMasOpciones);
         jpCobros = new JPanel(new BorderLayout());
         jpCobros.add(jpCobroTop, BorderLayout.NORTH);
         jpCobros.add(jspCobroMid, BorderLayout.CENTER);
