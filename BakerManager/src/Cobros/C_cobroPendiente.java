@@ -6,6 +6,7 @@
 package Cobros;
 
 import Cliente.Seleccionar_cliente;
+import Entities.E_facturaSinPago;
 import Entities.M_cliente;
 import Entities.M_funcionario;
 import Entities.M_menu_item;
@@ -21,6 +22,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -174,9 +176,15 @@ public class C_cobroPendiente extends MouseAdapter implements ActionListener, Ke
         int fila = this.vista.jtCobroCabecera.getSelectedRow();
         int columna = this.vista.jtCobroCabecera.getSelectedColumn();
         if ((fila > -1) && (columna > -1)) {
-            int idFactura = (int) this.vista.jtCobroCabecera.getValueAt(fila, 0);
-            Ver_ingreso vc = new Ver_ingreso(this.vista, idFactura);
-            vc.mostrarVista();
+            E_facturaSinPago fsp = modelo.getTm().getList().get(fila);
+            int idFactura = fsp.getIdCabecera();
+            if (idFactura == 0) {
+                NumberFormat nf = NumberFormat.getInstance();
+                JOptionPane.showMessageDialog(vista, "Saldo inicial del cliente:\n" + nf.format(fsp.getMonto()), "Saldo inicial", JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                Ver_ingreso vc = new Ver_ingreso(this.vista, idFactura);
+                vc.mostrarVista();
+            }
         }
         this.vista.jbDetalleCobro.setEnabled(false);
     }

@@ -158,7 +158,7 @@ public class MovimientoContableTM extends AbstractTableModel {
                     }
                 }
             }
-            case 5: {
+            case 5: {//pago
                 switch (row.getTipo()) {
                     case E_movimientoContable.TIPO_COBRO: {
                         return row.getCobro().getDebito();
@@ -167,7 +167,7 @@ public class MovimientoContableTM extends AbstractTableModel {
                         return row.getCompra().getTotal();
                     }
                     case E_movimientoContable.TIPO_PAGO: {
-                        return row.getPago().get();
+                        return row.getPago().getMonto();
                     }
                     case E_movimientoContable.TIPO_SALDO_INICIAL: {
                         return "";
@@ -179,7 +179,7 @@ public class MovimientoContableTM extends AbstractTableModel {
                 return row.getPago();
             }
             case 6: {
-                return row.getSaldo();
+                //return row.getSaldo();
             }
             default: {
                 return null;
