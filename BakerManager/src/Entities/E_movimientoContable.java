@@ -15,10 +15,11 @@ public class E_movimientoContable {
             TIPO_COBRO = 4, TIPO_SALDO_INICIAL = 5;
     private int id;
     private int tipo;
-    private E_facturaCabecera venta;
+    private E_facturaSinPago venta;
     private M_egreso_cabecera compra;
     private E_cuentaCorrienteCabecera cobro;
     private E_reciboPagoCabecera pago;
+    private M_cliente clienteSaldoInicial;
 
     public E_movimientoContable() {
     }
@@ -54,14 +55,14 @@ public class E_movimientoContable {
     /**
      * @return the venta
      */
-    public E_facturaCabecera getVenta() {
+    public E_facturaSinPago getVenta() {
         return venta;
     }
 
     /**
      * @param venta the venta to set
      */
-    public void setVenta(E_facturaCabecera venta) {
+    public void setVenta(E_facturaSinPago venta) {
         this.venta = venta;
     }
 
@@ -105,6 +106,14 @@ public class E_movimientoContable {
      */
     public void setPago(E_reciboPagoCabecera pago) {
         this.pago = pago;
+    }
+
+    public M_cliente getClienteSaldoInicial() {
+        return clienteSaldoInicial;
+    }
+
+    public void setClienteSaldoInicial(M_cliente clienteSaldoInicial) {
+        this.clienteSaldoInicial = clienteSaldoInicial;
     }
 
 }

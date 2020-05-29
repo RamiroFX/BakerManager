@@ -11,62 +11,42 @@ import java.util.Date;
  *
  * @author Ramiro Ferreira
  */
-public class E_facturaSinPago {
+public class E_facturaSinPago extends E_facturaCabecera {
 
-    private int idCabecera;
-    private int nroFactura;
-    private int idCliente;
     private int monto;
     private int pago;
     private int saldo;
-    private Date fecha;
-    private String ruc;
-    private String rucDiv;
-    private String clienteEntidad;
 
     public E_facturaSinPago() {
+        super();
     }
 
     /**
      * @return the idCabecera
      */
     public int getIdCabecera() {
-        return idCabecera;
+        return getIdFacturaCabecera();
     }
 
     /**
      * @param idCabecera the idCabecera to set
      */
     public void setIdCabecera(int idCabecera) {
-        this.idCabecera = idCabecera;
-    }
-
-    /**
-     * @return the nroFactura
-     */
-    public int getNroFactura() {
-        return nroFactura;
-    }
-
-    /**
-     * @param nroFactura the nroFactura to set
-     */
-    public void setNroFactura(int nroFactura) {
-        this.nroFactura = nroFactura;
+        this.setIdFacturaCabecera(idCabecera);
     }
 
     /**
      * @return the idCliente
      */
     public int getIdCliente() {
-        return idCliente;
+        return getCliente().getIdCliente();
     }
 
     /**
      * @param idCliente the idCliente to set
      */
     public void setIdCliente(int idCliente) {
-        this.idCliente = idCliente;
+        this.getCliente().setIdCliente(idCliente);
     }
 
     /**
@@ -115,55 +95,55 @@ public class E_facturaSinPago {
      * @return the ruc
      */
     public String getRuc() {
-        return ruc;
+        return this.getCliente().getRuc();
     }
 
     /**
      * @param ruc the ruc to set
      */
     public void setRuc(String ruc) {
-        this.ruc = ruc;
+        this.getCliente().setRuc(ruc);
     }
 
     /**
      * @return the rucDiv
      */
     public String getRucDiv() {
-        return rucDiv;
+        return this.getCliente().getRucId();
     }
 
     /**
      * @param rucDiv the rucDiv to set
      */
     public void setRucDiv(String rucDiv) {
-        this.rucDiv = rucDiv;
+        this.getCliente().setRucId(rucDiv);
     }
 
     /**
      * @return the clienteEntidad
      */
     public String getClienteEntidad() {
-        return clienteEntidad;
+        return this.getCliente().getEntidad();
     }
 
     /**
      * @param clienteEntidad the clienteEntidad to set
      */
     public void setClienteEntidad(String clienteEntidad) {
-        this.clienteEntidad = clienteEntidad;
+        this.getCliente().setEntidad(clienteEntidad);
     }
 
     /**
      * @return the fecha
      */
     public Date getFecha() {
-        return fecha;
+        return getTiempo();
     }
 
     /**
      * @param fecha the fecha to set
      */
     public void setFecha(Date fecha) {
-        this.fecha = fecha;
+        this.setTiempo(fecha);
     }
 }

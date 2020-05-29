@@ -16,6 +16,7 @@ public class M_egreso_cabecera {
     private Integer id_proveedor;
     private Integer id_empleado;
     private Integer id_condVenta;
+    private Integer total;
     private String condVenta;
     private Integer nro_factura;
     private Timestamp tiempo;
@@ -139,6 +140,14 @@ public class M_egreso_cabecera {
      */
     public void setCondVenta(String condVenta) {
         this.condVenta = condVenta;
+    }
+
+    public Integer getTotal() {
+        return total;
+    }
+
+    public void setTotal(Integer total) {
+        this.total = total;
     }
 
 }

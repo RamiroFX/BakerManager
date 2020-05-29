@@ -26,6 +26,11 @@ public class E_facturaCabecera {
 
     public E_facturaCabecera() {
         detalle = new ArrayList<>();
+        cliente = new M_cliente();
+        funcionario = new M_funcionario();
+        tipoOperacion = new E_tipoOperacion();
+        formaPago = new E_formaPago();
+        estado = new Estado();
     }
 
     public Integer getIdFacturaCabecera() {
