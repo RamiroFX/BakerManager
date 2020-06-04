@@ -416,9 +416,9 @@ public class DB_Cobro {
                 + "id_funcionario_registro, nro_recibo, id_estado, fecha_cobro, control, id_caja_y)"
                 + "VALUES (?, ?, ?, ?, ?, ?, ?, ?);";
         //LA SGBD SE ENCARGA DE INSERTAR EL TIMESTAMP.
-        String INSERT_DETALLE_CHEQUE_DIFERIDO = "INSERT INTO cuenta_corriente_detalle(id_cta_cte_cabecera, id_factura_cabecera, nro_recibo, monto, nro_cheque, id_banco, cheque_fecha, cheque_fecha_diferida, id_estado_cheque)VALUES (?, ?, ?, ?, ?, ?, ?, ?);";
-        String INSERT_DETALLE_CHEQUE = "INSERT INTO cuenta_corriente_detalle(id_cta_cte_cabecera, id_factura_cabecera, nro_recibo, monto, nro_cheque, id_banco, cheque_fecha)VALUES (?, ?, ?, ?, ?, ?, ?);";
-        String INSERT_DETALLE_EFECTIVO = "INSERT INTO cuenta_corriente_detalle(id_cta_cte_cabecera, id_factura_cabecera, nro_recibo, monto)VALUES (?, ?, ?, ?);";
+        String INSERT_DETALLE_CHEQUE_DIFERIDO = "INSERT INTO cuenta_corriente_detalle(id_cta_cte_cabecera, id_factura_cabecera, nro_recibo, monto, nro_cheque, id_banco, cheque_fecha, cheque_fecha_diferida, id_estado_cheque, observacion)VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);";
+        String INSERT_DETALLE_CHEQUE = "INSERT INTO cuenta_corriente_detalle(id_cta_cte_cabecera, id_factura_cabecera, nro_recibo, monto, nro_cheque, id_banco, cheque_fecha, observacion)VALUES (?, ?, ?, ?, ?, ?, ?, ?);";
+        String INSERT_DETALLE_EFECTIVO = "INSERT INTO cuenta_corriente_detalle(id_cta_cte_cabecera, id_factura_cabecera, nro_recibo, monto, observacion)VALUES (?, ?, ?, ?, ?);";
         long sq_cabecera = -1L;
         try {
             DB_manager.getConection().setAutoCommit(false);
@@ -444,9 +444,25 @@ public class DB_Cobro {
                     case E_formaPago.EFECTIVO: {
                         pst = DB_manager.getConection().prepareStatement(INSERT_DETALLE_EFECTIVO);
                         pst.setInt(1, (int) sq_cabecera);
-                        pst.setInt(2, unDetalle.getIdFacturaCabecera());
+                        /*
+                            en caso de que pague el saldo inicial entonces no tendrà numero de factura
+                            y debera ser null
+                         */
+                        if (unDetalle.getIdFacturaCabecera() == 0) {
+                            pst.setNull(2, java.sql.Types.INTEGER);
+                        } else {
+                            pst.setInt(2, unDetalle.getIdFacturaCabecera());
+                        }
                         pst.setInt(3, cabecera.getNroRecibo());
                         pst.setInt(4, (int) unDetalle.getMonto());
+                        /*
+                            en caso de que pague el saldo inicial entonces se comentara en la observacion
+                         */
+                        if (unDetalle.getIdFacturaCabecera() == 0) {
+                            pst.setString(5, "Saldo inicial");
+                        } else {
+                            pst.setNull(5, java.sql.Types.VARCHAR);
+                        }
                         pst.executeUpdate();
                         pst.close();
                         break;
@@ -455,7 +471,15 @@ public class DB_Cobro {
                         if (unDetalle.esChequeDiferido()) {
                             pst = DB_manager.getConection().prepareStatement(INSERT_DETALLE_CHEQUE_DIFERIDO);
                             pst.setInt(1, (int) sq_cabecera);
-                            pst.setInt(2, unDetalle.getIdFacturaCabecera());
+                            /*
+                            en caso de que pague el saldo inicial entonces no tendrà numero de factura
+                            y debera ser null
+                             */
+                            if (unDetalle.getIdFacturaCabecera() == 0) {
+                                pst.setNull(2, java.sql.Types.INTEGER);
+                            } else {
+                                pst.setInt(2, unDetalle.getIdFacturaCabecera());
+                            }
                             pst.setInt(3, cabecera.getNroRecibo());
                             pst.setInt(4, (int) unDetalle.getMonto());
                             pst.setInt(5, unDetalle.getNroCheque());
@@ -463,16 +487,40 @@ public class DB_Cobro {
                             pst.setTimestamp(7, new Timestamp(unDetalle.getFechaCheque().getTime()));
                             pst.setTimestamp(8, new Timestamp(unDetalle.getFechaDiferidaCheque().getTime()));
                             pst.setInt(9, Estado.INACTIVO);
+                            /*
+                            en caso de que pague el saldo inicial entonces se comentara en la observacion
+                             */
+                            if (unDetalle.getIdFacturaCabecera() == 0) {
+                                pst.setString(10, "Saldo inicial");
+                            } else {
+                                pst.setNull(10, java.sql.Types.VARCHAR);
+                            }
                             pst.executeUpdate();
                             pst.close();
                         } else {
                             pst = DB_manager.getConection().prepareStatement(INSERT_DETALLE_CHEQUE);
                             pst.setInt(1, (int) sq_cabecera);
-                            pst.setInt(2, unDetalle.getIdFacturaCabecera());
+                            /*
+                            en caso de que pague el saldo inicial entonces no tendrà numero de factura
+                            y debera ser null
+                             */
+                            if (unDetalle.getIdFacturaCabecera() == 0) {
+                                pst.setNull(2, java.sql.Types.INTEGER);
+                            } else {
+                                pst.setInt(2, unDetalle.getIdFacturaCabecera());
+                            }
                             pst.setInt(3, cabecera.getNroRecibo());
                             pst.setInt(4, (int) unDetalle.getMonto());
                             pst.setInt(5, unDetalle.getNroCheque());
                             pst.setInt(6, unDetalle.getBanco().getId());
+                            /*
+                            en caso de que pague el saldo inicial entonces se comentara en la observacion
+                             */
+                            if (unDetalle.getIdFacturaCabecera() == 0) {
+                                pst.setString(7, "Saldo inicial");
+                            } else {
+                                pst.setNull(7, java.sql.Types.VARCHAR);
+                            }
                             pst.setTimestamp(7, new Timestamp(unDetalle.getFechaCheque().getTime()));
                             pst.executeUpdate();
                             pst.close();
