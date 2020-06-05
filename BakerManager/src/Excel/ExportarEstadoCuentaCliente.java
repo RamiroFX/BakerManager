@@ -5,15 +5,18 @@
  */
 package Excel;
 
+import DB.DB_Cliente;
 import DB.DB_Cobro;
 import Entities.E_cuentaCorrienteCabecera;
 import Entities.E_cuentaCorrienteDetalle;
+import Entities.E_movimientoContable;
 import Entities.M_cliente;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import javax.swing.JFileChooser;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
@@ -33,9 +36,9 @@ import org.apache.poi.ss.usermodel.Row;
 public class ExportarEstadoCuentaCliente {
 
     String nombreHoja;
-    Date fechaInic, fechaFinal;
+    //Date fechaInic, fechaFinal;
     M_cliente cliente;
-    ArrayList<E_cuentaCorrienteCabecera> cabeceraList;
+    ArrayList<E_movimientoContable> cabeceraList;
     HSSFWorkbook workbook;
     HSSFSheet sheet;
     CellStyle style1, style2, style3, style4, style5;
@@ -44,13 +47,15 @@ public class ExportarEstadoCuentaCliente {
     public ExportarEstadoCuentaCliente(String nombreHoja, M_cliente cliente) {
         this.nombreHoja = nombreHoja;
         this.cliente = cliente;
+        inicializarVariables();
         createWorkBook();
         createCellStyles();
     }
 
     private void inicializarVariables() {
-        this.fechaInic = cabeceraList.get(0).getFechaPago();
-        this.fechaFinal = cabeceraList.get(cabeceraList.size() - 1).getFechaPago();
+        cabeceraList = DB_Cliente.obtenerEstadoCuenta(this.cliente.getIdCliente());
+        /*this.fechaInic = cabeceraList.get(0).getFechaPago();
+        this.fechaFinal = cabeceraList.get(cabeceraList.size() - 1).getFechaPago();*/
 
     }
 
@@ -91,7 +96,7 @@ public class ExportarEstadoCuentaCliente {
         //END FORMAT STYLE
     }
 
-    public void exportacionIndividual() {
+    public void exportacionHistorica() {
         File directory = null;
         String desktop = System.getProperty("user.home") + "\\Desktop";
         JFileChooser chooser = new JFileChooser(desktop);
@@ -105,92 +110,116 @@ public class ExportarEstadoCuentaCliente {
         }
         // Create a row and put some cells in it. Rows are 0 based.
         int filaActual = 0;
-        for (int q = 0; q < cabeceraList.size(); q++) {
-            E_cuentaCorrienteCabecera cabecera = cabeceraList.get(q);
+        //INICIO ESTADO DE CUENTA - CABECERA
+        Row produccionCabeceraRowFecha = sheet.createRow(filaActual);
+        filaActual++;
+        produccionCabeceraRowFecha.createCell(0).setCellValue(new HSSFRichTextString("Fecha"));
+        produccionCabeceraRowFecha.createCell(1).setCellValue(Calendar.getInstance().getTime());
+        produccionCabeceraRowFecha.getCell(0).setCellStyle(style5);
+        produccionCabeceraRowFecha.getCell(1).setCellStyle(dateCellStyle);
 
-            //INICIO RECIBO COBRO CABECERA
-            Row produccionCabeceraRowFecha = sheet.createRow(filaActual);
+        Row produccionCabeceraRowResp = sheet.createRow(filaActual);
+        filaActual++;
+        produccionCabeceraRowResp.createCell(0).setCellValue(new HSSFRichTextString("Cliente"));
+        produccionCabeceraRowResp.createCell(1).setCellValue(this.cliente.getEntidad());
+        produccionCabeceraRowResp.getCell(0).setCellStyle(style5);
+
+        Row rowTotal = sheet.createRow(filaActual);
+        filaActual++;
+        rowTotal.createCell(0).setCellValue(new HSSFRichTextString("Total pendiente"));
+        rowTotal.getCell(0).setCellStyle(style5);
+        //FIN ESTADO DE CUENTA - CABECERA
+
+        //INICIO CABECERA DETALLE 
+        Row cabeceraProduccionDetalle = sheet.createRow(filaActual);
+        filaActual++;
+        cabeceraProduccionDetalle.createCell(0).setCellValue(new HSSFRichTextString("Fecha"));
+        cabeceraProduccionDetalle.getCell(0).setCellStyle(style1);
+        cabeceraProduccionDetalle.createCell(1).setCellValue(new HSSFRichTextString("Documento"));
+        cabeceraProduccionDetalle.getCell(1).setCellStyle(style1);
+        cabeceraProduccionDetalle.createCell(2).setCellValue(new HSSFRichTextString("Nro"));
+        cabeceraProduccionDetalle.getCell(2).setCellStyle(style1);
+        cabeceraProduccionDetalle.createCell(3).setCellValue(new HSSFRichTextString("Monto"));
+        cabeceraProduccionDetalle.getCell(3).setCellStyle(style1);
+        cabeceraProduccionDetalle.createCell(4).setCellValue(new HSSFRichTextString("Débito"));
+        cabeceraProduccionDetalle.getCell(4).setCellStyle(style1);
+        cabeceraProduccionDetalle.createCell(5).setCellValue(new HSSFRichTextString("Credito"));
+        cabeceraProduccionDetalle.getCell(5).setCellStyle(style1);
+        //FIN CABECERA DETALLE
+
+        //INICIO DETALLE
+        int deuda = 0;
+        int credito = 0;
+        int total = 0;
+        for (int i = 0; i < cabeceraList.size(); i++) {
+            Row rowDetalle = sheet.createRow(filaActual);
             filaActual++;
-            produccionCabeceraRowFecha.createCell(0).setCellValue(new HSSFRichTextString("Fecha"));
-            produccionCabeceraRowFecha.createCell(1).setCellValue(cabecera.getFechaPago());
-            produccionCabeceraRowFecha.getCell(0).setCellStyle(style5);
-            produccionCabeceraRowFecha.getCell(1).setCellStyle(dateCellStyle);
-
-            Row produccionCabeceraRowResp = sheet.createRow(filaActual);
-            filaActual++;
-            produccionCabeceraRowResp.createCell(0).setCellValue(new HSSFRichTextString("Cliente"));
-            produccionCabeceraRowResp.createCell(1).setCellValue(cabecera.getCliente().getEntidad());
-            produccionCabeceraRowResp.getCell(0).setCellStyle(style5);
-
-            Row produccionCabeceraRowReg = sheet.createRow(filaActual);
-            filaActual++;
-            produccionCabeceraRowReg.createCell(0).setCellValue(new HSSFRichTextString("Cobrador"));
-            produccionCabeceraRowReg.createCell(1).setCellValue(cabecera.getCobrador().getNombre());
-            produccionCabeceraRowReg.getCell(0).setCellStyle(style5);
-
-            Row produccionCabeceraRowOT = sheet.createRow(filaActual);
-            filaActual++;
-            produccionCabeceraRowOT.createCell(0).setCellValue(new HSSFRichTextString("Nro recibo"));
-            produccionCabeceraRowOT.createCell(1).setCellValue(cabecera.getNroRecibo());
-            produccionCabeceraRowOT.getCell(0).setCellStyle(style5);
-
-            Row rowTotal = sheet.createRow(filaActual);
-            filaActual++;
-            rowTotal.createCell(0).setCellValue(new HSSFRichTextString("Total cobrado"));
-            rowTotal.getCell(0).setCellStyle(style5);
-            //FIN RECIBO COBRO CABECERA
-
-            //INICIO RECIBO COBRO CABECERA DETALLE
-            Row cabeceraProduccionDetalle = sheet.createRow(filaActual);
-            filaActual++;
-            cabeceraProduccionDetalle.createCell(0).setCellValue(new HSSFRichTextString("Monto"));
-            cabeceraProduccionDetalle.getCell(0).setCellStyle(style1);
-            cabeceraProduccionDetalle.createCell(1).setCellValue(new HSSFRichTextString("ID venta"));
-            cabeceraProduccionDetalle.getCell(1).setCellStyle(style1);
-            cabeceraProduccionDetalle.createCell(2).setCellValue(new HSSFRichTextString("Nro Factura"));
-            cabeceraProduccionDetalle.getCell(2).setCellStyle(style1);
-            cabeceraProduccionDetalle.createCell(3).setCellValue(new HSSFRichTextString("Nro Cheque"));
-            cabeceraProduccionDetalle.getCell(3).setCellStyle(style1);
-            cabeceraProduccionDetalle.createCell(4).setCellValue(new HSSFRichTextString("Banco"));
-            cabeceraProduccionDetalle.getCell(4).setCellStyle(style1);
-            cabeceraProduccionDetalle.createCell(5).setCellValue(new HSSFRichTextString("Fecha cheque"));
-            cabeceraProduccionDetalle.getCell(5).setCellStyle(style1);
-            cabeceraProduccionDetalle.createCell(6).setCellValue(new HSSFRichTextString("Fecha Cheque diferido"));
-            cabeceraProduccionDetalle.getCell(6).setCellStyle(style1);
-            //FIN CABECERA PRODUCCION DETALLE
-
-            //INICIO DETALLE PRODUCCION DETALLE
-            ArrayList<E_cuentaCorrienteDetalle> prodDetalleList;
-            prodDetalleList = new ArrayList<>(DB_Cobro.obtenerCobroDetalle(cabecera.getId()));
-            int total = 0;
-            for (int i = 0; i < prodDetalleList.size(); i++) {
-                Row filaProdDetalle = sheet.createRow(filaActual);
-                filaActual++;
-                E_cuentaCorrienteDetalle unDetalle = prodDetalleList.get(i);
-                filaProdDetalle.createCell(0).setCellValue(unDetalle.getMonto());
-                total = total + (int) unDetalle.getMonto();
-                filaProdDetalle.getCell(0).setCellStyle(style4);
-                filaProdDetalle.createCell(1).setCellValue(unDetalle.getIdFacturaCabecera());
-                filaProdDetalle.createCell(2).setCellValue(unDetalle.getNroFactura());
-                filaProdDetalle.createCell(3).setCellValue(unDetalle.getNroCheque());
-                filaProdDetalle.createCell(4).setCellValue(unDetalle.getBanco().getDescripcion());
-                if (unDetalle.getFechaCheque() != null) {
-                    filaProdDetalle.createCell(5).setCellValue(unDetalle.getFechaCheque());
-                    filaProdDetalle.getCell(5).setCellStyle(dateCellStyle);
-                } else {
-                    filaProdDetalle.createCell(5).setCellValue("");
+            E_movimientoContable unDetalle = cabeceraList.get(i);
+            switch (unDetalle.getTipo()) {
+                case E_movimientoContable.TIPO_SALDO_INICIAL: {
+                    deuda = deuda + (int) unDetalle.getClienteSaldoInicial().getSaldoInicial();
+                    total = credito - deuda;
+                    //rowDetalle.createCell(0).setCellValue();
+                    rowDetalle.createCell(1).setCellValue(unDetalle.getTipoDescripcion());
+                    //rowDetalle.createCell(2).setCellValue();
+                    rowDetalle.createCell(3).setCellValue(unDetalle.getClienteSaldoInicial().getSaldoInicial());
+                    rowDetalle.createCell(4).setCellValue(deuda);
+                    rowDetalle.createCell(5).setCellValue(credito);
+                    break;
                 }
-                if (unDetalle.getFechaDiferidaCheque() != null) {
-                    filaProdDetalle.createCell(6).setCellValue(unDetalle.getFechaDiferidaCheque());
-                    filaProdDetalle.getCell(6).setCellStyle(dateCellStyle);
-                } else {
-                    filaProdDetalle.createCell(6).setCellValue("");
+                case E_movimientoContable.TIPO_COBRO: {
+                    credito = credito + (int) unDetalle.getCobro().getDebito();
+                    total = credito - deuda;
+                    rowDetalle.createCell(0).setCellValue(unDetalle.getCobro().getFechaPago());
+                    rowDetalle.getCell(0).setCellStyle(style4);
+                    rowDetalle.createCell(1).setCellValue(unDetalle.getTipoDescripcion());
+                    rowDetalle.createCell(2).setCellValue(unDetalle.getCobro().getNroRecibo());
+                    rowDetalle.createCell(3).setCellValue(unDetalle.getCobro().getDebito());
+                    rowDetalle.createCell(4).setCellValue(deuda);
+                    rowDetalle.createCell(5).setCellValue(credito);
+                    break;
+                }
+                case E_movimientoContable.TIPO_COMPRA: {
+                    deuda = deuda + (int) unDetalle.getCompra().getTotal();
+                    total = credito - deuda;
+                    rowDetalle.createCell(0).setCellValue(unDetalle.getCompra().getTiempo());
+                    rowDetalle.getCell(0).setCellStyle(style4);
+                    rowDetalle.createCell(1).setCellValue(unDetalle.getTipoDescripcion());
+                    rowDetalle.createCell(2).setCellValue(unDetalle.getCompra().getNro_factura());
+                    rowDetalle.createCell(3).setCellValue(unDetalle.getCompra().getTotal());
+                    rowDetalle.createCell(4).setCellValue(deuda);
+                    rowDetalle.createCell(5).setCellValue(credito);
+                    break;
+                }
+                case E_movimientoContable.TIPO_PAGO: {
+                    credito = credito + (int) unDetalle.getPago().getMonto();
+                    total = credito - deuda;
+                    rowDetalle.createCell(0).setCellValue(unDetalle.getPago().getFechaPago());
+                    rowDetalle.getCell(0).setCellStyle(style4);
+                    rowDetalle.createCell(1).setCellValue(unDetalle.getTipoDescripcion());
+                    rowDetalle.createCell(2).setCellValue(unDetalle.getPago().getNroRecibo());
+                    rowDetalle.createCell(3).setCellValue(unDetalle.getPago().getMonto());
+                    rowDetalle.createCell(4).setCellValue(deuda);
+                    rowDetalle.createCell(5).setCellValue(credito);
+                    break;
+                }
+                case E_movimientoContable.TIPO_VENTA: {
+                    deuda = deuda + (int) unDetalle.getVenta().getMonto();
+                    total = credito - deuda;
+                    rowDetalle.createCell(0).setCellValue(unDetalle.getVenta().getFecha());
+                    rowDetalle.getCell(0).setCellStyle(style4);
+                    rowDetalle.createCell(1).setCellValue(unDetalle.getTipoDescripcion());
+                    rowDetalle.createCell(2).setCellValue(unDetalle.getVenta().getNroFactura());
+                    rowDetalle.createCell(3).setCellValue(unDetalle.getVenta().getMonto());
+                    rowDetalle.createCell(4).setCellValue(deuda);
+                    rowDetalle.createCell(5).setCellValue(credito);
+                    break;
                 }
             }
-            rowTotal.createCell(1).setCellValue(total);
-            rowTotal.getCell(1).setCellStyle(style4);
-            filaActual++;
         }
+        rowTotal.createCell(1).setCellValue(total);
+        rowTotal.getCell(1).setCellStyle(style4);
+        filaActual++;
 
         //INICIO AJUSTAR COLUMNAS
         sheet.autoSizeColumn(0);
@@ -226,16 +255,16 @@ public class ExportarEstadoCuentaCliente {
         }
         // Create a row and put some cells in it. Rows are 0 based.
         int filaActual = 0;
-        Row fechaInicio = sheet.createRow(filaActual);
-        fechaInicio.createCell(0).setCellValue(new HSSFRichTextString("Fecha inicio:"));
-        fechaInicio.createCell(1).setCellValue(fechaInic);
-        fechaInicio.getCell(1).setCellStyle(dateCellStyle);
-        filaActual++;
-        Row fechaFin = sheet.createRow(filaActual);
-        fechaFin.createCell(0).setCellValue(new HSSFRichTextString("Fecha fin:"));
-        fechaFin.createCell(1).setCellValue(fechaFinal);
-        fechaFin.getCell(1).setCellStyle(dateCellStyle);
-        filaActual++;
+//        Row fechaInicio = sheet.createRow(filaActual);
+//        fechaInicio.createCell(0).setCellValue(new HSSFRichTextString("Fecha inicio:"));
+//        fechaInicio.createCell(1).setCellValue(fechaInic);
+//        fechaInicio.getCell(1).setCellStyle(dateCellStyle);
+//        filaActual++;
+//        Row fechaFin = sheet.createRow(filaActual);
+//        fechaFin.createCell(0).setCellValue(new HSSFRichTextString("Fecha fin:"));
+//        fechaFin.createCell(1).setCellValue(fechaFinal);
+//        fechaFin.getCell(1).setCellStyle(dateCellStyle);
+//        filaActual++;
         Row totalCobrado = sheet.createRow(filaActual);
         totalCobrado.createCell(0).setCellValue(new HSSFRichTextString("Total cobrado:"));
         filaActual++;
@@ -254,7 +283,7 @@ public class ExportarEstadoCuentaCliente {
 
         //INICIO DETALLE PRODUCCION DETALLE
         int total = 0;
-        for (E_cuentaCorrienteCabecera cabecera : cabeceraList) {
+        /*for (E_cuentaCorrienteCabecera cabecera : cabeceraList) {
             Row rowDetalleCobro = sheet.createRow(filaActual);
             filaActual++;
             rowDetalleCobro.createCell(0).setCellValue(cabecera.getCliente().getEntidad());
@@ -264,7 +293,7 @@ public class ExportarEstadoCuentaCliente {
             rowDetalleCobro.createCell(3).setCellValue(cabecera.getDebito());
             rowDetalleCobro.getCell(3).setCellStyle(style4);
             total = total + cabecera.getDebito();
-        }
+        }*/
         totalCobrado.createCell(1).setCellValue(total);
         totalCobrado.getCell(1).setCellStyle(style4);
         filaActual++;

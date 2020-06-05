@@ -15,6 +15,7 @@ public class E_movimientoContable {
             TIPO_COBRO = 4, TIPO_SALDO_INICIAL = 5;
     private int id;
     private int tipo;
+    private String tipoDescripcion;
     private E_facturaSinPago venta;
     private M_egreso_cabecera compra;
     private E_cuentaCorrienteCabecera cobro;
@@ -50,6 +51,20 @@ public class E_movimientoContable {
      */
     public void setTipo(int tipo) {
         this.tipo = tipo;
+    }
+
+    /**
+     * @return the tipoDescripcion
+     */
+    public String getTipoDescripcion() {
+        return tipoDescripcion;
+    }
+
+    /**
+     * @param tipoDescripcion the tipoDescripcion to set
+     */
+    public void setTipoDescripcion(String tipoDescripcion) {
+        this.tipoDescripcion = tipoDescripcion;
     }
 
     /**

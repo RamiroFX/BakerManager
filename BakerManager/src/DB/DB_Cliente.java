@@ -4,6 +4,9 @@
  */
 package DB;
 
+import Entities.E_cuentaCorrienteCabecera;
+import Entities.E_facturaSinPago;
+import Entities.E_movimientoContable;
 import Entities.M_cliente;
 import Entities.M_cliente_contacto;
 import Entities.M_sucursal;
@@ -14,6 +17,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Types;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -1412,5 +1416,63 @@ public class DB_Cliente {
             ex.printStackTrace();
         }
         return idCategoria;
+    }
+
+    public static ArrayList<E_movimientoContable> obtenerEstadoCuenta(int idCliente) {
+        ArrayList<E_movimientoContable> list = new ArrayList<>();
+        String QUERY = "SELECT tipo_documento, id_cabecera, nro_factura, nro_recibo, "
+                + "fecha, id_cliente, cliente, monto, pago, saldo, ruc, "
+                + "ruc_identificador "
+                + "FROM public.v_documentos_comerciales_ventas "
+                + "WHERE id_cliente = ? "
+                + "ORDER BY fecha;";
+
+        QUERY = QUERY;
+        try {
+            pst = DB_manager.getConection().prepareStatement(QUERY, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            pst.setInt(1, idCliente);
+            rs = pst.executeQuery();
+            while (rs.next()) {
+                E_movimientoContable movCont = new E_movimientoContable();
+                switch (rs.getString(1)) {
+                    case "Factura": {
+                        M_cliente cliente = new M_cliente();
+                        cliente.setIdCliente(rs.getInt("id_cliente"));
+                        cliente.setEntidad(rs.getString("cliente"));
+                        E_facturaSinPago fsp = new E_facturaSinPago();
+                        fsp.setCliente(cliente);
+                        fsp.setMonto(rs.getInt("monto"));
+                        fsp.setFecha(rs.getDate("fecha"));
+                        fsp.setIdCabecera(rs.getInt("id_cabecera"));
+                        fsp.setNroFactura(rs.getInt("nro_factura"));
+                        movCont.setTipo(E_movimientoContable.TIPO_VENTA);
+                        movCont.setTipoDescripcion("Factura");
+                        movCont.setVenta(fsp);
+                        break;
+                    }
+                    case "Recibo": {
+                        M_cliente cliente = new M_cliente();
+                        cliente.setIdCliente(rs.getInt("id_cliente"));
+                        cliente.setEntidad(rs.getString("cliente"));
+                        E_cuentaCorrienteCabecera recibo = new E_cuentaCorrienteCabecera();
+                        recibo.setCliente(cliente);
+                        recibo.setDebito(rs.getInt("monto"));
+                        recibo.setFechaPago(rs.getDate("fecha"));
+                        recibo.setId(rs.getInt("id_cabecera"));
+                        recibo.setNroRecibo(rs.getInt("nro_recibo"));
+                        movCont.setTipo(E_movimientoContable.TIPO_COBRO);
+                        movCont.setTipoDescripcion("Recibo");
+                        movCont.setCobro(recibo);
+
+                        break;
+                    }
+                }
+                list.add(movCont);
+            }
+        } catch (SQLException ex) {
+            Logger lgr = Logger.getLogger(DB_Cobro.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        }
+        return list;
     }
 }

@@ -12,6 +12,7 @@ import Entities.Estado;
 import Entities.M_cliente;
 import Entities.M_funcionario;
 import Entities.M_menu_item;
+import Excel.ExportarEstadoCuentaCliente;
 import Interface.GestionInterface;
 import Interface.InterfaceNotificarCambio;
 import Interface.RecibirClienteCallback;
@@ -374,7 +375,8 @@ public class C_gestionCobro implements GestionInterface, RecibirEmpleadoCallback
                 EventQueue.invokeLater(new Runnable() {
                     @Override
                     public void run() {
-                        //TODO REPORTE HISTORICO
+                        ExportarEstadoCuentaCliente eecc = new ExportarEstadoCuentaCliente("Estado de cuenta", modelo.getCliente());
+                        eecc.exportacionHistorica();
                     }
                 });
                 break;

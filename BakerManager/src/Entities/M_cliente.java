@@ -10,7 +10,7 @@ package Entities;
  */
 public class M_cliente {
 
-    private Integer idCliente, idTipo, idCategoria;
+    private Integer idCliente, idTipo, idCategoria, saldoInicial;
     private String nombre, entidad, ruc, rucId, direccion, email, paginaWeb, tipo, categoria, observacion;
 
     public M_cliente() {
@@ -123,6 +123,20 @@ public class M_cliente {
     @Override
     public String toString() {
         return getEntidad();
+    }
+
+    /**
+     * @return the saldoInicial
+     */
+    public Integer getSaldoInicial() {
+        return saldoInicial;
+    }
+
+    /**
+     * @param saldoInicial the saldoInicial to set
+     */
+    public void setSaldoInicial(Integer saldoInicial) {
+        this.saldoInicial = saldoInicial;
     }
 
 }
