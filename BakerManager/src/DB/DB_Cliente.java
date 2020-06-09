@@ -1435,7 +1435,18 @@ public class DB_Cliente {
             while (rs.next()) {
                 E_movimientoContable movCont = new E_movimientoContable();
                 switch (rs.getString(1)) {
-                    case "Factura": {
+                    case E_movimientoContable.STR_TIPO_SALDO_INICIAL: {
+                        M_cliente cliente = new M_cliente();
+                        cliente.setIdCliente(rs.getInt("id_cliente"));
+                        cliente.setEntidad(rs.getString("cliente"));
+                        cliente.setSaldoInicial(rs.getInt("monto"));
+                        movCont.setTipo(E_movimientoContable.TIPO_SALDO_INICIAL);
+                        movCont.setTipoDescripcion(E_movimientoContable.STR_TIPO_SALDO_INICIAL);
+                        movCont.setClienteSaldoInicial(cliente);
+                        movCont.setFechaSaldoInicial(rs.getDate("fecha"));
+                        break;
+                    }
+                    case E_movimientoContable.STR_TIPO_VENTA: {
                         M_cliente cliente = new M_cliente();
                         cliente.setIdCliente(rs.getInt("id_cliente"));
                         cliente.setEntidad(rs.getString("cliente"));
@@ -1450,7 +1461,7 @@ public class DB_Cliente {
                         movCont.setVenta(fsp);
                         break;
                     }
-                    case "Recibo": {
+                    case E_movimientoContable.STR_TIPO_COBRO: {
                         M_cliente cliente = new M_cliente();
                         cliente.setIdCliente(rs.getInt("id_cliente"));
                         cliente.setEntidad(rs.getString("cliente"));

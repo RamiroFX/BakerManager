@@ -5,12 +5,16 @@
  */
 package Entities;
 
+import java.util.Date;
+
 /**
  *
  * @author Ramiro Ferreira
  */
 public class E_movimientoContable {
 
+    public static final String STR_TIPO_COMPRA = "Factura compra", STR_TIPO_VENTA = "Factura", STR_TIPO_PAGO = "Recibo pago",
+            STR_TIPO_COBRO = "Recibo", STR_TIPO_SALDO_INICIAL = "Saldo inicial";
     public static final int TIPO_COMPRA = 1, TIPO_VENTA = 2, TIPO_PAGO = 3,
             TIPO_COBRO = 4, TIPO_SALDO_INICIAL = 5;
     private int id;
@@ -21,6 +25,8 @@ public class E_movimientoContable {
     private E_cuentaCorrienteCabecera cobro;
     private E_reciboPagoCabecera pago;
     private M_cliente clienteSaldoInicial;
+    //AUX
+    private Date fechaSaldoInicial; 
 
     public E_movimientoContable() {
     }
@@ -129,6 +135,14 @@ public class E_movimientoContable {
 
     public void setClienteSaldoInicial(M_cliente clienteSaldoInicial) {
         this.clienteSaldoInicial = clienteSaldoInicial;
+    }
+
+    public Date getFechaSaldoInicial() {
+        return fechaSaldoInicial;
+    }
+
+    public void setFechaSaldoInicial(Date fechaSaldoInicial) {
+        this.fechaSaldoInicial = fechaSaldoInicial;
     }
 
 }

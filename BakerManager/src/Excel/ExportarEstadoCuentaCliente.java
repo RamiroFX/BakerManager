@@ -157,7 +157,8 @@ public class ExportarEstadoCuentaCliente {
                 case E_movimientoContable.TIPO_SALDO_INICIAL: {
                     deuda = deuda + (int) unDetalle.getClienteSaldoInicial().getSaldoInicial();
                     total = deuda - credito;
-                    //rowDetalle.createCell(0).setCellValue();
+                    rowDetalle.createCell(0).setCellValue(unDetalle.getFechaSaldoInicial());
+                    rowDetalle.getCell(0).setCellStyle(dateCellStyle);
                     rowDetalle.createCell(1).setCellValue(unDetalle.getTipoDescripcion());
                     //rowDetalle.createCell(2).setCellValue();
                     rowDetalle.createCell(3).setCellValue(unDetalle.getClienteSaldoInicial().getSaldoInicial());
@@ -260,7 +261,6 @@ public class ExportarEstadoCuentaCliente {
         try {
             FileOutputStream out = new FileOutputStream(directory.getPath() + ".xls");
             workbook.write(out);
-            System.out.println("Excel.ExportarEstadoCuentaCliente.exportacionHistorica().TERMINADO");
             out.close();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
