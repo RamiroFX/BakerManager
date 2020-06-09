@@ -626,4 +626,37 @@ public class DB_Cobro {
         }
     }
 
+    public static int obtenerTotalCobrado(Timestamp fechaInicio, Timestamp fechaFin, int idEstado) {
+        Integer totalCobrado = 0;
+        String query = "SELECT SUM(CCD.MONTO)\"Total\" "
+                + "FROM CUENTA_CORRIENTE_DETALLE CCD, CUENTA_CORRIENTE_CABECERA CCC "
+                + "WHERE CCC.ID_CTA_CTE_CABECERA = CCD.ID_CTA_CTE_CABECERA "
+                + "AND CCC.FECHA_COBRO BETWEEN '" + fechaInicio + "'::timestamp  "
+                + "AND '" + fechaFin + "'::timestamp "
+                + "AND CCC.ID_ESTADO = " + idEstado;
+        try {
+            pst = DB_manager.getConection().prepareStatement(query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            rs = pst.executeQuery();
+            while (rs.next()) {
+                totalCobrado = rs.getInt("Total");
+            }
+        } catch (SQLException ex) {
+            Logger lgr = Logger.getLogger(DB_Cobro.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (pst != null) {
+                    pst.close();
+                }
+            } catch (SQLException ex) {
+                Logger lgr = Logger.getLogger(DB_Cobro.class.getName());
+                lgr.log(Level.WARNING, ex.getMessage(), ex);
+            }
+        }
+        return totalCobrado;
+    }
+
 }

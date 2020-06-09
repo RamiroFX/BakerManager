@@ -1456,7 +1456,7 @@ public class DB_Cliente {
                         cliente.setEntidad(rs.getString("cliente"));
                         E_cuentaCorrienteCabecera recibo = new E_cuentaCorrienteCabecera();
                         recibo.setCliente(cliente);
-                        recibo.setDebito(rs.getInt("monto"));
+                        recibo.setDebito(rs.getInt("pago"));
                         recibo.setFechaPago(rs.getDate("fecha"));
                         recibo.setId(rs.getInt("id_cabecera"));
                         recibo.setNroRecibo(rs.getInt("nro_recibo"));

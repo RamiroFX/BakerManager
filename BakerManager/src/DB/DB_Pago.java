@@ -570,4 +570,37 @@ public class DB_Pago {
         }
         return (int) sq_cabecera;
     }
+
+    public static int obtenerTotalPagado(Timestamp fechaInicio, Timestamp fechaFin, int idEstado) {
+        Integer totalPagado = 0;
+        String query = "SELECT SUM(RPD.MONTO)\"Total\" "
+                + "FROM RECIBO_PAGO_DETALLE RPD, RECIBO_PAGO_CABECERA RPC "
+                + "WHERE RPC.ID_RECIBO_PAGO_CABECERA = RPD.ID_RECIBO_PAGO_CABECERA "
+                + "AND RPC.FECHA_PAGO BETWEEN '" + fechaInicio + "'::timestamp  "
+                + "AND '" + fechaFin + "'::timestamp "
+                + "AND RPC.ID_ESTADO = " + idEstado;
+        try {
+            pst = DB_manager.getConection().prepareStatement(query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            rs = pst.executeQuery();
+            while (rs.next()) {
+                totalPagado = rs.getInt("Total");
+            }
+        } catch (SQLException ex) {
+            Logger lgr = Logger.getLogger(DB_Pago.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (pst != null) {
+                    pst.close();
+                }
+            } catch (SQLException ex) {
+                Logger lgr = Logger.getLogger(DB_Pago.class.getName());
+                lgr.log(Level.WARNING, ex.getMessage(), ex);
+            }
+        }
+        return totalPagado;
+    }
 }

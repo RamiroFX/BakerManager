@@ -276,6 +276,7 @@ public class C_gestionCobro implements GestionInterface, RecibirEmpleadoCallback
                 break;
             }
             case TIPO_ESTADO_CUENTA: {
+                modelo.setEstadoCuentaCliente(cliente);
                 prepararReporteEstadoCuentas();
                 break;
             }
@@ -375,7 +376,7 @@ public class C_gestionCobro implements GestionInterface, RecibirEmpleadoCallback
                 EventQueue.invokeLater(new Runnable() {
                     @Override
                     public void run() {
-                        ExportarEstadoCuentaCliente eecc = new ExportarEstadoCuentaCliente("Estado de cuenta", modelo.getCliente());
+                        ExportarEstadoCuentaCliente eecc = new ExportarEstadoCuentaCliente("Estado de cuenta", modelo.getEstadoCuentaCliente());
                         eecc.exportacionHistorica();
                     }
                 });
@@ -386,7 +387,8 @@ public class C_gestionCobro implements GestionInterface, RecibirEmpleadoCallback
                 EventQueue.invokeLater(new Runnable() {
                     @Override
                     public void run() {
-                        //TODO REPORTE RESUMIDO
+                        ExportarEstadoCuentaCliente eecc = new ExportarEstadoCuentaCliente("Estado de cuenta", modelo.getEstadoCuentaCliente());
+                        eecc.exportacionResumida();
                     }
                 });
                 break;

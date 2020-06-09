@@ -28,7 +28,7 @@ import java.util.List;
 public class M_gestionCobroPago {
 
     private M_funcionario funcionario;
-    private M_cliente cliente;
+    private M_cliente cliente, estadoCuentaCliente;
     private M_facturaCabecera facturaCabecera;
     private CtaCteCabeceraTableModel tmCabecera;
     private CtaCteDetalleTableModel tmDetalle;
@@ -188,5 +188,19 @@ public class M_gestionCobroPago {
 
     public void anularCobro(Integer idCabecera) {
         DB_Cobro.anularCobro(idCabecera, false);
+    }
+
+    /**
+     * @return the estadoCuentaCliente
+     */
+    public M_cliente getEstadoCuentaCliente() {
+        return estadoCuentaCliente;
+    }
+
+    /**
+     * @param estadoCuentaCliente the estadoCuentaCliente to set
+     */
+    public void setEstadoCuentaCliente(M_cliente estadoCuentaCliente) {
+        this.estadoCuentaCliente = estadoCuentaCliente;
     }
 }

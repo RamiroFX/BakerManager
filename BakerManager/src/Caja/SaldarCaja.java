@@ -6,9 +6,11 @@
 package Caja;
 
 import DB.DB_Caja;
+import DB.DB_Cobro;
 import Interface.CommonFormat;
 import DB.DB_Egreso;
 import DB.DB_Ingreso;
+import DB.DB_Pago;
 import Entities.ArqueoCajaDetalle;
 import Entities.Caja;
 import Entities.Estado;
@@ -21,10 +23,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.awt.GridLayout;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -272,213 +271,6 @@ public class SaldarCaja extends JDialog implements ActionListener, KeyListener {
         studentInfoPanel.add(jpEgresos, "spanx, wrap");
         studentInfoPanel.add(jpIngresos, "spanx, wrap");
 
-        /*studentInfoPanel.setLayout(new GridBagLayout());
-
-        GridBagConstraints gc = new GridBagConstraints();
-
-        gc.gridy = 0;
-
-        Insets rightPadding = new Insets(0, 0, 0, 15);
-        Insets noPadding = new Insets(0, 0, 0, 0);
-
-        // ///// First row /////////////////////////////
-        gc.weightx = 1;
-        gc.weighty = 1;
-        gc.fill = GridBagConstraints.NONE;
-
-        gc.gridx = 0;
-        gc.anchor = GridBagConstraints.EAST;
-        gc.insets = rightPadding;
-        studentInfoPanel.add(jlFondoApertura, gc);
-
-        gc.gridx++;
-        gc.anchor = GridBagConstraints.WEST;
-        gc.insets = noPadding;
-        studentInfoPanel.add(jtfFondoApertura, gc);
-
-        // ////// Next row ////////////////////////////
-        gc.gridy++;
-
-        gc.weightx = 1;
-        gc.weighty = 1;
-        gc.fill = GridBagConstraints.NONE;
-
-        gc.gridx = 0;
-        gc.anchor = GridBagConstraints.EAST;
-        gc.insets = rightPadding;
-        studentInfoPanel.add(jlFondoCierre, gc);
-
-        gc.gridx++;
-        gc.anchor = GridBagConstraints.WEST;
-        gc.insets = noPadding;
-        studentInfoPanel.add(jtfFondoCierre, gc);
-
-        // ////// Next row ////////////////////////////
-//        gc.gridy++;
-//
-//        gc.weightx = 1;
-//        gc.weighty = 1;
-//        gc.fill = GridBagConstraints.NONE;
-//
-//        gc.gridx = 0;
-//        gc.anchor = GridBagConstraints.EAST;
-//        gc.insets = rightPadding;
-//        studentInfoPanel.add(jlDifCaja, gc);
-//
-//        gc.gridx++;
-//        gc.anchor = GridBagConstraints.WEST;
-//        gc.insets = noPadding;
-//        studentInfoPanel.add(jtfDifCaja, gc);
-        // ////// Next row ////////////////////////////
-        gc.gridy++;
-
-        gc.weightx = 1;
-        gc.weighty = 1;
-        gc.fill = GridBagConstraints.NONE;
-
-        gc.gridx = 0;
-        gc.anchor = GridBagConstraints.EAST;
-        gc.insets = rightPadding;
-        studentInfoPanel.add(jlDepositar, gc);
-
-        gc.gridx++;
-        gc.anchor = GridBagConstraints.WEST;
-        gc.insets = noPadding;
-        studentInfoPanel.add(jtfDepositar, gc);
-
-        // ////// Next row ////////////////////////////
-        gc.gridy++;
-
-        gc.weightx = 1;
-        gc.weighty = 1;
-        gc.fill = GridBagConstraints.NONE;
-
-        gc.gridx = 0;
-        gc.anchor = GridBagConstraints.EAST;
-        gc.insets = rightPadding;
-        studentInfoPanel.add(jlEgresoTotal, gc);
-
-        gc.gridx++;
-        gc.anchor = GridBagConstraints.WEST;
-        gc.insets = noPadding;
-        studentInfoPanel.add(jtfEgresoTotal, gc);
-
-        // ////// Next row ////////////////////////////
-        gc.gridy++;
-
-        gc.weightx = 1;
-        gc.weighty = 1;
-        gc.fill = GridBagConstraints.NONE;
-
-        gc.gridx = 0;
-        gc.anchor = GridBagConstraints.EAST;
-        gc.insets = rightPadding;
-        studentInfoPanel.add(jlEgresoContado, gc);
-
-        gc.gridx++;
-        gc.anchor = GridBagConstraints.WEST;
-        gc.insets = noPadding;
-        studentInfoPanel.add(jtfEgresoContado, gc);
-
-        // ////// Next row ////////////////////////////
-        gc.gridy++;
-
-        gc.weightx = 1;
-        gc.weighty = 1;
-        gc.fill = GridBagConstraints.NONE;
-
-        gc.gridx = 0;
-        gc.anchor = GridBagConstraints.EAST;
-        gc.insets = rightPadding;
-        studentInfoPanel.add(jlEgresoCredito, gc);
-
-        gc.gridx++;
-        gc.anchor = GridBagConstraints.WEST;
-        gc.insets = noPadding;
-        studentInfoPanel.add(jtfEgresoCredito, gc);
-
-        // ////// Next row ////////////////////////////
-        gc.gridy++;
-
-        gc.weightx = 1;
-        gc.weighty = 1;
-        gc.fill = GridBagConstraints.NONE;
-
-        gc.gridx = 0;
-        gc.anchor = GridBagConstraints.EAST;
-        gc.insets = rightPadding;
-        studentInfoPanel.add(jlIngresoTotal, gc);
-
-        gc.gridx++;
-        gc.anchor = GridBagConstraints.WEST;
-        gc.insets = noPadding;
-        studentInfoPanel.add(jtfIngresoTotal, gc);
-
-        // ////// Next row ////////////////////////////
-        gc.gridy++;
-
-        gc.weightx = 1;
-        gc.weighty = 1;
-        gc.fill = GridBagConstraints.NONE;
-
-        gc.gridx = 0;
-        gc.anchor = GridBagConstraints.EAST;
-        gc.insets = rightPadding;
-        studentInfoPanel.add(jlIngresoContado, gc);
-
-        gc.gridx++;
-        gc.anchor = GridBagConstraints.WEST;
-        gc.insets = noPadding;
-        studentInfoPanel.add(jtfIngresoContado, gc);
-
-        // ////// Next row ////////////////////////////
-        gc.gridy++;
-
-        gc.weightx = 1;
-        gc.weighty = 1;
-        gc.fill = GridBagConstraints.NONE;
-
-        gc.gridx = 0;
-        gc.anchor = GridBagConstraints.EAST;
-        gc.insets = rightPadding;
-        studentInfoPanel.add(jlIngresoCredito, gc);
-
-        gc.gridx++;
-        gc.anchor = GridBagConstraints.WEST;
-        gc.insets = noPadding;
-        studentInfoPanel.add(jtfIngresoCredito, gc);
-        // ////// Next row ////////////////////////////
-        gc.gridy++;
-
-        gc.weightx = 1;
-        gc.weighty = 1;
-        gc.fill = GridBagConstraints.NONE;
-
-        gc.gridx = 0;
-        gc.anchor = GridBagConstraints.EAST;
-        gc.insets = rightPadding;
-        studentInfoPanel.add(jlTotalEgrIng1, gc);
-
-        gc.gridx++;
-        gc.anchor = GridBagConstraints.WEST;
-        gc.insets = noPadding;
-        studentInfoPanel.add(jtfTotalEgrIng1, gc);
-// ////// Next row ////////////////////////////
-        gc.gridy++;
-
-        gc.weightx = 1;
-        gc.weighty = 1;
-        gc.fill = GridBagConstraints.NONE;
-
-        gc.gridx = 0;
-        gc.anchor = GridBagConstraints.EAST;
-        gc.insets = rightPadding;
-        studentInfoPanel.add(jlTotalEgrIng2, gc);
-
-        gc.gridx++;
-        gc.anchor = GridBagConstraints.WEST;
-        gc.insets = noPadding;
-        studentInfoPanel.add(jtfTotalEgrIng2, gc);*/
         // ////////// Buttons Panel ///////////////
         buttonsPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
         buttonsPanel.add(saveButton);
@@ -545,14 +337,16 @@ public class SaldarCaja extends JDialog implements ActionListener, KeyListener {
         Calendar fin = Calendar.getInstance();
         fin.set(Calendar.HOUR_OF_DAY, 23);
         fin.set(Calendar.MINUTE, 59);
-        Timestamp ini = new Timestamp(inicio.getTimeInMillis());
-        Timestamp fi = new Timestamp(fin.getTimeInMillis());
-        int egresoContado = DB_Egreso.obtenerTotalEgreso(ini, fi, 1);
-        int egresoCretdito = DB_Egreso.obtenerTotalEgreso(ini, fi, 2);
+        Timestamp fechaInicio = new Timestamp(inicio.getTimeInMillis());
+        Timestamp fechaFin = new Timestamp(fin.getTimeInMillis());
+        int egresoContado = DB_Egreso.obtenerTotalEgreso(fechaInicio, fechaFin, 1);
+        int egresoCretdito = DB_Egreso.obtenerTotalEgreso(fechaInicio, fechaFin, 2);
         int totalEgreso = egresoContado + egresoCretdito;
-        int ingresoContado = DB_Ingreso.obtenerTotalIngreso(ini, fi, 1, Estado.ACTIVO);
-        int ingresoCretdito = DB_Ingreso.obtenerTotalIngreso(ini, fi, 2, Estado.ACTIVO);
+        int ingresoContado = DB_Ingreso.obtenerTotalIngreso(fechaInicio, fechaFin, 1, Estado.ACTIVO);
+        int ingresoCretdito = DB_Ingreso.obtenerTotalIngreso(fechaInicio, fechaFin, 2, Estado.ACTIVO);
         int totalIngreso = ingresoContado + ingresoCretdito;
+        int totalCobrado = DB_Cobro.obtenerTotalCobrado(fechaInicio, fechaFin, Estado.ACTIVO);
+        int totalPagado = DB_Pago.obtenerTotalPagado(fechaInicio, fechaFin, Estado.ACTIVO);
 
         int totalEgrMasIng = totalEgreso + totalIngreso;
         int totalEgrMenosIng = totalEgreso - totalIngreso;
