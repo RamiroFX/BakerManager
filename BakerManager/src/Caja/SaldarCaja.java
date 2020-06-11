@@ -62,10 +62,14 @@ public class SaldarCaja extends JDialog implements ActionListener, KeyListener {
     private JButton saveButton, cancelButton, jbFondoAnterior;
     private JLabel jlFondoApertura, jlFondoCierre, jlEgresoTotal, //jlDifCaja,
             jlDepositar, jlEgresoCredito, jlEgresoContado, jlIngresoTotal,
-            jlIngresoCredito, jlIngresoContado, jlTotalEgrIng1, jlTotalEgrIng2;
+            jlIngresoCredito, jlIngresoContado, jlTotalEgrIng1, jlTotalEgrIng2,
+            jlTotalCobrado, jlTotalCobradoEfectivo, jlTotalCobradoCheque,
+            jlTotalPagado, jlTotalPagadoEfectivo, jlTotalPagadoCheque;
     private JFormattedTextField jtfFondoApertura, jtfFondoCierre, jtfDepositar, jtfEgresoTotal, //jtfDifCaja,
             jtfEgresoCredito, jtfEgresoContado, jtfIngresoTotal,
-            jtfIngresoCredito, jtfIngresoContado, jtfTotalEgrIng1, jtfTotalEgrIng2;
+            jtfIngresoCredito, jtfIngresoContado, jtfTotalEgrIng1, jtfTotalEgrIng2,
+            jtfTotalCobrado, jtfTotalCobradoEfectivo, jtfTotalCobradoCheque,
+            jtfTotalPagado, jtfTotalPagadoEfectivo, jtfTotalPagadoCheque;
     //ARQUEO CAJA VARIABLES
     private JTabbedPane jpArqueoCaja;
     private JTable jtFondoApertura, jtFondoCierre, jtDepositar;
@@ -145,6 +149,39 @@ public class SaldarCaja extends JDialog implements ActionListener, KeyListener {
         this.jtfTotalEgrIng2 = new JFormattedTextField();
         this.jtfTotalEgrIng2.setColumns(prefCols);
         this.jtfTotalEgrIng2.addKeyListener(this);
+        /*
+        TOTAL COBRADO VARIABLES
+         */
+        this.jlTotalCobrado = new JLabel("Total cobrado");
+        this.jlTotalCobrado.setFont(CommonFormat.fuenteTitulo);
+        this.jlTotalCobradoEfectivo = new JLabel("Cobrado efectivo");
+        this.jlTotalCobradoCheque = new JLabel("Cobrado cheque");
+        this.jtfTotalCobrado = new JFormattedTextField();
+        this.jtfTotalCobrado.setColumns(prefCols);
+        this.jtfTotalCobrado.addKeyListener(this);
+        this.jtfTotalCobradoEfectivo = new JFormattedTextField();
+        this.jtfTotalCobradoEfectivo.setColumns(prefCols);
+        this.jtfTotalCobradoEfectivo.addKeyListener(this);
+        this.jtfTotalCobradoCheque = new JFormattedTextField();
+        this.jtfTotalCobradoCheque.setColumns(prefCols);
+        this.jtfTotalCobradoCheque.addKeyListener(this);
+
+        /*
+        TOTAL PAGADO VARIABLES
+         */
+        this.jlTotalPagado = new JLabel("Total pagado");
+        this.jlTotalPagado.setFont(CommonFormat.fuenteTitulo);
+        this.jlTotalPagadoEfectivo = new JLabel("Pagado efectivo");
+        this.jlTotalPagadoCheque = new JLabel("Pagado cheque");
+        this.jtfTotalPagado = new JFormattedTextField();
+        this.jtfTotalPagado.setColumns(prefCols);
+        this.jtfTotalPagado.addKeyListener(this);
+        this.jtfTotalPagadoEfectivo = new JFormattedTextField();
+        this.jtfTotalPagadoEfectivo.setColumns(prefCols);
+        this.jtfTotalPagadoEfectivo.addKeyListener(this);
+        this.jtfTotalPagadoCheque = new JFormattedTextField();
+        this.jtfTotalPagadoCheque.setColumns(prefCols);
+        this.jtfTotalPagadoCheque.addKeyListener(this);
 
         this.jtfFondoApertura.setEditable(false);
         this.jtfFondoCierre.setEditable(false);
@@ -254,6 +291,22 @@ public class SaldarCaja extends JDialog implements ActionListener, KeyListener {
         jpIngresos.add(jtfIngresoContado, "wrap");
         jpIngresos.add(jlIngresoCredito);
         jpIngresos.add(jtfIngresoCredito, "wrap");
+        JPanel jpTotalCobrado = new JPanel(new MigLayout());
+        jpTotalCobrado.setBorder(borde);
+        jpTotalCobrado.add(jlTotalCobrado);
+        jpTotalCobrado.add(jtfTotalCobrado, "wrap");
+        jpTotalCobrado.add(jlTotalCobradoEfectivo);
+        jpTotalCobrado.add(jtfTotalCobradoEfectivo, "wrap");
+        jpTotalCobrado.add(jlTotalCobradoCheque);
+        jpTotalCobrado.add(jtfTotalCobradoCheque, "wrap");
+        JPanel jpTotalPagado = new JPanel(new MigLayout());
+        jpTotalPagado.setBorder(borde);
+        jpTotalPagado.add(jlTotalPagado);
+        jpTotalPagado.add(jtfTotalPagado, "wrap");
+        jpTotalPagado.add(jlTotalPagadoEfectivo);
+        jpTotalPagado.add(jtfTotalPagadoEfectivo, "wrap");
+        jpTotalPagado.add(jlTotalPagadoCheque);
+        jpTotalPagado.add(jtfTotalPagadoCheque, "wrap");
 
         JPanel studentInfoPanel = new JPanel(new MigLayout());
         JPanel buttonsPanel = new JPanel();
@@ -262,14 +315,16 @@ public class SaldarCaja extends JDialog implements ActionListener, KeyListener {
         Border spaceBorder = BorderFactory.createEmptyBorder(space, space, space, space);
 
         //studentInfoPanel.setBorder(spaceBorder);
-        studentInfoPanel.add(jlFondoApertura);
+        studentInfoPanel.add(jlFondoApertura, "span 2");
         studentInfoPanel.add(jtfFondoApertura, "wrap");
-        studentInfoPanel.add(jlFondoCierre);
+        studentInfoPanel.add(jlFondoCierre, "span 2");
         studentInfoPanel.add(jtfFondoCierre, "wrap");
-        studentInfoPanel.add(jlDepositar);
+        studentInfoPanel.add(jlDepositar, "span 2");
         studentInfoPanel.add(jtfDepositar, "wrap");
-        studentInfoPanel.add(jpEgresos, "spanx, wrap");
+        studentInfoPanel.add(jpEgresos, "spanx, split 2");
         studentInfoPanel.add(jpIngresos, "spanx, wrap");
+        studentInfoPanel.add(jpTotalCobrado, "spanx, split 2");
+        studentInfoPanel.add(jpTotalPagado, "spanx, wrap");
 
         // ////////// Buttons Panel ///////////////
         buttonsPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
@@ -358,6 +413,8 @@ public class SaldarCaja extends JDialog implements ActionListener, KeyListener {
         this.jtfIngresoTotal.setValue(totalIngreso);
         this.jtfIngresoContado.setValue(ingresoContado);
         this.jtfIngresoCredito.setValue(ingresoCretdito);
+        this.jtfTotalCobrado.setValue(totalCobrado);
+        this.jtfTotalPagado.setValue(totalPagado);
 
         ArrayList<ArqueoCajaDetalle> arqueCajaDetaApertura = new ArrayList<>();
         ArrayList<Moneda> monedas = DB_Caja.obtenerMonedas();
@@ -401,7 +458,7 @@ public class SaldarCaja extends JDialog implements ActionListener, KeyListener {
 
     private void setWindows(JFrame parentFrame) {
         setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-        setSize(900, 550);
+        setSize(1000, 500);
         setLocationRelativeTo(parentFrame);
     }
 
