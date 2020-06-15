@@ -59,7 +59,7 @@ public class SaldarCaja extends JDialog implements ActionListener, KeyListener {
 
     public JDateChooser jddInicio, jddFinal;
     public JComboBox jcbHoraInicio, jcbMinutoInicio, jcbHoraFin, jcbMinutoFin;
-    private JButton saveButton, cancelButton, jbFondoAnterior;
+    private JButton saveButton, cancelButton, jbFondoAnterior, jbDetalle;
     private JLabel jlFondoApertura, jlFondoCierre, jlEgresoTotal, //jlDifCaja,
             jlDepositar, jlEgresoCredito, jlEgresoContado, jlIngresoTotal,
             jlIngresoCredito, jlIngresoContado, jlTotalEgrIng1, jlTotalEgrIng2,
@@ -92,6 +92,7 @@ public class SaldarCaja extends JDialog implements ActionListener, KeyListener {
         jddInicio.setPreferredSize(new Dimension(150, 10));
         jddFinal = new JDateChooser(today);
         jddFinal.setPreferredSize(new Dimension(150, 10));
+        this.jbDetalle = new JButton("Detalle");
         this.saveButton = new JButton("Guardar");
         this.cancelButton = new JButton("Cancelar");
         this.jbFondoAnterior = new JButton("Caja chica anterior");
@@ -328,11 +329,13 @@ public class SaldarCaja extends JDialog implements ActionListener, KeyListener {
 
         // ////////// Buttons Panel ///////////////
         buttonsPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
+        buttonsPanel.add(jbDetalle);
         buttonsPanel.add(saveButton);
         buttonsPanel.add(cancelButton);
 
         Dimension btnSize = cancelButton.getPreferredSize();
         saveButton.setPreferredSize(btnSize);
+        jbDetalle.setPreferredSize(btnSize);
 
         // Add sub panels to dialog
         JPanel jpSaldarCaja = new JPanel(new BorderLayout());
@@ -356,6 +359,7 @@ public class SaldarCaja extends JDialog implements ActionListener, KeyListener {
     }
 
     private void addListeners() {
+        this.jbDetalle.addActionListener(this);
         this.saveButton.addActionListener(this);
         this.cancelButton.addActionListener(this);
         this.jbFondoAnterior.addActionListener(this);
@@ -654,6 +658,11 @@ public class SaldarCaja extends JDialog implements ActionListener, KeyListener {
         //this.jtfDifCaja.setValue(fondoInicial - fondoFinal);
     }
 
+    private void invocarDetalle() {
+        CajaDetalle cd = new CajaDetalle(this);
+        cd.mostrarVista();
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         Object src = e.getSource();
@@ -663,6 +672,8 @@ public class SaldarCaja extends JDialog implements ActionListener, KeyListener {
             crearCaja();
         } else if (src.equals(this.jbFondoAnterior)) {
             consultarUltimoFondo();
+        } else if (src.equals(this.jbDetalle)) {
+            invocarDetalle();
         }
     }
 
