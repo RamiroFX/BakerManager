@@ -232,7 +232,7 @@ public class DB_Ingreso {
         }
         return list;
     }
-    
+
     public static List<M_facturaCabecera> obtenerIngresoCredito(Date fechaInicio, Date fechaFinal, int idCliente, int idFuncionario, int idCondVenta, int nroFactura, int idEstado, boolean conFechas) {
         List<M_facturaCabecera> list = new ArrayList();
         String query = "SELECT "
@@ -264,7 +264,7 @@ public class DB_Ingreso {
         }
         if (idCondVenta > 0) {
             query = query + " AND FC.ID_COND_VENTA = ? ";
-        }else{
+        } else {
             query = query + " AND FC.ID_COND_VENTA NOT IN (1) ";
         }
         if (nroFactura > 0) {
@@ -1869,7 +1869,7 @@ public class DB_Ingreso {
             pst.executeUpdate();
             pst.close();
             //se devuelve al stock lo que se anuló
-            ArrayList<M_facturaDetalle> detalle=obtenerVentaDetalles(idVenta);
+            ArrayList<M_facturaDetalle> detalle = obtenerVentaDetalles(idVenta);
             for (int i = 0; i < detalle.size(); i++) {
                 String query = "UPDATE PRODUCTO SET "
                         + "CANT_ACTUAL = "
@@ -1920,6 +1920,79 @@ public class DB_Ingreso {
             st = DB_manager.getConection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             // se ejecuta el query y se obtienen los resultados en un ResultSet
             rs = st.executeQuery(Query);
+            while (rs.next()) {
+                E_facturaCabeceraFX faca = new E_facturaCabeceraFX();
+                faca.setIdFacturaCabecera(rs.getInt("ID"));
+                faca.setTotal(rs.getInt("TOTAL"));
+                faca.setClienteEntidad(rs.getString("Cliente"));
+                faca.setFuncionario(rs.getString("Empleado"));
+                faca.setCondVenta(rs.getString("COND_VENTA"));
+                faca.setTiempoString(rs.getString("TIEMPO"));
+                list.add(faca);
+            }
+        } catch (SQLException ex) {
+            Logger lgr = Logger.getLogger(DB_Egreso.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (pst != null) {
+                    pst.close();
+                }
+            } catch (SQLException ex) {
+                Logger lgr = Logger.getLogger(DB_Egreso.class.getName());
+                lgr.log(Level.WARNING, ex.getMessage(), ex);
+            }
+        }
+        return list;
+    }
+
+    public static List<E_facturaCabeceraFX> obtenerMovimientoVentasCabeceras(int idFuncionario, int idCliente, Date fechaInicio, Date fechaFinal, int idTipoOperacion) {
+        List<E_facturaCabeceraFX> list = new ArrayList<>();
+        String Query = "SELECT ID_FACTURA_CABECERA \"ID\", "
+                + "(SELECT NOMBRE || ' '|| APELLIDO WHERE F.ID_PERSONA = P.ID_PERSONA)\"Empleado\", "
+                + "(SELECT ENTIDAD FROM CLIENTE C WHERE FC.ID_CLIENTE = C.ID_CLIENTE) \"Cliente\", "
+                + "to_char(TIEMPO,'DD/MM/YYYY HH24:MI:SS:MS') \"Tiempo\", "
+                + "ROUND((SELECT SUM (CANTIDAD*(PRECIO-(PRECIO*DESCUENTO)/100)) FROM FACTURA_DETALLE FCC WHERE FCC.ID_FACTURA_CABECERA = FC.ID_FACTURA_CABECERA))\"Total\", "
+                + "(SELECT TIOP.DESCRIPCION FROM TIPO_OPERACION TIOP WHERE TIOP.ID_TIPO_OPERACION = FC.ID_COND_VENTA) \"COND_VENTA\" "
+                + "FROM FACTURA_CABECERA FC ,FUNCIONARIO F, PERSONA P "
+                + "WHERE  FC.TIEMPO BETWEEN ?  "
+                + "AND ? "
+                + "AND FC.ID_FUNCIONARIO = F.ID_FUNCIONARIO "
+                + "AND F.ID_PERSONA = P.ID_PERSONA ";
+
+        if (idFuncionario > -1) {
+            Query = Query + " AND FC.ID_FUNCIONARIO = ? ";
+        }
+        if (idCliente > -1) {
+            Query = Query + " AND FC.ID_CLIENTE = ? ";
+        }
+        if (idTipoOperacion > -1) {
+            Query = Query + "AND FC.ID_COND_VENTA = ? ";
+        }
+        Query = Query + " ORDER BY \"ID\"";
+        System.err.println("q:");
+        System.err.println(Query);
+        int pos = 3;
+        try {
+            pst = DB_manager.getConection().prepareStatement(Query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            pst.setTimestamp(1, new java.sql.Timestamp(fechaInicio.getTime()));
+            pst.setTimestamp(2, new java.sql.Timestamp(fechaFinal.getTime()));
+            if (idFuncionario > -1) {
+                pst.setInt(pos, idFuncionario);
+                pos++;
+            }
+            if (idCliente > 0) {
+                pst.setInt(pos, idCliente);
+                pos++;
+            }
+            if (idTipoOperacion > 0) {
+                pst.setInt(pos, idTipoOperacion);
+                pos++;
+            }
+            rs = pst.executeQuery();
             while (rs.next()) {
                 E_facturaCabeceraFX faca = new E_facturaCabeceraFX();
                 faca.setIdFacturaCabecera(rs.getInt("ID"));

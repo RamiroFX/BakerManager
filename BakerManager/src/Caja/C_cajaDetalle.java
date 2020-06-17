@@ -7,18 +7,13 @@ package Caja;
 
 import Empleado.Seleccionar_funcionario;
 import Entities.M_funcionario;
-import Entities.M_menu_item;
 import Interface.GestionInterface;
 import Interface.RecibirEmpleadoCallback;
-import MenuPrincipal.DatosUsuario;
-import bakermanager.C_inicio;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
-import java.beans.PropertyVetoException;
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import javax.swing.JOptionPane;
@@ -46,6 +41,7 @@ public class C_cajaDetalle implements GestionInterface, RecibirEmpleadoCallback 
 
     @Override
     public void inicializarVista() {
+        this.vista.jtVentas.setModel(modelo.getMovVentasTM());
         Date date = Calendar.getInstance().getTime();
         this.vista.jddInicio.setDate(date);
         this.vista.jddFinal.setDate(date);

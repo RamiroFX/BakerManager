@@ -18,6 +18,7 @@ import java.sql.Statement;
 import java.sql.Timestamp;
 import java.sql.Types;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Vector;
 import java.util.logging.Level;
@@ -1032,5 +1033,82 @@ public class DB_Egreso {
                     .getName());
             lgr.log(Level.SEVERE, ex.getMessage(), ex);
         }
+    }
+
+    public static List<M_egreso_cabecera> obtenerMovimientoVentasCabeceras(int idFuncionario, int idProveedor, int idTipoOperacion, Date fechaInicio, Date fechaFinal) {
+        List<M_egreso_cabecera> list = new ArrayList<>();
+        String Query = "SELECT ID_FACTURA_CABECERA \"ID\", "
+                + "(SELECT NOMBRE || ' '|| APELLIDO WHERE F.ID_PERSONA = P.ID_PERSONA)\"Empleado\", "
+                + "(SELECT ENTIDAD FROM CLIENTE C WHERE FC.ID_CLIENTE = C.ID_CLIENTE) \"Cliente\", "
+                + "to_char(TIEMPO,'DD/MM/YYYY HH24:MI:SS:MS') \"Tiempo\", "
+                + "ROUND((SELECT SUM (CANTIDAD*(PRECIO-(PRECIO*DESCUENTO)/100)) FROM FACTURA_DETALLE FCC WHERE FCC.ID_FACTURA_CABECERA = FC.ID_FACTURA_CABECERA))\"Total\", "
+                + "(SELECT TIOP.DESCRIPCION FROM TIPO_OPERACION TIOP WHERE TIOP.ID_TIPO_OPERACION = FC.ID_COND_VENTA) \"COND_VENTA\" "
+                + "FROM FACTURA_CABECERA FC ,FUNCIONARIO F, PERSONA P "
+                + "WHERE  FC.TIEMPO BETWEEN ?  "
+                + "AND ? "
+                + "AND FC.ID_FUNCIONARIO = F.ID_FUNCIONARIO "
+                + "AND F.ID_PERSONA = P.ID_PERSONA ";
+
+        if (idFuncionario > -1) {
+            Query = Query + " AND FC.ID_FUNCIONARIO = ? ";
+        }
+        if (idProveedor > -1) {
+            Query = Query + " AND FC.ID_PROVEEDOR = ? ";
+        }
+        if (idTipoOperacion > -1) {
+            Query = Query + "AND FC.ID_COND_COMPRA = ? ";
+        }
+        Query = Query + " ORDER BY \"ID\"";
+        System.err.println("q:");
+        System.err.println(Query);
+        int pos = 3;
+        try {
+            pst = DB_manager.getConection().prepareStatement(Query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            pst.setTimestamp(1, new java.sql.Timestamp(fechaInicio.getTime()));
+            pst.setTimestamp(2, new java.sql.Timestamp(fechaFinal.getTime()));
+            if (idFuncionario > -1) {
+                pst.setInt(pos, idFuncionario);
+                pos++;
+            }
+            if (idProveedor > 0) {
+                pst.setInt(pos, idProveedor);
+                pos++;
+            }
+            if (idTipoOperacion > 0) {
+                pst.setInt(pos, idTipoOperacion);
+                pos++;
+            }
+            rs = pst.executeQuery();
+            while (rs.next()) {
+                M_proveedor proveedor = new M_proveedor();
+                M_funcionario funcionario = new M_funcionario();
+                funcionario.setNombre(rs.getString("Empleado"));
+                proveedor.setEntidad(rs.getString("Proveedor"));
+                M_egreso_cabecera egca = new M_egreso_cabecera();
+                egca.setId_cabecera(rs.getInt("ID"));
+                egca.setTotal(rs.getInt("TOTAL"));
+                egca.setProveedor(proveedor);
+                egca.setFuncionario(funcionario);
+                egca.setCondVenta(rs.getString("COND_VENTA"));
+                egca.setTiempo(rs.getTimestamp("TIEMPO"));
+                list.add(egca);
+            }
+        } catch (SQLException ex) {
+            Logger lgr = Logger.getLogger(DB_Egreso.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (pst != null) {
+                    pst.close();
+                }
+            } catch (SQLException ex) {
+                Logger lgr = Logger.getLogger(DB_Egreso.class.getName());
+                lgr.log(Level.WARNING, ex.getMessage(), ex);
+            }
+        }
+        return list;
     }
 }
