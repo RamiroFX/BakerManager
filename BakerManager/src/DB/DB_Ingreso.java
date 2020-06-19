@@ -6,6 +6,7 @@ package DB;
 
 import Entities.E_cuentaCorrienteCabecera;
 import Entities.E_cuentaCorrienteConcepto;
+import Entities.E_facturaCabecera;
 import Entities.E_facturaCabeceraFX;
 import Entities.E_facturaDetalleFX;
 import Entities.E_facturacionCabecera;
@@ -1896,12 +1897,12 @@ public class DB_Ingreso {
         }
     }
 
-    public static List<E_facturaCabeceraFX> obtenerVentasCabeceras(int idCliente, String inicio, String fin, String condVenta) {
-        List<E_facturaCabeceraFX> list = new ArrayList<>();
+    public static List<E_facturaCabecera> obtenerVentasCabeceras(int idCliente, String inicio, String fin, String condVenta) {
+        List<E_facturaCabecera> list = new ArrayList<>();
         String Query = "SELECT ID_FACTURA_CABECERA \"ID\", "
                 + "(SELECT NOMBRE || ' '|| APELLIDO WHERE F.ID_PERSONA = P.ID_PERSONA)\"Empleado\", "
                 + "(SELECT ENTIDAD FROM CLIENTE C WHERE FC.ID_CLIENTE = C.ID_CLIENTE) \"Cliente\", "
-                + "to_char(TIEMPO,'DD/MM/YYYY HH24:MI:SS:MS') \"Tiempo\", "
+                + " TIEMPO , "
                 + "ROUND((SELECT SUM (CANTIDAD*(PRECIO-(PRECIO*DESCUENTO)/100)) FROM FACTURA_DETALLE FCC WHERE FCC.ID_FACTURA_CABECERA = FC.ID_FACTURA_CABECERA))\"Total\", "
                 + "(SELECT TIOP.DESCRIPCION FROM TIPO_OPERACION TIOP WHERE TIOP.ID_TIPO_OPERACION = FC.ID_COND_VENTA) \"COND_VENTA\" "
                 + "FROM FACTURA_CABECERA FC ,FUNCIONARIO F, PERSONA P "
@@ -1921,13 +1922,19 @@ public class DB_Ingreso {
             // se ejecuta el query y se obtienen los resultados en un ResultSet
             rs = st.executeQuery(Query);
             while (rs.next()) {
-                E_facturaCabeceraFX faca = new E_facturaCabeceraFX();
+                M_cliente cliente = new M_cliente();
+                cliente.setEntidad(rs.getString("Cliente"));
+                M_funcionario funcionario = new M_funcionario();
+                funcionario.setNombre(rs.getString("Empleado"));
+                E_tipoOperacion tiop = new E_tipoOperacion();
+                tiop.setDescripcion(rs.getString("COND_VENTA"));
+                E_facturaCabecera faca = new E_facturaCabecera();
                 faca.setIdFacturaCabecera(rs.getInt("ID"));
                 faca.setTotal(rs.getInt("TOTAL"));
-                faca.setClienteEntidad(rs.getString("Cliente"));
-                faca.setFuncionario(rs.getString("Empleado"));
-                faca.setCondVenta(rs.getString("COND_VENTA"));
-                faca.setTiempoString(rs.getString("TIEMPO"));
+                faca.setCliente(cliente);
+                faca.setFuncionario(funcionario);
+                faca.setTipoOperacion(tiop);
+                faca.setTiempo(rs.getDate("TIEMPO"));
                 list.add(faca);
             }
         } catch (SQLException ex) {
@@ -1949,19 +1956,18 @@ public class DB_Ingreso {
         return list;
     }
 
-    public static List<E_facturaCabeceraFX> obtenerMovimientoVentasCabeceras(int idFuncionario, int idCliente, Date fechaInicio, Date fechaFinal, int idTipoOperacion) {
-        List<E_facturaCabeceraFX> list = new ArrayList<>();
-        String Query = "SELECT ID_FACTURA_CABECERA \"ID\", "
+    public static List<E_facturaCabecera> obtenerMovimientoVentasCabeceras(int idFuncionario, int idCliente, Date fechaInicio, Date fechaFinal, int idTipoOperacion) {
+        List<E_facturaCabecera> list = new ArrayList<>();
+        String Query = "SELECT FC.id_factura_cabecera \"ID\", FC.id_funcionario, FC.id_cliente, FC.id_estado, FC.tiempo, FC.id_cond_venta, FC.nro_factura, "
                 + "(SELECT NOMBRE || ' '|| APELLIDO WHERE F.ID_PERSONA = P.ID_PERSONA)\"Empleado\", "
                 + "(SELECT ENTIDAD FROM CLIENTE C WHERE FC.ID_CLIENTE = C.ID_CLIENTE) \"Cliente\", "
-                + "to_char(TIEMPO,'DD/MM/YYYY HH24:MI:SS:MS') \"Tiempo\", "
-                + "ROUND((SELECT SUM (CANTIDAD*(PRECIO-(PRECIO*DESCUENTO)/100)) FROM FACTURA_DETALLE FCC WHERE FCC.ID_FACTURA_CABECERA = FC.ID_FACTURA_CABECERA))\"Total\", "
-                + "(SELECT TIOP.DESCRIPCION FROM TIPO_OPERACION TIOP WHERE TIOP.ID_TIPO_OPERACION = FC.ID_COND_VENTA) \"COND_VENTA\" "
-                + "FROM FACTURA_CABECERA FC ,FUNCIONARIO F, PERSONA P "
-                + "WHERE  FC.TIEMPO BETWEEN ?  "
-                + "AND ? "
-                + "AND FC.ID_FUNCIONARIO = F.ID_FUNCIONARIO "
-                + "AND F.ID_PERSONA = P.ID_PERSONA ";
+                + "(SELECT SUM (CANTIDAD*(PRECIO-(PRECIO*DESCUENTO)/100)) FROM FACTURA_DETALLE FCC WHERE FCC.ID_FACTURA_CABECERA = FC.ID_FACTURA_CABECERA) \"TOTAL\", "
+                + "(SELECT TIOP.DESCRIPCION FROM TIPO_OPERACION TIOP WHERE TIOP.ID_TIPO_OPERACION = FC.ID_COND_VENTA) \"COND_VENTA\"  "
+                + "FROM FACTURA_CABECERA FC ,FUNCIONARIO F, PERSONA P  "
+                + "WHERE  FC.TIEMPO BETWEEN ?  AND ?  "
+                + "AND FC.ID_FUNCIONARIO = F.ID_FUNCIONARIO  "
+                + "AND F.ID_PERSONA = P.ID_PERSONA  "
+                + "AND id_factura_cabecera not in (select id_movimiento from caja_movimiento where id_movimiento_contable_tipo = 1) ";
 
         if (idFuncionario > -1) {
             Query = Query + " AND FC.ID_FUNCIONARIO = ? ";
@@ -1994,13 +2000,19 @@ public class DB_Ingreso {
             }
             rs = pst.executeQuery();
             while (rs.next()) {
-                E_facturaCabeceraFX faca = new E_facturaCabeceraFX();
+                 M_cliente cliente = new M_cliente();
+                cliente.setEntidad(rs.getString("Cliente"));
+                M_funcionario funcionario = new M_funcionario();
+                funcionario.setNombre(rs.getString("Empleado"));
+                E_tipoOperacion tiop = new E_tipoOperacion();
+                tiop.setDescripcion(rs.getString("COND_VENTA"));
+                E_facturaCabecera faca = new E_facturaCabecera();
                 faca.setIdFacturaCabecera(rs.getInt("ID"));
                 faca.setTotal(rs.getInt("TOTAL"));
-                faca.setClienteEntidad(rs.getString("Cliente"));
-                faca.setFuncionario(rs.getString("Empleado"));
-                faca.setCondVenta(rs.getString("COND_VENTA"));
-                faca.setTiempoString(rs.getString("TIEMPO"));
+                faca.setCliente(cliente);
+                faca.setFuncionario(funcionario);
+                faca.setTipoOperacion(tiop);
+                faca.setTiempo(rs.getDate("TIEMPO"));
                 list.add(faca);
             }
         } catch (SQLException ex) {
@@ -2088,7 +2100,7 @@ public class DB_Ingreso {
         return list;
     }
 
-    public static void facturarVentas(ArrayList<E_facturaCabeceraFX> facalist, int idFuncionario, int idCliente, int nroFactura, int idTipoOperacion) {
+    public static void facturarVentas(ArrayList<E_facturaCabecera> facalist, int idFuncionario, int idCliente, int nroFactura, int idTipoOperacion) {
         String INSERT_FACTURACION_DETALLE = "INSERT INTO FACTURACION_DETALLE(ID_FACTURACION_CABECERA, ID_FACTURA_CABECERA)VALUES (?, ?);";
         //LA SGBD SE ENCARGA DE INSERTAR EL TIMESTAMP.
         String INSERT_FACTURACION_CABECERA = "INSERT INTO FACTURACION_CABECERA(ID_FUNCIONARIO, ID_CLIENTE, NRO_FACTURA, ID_COND_VENTA)VALUES (?, ?, ?, ?);";

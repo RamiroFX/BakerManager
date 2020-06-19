@@ -5,6 +5,7 @@
  */
 package Facturacion;
 
+import Entities.E_facturaCabecera;
 import Entities.E_facturaCabeceraFX;
 import Entities.E_facturacionCabecera;
 import Entities.M_facturaCabecera;
@@ -50,7 +51,7 @@ public class C_facturacion implements ActionListener, KeyListener, InterfaceSele
         SeleccionVentaCabeceraTableModel tm = new SeleccionVentaCabeceraTableModel(this);
         FacturaDetalleTableModel tmd = new FacturaDetalleTableModel(this);
         ArrayList<SeleccionVentaCabecera> list = new ArrayList<>();
-        for (E_facturaCabeceraFX ventaCabecera : modelo.obtenerVentasCabecera()) {
+        for (E_facturaCabecera ventaCabecera : modelo.obtenerVentasCabecera()) {
             list.add(new SeleccionVentaCabecera(ventaCabecera, false));
         }
         tm.setList(list);
@@ -201,7 +202,7 @@ public class C_facturacion implements ActionListener, KeyListener, InterfaceSele
 
     @Override
     public void recibirFacturacion(E_facturacionCabecera facturacionCabecera) {
-        ArrayList<E_facturaCabeceraFX> facalist = new ArrayList<>();
+        ArrayList<E_facturaCabecera> facalist = new ArrayList<>();
         SeleccionVentaCabeceraTableModel vctm = (SeleccionVentaCabeceraTableModel) vista.jtVentasCabecera.getModel();
         ArrayList<SeleccionVentaCabecera> sefacalist = vctm.getList();
         for (int i = 0; i < sefacalist.size(); i++) {

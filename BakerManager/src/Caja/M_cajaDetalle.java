@@ -7,6 +7,7 @@ package Caja;
 
 import DB.DB_Egreso;
 import DB.DB_Ingreso;
+import Entities.E_facturaCabecera;
 import Entities.E_facturaCabeceraFX;
 import Entities.M_egreso_cabecera;
 import Entities.M_funcionario;
@@ -80,8 +81,8 @@ public class M_cajaDetalle {
         calendarFinal.set(Calendar.SECOND, 59);
         calendarFinal.set(Calendar.MILLISECOND, 999);
         ArrayList<SeleccionVentaCabecera> lista = new ArrayList<>();
-        List<E_facturaCabeceraFX> list = DB_Ingreso.obtenerMovimientoVentasCabeceras(idFuncionario, idCliente, calendarInicio.getTime(), calendarFinal.getTime(), idTipoOperacion);
-        for (E_facturaCabeceraFX ventaCabecera : list) {
+        List<E_facturaCabecera> list = DB_Ingreso.obtenerMovimientoVentasCabeceras(idFuncionario, idCliente, calendarInicio.getTime(), calendarFinal.getTime(), idTipoOperacion);
+        for (E_facturaCabecera ventaCabecera : list) {
             lista.add(new SeleccionVentaCabecera(ventaCabecera, true));
         }
         this.getMovVentasTM().setList(lista);
@@ -102,10 +103,10 @@ public class M_cajaDetalle {
         calendarFinal.set(Calendar.MILLISECOND, 999);
 
         ArrayList<SeleccionCompraCabecera> lista = new ArrayList<>();
-        List<M_egreso_cabecera> list = DB_Egreso.obtenerMovimientoVentasCabeceras(idFuncionario, idProveedor, idTipoOperacion, calendarInicio.getTime(), calendarFinal.getTime());
+        /*List<M_egreso_cabecera> list = DB_Egreso.obtenerMovimientoVentasCabeceras(idFuncionario, idProveedor, idTipoOperacion, calendarInicio.getTime(), calendarFinal.getTime());
         for (M_egreso_cabecera egresoCabecera : list) {
             lista.add(new SeleccionCompraCabecera(egresoCabecera, true));
-        }
+        }*/
         this.getMovComprasTM().setList(lista);
     }
 }

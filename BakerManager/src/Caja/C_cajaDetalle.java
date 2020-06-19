@@ -6,9 +6,12 @@
 package Caja;
 
 import Empleado.Seleccionar_funcionario;
+import Entities.E_tipoOperacion;
 import Entities.M_funcionario;
 import Interface.GestionInterface;
+import Interface.InterfaceSeleccionVentaCabecera;
 import Interface.RecibirEmpleadoCallback;
+import ModeloTabla.SeleccionVentaCabecera;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -22,7 +25,7 @@ import javax.swing.JOptionPane;
  *
  * @author Ramiro Ferreira
  */
-public class C_cajaDetalle implements GestionInterface, RecibirEmpleadoCallback {
+public class C_cajaDetalle implements GestionInterface, RecibirEmpleadoCallback, InterfaceSeleccionVentaCabecera {
 
     V_cajaDetalle vista;
     M_cajaDetalle modelo;
@@ -30,6 +33,7 @@ public class C_cajaDetalle implements GestionInterface, RecibirEmpleadoCallback 
     public C_cajaDetalle(V_cajaDetalle vista, M_cajaDetalle modelo) {
         this.vista = vista;
         this.modelo = modelo;
+        this.modelo.getMovVentasTM().setInterface(this);
         this.vista.setLocationRelativeTo(null);
         callMethods();
     }
@@ -136,6 +140,25 @@ public class C_cajaDetalle implements GestionInterface, RecibirEmpleadoCallback 
         return false;
     }
 
+    private void actualizarSumaVentas() {
+        int totalContado = 0, totalCredito = 0;
+        for (SeleccionVentaCabecera seleccionVentaCabecera : modelo.getMovVentasTM().getList()) {
+            switch (seleccionVentaCabecera.getFacturaCabecera().getTipoOperacion().getId()) {
+                case E_tipoOperacion.CONTADO: {
+                    totalContado = totalContado + seleccionVentaCabecera.getFacturaCabecera().getTotal();
+                    break;
+                }
+                case E_tipoOperacion.CREDITO_30: {
+                    totalCredito = totalCredito + seleccionVentaCabecera.getFacturaCabecera().getTotal();
+                    break;
+                }
+            }
+        }
+        this.vista.jftTotalVentaContado.setValue(totalContado);
+        this.vista.jftTotalVentaCredito.setValue(totalCredito);
+        this.vista.jftTotalVenta.setValue(totalContado + totalCredito);
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         Object src = e.getSource();
@@ -187,6 +210,11 @@ public class C_cajaDetalle implements GestionInterface, RecibirEmpleadoCallback 
 
     @Override
     public void keyReleased(KeyEvent e) {
+    }
+
+    @Override
+    public void notificarCambioSeleccion() {
+        actualizarSumaVentas();
     }
 
 }

@@ -5,6 +5,7 @@
  */
 package ModeloTabla;
 
+import Entities.E_facturaCabecera;
 import Entities.E_facturaCabeceraFX;
 import Entities.M_facturaCabecera;
 
@@ -14,15 +15,15 @@ import Entities.M_facturaCabecera;
  */
 public class SeleccionVentaCabecera {
 
-    private E_facturaCabeceraFX facturaCabecera;
+    private E_facturaCabecera facturaCabecera;
     Boolean estaSeleccionado;
 
     public SeleccionVentaCabecera() {
-        this.facturaCabecera = new E_facturaCabeceraFX();
+        this.facturaCabecera = new E_facturaCabecera();
         this.estaSeleccionado = true;
     }
 
-    public SeleccionVentaCabecera(E_facturaCabeceraFX facturaCabecera, boolean estaSeleccionado) {
+    public SeleccionVentaCabecera(E_facturaCabecera facturaCabecera, boolean estaSeleccionado) {
         this.facturaCabecera = facturaCabecera;
         this.estaSeleccionado = estaSeleccionado;
     }
@@ -38,14 +39,14 @@ public class SeleccionVentaCabecera {
     /**
      * @return the facturaCabecera
      */
-    public E_facturaCabeceraFX getFacturaCabecera() {
+    public E_facturaCabecera getFacturaCabecera() {
         return facturaCabecera;
     }
 
     /**
      * @param facturaCabecera the facturaCabecera to set
      */
-    public void setFacturaCabecera(E_facturaCabeceraFX facturaCabecera) {
+    public void setFacturaCabecera(E_facturaCabecera facturaCabecera) {
         this.facturaCabecera = facturaCabecera;
     }
 

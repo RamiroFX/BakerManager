@@ -15,7 +15,7 @@ import java.util.List;
  */
 public class E_facturaCabecera {
 
-    private Integer idFacturaCabecera, nroFactura;
+    private Integer idFacturaCabecera, nroFactura, total;
     private M_funcionario funcionario;
     private M_cliente cliente;
     private E_tipoOperacion tipoOperacion;
@@ -25,7 +25,7 @@ public class E_facturaCabecera {
     private List<E_facturaDetalle> detalle;
 
     public E_facturaCabecera() {
-        detalle = new ArrayList<>();
+        //detalle = new ArrayList<>();
         cliente = new M_cliente();
         funcionario = new M_funcionario();
         tipoOperacion = new E_tipoOperacion();
@@ -108,6 +108,20 @@ public class E_facturaCabecera {
     @Override
     public String toString() {
         return getIdFacturaCabecera() + "|" + getNroFactura() + "|" + getCliente() + "|" + getTiempo();
+    }
+
+    /**
+     * @return the total
+     */
+    public Integer getTotal() {
+        return total;
+    }
+
+    /**
+     * @param total the total to set
+     */
+    public void setTotal(Integer total) {
+        this.total = total;
     }
 
 }

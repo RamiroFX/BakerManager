@@ -66,19 +66,19 @@ public class SeleccionVentaCabeceraTableModel extends AbstractTableModel {
                 return seleccionVentaCabecera.getFacturaCabecera().getIdFacturaCabecera();
             }
             case 1: {
-                return seleccionVentaCabecera.getFacturaCabecera().getClienteEntidad();
+                return seleccionVentaCabecera.getFacturaCabecera().getCliente().getEntidad();
             }
             case 2: {
                 return seleccionVentaCabecera.getFacturaCabecera().getFuncionario();
             }
             case 3: {
-                return seleccionVentaCabecera.getFacturaCabecera().getTiempoString();
+                return seleccionVentaCabecera.getFacturaCabecera().getTiempo();
             }
             case 4: {
                 return seleccionVentaCabecera.getFacturaCabecera().getTotal();
             }
             case 5: {
-                return seleccionVentaCabecera.getFacturaCabecera().getCondVenta();
+                return seleccionVentaCabecera.getFacturaCabecera().getTipoOperacion().getDescripcion();
             }
             case 6: {
                 return seleccionVentaCabecera.isEstaSeleccionado();
