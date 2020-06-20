@@ -69,7 +69,7 @@ public class SeleccionVentaCabeceraTableModel extends AbstractTableModel {
                 return seleccionVentaCabecera.getFacturaCabecera().getCliente().getEntidad();
             }
             case 2: {
-                return seleccionVentaCabecera.getFacturaCabecera().getFuncionario();
+                return seleccionVentaCabecera.getFacturaCabecera().getFuncionario().getNombre();
             }
             case 3: {
                 return seleccionVentaCabecera.getFacturaCabecera().getTiempo();

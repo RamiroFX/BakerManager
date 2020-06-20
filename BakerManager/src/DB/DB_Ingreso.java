@@ -1962,6 +1962,7 @@ public class DB_Ingreso {
                 + "(SELECT NOMBRE || ' '|| APELLIDO WHERE F.ID_PERSONA = P.ID_PERSONA)\"Empleado\", "
                 + "(SELECT ENTIDAD FROM CLIENTE C WHERE FC.ID_CLIENTE = C.ID_CLIENTE) \"Cliente\", "
                 + "(SELECT SUM (CANTIDAD*(PRECIO-(PRECIO*DESCUENTO)/100)) FROM FACTURA_DETALLE FCC WHERE FCC.ID_FACTURA_CABECERA = FC.ID_FACTURA_CABECERA) \"TOTAL\", "
+                + "FC.ID_COND_VENTA \"ID_COND_VENTA\",  "
                 + "(SELECT TIOP.DESCRIPCION FROM TIPO_OPERACION TIOP WHERE TIOP.ID_TIPO_OPERACION = FC.ID_COND_VENTA) \"COND_VENTA\"  "
                 + "FROM FACTURA_CABECERA FC ,FUNCIONARIO F, PERSONA P  "
                 + "WHERE  FC.TIEMPO BETWEEN ?  AND ?  "
@@ -2005,6 +2006,7 @@ public class DB_Ingreso {
                 M_funcionario funcionario = new M_funcionario();
                 funcionario.setNombre(rs.getString("Empleado"));
                 E_tipoOperacion tiop = new E_tipoOperacion();
+                tiop.setId(rs.getInt("ID_COND_VENTA"));
                 tiop.setDescripcion(rs.getString("COND_VENTA"));
                 E_facturaCabecera faca = new E_facturaCabecera();
                 faca.setIdFacturaCabecera(rs.getInt("ID"));

@@ -6,7 +6,6 @@
 package Facturacion;
 
 import Entities.E_facturaCabecera;
-import Entities.E_facturaCabeceraFX;
 import Entities.E_facturacionCabecera;
 import Entities.M_facturaCabecera;
 import Entities.M_facturaDetalle;

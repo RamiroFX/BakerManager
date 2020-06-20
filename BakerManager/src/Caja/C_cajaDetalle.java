@@ -41,6 +41,7 @@ public class C_cajaDetalle implements GestionInterface, RecibirEmpleadoCallback,
     private void callMethods() {
         inicializarVista();
         concederPermisos();
+        actualizarSumaVentas();
     }
 
     @Override
@@ -63,6 +64,8 @@ public class C_cajaDetalle implements GestionInterface, RecibirEmpleadoCallback,
         this.vista.jbBorrar.addActionListener(this);
         //this.vista.jtCobros.addMouseListener(this);
         //this.vista.jtCobros.addKeyListener(this);
+        this.vista.jbAgregarVentas.addActionListener(this);
+        this.vista.jbQuitarVentas.addActionListener(this);
         /**
          * **ESCAPE HOTKEY/
          */
@@ -71,6 +74,8 @@ public class C_cajaDetalle implements GestionInterface, RecibirEmpleadoCallback,
         this.vista.jbBuscar.addKeyListener(this);
         this.vista.jbEmpleado.addKeyListener(this);
         this.vista.jbBorrar.addKeyListener(this);
+        this.vista.jbAgregarVentas.addKeyListener(this);
+        this.vista.jbQuitarVentas.addKeyListener(this);
     }
 
     @Override
@@ -143,20 +148,38 @@ public class C_cajaDetalle implements GestionInterface, RecibirEmpleadoCallback,
     private void actualizarSumaVentas() {
         int totalContado = 0, totalCredito = 0;
         for (SeleccionVentaCabecera seleccionVentaCabecera : modelo.getMovVentasTM().getList()) {
-            switch (seleccionVentaCabecera.getFacturaCabecera().getTipoOperacion().getId()) {
-                case E_tipoOperacion.CONTADO: {
-                    totalContado = totalContado + seleccionVentaCabecera.getFacturaCabecera().getTotal();
-                    break;
-                }
-                case E_tipoOperacion.CREDITO_30: {
-                    totalCredito = totalCredito + seleccionVentaCabecera.getFacturaCabecera().getTotal();
-                    break;
+            if (seleccionVentaCabecera.isEstaSeleccionado()) {
+                switch (seleccionVentaCabecera.getFacturaCabecera().getTipoOperacion().getId()) {
+                    case E_tipoOperacion.CONTADO: {
+                        totalContado = totalContado + seleccionVentaCabecera.getFacturaCabecera().getTotal();
+                        break;
+                    }
+                    case E_tipoOperacion.CREDITO_30: {
+                        totalCredito = totalCredito + seleccionVentaCabecera.getFacturaCabecera().getTotal();
+                        break;
+                    }
                 }
             }
         }
         this.vista.jftTotalVentaContado.setValue(totalContado);
         this.vista.jftTotalVentaCredito.setValue(totalCredito);
         this.vista.jftTotalVenta.setValue(totalContado + totalCredito);
+    }
+
+    private void agregarTodoVentas() {
+        int rows = this.vista.jtVentas.getModel().getRowCount();
+        for (int i = 0; i < rows; i++) {
+            this.vista.jtVentas.getModel().setValueAt(true, i, 6);
+        }
+        actualizarSumaVentas();
+    }
+
+    private void quitarTodoVentas() {
+        int rows = this.vista.jtVentas.getModel().getRowCount();
+        for (int i = 0; i < rows; i++) {
+            this.vista.jtVentas.getModel().setValueAt(false, i, 6);
+        }
+        actualizarSumaVentas();
     }
 
     @Override
@@ -171,6 +194,10 @@ public class C_cajaDetalle implements GestionInterface, RecibirEmpleadoCallback,
             sf.mostrarVista();
         } else if (src.equals(this.vista.jbBorrar)) {
             borrarDatos();
+        } else if (src.equals(this.vista.jbAgregarVentas)) {
+            agregarTodoVentas();
+        } else if (src.equals(this.vista.jbQuitarVentas)) {
+            quitarTodoVentas();
         }
     }
 
