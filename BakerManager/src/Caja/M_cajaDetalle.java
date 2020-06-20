@@ -103,10 +103,10 @@ public class M_cajaDetalle {
         calendarFinal.set(Calendar.MILLISECOND, 999);
 
         ArrayList<SeleccionCompraCabecera> lista = new ArrayList<>();
-        /*List<M_egreso_cabecera> list = DB_Egreso.obtenerMovimientoVentasCabeceras(idFuncionario, idProveedor, idTipoOperacion, calendarInicio.getTime(), calendarFinal.getTime());
+        List<M_egreso_cabecera> list = DB_Egreso.obtenerMovimientoComprasCabeceras(idFuncionario, idProveedor, idTipoOperacion, calendarInicio.getTime(), calendarFinal.getTime());
         for (M_egreso_cabecera egresoCabecera : list) {
             lista.add(new SeleccionCompraCabecera(egresoCabecera, true));
-        }*/
+        }
         this.getMovComprasTM().setList(lista);
     }
 }

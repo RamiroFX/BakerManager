@@ -5,7 +5,7 @@
  */
 package ModeloTabla;
 
-import Interface.InterfaceSeleccionVentaCabecera;
+import Interface.InterfaceSeleccionCompraCabecera;
 import java.util.ArrayList;
 import javax.swing.table.AbstractTableModel;
 
@@ -16,21 +16,21 @@ import javax.swing.table.AbstractTableModel;
 public class SeleccionCompraCabeceraTableModel extends AbstractTableModel {
 
     ArrayList<SeleccionCompraCabecera> list;
-    private String[] colNames = {"Id", "Proveedor", "Funcionario", "Tiempo", "Total", "Cond.", "Seleccionado"};
+    private String[] colNames = {"Id", "Nro. factura", "Proveedor", "Funcionario", "Tiempo", "Total", "Cond.", "Seleccionado"};
 
-    private InterfaceSeleccionVentaCabecera interfaceSeleccionVentaCabecera;
+    private InterfaceSeleccionCompraCabecera interfaceSeleccionVentaCabecera;
 
     public SeleccionCompraCabeceraTableModel() {
         list = new ArrayList<>();
     }
 
-    public SeleccionCompraCabeceraTableModel(InterfaceSeleccionVentaCabecera interfaceSeleccionVentaCabecera) {
+    public SeleccionCompraCabeceraTableModel(InterfaceSeleccionCompraCabecera nterfaceSeleccionCompraCabecera) {
         list = new ArrayList<>();
-        this.interfaceSeleccionVentaCabecera = interfaceSeleccionVentaCabecera;
+        this.interfaceSeleccionVentaCabecera = nterfaceSeleccionCompraCabecera;
     }
 
-    public void setInterface(InterfaceSeleccionVentaCabecera interfaceSeleccionVentaCabecera) {
-        this.interfaceSeleccionVentaCabecera = interfaceSeleccionVentaCabecera;
+    public void setInterface(InterfaceSeleccionCompraCabecera nterfaceSeleccionCompraCabecera) {
+        this.interfaceSeleccionVentaCabecera = nterfaceSeleccionCompraCabecera;
     }
 
     @Override
@@ -66,21 +66,24 @@ public class SeleccionCompraCabeceraTableModel extends AbstractTableModel {
                 return seleccionCompraCabecera.getFacturaCabecera().getId_cabecera();
             }
             case 1: {
-                return seleccionCompraCabecera.getFacturaCabecera().getProveedor().getEntidad();
+                return seleccionCompraCabecera.getFacturaCabecera().getNro_factura();
             }
             case 2: {
-                return seleccionCompraCabecera.getFacturaCabecera().getFuncionario().getNombre();
+                return seleccionCompraCabecera.getFacturaCabecera().getProveedor().getEntidad();
             }
             case 3: {
-                return seleccionCompraCabecera.getFacturaCabecera().getTiempo();
+                return seleccionCompraCabecera.getFacturaCabecera().getFuncionario().getNombre();
             }
             case 4: {
-                return seleccionCompraCabecera.getFacturaCabecera().getTotal();
+                return seleccionCompraCabecera.getFacturaCabecera().getTiempo();
             }
             case 5: {
-                return seleccionCompraCabecera.getFacturaCabecera().getCondVenta();
+                return seleccionCompraCabecera.getFacturaCabecera().getTotal();
             }
             case 6: {
+                return seleccionCompraCabecera.getFacturaCabecera().getCondVenta();
+            }
+            case 7: {
                 return seleccionCompraCabecera.isEstaSeleccionado();
             }
             default: {
@@ -94,7 +97,7 @@ public class SeleccionCompraCabeceraTableModel extends AbstractTableModel {
         if (aValue instanceof Boolean && column == 6) {
             SeleccionCompraCabecera rowData = list.get(row);
             rowData.setEstaSeleccionado((boolean) aValue);
-            interfaceSeleccionVentaCabecera.notificarCambioSeleccion();
+            interfaceSeleccionVentaCabecera.notificarCambioSeleccionCompraCabecera();
             fireTableCellUpdated(row, column);
         }
     }

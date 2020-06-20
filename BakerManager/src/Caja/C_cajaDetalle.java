@@ -9,6 +9,7 @@ import Empleado.Seleccionar_funcionario;
 import Entities.E_tipoOperacion;
 import Entities.M_funcionario;
 import Interface.GestionInterface;
+import Interface.InterfaceSeleccionCompraCabecera;
 import Interface.InterfaceSeleccionVentaCabecera;
 import Interface.RecibirEmpleadoCallback;
 import ModeloTabla.SeleccionVentaCabecera;
@@ -25,7 +26,8 @@ import javax.swing.JOptionPane;
  *
  * @author Ramiro Ferreira
  */
-public class C_cajaDetalle implements GestionInterface, RecibirEmpleadoCallback, InterfaceSeleccionVentaCabecera {
+public class C_cajaDetalle implements GestionInterface, RecibirEmpleadoCallback, InterfaceSeleccionVentaCabecera,
+        InterfaceSeleccionCompraCabecera {
 
     V_cajaDetalle vista;
     M_cajaDetalle modelo;
@@ -34,6 +36,7 @@ public class C_cajaDetalle implements GestionInterface, RecibirEmpleadoCallback,
         this.vista = vista;
         this.modelo = modelo;
         this.modelo.getMovVentasTM().setInterface(this);
+        this.modelo.getMovComprasTM().setInterface(this);
         this.vista.setLocationRelativeTo(null);
         callMethods();
     }
@@ -47,6 +50,7 @@ public class C_cajaDetalle implements GestionInterface, RecibirEmpleadoCallback,
     @Override
     public void inicializarVista() {
         this.vista.jtVentas.setModel(modelo.getMovVentasTM());
+        this.vista.jtCompras.setModel(modelo.getMovComprasTM());
         Date date = Calendar.getInstance().getTime();
         this.vista.jddInicio.setDate(date);
         this.vista.jddFinal.setDate(date);
@@ -66,6 +70,8 @@ public class C_cajaDetalle implements GestionInterface, RecibirEmpleadoCallback,
         //this.vista.jtCobros.addKeyListener(this);
         this.vista.jbAgregarVentas.addActionListener(this);
         this.vista.jbQuitarVentas.addActionListener(this);
+        this.vista.jbAgregarCompras.addActionListener(this);
+        this.vista.jbQuitarCompras.addActionListener(this);
         /**
          * **ESCAPE HOTKEY/
          */
@@ -76,6 +82,8 @@ public class C_cajaDetalle implements GestionInterface, RecibirEmpleadoCallback,
         this.vista.jbBorrar.addKeyListener(this);
         this.vista.jbAgregarVentas.addKeyListener(this);
         this.vista.jbQuitarVentas.addKeyListener(this);
+        this.vista.jbAgregarCompras.addKeyListener(this);
+        this.vista.jbQuitarCompras.addKeyListener(this);
     }
 
     @Override
@@ -242,6 +250,10 @@ public class C_cajaDetalle implements GestionInterface, RecibirEmpleadoCallback,
     @Override
     public void notificarCambioSeleccion() {
         actualizarSumaVentas();
+    }
+
+    @Override
+    public void notificarCambioSeleccionCompraCabecera() {
     }
 
 }

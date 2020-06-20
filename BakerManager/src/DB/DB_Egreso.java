@@ -4,7 +4,6 @@
  */
 package DB;
 
-import Entities.Estado;
 import Entities.M_egreso_cabecera;
 import Entities.M_egreso_detalle;
 import Entities.M_egreso_detalleFX;
@@ -1035,28 +1034,30 @@ public class DB_Egreso {
         }
     }
 
-    public static List<M_egreso_cabecera> obtenerMovimientoVentasCabeceras(int idFuncionario, int idProveedor, int idTipoOperacion, Date fechaInicio, Date fechaFinal) {
+    public static List<M_egreso_cabecera> obtenerMovimientoComprasCabeceras(int idFuncionario, int idProveedor, int idTipoOperacion, Date fechaInicio, Date fechaFinal) {
         List<M_egreso_cabecera> list = new ArrayList<>();
-        String Query = "SELECT ID_FACTURA_CABECERA \"ID\", "
-                + "(SELECT NOMBRE || ' '|| APELLIDO WHERE F.ID_PERSONA = P.ID_PERSONA)\"Empleado\", "
-                + "(SELECT ENTIDAD FROM CLIENTE C WHERE FC.ID_CLIENTE = C.ID_CLIENTE) \"Cliente\", "
-                + "to_char(TIEMPO,'DD/MM/YYYY HH24:MI:SS:MS') \"Tiempo\", "
-                + "ROUND((SELECT SUM (CANTIDAD*(PRECIO-(PRECIO*DESCUENTO)/100)) FROM FACTURA_DETALLE FCC WHERE FCC.ID_FACTURA_CABECERA = FC.ID_FACTURA_CABECERA))\"Total\", "
-                + "(SELECT TIOP.DESCRIPCION FROM TIPO_OPERACION TIOP WHERE TIOP.ID_TIPO_OPERACION = FC.ID_COND_VENTA) \"COND_VENTA\" "
-                + "FROM FACTURA_CABECERA FC ,FUNCIONARIO F, PERSONA P "
-                + "WHERE  FC.TIEMPO BETWEEN ?  "
+        String Query = "SELECT EC.ID_EGRESO_CABECERA \"ID\", "
+                + "EC.NRO_FACTURA \"NRO_FACTURA\", "
+                + "(SELECT NOMBRE || ' '|| APELLIDO WHERE F.ID_PERSONA = P.ID_PERSONA)\"EMPLEADO\", "
+                + "(SELECT ENTIDAD FROM PROVEEDOR PV WHERE EC.ID_PROVEEDOR = PV.ID_PROVEEDOR) \"PROVEEDOR\", "
+                + "TIEMPO, "
+                + "(SELECT SUM (CANTIDAD*(PRECIO-(PRECIO*DESCUENTO)/100)) FROM EGRESO_DETALLE ED WHERE ED.ID_EGRESO_CABECERA = EC.ID_EGRESO_CABECERA)\"TOTAL\", "
+                + "(SELECT TIOP.DESCRIPCION FROM TIPO_OPERACION TIOP WHERE TIOP.ID_TIPO_OPERACION = EC.ID_COND_COMPRA) \"COND_COMPRA\" "
+                + "FROM EGRESO_CABECERA EC ,FUNCIONARIO F, PERSONA P "
+                + "WHERE  EC.TIEMPO BETWEEN ?  "
                 + "AND ? "
-                + "AND FC.ID_FUNCIONARIO = F.ID_FUNCIONARIO "
-                + "AND F.ID_PERSONA = P.ID_PERSONA ";
+                + "AND EC.ID_FUNCIONARIO = F.ID_FUNCIONARIO "
+                + "AND F.ID_PERSONA = P.ID_PERSONA "
+                + "AND EC.ID_ESTADO = 1 ";
 
         if (idFuncionario > -1) {
-            Query = Query + " AND FC.ID_FUNCIONARIO = ? ";
+            Query = Query + " AND EC.ID_FUNCIONARIO = ? ";
         }
         if (idProveedor > -1) {
-            Query = Query + " AND FC.ID_PROVEEDOR = ? ";
+            Query = Query + " AND EC.ID_PROVEEDOR = ? ";
         }
         if (idTipoOperacion > -1) {
-            Query = Query + "AND FC.ID_COND_COMPRA = ? ";
+            Query = Query + "AND EC.ID_COND_COMPRA = ? ";
         }
         Query = Query + " ORDER BY \"ID\"";
         System.err.println("q:");
@@ -1082,14 +1083,15 @@ public class DB_Egreso {
             while (rs.next()) {
                 M_proveedor proveedor = new M_proveedor();
                 M_funcionario funcionario = new M_funcionario();
-                funcionario.setNombre(rs.getString("Empleado"));
-                proveedor.setEntidad(rs.getString("Proveedor"));
+                funcionario.setNombre(rs.getString("EMPLEADO"));
+                proveedor.setEntidad(rs.getString("PROVEEDOR"));
                 M_egreso_cabecera egca = new M_egreso_cabecera();
                 egca.setId_cabecera(rs.getInt("ID"));
+                egca.setNro_factura(rs.getInt("NRO_FACTURA"));
                 egca.setTotal(rs.getInt("TOTAL"));
                 egca.setProveedor(proveedor);
                 egca.setFuncionario(funcionario);
-                egca.setCondVenta(rs.getString("COND_VENTA"));
+                egca.setCondVenta(rs.getString("COND_COMPRA"));
                 egca.setTiempo(rs.getTimestamp("TIEMPO"));
                 list.add(egca);
             }
