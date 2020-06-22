@@ -12,10 +12,12 @@ import Entities.E_reciboPagoDetalle;
 import Entities.E_tipoOperacion;
 import Entities.M_funcionario;
 import Interface.GestionInterface;
+import Interface.InterfaceCajaMovimientos;
 import Interface.InterfaceSeleccionCobroCabecera;
 import Interface.InterfaceSeleccionCompraCabecera;
 import Interface.InterfaceSeleccionPagoCabecera;
 import Interface.InterfaceSeleccionVentaCabecera;
+import Interface.MovimientosCaja;
 import Interface.RecibirEmpleadoCallback;
 import ModeloTabla.SeleccionCobroCabecera;
 import ModeloTabla.SeleccionCompraCabecera;
@@ -25,7 +27,6 @@ import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
-import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.Date;
 import javax.swing.JOptionPane;
@@ -39,6 +40,7 @@ public class C_cajaDetalle implements GestionInterface, RecibirEmpleadoCallback,
 
     V_cajaDetalle vista;
     M_cajaDetalle modelo;
+    InterfaceCajaMovimientos interfaceCajaMov;
 
     public C_cajaDetalle(V_cajaDetalle vista, M_cajaDetalle modelo) {
         this.vista = vista;
@@ -113,6 +115,10 @@ public class C_cajaDetalle implements GestionInterface, RecibirEmpleadoCallback,
         this.vista.jbQuitarPago.addKeyListener(this);
     }
 
+    public void setInterface(InterfaceCajaMovimientos interfaceCajaMov) {
+        this.interfaceCajaMov = interfaceCajaMov;
+    }
+
     @Override
     public void mostrarVista() {
         this.vista.setVisible(true);
@@ -129,29 +135,22 @@ public class C_cajaDetalle implements GestionInterface, RecibirEmpleadoCallback,
             public void run() {
                 Date inicio = vista.jddInicio.getDate();
                 Date fin = vista.jddFinal.getDate();
-                if (validarFechas(inicio, fin)) {
-                    Calendar calendarioInicio = Calendar.getInstance();
-                    calendarioInicio.setTime(inicio);
-                    calendarioInicio.set(Calendar.HOUR_OF_DAY, 0);
-                    calendarioInicio.set(Calendar.MINUTE, 0);
-                    Calendar calendarioFin = Calendar.getInstance();
-                    calendarioFin.setTime(fin);
-                    calendarioFin.set(Calendar.HOUR_OF_DAY, 23);
-                    calendarioFin.set(Calendar.MINUTE, 59);
-                    Timestamp ini = new Timestamp(calendarioInicio.getTimeInMillis());
-                    Timestamp fi = new Timestamp(calendarioFin.getTimeInMillis());
-                    int idFuncionario = -1;
-                    if (modelo.getFuncionario() != null && modelo.getFuncionario().getId_funcionario() != null) {
-                        idFuncionario = modelo.getFuncionario().getId_funcionario();
-                    }
-                    //vista.jtCaja.setModel(modelo.consultarCajas(idFuncionario, ini, fi));
-                    //Utilities.c_packColumn.packColumns(vista.jtCaja, 1);
-                    //vista.jbDetalle.setEnabled(false);
-                } else {
+                if (!validarFechas(inicio, fin)) {
                     vista.jddFinal.setDate(vista.jddInicio.getDate());
                     vista.jddFinal.updateUI();
                     JOptionPane.showMessageDialog(vista, "La fecha inicio debe ser menor que fecha final", "Atención", JOptionPane.WARNING_MESSAGE);
+                    return;
                 }
+                int idFuncionario = modelo.getFuncionario().getId_funcionario();
+                modelo.buscarMovimientos(idFuncionario, inicio, fin);
+                actualizarSumaVentas();
+                actualizarSumaCompras();
+                actualizarSumaCobros();
+                actualizarSumaPagos();
+                Utilities.c_packColumn.packColumns(vista.jtVentas, 1);
+                Utilities.c_packColumn.packColumns(vista.jtCompras, 1);
+                Utilities.c_packColumn.packColumns(vista.jtCobros, 1);
+                Utilities.c_packColumn.packColumns(vista.jtPagos, 1);
             }
         });
     }
@@ -334,10 +333,31 @@ public class C_cajaDetalle implements GestionInterface, RecibirEmpleadoCallback,
         actualizarSumaPagos();
     }
 
+    private void enviarMovimientos() {
+        MovimientosCaja movimientosCaja = new MovimientosCaja();
+        for (SeleccionCobroCabecera seleccionCobroCabecera : modelo.getMovCobroTM().getList()) {
+            movimientosCaja.getMovimientoCobros().add(seleccionCobroCabecera.getCobro());
+        }
+        for (SeleccionCompraCabecera seleccionCompraCabecera : modelo.getMovComprasTM().getList()) {
+            movimientosCaja.getMovimientoCompras().add(seleccionCompraCabecera.getFacturaCabecera());
+        }
+        for (SeleccionPagoCabecera seleccionPagoCabecera : modelo.getMovPagoTM().getList()) {
+            movimientosCaja.getMovimientoPagos().add(seleccionPagoCabecera.getPago());
+        }
+        for (SeleccionVentaCabecera seleccionVentaCabecera : modelo.getMovVentasTM().getList()) {
+            movimientosCaja.getMovimientoVentas().add(seleccionVentaCabecera.getFacturaCabecera());
+        }
+        this.interfaceCajaMov.recibirMovimientos(movimientosCaja);
+        cerrar();
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         Object src = e.getSource();
         if (src.equals(this.vista.jbAceptar)) {
+            enviarMovimientos();
+        } else if (src.equals(this.vista.jbCancelar)) {
+            cerrar();
         } else if (src.equals(this.vista.jbBuscar)) {
             consultarCajas();
         } else if (src.equals(this.vista.jbEmpleado)) {

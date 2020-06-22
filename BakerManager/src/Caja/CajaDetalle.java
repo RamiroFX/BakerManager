@@ -5,6 +5,8 @@
  */
 package Caja;
 
+import Interface.InterfaceCajaMovimientos;
+import java.util.Date;
 import javax.swing.JDialog;
 
 /**
@@ -23,7 +25,15 @@ public class CajaDetalle {
         this.controlador = new C_cajaDetalle(vista, modelo);
     }
 
+    public void setInterface(InterfaceCajaMovimientos interfaceCajaMovimientos) {
+        this.controlador.setInterface(interfaceCajaMovimientos);
+    }
+
     public void mostrarVista() {
         this.controlador.mostrarVista();
+    }
+
+    public void setRangoTiempo(Date tiempoInicio, Date tiempoFinal) {
+        this.modelo.setRangoTiempo(tiempoInicio, tiempoFinal);
     }
 }

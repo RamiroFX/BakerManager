@@ -21,7 +21,7 @@ public class SeleccionPagoCabecera {
         this.estaSeleccionado = true;
     }
 
-    public SeleccionPagoCabecera(E_reciboPagoCabecera cobro, boolean estaSeleccionado) {
+    public SeleccionPagoCabecera(E_reciboPagoCabecera pago, boolean estaSeleccionado) {
         this.pago = pago;
         this.estaSeleccionado = estaSeleccionado;
     }

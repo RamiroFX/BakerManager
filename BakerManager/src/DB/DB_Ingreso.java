@@ -1981,8 +1981,6 @@ public class DB_Ingreso {
             Query = Query + "AND FC.ID_COND_VENTA = ? ";
         }
         Query = Query + " ORDER BY \"ID\"";
-        System.err.println("q:");
-        System.err.println(Query);
         int pos = 3;
         try {
             pst = DB_manager.getConection().prepareStatement(Query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);

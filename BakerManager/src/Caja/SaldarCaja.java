@@ -13,8 +13,14 @@ import DB.DB_Ingreso;
 import DB.DB_Pago;
 import Entities.ArqueoCajaDetalle;
 import Entities.Caja;
+import Entities.E_cuentaCorrienteCabecera;
+import Entities.E_facturaCabecera;
+import Entities.E_reciboPagoCabecera;
 import Entities.Estado;
+import Entities.M_egreso_cabecera;
 import Entities.Moneda;
+import Interface.InterfaceCajaMovimientos;
+import Interface.MovimientosCaja;
 import MenuPrincipal.DatosUsuario;
 import bakermanager.C_inicio;
 import com.nitido.utils.toaster.Toaster;
@@ -55,7 +61,7 @@ import net.miginfocom.swing.MigLayout;
  *
  * @author Ramiro Ferreira
  */
-public class SaldarCaja extends JDialog implements ActionListener, KeyListener {
+public class SaldarCaja extends JDialog implements ActionListener, KeyListener, InterfaceCajaMovimientos {
 
     public JDateChooser jddInicio, jddFinal;
     public JComboBox jcbHoraInicio, jcbMinutoInicio, jcbHoraFin, jcbMinutoFin;
@@ -659,8 +665,44 @@ public class SaldarCaja extends JDialog implements ActionListener, KeyListener {
     }
 
     private void invocarDetalle() {
+        int horaFin = jcbHoraFin.getSelectedIndex();
+        int minutoFin = jcbMinutoFin.getSelectedIndex();
+        Calendar calendarInicio = Calendar.getInstance();
+        calendarInicio.setTime(jddInicio.getDate());
+        calendarInicio.set(Calendar.HOUR_OF_DAY, 0);
+        calendarInicio.set(Calendar.MINUTE, 0);
+        calendarInicio.set(Calendar.SECOND, 0);
+        calendarInicio.set(Calendar.MILLISECOND, 0);
+        Calendar calendarFinal = Calendar.getInstance();
+        calendarFinal.setTime(jddFinal.getDate());
+        calendarFinal.set(Calendar.HOUR_OF_DAY, horaFin);
+        calendarFinal.set(Calendar.MINUTE, minutoFin);
+        calendarFinal.set(Calendar.SECOND, 59);
+        calendarFinal.set(Calendar.MILLISECOND, 999);
         CajaDetalle cd = new CajaDetalle(this);
+        cd.setRangoTiempo(calendarInicio.getTime(), calendarFinal.getTime());
+        cd.setInterface(this);
         cd.mostrarVista();
+    }
+
+    private void actualizarMovimientos(MovimientosCaja movimientosCaja) {
+        int totalCobro = 0, totalPago = 0, totalCompra = 0, totalVenta = 0;
+        for (E_cuentaCorrienteCabecera cobro : movimientosCaja.getMovimientoCobros()) {
+            totalCobro = totalCobro + cobro.getDebito();
+        }
+        for (E_reciboPagoCabecera seleccionCompraCabecera : movimientosCaja.getMovimientoPagos()) {
+            totalPago = totalPago + seleccionCompraCabecera.getMonto();
+        }
+        for (M_egreso_cabecera seleccionPagoCabecera : movimientosCaja.getMovimientoCompras()) {
+            totalCompra = totalCompra + seleccionPagoCabecera.getTotal();
+        }
+        for (E_facturaCabecera seleccionVentaCabecera : movimientosCaja.getMovimientoVentas()) {
+            totalVenta = totalVenta + seleccionVentaCabecera.getTotal();
+        }
+        this.jtfTotalCobrado.setValue(totalCobro);
+        this.jtfTotalPagado.setValue(totalPago);
+        this.jtfIngresoTotal.setValue(totalVenta);
+        this.jtfEgresoTotal.setValue(totalCompra);
     }
 
     @Override
@@ -694,4 +736,10 @@ public class SaldarCaja extends JDialog implements ActionListener, KeyListener {
     @Override
     public void keyReleased(KeyEvent e) {
     }
+
+    @Override
+    public void recibirMovimientos(MovimientosCaja movimientosCaja) {
+        actualizarMovimientos(movimientosCaja);
+    }
+
 }

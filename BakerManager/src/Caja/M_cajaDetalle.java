@@ -35,6 +35,7 @@ import java.util.List;
  */
 public class M_cajaDetalle {
 
+    private Date fechaInicial, fechaFinal;
     private M_funcionario funcionario;
     private SeleccionVentaCabeceraTableModel movVentasTM;
     private SeleccionCompraCabeceraTableModel movCompraTM;
@@ -43,15 +44,40 @@ public class M_cajaDetalle {
 
     public M_cajaDetalle() {
         this.funcionario = new M_funcionario();
+        this.funcionario.setId_funcionario(-1);
         this.movVentasTM = new SeleccionVentaCabeceraTableModel();
         this.movCompraTM = new SeleccionCompraCabeceraTableModel();
         this.movCobroTM = new SeleccionCobroCabeceraTableModel();
         this.movPagoTM = new SeleccionPagoCabeceraTableModel();
+    }
+
+    private void initializeTableModels() {
+        //Calendar calendarInicio = Calendar.getInstance();
+        obtenerVentasCabecera(-1, -1, -1, fechaInicial, fechaFinal);
+        obtenerComprasCabecera(-1, -1, -1, fechaInicial, fechaFinal);
+        obtenerCobrosCabecera(-1, -1, fechaInicial, fechaFinal);
+        obtenerPagosCabecera(-1, -1, fechaInicial, fechaFinal);
+
+    }
+
+    public void buscarMovimientos(int idFuncionario, Date fechaInicio, Date fechaFin) {
         Calendar calendarInicio = Calendar.getInstance();
-        obtenerVentasCabecera(-1, -1, -1, calendarInicio.getTime(), calendarInicio.getTime());
-        obtenerComprasCabecera(-1, -1, -1, calendarInicio.getTime(), calendarInicio.getTime());
-        obtenerCobrosCabecera(-1, -1, calendarInicio.getTime(), calendarInicio.getTime());
-        obtenerPagosCabecera(-1, -1, calendarInicio.getTime(), calendarInicio.getTime());
+        calendarInicio.setTime(fechaInicio);
+        calendarInicio.set(Calendar.HOUR_OF_DAY, 0);
+        calendarInicio.set(Calendar.MINUTE, 0);
+        calendarInicio.set(Calendar.SECOND, 0);
+        calendarInicio.set(Calendar.MILLISECOND, 0);
+        Calendar calendarFinal = Calendar.getInstance();
+        calendarFinal.setTime(fechaFin);
+        calendarFinal.set(Calendar.HOUR_OF_DAY, 23);
+        calendarFinal.set(Calendar.MINUTE, 59);
+        calendarFinal.set(Calendar.SECOND, 59);
+        calendarFinal.set(Calendar.MILLISECOND, 999);
+        obtenerVentasCabecera(idFuncionario, -1, -1, calendarInicio.getTime(), calendarInicio.getTime());
+        obtenerComprasCabecera(idFuncionario, -1, -1, calendarInicio.getTime(), calendarInicio.getTime());
+        obtenerCobrosCabecera(idFuncionario, -1, calendarInicio.getTime(), calendarInicio.getTime());
+        obtenerPagosCabecera(idFuncionario, -1, calendarInicio.getTime(), calendarInicio.getTime());
+
     }
 
     public SeleccionVentaCabeceraTableModel getMovVentasTM() {
@@ -91,20 +117,8 @@ public class M_cajaDetalle {
     }
 
     public void obtenerVentasCabecera(int idFuncionario, int idCliente, int idTipoOperacion, Date fechaInicio, Date fechaFin) {
-        Calendar calendarInicio = Calendar.getInstance();
-        calendarInicio.setTime(fechaInicio);
-        calendarInicio.set(Calendar.HOUR_OF_DAY, 0);
-        calendarInicio.set(Calendar.MINUTE, 0);
-        calendarInicio.set(Calendar.SECOND, 0);
-        calendarInicio.set(Calendar.MILLISECOND, 0);
-        Calendar calendarFinal = Calendar.getInstance();
-        calendarFinal.setTime(fechaFin);
-        calendarFinal.set(Calendar.HOUR_OF_DAY, 23);
-        calendarFinal.set(Calendar.MINUTE, 59);
-        calendarFinal.set(Calendar.SECOND, 59);
-        calendarFinal.set(Calendar.MILLISECOND, 999);
         ArrayList<SeleccionVentaCabecera> lista = new ArrayList<>();
-        List<E_facturaCabecera> list = DB_Ingreso.obtenerMovimientoVentasCabeceras(idFuncionario, idCliente, calendarInicio.getTime(), calendarFinal.getTime(), idTipoOperacion);
+        List<E_facturaCabecera> list = DB_Ingreso.obtenerMovimientoVentasCabeceras(idFuncionario, idCliente, fechaInicio, fechaFin, idTipoOperacion);
         for (E_facturaCabecera ventaCabecera : list) {
             lista.add(new SeleccionVentaCabecera(ventaCabecera, true));
         }
@@ -112,20 +126,8 @@ public class M_cajaDetalle {
     }
 
     public void obtenerComprasCabecera(int idFuncionario, int idProveedor, int idTipoOperacion, Date fechaInicio, Date fechaFin) {
-        Calendar calendarInicio = Calendar.getInstance();
-        calendarInicio.setTime(fechaInicio);
-        calendarInicio.set(Calendar.HOUR_OF_DAY, 0);
-        calendarInicio.set(Calendar.MINUTE, 0);
-        calendarInicio.set(Calendar.SECOND, 0);
-        calendarInicio.set(Calendar.MILLISECOND, 0);
-        Calendar calendarFinal = Calendar.getInstance();
-        calendarFinal.setTime(fechaFin);
-        calendarFinal.set(Calendar.HOUR_OF_DAY, 23);
-        calendarFinal.set(Calendar.MINUTE, 59);
-        calendarFinal.set(Calendar.SECOND, 59);
-        calendarFinal.set(Calendar.MILLISECOND, 999);
         ArrayList<SeleccionCompraCabecera> lista = new ArrayList<>();
-        List<M_egreso_cabecera> list = DB_Egreso.obtenerMovimientoComprasCabeceras(idFuncionario, idProveedor, idTipoOperacion, calendarInicio.getTime(), calendarFinal.getTime());
+        List<M_egreso_cabecera> list = DB_Egreso.obtenerMovimientoComprasCabeceras(idFuncionario, idProveedor, idTipoOperacion, fechaInicio, fechaFin);
         for (M_egreso_cabecera egresoCabecera : list) {
             lista.add(new SeleccionCompraCabecera(egresoCabecera, true));
         }
@@ -133,20 +135,8 @@ public class M_cajaDetalle {
     }
 
     public void obtenerCobrosCabecera(int idFuncionario, int idCliente, Date fechaInicio, Date fechaFin) {
-        Calendar calendarInicio = Calendar.getInstance();
-        calendarInicio.setTime(fechaInicio);
-        calendarInicio.set(Calendar.HOUR_OF_DAY, 0);
-        calendarInicio.set(Calendar.MINUTE, 0);
-        calendarInicio.set(Calendar.SECOND, 0);
-        calendarInicio.set(Calendar.MILLISECOND, 0);
-        Calendar calendarFinal = Calendar.getInstance();
-        calendarFinal.setTime(fechaFin);
-        calendarFinal.set(Calendar.HOUR_OF_DAY, 23);
-        calendarFinal.set(Calendar.MINUTE, 59);
-        calendarFinal.set(Calendar.SECOND, 59);
-        calendarFinal.set(Calendar.MILLISECOND, 999);
         ArrayList<SeleccionCobroCabecera> lista = new ArrayList<>();
-        List<E_cuentaCorrienteCabecera> list = DB_Cobro.obtenerMovimientoCobrosCabeceras(idFuncionario, idCliente, calendarInicio.getTime(), calendarFinal.getTime());
+        List<E_cuentaCorrienteCabecera> list = DB_Cobro.obtenerMovimientoCobrosCabeceras(idFuncionario, idCliente, fechaInicio, fechaFin);
         for (E_cuentaCorrienteCabecera egresoCabecera : list) {
             lista.add(new SeleccionCobroCabecera(egresoCabecera, true));
         }
@@ -158,20 +148,8 @@ public class M_cajaDetalle {
     }
 
     public void obtenerPagosCabecera(int idFuncionario, int idProveedor, Date fechaInicio, Date fechaFin) {
-        Calendar calendarInicio = Calendar.getInstance();
-        calendarInicio.setTime(fechaInicio);
-        calendarInicio.set(Calendar.HOUR_OF_DAY, 0);
-        calendarInicio.set(Calendar.MINUTE, 0);
-        calendarInicio.set(Calendar.SECOND, 0);
-        calendarInicio.set(Calendar.MILLISECOND, 0);
-        Calendar calendarFinal = Calendar.getInstance();
-        calendarFinal.setTime(fechaFin);
-        calendarFinal.set(Calendar.HOUR_OF_DAY, 23);
-        calendarFinal.set(Calendar.MINUTE, 59);
-        calendarFinal.set(Calendar.SECOND, 59);
-        calendarFinal.set(Calendar.MILLISECOND, 999);
         ArrayList<SeleccionPagoCabecera> lista = new ArrayList<>();
-        List<E_reciboPagoCabecera> list = DB_Pago.obtenerMovimientoPagosCabeceras(idFuncionario, idProveedor, calendarInicio.getTime(), calendarFinal.getTime());
+        List<E_reciboPagoCabecera> list = DB_Pago.obtenerMovimientoPagosCabeceras(idFuncionario, idProveedor, fechaInicio, fechaFin);
         for (E_reciboPagoCabecera reciboPagoCabecera : list) {
             lista.add(new SeleccionPagoCabecera(reciboPagoCabecera, true));
         }
@@ -180,5 +158,11 @@ public class M_cajaDetalle {
 
     public List<E_reciboPagoDetalle> obtenerDetallePago(int idReciboPago) {
         return DB_Pago.obtenerPagoDetalle(idReciboPago);
+    }
+
+    public void setRangoTiempo(Date tiempoInicio, Date tiempoFinal) {
+        this.fechaInicial = tiempoInicio;
+        this.fechaFinal = tiempoFinal;
+        initializeTableModels();
     }
 }

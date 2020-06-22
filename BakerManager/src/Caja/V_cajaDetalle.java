@@ -228,11 +228,9 @@ public class V_cajaDetalle extends JDialog {
         Insets insets = new Insets(10, 10, 10, 10);
         jbAceptar = new JButton("Aceptar");
         jbAceptar.setFont(CommonFormat.fuente);
-        jbAceptar.setEnabled(false);
         jbAceptar.setMargin(insets);
         jbCancelar = new JButton("Cancelar");
         jbCancelar.setFont(CommonFormat.fuente);
-        jbCancelar.setEnabled(false);
         jbCancelar.setMargin(insets);
         jpBot.add(jbAceptar);
         jpBot.add(jbCancelar);

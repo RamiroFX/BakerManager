@@ -626,8 +626,6 @@ public class DB_Pago {
             Query = Query + " AND RPC.ID_PROVEEDOR = ? ";
         }
         Query = Query + " ORDER BY \"ID\"";
-        System.err.println("q:");
-        System.err.println(Query);
         int pos = 3;
         try {
             pst = DB_manager.getConection().prepareStatement(Query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
