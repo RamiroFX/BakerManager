@@ -188,7 +188,7 @@ public class DB_Cobro {
         return list;
     }
 
-    public static List<E_cuentaCorrienteCabecera> obtenerCobro(int idCliente, int idFuncionario, Date fechaInicio, Date fechaFinal, int nroRecibo, int idEstado) {
+    public static List<E_cuentaCorrienteCabecera> obtenerCobros(int idCliente, int idFuncionario, Date fechaInicio, Date fechaFinal, int nroRecibo, int idEstado) {
         List<E_cuentaCorrienteCabecera> list = new ArrayList();
         String query = "SELECT "
                 + "CCC.ID_CTA_CTE_CABECERA, "//1
@@ -513,15 +513,15 @@ public class DB_Cobro {
                             pst.setInt(4, (int) unDetalle.getMonto());
                             pst.setInt(5, unDetalle.getNroCheque());
                             pst.setInt(6, unDetalle.getBanco().getId());
+                            pst.setTimestamp(7, new Timestamp(unDetalle.getFechaCheque().getTime()));
                             /*
                             en caso de que pague el saldo inicial entonces se comentara en la observacion
                              */
                             if (unDetalle.getIdFacturaCabecera() == 0) {
-                                pst.setString(7, "Saldo inicial");
+                                pst.setString(8, "Saldo inicial");
                             } else {
-                                pst.setNull(7, java.sql.Types.VARCHAR);
+                                pst.setNull(8, java.sql.Types.VARCHAR);
                             }
-                            pst.setTimestamp(7, new Timestamp(unDetalle.getFechaCheque().getTime()));
                             pst.executeUpdate();
                             pst.close();
                         }
@@ -657,6 +657,77 @@ public class DB_Cobro {
             }
         }
         return totalCobrado;
+    }
+
+    public static List<E_cuentaCorrienteCabecera> obtenerMovimientoCobrosCabeceras(int idFuncionario, int idCliente, Date fechaInicio, Date fechaFinal) {
+        List<E_cuentaCorrienteCabecera> list = new ArrayList<>();
+        String Query = "SELECT CCC.ID_CTA_CTE_CABECERA \"ID\", "
+                + "CCC.NRO_RECIBO \"NRO_RECIBO\", "
+                + "(SELECT NOMBRE || ' '|| APELLIDO WHERE F.ID_PERSONA = P.ID_PERSONA)\"EMPLEADO\", "
+                + "(SELECT ENTIDAD FROM CLIENTE C WHERE CCC.ID_CLIENTE= C.ID_CLIENTE) \"CLIENTE\", "
+                + "FECHA_COBRO, "
+                + "(SELECT SUM (MONTO) FROM CUENTA_CORRIENTE_DETALLE CCD WHERE CCC.ID_CTA_CTE_CABECERA = CCD.ID_CTA_CTE_CABECERA)\"TOTAL\" "
+                + "FROM CUENTA_CORRIENTE_CABECERA CCC ,FUNCIONARIO F, PERSONA P "
+                + "WHERE  CCC.FECHA_COBRO BETWEEN ?  "
+                + "AND ? "
+                + "AND CCC.ID_FUNCIONARIO_REGISTRO = F.ID_FUNCIONARIO "
+                + "AND F.ID_PERSONA = P.ID_PERSONA "
+                + "AND CCC.ID_ESTADO = 1 ";
+
+        if (idFuncionario > -1) {
+            Query = Query + " AND CCC.ID_FUNCIONARIO_REGISTRO = ? ";
+        }
+        if (idCliente > -1) {
+            Query = Query + " AND CCC.ID_CLIENTE = ? ";
+        }
+        Query = Query + " ORDER BY \"ID\"";
+        System.err.println("q:");
+        System.err.println(Query);
+        int pos = 3;
+        try {
+            pst = DB_manager.getConection().prepareStatement(Query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            pst.setTimestamp(1, new java.sql.Timestamp(fechaInicio.getTime()));
+            pst.setTimestamp(2, new java.sql.Timestamp(fechaFinal.getTime()));
+            if (idFuncionario > -1) {
+                pst.setInt(pos, idFuncionario);
+                pos++;
+            }
+            if (idCliente > 0) {
+                pst.setInt(pos, idCliente);
+                pos++;
+            }
+            rs = pst.executeQuery();
+            while (rs.next()) {
+                M_cliente cliente = new M_cliente();
+                M_funcionario funcionario = new M_funcionario();
+                funcionario.setNombre(rs.getString("EMPLEADO"));
+                cliente.setEntidad(rs.getString("CLIENTE"));
+                E_cuentaCorrienteCabecera ccc = new E_cuentaCorrienteCabecera();
+                ccc.setId(rs.getInt("ID"));
+                ccc.setNroRecibo(rs.getInt("NRO_RECIBO"));
+                ccc.setDebito(rs.getInt("TOTAL"));
+                ccc.setCliente(cliente);
+                ccc.setFuncionario(funcionario);
+                ccc.setFechaPago(rs.getTimestamp("FECHA_COBRO"));
+                list.add(ccc);
+            }
+        } catch (SQLException ex) {
+            Logger lgr = Logger.getLogger(DB_Cobro.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (pst != null) {
+                    pst.close();
+                }
+            } catch (SQLException ex) {
+                Logger lgr = Logger.getLogger(DB_Cobro.class.getName());
+                lgr.log(Level.WARNING, ex.getMessage(), ex);
+            }
+        }
+        return list;
     }
 
 }

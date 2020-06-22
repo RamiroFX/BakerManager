@@ -1042,7 +1042,8 @@ public class DB_Egreso {
                 + "(SELECT ENTIDAD FROM PROVEEDOR PV WHERE EC.ID_PROVEEDOR = PV.ID_PROVEEDOR) \"PROVEEDOR\", "
                 + "TIEMPO, "
                 + "(SELECT SUM (CANTIDAD*(PRECIO-(PRECIO*DESCUENTO)/100)) FROM EGRESO_DETALLE ED WHERE ED.ID_EGRESO_CABECERA = EC.ID_EGRESO_CABECERA)\"TOTAL\", "
-                + "(SELECT TIOP.DESCRIPCION FROM TIPO_OPERACION TIOP WHERE TIOP.ID_TIPO_OPERACION = EC.ID_COND_COMPRA) \"COND_COMPRA\" "
+                + "(SELECT TIOP.DESCRIPCION FROM TIPO_OPERACION TIOP WHERE TIOP.ID_TIPO_OPERACION = EC.ID_COND_COMPRA) \"COND_COMPRA\", "
+                + "EC.ID_COND_COMPRA \"ID_COND_COMPRA\" "
                 + "FROM EGRESO_CABECERA EC ,FUNCIONARIO F, PERSONA P "
                 + "WHERE  EC.TIEMPO BETWEEN ?  "
                 + "AND ? "
@@ -1091,6 +1092,7 @@ public class DB_Egreso {
                 egca.setTotal(rs.getInt("TOTAL"));
                 egca.setProveedor(proveedor);
                 egca.setFuncionario(funcionario);
+                egca.setId_condVenta(rs.getInt("ID_COND_COMPRA"));
                 egca.setCondVenta(rs.getString("COND_COMPRA"));
                 egca.setTiempo(rs.getTimestamp("TIEMPO"));
                 list.add(egca);

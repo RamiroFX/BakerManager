@@ -603,4 +603,75 @@ public class DB_Pago {
         }
         return totalPagado;
     }
+
+    public static List<E_reciboPagoCabecera> obtenerMovimientoPagosCabeceras(int idFuncionario, int idProveedor, Date fechaInicio, Date fechaFinal) {
+        List<E_reciboPagoCabecera> list = new ArrayList<>();
+        String Query = "SELECT RPC.id_recibo_pago_cabecera \"ID\", "
+                + "RPC.NRO_RECIBO \"NRO_RECIBO\", "
+                + "(SELECT NOMBRE || ' '|| APELLIDO WHERE F.ID_PERSONA = P.ID_PERSONA)\"EMPLEADO\", "
+                + "(SELECT ENTIDAD FROM PROVEEDOR PROV WHERE RPC.ID_PROVEEDOR= PROV.ID_PROVEEDOR) \"PROVEEDOR\", "
+                + "FECHA_PAGO, "
+                + "(SELECT SUM (MONTO) FROM recibo_pago_detalle RPD WHERE RPC.id_recibo_pago_cabecera = RPD.id_recibo_pago_cabecera)\"TOTAL\" "
+                + "FROM RECIBO_PAGO_CABECERA RPC ,FUNCIONARIO F, PERSONA P "
+                + "WHERE  RPC.FECHA_PAGO BETWEEN ?  "
+                + "AND ? "
+                + "AND RPC.ID_FUNCIONARIO_REGISTRO = F.ID_FUNCIONARIO "
+                + "AND F.ID_PERSONA = P.ID_PERSONA "
+                + "AND RPC.ID_ESTADO = 1 ";
+
+        if (idFuncionario > -1) {
+            Query = Query + " AND RPC.ID_FUNCIONARIO_REGISTRO = ? ";
+        }
+        if (idProveedor > -1) {
+            Query = Query + " AND RPC.ID_PROVEEDOR = ? ";
+        }
+        Query = Query + " ORDER BY \"ID\"";
+        System.err.println("q:");
+        System.err.println(Query);
+        int pos = 3;
+        try {
+            pst = DB_manager.getConection().prepareStatement(Query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            pst.setTimestamp(1, new java.sql.Timestamp(fechaInicio.getTime()));
+            pst.setTimestamp(2, new java.sql.Timestamp(fechaFinal.getTime()));
+            if (idFuncionario > -1) {
+                pst.setInt(pos, idFuncionario);
+                pos++;
+            }
+            if (idProveedor > 0) {
+                pst.setInt(pos, idProveedor);
+                pos++;
+            }
+            rs = pst.executeQuery();
+            while (rs.next()) {
+                M_proveedor proveedor = new M_proveedor();
+                M_funcionario funcionario = new M_funcionario();
+                funcionario.setNombre(rs.getString("EMPLEADO"));
+                proveedor.setEntidad(rs.getString("PROVEEDOR"));
+                E_reciboPagoCabecera ccc = new E_reciboPagoCabecera();
+                ccc.setId(rs.getInt("ID"));
+                ccc.setNroRecibo(rs.getInt("NRO_RECIBO"));
+                ccc.setMonto(rs.getInt("TOTAL"));
+                ccc.setProveedor(proveedor);
+                ccc.setFuncionario(funcionario);
+                ccc.setFechaPago(rs.getTimestamp("FECHA_PAGO"));
+                list.add(ccc);
+            }
+        } catch (SQLException ex) {
+            Logger lgr = Logger.getLogger(DB_Cobro.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (pst != null) {
+                    pst.close();
+                }
+            } catch (SQLException ex) {
+                Logger lgr = Logger.getLogger(DB_Cobro.class.getName());
+                lgr.log(Level.WARNING, ex.getMessage(), ex);
+            }
+        }
+        return list;
+    }
 }

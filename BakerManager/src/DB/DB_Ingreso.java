@@ -1899,7 +1899,7 @@ public class DB_Ingreso {
 
     public static List<E_facturaCabecera> obtenerVentasCabeceras(int idCliente, String inicio, String fin, String condVenta) {
         List<E_facturaCabecera> list = new ArrayList<>();
-        String Query = "SELECT ID_FACTURA_CABECERA \"ID\", "
+        String Query = "SELECT ID_FACTURA_CABECERA \"ID\", FC.nro_factura \"NRO_FACTURA\", "
                 + "(SELECT NOMBRE || ' '|| APELLIDO WHERE F.ID_PERSONA = P.ID_PERSONA)\"Empleado\", "
                 + "(SELECT ENTIDAD FROM CLIENTE C WHERE FC.ID_CLIENTE = C.ID_CLIENTE) \"Cliente\", "
                 + " TIEMPO , "
@@ -1930,6 +1930,7 @@ public class DB_Ingreso {
                 tiop.setDescripcion(rs.getString("COND_VENTA"));
                 E_facturaCabecera faca = new E_facturaCabecera();
                 faca.setIdFacturaCabecera(rs.getInt("ID"));
+                faca.setNroFactura(rs.getInt("NRO_FACTURA"));
                 faca.setTotal(rs.getInt("TOTAL"));
                 faca.setCliente(cliente);
                 faca.setFuncionario(funcionario);
@@ -1958,7 +1959,7 @@ public class DB_Ingreso {
 
     public static List<E_facturaCabecera> obtenerMovimientoVentasCabeceras(int idFuncionario, int idCliente, Date fechaInicio, Date fechaFinal, int idTipoOperacion) {
         List<E_facturaCabecera> list = new ArrayList<>();
-        String Query = "SELECT FC.id_factura_cabecera \"ID\", FC.id_funcionario, FC.id_cliente, FC.id_estado, FC.tiempo, FC.id_cond_venta, FC.nro_factura, "
+        String Query = "SELECT FC.id_factura_cabecera \"ID\", FC.id_funcionario, FC.id_cliente, FC.id_estado, FC.tiempo, FC.id_cond_venta, FC.nro_factura \"NRO_FACTURA\", "
                 + "(SELECT NOMBRE || ' '|| APELLIDO WHERE F.ID_PERSONA = P.ID_PERSONA)\"Empleado\", "
                 + "(SELECT ENTIDAD FROM CLIENTE C WHERE FC.ID_CLIENTE = C.ID_CLIENTE) \"Cliente\", "
                 + "(SELECT SUM (CANTIDAD*(PRECIO-(PRECIO*DESCUENTO)/100)) FROM FACTURA_DETALLE FCC WHERE FCC.ID_FACTURA_CABECERA = FC.ID_FACTURA_CABECERA) \"TOTAL\", "
@@ -2010,6 +2011,7 @@ public class DB_Ingreso {
                 tiop.setDescripcion(rs.getString("COND_VENTA"));
                 E_facturaCabecera faca = new E_facturaCabecera();
                 faca.setIdFacturaCabecera(rs.getInt("ID"));
+                faca.setNroFactura(rs.getInt("NRO_FACTURA"));
                 faca.setTotal(rs.getInt("TOTAL"));
                 faca.setCliente(cliente);
                 faca.setFuncionario(funcionario);

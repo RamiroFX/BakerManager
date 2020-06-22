@@ -179,6 +179,20 @@ public class E_reciboPagoDetalle {
         this.formaPago = formaPago;
     }
 
+    public E_formaPago calcularFormaPago() {
+        if (getBanco() == null) {
+            return new E_formaPago(E_formaPago.EFECTIVO, "Efectivo");
+        } else {
+            if (getBanco().getId() == 0) {
+                return new E_formaPago(E_formaPago.EFECTIVO, "Efectivo");
+            } else if (getNroCheque() == 0 && getFechaCheque() == null) {
+                return new E_formaPago(E_formaPago.TARJETA, "Tarjeta");
+            } else {
+                return new E_formaPago(E_formaPago.CHEQUE, "Cheque");
+            }
+        }
+    }
+
     /**
      * @return the tipoCheque
      */

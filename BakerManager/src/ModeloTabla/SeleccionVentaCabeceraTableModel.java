@@ -16,7 +16,7 @@ import javax.swing.table.AbstractTableModel;
 public class SeleccionVentaCabeceraTableModel extends AbstractTableModel {
 
     ArrayList<SeleccionVentaCabecera> list;
-    private String[] colNames = {"Id", "Cliente", "Funcionario", "Tiempo", "Total", "Cond.", "Seleccionado"};
+    private String[] colNames = {"Id", "Nro. factura", "Cliente", "Funcionario", "Tiempo", "Total", "Cond.", "Seleccionado"};
 
     private InterfaceSeleccionVentaCabecera interfaceSeleccionVentaCabecera;
 
@@ -45,7 +45,7 @@ public class SeleccionVentaCabeceraTableModel extends AbstractTableModel {
 
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
-        return columnIndex == 6;
+        return columnIndex == 7;
     }
 
     @Override
@@ -66,21 +66,24 @@ public class SeleccionVentaCabeceraTableModel extends AbstractTableModel {
                 return seleccionVentaCabecera.getFacturaCabecera().getIdFacturaCabecera();
             }
             case 1: {
-                return seleccionVentaCabecera.getFacturaCabecera().getCliente().getEntidad();
+                return seleccionVentaCabecera.getFacturaCabecera().getNroFactura();
             }
             case 2: {
-                return seleccionVentaCabecera.getFacturaCabecera().getFuncionario().getNombre();
+                return seleccionVentaCabecera.getFacturaCabecera().getCliente().getEntidad();
             }
             case 3: {
-                return seleccionVentaCabecera.getFacturaCabecera().getTiempo();
+                return seleccionVentaCabecera.getFacturaCabecera().getFuncionario().getNombre();
             }
             case 4: {
-                return seleccionVentaCabecera.getFacturaCabecera().getTotal();
+                return seleccionVentaCabecera.getFacturaCabecera().getTiempo();
             }
             case 5: {
-                return seleccionVentaCabecera.getFacturaCabecera().getTipoOperacion().getDescripcion();
+                return seleccionVentaCabecera.getFacturaCabecera().getTotal();
             }
             case 6: {
+                return seleccionVentaCabecera.getFacturaCabecera().getTipoOperacion().getDescripcion();
+            }
+            case 7: {
                 return seleccionVentaCabecera.isEstaSeleccionado();
             }
             default: {
@@ -91,7 +94,7 @@ public class SeleccionVentaCabeceraTableModel extends AbstractTableModel {
 
     @Override
     public void setValueAt(Object aValue, int row, int column) {
-        if (aValue instanceof Boolean && column == 6) {
+        if (aValue instanceof Boolean && column == 7) {
             SeleccionVentaCabecera rowData = list.get(row);
             rowData.setEstaSeleccionado((boolean) aValue);
             interfaceSeleccionVentaCabecera.notificarCambioSeleccion();

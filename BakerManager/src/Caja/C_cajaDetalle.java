@@ -6,12 +6,20 @@
 package Caja;
 
 import Empleado.Seleccionar_funcionario;
+import Entities.E_cuentaCorrienteDetalle;
+import Entities.E_formaPago;
+import Entities.E_reciboPagoDetalle;
 import Entities.E_tipoOperacion;
 import Entities.M_funcionario;
 import Interface.GestionInterface;
+import Interface.InterfaceSeleccionCobroCabecera;
 import Interface.InterfaceSeleccionCompraCabecera;
+import Interface.InterfaceSeleccionPagoCabecera;
 import Interface.InterfaceSeleccionVentaCabecera;
 import Interface.RecibirEmpleadoCallback;
+import ModeloTabla.SeleccionCobroCabecera;
+import ModeloTabla.SeleccionCompraCabecera;
+import ModeloTabla.SeleccionPagoCabecera;
 import ModeloTabla.SeleccionVentaCabecera;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
@@ -27,7 +35,7 @@ import javax.swing.JOptionPane;
  * @author Ramiro Ferreira
  */
 public class C_cajaDetalle implements GestionInterface, RecibirEmpleadoCallback, InterfaceSeleccionVentaCabecera,
-        InterfaceSeleccionCompraCabecera {
+        InterfaceSeleccionCompraCabecera, InterfaceSeleccionCobroCabecera, InterfaceSeleccionPagoCabecera {
 
     V_cajaDetalle vista;
     M_cajaDetalle modelo;
@@ -37,6 +45,8 @@ public class C_cajaDetalle implements GestionInterface, RecibirEmpleadoCallback,
         this.modelo = modelo;
         this.modelo.getMovVentasTM().setInterface(this);
         this.modelo.getMovComprasTM().setInterface(this);
+        this.modelo.getMovCobroTM().setInterface(this);
+        this.modelo.getMovPagoTM().setInterface(this);
         this.vista.setLocationRelativeTo(null);
         callMethods();
     }
@@ -45,12 +55,21 @@ public class C_cajaDetalle implements GestionInterface, RecibirEmpleadoCallback,
         inicializarVista();
         concederPermisos();
         actualizarSumaVentas();
+        actualizarSumaCompras();
+        actualizarSumaCobros();
+        actualizarSumaPagos();
     }
 
     @Override
     public void inicializarVista() {
         this.vista.jtVentas.setModel(modelo.getMovVentasTM());
         this.vista.jtCompras.setModel(modelo.getMovComprasTM());
+        this.vista.jtCobros.setModel(modelo.getMovCobroTM());
+        this.vista.jtPagos.setModel(modelo.getMovPagoTM());
+        Utilities.c_packColumn.packColumns(this.vista.jtVentas, 1);
+        Utilities.c_packColumn.packColumns(this.vista.jtCompras, 1);
+        Utilities.c_packColumn.packColumns(this.vista.jtCobros, 1);
+        Utilities.c_packColumn.packColumns(this.vista.jtPagos, 1);
         Date date = Calendar.getInstance().getTime();
         this.vista.jddInicio.setDate(date);
         this.vista.jddFinal.setDate(date);
@@ -72,6 +91,10 @@ public class C_cajaDetalle implements GestionInterface, RecibirEmpleadoCallback,
         this.vista.jbQuitarVentas.addActionListener(this);
         this.vista.jbAgregarCompras.addActionListener(this);
         this.vista.jbQuitarCompras.addActionListener(this);
+        this.vista.jbAgregarCobro.addActionListener(this);
+        this.vista.jbQuitarCobro.addActionListener(this);
+        this.vista.jbAgregarPago.addActionListener(this);
+        this.vista.jbQuitarPago.addActionListener(this);
         /**
          * **ESCAPE HOTKEY/
          */
@@ -84,6 +107,10 @@ public class C_cajaDetalle implements GestionInterface, RecibirEmpleadoCallback,
         this.vista.jbQuitarVentas.addKeyListener(this);
         this.vista.jbAgregarCompras.addKeyListener(this);
         this.vista.jbQuitarCompras.addKeyListener(this);
+        this.vista.jbAgregarCobro.addKeyListener(this);
+        this.vista.jbQuitarCobro.addKeyListener(this);
+        this.vista.jbAgregarPago.addKeyListener(this);
+        this.vista.jbQuitarPago.addKeyListener(this);
     }
 
     @Override
@@ -177,7 +204,7 @@ public class C_cajaDetalle implements GestionInterface, RecibirEmpleadoCallback,
     private void agregarTodoVentas() {
         int rows = this.vista.jtVentas.getModel().getRowCount();
         for (int i = 0; i < rows; i++) {
-            this.vista.jtVentas.getModel().setValueAt(true, i, 6);
+            this.vista.jtVentas.getModel().setValueAt(true, i, 7);
         }
         actualizarSumaVentas();
     }
@@ -185,9 +212,126 @@ public class C_cajaDetalle implements GestionInterface, RecibirEmpleadoCallback,
     private void quitarTodoVentas() {
         int rows = this.vista.jtVentas.getModel().getRowCount();
         for (int i = 0; i < rows; i++) {
-            this.vista.jtVentas.getModel().setValueAt(false, i, 6);
+            this.vista.jtVentas.getModel().setValueAt(false, i, 7);
         }
         actualizarSumaVentas();
+    }
+
+    private void actualizarSumaCompras() {
+        int totalContado = 0, totalCredito = 0;
+        for (SeleccionCompraCabecera seleccionCompraCabecera : modelo.getMovComprasTM().getList()) {
+            if (seleccionCompraCabecera.isEstaSeleccionado()) {
+                switch (seleccionCompraCabecera.getFacturaCabecera().getId_condVenta()) {
+                    case E_tipoOperacion.CONTADO: {
+                        totalContado = totalContado + seleccionCompraCabecera.getFacturaCabecera().getTotal();
+                        break;
+                    }
+                    case E_tipoOperacion.CREDITO_30: {
+                        totalCredito = totalCredito + seleccionCompraCabecera.getFacturaCabecera().getTotal();
+                        break;
+                    }
+                }
+            }
+        }
+        this.vista.jftTotalCompraContado.setValue(totalContado);
+        this.vista.jftTotalCompraCredito.setValue(totalCredito);
+        this.vista.jftTotalCompra.setValue(totalContado + totalCredito);
+    }
+
+    private void agregarTodoCompras() {
+        int rows = this.vista.jtCompras.getModel().getRowCount();
+        for (int i = 0; i < rows; i++) {
+            this.vista.jtCompras.getModel().setValueAt(true, i, 7);
+        }
+        actualizarSumaCompras();
+    }
+
+    private void quitarTodoCompras() {
+        int rows = this.vista.jtCompras.getModel().getRowCount();
+        for (int i = 0; i < rows; i++) {
+            this.vista.jtCompras.getModel().setValueAt(false, i, 7);
+        }
+        actualizarSumaCompras();
+    }
+
+    private void actualizarSumaCobros() {
+        int totalEfectivo = 0, totalCheque = 0;
+        for (SeleccionCobroCabecera seleccionCobroCabecera : modelo.getMovCobroTM().getList()) {
+            if (seleccionCobroCabecera.isSeleccionado()) {
+                for (E_cuentaCorrienteDetalle e_cuentaCorrienteDetalle : modelo.obtenerDetalleCobro(seleccionCobroCabecera.getCobro().getId())) {
+                    switch (e_cuentaCorrienteDetalle.calcularFormaPago().getId()) {
+                        case E_formaPago.EFECTIVO: {
+                            totalEfectivo = (int) (totalEfectivo + e_cuentaCorrienteDetalle.getMonto());
+                            break;
+                        }
+                        case E_formaPago.CHEQUE: {
+                            totalCheque = (int) (totalCheque + e_cuentaCorrienteDetalle.getMonto());
+                            break;
+                        }
+                    }
+
+                }
+            }
+        }
+        this.vista.jftTotalCobroEfectivo.setValue(totalEfectivo);
+        this.vista.jftTotalCobroCheque.setValue(totalCheque);
+        this.vista.jftTotalCobro.setValue(totalEfectivo + totalCheque);
+    }
+
+    private void agregarTodoCobros() {
+        int rows = this.vista.jtCobros.getModel().getRowCount();
+        for (int i = 0; i < rows; i++) {
+            this.vista.jtCobros.getModel().setValueAt(true, i, 6);
+        }
+        actualizarSumaCobros();
+    }
+
+    private void quitarTodoCobros() {
+        int rows = this.vista.jtCobros.getModel().getRowCount();
+        for (int i = 0; i < rows; i++) {
+            this.vista.jtCobros.getModel().setValueAt(false, i, 6);
+        }
+        actualizarSumaCobros();
+    }
+
+    private void actualizarSumaPagos() {
+        int totalEfectivo = 0, totalCheque = 0;
+        for (SeleccionPagoCabecera seleccionPagoCabecera : modelo.getMovPagoTM().getList()) {
+            if (seleccionPagoCabecera.isSeleccionado()) {
+                for (E_reciboPagoDetalle reciboPagoDetalle : modelo.obtenerDetallePago(seleccionPagoCabecera.getPago().getId())) {
+                    switch (reciboPagoDetalle.calcularFormaPago().getId()) {
+                        case E_formaPago.EFECTIVO: {
+                            totalEfectivo = (int) (totalEfectivo + reciboPagoDetalle.getMonto());
+                            break;
+                        }
+                        case E_formaPago.CHEQUE: {
+                            totalCheque = (int) (totalCheque + reciboPagoDetalle.getMonto());
+                            break;
+                        }
+                    }
+
+                }
+            }
+        }
+        this.vista.jftTotalPagoEfectivo.setValue(totalEfectivo);
+        this.vista.jftTotalPagoCheque.setValue(totalCheque);
+        this.vista.jftTotalPago.setValue(totalEfectivo + totalCheque);
+    }
+
+    private void agregarTodoPagos() {
+        int rows = this.vista.jtPagos.getModel().getRowCount();
+        for (int i = 0; i < rows; i++) {
+            this.vista.jtPagos.getModel().setValueAt(true, i, 6);
+        }
+        actualizarSumaPagos();
+    }
+
+    private void quitarTodoPagos() {
+        int rows = this.vista.jtPagos.getModel().getRowCount();
+        for (int i = 0; i < rows; i++) {
+            this.vista.jtPagos.getModel().setValueAt(false, i, 6);
+        }
+        actualizarSumaPagos();
     }
 
     @Override
@@ -206,6 +350,18 @@ public class C_cajaDetalle implements GestionInterface, RecibirEmpleadoCallback,
             agregarTodoVentas();
         } else if (src.equals(this.vista.jbQuitarVentas)) {
             quitarTodoVentas();
+        } else if (src.equals(this.vista.jbAgregarCompras)) {
+            agregarTodoCompras();
+        } else if (src.equals(this.vista.jbQuitarCompras)) {
+            quitarTodoCompras();
+        } else if (src.equals(this.vista.jbAgregarCobro)) {
+            agregarTodoCobros();
+        } else if (src.equals(this.vista.jbQuitarCobro)) {
+            quitarTodoCobros();
+        } else if (src.equals(this.vista.jbAgregarPago)) {
+            agregarTodoPagos();
+        } else if (src.equals(this.vista.jbQuitarPago)) {
+            quitarTodoPagos();
         }
     }
 
@@ -254,6 +410,17 @@ public class C_cajaDetalle implements GestionInterface, RecibirEmpleadoCallback,
 
     @Override
     public void notificarCambioSeleccionCompraCabecera() {
+        actualizarSumaCompras();
+    }
+
+    @Override
+    public void notificarCambioSeleccionCobroCabecera() {
+        actualizarSumaCobros();
+    }
+
+    @Override
+    public void notificarCambioSeleccionPagoCabecera() {
+        actualizarSumaPagos();
     }
 
 }

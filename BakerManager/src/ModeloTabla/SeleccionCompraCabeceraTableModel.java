@@ -45,7 +45,7 @@ public class SeleccionCompraCabeceraTableModel extends AbstractTableModel {
 
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
-        return columnIndex == 6;
+        return columnIndex == 7;
     }
 
     @Override
@@ -94,7 +94,7 @@ public class SeleccionCompraCabeceraTableModel extends AbstractTableModel {
 
     @Override
     public void setValueAt(Object aValue, int row, int column) {
-        if (aValue instanceof Boolean && column == 6) {
+        if (aValue instanceof Boolean && column == 7) {
             SeleccionCompraCabecera rowData = list.get(row);
             rowData.setEstaSeleccionado((boolean) aValue);
             interfaceSeleccionVentaCabecera.notificarCambioSeleccionCompraCabecera();
