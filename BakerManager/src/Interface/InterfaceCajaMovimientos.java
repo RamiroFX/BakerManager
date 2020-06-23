@@ -5,12 +5,14 @@
  */
 package Interface;
 
+import java.util.Date;
+
 /**
  *
  * @author Ramiro Ferreira
  */
 public interface InterfaceCajaMovimientos {
 
-    public void recibirMovimientos(MovimientosCaja movimientosCaja);
+    public void recibirMovimientos(MovimientosCaja movimientosCaja, Date tiempoInicio, Date tiempoFin);
 
 }

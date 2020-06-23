@@ -1959,7 +1959,7 @@ public class DB_Ingreso {
 
     public static List<E_facturaCabecera> obtenerMovimientoVentasCabeceras(int idFuncionario, int idCliente, Date fechaInicio, Date fechaFinal, int idTipoOperacion) {
         List<E_facturaCabecera> list = new ArrayList<>();
-        String Query = "SELECT FC.id_factura_cabecera \"ID\", FC.id_funcionario, FC.id_cliente, FC.id_estado, FC.tiempo, FC.id_cond_venta, FC.nro_factura \"NRO_FACTURA\", "
+        String Query = "SELECT FC.id_factura_cabecera \"ID\", FC.id_funcionario, FC.id_cliente, FC.id_estado, FC.tiempo \"TIEMPO\", FC.id_cond_venta, FC.nro_factura \"NRO_FACTURA\", "
                 + "(SELECT NOMBRE || ' '|| APELLIDO WHERE F.ID_PERSONA = P.ID_PERSONA)\"Empleado\", "
                 + "(SELECT ENTIDAD FROM CLIENTE C WHERE FC.ID_CLIENTE = C.ID_CLIENTE) \"Cliente\", "
                 + "(SELECT SUM (CANTIDAD*(PRECIO-(PRECIO*DESCUENTO)/100)) FROM FACTURA_DETALLE FCC WHERE FCC.ID_FACTURA_CABECERA = FC.ID_FACTURA_CABECERA) \"TOTAL\", "
@@ -2000,7 +2000,7 @@ public class DB_Ingreso {
             }
             rs = pst.executeQuery();
             while (rs.next()) {
-                 M_cliente cliente = new M_cliente();
+                M_cliente cliente = new M_cliente();
                 cliente.setEntidad(rs.getString("Cliente"));
                 M_funcionario funcionario = new M_funcionario();
                 funcionario.setNombre(rs.getString("Empleado"));
@@ -2014,7 +2014,7 @@ public class DB_Ingreso {
                 faca.setCliente(cliente);
                 faca.setFuncionario(funcionario);
                 faca.setTipoOperacion(tiop);
-                faca.setTiempo(rs.getDate("TIEMPO"));
+                faca.setTiempo(rs.getTimestamp("TIEMPO"));
                 list.add(faca);
             }
         } catch (SQLException ex) {

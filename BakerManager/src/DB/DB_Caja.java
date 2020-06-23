@@ -8,7 +8,12 @@ package DB;
 import Entities.ArqueoCajaDetalle;
 import Entities.Caja;
 import Entities.CierreCaja;
+import Entities.E_cuentaCorrienteCabecera;
+import Entities.E_facturaCabecera;
+import Entities.E_reciboPagoCabecera;
+import Entities.M_egreso_cabecera;
 import Entities.Moneda;
+import Interface.MovimientosCaja;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -31,13 +36,15 @@ public class DB_Caja {
     public static long insertarArqueoCaja(Caja caja,
             ArrayList<ArqueoCajaDetalle> arqueoInicio,
             ArrayList<ArqueoCajaDetalle> arqueoFin,
-            ArrayList<ArqueoCajaDetalle> arqueoDeposito) {
+            ArrayList<ArqueoCajaDetalle> arqueoDeposito,
+            MovimientosCaja movimientosCaja) {
         String INSERT_ARQUEO = "INSERT INTO ARQUEO_CAJA( ID_CAJA, "
                 + "ID_MONEDA, CANTIDAD, ID_ARQUEO_CAJA_TIPO)VALUES (?, ?, ?, ?)";
         String INSERT_CAJA = "INSERT INTO CAJA"
                 + "(ID_FUNCIONARIO_APERTURA, ID_FUNCIONARIO_CIERRE, TIEMPO_APERTURA, TIEMPO_CIERRE)"
                 + "VALUES "
                 + "(?, ?, ?, ?)";
+        String INSERT_CAJA_MOVIMIENTO = "INSERT INTO caja_movimiento (id_caja, id_movimiento_contable_tipo, id_movimiento) VALUES(?, ?, ?);";
         long sq_cabecera = -1L;
         try {
             DB_manager.getConection().setAutoCommit(false);
@@ -77,6 +84,38 @@ public class DB_Caja {
                 pst.setInt(2, arqueoDeposito.get(i).getMoneda().getIdMoneda());
                 pst.setInt(3, arqueoDeposito.get(i).getCantidad());
                 pst.setInt(4, arqueoDeposito.get(i).getIdTipo());
+                pst.executeUpdate();
+                pst.close();
+            }
+            for (E_facturaCabecera movimientoVentas : movimientosCaja.getMovimientoVentas()) {
+                pst = DB_manager.getConection().prepareStatement(INSERT_CAJA_MOVIMIENTO);
+                pst.setInt(1, (int) sq_cabecera);
+                pst.setInt(2, 1);
+                pst.setInt(3, movimientoVentas.getIdFacturaCabecera());
+                pst.executeUpdate();
+                pst.close();
+            }
+            for (M_egreso_cabecera movimientoCompras : movimientosCaja.getMovimientoCompras()) {
+                pst = DB_manager.getConection().prepareStatement(INSERT_CAJA_MOVIMIENTO);
+                pst.setInt(1, (int) sq_cabecera);
+                pst.setInt(2, 2);
+                pst.setInt(3, movimientoCompras.getId_cabecera());
+                pst.executeUpdate();
+                pst.close();
+            }
+            for (E_cuentaCorrienteCabecera movimientoCobro : movimientosCaja.getMovimientoCobros()) {
+                pst = DB_manager.getConection().prepareStatement(INSERT_CAJA_MOVIMIENTO);
+                pst.setInt(1, (int) sq_cabecera);
+                pst.setInt(2, 3);
+                pst.setInt(3, movimientoCobro.getId());
+                pst.executeUpdate();
+                pst.close();
+            }
+            for (E_reciboPagoCabecera movimientoPagos : movimientosCaja.getMovimientoPagos()) {
+                pst = DB_manager.getConection().prepareStatement(INSERT_CAJA_MOVIMIENTO);
+                pst.setInt(1, (int) sq_cabecera);
+                pst.setInt(2, 4);
+                pst.setInt(3, movimientoPagos.getId());
                 pst.executeUpdate();
                 pst.close();
             }

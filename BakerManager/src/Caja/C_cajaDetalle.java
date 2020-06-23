@@ -334,6 +334,13 @@ public class C_cajaDetalle implements GestionInterface, RecibirEmpleadoCallback,
     }
 
     private void enviarMovimientos() {
+        Date inicio = vista.jddInicio.getDate();
+        Date fin = vista.jddFinal.getDate();
+        Calendar calendar = Calendar.getInstance();
+        Calendar calendarFinal = Calendar.getInstance();
+        calendarFinal.setTime(fin);
+        calendarFinal.set(Calendar.MINUTE, calendar.get(Calendar.MINUTE));
+        calendarFinal.set(Calendar.HOUR_OF_DAY, calendar.get(Calendar.HOUR_OF_DAY));
         MovimientosCaja movimientosCaja = new MovimientosCaja();
         for (SeleccionCobroCabecera seleccionCobroCabecera : modelo.getMovCobroTM().getList()) {
             movimientosCaja.getMovimientoCobros().add(seleccionCobroCabecera.getCobro());
@@ -347,7 +354,7 @@ public class C_cajaDetalle implements GestionInterface, RecibirEmpleadoCallback,
         for (SeleccionVentaCabecera seleccionVentaCabecera : modelo.getMovVentasTM().getList()) {
             movimientosCaja.getMovimientoVentas().add(seleccionVentaCabecera.getFacturaCabecera());
         }
-        this.interfaceCajaMov.recibirMovimientos(movimientosCaja);
+        this.interfaceCajaMov.recibirMovimientos(movimientosCaja, inicio, calendarFinal.getTime());
         cerrar();
     }
 

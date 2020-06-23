@@ -14,14 +14,19 @@ import DB.DB_Pago;
 import Entities.ArqueoCajaDetalle;
 import Entities.Caja;
 import Entities.E_cuentaCorrienteCabecera;
+import Entities.E_cuentaCorrienteDetalle;
 import Entities.E_facturaCabecera;
+import Entities.E_formaPago;
 import Entities.E_reciboPagoCabecera;
+import Entities.E_reciboPagoDetalle;
+import Entities.E_tipoOperacion;
 import Entities.Estado;
 import Entities.M_egreso_cabecera;
 import Entities.Moneda;
 import Interface.InterfaceCajaMovimientos;
 import Interface.MovimientosCaja;
 import MenuPrincipal.DatosUsuario;
+import ModeloTabla.SeleccionCompraCabecera;
 import bakermanager.C_inicio;
 import com.nitido.utils.toaster.Toaster;
 import com.toedter.calendar.JDateChooser;
@@ -39,6 +44,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -63,16 +69,18 @@ import net.miginfocom.swing.MigLayout;
  */
 public class SaldarCaja extends JDialog implements ActionListener, KeyListener, InterfaceCajaMovimientos {
 
+    private static final String TT_EFECTIVO_RENDIR = "Efectivo a rendir: suma de ventas y cobros en efectivo menos compras y pagos en efectivo";
+
     public JDateChooser jddInicio, jddFinal;
     public JComboBox jcbHoraInicio, jcbMinutoInicio, jcbHoraFin, jcbMinutoFin;
     private JButton saveButton, cancelButton, jbFondoAnterior, jbDetalle;
     private JLabel jlFondoApertura, jlFondoCierre, jlEgresoTotal, //jlDifCaja,
-            jlDepositar, jlEgresoCredito, jlEgresoContado, jlIngresoTotal,
+            jlDepositar, jlEfectivoRendir, jlEgresoCredito, jlEgresoContado, jlIngresoTotal,
             jlIngresoCredito, jlIngresoContado, jlTotalEgrIng1, jlTotalEgrIng2,
             jlTotalCobrado, jlTotalCobradoEfectivo, jlTotalCobradoCheque,
             jlTotalPagado, jlTotalPagadoEfectivo, jlTotalPagadoCheque;
     private JFormattedTextField jtfFondoApertura, jtfFondoCierre, jtfDepositar, jtfEgresoTotal, //jtfDifCaja,
-            jtfEgresoCredito, jtfEgresoContado, jtfIngresoTotal,
+            jtfEgresoCredito, jtfEgresoContado, jtfIngresoTotal, jftEfectivoRendir,
             jtfIngresoCredito, jtfIngresoContado, jtfTotalEgrIng1, jtfTotalEgrIng2,
             jtfTotalCobrado, jtfTotalCobradoEfectivo, jtfTotalCobradoCheque,
             jtfTotalPagado, jtfTotalPagadoEfectivo, jtfTotalPagadoCheque;
@@ -81,6 +89,7 @@ public class SaldarCaja extends JDialog implements ActionListener, KeyListener, 
     private JTable jtFondoApertura, jtFondoCierre, jtDepositar;
     private JScrollPane jspFondoApertura, jspFondoCierre, jspDepositar;
     private ArqueoCajaTableModel tbmFondoApertura, tbmFondoCierre, tbmDepositar;
+    private MovimientosCaja movimientosCaja;
 
     public SaldarCaja(C_inicio inicio) {
         super(inicio.vista, "Saldar caja", true);
@@ -108,8 +117,10 @@ public class SaldarCaja extends JDialog implements ActionListener, KeyListener, 
         this.jlFondoCierre.setFont(CommonFormat.fuenteTitulo);
         //this.jlDifCaja = new JLabel("Dif. de Caja");
         //this.jlDifCaja.setFont(CommonFormat.fuenteSubTitulo);
-        this.jlDepositar = new JLabel("A depositar");
+        this.jlDepositar = new JLabel("Depositado");
         this.jlDepositar.setFont(CommonFormat.fuenteTitulo);
+        this.jlEfectivoRendir = new JLabel("Efectivo a rendir");
+        this.jlEfectivoRendir.setFont(CommonFormat.fuenteTitulo);
         this.jlEgresoTotal = new JLabel("Egreso total");
         this.jlEgresoTotal.setFont(CommonFormat.fuenteTitulo);
         this.jlEgresoCredito = new JLabel("Egreso credito");
@@ -136,6 +147,9 @@ public class SaldarCaja extends JDialog implements ActionListener, KeyListener, 
         //this.jtfDifCaja.setColumns(prefCols);
         this.jtfDepositar = new JFormattedTextField();
         this.jtfDepositar.setColumns(prefCols);
+        this.jftEfectivoRendir = new JFormattedTextField();
+        this.jftEfectivoRendir.setColumns(prefCols);
+        this.jftEfectivoRendir.setToolTipText(TT_EFECTIVO_RENDIR);
         this.jtfEgresoTotal = new JFormattedTextField();
         this.jtfEgresoTotal.setColumns(prefCols);
         this.jtfEgresoTotal.addKeyListener(this);
@@ -194,6 +208,7 @@ public class SaldarCaja extends JDialog implements ActionListener, KeyListener, 
         this.jtfFondoCierre.setEditable(false);
         //this.jtfDifCaja.setEditable(false);
         this.jtfDepositar.setEditable(false);
+        this.jftEfectivoRendir.setEditable(false);
         this.jtfTotalEgrIng1.setEditable(false);
         this.jtfTotalEgrIng2.setEditable(false);
         this.jtfEgresoTotal.setEditable(false);
@@ -328,6 +343,8 @@ public class SaldarCaja extends JDialog implements ActionListener, KeyListener, 
         studentInfoPanel.add(jtfFondoCierre, "wrap");
         studentInfoPanel.add(jlDepositar, "span 2");
         studentInfoPanel.add(jtfDepositar, "wrap");
+        studentInfoPanel.add(jlEfectivoRendir, "span 2");
+        studentInfoPanel.add(jftEfectivoRendir, "wrap");
         studentInfoPanel.add(jpEgresos, "spanx, split 2");
         studentInfoPanel.add(jpIngresos, "spanx, wrap");
         studentInfoPanel.add(jpTotalCobrado, "spanx, split 2");
@@ -463,12 +480,19 @@ public class SaldarCaja extends JDialog implements ActionListener, KeyListener, 
         this.tbmDepositar.setArqueoCajaList(arqueoDeposito);
         this.tbmDepositar.updateTable();
         Utilities.c_packColumn.packColumns(jtDepositar, 1);
+        int idFuncionario = DatosUsuario.getRol_usuario().getFuncionario().getId_funcionario();
+        movimientosCaja = new MovimientosCaja();
+        movimientosCaja.setMovimientoVentas((ArrayList<E_facturaCabecera>) DB_Ingreso.obtenerMovimientoVentasCabeceras(idFuncionario, -1, fechaInicio, fechaFin, -1));
+        movimientosCaja.setMovimientoCompras((ArrayList<M_egreso_cabecera>) DB_Egreso.obtenerMovimientoComprasCabeceras(idFuncionario, -1, -1, fechaInicio, fechaFin));
+        movimientosCaja.setMovimientoCobros((ArrayList<E_cuentaCorrienteCabecera>) DB_Cobro.obtenerMovimientoCobrosCabeceras(idFuncionario, -1, fechaInicio, fechaFin));
+        movimientosCaja.setMovimientoPagos((ArrayList<E_reciboPagoCabecera>) DB_Pago.obtenerMovimientoPagosCabeceras(idFuncionario, -1, fechaInicio, fechaFin));
+        actualizarMovimientos(movimientosCaja);
 
     }
 
     private void setWindows(JFrame parentFrame) {
         setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-        setSize(1000, 500);
+        setSize(1000, 520);
         setLocationRelativeTo(parentFrame);
     }
 
@@ -558,7 +582,7 @@ public class SaldarCaja extends JDialog implements ActionListener, KeyListener, 
         ArrayList<ArqueoCajaDetalle> arqueoCajaCierre = arqueoCajaCierre();
         ArrayList<ArqueoCajaDetalle> arqueoDeposito = arqueoDepositar();
         try {
-            DB_Caja.insertarArqueoCaja(caja, arqueoCajaApertura, arqueoCajaCierre, arqueoDeposito);
+            DB_Caja.insertarArqueoCaja(caja, arqueoCajaApertura, arqueoCajaCierre, arqueoDeposito, movimientosCaja);
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Hubo un problema creando la caja", "Error", JOptionPane.ERROR_MESSAGE);
             return;
@@ -686,23 +710,99 @@ public class SaldarCaja extends JDialog implements ActionListener, KeyListener, 
     }
 
     private void actualizarMovimientos(MovimientosCaja movimientosCaja) {
-        int totalCobro = 0, totalPago = 0, totalCompra = 0, totalVenta = 0;
+        this.movimientosCaja = movimientosCaja;
+        int totalVenta = 0, totalVentaContado = 0, totalVentaCredito = 0;
+        int totalPago = 0, totalPagoEfectivo = 0, totalPagoCheque = 0;
+        int totalCompra = 0, totalCompraContado = 0, totalCompraCredito = 0;
+        int totalCobro = 0, totalCobroEfectivo = 0, totalCobroCheque = 0;
+        /*
+        MOVIMIENTO DE COBROS
+         */
         for (E_cuentaCorrienteCabecera cobro : movimientosCaja.getMovimientoCobros()) {
             totalCobro = totalCobro + cobro.getDebito();
+            for (E_cuentaCorrienteDetalle e_cuentaCorrienteDetalle : DB_Cobro.obtenerCobroDetalle(cobro.getId())) {
+                switch (e_cuentaCorrienteDetalle.calcularFormaPago().getId()) {
+                    case E_formaPago.EFECTIVO: {
+                        totalCobroEfectivo = (int) (totalCobroEfectivo + e_cuentaCorrienteDetalle.getMonto());
+                        break;
+                    }
+                    case E_formaPago.CHEQUE: {
+                        totalCobroCheque = (int) (totalCobroCheque + e_cuentaCorrienteDetalle.getMonto());
+                        break;
+                    }
+                }
+
+            }
         }
-        for (E_reciboPagoCabecera seleccionCompraCabecera : movimientosCaja.getMovimientoPagos()) {
-            totalPago = totalPago + seleccionCompraCabecera.getMonto();
+        /*
+        MOVIMIENTO DE PAGOS        
+         */
+        for (E_reciboPagoCabecera pago : movimientosCaja.getMovimientoPagos()) {
+            totalPago = totalPago + pago.getMonto();
+            for (E_reciboPagoDetalle reciboPagoDetalle : DB_Pago.obtenerPagoDetalle(pago.getId())) {
+                switch (reciboPagoDetalle.calcularFormaPago().getId()) {
+                    case E_formaPago.EFECTIVO: {
+                        totalPagoEfectivo = (int) (totalPagoEfectivo + reciboPagoDetalle.getMonto());
+                        break;
+                    }
+                    case E_formaPago.CHEQUE: {
+                        totalPagoCheque = (int) (totalPagoCheque + reciboPagoDetalle.getMonto());
+                        break;
+                    }
+                }
+
+            }
         }
-        for (M_egreso_cabecera seleccionPagoCabecera : movimientosCaja.getMovimientoCompras()) {
-            totalCompra = totalCompra + seleccionPagoCabecera.getTotal();
+        /*
+        MOVIMIENTO DE COMPRAS
+         */
+        for (M_egreso_cabecera compra : movimientosCaja.getMovimientoCompras()) {
+            totalCompra = totalCompra + compra.getTotal();
+            switch (compra.getId_condVenta()) {
+                case E_tipoOperacion.CONTADO: {
+                    totalCompraContado = totalCompraContado + compra.getTotal();
+                    break;
+                }
+                case E_tipoOperacion.CREDITO_30: {
+                    totalCompraCredito = totalCompraCredito + compra.getTotal();
+                    break;
+                }
+            }
         }
-        for (E_facturaCabecera seleccionVentaCabecera : movimientosCaja.getMovimientoVentas()) {
-            totalVenta = totalVenta + seleccionVentaCabecera.getTotal();
+        /*
+        MOVIMIENTO DE VENTAS
+         */
+        for (E_facturaCabecera venta : movimientosCaja.getMovimientoVentas()) {
+            totalVenta = totalVenta + venta.getTotal();
+            switch (venta.getTipoOperacion().getId()) {
+                case E_tipoOperacion.CONTADO: {
+                    totalVentaContado = totalVentaContado + venta.getTotal();
+                    break;
+                }
+                case E_tipoOperacion.CREDITO_30: {
+                    totalVentaCredito = totalVentaCredito + venta.getTotal();
+                    break;
+                }
+            }
         }
+        //COBROS
         this.jtfTotalCobrado.setValue(totalCobro);
+        this.jtfTotalCobradoEfectivo.setValue(totalCobroEfectivo);
+        this.jtfTotalCobradoCheque.setValue(totalCobroCheque);
+        //PAGOS
         this.jtfTotalPagado.setValue(totalPago);
+        this.jtfTotalPagadoCheque.setValue(totalPagoCheque);
+        this.jtfTotalPagadoEfectivo.setValue(totalPagoEfectivo);
+        //VENTAS
         this.jtfIngresoTotal.setValue(totalVenta);
+        this.jtfIngresoContado.setValue(totalVentaContado);
+        this.jtfIngresoCredito.setValue(totalVentaCredito);
+        //COMPRAS
         this.jtfEgresoTotal.setValue(totalCompra);
+        this.jtfEgresoContado.setValue(totalCompraContado);
+        this.jtfEgresoCredito.setValue(totalCompraCredito);
+        Integer aDepositar = totalCobroEfectivo + totalVentaContado - totalCompraContado - totalPagoEfectivo;
+        this.jftEfectivoRendir.setValue(aDepositar);
     }
 
     @Override
@@ -738,8 +838,14 @@ public class SaldarCaja extends JDialog implements ActionListener, KeyListener, 
     }
 
     @Override
-    public void recibirMovimientos(MovimientosCaja movimientosCaja) {
+    public void recibirMovimientos(MovimientosCaja movimientosCaja, Date tiempoInicio, Date tiempoFin) {
         actualizarMovimientos(movimientosCaja);
+        Calendar calendarFinal = Calendar.getInstance();
+        calendarFinal.setTime(tiempoFin);
+        jddInicio.setDate(tiempoInicio);
+        jddFinal.setDate(calendarFinal.getTime());
+        jcbHoraFin.setSelectedIndex(calendarFinal.get(Calendar.HOUR_OF_DAY));
+        jcbMinutoFin.setSelectedIndex(calendarFinal.get(Calendar.MINUTE));
     }
 
 }

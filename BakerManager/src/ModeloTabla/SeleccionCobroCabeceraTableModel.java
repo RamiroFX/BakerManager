@@ -6,6 +6,7 @@
 package ModeloTabla;
 
 import Interface.InterfaceSeleccionCobroCabecera;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import javax.swing.table.AbstractTableModel;
 
@@ -15,16 +16,19 @@ import javax.swing.table.AbstractTableModel;
  */
 public class SeleccionCobroCabeceraTableModel extends AbstractTableModel {
 
-    ArrayList<SeleccionCobroCabecera> list;
+    private SimpleDateFormat dateFormater;
+    private ArrayList<SeleccionCobroCabecera> list;
     private String[] colNames = {"Id", "Nro. recibo", "Cliente", "Funcionario", "Tiempo", "Total", "Seleccionado"};
 
     private InterfaceSeleccionCobroCabecera interfaceSeleccionCobroCabecera;
 
     public SeleccionCobroCabeceraTableModel() {
+        this.dateFormater = new SimpleDateFormat("dd/MM/YYYY HH:mm:ss");
         list = new ArrayList<>();
     }
 
     public SeleccionCobroCabeceraTableModel(InterfaceSeleccionCobroCabecera interfaceSeleccionCobroCabecera) {
+        this.dateFormater = new SimpleDateFormat("dd/MM/YYYY HH:mm:ss");
         list = new ArrayList<>();
         this.interfaceSeleccionCobroCabecera = interfaceSeleccionCobroCabecera;
     }
@@ -75,7 +79,7 @@ public class SeleccionCobroCabeceraTableModel extends AbstractTableModel {
                 return seleccionCompraCabecera.getCobro().getFuncionario().getNombre();
             }
             case 4: {
-                return seleccionCompraCabecera.getCobro().getFechaPago();
+                return dateFormater.format(seleccionCompraCabecera.getCobro().getFechaPago());
             }
             case 5: {
                 return seleccionCompraCabecera.getCobro().getDebito();

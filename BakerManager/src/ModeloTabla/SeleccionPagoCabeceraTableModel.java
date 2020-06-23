@@ -6,6 +6,7 @@
 package ModeloTabla;
 
 import Interface.InterfaceSeleccionPagoCabecera;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import javax.swing.table.AbstractTableModel;
 
@@ -15,16 +16,19 @@ import javax.swing.table.AbstractTableModel;
  */
 public class SeleccionPagoCabeceraTableModel extends AbstractTableModel {
 
-    ArrayList<SeleccionPagoCabecera> list;
+    private SimpleDateFormat dateFormater;
+    private ArrayList<SeleccionPagoCabecera> list;
     private String[] colNames = {"Id", "Nro. recibo", "Proveedor", "Funcionario", "Tiempo", "Total", "Seleccionado"};
 
     private InterfaceSeleccionPagoCabecera interfaceSeleccionPagoCabecera;
 
     public SeleccionPagoCabeceraTableModel() {
+        this.dateFormater = new SimpleDateFormat("dd/MM/YYYY HH:mm:ss");
         list = new ArrayList<>();
     }
 
     public SeleccionPagoCabeceraTableModel(InterfaceSeleccionPagoCabecera interfaceSeleccionPagoCabecera) {
+        this.dateFormater = new SimpleDateFormat("dd/MM/YYYY HH:mm:ss");
         list = new ArrayList<>();
         this.interfaceSeleccionPagoCabecera = interfaceSeleccionPagoCabecera;
     }
@@ -75,7 +79,7 @@ public class SeleccionPagoCabeceraTableModel extends AbstractTableModel {
                 return seleccionPagoCabecera.getPago().getFuncionario().getNombre();
             }
             case 4: {
-                return seleccionPagoCabecera.getPago().getFechaPago();
+                return dateFormater.format(seleccionPagoCabecera.getPago().getFechaPago());
             }
             case 5: {
                 return seleccionPagoCabecera.getPago().getMonto();

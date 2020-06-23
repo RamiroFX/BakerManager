@@ -6,6 +6,7 @@
 package ModeloTabla;
 
 import Interface.InterfaceSeleccionVentaCabecera;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import javax.swing.table.AbstractTableModel;
 
@@ -15,16 +16,19 @@ import javax.swing.table.AbstractTableModel;
  */
 public class SeleccionVentaCabeceraTableModel extends AbstractTableModel {
 
-    ArrayList<SeleccionVentaCabecera> list;
+    private SimpleDateFormat dateFormater;
+    private ArrayList<SeleccionVentaCabecera> list;
     private String[] colNames = {"Id", "Nro. factura", "Cliente", "Funcionario", "Tiempo", "Total", "Cond.", "Seleccionado"};
 
     private InterfaceSeleccionVentaCabecera interfaceSeleccionVentaCabecera;
 
     public SeleccionVentaCabeceraTableModel() {
+        this.dateFormater = new SimpleDateFormat("dd/MM/YYYY HH:mm:ss");
         list = new ArrayList<>();
     }
 
     public SeleccionVentaCabeceraTableModel(InterfaceSeleccionVentaCabecera interfaceSeleccionVentaCabecera) {
+        this.dateFormater = new SimpleDateFormat("dd/MM/YYYY HH:mm:ss");
         list = new ArrayList<>();
         this.interfaceSeleccionVentaCabecera = interfaceSeleccionVentaCabecera;
     }
@@ -75,7 +79,7 @@ public class SeleccionVentaCabeceraTableModel extends AbstractTableModel {
                 return seleccionVentaCabecera.getFacturaCabecera().getFuncionario().getNombre();
             }
             case 4: {
-                return seleccionVentaCabecera.getFacturaCabecera().getTiempo();
+                return dateFormater.format(seleccionVentaCabecera.getFacturaCabecera().getTiempo());
             }
             case 5: {
                 return seleccionVentaCabecera.getFacturaCabecera().getTotal();
