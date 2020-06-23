@@ -102,7 +102,7 @@ public class C_gestionCaja implements GestionInterface, RecibirEmpleadoCallback 
 
     private void invocarVistaSaldarCaja() {
         SaldarCaja sc = new SaldarCaja(c_inicio);
-        sc.setVisible(true);
+        sc.mostrarVista();
     }
 
     private void invocarVistaVerCaja() {
@@ -111,7 +111,7 @@ public class C_gestionCaja implements GestionInterface, RecibirEmpleadoCallback 
         if ((fila > -1) && (columna > -1)) {
             int idCaja = Integer.valueOf(String.valueOf(this.vista.jtCaja.getValueAt(fila, 0)));
             VerDetalleCaja detalleCaja = new VerDetalleCaja(c_inicio, idCaja);
-            detalleCaja.setVisible(true);
+            detalleCaja.mostrarVista();
         }
         this.vista.jbDetalle.setEnabled(false);
     }
