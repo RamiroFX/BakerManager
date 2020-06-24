@@ -16,6 +16,7 @@ import Entities.E_reciboPagoCabecera;
 import Entities.E_reciboPagoDetalle;
 import Entities.M_egreso_cabecera;
 import Entities.M_funcionario;
+import Interface.MovimientosCaja;
 import ModeloTabla.SeleccionCobroCabecera;
 import ModeloTabla.SeleccionCobroCabeceraTableModel;
 import ModeloTabla.SeleccionCompraCabecera;
@@ -41,6 +42,7 @@ public class M_cajaDetalle {
     private SeleccionCompraCabeceraTableModel movCompraTM;
     private SeleccionCobroCabeceraTableModel movCobroTM;
     private SeleccionPagoCabeceraTableModel movPagoTM;
+    private MovimientosCaja movimientosCaja;//para ver datos
 
     public M_cajaDetalle() {
         this.funcionario = new M_funcionario();
@@ -78,6 +80,14 @@ public class M_cajaDetalle {
         obtenerCobrosCabecera(idFuncionario, -1, calendarInicio.getTime(), calendarInicio.getTime());
         obtenerPagosCabecera(idFuncionario, -1, calendarInicio.getTime(), calendarInicio.getTime());
 
+    }
+
+    public MovimientosCaja getMovimientosCaja() {
+        return movimientosCaja;
+    }
+
+    public void setMovimientosCaja(MovimientosCaja movimientosCaja) {
+        this.movimientosCaja = movimientosCaja;
     }
 
     public SeleccionVentaCabeceraTableModel getMovVentasTM() {

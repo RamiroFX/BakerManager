@@ -52,6 +52,7 @@ public class VerDetalleCaja implements ActionListener, KeyListener {
     private ArrayList<ArqueoCajaDetalle> acdDepositar;
     private Caja caja;
     private V_SaldarCaja vista;
+    private MovimientosCaja movimientosCaja;
 
     public VerDetalleCaja(C_inicio inicio, int idCaja) {
         this.vista = new V_SaldarCaja(inicio);
@@ -107,6 +108,7 @@ public class VerDetalleCaja implements ActionListener, KeyListener {
     }
 
     private void initializeLogic(int idCaja) {
+        movimientosCaja = new MovimientosCaja();
         acdApertura = DB_Caja.obtenerArqueoCaja(idCaja, 1);
         acdCierre = DB_Caja.obtenerArqueoCaja(idCaja, 2);
         acdDepositar = DB_Caja.obtenerArqueoCaja(idCaja, 3);
@@ -171,7 +173,6 @@ public class VerDetalleCaja implements ActionListener, KeyListener {
     }
 
     private void actualizarMovimientos() {
-        MovimientosCaja movimientosCaja = new MovimientosCaja();
         movimientosCaja.setMovimientoVentas((ArrayList<E_facturaCabecera>) DB_Ingreso.obtenerMovimientoVentasCabeceras(this.caja.getIdCaja()));
         movimientosCaja.setMovimientoCompras((ArrayList<M_egreso_cabecera>) DB_Egreso.obtenerMovimientoComprasCabeceras(this.caja.getIdCaja()));
         movimientosCaja.setMovimientoCobros((ArrayList<E_cuentaCorrienteCabecera>) DB_Cobro.obtenerMovimientoCobrosCabeceras(this.caja.getIdCaja()));
@@ -336,6 +337,11 @@ public class VerDetalleCaja implements ActionListener, KeyListener {
         this.vista.jtfDepositar.setValue(total);
     }
 
+    private void verDetalle() {
+        CajaDetalle cd = new CajaDetalle(vista, movimientosCaja);
+        cd.mostrarVista();
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         Object src = e.getSource();
@@ -343,6 +349,8 @@ public class VerDetalleCaja implements ActionListener, KeyListener {
             cerrar();
         } else if (src.equals(this.vista.printButton)) {
             imprimirCaja();
+        } else if (src.equals(this.vista.jbDetalle)) {
+            verDetalle();
         }
     }
 

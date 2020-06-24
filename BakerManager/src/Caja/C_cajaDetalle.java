@@ -45,11 +45,13 @@ public class C_cajaDetalle implements GestionInterface, RecibirEmpleadoCallback,
     public C_cajaDetalle(V_cajaDetalle vista, M_cajaDetalle modelo) {
         this.vista = vista;
         this.modelo = modelo;
-        this.modelo.getMovVentasTM().setInterface(this);
-        this.modelo.getMovComprasTM().setInterface(this);
-        this.modelo.getMovCobroTM().setInterface(this);
-        this.modelo.getMovPagoTM().setInterface(this);
-        this.vista.setLocationRelativeTo(null);
+        callMethods();
+    }
+
+    public C_cajaDetalle(V_cajaDetalle vista, M_cajaDetalle modelo, MovimientosCaja movimientosCaja) {
+        this.vista = vista;
+        this.modelo = modelo;
+        this.modelo.setMovimientosCaja(movimientosCaja);
         callMethods();
     }
 
@@ -64,6 +66,11 @@ public class C_cajaDetalle implements GestionInterface, RecibirEmpleadoCallback,
 
     @Override
     public void inicializarVista() {
+        this.vista.setLocationRelativeTo(null);
+        this.modelo.getMovVentasTM().setInterface(this);
+        this.modelo.getMovComprasTM().setInterface(this);
+        this.modelo.getMovCobroTM().setInterface(this);
+        this.modelo.getMovPagoTM().setInterface(this);
         this.vista.jtVentas.setModel(modelo.getMovVentasTM());
         this.vista.jtCompras.setModel(modelo.getMovComprasTM());
         this.vista.jtCobros.setModel(modelo.getMovCobroTM());
@@ -356,6 +363,11 @@ public class C_cajaDetalle implements GestionInterface, RecibirEmpleadoCallback,
         }
         this.interfaceCajaMov.recibirMovimientos(movimientosCaja, inicio, calendarFinal.getTime());
         cerrar();
+    }
+
+    private void consultarDatosCaja() {
+        
+
     }
 
     @Override

@@ -6,6 +6,7 @@
 package Caja;
 
 import Interface.InterfaceCajaMovimientos;
+import Interface.MovimientosCaja;
 import java.util.Date;
 import javax.swing.JDialog;
 
@@ -23,6 +24,12 @@ public class CajaDetalle {
         this.vista = new V_cajaDetalle(owner);
         this.modelo = new M_cajaDetalle();
         this.controlador = new C_cajaDetalle(vista, modelo);
+    }
+
+    public CajaDetalle(JDialog owner, MovimientosCaja movimientosCaja) {
+        this.vista = new V_cajaDetalle(owner);
+        this.modelo = new M_cajaDetalle();
+        this.controlador = new C_cajaDetalle(vista, modelo, movimientosCaja);
     }
 
     public void setInterface(InterfaceCajaMovimientos interfaceCajaMovimientos) {
