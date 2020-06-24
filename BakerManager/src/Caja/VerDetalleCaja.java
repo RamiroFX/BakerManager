@@ -62,6 +62,9 @@ public class VerDetalleCaja implements ActionListener, KeyListener {
 
     private void initializeVariables() {
         this.vista.printButton.setVisible(true);
+        this.vista.saveButton.setVisible(false);
+        this.vista.jbFondoAnterior.setVisible(false);
+        this.vista.setTitle("Ver caja");
         //ARQUEO CAJA 
         tbmFondoApertura = new ArqueoCajaTableModel();
         tbmFondoCierre = new ArqueoCajaTableModel();
@@ -79,7 +82,7 @@ public class VerDetalleCaja implements ActionListener, KeyListener {
     private void addListeners() {
         this.vista.printButton.addActionListener(this);
         this.vista.cancelButton.addActionListener(this);
-        this.tbmFondoApertura.addTableModelListener(new TableModelListener() {
+        /*this.tbmFondoApertura.addTableModelListener(new TableModelListener() {
             @Override
             public void tableChanged(TableModelEvent e) {
                 sumarFondoApertura();
@@ -96,8 +99,8 @@ public class VerDetalleCaja implements ActionListener, KeyListener {
             public void tableChanged(TableModelEvent e) {
                 arqueoDepositar();
             }
-        });
-        /*
+        });*/
+ /*
         KEYLISTENER
          */
         this.vista.jtFondoApertura.addKeyListener(this);
@@ -108,33 +111,6 @@ public class VerDetalleCaja implements ActionListener, KeyListener {
         acdCierre = DB_Caja.obtenerArqueoCaja(idCaja, 2);
         acdDepositar = DB_Caja.obtenerArqueoCaja(idCaja, 3);
         caja = DB_Caja.obtenerCaja(idCaja);
-        Calendar inicio = Calendar.getInstance();
-        inicio.setTime(caja.getTiempoApertura());
-        inicio.set(Calendar.HOUR_OF_DAY, 0);
-        inicio.set(Calendar.MINUTE, 0);
-        Calendar fin = Calendar.getInstance();
-        fin.setTime(caja.getTiempoApertura());
-        fin.set(Calendar.HOUR_OF_DAY, 23);
-        fin.set(Calendar.MINUTE, 59);
-        Timestamp ini = new Timestamp(inicio.getTimeInMillis());
-        Timestamp fi = new Timestamp(fin.getTimeInMillis());
-        int egresoContado = DB_Egreso.obtenerTotalEgreso(ini, fi, 1);
-        int egresoCretdito = DB_Egreso.obtenerTotalEgreso(ini, fi, 2);
-        int totalEgreso = egresoContado + egresoCretdito;
-        int ingresoContado = DB_Ingreso.obtenerTotalIngreso(ini, fi, 1, Estado.ACTIVO);
-        int ingresoCretdito = DB_Ingreso.obtenerTotalIngreso(ini, fi, 2, Estado.ACTIVO);
-        int totalIngreso = ingresoContado + ingresoCretdito;
-
-        int totalEgrMasIng = totalEgreso + totalIngreso;
-        int totalEgrMenosIng = totalEgreso - totalIngreso;
-        this.vista.jtfTotalEgrIng1.setValue(totalEgrMasIng);
-        this.vista.jtfTotalEgrIng2.setValue(totalEgrMenosIng);
-        this.vista.jtfEgresoTotal.setValue(totalEgreso);
-        this.vista.jtfEgresoContado.setValue(egresoContado);
-        this.vista.jtfEgresoCredito.setValue(egresoCretdito);
-        this.vista.jtfIngresoTotal.setValue(totalIngreso);
-        this.vista.jtfIngresoContado.setValue(ingresoContado);
-        this.vista.jtfIngresoCredito.setValue(ingresoCretdito);
 
         this.tbmFondoApertura.setArqueoCajaList(acdApertura);
         this.tbmFondoApertura.updateTable();
@@ -148,6 +124,10 @@ public class VerDetalleCaja implements ActionListener, KeyListener {
         this.tbmDepositar.updateTable();
         Utilities.c_packColumn.packColumns(this.vista.jtDepositar, 1);
 
+        this.vista.jddInicio.setDate(caja.getTiempoApertura());
+        this.vista.jddInicio.setEnabled(false);
+        this.vista.jddFinal.setDate(caja.getTiempoCierre());
+        this.vista.jddFinal.setEnabled(false);
         SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(caja.getTiempoCierre());
@@ -180,6 +160,14 @@ public class VerDetalleCaja implements ActionListener, KeyListener {
         } else {
             this.vista.jcbMinutoInicio.setSelectedItem("" + minutoInicio);
         }
+        this.vista.jcbHoraInicio.setEnabled(false);
+        this.vista.jcbMinutoInicio.setEnabled(false);
+        this.vista.jcbHoraFin.setEnabled(false);
+        this.vista.jcbMinutoFin.setEnabled(false);
+        sumarFondoCierre();
+        sumarFondoApertura();
+        arqueoDepositar();
+        actualizarMovimientos();
     }
 
     private void actualizarMovimientos() {

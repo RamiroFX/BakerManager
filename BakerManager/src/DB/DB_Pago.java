@@ -672,4 +672,55 @@ public class DB_Pago {
         }
         return list;
     }
+
+    public static List<E_reciboPagoCabecera> obtenerMovimientoPagosCabeceras(int idCaja) {
+        List<E_reciboPagoCabecera> list = new ArrayList<>();
+        String Query = "SELECT RPC.id_recibo_pago_cabecera \"ID\", "
+                + "RPC.NRO_RECIBO \"NRO_RECIBO\", "
+                + "(SELECT NOMBRE || ' '|| APELLIDO WHERE F.ID_PERSONA = P.ID_PERSONA)\"EMPLEADO\", "
+                + "(SELECT ENTIDAD FROM PROVEEDOR PROV WHERE RPC.ID_PROVEEDOR= PROV.ID_PROVEEDOR) \"PROVEEDOR\", "
+                + "FECHA_PAGO, "
+                + "(SELECT SUM (MONTO) FROM recibo_pago_detalle RPD WHERE RPC.id_recibo_pago_cabecera = RPD.id_recibo_pago_cabecera)\"TOTAL\" "
+                + "FROM RECIBO_PAGO_CABECERA RPC ,FUNCIONARIO F, PERSONA P "
+                + "WHERE RPC.ID_FUNCIONARIO_REGISTRO = F.ID_FUNCIONARIO "
+                + "AND F.ID_PERSONA = P.ID_PERSONA "
+                + "AND RPC.ID_ESTADO = 1 " 
+                + "AND RPC.id_recibo_pago_cabecera IN(select id_movimiento from caja_movimiento where id_movimiento_contable_tipo = 4 and id_caja = ?)";
+        Query = Query + " ORDER BY \"ID\"";
+        try {
+            pst = DB_manager.getConection().prepareStatement(Query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            pst.setInt(1, idCaja);
+            rs = pst.executeQuery();
+            while (rs.next()) {
+                M_proveedor proveedor = new M_proveedor();
+                M_funcionario funcionario = new M_funcionario();
+                funcionario.setNombre(rs.getString("EMPLEADO"));
+                proveedor.setEntidad(rs.getString("PROVEEDOR"));
+                E_reciboPagoCabecera ccc = new E_reciboPagoCabecera();
+                ccc.setId(rs.getInt("ID"));
+                ccc.setNroRecibo(rs.getInt("NRO_RECIBO"));
+                ccc.setMonto(rs.getInt("TOTAL"));
+                ccc.setProveedor(proveedor);
+                ccc.setFuncionario(funcionario);
+                ccc.setFechaPago(rs.getTimestamp("FECHA_PAGO"));
+                list.add(ccc);
+            }
+        } catch (SQLException ex) {
+            Logger lgr = Logger.getLogger(DB_Cobro.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (pst != null) {
+                    pst.close();
+                }
+            } catch (SQLException ex) {
+                Logger lgr = Logger.getLogger(DB_Cobro.class.getName());
+                lgr.log(Level.WARNING, ex.getMessage(), ex);
+            }
+        }
+        return list;
+    }
 }

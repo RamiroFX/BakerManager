@@ -173,6 +173,12 @@ public class V_SaldarCaja extends JDialog {
         this.jtfIngresoTotal.setEditable(false);
         this.jtfIngresoContado.setEditable(false);
         this.jtfIngresoCredito.setEditable(false);
+        this.jtfTotalPagado.setEditable(false);
+        this.jtfTotalPagadoCheque.setEditable(false);
+        this.jtfTotalPagadoEfectivo.setEditable(false);
+        this.jtfTotalCobrado.setEditable(false);
+        this.jtfTotalCobradoCheque.setEditable(false);
+        this.jtfTotalCobradoEfectivo.setEditable(false);
         jcbHoraInicio = new JComboBox();
         jcbMinutoInicio = new JComboBox();
         jcbHoraFin = new JComboBox();

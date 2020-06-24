@@ -1113,4 +1113,58 @@ public class DB_Egreso {
         }
         return list;
     }
+    public static List<M_egreso_cabecera> obtenerMovimientoComprasCabeceras(int idCaja) {
+        List<M_egreso_cabecera> list = new ArrayList<>();
+        String Query = "SELECT EC.ID_EGRESO_CABECERA \"ID\", "
+                + "EC.NRO_FACTURA \"NRO_FACTURA\", "
+                + "(SELECT NOMBRE || ' '|| APELLIDO WHERE F.ID_PERSONA = P.ID_PERSONA)\"EMPLEADO\", "
+                + "(SELECT ENTIDAD FROM PROVEEDOR PV WHERE EC.ID_PROVEEDOR = PV.ID_PROVEEDOR) \"PROVEEDOR\", "
+                + "TIEMPO, "
+                + "(SELECT SUM (CANTIDAD*(PRECIO-(PRECIO*DESCUENTO)/100)) FROM EGRESO_DETALLE ED WHERE ED.ID_EGRESO_CABECERA = EC.ID_EGRESO_CABECERA)\"TOTAL\", "
+                + "(SELECT TIOP.DESCRIPCION FROM TIPO_OPERACION TIOP WHERE TIOP.ID_TIPO_OPERACION = EC.ID_COND_COMPRA) \"COND_COMPRA\", "
+                + "EC.ID_COND_COMPRA \"ID_COND_COMPRA\" "
+                + "FROM EGRESO_CABECERA EC ,FUNCIONARIO F, PERSONA P "
+                + "WHERE EC.ID_FUNCIONARIO = F.ID_FUNCIONARIO "
+                + "AND F.ID_PERSONA = P.ID_PERSONA "
+                + "AND EC.ID_ESTADO = 1 "
+                + "AND EC.ID_EGRESO_CABECERA IN(select id_movimiento from caja_movimiento where id_movimiento_contable_tipo = 2 and id_caja =?)";
+        Query = Query + " ORDER BY \"ID\"";
+        try {
+            pst = DB_manager.getConection().prepareStatement(Query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            pst.setInt(1, idCaja);
+            rs = pst.executeQuery();
+            while (rs.next()) {
+                M_proveedor proveedor = new M_proveedor();
+                M_funcionario funcionario = new M_funcionario();
+                funcionario.setNombre(rs.getString("EMPLEADO"));
+                proveedor.setEntidad(rs.getString("PROVEEDOR"));
+                M_egreso_cabecera egca = new M_egreso_cabecera();
+                egca.setId_cabecera(rs.getInt("ID"));
+                egca.setNro_factura(rs.getInt("NRO_FACTURA"));
+                egca.setTotal(rs.getInt("TOTAL"));
+                egca.setProveedor(proveedor);
+                egca.setFuncionario(funcionario);
+                egca.setId_condVenta(rs.getInt("ID_COND_COMPRA"));
+                egca.setCondVenta(rs.getString("COND_COMPRA"));
+                egca.setTiempo(rs.getTimestamp("TIEMPO"));
+                list.add(egca);
+            }
+        } catch (SQLException ex) {
+            Logger lgr = Logger.getLogger(DB_Egreso.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (pst != null) {
+                    pst.close();
+                }
+            } catch (SQLException ex) {
+                Logger lgr = Logger.getLogger(DB_Egreso.class.getName());
+                lgr.log(Level.WARNING, ex.getMessage(), ex);
+            }
+        }
+        return list;
+    }
 }
