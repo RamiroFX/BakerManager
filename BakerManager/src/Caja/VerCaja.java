@@ -21,6 +21,7 @@ import Entities.E_reciboPagoDetalle;
 import Entities.E_tipoOperacion;
 import Entities.Estado;
 import Entities.M_egreso_cabecera;
+import Excel.ExportarCaja;
 import Impresora.Impresora;
 import Interface.MovimientosCaja;
 import bakermanager.C_inicio;
@@ -42,7 +43,7 @@ import javax.swing.event.TableModelListener;
  *
  * @author Ramiro Ferreira
  */
-public class VerDetalleCaja implements ActionListener, KeyListener {
+public class VerCaja implements ActionListener, KeyListener {
 
     private static final String TT_EFECTIVO_RENDIR = "Efectivo a rendir: suma de ventas y cobros en efectivo menos compras y pagos en efectivo";
     private ArqueoCajaTableModel tbmFondoApertura, tbmFondoCierre, tbmDepositar;
@@ -54,7 +55,7 @@ public class VerDetalleCaja implements ActionListener, KeyListener {
     private V_SaldarCaja vista;
     private MovimientosCaja movimientosCaja;
 
-    public VerDetalleCaja(C_inicio inicio, int idCaja) {
+    public VerCaja(C_inicio inicio, int idCaja) {
         this.vista = new V_SaldarCaja(inicio);
         initializeVariables();
         addListeners();
@@ -63,6 +64,7 @@ public class VerDetalleCaja implements ActionListener, KeyListener {
 
     private void initializeVariables() {
         this.vista.printButton.setVisible(true);
+        this.vista.jbExportar.setVisible(true);
         this.vista.saveButton.setVisible(false);
         this.vista.jbFondoAnterior.setVisible(false);
         this.vista.setTitle("Ver caja");
@@ -81,29 +83,10 @@ public class VerDetalleCaja implements ActionListener, KeyListener {
     }
 
     private void addListeners() {
+        this.vista.jbExportar.addActionListener(this);
         this.vista.printButton.addActionListener(this);
+        this.vista.jbDetalle.addActionListener(this);
         this.vista.cancelButton.addActionListener(this);
-        /*this.tbmFondoApertura.addTableModelListener(new TableModelListener() {
-            @Override
-            public void tableChanged(TableModelEvent e) {
-                sumarFondoApertura();
-            }
-        });
-        this.tbmFondoCierre.addTableModelListener(new TableModelListener() {
-            @Override
-            public void tableChanged(TableModelEvent e) {
-                sumarFondoCierre();
-            }
-        });
-        this.tbmDepositar.addTableModelListener(new TableModelListener() {
-            @Override
-            public void tableChanged(TableModelEvent e) {
-                arqueoDepositar();
-            }
-        });*/
- /*
-        KEYLISTENER
-         */
         this.vista.jtFondoApertura.addKeyListener(this);
     }
 
@@ -342,6 +325,11 @@ public class VerDetalleCaja implements ActionListener, KeyListener {
         cd.mostrarVista();
     }
 
+    private void exportarCaja() {
+        ExportarCaja ec = new ExportarCaja();
+        ec.exportarCajaMovimientos();
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         Object src = e.getSource();
@@ -351,6 +339,8 @@ public class VerDetalleCaja implements ActionListener, KeyListener {
             imprimirCaja();
         } else if (src.equals(this.vista.jbDetalle)) {
             verDetalle();
+        } else if (src.equals(this.vista.jbExportar)) {
+            exportarCaja();
         }
     }
 

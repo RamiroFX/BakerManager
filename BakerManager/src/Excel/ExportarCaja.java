@@ -661,4 +661,8 @@ public class ExportarCaja {
             e.printStackTrace();
         }
     }
+    
+    public void exportarCajaMovimientos(){
+        
+    }
 }

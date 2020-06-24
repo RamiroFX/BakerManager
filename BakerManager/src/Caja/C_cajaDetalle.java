@@ -53,6 +53,25 @@ public class C_cajaDetalle implements GestionInterface, RecibirEmpleadoCallback,
         this.modelo = modelo;
         this.modelo.setMovimientosCaja(movimientosCaja);
         callMethods();
+        bloquearComandos();
+    }
+
+    private void bloquearComandos() {
+        this.modelo.setEditingMode(true);
+        this.vista.jbAceptar.setEnabled(false);
+        this.vista.jbAgregarCobro.setEnabled(false);
+        this.vista.jbQuitarCobro.setEnabled(false);
+        this.vista.jbAgregarCompras.setEnabled(false);
+        this.vista.jbQuitarCompras.setEnabled(false);
+        this.vista.jbAgregarPago.setEnabled(false);
+        this.vista.jbQuitarPago.setEnabled(false);
+        this.vista.jbAgregarVentas.setEnabled(false);
+        this.vista.jbQuitarVentas.setEnabled(false);
+        this.vista.jbEmpleado.setEnabled(false);
+        this.vista.jbBorrar.setEnabled(false);
+        this.vista.jbBuscar.setEnabled(false);
+        this.vista.jddInicio.setEnabled(false);
+        this.vista.jddFinal.setEnabled(false);
     }
 
     private void callMethods() {
@@ -366,7 +385,6 @@ public class C_cajaDetalle implements GestionInterface, RecibirEmpleadoCallback,
     }
 
     private void consultarDatosCaja() {
-        
 
     }
 
@@ -444,22 +462,30 @@ public class C_cajaDetalle implements GestionInterface, RecibirEmpleadoCallback,
 
     @Override
     public void notificarCambioSeleccion() {
-        actualizarSumaVentas();
+        if (!modelo.isEditingMode()) {
+            actualizarSumaVentas();
+        }
     }
 
     @Override
     public void notificarCambioSeleccionCompraCabecera() {
-        actualizarSumaCompras();
+        if (!modelo.isEditingMode()) {
+            actualizarSumaCompras();
+        }
     }
 
     @Override
     public void notificarCambioSeleccionCobroCabecera() {
-        actualizarSumaCobros();
+        if (!modelo.isEditingMode()) {
+            actualizarSumaCobros();
+        }
     }
 
     @Override
     public void notificarCambioSeleccionPagoCabecera() {
-        actualizarSumaPagos();
+        if (!modelo.isEditingMode()) {
+            actualizarSumaPagos();
+        }
     }
 
 }

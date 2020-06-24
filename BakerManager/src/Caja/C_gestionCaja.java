@@ -110,7 +110,7 @@ public class C_gestionCaja implements GestionInterface, RecibirEmpleadoCallback 
         int columna = this.vista.jtCaja.getSelectedColumn();
         if ((fila > -1) && (columna > -1)) {
             int idCaja = Integer.valueOf(String.valueOf(this.vista.jtCaja.getValueAt(fila, 0)));
-            VerDetalleCaja detalleCaja = new VerDetalleCaja(c_inicio, idCaja);
+            VerCaja detalleCaja = new VerCaja(c_inicio, idCaja);
             detalleCaja.mostrarVista();
         }
         this.vista.jbDetalle.setEnabled(false);

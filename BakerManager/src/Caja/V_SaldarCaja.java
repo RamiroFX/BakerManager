@@ -38,7 +38,8 @@ public class V_SaldarCaja extends JDialog {
 
     public JDateChooser jddInicio, jddFinal;
     public JComboBox jcbHoraInicio, jcbMinutoInicio, jcbHoraFin, jcbMinutoFin;
-    public JButton saveButton, cancelButton, jbFondoAnterior, jbDetalle, printButton;
+    public JButton saveButton, cancelButton, jbFondoAnterior, jbDetalle, printButton,
+            jbExportar;
     public JLabel jlFondoApertura, jlFondoCierre, jlEgresoTotal, //jlDifCaja,
             jlDepositar, jlEfectivoRendir, jlEgresoCredito, jlEgresoContado, jlIngresoTotal,
             jlIngresoCredito, jlIngresoContado, jlTotalEgrIng1, jlTotalEgrIng2,
@@ -74,6 +75,8 @@ public class V_SaldarCaja extends JDialog {
         jddInicio.setPreferredSize(new Dimension(150, 10));
         jddFinal = new JDateChooser(today);
         jddFinal.setPreferredSize(new Dimension(150, 10));
+        this.jbExportar = new JButton("Exportar");
+        this.jbExportar.setVisible(false);
         this.printButton = new JButton("Imprimir");
         this.printButton.setVisible(false);
         this.jbDetalle = new JButton("Detalle");
@@ -311,6 +314,7 @@ public class V_SaldarCaja extends JDialog {
 
         // ////////// Buttons Panel ///////////////
         buttonsPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
+        buttonsPanel.add(jbExportar);
         buttonsPanel.add(printButton);
         buttonsPanel.add(jbDetalle);
         buttonsPanel.add(saveButton);
@@ -319,6 +323,7 @@ public class V_SaldarCaja extends JDialog {
         Dimension btnSize = cancelButton.getPreferredSize();
         saveButton.setPreferredSize(btnSize);
         jbDetalle.setPreferredSize(btnSize);
+        jbExportar.setPreferredSize(btnSize);
         printButton.setPreferredSize(btnSize);
 
         // Add sub panels to dialog

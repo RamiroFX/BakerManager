@@ -129,8 +129,11 @@ public class V_cajaDetalle extends JDialog {
         jlTotalVentaContado = new JLabel("Total contado");
         jlTotalVentaCredito = new JLabel("Total crédito");
         jftTotalVenta = new JFormattedTextField();
+        jftTotalVenta.setEditable(false);
         jftTotalVentaContado = new JFormattedTextField();
+        jftTotalVentaContado.setEditable(false);
         jftTotalVentaCredito = new JFormattedTextField();
+        jftTotalVentaCredito.setEditable(false);
         JPanel jpMovimientoVentasControles = new JPanel(new MigLayout());
         jpMovimientoVentasControles.add(jlTotalVenta);
         jpMovimientoVentasControles.add(jftTotalVenta, "growx, spanx, wrap");
@@ -153,8 +156,11 @@ public class V_cajaDetalle extends JDialog {
         jlTotalCompraContado = new JLabel("Total contado");
         jlTotalCompraCredito = new JLabel("Total crédito");
         jftTotalCompra = new JFormattedTextField();
+        jftTotalCompra.setEditable(false);
         jftTotalCompraContado = new JFormattedTextField();
+        jftTotalCompraContado.setEditable(false);
         jftTotalCompraCredito = new JFormattedTextField();
+        jftTotalCompraCredito.setEditable(false);
         JPanel jpMovimientoCompraControles = new JPanel(new MigLayout());
         jpMovimientoCompraControles.add(jlTotalCompra);
         jpMovimientoCompraControles.add(jftTotalCompra, "growx, spanx, wrap");
@@ -177,8 +183,11 @@ public class V_cajaDetalle extends JDialog {
         jlTotalCobroEfectivo = new JLabel("Total efectivo");
         jlTotalCobroCheque = new JLabel("Total cheque");
         jftTotalCobro = new JFormattedTextField();
+        jftTotalCobro.setEditable(false);
         jftTotalCobroEfectivo = new JFormattedTextField();
+        jftTotalCobroEfectivo.setEditable(false);
         jftTotalCobroCheque = new JFormattedTextField();
+        jftTotalCobroCheque.setEditable(false);
         JPanel jpMovimientoCobroControles = new JPanel(new MigLayout());
         jpMovimientoCobroControles.add(jlTotalCobro);
         jpMovimientoCobroControles.add(jftTotalCobro, "growx, spanx, wrap");
@@ -201,8 +210,11 @@ public class V_cajaDetalle extends JDialog {
         jlTotalPagoEfectivo = new JLabel("Total efectivo");
         jlTotalPagoCheque = new JLabel("Total cheque");
         jftTotalPago = new JFormattedTextField();
+        jftTotalPago.setEditable(false);
         jftTotalPagoEfectivo = new JFormattedTextField();
+        jftTotalPagoEfectivo.setEditable(false);
         jftTotalPagoCheque = new JFormattedTextField();
+        jftTotalPagoCheque.setEditable(false);
         JPanel jpMovimientoPagoControles = new JPanel(new MigLayout());
         jpMovimientoPagoControles.add(jlTotalPago);
         jpMovimientoPagoControles.add(jftTotalPago, "growx, spanx, wrap");

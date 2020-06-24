@@ -43,8 +43,10 @@ public class M_cajaDetalle {
     private SeleccionCobroCabeceraTableModel movCobroTM;
     private SeleccionPagoCabeceraTableModel movPagoTM;
     private MovimientosCaja movimientosCaja;//para ver datos
+    private boolean editingMode;
 
     public M_cajaDetalle() {
+        this.editingMode = false;
         this.funcionario = new M_funcionario();
         this.funcionario.setId_funcionario(-1);
         this.movVentasTM = new SeleccionVentaCabeceraTableModel();
@@ -54,12 +56,10 @@ public class M_cajaDetalle {
     }
 
     private void initializeTableModels() {
-        //Calendar calendarInicio = Calendar.getInstance();
         obtenerVentasCabecera(-1, -1, -1, fechaInicial, fechaFinal);
         obtenerComprasCabecera(-1, -1, -1, fechaInicial, fechaFinal);
         obtenerCobrosCabecera(-1, -1, fechaInicial, fechaFinal);
         obtenerPagosCabecera(-1, -1, fechaInicial, fechaFinal);
-
     }
 
     public void buscarMovimientos(int idFuncionario, Date fechaInicio, Date fechaFin) {
@@ -88,6 +88,30 @@ public class M_cajaDetalle {
 
     public void setMovimientosCaja(MovimientosCaja movimientosCaja) {
         this.movimientosCaja = movimientosCaja;
+        ArrayList<SeleccionVentaCabecera> listaVentas = new ArrayList<>();
+        List<E_facturaCabecera> ventas = this.movimientosCaja.getMovimientoVentas();
+        for (E_facturaCabecera unaVenta : ventas) {
+            listaVentas.add(new SeleccionVentaCabecera(unaVenta, true));
+        }
+        this.getMovVentasTM().setList(listaVentas);
+        ArrayList<SeleccionCompraCabecera> listaCompras = new ArrayList<>();
+        List<M_egreso_cabecera> compras = this.movimientosCaja.getMovimientoCompras();
+        for (M_egreso_cabecera egresoCabecera : compras) {
+            listaCompras.add(new SeleccionCompraCabecera(egresoCabecera, true));
+        }
+        this.getMovComprasTM().setList(listaCompras);
+        ArrayList<SeleccionCobroCabecera> listaCobros = new ArrayList<>();
+        List<E_cuentaCorrienteCabecera> cobros = this.movimientosCaja.getMovimientoCobros();
+        for (E_cuentaCorrienteCabecera unCobro : cobros) {
+            listaCobros.add(new SeleccionCobroCabecera(unCobro, true));
+        }
+        this.getMovCobroTM().setList(listaCobros);
+        ArrayList<SeleccionPagoCabecera> listaPagos = new ArrayList<>();
+        List<E_reciboPagoCabecera> pagos = this.movimientosCaja.getMovimientoPagos();
+        for (E_reciboPagoCabecera unPago : pagos) {
+            listaPagos.add(new SeleccionPagoCabecera(unPago, true));
+        }
+        this.getMovPagoTM().setList(listaPagos);
     }
 
     public SeleccionVentaCabeceraTableModel getMovVentasTM() {
@@ -174,5 +198,19 @@ public class M_cajaDetalle {
         this.fechaInicial = tiempoInicio;
         this.fechaFinal = tiempoFinal;
         initializeTableModels();
+    }
+
+    /**
+     * @return the editingMode
+     */
+    public boolean isEditingMode() {
+        return editingMode;
+    }
+
+    /**
+     * @param editingMode the editingMode to set
+     */
+    public void setEditingMode(boolean editingMode) {
+        this.editingMode = editingMode;
     }
 }
