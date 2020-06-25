@@ -1969,7 +1969,8 @@ public class DB_Ingreso {
                 + "WHERE  FC.TIEMPO BETWEEN ?  AND ?  "
                 + "AND FC.ID_FUNCIONARIO = F.ID_FUNCIONARIO  "
                 + "AND F.ID_PERSONA = P.ID_PERSONA  "
-                + "AND id_factura_cabecera not in (select id_movimiento from caja_movimiento where id_movimiento_contable_tipo = 1) ";
+                + "AND FC.ID_ESTADO = 1  "
+                + "AND id_factura_cabecera not in (select id_movimiento from caja_movimiento where id_movimiento_contable_tipo = 1 and id_estado = 1) ";
 
         if (idFuncionario > -1) {
             Query = Query + " AND FC.ID_FUNCIONARIO = ? ";
@@ -2047,7 +2048,7 @@ public class DB_Ingreso {
                 + "FROM FACTURA_CABECERA FC ,FUNCIONARIO F, PERSONA P  "
                 + "WHERE FC.ID_FUNCIONARIO = F.ID_FUNCIONARIO  "
                 + "AND F.ID_PERSONA = P.ID_PERSONA  "
-                + "AND id_factura_cabecera in (select id_movimiento from caja_movimiento where id_movimiento_contable_tipo = 1 and id_caja = ?) ";
+                + "AND id_factura_cabecera in (select id_movimiento from caja_movimiento where id_movimiento_contable_tipo = 1 AND id_caja = ?) ";
 
         Query = Query + " ORDER BY \"ID\"";
         try {

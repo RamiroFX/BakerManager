@@ -617,7 +617,8 @@ public class DB_Pago {
                 + "AND ? "
                 + "AND RPC.ID_FUNCIONARIO_REGISTRO = F.ID_FUNCIONARIO "
                 + "AND F.ID_PERSONA = P.ID_PERSONA "
-                + "AND RPC.ID_ESTADO = 1 ";
+                + "AND RPC.ID_ESTADO = 1 "
+                + "AND RPC.id_recibo_pago_cabecera NOT IN(select id_movimiento from caja_movimiento where id_movimiento_contable_tipo = 4 AND id_estado = 1)";
 
         if (idFuncionario > -1) {
             Query = Query + " AND RPC.ID_FUNCIONARIO_REGISTRO = ? ";
@@ -685,7 +686,7 @@ public class DB_Pago {
                 + "WHERE RPC.ID_FUNCIONARIO_REGISTRO = F.ID_FUNCIONARIO "
                 + "AND F.ID_PERSONA = P.ID_PERSONA "
                 + "AND RPC.ID_ESTADO = 1 " 
-                + "AND RPC.id_recibo_pago_cabecera IN(select id_movimiento from caja_movimiento where id_movimiento_contable_tipo = 4 and id_caja = ?)";
+                + "AND RPC.id_recibo_pago_cabecera IN(select id_movimiento from caja_movimiento where id_movimiento_contable_tipo = 4 AND id_caja = ?)";
         Query = Query + " ORDER BY \"ID\"";
         try {
             pst = DB_manager.getConection().prepareStatement(Query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);

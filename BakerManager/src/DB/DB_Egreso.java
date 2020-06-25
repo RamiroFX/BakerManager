@@ -1049,7 +1049,8 @@ public class DB_Egreso {
                 + "AND ? "
                 + "AND EC.ID_FUNCIONARIO = F.ID_FUNCIONARIO "
                 + "AND F.ID_PERSONA = P.ID_PERSONA "
-                + "AND EC.ID_ESTADO = 1 ";
+                + "AND EC.ID_ESTADO = 1 "
+                + "AND EC.ID_EGRESO_CABECERA NOT IN(select id_movimiento from caja_movimiento where id_movimiento_contable_tipo = 2 AND id_estado = 1)";
 
         if (idFuncionario > -1) {
             Query = Query + " AND EC.ID_FUNCIONARIO = ? ";
@@ -1127,7 +1128,7 @@ public class DB_Egreso {
                 + "WHERE EC.ID_FUNCIONARIO = F.ID_FUNCIONARIO "
                 + "AND F.ID_PERSONA = P.ID_PERSONA "
                 + "AND EC.ID_ESTADO = 1 "
-                + "AND EC.ID_EGRESO_CABECERA IN(select id_movimiento from caja_movimiento where id_movimiento_contable_tipo = 2 and id_caja =?)";
+                + "AND EC.ID_EGRESO_CABECERA IN(select id_movimiento from caja_movimiento where id_movimiento_contable_tipo = 2 AND id_caja =?)";
         Query = Query + " ORDER BY \"ID\"";
         try {
             pst = DB_manager.getConection().prepareStatement(Query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
