@@ -9,10 +9,15 @@ import DB.DB_Egreso;
 import DB.DB_Funcionario;
 import DB.DB_Ingreso;
 import Entities.ArqueoCajaDetalle;
+import Entities.Caja;
 import Entities.CierreCaja;
+import Entities.E_facturaCabecera;
+import Entities.E_tipoOperacion;
 import Entities.Estado;
+import Entities.M_egreso_cabecera;
 import Entities.M_funcionario;
 import Entities.Moneda;
+import Interface.MovimientosCaja;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -36,7 +41,6 @@ import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellUtil;
-import org.apache.poi.xssf.usermodel.XSSFFont;
 
 /**
  *
@@ -382,8 +386,8 @@ public class ExportarCaja {
             sheets.get(monthCursor).addMergedRegion(new CellRangeAddress(fila, fila, 0, 1));
             fila++;
             //TOTAL EGRESO
-            int ingresoContado = DB_Ingreso.obtenerTotalIngreso(ini, fi, 1,Estado.ACTIVO);
-            int ingresoCretdito = DB_Ingreso.obtenerTotalIngreso(ini, fi, 2,Estado.ACTIVO);
+            int ingresoContado = DB_Ingreso.obtenerTotalIngreso(ini, fi, 1, Estado.ACTIVO);
+            int ingresoCretdito = DB_Ingreso.obtenerTotalIngreso(ini, fi, 2, Estado.ACTIVO);
             int totalIngresos = ingresoContado + ingresoCretdito;
             Row totalIngreso = sheets.get(monthCursor).createRow(fila);
             totalIngreso.createCell(0).setCellValue(new HSSFRichTextString("Total ingresos"));
@@ -560,8 +564,8 @@ public class ExportarCaja {
             int egresoCretdito = DB_Egreso.obtenerTotalEgreso(ini, fi, 2);
             int totalEgresos = egresoContado + egresoCretdito;
             //TOTAL INGRESO
-            int ingresoContado = DB_Ingreso.obtenerTotalIngreso(ini, fi, 1,Estado.ACTIVO);
-            int ingresoCretdito = DB_Ingreso.obtenerTotalIngreso(ini, fi, 2,Estado.ACTIVO);
+            int ingresoContado = DB_Ingreso.obtenerTotalIngreso(ini, fi, 1, Estado.ACTIVO);
+            int ingresoCretdito = DB_Ingreso.obtenerTotalIngreso(ini, fi, 2, Estado.ACTIVO);
             int totalIngresos = ingresoContado + ingresoCretdito;
             //TOTAL DEPOSITADO
             int totalDepositado = 0;
@@ -661,8 +665,251 @@ public class ExportarCaja {
             e.printStackTrace();
         }
     }
-    
-    public void exportarCajaMovimientos(){
-        
+
+    public void exportarCajaMovimientos(Caja caja, MovimientosCaja movimientosCaja) {
+        //PREPARAR CONTENIDO
+        int fila = 0;//En preparar cuerpo empieza en cero (0).
+        Calendar calendar = Calendar.getInstance();
+        int monthCursor = 0;
+        int columnaDerecha = 5;
+        Date resumenFechaInicio = null;
+        Date resumenFechaFin = null;
+        sheets.clear();
+        sheets.add(workbook.createSheet(sdfs.format(calendar.getTime())));
+        sheets.get(monthCursor).getPrintSetup().setLandscape(true);
+        //CREAR FECHA DE CAJA
+        Row rowTitulo = sheets.get(monthCursor).createRow(fila);
+        rowTitulo.createCell(0).setCellValue(new HSSFRichTextString("Planilla de movimiento diario"));
+        rowTitulo.getCell(0).setCellStyle(style8);
+        sheets.get(monthCursor).addMergedRegion(new CellRangeAddress(fila, fila, 0, 3));
+        fila++;
+        Row rowFecha = sheets.get(monthCursor).createRow(fila);
+        rowFecha.createCell(0).setCellValue(new HSSFRichTextString("Fecha"));
+        rowFecha.getCell(0).setCellStyle(style8);
+        rowFecha.createCell(1).setCellValue(caja.getTiempoApertura());
+        rowFecha.getCell(1).setCellStyle(dateCellStyle);
+        fila++;
+        /*
+        MOVIMIENTO DE VENTAS CONTADO
+         */
+        int ventaContado = 0;
+        Row rowVentaContadoTitulo = sheets.get(monthCursor).createRow(fila);
+        rowVentaContadoTitulo.createCell(0).setCellValue(new HSSFRichTextString("Venta contado"));
+        rowVentaContadoTitulo.getCell(0).setCellStyle(style8);
+        fila++;
+        Row rowVentaContadoCabecera = sheets.get(monthCursor).createRow(fila);
+        rowVentaContadoCabecera.createCell(0).setCellValue(new HSSFRichTextString("ID venta"));
+        rowVentaContadoCabecera.getCell(0).setCellStyle(style8);
+        rowVentaContadoCabecera.createCell(1).setCellValue(new HSSFRichTextString("Nro. Factura"));
+        rowVentaContadoCabecera.getCell(1).setCellStyle(style8);
+        rowVentaContadoCabecera.createCell(2).setCellValue(new HSSFRichTextString("Cliente"));
+        rowVentaContadoCabecera.getCell(2).setCellStyle(style8);
+        rowVentaContadoCabecera.createCell(3).setCellValue(new HSSFRichTextString("Importe"));
+        rowVentaContadoCabecera.getCell(3).setCellStyle(style8);
+        fila++;
+        for (E_facturaCabecera movimientoVenta : movimientosCaja.getMovimientoVentas()) {
+            if (movimientoVenta.getTipoOperacion().getId() == E_tipoOperacion.CONTADO) {
+                ventaContado = ventaContado + movimientoVenta.getTotal();
+                //limite de lineas por hoja
+                if (fila > 33) {
+                    Row rowVentaContadoDetalle = sheets.get(monthCursor).createRow(fila);
+                    fila++;
+                    rowVentaContadoDetalle.createCell(0 + columnaDerecha).setCellValue(movimientoVenta.getIdFacturaCabecera());
+                    rowVentaContadoDetalle.getCell(0 + columnaDerecha).setCellStyle(style4);
+                    rowVentaContadoDetalle.createCell(1 + columnaDerecha).setCellValue(movimientoVenta.getNroFactura());
+                    rowVentaContadoDetalle.getCell(1 + columnaDerecha).setCellStyle(style4);
+                    rowVentaContadoDetalle.createCell(2 + columnaDerecha).setCellValue(new HSSFRichTextString(movimientoVenta.getCliente().getEntidad()));
+                    rowVentaContadoDetalle.createCell(3 + columnaDerecha).setCellValue(movimientoVenta.getTotal());
+                    rowVentaContadoDetalle.getCell(3 + columnaDerecha).setCellStyle(style4);
+                } else {
+                    Row rowVentaContadoDetalle = sheets.get(monthCursor).createRow(fila);
+                    fila++;
+                    rowVentaContadoDetalle.createCell(0).setCellValue(movimientoVenta.getIdFacturaCabecera());
+                    rowVentaContadoDetalle.getCell(0).setCellStyle(style4);
+                    rowVentaContadoDetalle.createCell(1).setCellValue(movimientoVenta.getNroFactura());
+                    rowVentaContadoDetalle.getCell(1).setCellStyle(style4);
+                    rowVentaContadoDetalle.createCell(2).setCellValue(new HSSFRichTextString(movimientoVenta.getCliente().getEntidad()));
+                    rowVentaContadoDetalle.createCell(3).setCellValue(movimientoVenta.getTotal());
+                    rowVentaContadoDetalle.getCell(3).setCellStyle(style4);
+                }
+            }
+        }
+        rowVentaContadoTitulo.createCell(1).setCellValue(ventaContado);
+        rowVentaContadoTitulo.getCell(1).setCellStyle(style4);
+        fila++;
+        /*
+        MOVIMIENTO DE VENTAS CREDITO
+         */
+        int ventaCredito = 0;
+        Row rowVentaCreditoTitulo = sheets.get(monthCursor).createRow(fila);
+        rowVentaCreditoTitulo.createCell(0).setCellValue(new HSSFRichTextString("Venta credito"));
+        rowVentaCreditoTitulo.getCell(0).setCellStyle(style8);
+        fila++;
+        Row rowVentaCreditoCabecera = sheets.get(monthCursor).createRow(fila);
+        rowVentaCreditoCabecera.createCell(0).setCellValue(new HSSFRichTextString("ID venta"));
+        rowVentaCreditoCabecera.getCell(0).setCellStyle(style8);
+        rowVentaCreditoCabecera.createCell(1).setCellValue(new HSSFRichTextString("Nro. Factura"));
+        rowVentaCreditoCabecera.getCell(1).setCellStyle(style8);
+        rowVentaCreditoCabecera.createCell(2).setCellValue(new HSSFRichTextString("Cliente"));
+        rowVentaCreditoCabecera.getCell(2).setCellStyle(style8);
+        rowVentaCreditoCabecera.createCell(3).setCellValue(new HSSFRichTextString("Importe"));
+        rowVentaCreditoCabecera.getCell(3).setCellStyle(style8);
+        fila++;
+        for (E_facturaCabecera movimientoVenta : movimientosCaja.getMovimientoVentas()) {
+            if (movimientoVenta.getTipoOperacion().getId() == E_tipoOperacion.CREDITO_30) {
+                ventaCredito = ventaCredito + movimientoVenta.getTotal();
+                //limite de lineas por hoja
+                if (fila > 33) {
+                    Row rowVentaCreditoDetalle = sheets.get(monthCursor).createRow(fila);
+                    fila++;
+                    rowVentaCreditoDetalle.createCell(0 + columnaDerecha).setCellValue(movimientoVenta.getIdFacturaCabecera());
+                    rowVentaCreditoDetalle.getCell(0 + columnaDerecha).setCellStyle(style4);
+                    rowVentaCreditoDetalle.createCell(1 + columnaDerecha).setCellValue(movimientoVenta.getNroFactura());
+                    rowVentaCreditoDetalle.getCell(1 + columnaDerecha).setCellStyle(style4);
+                    rowVentaCreditoDetalle.createCell(2 + columnaDerecha).setCellValue(new HSSFRichTextString(movimientoVenta.getCliente().getEntidad()));
+                    rowVentaCreditoDetalle.createCell(3 + columnaDerecha).setCellValue(movimientoVenta.getTotal());
+                    rowVentaCreditoDetalle.getCell(3 + columnaDerecha).setCellStyle(style4);
+                } else {
+                    Row rowVentaCreditoDetalle = sheets.get(monthCursor).createRow(fila);
+                    fila++;
+                    rowVentaCreditoDetalle.createCell(0).setCellValue(movimientoVenta.getIdFacturaCabecera());
+                    rowVentaCreditoDetalle.getCell(0).setCellStyle(style4);
+                    rowVentaCreditoDetalle.createCell(1).setCellValue(movimientoVenta.getNroFactura());
+                    rowVentaCreditoDetalle.getCell(1).setCellStyle(style4);
+                    rowVentaCreditoDetalle.createCell(2).setCellValue(new HSSFRichTextString(movimientoVenta.getCliente().getEntidad()));
+                    rowVentaCreditoDetalle.createCell(3).setCellValue(movimientoVenta.getTotal());
+                    rowVentaCreditoDetalle.getCell(3).setCellStyle(style4);
+                }
+            }
+        }
+        rowVentaCreditoTitulo.createCell(1).setCellValue(ventaCredito);
+        rowVentaCreditoTitulo.getCell(1).setCellStyle(style4);
+        fila++;
+
+        /*
+        MOVIMIENTO DE COMPRAS CONTADO
+         */
+        int compraContado = 0;
+        Row rowCompraContadoTitulo = sheets.get(monthCursor).createRow(fila);
+        rowCompraContadoTitulo.createCell(0).setCellValue(new HSSFRichTextString("Compra contado"));
+        rowCompraContadoTitulo.getCell(0).setCellStyle(style8);
+        fila++;
+        Row rowCompraContadoCabecera = sheets.get(monthCursor).createRow(fila);
+        rowCompraContadoCabecera.createCell(0).setCellValue(new HSSFRichTextString("ID compra"));
+        rowCompraContadoCabecera.getCell(0).setCellStyle(style8);
+        rowCompraContadoCabecera.createCell(1).setCellValue(new HSSFRichTextString("Nro. Factura"));
+        rowCompraContadoCabecera.getCell(1).setCellStyle(style8);
+        rowCompraContadoCabecera.createCell(2).setCellValue(new HSSFRichTextString("Proveedor"));
+        rowCompraContadoCabecera.getCell(2).setCellStyle(style8);
+        rowCompraContadoCabecera.createCell(3).setCellValue(new HSSFRichTextString("Importe"));
+        rowCompraContadoCabecera.getCell(3).setCellStyle(style8);
+        fila++;
+        for (M_egreso_cabecera movimientoCompra : movimientosCaja.getMovimientoCompras()) {
+            if (movimientoCompra.getId_condVenta() == E_tipoOperacion.CONTADO) {
+                compraContado = compraContado + movimientoCompra.getTotal();
+                //limite de lineas por hoja
+                if (fila > 33) {
+                    Row rowCompraContadoDetalle = sheets.get(monthCursor).createRow(fila);
+                    fila++;
+                    rowCompraContadoDetalle.createCell(0 + columnaDerecha).setCellValue(movimientoCompra.getId_cabecera());
+                    rowCompraContadoDetalle.getCell(0 + columnaDerecha).setCellStyle(style4);
+                    rowCompraContadoDetalle.createCell(1 + columnaDerecha).setCellValue(movimientoCompra.getNro_factura());
+                    rowCompraContadoDetalle.getCell(1 + columnaDerecha).setCellStyle(style4);
+                    rowCompraContadoDetalle.createCell(2 + columnaDerecha).setCellValue(new HSSFRichTextString(movimientoCompra.getProveedor().getEntidad()));
+                    rowCompraContadoDetalle.createCell(3 + columnaDerecha).setCellValue(movimientoCompra.getTotal());
+                    rowCompraContadoDetalle.getCell(3 + columnaDerecha).setCellStyle(style4);
+                } else {
+                    Row rowCompraContadoDetalle = sheets.get(monthCursor).createRow(fila);
+                    fila++;
+                    rowCompraContadoDetalle.createCell(0).setCellValue(movimientoCompra.getId_cabecera());
+                    rowCompraContadoDetalle.getCell(0).setCellStyle(style4);
+                    rowCompraContadoDetalle.createCell(1).setCellValue(movimientoCompra.getNro_factura());
+                    rowCompraContadoDetalle.getCell(1).setCellStyle(style4);
+                    rowCompraContadoDetalle.createCell(2).setCellValue(new HSSFRichTextString(movimientoCompra.getProveedor().getEntidad()));
+                    rowCompraContadoDetalle.createCell(3).setCellValue(movimientoCompra.getTotal());
+                    rowCompraContadoDetalle.getCell(3).setCellStyle(style4);
+                }
+            }
+        }
+        rowCompraContadoTitulo.createCell(1).setCellValue(compraContado);
+        rowCompraContadoTitulo.getCell(1).setCellStyle(style4);
+        fila++;
+
+        /*
+        MOVIMIENTO DE COMPRAS EFECTIVO
+         */
+        int compraCredito = 0;
+        Row rowCompraCreditoTitulo = sheets.get(monthCursor).createRow(fila);
+        rowCompraCreditoTitulo.createCell(0).setCellValue(new HSSFRichTextString("Compra credito"));
+        rowCompraCreditoTitulo.getCell(0).setCellStyle(style8);
+        fila++;
+        Row rowCompraCreditoCabecera = sheets.get(monthCursor).createRow(fila);
+        rowCompraCreditoCabecera.createCell(0).setCellValue(new HSSFRichTextString("ID compra"));
+        rowCompraCreditoCabecera.getCell(0).setCellStyle(style8);
+        rowCompraCreditoCabecera.createCell(1).setCellValue(new HSSFRichTextString("Nro. Factura"));
+        rowCompraCreditoCabecera.getCell(1).setCellStyle(style8);
+        rowCompraCreditoCabecera.createCell(2).setCellValue(new HSSFRichTextString("Proveedor"));
+        rowCompraCreditoCabecera.getCell(2).setCellStyle(style8);
+        rowCompraCreditoCabecera.createCell(3).setCellValue(new HSSFRichTextString("Importe"));
+        rowCompraCreditoCabecera.getCell(3).setCellStyle(style8);
+        fila++;
+        for (M_egreso_cabecera movimientoCompra : movimientosCaja.getMovimientoCompras()) {
+            if (movimientoCompra.getId_condVenta() == E_tipoOperacion.CREDITO_30) {
+                compraCredito = compraCredito + movimientoCompra.getTotal();
+                //limite de lineas por hoja
+                if (fila > 33) {
+                    Row rowCompraCreditoDetalle = sheets.get(monthCursor).createRow(fila);
+                    fila++;
+                    rowCompraCreditoDetalle.createCell(0 + columnaDerecha).setCellValue(movimientoCompra.getId_cabecera());
+                    rowCompraCreditoDetalle.getCell(0 + columnaDerecha).setCellStyle(style4);
+                    rowCompraCreditoDetalle.createCell(1 + columnaDerecha).setCellValue(movimientoCompra.getNro_factura());
+                    rowCompraCreditoDetalle.getCell(1 + columnaDerecha).setCellStyle(style4);
+                    rowCompraCreditoDetalle.createCell(2 + columnaDerecha).setCellValue(new HSSFRichTextString(movimientoCompra.getProveedor().getEntidad()));
+                    rowCompraCreditoDetalle.createCell(3 + columnaDerecha).setCellValue(movimientoCompra.getTotal());
+                    rowCompraCreditoDetalle.getCell(3 + columnaDerecha).setCellStyle(style4);
+                } else {
+                    Row rowCompraCreditoDetalle = sheets.get(monthCursor).createRow(fila);
+                    fila++;
+                    rowCompraCreditoDetalle.createCell(0).setCellValue(movimientoCompra.getId_cabecera());
+                    rowCompraCreditoDetalle.getCell(0).setCellStyle(style4);
+                    rowCompraCreditoDetalle.createCell(1).setCellValue(movimientoCompra.getNro_factura());
+                    rowCompraCreditoDetalle.getCell(1).setCellStyle(style4);
+                    rowCompraCreditoDetalle.createCell(2).setCellValue(new HSSFRichTextString(movimientoCompra.getProveedor().getEntidad()));
+                    rowCompraCreditoDetalle.createCell(3).setCellValue(movimientoCompra.getTotal());
+                    rowCompraCreditoDetalle.getCell(3).setCellStyle(style4);
+                }
+            }
+        }
+        rowCompraCreditoTitulo.createCell(1).setCellValue(compraCredito);
+        rowCompraCreditoTitulo.getCell(1).setCellStyle(style4);
+
+        String desktop = System.getProperty("user.home") + "\\Desktop";
+        JFileChooser chooser = new JFileChooser(desktop);
+        if (chooser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
+            directory = chooser.getSelectedFile();
+            directory.setWritable(true);
+            directory.setExecutable(true);
+            directory.setReadable(true);
+        } else {
+            return;
+        }
+        sheets.get(monthCursor).autoSizeColumn(0);
+        sheets.get(monthCursor).autoSizeColumn(1);
+        sheets.get(monthCursor).autoSizeColumn(2);
+        sheets.get(monthCursor).autoSizeColumn(3);
+        sheets.get(monthCursor).autoSizeColumn(4);
+        sheets.get(monthCursor).autoSizeColumn(5);
+        sheets.get(monthCursor).autoSizeColumn(6);
+
+        //PREPARAR DOCUMENTO
+        try {
+            FileOutputStream out = new FileOutputStream(directory.getPath() + ".xls");
+            workbook.write(out);
+            out.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
