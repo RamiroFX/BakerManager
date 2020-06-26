@@ -292,6 +292,8 @@ public class ExportarVentas {
             int dateType = fechaInic.compareTo(fechaFinal);
             if (dateType == 0) {
                 fechaInicio.createCell(col).setCellValue(new HSSFRichTextString("Fecha :"));
+                fechaInicio.getCell(col).setCellStyle(style2);
+                col++;
                 fechaInicio.createCell(col).setCellValue(fechaInic);
                 fechaInicio.getCell(col).setCellStyle(dateCellStyle);
                 col++;
@@ -299,13 +301,17 @@ public class ExportarVentas {
                 fechaFin = sheet.createRow(filaActual);
                 filaActual++;
                 fechaFin.createCell(col).setCellValue(new HSSFRichTextString("Fecha fin:"));
+                fechaFin.getCell(col).setCellStyle(style2);
+                fechaInicio.createCell(col).setCellValue(new HSSFRichTextString("Fecha inicio:"));
+                fechaInicio.getCell(col).setCellStyle(style2);
+                col++;
                 fechaFin.createCell(col).setCellValue(fechaFinal);
                 fechaFin.getCell(col).setCellStyle(dateCellStyle);
-                fechaInicio.createCell(col).setCellValue(new HSSFRichTextString("Fecha inicio:"));
                 fechaInicio.createCell(col).setCellValue(fechaInic);
                 fechaInicio.getCell(col).setCellStyle(dateCellStyle);
             }
         }
+        col = 0;
         Row rowTotalIngreso = sheet.createRow(filaActual);
         rowTotalIngreso.createCell(0).setCellValue(new HSSFRichTextString("Total ingresos"));
         rowTotalIngreso.getCell(0).setCellStyle(style2);
@@ -313,6 +319,14 @@ public class ExportarVentas {
         Row rowTotalImpuesto = sheet.createRow(filaActual);
         rowTotalImpuesto.createCell(0).setCellValue(new HSSFRichTextString("Total impuesto"));
         rowTotalImpuesto.getCell(0).setCellStyle(style2);
+        filaActual++;
+        Row rowTotalImpuestoIVA5 = sheet.createRow(filaActual);
+        rowTotalImpuestoIVA5.createCell(0).setCellValue(new HSSFRichTextString("Impuesto 5%"));
+        rowTotalImpuestoIVA5.getCell(0).setCellStyle(style2);
+        filaActual++;
+        Row rowTotalImpuestoIVA10 = sheet.createRow(filaActual);
+        rowTotalImpuestoIVA10.createCell(0).setCellValue(new HSSFRichTextString("Impuesto 10%"));
+        rowTotalImpuestoIVA10.getCell(0).setCellStyle(style2);
         filaActual++;
 
         Row rowCabecera = sheet.createRow(filaActual);
@@ -332,12 +346,22 @@ public class ExportarVentas {
         rowCabecera.createCell(col).setCellValue(new HSSFRichTextString("Impuesto"));
         rowCabecera.getCell(col).setCellStyle(style1);
         col++;
+        rowCabecera.createCell(col).setCellValue(new HSSFRichTextString("Impuesto IVA 5%"));
+        rowCabecera.getCell(col).setCellStyle(style1);
+        col++;
+        rowCabecera.createCell(col).setCellValue(new HSSFRichTextString("Impuesto IVA 10%"));
+        rowCabecera.getCell(col).setCellStyle(style1);
+        col++;
         //FIN CUERPO
         Integer total = 0;
         Integer totalImpuesto = 0;
+        Integer totalImpuestoIVA5 = 0;
+        Integer totalImpuestoIVA10 = 0;
         //TOTAL INGRESOS
 
         for (M_facturaCabecera facturaCabecera : facturaCabeceraFX) {
+            int impuestoIVA5 = 0;
+            int impuestoIVA10 = 0;
             Row row = sheet.createRow(filaActual);
             col = 0;
             row.createCell(col).setCellValue(facturaCabecera.getTiempo());
@@ -360,7 +384,7 @@ public class ExportarVentas {
                 int iva10 = 0;
                 switch (facturaDetalle.getProducto().getIdImpuesto()) {
                     case E_impuesto.EXENTA: {
-                        exenta = exenta + facturaDetalle.calcularSubTotal();
+                        //exenta = exenta + facturaDetalle.calcularSubTotal();
                         break;
                     }
                     case E_impuesto.IVA5: {
@@ -372,25 +396,42 @@ public class ExportarVentas {
                         break;
                     }
                 }
+                impuestoIVA5 = impuestoIVA5 + iva5;
+                impuestoIVA10 = impuestoIVA10 + iva10;
                 subTotalImpuesto = subTotalImpuesto + exenta + iva5 + iva10;
                 int subTotal = facturaDetalle.calcularSubTotal();
                 total = total + subTotal;
             }
             totalImpuesto = totalImpuesto + subTotalImpuesto;
+            totalImpuestoIVA10 = totalImpuestoIVA10 + impuestoIVA10;
+            totalImpuestoIVA5 = totalImpuestoIVA5 + impuestoIVA5;
             row.createCell(col).setCellValue(subTotalImpuesto);
             row.getCell(col).setCellStyle(styleNumber);
+            col++;
+            row.createCell(col).setCellValue(impuestoIVA5);
+            row.getCell(col).setCellStyle(styleNumber);
+            col++;
+            row.createCell(col).setCellValue(impuestoIVA10);
+            row.getCell(col).setCellStyle(styleNumber);
+            col++;
             filaActual++;
         }
         rowTotalIngreso.createCell(1).setCellValue(total);
         rowTotalIngreso.getCell(1).setCellStyle(styleNumber);
         rowTotalImpuesto.createCell(1).setCellValue(totalImpuesto);
         rowTotalImpuesto.getCell(1).setCellStyle(styleNumber);
+        rowTotalImpuestoIVA5.createCell(1).setCellValue(totalImpuestoIVA5);
+        rowTotalImpuestoIVA5.getCell(1).setCellStyle(styleNumber);
+        rowTotalImpuestoIVA10.createCell(1).setCellValue(totalImpuestoIVA10);
+        rowTotalImpuestoIVA10.getCell(1).setCellStyle(styleNumber);
         sheet.autoSizeColumn(0);
         sheet.autoSizeColumn(1);
         sheet.autoSizeColumn(2);
         sheet.autoSizeColumn(3);
         sheet.autoSizeColumn(4);
         sheet.autoSizeColumn(5);
+        sheet.autoSizeColumn(6);
+        sheet.autoSizeColumn(7);
         try {
             FileOutputStream out = new FileOutputStream(directory.getPath() + ".xls");
             workbook.write(out);
