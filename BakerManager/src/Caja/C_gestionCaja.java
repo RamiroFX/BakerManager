@@ -50,7 +50,7 @@ public class C_gestionCaja implements GestionInterface, RecibirEmpleadoCallback 
 
     @Override
     public void concederPermisos() {
-        ArrayList<M_menu_item> accesos = DatosUsuario.getRol_usuario().getAccesos();
+        /*ArrayList<M_menu_item> accesos = DatosUsuario.getRol_usuario().getAccesos();
         for (M_menu_item acceso : accesos) {
             if (this.vista.jbAgregar.getName().equals(acceso.getItemDescripcion())) {
                 this.vista.jbAgregar.setEnabled(true);
@@ -58,7 +58,7 @@ public class C_gestionCaja implements GestionInterface, RecibirEmpleadoCallback 
             }
             /*if (this.vista.jbResumen.getName().equals(acceso.getItemDescripcion())) {
                 this.vista.jbResumen.addActionListener(this);
-            }*/
+            }
             if (this.vista.jbDetalle.getName().equals(acceso.getItemDescripcion())) {
                 this.vista.jbDetalle.addActionListener(this);
             }
@@ -70,13 +70,25 @@ public class C_gestionCaja implements GestionInterface, RecibirEmpleadoCallback 
                 this.vista.jbEmpleado.addActionListener(this);
                 this.vista.jbBorrar.addActionListener(this);
             }
-        }
+        }*/
+        this.vista.jbBuscar.setEnabled(true);
+        this.vista.jddFinal.setEnabled(true);
+        this.vista.jddInicio.setEnabled(true);
+        this.vista.jbBuscar.addActionListener(this);
+        this.vista.jbEmpleado.addActionListener(this);
+        this.vista.jbBorrar.addActionListener(this);
+        this.vista.jbDetalle.addActionListener(this);
+        this.vista.jbAgregar.setEnabled(true);
+        this.vista.jbAgregar.addActionListener(this);
+        this.vista.jbAnular.setEnabled(true);
+        this.vista.jbAnular.addActionListener(this);
         this.vista.jtCaja.addMouseListener(this);
         this.vista.jtCaja.addKeyListener(this);
         /**
          * **ESCAPE HOTKEY/
          */
         this.vista.jbAgregar.addKeyListener(this);
+        this.vista.jbAnular.addKeyListener(this);
         //this.vista.jbResumen.addKeyListener(this);
         this.vista.jbDetalle.addKeyListener(this);
         this.vista.jbBuscar.addKeyListener(this);
@@ -238,11 +250,27 @@ public class C_gestionCaja implements GestionInterface, RecibirEmpleadoCallback 
         return false;
     }
 
+    private void anularCaja() {
+        int opcion = JOptionPane.showConfirmDialog(vista, "¿Está seguro que desea continuar? Accion irreversible.", "Atención", JOptionPane.WARNING_MESSAGE, JOptionPane.YES_NO_OPTION);
+        if (opcion == JOptionPane.YES_OPTION) {
+            int fila = this.vista.jtCaja.getSelectedRow();
+            if (fila > -1) {
+                Integer idCaja = Integer.valueOf(String.valueOf(this.vista.jtCaja.getValueAt(fila, 0)));
+                modelo.anularCaja(idCaja);
+            }
+        }
+        consultarCajas();
+        this.vista.jbDetalle.setEnabled(false);
+        this.vista.jbAnular.setEnabled(false);
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         Object src = e.getSource();
         if (src.equals(this.vista.jbAgregar)) {
             invocarVistaSaldarCaja();
+        } else if (src.equals(this.vista.jbAnular)) {
+            anularCaja();
         } else if (src.equals(this.vista.jbBuscar)) {
             consultarCajas();
         } else if (src.equals(this.vista.jbEmpleado)) {

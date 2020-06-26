@@ -20,6 +20,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -148,7 +149,7 @@ public class DB_Caja {
         return (int) sq_cabecera;
     }
 
-    public static ResultSetTableModel consultarCajas(Integer idFuncionario, Timestamp fechaInicio, Timestamp fechaFin) {
+    public static ResultSetTableModel consultarCajas(Integer idFuncionario, Timestamp fechaInicio, Timestamp fechaFin, int idEstado) {
         String Q_CAJA_APERTURA = "(SELECT SUM(CANTIDAD*VALOR) FROM ARQUEO_CAJA, MONEDA WHERE MONEDA.ID_MONEDA = ARQUEO_CAJA.ID_MONEDA AND ARQUEO_CAJA.ID_CAJA = CAJA.ID_CAJA AND ID_ARQUEO_CAJA_TIPO = 1)";
         String Q_CAJA_CIERRE = "(SELECT SUM(CANTIDAD*VALOR) FROM ARQUEO_CAJA, MONEDA WHERE MONEDA.ID_MONEDA = ARQUEO_CAJA.ID_MONEDA AND ARQUEO_CAJA.ID_CAJA = CAJA.ID_CAJA AND ID_ARQUEO_CAJA_TIPO = 2)";
         /*String Q_INGRESO_CONTADO = "(SELECT SUM(ROUND(EGDE.CANTIDAD*(EGDE.PRECIO-(EGDE.PRECIO*EGDE.DESCUENTO)/100)))\"Total\" "
@@ -185,13 +186,18 @@ public class DB_Caja {
                 + "  AND  CAJA.ID_FUNCIONARIO_CIERRE = FUNCIONARIO.ID_FUNCIONARIO"
                 + "  AND FUNCIONARIO.ID_PERSONA = PERSONA.ID_PERSONA"
                 + "  AND CAJA.TIEMPO_CIERRE BETWEEN ?  AND ?  ";
-        String func = " AND CAJA.ID_FUNCIONARIO_CIERRE = ?";
+        String func = " AND CAJA.ID_FUNCIONARIO_CIERRE = ? ";
+        String estad = " AND CAJA.ID_ESTADO = ? ";
         String ORDER = " ORDER BY TIEMPO_CIERRE ";
         if (idFuncionario > -1) {
             Query = Query + func;
         }
+        if (idEstado > -1) {
+            Query = Query + estad;
+        }
         Query = Query + ORDER;
         ResultSetTableModel rstm = null;
+        int pos = 3;
         try {
             pst = DB_manager.getConection().prepareStatement(Query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             pst.setTimestamp(1, fechaInicio);
@@ -205,7 +211,13 @@ public class DB_Caja {
 //            pst.setTimestamp(9, fechaInicio);
 //            pst.setTimestamp(10, fechaFin);
             if (idFuncionario > -1) {
-                pst.setInt(3, idFuncionario);
+                pst.setInt(pos, idFuncionario);
+                pos++;
+            }
+
+            if (idEstado > -1) {
+                pst.setInt(pos, idEstado);
+                pos++;
             }
             // se ejecuta el query y se obtienen los resultados en un ResultSet
             rs = pst.executeQuery();
@@ -521,6 +533,62 @@ public class DB_Caja {
             ex.printStackTrace();
         }
         return arqueo;
+    }
+
+    public static void cambiarEstadoCaja(Integer idCaja, int idEstado) {
+        String UPDATE_VENTA = "UPDATE caja SET id_estado = ? WHERE id_caja = ?";
+        try {
+            DB_manager.habilitarTransaccionManual();
+            pst = DB_manager.getConection().prepareStatement(UPDATE_VENTA);
+            pst.setInt(1, idEstado);
+            pst.setInt(2, idCaja);
+            pst.executeUpdate();
+            pst.close();
+            //se anulan los movimientos de caja tambien
+            List<E_facturaCabecera> ventas = DB_Ingreso.obtenerMovimientoVentasCabeceras(idCaja);
+            for (int i = 0; i < ventas.size(); i++) {
+                String query = "UPDATE caja_movimiento SET "
+                        + "id_estado = 2 WHERE id_movimiento_contable_tipo = 1 AND id_movimiento = " + ventas.get(i).getIdFacturaCabecera();
+                st = DB_manager.getConection().createStatement();
+                st.executeUpdate(query);
+            }
+            List<M_egreso_cabecera> compras = DB_Egreso.obtenerMovimientoComprasCabeceras(idCaja);
+            for (int i = 0; i < compras.size(); i++) {
+                String query = "UPDATE caja_movimiento SET "
+                        + "id_estado = 2 WHERE id_movimiento_contable_tipo = 2 AND id_movimiento = " + compras.get(i).getId_cabecera();
+                st = DB_manager.getConection().createStatement();
+                st.executeUpdate(query);
+            }
+            List<E_cuentaCorrienteCabecera> cobros = DB_Cobro.obtenerMovimientoCobrosCabeceras(idCaja);
+            for (int i = 0; i < cobros.size(); i++) {
+                String query = "UPDATE caja_movimiento SET "
+                        + "id_estado = 2 WHERE id_movimiento_contable_tipo = 3 AND id_movimiento = " + cobros.get(i).getId();
+                st = DB_manager.getConection().createStatement();
+                st.executeUpdate(query);
+            }
+            List<E_reciboPagoCabecera> pagos = DB_Pago.obtenerMovimientoPagosCabeceras(idCaja);
+            for (int i = 0; i < pagos.size(); i++) {
+                String query = "UPDATE caja_movimiento SET "
+                        + "id_estado = 2 WHERE id_movimiento_contable_tipo = 4 AND id_movimiento = " + pagos.get(i).getId();
+                st = DB_manager.getConection().createStatement();
+                st.executeUpdate(query);
+            }
+            DB_manager.establecerTransaccion();
+        } catch (SQLException ex) {
+            System.out.println(ex.getNextException());
+            if (DB_manager.getConection() != null) {
+                try {
+                    DB_manager.getConection().rollback();
+                } catch (SQLException ex1) {
+                    Logger lgr = Logger.getLogger(DB_Caja.class
+                            .getName());
+                    lgr.log(Level.WARNING, ex1.getMessage(), ex1);
+                }
+            }
+            Logger lgr = Logger.getLogger(DB_Caja.class
+                    .getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        }
     }
 
 }

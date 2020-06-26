@@ -61,7 +61,7 @@ public class M_gestionCaja {
     }
 
     public ResultSetTableModel consultarCajas(int idFuncionario, Timestamp fecha_inicio, Timestamp fecha_fin) {
-        return DB_Caja.consultarCajas(idFuncionario, fecha_inicio, fecha_fin);
+        return DB_Caja.consultarCajas(idFuncionario, fecha_inicio, fecha_fin, 1);
     }
 
     public void exportarExcel(Integer idFuncionario, Date fecha_inicio, Date fecha_fin) {
@@ -112,5 +112,10 @@ public class M_gestionCaja {
             }
         }
         return false;
+    }
+
+    public void anularCaja(Integer idCaja) {
+        //id 2 es inactivo
+        DB_Caja.cambiarEstadoCaja(idCaja, 2);
     }
 }

@@ -22,7 +22,7 @@ import net.miginfocom.swing.MigLayout;
 public class V_gestionCaja extends JInternalFrame {
 
     public JButton jbBuscar, jbBorrar, jbAgregar, jbDetalle,
-            jbEmpleado, jbExportar;
+            jbEmpleado, jbExportar, jbAnular;
     public JTextField jtfEmpleado;
     private JPanel jpTop, jpBotonesTop, jpBot;
     public JScrollPane jspCaja;
@@ -88,12 +88,17 @@ public class V_gestionCaja extends JInternalFrame {
         jpBot = new JPanel();
         Insets insets = new Insets(10, 10, 10, 10);
         jbAgregar = new JButton("Saldar caja [F1]");
-        jbAgregar.setName("crear venta");
+        jbAgregar.setName("crear caja");
         jbAgregar.setFont(CommonFormat.fuente);
         jbAgregar.setEnabled(false);
         jbAgregar.setMargin(insets);
+        jbAnular = new JButton("Anular caja");
+        jbAnular.setName("anular caja");
+        jbAnular.setFont(CommonFormat.fuente);
+        jbAnular.setEnabled(false);
+        jbAnular.setMargin(insets);
         jbDetalle = new JButton("Ver detalle");
-        jbDetalle.setName("detalle venta");
+        jbDetalle.setName("detalle caja");
         jbDetalle.setFont(CommonFormat.fuente);
         jbDetalle.setEnabled(false);
         jbDetalle.setMargin(insets);
@@ -102,6 +107,7 @@ public class V_gestionCaja extends JInternalFrame {
         jbExportar.setFont(CommonFormat.fuente);
         jbExportar.setMargin(insets);
         jpBot.add(jbAgregar);
+        jpBot.add(jbAnular);
         jpBot.add(jbDetalle);
         jpBot.add(jbExportar);
         jpBot.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED), "Opciones"));

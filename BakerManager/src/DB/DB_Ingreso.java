@@ -1886,12 +1886,12 @@ public class DB_Ingreso {
                 try {
                     DB_manager.getConection().rollback();
                 } catch (SQLException ex1) {
-                    Logger lgr = Logger.getLogger(DB_Proveedor.class
+                    Logger lgr = Logger.getLogger(DB_Ingreso.class
                             .getName());
                     lgr.log(Level.WARNING, ex1.getMessage(), ex1);
                 }
             }
-            Logger lgr = Logger.getLogger(DB_Proveedor.class
+            Logger lgr = Logger.getLogger(DB_Ingreso.class
                     .getName());
             lgr.log(Level.SEVERE, ex.getMessage(), ex);
         }
