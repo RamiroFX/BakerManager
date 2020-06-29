@@ -5,6 +5,8 @@
  */
 package ModeloTabla;
 
+import Entities.Caja;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.table.AbstractTableModel;
@@ -15,11 +17,13 @@ import javax.swing.table.AbstractTableModel;
  */
 public class CajaTableModel extends AbstractTableModel {
 
-    List<SeleccionProductoCategoria> productoCategoriaList;
-    private String[] colNames = {"Id", "Descripcion", "Seleccionado"};
+    private SimpleDateFormat dateFormater;
+    List<Caja> list;
+    private String[] colNames = {"ID", "Func. apertura", "Func. cierre", "Monto inicial", "Monto final", "Tiempo apertura", "Tiempo cierre"};
 
     public CajaTableModel() {
-        productoCategoriaList = new ArrayList<>();
+        this.dateFormater = new SimpleDateFormat("dd/MM/YYYY HH:mm:ss");
+        list = new ArrayList<>();
     }
 
     @Override
@@ -39,7 +43,7 @@ public class CajaTableModel extends AbstractTableModel {
 
     @Override
     public int getRowCount() {
-        return this.productoCategoriaList.size();
+        return this.list.size();
     }
 
     @Override
@@ -49,16 +53,28 @@ public class CajaTableModel extends AbstractTableModel {
 
     @Override
     public Object getValueAt(int rowIndex, int colIndex) {
-        SeleccionProductoCategoria productoCategoria = this.productoCategoriaList.get(rowIndex);
+        Caja caja = this.list.get(rowIndex);
         switch (colIndex) {
             case 0: {
-                return productoCategoria.getProductoCategoria().getId();
+                return caja.getIdCaja();
             }
             case 1: {
-                return productoCategoria.getProductoCategoria().getDescripcion();
+                return caja.getFuncionarioApertura().getNombre();
             }
             case 2: {
-                return productoCategoria.isEstaSeleccionado();
+                return caja.getFuncionarioCierre().getNombre();
+            }
+            case 3: {
+                return caja.getMontoApertura();
+            }
+            case 4: {
+                return caja.getMontoCierre();
+            }
+            case 5: {
+                return dateFormater.format(caja.getTiempoApertura());
+            }
+            case 6: {
+                return dateFormater.format(caja.getTiempoCierre());
             }
             default: {
                 return null;
@@ -66,17 +82,13 @@ public class CajaTableModel extends AbstractTableModel {
         }
     }
 
-    @Override
-    public void setValueAt(Object aValue, int row, int column) {
-        if (aValue instanceof Boolean && column == 2) {
-            SeleccionProductoCategoria rowData = productoCategoriaList.get(row);
-            rowData.setEstaSeleccionado((boolean) aValue);
-            fireTableCellUpdated(row, column);
-        }
+    public void setList(List<Caja> list) {
+        this.list = list;
+        updateTable();
     }
 
-    public void setProductoCategoriaList(List<SeleccionProductoCategoria> productoCategoriaList) {
-        this.productoCategoriaList = productoCategoriaList;
+    public List<Caja> getList() {
+        return list;
     }
 
     public void updateTable() {

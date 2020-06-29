@@ -1,11 +1,11 @@
 package Caja;
 
 import Empleado.Seleccionar_funcionario;
+import Entities.Estado;
 import Entities.M_funcionario;
-import Entities.M_menu_item;
 import Interface.GestionInterface;
 import Interface.RecibirEmpleadoCallback;
-import MenuPrincipal.DatosUsuario;
+import Utilities.StatusCellRenderer;
 import bakermanager.C_inicio;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
@@ -27,6 +27,7 @@ public class C_gestionCaja implements GestionInterface, RecibirEmpleadoCallback 
     V_gestionCaja vista;
     M_gestionCaja modelo;
     public C_inicio c_inicio;
+    StatusCellRenderer scr;
 
     public C_gestionCaja(V_gestionCaja vista, M_gestionCaja modelo, C_inicio c_inicio) {
         this.vista = vista;
@@ -43,6 +44,13 @@ public class C_gestionCaja implements GestionInterface, RecibirEmpleadoCallback 
 
     @Override
     public void inicializarVista() {
+        this.vista.jtCaja.setModel(this.modelo.getCajaTableModel());
+        this.scr = new StatusCellRenderer(1, this.modelo.getCajaTableModel().getList());
+        this.vista.jtCaja.setDefaultRenderer(Object.class, scr);
+        ArrayList<Estado> estados = modelo.getEstados();
+        for (int i = 0; i < estados.size(); i++) {
+            this.vista.jcbEstado.addItem(estados.get(i));
+        }
         Date date = Calendar.getInstance().getTime();
         this.vista.jddInicio.setDate(date);
         this.vista.jddFinal.setDate(date);
@@ -149,7 +157,9 @@ public class C_gestionCaja implements GestionInterface, RecibirEmpleadoCallback 
                     if (modelo.getFuncionario() != null && modelo.getFuncionario().getId_funcionario() != null) {
                         idFuncionario = modelo.getFuncionario().getId_funcionario();
                     }
-                    vista.jtCaja.setModel(modelo.consultarCajas(idFuncionario, ini, fi));
+                    Estado estado = vista.jcbEstado.getItemAt(vista.jcbEstado.getSelectedIndex());
+                    modelo.consultarCajas(idFuncionario, estado.getId(), ini, fi);
+                    scr.setList(modelo.getCajaTableModel().getList());
                     Utilities.c_packColumn.packColumns(vista.jtCaja, 1);
                     vista.jbDetalle.setEnabled(false);
                 } else {

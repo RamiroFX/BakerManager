@@ -1,11 +1,14 @@
 package Caja;
 
 import DB.DB_Caja;
+import DB.DB_manager;
 import DB.ResultSetTableModel;
 import Entities.Caja;
 import Entities.CierreCaja;
+import Entities.Estado;
 import Entities.M_funcionario;
 import Excel.ExportarCaja;
+import ModeloTabla.CajaTableModel;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -21,10 +24,12 @@ public class M_gestionCaja {
     private Caja caja;
 
     private M_funcionario funcionario;
+    private CajaTableModel cajaTableModel;
 
     public M_gestionCaja() {
         this.caja = new Caja();
         this.funcionario = new M_funcionario();
+        this.cajaTableModel = new CajaTableModel();
     }
 
     public M_gestionCaja(Caja caja, M_funcionario funcionario) {
@@ -60,8 +65,14 @@ public class M_gestionCaja {
         return alias + "-(" + nombre + " " + apellido + ")";
     }
 
-    public ResultSetTableModel consultarCajas(int idFuncionario, Timestamp fecha_inicio, Timestamp fecha_fin) {
-        return DB_Caja.consultarCajas(idFuncionario, fecha_inicio, fecha_fin, 1);
+    public ArrayList<Estado> getEstados() {
+        ArrayList<Estado> estados = DB_manager.obtenerEstados();
+        estados.add(new Estado(-1, "Todos"));
+        return estados;
+    }
+
+    public void consultarCajas(int idFuncionario, int idEstado, Timestamp fecha_inicio, Timestamp fecha_fin) {
+        this.getCajaTableModel().setList(DB_Caja.consultarCajas2(idFuncionario, fecha_inicio, fecha_fin, idEstado));
     }
 
     public void exportarExcel(Integer idFuncionario, Date fecha_inicio, Date fecha_fin) {
@@ -117,5 +128,13 @@ public class M_gestionCaja {
     public void anularCaja(Integer idCaja) {
         //id 2 es inactivo
         DB_Caja.cambiarEstadoCaja(idCaja, 2);
+    }
+
+    public CajaTableModel getCajaTableModel() {
+        return cajaTableModel;
+    }
+
+    public void setCajaTableModel(CajaTableModel cajaTableModel) {
+        this.cajaTableModel = cajaTableModel;
     }
 }

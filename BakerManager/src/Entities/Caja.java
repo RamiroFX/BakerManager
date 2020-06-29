@@ -13,9 +13,15 @@ import java.util.Date;
 public class Caja {
 
     private int idCaja, idEmpleadoApertura, idEmpleadoCierre;
+    private M_funcionario funcionarioApertura, funcionarioCierre;
+    private int montoApertura, montoCierre, montoDepositado;
     private Date tiempoApertura, tiempoCierre;
+    private Estado estado;
 
     public Caja() {
+        funcionarioApertura = new M_funcionario();
+        funcionarioCierre = new M_funcionario();
+        estado = new Estado();
     }
 
     public Caja(int idCaja, int idEmpleadoApertura, int idEmpleadoCierre, Date tiempoApertura, Date tiempoCierre) {
@@ -69,6 +75,54 @@ public class Caja {
     @Override
     public String toString() {
         return "Caja:{Id: " + getIdCaja() + ", tiempoCierre:" + getTiempoCierre() + "}";
+    }
+
+    public M_funcionario getFuncionarioApertura() {
+        return funcionarioApertura;
+    }
+
+    public void setFuncionarioApertura(M_funcionario funcionarioApertura) {
+        this.funcionarioApertura = funcionarioApertura;
+    }
+
+    public M_funcionario getFuncionarioCierre() {
+        return funcionarioCierre;
+    }
+
+    public void setFuncionarioCierre(M_funcionario funcionarioCierre) {
+        this.funcionarioCierre = funcionarioCierre;
+    }
+
+    public int getMontoApertura() {
+        return montoApertura;
+    }
+
+    public void setMontoApertura(int montoApertura) {
+        this.montoApertura = montoApertura;
+    }
+
+    public int getMontoCierre() {
+        return montoCierre;
+    }
+
+    public void setMontoCierre(int montoCierre) {
+        this.montoCierre = montoCierre;
+    }
+
+    public int getMontoDepositado() {
+        return montoDepositado;
+    }
+
+    public void setMontoDepositado(int montoDepositado) {
+        this.montoDepositado = montoDepositado;
+    }
+
+    public Estado getEstado() {
+        return estado;
+    }
+
+    public void setEstado(Estado estado) {
+        this.estado = estado;
     }
 
 }

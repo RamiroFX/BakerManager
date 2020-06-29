@@ -1,10 +1,13 @@
 package Caja;
 
+import Entities.Estado;
 import Interface.CommonFormat;
 import com.toedter.calendar.JDateChooser;
 import java.awt.Dimension;
 import java.awt.Insets;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JInternalFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -25,6 +28,7 @@ public class V_gestionCaja extends JInternalFrame {
             jbEmpleado, jbExportar, jbAnular;
     public JTextField jtfEmpleado;
     private JPanel jpTop, jpBotonesTop, jpBot;
+    public JComboBox<Estado> jcbEstado;
     public JScrollPane jspCaja;
     public JTable jtCaja;
     public JDateChooser jddInicio, jddFinal;
@@ -56,12 +60,23 @@ public class V_gestionCaja extends JInternalFrame {
         jddInicio.setPreferredSize(new Dimension(150, 10));
         jddFinal = new JDateChooser();
         jddFinal.setPreferredSize(new Dimension(150, 10));
+        jcbEstado = new JComboBox<>();
         jpFiltros.add(jbEmpleado, "growx");
         jpFiltros.add(jtfEmpleado, "growx");
         jpFiltros.add(new JLabel("Fecha inicio:"));
         jpFiltros.add(jddInicio, "growx");
         jpFiltros.add(new JLabel("Fecha final:"));
-        jpFiltros.add(jddFinal, "growx");
+        jpFiltros.add(jddFinal, "growx, wrap");
+        jpFiltros.add(new JComponent() {
+        });
+        jpFiltros.add(new JComponent() {
+        });
+        jpFiltros.add(new JComponent() {
+        });
+        jpFiltros.add(new JComponent() {
+        });
+        jpFiltros.add(new JLabel("Estado"));
+        jpFiltros.add(jcbEstado, "growx");
         jpBotonesTop = new JPanel(new MigLayout());
         jpBotonesTop.setBorder(new EtchedBorder(EtchedBorder.RAISED));
         /*jtfBuscar = new JTextField();

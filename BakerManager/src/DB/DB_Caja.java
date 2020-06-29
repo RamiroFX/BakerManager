@@ -11,7 +11,9 @@ import Entities.CierreCaja;
 import Entities.E_cuentaCorrienteCabecera;
 import Entities.E_facturaCabecera;
 import Entities.E_reciboPagoCabecera;
+import Entities.Estado;
 import Entities.M_egreso_cabecera;
+import Entities.M_funcionario;
 import Entities.Moneda;
 import Interface.MovimientosCaja;
 import java.sql.PreparedStatement;
@@ -227,6 +229,78 @@ public class DB_Caja {
             lgr.log(Level.SEVERE, ex.getMessage(), ex);
         }
         return rstm;
+    }
+
+    public static ArrayList<Caja> consultarCajas2(Integer idFuncionario, Timestamp fechaInicio, Timestamp fechaFin, int idEstado) {
+        ArrayList<Caja> cajas = new ArrayList<>();
+        String Q_CAJA_APERTURA = "(SELECT SUM(CANTIDAD*VALOR) FROM ARQUEO_CAJA, MONEDA WHERE MONEDA.ID_MONEDA = ARQUEO_CAJA.ID_MONEDA AND ARQUEO_CAJA.ID_CAJA = CAJA.ID_CAJA AND ID_ARQUEO_CAJA_TIPO = 1)";
+        String Q_CAJA_CIERRE = "(SELECT SUM(CANTIDAD*VALOR) FROM ARQUEO_CAJA, MONEDA WHERE MONEDA.ID_MONEDA = ARQUEO_CAJA.ID_MONEDA AND ARQUEO_CAJA.ID_CAJA = CAJA.ID_CAJA AND ID_ARQUEO_CAJA_TIPO = 2)";
+        String Q_CAJA_DEPOSITADO = "(SELECT SUM(CANTIDAD*VALOR) FROM ARQUEO_CAJA, MONEDA WHERE MONEDA.ID_MONEDA = ARQUEO_CAJA.ID_MONEDA AND ARQUEO_CAJA.ID_CAJA = CAJA.ID_CAJA AND ID_ARQUEO_CAJA_TIPO = 3)";
+        String Query = "SELECT ID_CAJA \"ID\", "
+                + "CAJA.ID_ESTADO, "
+                + "(SELECT DESCRIPCION FROM ESTADO WHERE ESTADO.ID_ESTADO= CAJA.ID_ESTADO) \"ESTADO\", "
+                + "(SELECT NOMBRE ||' '|| APELLIDO WHERE PERSONA.ID_PERSONA = FUNCIONARIO.ID_PERSONA AND FUNCIONARIO.ID_FUNCIONARIO = ID_FUNCIONARIO_APERTURA) \"FUNC APERTURA\", "
+                + "(SELECT NOMBRE ||' '|| APELLIDO WHERE PERSONA.ID_PERSONA = FUNCIONARIO.ID_PERSONA AND FUNCIONARIO.ID_FUNCIONARIO = ID_FUNCIONARIO_CIERRE)\"FUNC CIERRE\" , "
+                + "COALESCE(" + Q_CAJA_APERTURA + ",0) \"MONTO_INICIAL\", "
+                + "COALESCE(" + Q_CAJA_CIERRE + ",0) \"MONTO_FINAL\", "
+                + "COALESCE(" + Q_CAJA_DEPOSITADO + ",0) \"MONTO_DEPOSITADO\", "
+                + " TIEMPO_APERTURA, "
+                + " TIEMPO_CIERRE "
+                + "  FROM CAJA, FUNCIONARIO , PERSONA"
+                + "  WHERE CAJA.ID_FUNCIONARIO_APERTURA = FUNCIONARIO.ID_FUNCIONARIO"
+                + "  AND  CAJA.ID_FUNCIONARIO_CIERRE = FUNCIONARIO.ID_FUNCIONARIO"
+                + "  AND FUNCIONARIO.ID_PERSONA = PERSONA.ID_PERSONA"
+                + "  AND CAJA.TIEMPO_CIERRE BETWEEN ?  AND ?  ";
+        String func = " AND CAJA.ID_FUNCIONARIO_CIERRE = ? ";
+        String estad = " AND CAJA.ID_ESTADO = ? ";
+        String ORDER = " ORDER BY TIEMPO_CIERRE ";
+        if (idFuncionario > -1) {
+            Query = Query + func;
+        }
+        if (idEstado > -1) {
+            Query = Query + estad;
+        }
+        Query = Query + ORDER;
+        int pos = 3;
+        try {
+            pst = DB_manager.getConection().prepareStatement(Query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            pst.setTimestamp(1, fechaInicio);
+            pst.setTimestamp(2, fechaFin);
+            if (idFuncionario > -1) {
+                pst.setInt(pos, idFuncionario);
+                pos++;
+            }
+            if (idEstado > -1) {
+                pst.setInt(pos, idEstado);
+                pos++;
+            }
+            // se ejecuta el query y se obtienen los resultados en un ResultSet
+            rs = pst.executeQuery();
+            while (rs.next()) {
+                Estado estado = new Estado();
+                estado.setId(rs.getInt("ID_ESTADO"));
+                estado.setDescripcion(rs.getString("ESTADO"));
+                M_funcionario funcAper = new M_funcionario();
+                funcAper.setNombre(rs.getString("FUNC APERTURA"));
+                M_funcionario funcCierre = new M_funcionario();
+                funcCierre.setNombre(rs.getString("FUNC CIERRE"));
+                Caja unaCaja = new Caja();
+                unaCaja.setFuncionarioApertura(funcAper);
+                unaCaja.setFuncionarioCierre(funcCierre);
+                unaCaja.setEstado(estado);
+                unaCaja.setMontoApertura(rs.getInt("MONTO_INICIAL"));
+                unaCaja.setMontoCierre(rs.getInt("MONTO_FINAL"));
+                unaCaja.setMontoDepositado(rs.getInt("MONTO_DEPOSITADO"));
+                unaCaja.setIdCaja(rs.getInt("ID"));
+                unaCaja.setTiempoApertura(rs.getTimestamp("TIEMPO_APERTURA"));
+                unaCaja.setTiempoCierre(rs.getTimestamp("TIEMPO_CIERRE"));
+                cajas.add(unaCaja);
+            }
+        } catch (SQLException ex) {
+            Logger lgr = Logger.getLogger(DB_Caja.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        }
+        return cajas;
     }
 
     public static ArrayList<CierreCaja> consultarCajas2(Integer idFuncionario, Timestamp fechaInicio, Timestamp fechaFin) {

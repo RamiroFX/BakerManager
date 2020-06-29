@@ -45,6 +45,10 @@ public class Estado {
         return getDescripcion();
     }
 
+    public String toString2() {
+        return "Estado[" + getId() + ":" + getDescripcion() + "]";
+    }
+
     @Override
     public boolean equals(Object o) {
         // If the object is compared with itself then return true   
