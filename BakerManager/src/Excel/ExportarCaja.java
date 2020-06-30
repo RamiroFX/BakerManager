@@ -912,4 +912,145 @@ public class ExportarCaja {
             e.printStackTrace();
         }
     }
+
+    public void exportarInformeCierreCaja(Caja caja, MovimientosCaja movimientosCaja) {
+        System.out.println("Excel.ExportarCaja.exportarInformeCierreCaja()");
+        //PREPARAR CONTENIDO
+        int fila = 0;//En preparar cuerpo empieza en cero (0).
+        Calendar calendar = Calendar.getInstance();
+        int monthCursor = 0;
+        int columnaDerecha = 5;
+        Date resumenFechaInicio = null;
+        Date resumenFechaFin = null;
+        sheets.clear();
+        sheets.add(workbook.createSheet(sdfs.format(calendar.getTime())));
+        sheets.get(monthCursor).getPrintSetup().setLandscape(true);
+        //CREAR FECHA DE CAJA
+        Row rowTitulo = sheets.get(monthCursor).createRow(fila);
+        rowTitulo.createCell(0).setCellValue(new HSSFRichTextString("Informe Cierre de Caja"));
+        rowTitulo.getCell(0).setCellStyle(style8);
+        CellUtil.setAlignment(rowTitulo.getCell(0), workbook, CellStyle.ALIGN_CENTER);
+        sheets.get(monthCursor).addMergedRegion(new CellRangeAddress(fila, fila, 0, 12));
+        fila++;
+        Row rowIDYFecha = sheets.get(monthCursor).createRow(fila);
+        rowIDYFecha.createCell(0).setCellValue(new HSSFRichTextString("Nª Informe"));
+        rowIDYFecha.getCell(0).setCellStyle(style8);
+        rowIDYFecha.createCell(1).setCellValue(caja.getIdCaja());
+        rowIDYFecha.getCell(1).setCellStyle(style4);
+        rowIDYFecha.createCell(0).setCellValue(new HSSFRichTextString("Fecha informe"));
+        rowIDYFecha.getCell(0).setCellStyle(style8);
+        rowIDYFecha.createCell(1).setCellValue(caja.getTiempoCierre());
+        rowIDYFecha.getCell(1).setCellStyle(dateCellStyle);
+        fila++;
+        CellRangeAddress conceptosCRA = new CellRangeAddress(fila, fila + 1, 0, 0);
+        CellRangeAddress nroDocCRA = new CellRangeAddress(fila, fila + 1, 1, 1);
+        CellRangeAddress fechaCRA = new CellRangeAddress(fila, fila + 1, 2, 2);
+        CellRangeAddress rucCRA = new CellRangeAddress(fila, fila + 1, 3, 3);
+        CellRangeAddress entidadCRA = new CellRangeAddress(fila, fila + 1, 4, 4);
+        CellRangeAddress referenciaCRA = new CellRangeAddress(fila, fila, 5, 8);
+        CellRangeAddress efectivoCRA = new CellRangeAddress(fila, fila, 9, 10);
+        CellRangeAddress documentosCRA = new CellRangeAddress(fila, fila, 11, 12);
+        sheets.get(monthCursor).addMergedRegion(conceptosCRA);
+        sheets.get(monthCursor).addMergedRegion(nroDocCRA);
+        sheets.get(monthCursor).addMergedRegion(fechaCRA);
+        sheets.get(monthCursor).addMergedRegion(rucCRA);
+        sheets.get(monthCursor).addMergedRegion(entidadCRA);
+        sheets.get(monthCursor).addMergedRegion(referenciaCRA);
+        sheets.get(monthCursor).addMergedRegion(efectivoCRA);
+        sheets.get(monthCursor).addMergedRegion(documentosCRA);
+        int rowCabeceraDetalleIndex = 0;
+        Row rowCabeceraDetalle = sheets.get(monthCursor).createRow(fila);
+        rowCabeceraDetalle.createCell(rowCabeceraDetalleIndex).setCellValue(new HSSFRichTextString("Conceptos"));
+        rowCabeceraDetalle.getCell(rowCabeceraDetalleIndex).setCellStyle(style8);
+        CellUtil.setAlignment(rowCabeceraDetalle.getCell(rowCabeceraDetalleIndex), workbook, CellStyle.ALIGN_CENTER);
+        rowCabeceraDetalleIndex++;
+        rowCabeceraDetalle.createCell(rowCabeceraDetalleIndex).setCellValue(new HSSFRichTextString("Nº Doc."));
+        rowCabeceraDetalle.getCell(rowCabeceraDetalleIndex).setCellStyle(style8);
+        CellUtil.setAlignment(rowCabeceraDetalle.getCell(rowCabeceraDetalleIndex), workbook, CellStyle.ALIGN_CENTER);
+        rowCabeceraDetalleIndex++;
+        rowCabeceraDetalle.createCell(rowCabeceraDetalleIndex).setCellValue(new HSSFRichTextString("Fecha"));
+        rowCabeceraDetalle.getCell(rowCabeceraDetalleIndex).setCellStyle(style8);
+        CellUtil.setAlignment(rowCabeceraDetalle.getCell(rowCabeceraDetalleIndex), workbook, CellStyle.ALIGN_CENTER);
+        rowCabeceraDetalleIndex++;
+        rowCabeceraDetalle.createCell(rowCabeceraDetalleIndex).setCellValue(new HSSFRichTextString("R.U.C."));
+        rowCabeceraDetalle.getCell(rowCabeceraDetalleIndex).setCellStyle(style8);
+        CellUtil.setAlignment(rowCabeceraDetalle.getCell(rowCabeceraDetalleIndex), workbook, CellStyle.ALIGN_CENTER);
+        rowCabeceraDetalleIndex++;
+        rowCabeceraDetalle.createCell(rowCabeceraDetalleIndex).setCellValue(new HSSFRichTextString("Entidad"));
+        rowCabeceraDetalle.getCell(rowCabeceraDetalleIndex).setCellStyle(style8);
+        CellUtil.setAlignment(rowCabeceraDetalle.getCell(rowCabeceraDetalleIndex), workbook, CellStyle.ALIGN_CENTER);
+        rowCabeceraDetalleIndex++;
+        rowCabeceraDetalle.createCell(rowCabeceraDetalleIndex).setCellValue(new HSSFRichTextString("Referencia"));
+        rowCabeceraDetalle.getCell(rowCabeceraDetalleIndex).setCellStyle(style8);
+        CellUtil.setAlignment(rowCabeceraDetalle.getCell(rowCabeceraDetalleIndex), workbook, CellStyle.ALIGN_CENTER);
+        rowCabeceraDetalleIndex = rowCabeceraDetalleIndex + 4;
+        rowCabeceraDetalle.createCell(rowCabeceraDetalleIndex).setCellValue(new HSSFRichTextString("Efectivo"));
+        rowCabeceraDetalle.getCell(rowCabeceraDetalleIndex).setCellStyle(style8);
+        CellUtil.setAlignment(rowCabeceraDetalle.getCell(rowCabeceraDetalleIndex), workbook, CellStyle.ALIGN_CENTER);
+        rowCabeceraDetalleIndex = rowCabeceraDetalleIndex + 2;
+        rowCabeceraDetalle.createCell(rowCabeceraDetalleIndex).setCellValue(new HSSFRichTextString("Documentos"));
+        rowCabeceraDetalle.getCell(rowCabeceraDetalleIndex).setCellStyle(style8);
+        CellUtil.setAlignment(rowCabeceraDetalle.getCell(rowCabeceraDetalleIndex), workbook, CellStyle.ALIGN_CENTER);
+        rowCabeceraDetalleIndex = 5;
+        fila++;
+        Row rowCabeceraSubDetalle = sheets.get(monthCursor).createRow(fila);
+        rowCabeceraSubDetalle.createCell(rowCabeceraDetalleIndex).setCellValue(new HSSFRichTextString("Fecha"));
+        rowCabeceraSubDetalle.getCell(rowCabeceraDetalleIndex).setCellStyle(style8);
+        rowCabeceraDetalleIndex++;
+        rowCabeceraSubDetalle.createCell(rowCabeceraDetalleIndex).setCellValue(new HSSFRichTextString("F. Dif."));
+        rowCabeceraSubDetalle.getCell(rowCabeceraDetalleIndex).setCellStyle(style8);
+        rowCabeceraDetalleIndex++;
+        rowCabeceraSubDetalle.createCell(rowCabeceraDetalleIndex).setCellValue(new HSSFRichTextString("Número"));
+        rowCabeceraSubDetalle.getCell(rowCabeceraDetalleIndex).setCellStyle(style8);
+        rowCabeceraDetalleIndex++;
+        rowCabeceraSubDetalle.createCell(rowCabeceraDetalleIndex).setCellValue(new HSSFRichTextString("Entidad"));
+        rowCabeceraSubDetalle.getCell(rowCabeceraDetalleIndex).setCellStyle(style8);
+        rowCabeceraDetalleIndex++;
+        rowCabeceraSubDetalle.createCell(rowCabeceraDetalleIndex).setCellValue(new HSSFRichTextString("Ingresos"));
+        rowCabeceraSubDetalle.getCell(rowCabeceraDetalleIndex).setCellStyle(style8);
+        rowCabeceraDetalleIndex++;
+        rowCabeceraSubDetalle.createCell(rowCabeceraDetalleIndex).setCellValue(new HSSFRichTextString("Egresos"));
+        rowCabeceraSubDetalle.getCell(rowCabeceraDetalleIndex).setCellStyle(style8);
+        rowCabeceraDetalleIndex++;
+        rowCabeceraSubDetalle.createCell(rowCabeceraDetalleIndex).setCellValue(new HSSFRichTextString("Ingresos"));
+        rowCabeceraSubDetalle.getCell(rowCabeceraDetalleIndex).setCellStyle(style8);
+        rowCabeceraDetalleIndex++;
+        rowCabeceraSubDetalle.createCell(rowCabeceraDetalleIndex).setCellValue(new HSSFRichTextString("Egresos"));
+        rowCabeceraSubDetalle.getCell(rowCabeceraDetalleIndex).setCellStyle(style8);
+        rowCabeceraDetalleIndex++;
+        String desktop = System.getProperty("user.home") + "\\Desktop";
+        JFileChooser chooser = new JFileChooser(desktop);
+        if (chooser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
+            directory = chooser.getSelectedFile();
+            directory.setWritable(true);
+            directory.setExecutable(true);
+            directory.setReadable(true);
+        } else {
+            return;
+        }
+        sheets.get(monthCursor).autoSizeColumn(0);
+        sheets.get(monthCursor).autoSizeColumn(1);
+        sheets.get(monthCursor).autoSizeColumn(2);
+        sheets.get(monthCursor).autoSizeColumn(3);
+        sheets.get(monthCursor).autoSizeColumn(4);
+        sheets.get(monthCursor).autoSizeColumn(5);
+        sheets.get(monthCursor).autoSizeColumn(6);
+        sheets.get(monthCursor).autoSizeColumn(7);
+        sheets.get(monthCursor).autoSizeColumn(8);
+        sheets.get(monthCursor).autoSizeColumn(9);
+        sheets.get(monthCursor).autoSizeColumn(10);
+        sheets.get(monthCursor).autoSizeColumn(11);
+        sheets.get(monthCursor).autoSizeColumn(12);
+
+        //PREPARAR DOCUMENTO
+        try {
+            FileOutputStream out = new FileOutputStream(directory.getPath() + ".xls");
+            workbook.write(out);
+            out.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }

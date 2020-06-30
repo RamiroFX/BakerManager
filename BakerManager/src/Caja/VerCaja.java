@@ -327,7 +327,7 @@ public class VerCaja implements ActionListener, KeyListener {
 
     private void exportarCaja() {
         ExportarCaja ec = new ExportarCaja();
-        ec.exportarCajaMovimientos(caja, movimientosCaja);
+        ec.exportarInformeCierreCaja(caja, movimientosCaja);
     }
 
     @Override
