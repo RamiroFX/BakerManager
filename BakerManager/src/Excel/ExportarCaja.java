@@ -54,7 +54,8 @@ public class ExportarCaja {
 
     private HSSFWorkbook workbook;
     private ArrayList<HSSFSheet> sheets;
-    private CellStyle style1, style2, style3, style4, style5, style6, style7, style8;
+    private CellStyle style1, style2, style3, style4, style5, style6, style7,
+            style8, style9BorderBoldItalic, style10, style11;
     private HSSFCellStyle dateCellStyle;
     private File directory;
     private ArrayList<CierreCaja> cierreCajas;
@@ -129,6 +130,28 @@ public class ExportarCaja {
         font.setItalic(false);
         style8 = workbook.createCellStyle();
         style8.setFont(font);
+
+        style9BorderBoldItalic = workbook.createCellStyle();
+        style9BorderBoldItalic.setBorderRight(HSSFCellStyle.BORDER_THIN);
+        style9BorderBoldItalic.setBorderLeft(HSSFCellStyle.BORDER_THIN);
+        style9BorderBoldItalic.setBorderTop(HSSFCellStyle.BORDER_THIN);
+        style9BorderBoldItalic.setBorderBottom(HSSFCellStyle.BORDER_THIN);
+        style9BorderBoldItalic.setFont(font);
+
+        style10 = workbook.createCellStyle();
+        style10.setFont(font);
+        style10.setFillForegroundColor(IndexedColors.LIGHT_GREEN.getIndex());
+        style10.setFillPattern(CellStyle.SOLID_FOREGROUND);
+
+        style11 = workbook.createCellStyle();
+        style11.setFont(font);
+        style11.setFillForegroundColor(IndexedColors.LIGHT_GREEN.getIndex());
+        style11.setFillPattern(CellStyle.SOLID_FOREGROUND);
+        style11.setBorderRight(HSSFCellStyle.BORDER_THIN);
+        style11.setBorderLeft(HSSFCellStyle.BORDER_THIN);
+        style11.setBorderTop(HSSFCellStyle.BORDER_THIN);
+        style11.setBorderBottom(HSSFCellStyle.BORDER_THIN);
+        style11.setDataFormat(format.getFormat("#,##0"));
         //END FORMAT STYLE
     }
 
@@ -933,14 +956,14 @@ public class ExportarCaja {
         sheets.get(monthCursor).addMergedRegion(new CellRangeAddress(fila, fila, 0, 12));
         fila++;
         Row rowIDYFecha = sheets.get(monthCursor).createRow(fila);
-        rowIDYFecha.createCell(0).setCellValue(new HSSFRichTextString("Nª Informe"));
+        rowIDYFecha.createCell(0).setCellValue(new HSSFRichTextString("N° Informe"));
         rowIDYFecha.getCell(0).setCellStyle(style8);
         rowIDYFecha.createCell(1).setCellValue(caja.getIdCaja());
         rowIDYFecha.getCell(1).setCellStyle(style4);
-        rowIDYFecha.createCell(0).setCellValue(new HSSFRichTextString("Fecha informe"));
-        rowIDYFecha.getCell(0).setCellStyle(style8);
-        rowIDYFecha.createCell(1).setCellValue(caja.getTiempoCierre());
-        rowIDYFecha.getCell(1).setCellStyle(dateCellStyle);
+        rowIDYFecha.createCell(3).setCellValue(new HSSFRichTextString("Fecha informe"));
+        rowIDYFecha.getCell(3).setCellStyle(style8);
+        rowIDYFecha.createCell(4).setCellValue(caja.getTiempoCierre());
+        rowIDYFecha.getCell(4).setCellStyle(dateCellStyle);
         fila++;
         CellRangeAddress conceptosCRA = new CellRangeAddress(fila, fila + 1, 0, 0);
         CellRangeAddress nroDocCRA = new CellRangeAddress(fila, fila + 1, 1, 1);
@@ -995,29 +1018,149 @@ public class ExportarCaja {
         fila++;
         Row rowCabeceraSubDetalle = sheets.get(monthCursor).createRow(fila);
         rowCabeceraSubDetalle.createCell(rowCabeceraDetalleIndex).setCellValue(new HSSFRichTextString("Fecha"));
-        rowCabeceraSubDetalle.getCell(rowCabeceraDetalleIndex).setCellStyle(style8);
+        rowCabeceraSubDetalle.getCell(rowCabeceraDetalleIndex).setCellStyle(style9BorderBoldItalic);
         rowCabeceraDetalleIndex++;
         rowCabeceraSubDetalle.createCell(rowCabeceraDetalleIndex).setCellValue(new HSSFRichTextString("F. Dif."));
-        rowCabeceraSubDetalle.getCell(rowCabeceraDetalleIndex).setCellStyle(style8);
+        rowCabeceraSubDetalle.getCell(rowCabeceraDetalleIndex).setCellStyle(style9BorderBoldItalic);
         rowCabeceraDetalleIndex++;
         rowCabeceraSubDetalle.createCell(rowCabeceraDetalleIndex).setCellValue(new HSSFRichTextString("Número"));
-        rowCabeceraSubDetalle.getCell(rowCabeceraDetalleIndex).setCellStyle(style8);
+        rowCabeceraSubDetalle.getCell(rowCabeceraDetalleIndex).setCellStyle(style9BorderBoldItalic);
         rowCabeceraDetalleIndex++;
         rowCabeceraSubDetalle.createCell(rowCabeceraDetalleIndex).setCellValue(new HSSFRichTextString("Entidad"));
-        rowCabeceraSubDetalle.getCell(rowCabeceraDetalleIndex).setCellStyle(style8);
+        rowCabeceraSubDetalle.getCell(rowCabeceraDetalleIndex).setCellStyle(style9BorderBoldItalic);
         rowCabeceraDetalleIndex++;
         rowCabeceraSubDetalle.createCell(rowCabeceraDetalleIndex).setCellValue(new HSSFRichTextString("Ingresos"));
-        rowCabeceraSubDetalle.getCell(rowCabeceraDetalleIndex).setCellStyle(style8);
+        rowCabeceraSubDetalle.getCell(rowCabeceraDetalleIndex).setCellStyle(style9BorderBoldItalic);
         rowCabeceraDetalleIndex++;
         rowCabeceraSubDetalle.createCell(rowCabeceraDetalleIndex).setCellValue(new HSSFRichTextString("Egresos"));
-        rowCabeceraSubDetalle.getCell(rowCabeceraDetalleIndex).setCellStyle(style8);
+        rowCabeceraSubDetalle.getCell(rowCabeceraDetalleIndex).setCellStyle(style9BorderBoldItalic);
         rowCabeceraDetalleIndex++;
         rowCabeceraSubDetalle.createCell(rowCabeceraDetalleIndex).setCellValue(new HSSFRichTextString("Ingresos"));
-        rowCabeceraSubDetalle.getCell(rowCabeceraDetalleIndex).setCellStyle(style8);
+        rowCabeceraSubDetalle.getCell(rowCabeceraDetalleIndex).setCellStyle(style9BorderBoldItalic);
         rowCabeceraDetalleIndex++;
         rowCabeceraSubDetalle.createCell(rowCabeceraDetalleIndex).setCellValue(new HSSFRichTextString("Egresos"));
-        rowCabeceraSubDetalle.getCell(rowCabeceraDetalleIndex).setCellStyle(style8);
+        rowCabeceraSubDetalle.getCell(rowCabeceraDetalleIndex).setCellStyle(style9BorderBoldItalic);
         rowCabeceraDetalleIndex++;
+        fila++;
+        /*
+        BORDES PARA LAS REGIONES COMBINADAS
+         */
+        HSSFRegionUtil.setBorderTop(CellStyle.BORDER_THIN, conceptosCRA, sheets.get(monthCursor), workbook);
+        HSSFRegionUtil.setBorderLeft(CellStyle.BORDER_THIN, conceptosCRA, sheets.get(monthCursor), workbook);
+        HSSFRegionUtil.setBorderRight(CellStyle.BORDER_THIN, conceptosCRA, sheets.get(monthCursor), workbook);
+        HSSFRegionUtil.setBorderBottom(CellStyle.BORDER_THIN, conceptosCRA, sheets.get(monthCursor), workbook);
+        HSSFRegionUtil.setBorderTop(CellStyle.BORDER_THIN, nroDocCRA, sheets.get(monthCursor), workbook);
+        HSSFRegionUtil.setBorderLeft(CellStyle.BORDER_THIN, nroDocCRA, sheets.get(monthCursor), workbook);
+        HSSFRegionUtil.setBorderRight(CellStyle.BORDER_THIN, nroDocCRA, sheets.get(monthCursor), workbook);
+        HSSFRegionUtil.setBorderBottom(CellStyle.BORDER_THIN, nroDocCRA, sheets.get(monthCursor), workbook);
+        HSSFRegionUtil.setBorderTop(CellStyle.BORDER_THIN, fechaCRA, sheets.get(monthCursor), workbook);
+        HSSFRegionUtil.setBorderLeft(CellStyle.BORDER_THIN, fechaCRA, sheets.get(monthCursor), workbook);
+        HSSFRegionUtil.setBorderRight(CellStyle.BORDER_THIN, fechaCRA, sheets.get(monthCursor), workbook);
+        HSSFRegionUtil.setBorderBottom(CellStyle.BORDER_THIN, fechaCRA, sheets.get(monthCursor), workbook);
+        HSSFRegionUtil.setBorderTop(CellStyle.BORDER_THIN, rucCRA, sheets.get(monthCursor), workbook);
+        HSSFRegionUtil.setBorderLeft(CellStyle.BORDER_THIN, rucCRA, sheets.get(monthCursor), workbook);
+        HSSFRegionUtil.setBorderRight(CellStyle.BORDER_THIN, rucCRA, sheets.get(monthCursor), workbook);
+        HSSFRegionUtil.setBorderBottom(CellStyle.BORDER_THIN, rucCRA, sheets.get(monthCursor), workbook);
+        HSSFRegionUtil.setBorderTop(CellStyle.BORDER_THIN, entidadCRA, sheets.get(monthCursor), workbook);
+        HSSFRegionUtil.setBorderLeft(CellStyle.BORDER_THIN, entidadCRA, sheets.get(monthCursor), workbook);
+        HSSFRegionUtil.setBorderRight(CellStyle.BORDER_THIN, entidadCRA, sheets.get(monthCursor), workbook);
+        HSSFRegionUtil.setBorderBottom(CellStyle.BORDER_THIN, entidadCRA, sheets.get(monthCursor), workbook);
+        HSSFRegionUtil.setBorderTop(CellStyle.BORDER_THIN, referenciaCRA, sheets.get(monthCursor), workbook);
+        HSSFRegionUtil.setBorderLeft(CellStyle.BORDER_THIN, referenciaCRA, sheets.get(monthCursor), workbook);
+        HSSFRegionUtil.setBorderRight(CellStyle.BORDER_THIN, referenciaCRA, sheets.get(monthCursor), workbook);
+        HSSFRegionUtil.setBorderBottom(CellStyle.BORDER_THIN, referenciaCRA, sheets.get(monthCursor), workbook);
+        HSSFRegionUtil.setBorderTop(CellStyle.BORDER_THIN, efectivoCRA, sheets.get(monthCursor), workbook);
+        HSSFRegionUtil.setBorderLeft(CellStyle.BORDER_THIN, efectivoCRA, sheets.get(monthCursor), workbook);
+        HSSFRegionUtil.setBorderRight(CellStyle.BORDER_THIN, efectivoCRA, sheets.get(monthCursor), workbook);
+        HSSFRegionUtil.setBorderBottom(CellStyle.BORDER_THIN, efectivoCRA, sheets.get(monthCursor), workbook);
+        HSSFRegionUtil.setBorderTop(CellStyle.BORDER_THIN, documentosCRA, sheets.get(monthCursor), workbook);
+        HSSFRegionUtil.setBorderLeft(CellStyle.BORDER_THIN, documentosCRA, sheets.get(monthCursor), workbook);
+        HSSFRegionUtil.setBorderRight(CellStyle.BORDER_THIN, documentosCRA, sheets.get(monthCursor), workbook);
+        HSSFRegionUtil.setBorderBottom(CellStyle.BORDER_THIN, documentosCRA, sheets.get(monthCursor), workbook);
+
+        /*
+        INICIO FONDO FIJO
+         */
+        Row rowFondoFijoDetalle = sheets.get(monthCursor).createRow(fila);
+        rowFondoFijoDetalle.createCell(0).setCellValue(new HSSFRichTextString("1 - Fondo Fijo"));
+        rowFondoFijoDetalle.getCell(0).setCellStyle(style8);
+        rowFondoFijoDetalle.createCell(2).setCellValue(caja.getTiempoCierre());
+        rowFondoFijoDetalle.getCell(2).setCellStyle(dateCellStyle);
+        rowFondoFijoDetalle.createCell(4).setCellValue(new HSSFRichTextString("Fondo Fijo"));
+        rowFondoFijoDetalle.getCell(4).setCellStyle(style8);
+        fila++;
+        CellRangeAddress fondoFijoResumenCRA = new CellRangeAddress(fila, fila, 0, 8);
+        sheets.get(monthCursor).addMergedRegion(fondoFijoResumenCRA);
+        Row rowFondoFijoResumen = sheets.get(monthCursor).createRow(fila);
+        rowFondoFijoResumen.createCell(0).setCellValue(new HSSFRichTextString("Total 1 - Fondo Fijo"));
+        rowFondoFijoResumen.getCell(0).setCellStyle(style10);
+        //JUSTIFICAR A LA DERECHA
+        CellUtil.setAlignment(rowFondoFijoResumen.getCell(0), workbook, CellStyle.ALIGN_RIGHT);
+        rowFondoFijoResumen.createCell(9).setCellValue(caja.getMontoCierre());
+        rowFondoFijoResumen.getCell(9).setCellStyle(style11);
+        rowFondoFijoResumen.createCell(10).setCellValue(0);
+        rowFondoFijoResumen.getCell(10).setCellStyle(style11);
+        rowFondoFijoResumen.createCell(11).setCellValue(0);
+        rowFondoFijoResumen.getCell(11).setCellStyle(style11);
+        rowFondoFijoResumen.createCell(12).setCellValue(0);
+        rowFondoFijoResumen.getCell(12).setCellStyle(style11);
+        //COLOCAR BORDES
+        HSSFRegionUtil.setBorderTop(CellStyle.BORDER_THIN, fondoFijoResumenCRA, sheets.get(monthCursor), workbook);
+        HSSFRegionUtil.setBorderLeft(CellStyle.BORDER_THIN, fondoFijoResumenCRA, sheets.get(monthCursor), workbook);
+        HSSFRegionUtil.setBorderRight(CellStyle.BORDER_THIN, fondoFijoResumenCRA, sheets.get(monthCursor), workbook);
+        HSSFRegionUtil.setBorderBottom(CellStyle.BORDER_THIN, fondoFijoResumenCRA, sheets.get(monthCursor), workbook);
+        fila++;
+        /*
+        FIN FONDO FIJO
+         */
+
+ /*
+        INICIO VENTA CONTADO
+         */
+        boolean bmv = true;
+        int totalVentaContado = 0;
+        for (E_facturaCabecera movimientoVenta : movimientosCaja.getMovimientoVentas()) {
+            if (movimientoVenta.getTipoOperacion().getId() == E_tipoOperacion.CONTADO) {
+                totalVentaContado = totalVentaContado + movimientoVenta.getTotal();
+                Row rowVentaContadoDetalle = sheets.get(monthCursor).createRow(fila);
+                if (bmv) {
+                    //solo se imprime una vez el sub titulo del documento
+                    rowVentaContadoDetalle.createCell(0).setCellValue(new HSSFRichTextString("2 - Venta contado"));
+                    rowVentaContadoDetalle.getCell(0).setCellStyle(style8);
+                    bmv = false;
+                }
+                rowFondoFijoDetalle.createCell(1).setCellValue(movimientoVenta.getNroFactura());
+                rowFondoFijoDetalle.getCell(1).setCellStyle(style4);
+                rowFondoFijoDetalle.createCell(2).setCellValue(movimientoVenta.getTiempo());
+                rowFondoFijoDetalle.getCell(2).setCellStyle(dateCellStyle);
+                rowFondoFijoDetalle.createCell(2).setCellValue(new HSSFRichTextString(movimientoVenta.getCliente().getEntidad()));
+                rowFondoFijoDetalle.createCell(7).setCellValue(movimientoVenta.getTotal());
+                rowFondoFijoDetalle.getCell(7).setCellStyle(style4);
+                fila++;
+            }
+        }
+        fila++;
+        CellRangeAddress fondoVentaContadoResumenCRA = new CellRangeAddress(fila, fila, 0, 8);
+        sheets.get(monthCursor).addMergedRegion(fondoVentaContadoResumenCRA);
+        Row rowVentaContadoResumen = sheets.get(monthCursor).createRow(fila);
+        rowVentaContadoResumen.createCell(0).setCellValue(new HSSFRichTextString("Total 2 - Venta Contado"));
+        rowVentaContadoResumen.getCell(0).setCellStyle(style10);
+        //JUSTIFICAR A LA DERECHA
+        CellUtil.setAlignment(rowVentaContadoResumen.getCell(0), workbook, CellStyle.ALIGN_RIGHT);
+        rowVentaContadoResumen.createCell(9).setCellValue(totalVentaContado);
+        rowVentaContadoResumen.getCell(9).setCellStyle(style11);
+        rowVentaContadoResumen.createCell(10).setCellValue(0);
+        rowVentaContadoResumen.getCell(10).setCellStyle(style11);
+        rowVentaContadoResumen.createCell(11).setCellValue(0);
+        rowVentaContadoResumen.getCell(11).setCellStyle(style11);
+        rowVentaContadoResumen.createCell(12).setCellValue(0);
+        rowVentaContadoResumen.getCell(12).setCellStyle(style11);
+        //COLOCAR BORDES
+        HSSFRegionUtil.setBorderTop(CellStyle.BORDER_THIN, fondoVentaContadoResumenCRA, sheets.get(monthCursor), workbook);
+        HSSFRegionUtil.setBorderLeft(CellStyle.BORDER_THIN, fondoVentaContadoResumenCRA, sheets.get(monthCursor), workbook);
+        HSSFRegionUtil.setBorderRight(CellStyle.BORDER_THIN, fondoVentaContadoResumenCRA, sheets.get(monthCursor), workbook);
+        HSSFRegionUtil.setBorderBottom(CellStyle.BORDER_THIN, fondoVentaContadoResumenCRA, sheets.get(monthCursor), workbook);
+
         String desktop = System.getProperty("user.home") + "\\Desktop";
         JFileChooser chooser = new JFileChooser(desktop);
         if (chooser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
