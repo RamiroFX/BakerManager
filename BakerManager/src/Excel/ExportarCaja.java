@@ -5,13 +5,17 @@
 package Excel;
 
 import DB.DB_Caja;
+import DB.DB_Cobro;
 import DB.DB_Egreso;
 import DB.DB_Funcionario;
 import DB.DB_Ingreso;
 import Entities.ArqueoCajaDetalle;
 import Entities.Caja;
 import Entities.CierreCaja;
+import Entities.E_cuentaCorrienteCabecera;
+import Entities.E_cuentaCorrienteDetalle;
 import Entities.E_facturaCabecera;
+import Entities.E_formaPago;
 import Entities.E_tipoOperacion;
 import Entities.Estado;
 import Entities.M_egreso_cabecera;
@@ -1129,17 +1133,17 @@ public class ExportarCaja {
                     rowVentaContadoDetalle.getCell(0).setCellStyle(style8);
                     bmv = false;
                 }
-                rowFondoFijoDetalle.createCell(1).setCellValue(movimientoVenta.getNroFactura());
-                rowFondoFijoDetalle.getCell(1).setCellStyle(style4);
-                rowFondoFijoDetalle.createCell(2).setCellValue(movimientoVenta.getTiempo());
-                rowFondoFijoDetalle.getCell(2).setCellStyle(dateCellStyle);
-                rowFondoFijoDetalle.createCell(2).setCellValue(new HSSFRichTextString(movimientoVenta.getCliente().getEntidad()));
-                rowFondoFijoDetalle.createCell(7).setCellValue(movimientoVenta.getTotal());
-                rowFondoFijoDetalle.getCell(7).setCellStyle(style4);
+                rowVentaContadoDetalle.createCell(1).setCellValue(movimientoVenta.getNroFactura());
+                rowVentaContadoDetalle.getCell(1).setCellStyle(style4);
+                rowVentaContadoDetalle.createCell(2).setCellValue(movimientoVenta.getTiempo());
+                rowVentaContadoDetalle.getCell(2).setCellStyle(dateCellStyle);
+                rowVentaContadoDetalle.createCell(3).setCellValue(new HSSFRichTextString(movimientoVenta.getCliente().getRucCompleto()));
+                rowVentaContadoDetalle.createCell(4).setCellValue(new HSSFRichTextString(movimientoVenta.getCliente().getEntidad()));
+                rowVentaContadoDetalle.createCell(9).setCellValue(movimientoVenta.getTotal());
+                rowVentaContadoDetalle.getCell(9).setCellStyle(style4);
                 fila++;
             }
         }
-        fila++;
         CellRangeAddress fondoVentaContadoResumenCRA = new CellRangeAddress(fila, fila, 0, 8);
         sheets.get(monthCursor).addMergedRegion(fondoVentaContadoResumenCRA);
         Row rowVentaContadoResumen = sheets.get(monthCursor).createRow(fila);
@@ -1160,7 +1164,122 @@ public class ExportarCaja {
         HSSFRegionUtil.setBorderLeft(CellStyle.BORDER_THIN, fondoVentaContadoResumenCRA, sheets.get(monthCursor), workbook);
         HSSFRegionUtil.setBorderRight(CellStyle.BORDER_THIN, fondoVentaContadoResumenCRA, sheets.get(monthCursor), workbook);
         HSSFRegionUtil.setBorderBottom(CellStyle.BORDER_THIN, fondoVentaContadoResumenCRA, sheets.get(monthCursor), workbook);
+        fila++;
+        /*
+            FIN VENTA CONTADO
+         */
 
+ /*
+        INICIO VENTA CREDITO
+         */
+        boolean bmvcred = true;
+        int totalVentaCredito = 0;
+        for (E_facturaCabecera movimientoVenta : movimientosCaja.getMovimientoVentas()) {
+            if (movimientoVenta.getTipoOperacion().getId() == E_tipoOperacion.CREDITO_30) {
+                totalVentaCredito = totalVentaCredito + movimientoVenta.getTotal();
+                Row rowVentaCreditoDetalle = sheets.get(monthCursor).createRow(fila);
+                if (bmvcred) {
+                    //solo se imprime una vez el sub titulo del documento
+                    rowVentaCreditoDetalle.createCell(0).setCellValue(new HSSFRichTextString("3 - Venta crédito"));
+                    rowVentaCreditoDetalle.getCell(0).setCellStyle(style8);
+                    bmvcred = false;
+                }
+                rowVentaCreditoDetalle.createCell(1).setCellValue(movimientoVenta.getNroFactura());
+                rowVentaCreditoDetalle.getCell(1).setCellStyle(style4);
+                rowVentaCreditoDetalle.createCell(2).setCellValue(movimientoVenta.getTiempo());
+                rowVentaCreditoDetalle.getCell(2).setCellStyle(dateCellStyle);
+                rowVentaCreditoDetalle.createCell(3).setCellValue(new HSSFRichTextString(movimientoVenta.getCliente().getRucCompleto()));
+                rowVentaCreditoDetalle.createCell(4).setCellValue(new HSSFRichTextString(movimientoVenta.getCliente().getEntidad()));
+                rowVentaCreditoDetalle.createCell(9).setCellValue(movimientoVenta.getTotal());
+                rowVentaCreditoDetalle.getCell(9).setCellStyle(style4);
+                fila++;
+            }
+        }
+        CellRangeAddress fondoVentaCreditoResumenCRA = new CellRangeAddress(fila, fila, 0, 8);
+        sheets.get(monthCursor).addMergedRegion(fondoVentaCreditoResumenCRA);
+        Row rowVentaCreditoResumen = sheets.get(monthCursor).createRow(fila);
+        rowVentaCreditoResumen.createCell(0).setCellValue(new HSSFRichTextString("Total 3 - Venta Crédito"));
+        rowVentaCreditoResumen.getCell(0).setCellStyle(style10);
+        //JUSTIFICAR A LA DERECHA
+        CellUtil.setAlignment(rowVentaCreditoResumen.getCell(0), workbook, CellStyle.ALIGN_RIGHT);
+        rowVentaCreditoResumen.createCell(9).setCellValue(0);
+        rowVentaCreditoResumen.getCell(9).setCellStyle(style11);
+        rowVentaCreditoResumen.createCell(10).setCellValue(0);
+        rowVentaCreditoResumen.getCell(10).setCellStyle(style11);
+        rowVentaCreditoResumen.createCell(11).setCellValue(totalVentaCredito);
+        rowVentaCreditoResumen.getCell(11).setCellStyle(style11);
+        rowVentaCreditoResumen.createCell(12).setCellValue(0);
+        rowVentaCreditoResumen.getCell(12).setCellStyle(style11);
+        //COLOCAR BORDES
+        HSSFRegionUtil.setBorderTop(CellStyle.BORDER_THIN, fondoVentaCreditoResumenCRA, sheets.get(monthCursor), workbook);
+        HSSFRegionUtil.setBorderLeft(CellStyle.BORDER_THIN, fondoVentaCreditoResumenCRA, sheets.get(monthCursor), workbook);
+        HSSFRegionUtil.setBorderRight(CellStyle.BORDER_THIN, fondoVentaCreditoResumenCRA, sheets.get(monthCursor), workbook);
+        HSSFRegionUtil.setBorderBottom(CellStyle.BORDER_THIN, fondoVentaCreditoResumenCRA, sheets.get(monthCursor), workbook);
+        fila++;
+        /*
+        FIN VENTA CREDITO
+         */
+ /*
+        INICIO COBRANZA
+         */
+        boolean bmcob = true;
+        int totalCobroEfectivo = 0;
+        int totalCobroCheque = 0;
+        for (E_cuentaCorrienteCabecera movimientoCobro : movimientosCaja.getMovimientoCobros()) {
+            for (E_cuentaCorrienteDetalle cobro : DB_Cobro.obtenerCobroDetalle(movimientoCobro.getId())) {
+                Row rowCobranzaDetalle = sheets.get(monthCursor).createRow(fila);
+                if (bmcob) {
+                    //solo se imprime una vez el sub titulo del documento
+                    rowCobranzaDetalle.createCell(0).setCellValue(new HSSFRichTextString("4 - Cobranzas"));
+                    rowCobranzaDetalle.getCell(0).setCellStyle(style8);
+                    bmcob = false;
+                }
+                rowCobranzaDetalle.createCell(1).setCellValue(cobro.getNroRecibo());
+                rowCobranzaDetalle.getCell(1).setCellStyle(style4);
+                rowCobranzaDetalle.createCell(2).setCellValue(movimientoCobro.getFechaPago());
+                rowCobranzaDetalle.getCell(2).setCellStyle(dateCellStyle);
+                rowCobranzaDetalle.createCell(3).setCellValue(new HSSFRichTextString(movimientoCobro.getCliente().getRucCompleto()));
+                rowCobranzaDetalle.createCell(4).setCellValue(new HSSFRichTextString(movimientoCobro.getCliente().getEntidad()));
+                rowCobranzaDetalle.createCell(9).setCellValue(cobro.getMonto());
+                rowCobranzaDetalle.getCell(9).setCellStyle(style4);
+                fila++;
+                switch (cobro.calcularFormaPago().getId()) {
+                    case E_formaPago.EFECTIVO: {
+                        totalCobroEfectivo = (int) (totalCobroEfectivo + cobro.getMonto());
+                        break;
+                    }
+                    case E_formaPago.CHEQUE: {
+                        totalCobroCheque = (int) (totalCobroCheque + cobro.getMonto());
+                        break;
+                    }
+                }
+
+            }
+        }
+        CellRangeAddress fondoVentaCreditoResumenCRA = new CellRangeAddress(fila, fila, 0, 8);
+        sheets.get(monthCursor).addMergedRegion(fondoVentaCreditoResumenCRA);
+        Row rowVentaCreditoResumen = sheets.get(monthCursor).createRow(fila);
+        rowVentaCreditoResumen.createCell(0).setCellValue(new HSSFRichTextString("Total 3 - Venta Crédito"));
+        rowVentaCreditoResumen.getCell(0).setCellStyle(style10);
+        //JUSTIFICAR A LA DERECHA
+        CellUtil.setAlignment(rowVentaCreditoResumen.getCell(0), workbook, CellStyle.ALIGN_RIGHT);
+        rowVentaCreditoResumen.createCell(9).setCellValue(0);
+        rowVentaCreditoResumen.getCell(9).setCellStyle(style11);
+        rowVentaCreditoResumen.createCell(10).setCellValue(0);
+        rowVentaCreditoResumen.getCell(10).setCellStyle(style11);
+        rowVentaCreditoResumen.createCell(11).setCellValue(totalVentaCredito);
+        rowVentaCreditoResumen.getCell(11).setCellStyle(style11);
+        rowVentaCreditoResumen.createCell(12).setCellValue(0);
+        rowVentaCreditoResumen.getCell(12).setCellStyle(style11);
+        //COLOCAR BORDES
+        HSSFRegionUtil.setBorderTop(CellStyle.BORDER_THIN, fondoVentaCreditoResumenCRA, sheets.get(monthCursor), workbook);
+        HSSFRegionUtil.setBorderLeft(CellStyle.BORDER_THIN, fondoVentaCreditoResumenCRA, sheets.get(monthCursor), workbook);
+        HSSFRegionUtil.setBorderRight(CellStyle.BORDER_THIN, fondoVentaCreditoResumenCRA, sheets.get(monthCursor), workbook);
+        HSSFRegionUtil.setBorderBottom(CellStyle.BORDER_THIN, fondoVentaCreditoResumenCRA, sheets.get(monthCursor), workbook);
+        fila++;
+        /*
+        FIN VENTA CREDITO
+         */
         String desktop = System.getProperty("user.home") + "\\Desktop";
         JFileChooser chooser = new JFileChooser(desktop);
         if (chooser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {

@@ -2042,6 +2042,8 @@ public class DB_Ingreso {
         String Query = "SELECT FC.id_factura_cabecera \"ID\", FC.id_funcionario, FC.id_cliente, FC.id_estado, FC.tiempo \"TIEMPO\", FC.id_cond_venta, FC.nro_factura \"NRO_FACTURA\", "
                 + "(SELECT NOMBRE || ' '|| APELLIDO WHERE F.ID_PERSONA = P.ID_PERSONA)\"Empleado\", "
                 + "(SELECT ENTIDAD FROM CLIENTE C WHERE FC.ID_CLIENTE = C.ID_CLIENTE) \"Cliente\", "
+                + "(SELECT RUC FROM CLIENTE C WHERE FC.ID_CLIENTE = C.ID_CLIENTE) \"RUC_CLIENTE\", "
+                + "(SELECT RUC_IDENTIFICADOR FROM CLIENTE C WHERE FC.ID_CLIENTE = C.ID_CLIENTE) \"RUC_ID_CLIENTE\", "
                 + "(SELECT SUM (CANTIDAD*(PRECIO-(PRECIO*DESCUENTO)/100)) FROM FACTURA_DETALLE FCC WHERE FCC.ID_FACTURA_CABECERA = FC.ID_FACTURA_CABECERA) \"TOTAL\", "
                 + "FC.ID_COND_VENTA \"ID_COND_VENTA\",  "
                 + "(SELECT TIOP.DESCRIPCION FROM TIPO_OPERACION TIOP WHERE TIOP.ID_TIPO_OPERACION = FC.ID_COND_VENTA) \"COND_VENTA\"  "
@@ -2058,6 +2060,8 @@ public class DB_Ingreso {
             while (rs.next()) {
                 M_cliente cliente = new M_cliente();
                 cliente.setEntidad(rs.getString("Cliente"));
+                cliente.setRuc(rs.getString("RUC_CLIENTE"));
+                cliente.setRucId(rs.getString("RUC_ID_CLIENTE"));
                 M_funcionario funcionario = new M_funcionario();
                 funcionario.setNombre(rs.getString("Empleado"));
                 E_tipoOperacion tiop = new E_tipoOperacion();

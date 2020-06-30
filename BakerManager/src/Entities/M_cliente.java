@@ -139,4 +139,14 @@ public class M_cliente {
         this.saldoInicial = saldoInicial;
     }
 
+    public String getRucCompleto() {
+        String rucCompleto = "";
+        if (getRuc() != null) {
+            rucCompleto = getRuc();
+            if (getRucId() != null) {
+                rucCompleto = rucCompleto + "-" + getRucId();
+            }
+        }
+        return rucCompleto;
+    }
 }
