@@ -1120,6 +1120,8 @@ public class DB_Egreso {
                 + "EC.NRO_FACTURA \"NRO_FACTURA\", "
                 + "(SELECT NOMBRE || ' '|| APELLIDO WHERE F.ID_PERSONA = P.ID_PERSONA)\"EMPLEADO\", "
                 + "(SELECT ENTIDAD FROM PROVEEDOR PV WHERE EC.ID_PROVEEDOR = PV.ID_PROVEEDOR) \"PROVEEDOR\", "
+                + "(SELECT RUC FROM PROVEEDOR PV WHERE EC.ID_PROVEEDOR = PV.ID_PROVEEDOR) \"RUC_PROVEEDOR\", "
+                + "(SELECT RUC_IDENTIFICADOR FROM PROVEEDOR PV WHERE EC.ID_PROVEEDOR = PV.ID_PROVEEDOR) \"RUC_ID_PROVEEDOR\", "
                 + "TIEMPO, "
                 + "(SELECT SUM (CANTIDAD*(PRECIO-(PRECIO*DESCUENTO)/100)) FROM EGRESO_DETALLE ED WHERE ED.ID_EGRESO_CABECERA = EC.ID_EGRESO_CABECERA)\"TOTAL\", "
                 + "(SELECT TIOP.DESCRIPCION FROM TIPO_OPERACION TIOP WHERE TIOP.ID_TIPO_OPERACION = EC.ID_COND_COMPRA) \"COND_COMPRA\", "
@@ -1139,6 +1141,8 @@ public class DB_Egreso {
                 M_funcionario funcionario = new M_funcionario();
                 funcionario.setNombre(rs.getString("EMPLEADO"));
                 proveedor.setEntidad(rs.getString("PROVEEDOR"));
+                proveedor.setRuc(rs.getString("RUC_PROVEEDOR"));
+                proveedor.setRuc_id(rs.getString("RUC_ID_PROVEEDOR"));
                 M_egreso_cabecera egca = new M_egreso_cabecera();
                 egca.setId_cabecera(rs.getInt("ID"));
                 egca.setNro_factura(rs.getInt("NRO_FACTURA"));

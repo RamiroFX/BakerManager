@@ -11,7 +11,7 @@ package Entities;
 public class M_proveedor {
 
     private Integer id;
-    private String nombre, entidad, ruc, ruc_id, descripcion, direccion, pagWeb,email, observacion;
+    private String nombre, entidad, ruc, ruc_id, descripcion, direccion, pagWeb, email, observacion;
 
     public String getPagWeb() {
         return pagWeb;
@@ -145,5 +145,16 @@ public class M_proveedor {
      */
     public void setObservacion(String observacion) {
         this.observacion = observacion;
+    }
+
+    public String getRucCompleto() {
+        String rucCompleto = "";
+        if (getRuc() != null) {
+            rucCompleto = getRuc();
+            if (getRuc_id() != null) {
+                rucCompleto = rucCompleto + "-" + getRuc_id();
+            }
+        }
+        return rucCompleto;
     }
 }

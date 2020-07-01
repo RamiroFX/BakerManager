@@ -735,6 +735,8 @@ public class DB_Cobro {
                 + "CCC.NRO_RECIBO \"NRO_RECIBO\", "
                 + "(SELECT NOMBRE || ' '|| APELLIDO WHERE F.ID_PERSONA = P.ID_PERSONA)\"EMPLEADO\", "
                 + "(SELECT ENTIDAD FROM CLIENTE C WHERE CCC.ID_CLIENTE= C.ID_CLIENTE) \"CLIENTE\", "
+                + "(SELECT RUC FROM CLIENTE C WHERE CCC.ID_CLIENTE = C.ID_CLIENTE) \"RUC_CLIENTE\", "
+                + "(SELECT RUC_IDENTIFICADOR FROM CLIENTE C WHERE CCC.ID_CLIENTE = C.ID_CLIENTE) \"RUC_ID_CLIENTE\", "
                 + "FECHA_COBRO, "
                 + "(SELECT SUM (MONTO) FROM CUENTA_CORRIENTE_DETALLE CCD WHERE CCC.ID_CTA_CTE_CABECERA = CCD.ID_CTA_CTE_CABECERA)\"TOTAL\" "
                 + "FROM CUENTA_CORRIENTE_CABECERA CCC ,FUNCIONARIO F, PERSONA P "
@@ -753,6 +755,8 @@ public class DB_Cobro {
                 M_funcionario funcionario = new M_funcionario();
                 funcionario.setNombre(rs.getString("EMPLEADO"));
                 cliente.setEntidad(rs.getString("CLIENTE"));
+                cliente.setRuc(rs.getString("RUC_CLIENTE"));
+                cliente.setRucId(rs.getString("RUC_ID_CLIENTE"));
                 E_cuentaCorrienteCabecera ccc = new E_cuentaCorrienteCabecera();
                 ccc.setId(rs.getInt("ID"));
                 ccc.setNroRecibo(rs.getInt("NRO_RECIBO"));

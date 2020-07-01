@@ -83,7 +83,7 @@ public class Test {
         Inicio i = new Inicio();
         i.conectarBD();
 
-        Caja caja = DB_Caja.obtenerCaja(1);
+        Caja caja = DB_Caja.obtenerCaja(2);
         MovimientosCaja movimientosCaja = new MovimientosCaja();
         movimientosCaja.setMovimientoVentas((ArrayList<E_facturaCabecera>) DB_Ingreso.obtenerMovimientoVentasCabeceras(caja.getIdCaja()));
         movimientosCaja.setMovimientoCompras((ArrayList<M_egreso_cabecera>) DB_Egreso.obtenerMovimientoComprasCabeceras(caja.getIdCaja()));

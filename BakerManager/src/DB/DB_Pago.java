@@ -680,6 +680,8 @@ public class DB_Pago {
                 + "RPC.NRO_RECIBO \"NRO_RECIBO\", "
                 + "(SELECT NOMBRE || ' '|| APELLIDO WHERE F.ID_PERSONA = P.ID_PERSONA)\"EMPLEADO\", "
                 + "(SELECT ENTIDAD FROM PROVEEDOR PROV WHERE RPC.ID_PROVEEDOR= PROV.ID_PROVEEDOR) \"PROVEEDOR\", "
+                + "(SELECT RUC FROM PROVEEDOR PV WHERE RPC.ID_PROVEEDOR = PV.ID_PROVEEDOR) \"RUC_PROVEEDOR\", "
+                + "(SELECT RUC_IDENTIFICADOR FROM PROVEEDOR PV WHERE RPC.ID_PROVEEDOR = PV.ID_PROVEEDOR) \"RUC_ID_PROVEEDOR\", "
                 + "FECHA_PAGO, "
                 + "(SELECT SUM (MONTO) FROM recibo_pago_detalle RPD WHERE RPC.id_recibo_pago_cabecera = RPD.id_recibo_pago_cabecera)\"TOTAL\" "
                 + "FROM RECIBO_PAGO_CABECERA RPC ,FUNCIONARIO F, PERSONA P "
@@ -697,6 +699,8 @@ public class DB_Pago {
                 M_funcionario funcionario = new M_funcionario();
                 funcionario.setNombre(rs.getString("EMPLEADO"));
                 proveedor.setEntidad(rs.getString("PROVEEDOR"));
+                proveedor.setRuc(rs.getString("RUC_PROVEEDOR"));
+                proveedor.setRuc_id(rs.getString("RUC_ID_PROVEEDOR"));
                 E_reciboPagoCabecera ccc = new E_reciboPagoCabecera();
                 ccc.setId(rs.getInt("ID"));
                 ccc.setNroRecibo(rs.getInt("NRO_RECIBO"));
