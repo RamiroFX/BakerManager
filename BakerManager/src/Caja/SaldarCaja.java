@@ -282,6 +282,13 @@ public class SaldarCaja implements ActionListener, KeyListener, InterfaceCajaMov
         ArrayList<ArqueoCajaDetalle> arqueoCajaApertura = arqueoCajaApertura();
         ArrayList<ArqueoCajaDetalle> arqueoCajaCierre = arqueoCajaCierre();
         ArrayList<ArqueoCajaDetalle> arqueoDeposito = arqueoDepositar();
+
+        if (!existenMovimientos()) {
+            return;
+        }
+        if (!validarMontoADepositar()) {
+            return;
+        }
         try {
             DB_Caja.insertarArqueoCaja(caja, arqueoCajaApertura, arqueoCajaCierre, arqueoDeposito, movimientosCaja);
         } catch (Exception e) {
@@ -504,6 +511,52 @@ public class SaldarCaja implements ActionListener, KeyListener, InterfaceCajaMov
         this.vista.jtfEgresoCredito.setValue(totalCompraCredito);
         Integer aDepositar = totalCobroEfectivo + totalVentaContado - totalCompraContado - totalPagoEfectivo;
         this.vista.jftEfectivoRendir.setValue(aDepositar);
+    }
+
+    private boolean existenMovimientos() {
+        boolean hayMovimientos = false;
+        if (!movimientosCaja.getMovimientoCobros().isEmpty()) {
+            hayMovimientos = true;
+        } else if (!movimientosCaja.getMovimientoCompras().isEmpty()) {
+            hayMovimientos = true;
+        } else if (!movimientosCaja.getMovimientoVentas().isEmpty()) {
+            hayMovimientos = true;
+        } else if (!movimientosCaja.getMovimientoPagos().isEmpty()) {
+            hayMovimientos = true;
+        }
+        if (!hayMovimientos) {
+            int opcion = JOptionPane.showConfirmDialog(vista, "La caja no contiene movimientos. ¿Desea continuar?", "Atención", JOptionPane.WARNING_MESSAGE, JOptionPane.YES_NO_OPTION);
+            if (opcion == JOptionPane.YES_OPTION) {
+                return true;
+            }
+        }
+        return hayMovimientos;
+    }
+
+    private boolean validarMontoADepositar() {
+        System.out.println("Caja.SaldarCaja.validarMontoADepositar()");
+        //aRendir es el monto de la suma de ventas al contado y cobros en efectivo (Ingresos en efectivo)
+        int aRendir = (int) vista.jftEfectivoRendir.getValue();
+        //aDepositar es la cantidad de billetes y monedas que el usuario registra a depositar para rendir la caja
+        int aDepositar = (int) vista.jtfDepositar.getValue();
+        System.out.println("aRendir: " + aRendir);
+        System.out.println("aDepositar: " + aDepositar);
+        if (aDepositar < aRendir) {
+            System.out.println("Caja.SaldarCaja.validarMontoADepositar().1");
+            int opcion = JOptionPane.showConfirmDialog(vista, "El monto depositado es menor al que tiene que rendir. ¿Desea continuar?", "Atención", JOptionPane.WARNING_MESSAGE, JOptionPane.YES_NO_OPTION);
+            return opcion == JOptionPane.YES_OPTION;
+        }
+        if (aDepositar > aRendir) {
+            System.out.println("Caja.SaldarCaja.validarMontoADepositar().2");
+            int opcion = JOptionPane.showConfirmDialog(vista, "El monto depositado es mayor al que tiene que rendir. ¿Desea continuar?", "Atención", JOptionPane.WARNING_MESSAGE, JOptionPane.YES_NO_OPTION);
+            return opcion == JOptionPane.YES_OPTION;
+        }
+        System.out.println("Caja.SaldarCaja.validarMontoADepositar().3: " + (aRendir > 0 && aDepositar == aRendir));
+        //LOS MONTOS COINCIDEN
+        if (aRendir == 0 && aDepositar == 0) {
+            return true;
+        }
+        return aRendir > 0 && aDepositar == aRendir;
     }
 
     @Override
