@@ -35,6 +35,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFFont;
+import org.apache.poi.hssf.usermodel.HSSFPrintSetup;
 import org.apache.poi.hssf.usermodel.HSSFRichTextString;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -60,7 +61,7 @@ public class ExportarCaja {
     private ArrayList<HSSFSheet> sheets;
     private CellStyle style1, style2, style3, style4, style5, style6, style7,
             style8, style9BorderBoldItalic, style10, style11, style4Borded;
-    private HSSFCellStyle dateCellStyle, dateCellStyleBorded;
+    private HSSFCellStyle dateCellStyle, dateCellStyleBorded, style5fx;
     private File directory;
     private ArrayList<CierreCaja> cierreCajas;
     private SimpleDateFormat sdfs;
@@ -112,8 +113,8 @@ public class ExportarCaja {
         dateCellStyle.setDataFormat(df);
 
         dateCellStyleBorded = workbook.createCellStyle();
-        dateCellStyleBorded.setBorderBottom(HSSFCellStyle.BORDER_THIN);
-        dateCellStyleBorded.setBorderTop(HSSFCellStyle.BORDER_THIN);
+        //dateCellStyleBorded.setBorderBottom(HSSFCellStyle.BORDER_THIN);
+        //dateCellStyleBorded.setBorderTop(HSSFCellStyle.BORDER_THIN);
         dateCellStyleBorded.setBorderRight(HSSFCellStyle.BORDER_THIN);
         dateCellStyleBorded.setBorderLeft(HSSFCellStyle.BORDER_THIN);
         dateCellStyleBorded.setDataFormat(df);
@@ -123,6 +124,10 @@ public class ExportarCaja {
         style5.setBorderTop(HSSFCellStyle.BORDER_THIN);
         style5.setBorderRight(HSSFCellStyle.BORDER_THIN);
         style5.setBorderLeft(HSSFCellStyle.BORDER_THIN);
+
+        style5fx = workbook.createCellStyle();
+        style5fx.setBorderRight(HSSFCellStyle.BORDER_THIN);
+        style5fx.setBorderLeft(HSSFCellStyle.BORDER_THIN);
 
         style6 = workbook.createCellStyle();
         style6.setBorderRight(HSSFCellStyle.BORDER_THIN);
@@ -165,8 +170,8 @@ public class ExportarCaja {
         style11.setDataFormat(format.getFormat("#,##0"));
 
         style4Borded = workbook.createCellStyle();
-        style4Borded.setBorderBottom(HSSFCellStyle.BORDER_THIN);
-        style4Borded.setBorderTop(HSSFCellStyle.BORDER_THIN);
+        //style4Borded.setBorderBottom(HSSFCellStyle.BORDER_THIN);
+        //style4Borded.setBorderTop(HSSFCellStyle.BORDER_THIN);
         style4Borded.setBorderRight(HSSFCellStyle.BORDER_THIN);
         style4Borded.setBorderLeft(HSSFCellStyle.BORDER_THIN);
         style4Borded.setDataFormat(format.getFormat("#,##0"));
@@ -966,6 +971,7 @@ public class ExportarCaja {
         sheets.clear();
         sheets.add(workbook.createSheet(sdfs.format(calendar.getTime())));
         sheets.get(monthCursor).getPrintSetup().setLandscape(true);
+        sheets.get(monthCursor).getPrintSetup().setPaperSize(HSSFPrintSetup.A4_PAPERSIZE);
         //CREAR FECHA DE CAJA
         Row rowTitulo = sheets.get(monthCursor).createRow(fila);
         rowTitulo.createCell(0).setCellValue(new HSSFRichTextString("Informe Cierre de Caja"));
@@ -1105,7 +1111,7 @@ public class ExportarCaja {
         rowFondoFijoDetalle.createCell(2).setCellValue(caja.getTiempoCierre());
         rowFondoFijoDetalle.getCell(2).setCellStyle(dateCellStyleBorded);
         rowFondoFijoDetalle.createCell(4).setCellValue(new HSSFRichTextString("Fondo Fijo"));
-        rowFondoFijoDetalle.getCell(4).setCellStyle(style5);
+        rowFondoFijoDetalle.getCell(4).setCellStyle(style5fx);
         rowFondoFijoDetalle.createCell(9).setCellValue(0);
         rowFondoFijoDetalle.getCell(9).setCellStyle(style4Borded);
         rowFondoFijoDetalle.createCell(10).setCellValue(0);
@@ -1161,7 +1167,7 @@ public class ExportarCaja {
                 rowVentaContadoDetalle.getCell(2).setCellStyle(dateCellStyleBorded);
                 rowVentaContadoDetalle.createCell(3).setCellValue(new HSSFRichTextString(movimientoVenta.getCliente().getRucCompleto()));
                 rowVentaContadoDetalle.createCell(4).setCellValue(new HSSFRichTextString(movimientoVenta.getCliente().getEntidad()));
-                rowVentaContadoDetalle.getCell(4).setCellStyle(style5);
+                rowVentaContadoDetalle.getCell(4).setCellStyle(style5fx);
                 rowVentaContadoDetalle.createCell(9).setCellValue(movimientoVenta.getTotal());
                 rowVentaContadoDetalle.getCell(9).setCellStyle(style4Borded);
                 rowVentaContadoDetalle.createCell(10).setCellValue(0);
@@ -1219,7 +1225,7 @@ public class ExportarCaja {
                 rowVentaCreditoDetalle.getCell(2).setCellStyle(dateCellStyleBorded);
                 rowVentaCreditoDetalle.createCell(3).setCellValue(new HSSFRichTextString(movimientoVenta.getCliente().getRucCompleto()));
                 rowVentaCreditoDetalle.createCell(4).setCellValue(new HSSFRichTextString(movimientoVenta.getCliente().getEntidad()));
-                rowVentaCreditoDetalle.getCell(4).setCellStyle(style5);
+                rowVentaCreditoDetalle.getCell(4).setCellStyle(style5fx);
                 rowVentaCreditoDetalle.createCell(9).setCellValue(0);
                 rowVentaCreditoDetalle.getCell(9).setCellStyle(style4Borded);
                 rowVentaCreditoDetalle.createCell(10).setCellValue(0);
@@ -1276,7 +1282,7 @@ public class ExportarCaja {
                 rowCobranzaDetalle.getCell(2).setCellStyle(dateCellStyle);
                 rowCobranzaDetalle.createCell(3).setCellValue(new HSSFRichTextString(movimientoCobro.getCliente().getRucCompleto()));
                 rowCobranzaDetalle.createCell(4).setCellValue(new HSSFRichTextString(movimientoCobro.getCliente().getEntidad()));
-                rowCobranzaDetalle.getCell(4).setCellStyle(style5);
+                rowCobranzaDetalle.getCell(4).setCellStyle(style5fx);
                 switch (cobro.calcularFormaPago().getId()) {
                     case E_formaPago.EFECTIVO: {
                         totalCobroEfectivo = (int) (totalCobroEfectivo + cobro.getMonto());
@@ -1360,7 +1366,7 @@ public class ExportarCaja {
                 rowCompraContadoDetalle.getCell(2).setCellStyle(dateCellStyleBorded);
                 rowCompraContadoDetalle.createCell(3).setCellValue(new HSSFRichTextString(movimientoCompra.getProveedor().getRucCompleto()));
                 rowCompraContadoDetalle.createCell(4).setCellValue(new HSSFRichTextString(movimientoCompra.getProveedor().getEntidad()));
-                rowCompraContadoDetalle.getCell(4).setCellStyle(style5);
+                rowCompraContadoDetalle.getCell(4).setCellStyle(style5fx);
                 rowCompraContadoDetalle.createCell(9).setCellValue(0);
                 rowCompraContadoDetalle.getCell(9).setCellStyle(style4Borded);
                 rowCompraContadoDetalle.createCell(10).setCellValue(movimientoCompra.getTotal());
@@ -1418,7 +1424,7 @@ public class ExportarCaja {
                 rowCompraCreditoDetalle.getCell(2).setCellStyle(dateCellStyleBorded);
                 rowCompraCreditoDetalle.createCell(3).setCellValue(new HSSFRichTextString(movimientoCompra.getProveedor().getRucCompleto()));
                 rowCompraCreditoDetalle.createCell(4).setCellValue(new HSSFRichTextString(movimientoCompra.getProveedor().getEntidad()));
-                rowCompraCreditoDetalle.getCell(4).setCellStyle(style5);
+                rowCompraCreditoDetalle.getCell(4).setCellStyle(style5fx);
                 rowCompraCreditoDetalle.createCell(9).setCellValue(0);
                 rowCompraCreditoDetalle.getCell(9).setCellStyle(style4Borded);
                 rowCompraCreditoDetalle.createCell(10).setCellValue(0);
