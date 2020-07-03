@@ -12,6 +12,8 @@ import Entities.M_cliente;
 import Entities.M_facturaCabecera;
 import Entities.M_facturaDetalle;
 import Entities.M_funcionario;
+import Entities.M_menu_item;
+import MenuPrincipal.DatosUsuario;
 import ModeloTabla.FacturaCabeceraTableModel;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -28,6 +30,7 @@ public class M_gestionVentas {
     M_facturaDetalle detalle;
     ArrayList<M_facturaDetalle> detalles;
     private FacturaCabeceraTableModel tm;
+    private ArrayList<M_menu_item> accesos;
 
     public M_gestionVentas() {
         this.cabecera = new M_facturaCabecera();
@@ -36,6 +39,7 @@ public class M_gestionVentas {
         this.detalle = new M_facturaDetalle();
         this.detalles = new ArrayList<>();
         this.tm = new FacturaCabeceraTableModel();
+        this.accesos = DatosUsuario.getRol_usuario().getAccesos();
     }
 
     public M_facturaCabecera getCabecera() {
@@ -139,5 +143,13 @@ public class M_gestionVentas {
      */
     public void setTm(FacturaCabeceraTableModel tm) {
         this.tm = tm;
+    }
+
+    public ArrayList<M_menu_item> getAccesos() {
+        return accesos;
+    }
+
+    public void setAccesos(ArrayList<M_menu_item> accesos) {
+        this.accesos = accesos;
     }
 }

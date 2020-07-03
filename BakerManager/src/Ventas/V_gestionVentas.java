@@ -31,7 +31,8 @@ import net.miginfocom.swing.MigLayout;
 public class V_gestionVentas extends JInternalFrame {
 
     public JButton jbBuscar, jbBuscarDetalle, jbBorrar, jbAgregar, jbDetalle,
-            jbResumen, jbCliente, jbEmpleado, jbAnular, jbFacturar, jbHistorialFacturacion;
+            jbResumen, jbCliente, jbEmpleado, jbAnular, jbFacturar,
+            jbHistorialFacturacion, jbMasOpciones;
     public JTextField jtfNroFactura, jtfCliente, jtfEmpleado;
     public JComboBox<E_tipoOperacion> jcbCondVenta;
     public JComboBox<Estado> jcbEstado;
@@ -159,13 +160,16 @@ public class V_gestionVentas extends JInternalFrame {
         jbHistorialFacturacion.setName("historial facturacion");
         jbHistorialFacturacion.setMargin(insets);
         jbHistorialFacturacion.setFont(CommonFormat.fuente);
+        jbMasOpciones = new JButton("Más opciones");
+        jbMasOpciones.setFont(CommonFormat.fuente);
+        jbMasOpciones.setMargin(insets);
         //jbFacturacion.setEnabled(false);
         jpBot.add(jbAgregar);
         jpBot.add(jbDetalle);
         jpBot.add(jbAnular);
         jpBot.add(jbResumen);
         jpBot.add(jbFacturar);
-        jpBot.add(jbHistorialFacturacion);
+        jpBot.add(jbMasOpciones);
         jpBot.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED), "Opciones"));
     }
 }

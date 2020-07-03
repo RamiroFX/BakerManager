@@ -83,7 +83,7 @@ public class C_gestionVentas implements GestionInterface, RecibirEmpleadoCallbac
 
     @Override
     public final void concederPermisos() {
-        ArrayList<M_menu_item> accesos = DatosUsuario.getRol_usuario().getAccesos();
+        ArrayList<M_menu_item> accesos = this.modelo.getAccesos();
         for (int i = 0; i < accesos.size(); i++) {
             if (this.vista.jbAgregar.getName().equals(accesos.get(i).getItemDescripcion())) {
                 this.vista.jbAgregar.setEnabled(true);
@@ -120,12 +120,13 @@ public class C_gestionVentas implements GestionInterface, RecibirEmpleadoCallbac
                 this.vista.jbHistorialFacturacion.addActionListener(this);
             }
         }
-
+        this.vista.jbMasOpciones.addActionListener(this);
         this.vista.jtIngresoCabecera.addMouseListener(this);
         this.vista.jtIngresoCabecera.addKeyListener(this);
         /**
          * **ESCAPE HOTKEY/
          */
+        this.vista.jbMasOpciones.addKeyListener(this);
         this.vista.jbAgregar.addKeyListener(this);
         this.vista.jbResumen.addKeyListener(this);
         this.vista.jbAnular.addKeyListener(this);
@@ -141,7 +142,7 @@ public class C_gestionVentas implements GestionInterface, RecibirEmpleadoCallbac
     }
 
     private void verificarPermiso() {
-        ArrayList<M_menu_item> accesos = DatosUsuario.getRol_usuario().getAccesos();
+        ArrayList<M_menu_item> accesos = this.modelo.getAccesos();
         for (int i = 0; i < accesos.size(); i++) {
             if (this.vista.jbDetalle.getName().equals(accesos.get(i).getItemDescripcion())) {
                 this.vista.jbDetalle.setEnabled(true);
@@ -444,6 +445,35 @@ public class C_gestionVentas implements GestionInterface, RecibirEmpleadoCallbac
         });
     }
 
+    private void mostrarOpciones() {
+        Object[] options = {"Historial de Facturación"};
+        int n = JOptionPane.showOptionDialog(this.vista,
+                "Eliga su opción",
+                "Atención",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                null, //do not use a custom Icon
+                options, //the titles of buttons
+                options[0]); //default button title
+        switch (n) {
+            case 0: {
+                EventQueue.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        ArrayList<M_menu_item> accesos = modelo.getAccesos();
+                        for (int i = 0; i < accesos.size(); i++) {
+                            if (vista.jbHistorialFacturacion.getName().equals(accesos.get(i).getItemDescripcion())) {
+                                historialFacturacion();
+                                return;
+                            }
+                        }
+                    }
+                });
+                break;
+            }
+        }
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource().equals(this.vista.jbAgregar)) {
@@ -488,6 +518,8 @@ public class C_gestionVentas implements GestionInterface, RecibirEmpleadoCallbac
         }
         if (e.getSource().equals(this.vista.jbHistorialFacturacion)) {
             historialFacturacion();
+        } else if (e.getSource().equals(this.vista.jbMasOpciones)) {
+            mostrarOpciones();
         }
     }
 
