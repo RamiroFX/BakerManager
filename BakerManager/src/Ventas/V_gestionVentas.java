@@ -32,7 +32,7 @@ public class V_gestionVentas extends JInternalFrame {
 
     public JButton jbBuscar, jbBuscarDetalle, jbBorrar, jbAgregar, jbDetalle,
             jbResumen, jbCliente, jbEmpleado, jbAnular, jbFacturar,
-            jbHistorialFacturacion, jbMasOpciones;
+            jbHistorialFacturacion, jbNotasCredito, jbMasOpciones;
     public JTextField jtfNroFactura, jtfCliente, jtfEmpleado;
     public JComboBox<E_tipoOperacion> jcbCondVenta;
     public JComboBox<Estado> jcbEstado;
@@ -160,6 +160,10 @@ public class V_gestionVentas extends JInternalFrame {
         jbHistorialFacturacion.setName("historial facturacion");
         jbHistorialFacturacion.setMargin(insets);
         jbHistorialFacturacion.setFont(CommonFormat.fuente);
+        jbNotasCredito = new JButton("Notas de crédito");
+        jbNotasCredito.setName("Gestión notas crédito");
+        jbNotasCredito.setMargin(insets);
+        jbNotasCredito.setFont(CommonFormat.fuente);
         jbMasOpciones = new JButton("Más opciones");
         jbMasOpciones.setFont(CommonFormat.fuente);
         jbMasOpciones.setMargin(insets);

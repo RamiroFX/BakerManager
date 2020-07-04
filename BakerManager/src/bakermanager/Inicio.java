@@ -5,7 +5,6 @@
 package bakermanager;
 
 import DB.DB_manager;
-import Entities.M_funcionario;
 import Entities.M_rol;
 import Entities.M_rol_usuario;
 import Login.Login;
@@ -31,10 +30,11 @@ public class Inicio {
         controlador = new C_inicio(vista, modelo);
         controlador.mostrarVista();
     }
+
     /*
     Se utiliza solo para testeos
-    */
-    public void conectarBD(){
+     */
+    public void conectarBD() {
         try {
             DB_manager.conectarBD("postgres", "postgres");
         } catch (SQLException ex) {

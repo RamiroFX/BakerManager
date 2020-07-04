@@ -20,6 +20,7 @@ import Entities.Estado;
 import Facturacion.HistorialFacturacion;
 import Interface.RecibirClienteCallback;
 import Interface.RecibirEmpleadoCallback;
+import NotasCredito.GestionNotasCredito;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -445,8 +446,18 @@ public class C_gestionVentas implements GestionInterface, RecibirEmpleadoCallbac
         });
     }
 
+    private void gestionNotasCredito() {
+        EventQueue.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                GestionNotasCredito hf = new GestionNotasCredito(c_inicio);
+                hf.mostrarVista();
+            }
+        });
+    }
+
     private void mostrarOpciones() {
-        Object[] options = {"Historial de Facturación"};
+        Object[] options = {"Notas de crédito", "Historial de Facturación"};
         int n = JOptionPane.showOptionDialog(this.vista,
                 "Eliga su opción",
                 "Atención",
@@ -464,6 +475,23 @@ public class C_gestionVentas implements GestionInterface, RecibirEmpleadoCallbac
                         for (int i = 0; i < accesos.size(); i++) {
                             if (vista.jbHistorialFacturacion.getName().equals(accesos.get(i).getItemDescripcion())) {
                                 historialFacturacion();
+                                return;
+                            }
+                        }
+                    }
+                });
+                break;
+            }
+            case 1: {
+                EventQueue.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        ArrayList<M_menu_item> accesos = modelo.getAccesos();
+                        //Gestión notas crédito
+                        gestionNotasCredito();
+                        for (int i = 0; i < accesos.size(); i++) {
+                            if (vista.jbNotasCredito.getName().equals(accesos.get(i).getItemDescripcion())) {
+                                gestionNotasCredito();
                                 return;
                             }
                         }

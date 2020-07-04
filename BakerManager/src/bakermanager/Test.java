@@ -32,6 +32,7 @@ import Pedido.M_gestionPedido;
 import Pedido.V_gestionPedido;
 import Impresora.Impresora;
 import Interface.MovimientosCaja;
+import NotasCredito.GestionNotasCredito;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -50,7 +51,7 @@ public class Test {
 
     public static void main(String[] args) throws SQLException {
 
-        testearInformeCierreCaja();
+        testearGestionNotaCredito();
         //testearDiagramaPedido();
         /*DB_manager.conectarBD("postgres", "postgres");
         M_facturaCabecera faca;
@@ -92,5 +93,13 @@ public class Test {
         ExportarCaja ec = new ExportarCaja();
 
         ec.exportarInformeCierreCaja(caja, movimientosCaja);
+    }
+
+    public static void testearGestionNotaCredito() {
+        Inicio i = new Inicio();
+        i.conectarBD();
+
+        GestionNotasCredito gnc = new GestionNotasCredito(i.controlador);
+        gnc.mostrarVista();
     }
 }
