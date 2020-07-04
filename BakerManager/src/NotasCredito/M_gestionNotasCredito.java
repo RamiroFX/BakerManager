@@ -8,8 +8,10 @@ package NotasCredito;
 import DB.DB_NotaCredito;
 import DB.DB_manager;
 import Entities.E_NotaCreditoCabecera;
+import Entities.E_NotaCreditoDetalle;
 import Entities.E_tipoOperacion;
 import ModeloTabla.NotaCreditoCabeceraTableModel;
+import ModeloTabla.NotaCreditoDetalleTableModel;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -22,13 +24,15 @@ import java.util.List;
 public class M_gestionNotasCredito {
 
     public E_NotaCreditoCabecera cabecera;
-    private NotaCreditoCabeceraTableModel tm;
+    private NotaCreditoCabeceraTableModel tmCabecera;
+    private NotaCreditoDetalleTableModel tmDetalle;
 
     public M_gestionNotasCredito() {
         this.cabecera = new E_NotaCreditoCabecera();
         this.cabecera.getFuncionario().setId_funcionario(-1);
         this.cabecera.getCliente().setIdCliente(-1);
-        this.tm = new NotaCreditoCabeceraTableModel();
+        this.tmCabecera = new NotaCreditoCabeceraTableModel();
+        this.tmDetalle = new NotaCreditoDetalleTableModel();
     }
 
     public E_NotaCreditoCabecera getCabecera() {
@@ -37,6 +41,28 @@ public class M_gestionNotasCredito {
 
     public void setCabecera(E_NotaCreditoCabecera cabecera) {
         this.cabecera = cabecera;
+    }
+
+    public NotaCreditoCabeceraTableModel getTm() {
+        return tmCabecera;
+    }
+
+    public void setTm(NotaCreditoCabeceraTableModel tm) {
+        this.tmCabecera = tm;
+    }
+
+    /**
+     * @return the tmDetalle
+     */
+    public NotaCreditoDetalleTableModel getTmDetalle() {
+        return tmDetalle;
+    }
+
+    /**
+     * @param tmDetalle the tmDetalle to set
+     */
+    public void setTmDetalle(NotaCreditoDetalleTableModel tmDetalle) {
+        this.tmDetalle = tmDetalle;
     }
 
     public ArrayList<E_tipoOperacion> obtenerTipoOperaciones() {
@@ -91,12 +117,7 @@ public class M_gestionNotasCredito {
 
     }
 
-    public NotaCreditoCabeceraTableModel getTm() {
-        return tm;
+    public List<E_NotaCreditoDetalle> obtenerNotasCreditoDetalle(int idNotaCreditoCabecera) {
+        return DB_NotaCredito.obtenerNotasCreditoDetalle(idNotaCreditoCabecera);
     }
-
-    public void setTm(NotaCreditoCabeceraTableModel tm) {
-        this.tm = tm;
-    }
-
 }

@@ -6,6 +6,7 @@
 package DB;
 
 import Entities.E_NotaCreditoCabecera;
+import Entities.E_NotaCreditoDetalle;
 import Entities.E_facturaCabecera;
 import Entities.E_tipoOperacion;
 import Entities.Estado;
@@ -137,6 +138,10 @@ public class DB_NotaCredito {
             }
         }
         return list;
+    }
+
+    public static List<E_NotaCreditoDetalle> obtenerNotasCreditoDetalle(int idNotaCreditoCabecera) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
 }

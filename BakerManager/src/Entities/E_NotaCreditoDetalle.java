@@ -12,11 +12,12 @@ package Entities;
 public class E_NotaCreditoDetalle {
 
     private int id;
-    private double cantidad;
+    private double cantidad, descuento;
     private int precio;
     //private E_NotaCreditoCabecera notaCreditoCabecera;
     private E_facturaDetalle facturaDetalle;
     private M_producto producto;
+    private String observacion;
 
     public E_NotaCreditoDetalle() {
         ///this.notaCreditoCabecera = new E_NotaCreditoCabecera();
@@ -56,7 +57,6 @@ public class E_NotaCreditoDetalle {
     public void setNotaCreditoCabecera(E_NotaCreditoCabecera notaCreditoCabecera) {
         this.notaCreditoCabecera = notaCreditoCabecera;
     }*/
-
     public E_facturaDetalle getFacturaDetalle() {
         return facturaDetalle;
     }
@@ -71,6 +71,39 @@ public class E_NotaCreditoDetalle {
 
     public void setProducto(M_producto producto) {
         this.producto = producto;
+    }
+
+    /**
+     * @return the descuento
+     */
+    public double getDescuento() {
+        return descuento;
+    }
+
+    /**
+     * @param descuento the descuento to set
+     */
+    public void setDescuento(double descuento) {
+        this.descuento = descuento;
+    }
+
+    public int getSubTotal() {
+        Integer Precio = getPrecio() - Math.round(Math.round(((getPrecio() * getDescuento()) / 100)));
+        return Math.round(Math.round((getCantidad() * Precio)));
+    }
+
+    /**
+     * @return the observacion
+     */
+    public String getObservacion() {
+        return observacion;
+    }
+
+    /**
+     * @param observacion the observacion to set
+     */
+    public void setObservacion(String observacion) {
+        this.observacion = observacion;
     }
 
 }

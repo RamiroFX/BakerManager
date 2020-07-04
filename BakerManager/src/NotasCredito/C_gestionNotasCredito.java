@@ -43,6 +43,7 @@ public class C_gestionNotasCredito implements GestionInterface, RecibirEmpleadoC
     @Override
     public final void inicializarVista() {
         this.vista.jtCabecera.setModel(modelo.getTm());
+        this.vista.jtDetalle.setModel(modelo.getTmDetalle());
         ArrayList<E_tipoOperacion> condVenta = modelo.obtenerTipoOperaciones();
         for (int i = 0; i < condVenta.size(); i++) {
             this.vista.jcbCondVenta.addItem(condVenta.get(i));
@@ -76,6 +77,7 @@ public class C_gestionNotasCredito implements GestionInterface, RecibirEmpleadoC
             }
         }*/
         //TODO remove
+        this.vista.jbBorrar.addActionListener(this);
         this.vista.jbSalir.addActionListener(this);
         this.vista.jbBuscar.addActionListener(this);
         this.vista.jbCliente.addActionListener(this);
@@ -163,16 +165,18 @@ public class C_gestionNotasCredito implements GestionInterface, RecibirEmpleadoC
         }
     }
 
-    private void facturacionDetalle() {
-        int fila = vista.jtCabecera.getSelectedRow();
-        if (fila > -1) {
-        }
-    }
-
-    private void ventaDetalle() {
-        int fila = this.vista.jtDetalle.getSelectedRow();
-        if (fila > -1) {
-        }
+    private void consultarNotasCreditoDetalle() {
+        EventQueue.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                int fila = vista.jtDetalle.getSelectedRow();
+                if (fila > -1) {
+                    int idNotaCreditoCabecera = modelo.getTm().getList().get(fila).getId();
+                    modelo.getTmDetalle().setList(modelo.obtenerNotasCreditoDetalle(idNotaCreditoCabecera));
+                    Utilities.c_packColumn.packColumns(vista.jtDetalle, 1);
+                }
+            }
+        });
     }
 
     @Override
@@ -205,6 +209,7 @@ public class C_gestionNotasCredito implements GestionInterface, RecibirEmpleadoC
         if (source.equals(this.vista.jtCabecera)) {
         }
         if (source.equals(this.vista.jtDetalle)) {
+            consultarNotasCreditoDetalle();
         }
     }
 
