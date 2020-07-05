@@ -6,7 +6,7 @@
 package ModeloTabla;
 
 import Entities.E_NotaCreditoDetalle;
-import Parametros.Impuesto;
+import Entities.E_impuesto;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,10 +20,10 @@ public class NotaCreditoDetalleTableModel extends AbstractTableModel {
 
     private DecimalFormat decimalFormat;
     private List<E_NotaCreditoDetalle> list;
-    private final String[] colNames = {"Cod.", "Cantidad", "Producto", "Precio", "Descuento", "Exenta", "IVA5%", "IVA10%", "Observación"};
+    private final String[] colNames = {"Cod.", "Cantidad", "Producto", "Precio", "Descuento", "Exenta", "IVA5%", "IVA10%"};
 
     public NotaCreditoDetalleTableModel() {
-        this.decimalFormat = new DecimalFormat("###,###");
+        this.decimalFormat = new DecimalFormat("#,##0.##");
         this.list = new ArrayList<>();
     }
 
@@ -70,30 +70,30 @@ public class NotaCreditoDetalleTableModel extends AbstractTableModel {
                 return nd.getProducto().getCodigo();
             }
             case 1: {
-                return nd.getCantidad();
+                return decimalFormat.format(nd.getCantidad());
             }
             case 2: {
                 return nd.getProducto().getDescripcion();
             }
             case 3: {
-                return nd.getPrecio();
+                return decimalFormat.format(nd.getPrecio());
             }
             case 4: {
                 return nd.getDescuento();
             }
             case 5:
-                if (nd.getProducto().getIdImpuesto() == Impuesto.EXENTA) {
+                if (nd.getProducto().getIdImpuesto() == E_impuesto.EXENTA) {
                     return decimalFormat.format(nd.getSubTotal());
                 }
                 return 0;
             case 6: {
-                if (nd.getProducto().getIdImpuesto() == Impuesto.IVA5) {
+                if (nd.getProducto().getIdImpuesto() == E_impuesto.IVA5) {
                     return decimalFormat.format(nd.getSubTotal());
                 }
                 return 0;
             }
             case 7: {
-                if (nd.getProducto().getIdImpuesto() == Impuesto.IVA10) {
+                if (nd.getProducto().getIdImpuesto() == E_impuesto.IVA10) {
                     return decimalFormat.format(nd.getSubTotal());
                 }
                 return 0;

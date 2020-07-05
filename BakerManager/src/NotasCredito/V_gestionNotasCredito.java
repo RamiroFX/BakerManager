@@ -6,6 +6,7 @@
 package NotasCredito;
 
 import Entities.E_tipoOperacion;
+import Entities.Estado;
 import bakermanager.V_inicio;
 import com.toedter.calendar.JDateChooser;
 import java.awt.Dimension;
@@ -32,6 +33,7 @@ public class V_gestionNotasCredito extends JDialog {
             jbCliente, jbEmpleado, jbNueva, jbDetalle, jbAnular;
     public JTextField jtfNroNotaCredito, jtfCliente, jtfEmpleado;
     public JComboBox<E_tipoOperacion> jcbCondVenta;
+    public JComboBox<Estado> jcbEstado;
     private JPanel jpTop, jpBotonesTop, jpBot;
     public JTable jtCabecera, jtDetalle;
     ;
@@ -40,7 +42,7 @@ public class V_gestionNotasCredito extends JDialog {
 
     public V_gestionNotasCredito(V_inicio inicio) {
         super(inicio, "Gestión de notas de crédito");
-        setSize(1050, 600);
+        setSize(1100, 600);
         setName("jdGestionNotasCredito");
         initTop();
         initMid();
@@ -66,6 +68,7 @@ public class V_gestionNotasCredito extends JDialog {
         jtfEmpleado.setPreferredSize(new Dimension(250, 10));
         jtfEmpleado.setEditable(false);
         jcbCondVenta = new JComboBox();
+        jcbEstado = new JComboBox();
         jtfNroNotaCredito = new JTextField();
         jddInicio = new JDateChooser();
         jddInicio.setPreferredSize(new Dimension(150, 10));
@@ -76,7 +79,9 @@ public class V_gestionNotasCredito extends JDialog {
         jpFiltros.add(new JLabel("Fecha inicio:"));
         jpFiltros.add(jddInicio, "growx");
         jpFiltros.add(new JLabel("Cond. compra:"));
-        jpFiltros.add(jcbCondVenta, "wrap");
+        jpFiltros.add(jcbCondVenta,"growx");
+        jpFiltros.add(new JLabel("Estado:"));
+        jpFiltros.add(jcbEstado, "wrap");
         jpFiltros.add(jbEmpleado);
         jpFiltros.add(jtfEmpleado, "growx");
         jpFiltros.add(new JLabel("Fecha final:"));

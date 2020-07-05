@@ -21,7 +21,7 @@ public class NotaCreditoCabeceraTableModel extends AbstractTableModel {
     private SimpleDateFormat dateFormater;
     private DecimalFormat decimalFormat;
     private List<E_NotaCreditoCabecera> list;
-    private final String[] colNames = {"Id.", "Nro Nota Crédito", "Cliente", "Funcionario", "Tiempo", "Total", "Cond. venta"};
+    private final String[] colNames = {"Id.", "Nro Nota Crédito", "Nro. Factura", "Cliente", "Funcionario", "Tiempo", "Total", "Cond. venta"};
 
     public NotaCreditoCabeceraTableModel() {
         this.dateFormater = new SimpleDateFormat("dd/MM/YYYY hh:mm:ss");
@@ -68,24 +68,27 @@ public class NotaCreditoCabeceraTableModel extends AbstractTableModel {
         E_NotaCreditoCabecera nc = this.list.get(rowIndex);
         switch (colIndex) {
             case 0: {
-                return nc.getId();
+                return decimalFormat.format(nc.getId());
             }
             case 1: {
-                return nc.getNroNotaCredito();
+                return decimalFormat.format(nc.getNroNotaCredito());
             }
             case 2: {
-                return nc.getCliente().getEntidad();
+                return decimalFormat.format(nc.getFacturaCabecera().getNroFactura());
             }
             case 3: {
-                return nc.getFuncionario().getNombre();
+                return nc.getCliente().getEntidad();
             }
             case 4: {
-                return dateFormater.format(nc.getTiempo());
+                return nc.getFuncionario().getNombre();
             }
             case 5: {
-                return decimalFormat.format(nc.getTotal());
+                return dateFormater.format(nc.getTiempo());
             }
             case 6: {
+                return decimalFormat.format(nc.getTotal());
+            }
+            case 7: {
                 return nc.getFacturaCabecera().getTipoOperacion().getDescripcion();
             }
             default: {

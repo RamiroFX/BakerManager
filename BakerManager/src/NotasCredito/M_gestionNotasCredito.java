@@ -10,6 +10,7 @@ import DB.DB_manager;
 import Entities.E_NotaCreditoCabecera;
 import Entities.E_NotaCreditoDetalle;
 import Entities.E_tipoOperacion;
+import Entities.Estado;
 import ModeloTabla.NotaCreditoCabeceraTableModel;
 import ModeloTabla.NotaCreditoDetalleTableModel;
 import java.util.ArrayList;
@@ -23,7 +24,7 @@ import java.util.List;
  */
 public class M_gestionNotasCredito {
 
-    public E_NotaCreditoCabecera cabecera;
+    private E_NotaCreditoCabecera cabecera;
     private NotaCreditoCabeceraTableModel tmCabecera;
     private NotaCreditoDetalleTableModel tmDetalle;
 
@@ -100,7 +101,8 @@ public class M_gestionNotasCredito {
         return false;
     }
 
-    public List<E_NotaCreditoCabecera> obtenerNotasCreditoCabecera(int idCliente, int idFuncionario, int nroNotaCredito, Date fechaInicio, Date fechaFinal, int idTipoOperacion) {
+    public List<E_NotaCreditoCabecera> obtenerNotasCreditoCabecera(int idCliente, int idFuncionario, int nroNotaCredito, Date fechaInicio, Date fechaFinal,
+            int idTipoOperacion, int idEstado) {
         Calendar calendarInicio = Calendar.getInstance();
         calendarInicio.setTime(fechaInicio);
         calendarInicio.set(Calendar.HOUR_OF_DAY, 0);
@@ -113,11 +115,18 @@ public class M_gestionNotasCredito {
         calendarFinal.set(Calendar.MINUTE, 59);
         calendarFinal.set(Calendar.SECOND, 59);
         calendarFinal.set(Calendar.MILLISECOND, 999);
-        return DB_NotaCredito.obtenerNotasCredito(idCliente, idFuncionario, nroNotaCredito, calendarInicio.getTime(), calendarFinal.getTime(), idTipoOperacion);
+        return DB_NotaCredito.obtenerNotasCredito(idCliente, idFuncionario, nroNotaCredito, 
+                calendarInicio.getTime(), calendarFinal.getTime(), idTipoOperacion, idEstado);
 
     }
 
     public List<E_NotaCreditoDetalle> obtenerNotasCreditoDetalle(int idNotaCreditoCabecera) {
         return DB_NotaCredito.obtenerNotasCreditoDetalle(idNotaCreditoCabecera);
+    }
+
+    public ArrayList<Estado> obtenerEstados() {
+        ArrayList<Estado> estados = DB_manager.obtenerEstados();
+        estados.add(new Estado(-1, "Todos"));
+        return estados;
     }
 }

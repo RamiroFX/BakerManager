@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Cobros;
+package NotasCredito;
 
 import com.toedter.calendar.JDateChooser;
 import java.awt.BorderLayout;
@@ -32,33 +32,39 @@ import net.miginfocom.swing.MigLayout;
  *
  * @author Ramiro Ferreira
  */
-public class V_crearCobro extends JDialog {
-
+public class V_crearNotaCredito extends JDialog {
+    
     private static final String INGRESAR_COD_PROD = "Ingresar número de factura";
     private static final String COD_PROD = "Número de factura";
+    private static final String TITULO_CREAR = "Crear Nota de Crédito";
+    private static final String TITULO_VER = "Ver Nota de Crédito";
 
     //NORTE
     JPanel jpNorth;
-    public JTextField jtfCliente, jtfFuncionario, jtfNroRecibo, jtfClieRuc, jtfNroFactura;
-    public JButton jbCliente, jbFuncionario;
-    public JLabel jlNroRecibo, jlFechaCobro;
-    public JDateChooser jdcFechaCobro;
+    public JTextField jtfCliente, jtfNroRecibo, jtfClieRuc, jtfNroFactura;
+    public JButton jbCliente;
+    public JLabel jlNroNotaCredito, jlFechaNotaCredito;
+    public JDateChooser jdcFechaotaCredito;
     //CENTRO
     JPanel jpCenter;
-    public JTable jtReciboDetalle;
-    public JScrollPane jspReciboDetalle;
+    public JTable jtNotaCreditoDetalle;
+    public JScrollPane jspNotaCreditoDetalle;
     public JButton jbAgregarFactura, jbModificarDetalle, jbEliminarDetalle;
     public JLabel jlTotal;
     public JFormattedTextField jftTotal;
     //SUR
     JPanel jpSouth;
     public JButton jbAceptar, jbImprimir, jbSalir;
-
-    public V_crearCobro(JFrame frame) {
-        super(frame, "Crear cobro", JDialog.ModalityType.APPLICATION_MODAL);
+    
+    public V_crearNotaCredito(JFrame frame) {
+        super(frame, TITULO_CREAR, JDialog.ModalityType.APPLICATION_MODAL);
+        initComponents();
+        constructLayout(frame);
+    }
+    
+    private void constructLayout(JFrame frame) {
         setSize(950, 700);
         setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-        initComponents();
         setLocationRelativeTo(frame);
         getContentPane().setLayout(new BorderLayout());
         getContentPane().add(jpNorth, BorderLayout.NORTH);
@@ -68,54 +74,41 @@ public class V_crearCobro extends JDialog {
             public void windowOpened(WindowEvent e) {
                 jtfNroFactura.requestFocus();
             }
-        });
+        });        
     }
-
+    
     private void initComponents() {
         initNorth();
         initCenter();
         initSouth();
     }
-
+    
     private void initNorth() {
         jpNorth = new JPanel(new MigLayout());
         jbCliente = new JButton("Agregar cliente [F3] ");
-        jbFuncionario = new JButton("Agregar cobrador [F5]");
         jtfCliente = new JTextField(30);
         jtfCliente.setEditable(false);
-        jtfFuncionario = new JTextField(30);
-        jtfFuncionario.setEditable(false);
-        jlNroRecibo = new JLabel("Nro. Recibo");
+        jlNroNotaCredito = new JLabel("Nro. Nota de crédito");
         jtfNroRecibo = new JTextField(20);
-        jlFechaCobro = new JLabel("Fecha");
-        jdcFechaCobro = new JDateChooser();
-        jdcFechaCobro.setPreferredSize(new Dimension(150, 20));
-        jpNorth.add(jbCliente,"growx");
+        jlFechaNotaCredito = new JLabel("Fecha");
+        jdcFechaotaCredito = new JDateChooser();
+        jdcFechaotaCredito.setPreferredSize(new Dimension(150, 20));
+        jpNorth.add(jbCliente, "growx");
         jpNorth.add(jtfCliente);
-        jpNorth.add(jlNroRecibo);
+        jpNorth.add(jlNroNotaCredito);
         jpNorth.add(jtfNroRecibo);
-        jpNorth.add(jlFechaCobro);
-        jpNorth.add(jdcFechaCobro, "wrap");
-        jpNorth.add(jbFuncionario);
-        jpNorth.add(jtfFuncionario);
-        jpNorth.add(new JComponent() {
-        });
-        jpNorth.add(new JComponent() {
-        });
-        jpNorth.add(new JComponent() {
-        });
-        jpNorth.add(new JComponent() {
-        });
+        jpNorth.add(jlFechaNotaCredito);
+        jpNorth.add(jdcFechaotaCredito);
     }
-
+    
     private void initCenter() {
         int columns = 8;
         jpCenter = new JPanel(new BorderLayout());
         jpCenter.setBorder(new EtchedBorder(EtchedBorder.RAISED));
-        jtReciboDetalle = new JTable();
-        jtReciboDetalle.getTableHeader().setReorderingAllowed(false);
-        jtReciboDetalle.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        jspReciboDetalle = new JScrollPane(jtReciboDetalle);
+        jtNotaCreditoDetalle = new JTable();
+        jtNotaCreditoDetalle.getTableHeader().setReorderingAllowed(false);
+        jtNotaCreditoDetalle.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        jspNotaCreditoDetalle = new JScrollPane(jtNotaCreditoDetalle);
         jtfNroFactura = new JTextField(13);
         jtfNroFactura.setToolTipText(INGRESAR_COD_PROD);
         JPanel jpCodProd = new JPanel(new MigLayout());
@@ -130,7 +123,7 @@ public class V_crearCobro extends JDialog {
         jpSouthAux.add(jbAgregarFactura, "growx, wrap");
         jpSouthAux.add(jbModificarDetalle, "growx, wrap");
         jpSouthAux.add(jbEliminarDetalle, "growx");
-
+        
         Font fTotal = new Font(Font.SERIF, Font.BOLD, 15);
         jlTotal = new JLabel("Total");
         jlTotal.setFont(fTotal);
@@ -142,21 +135,22 @@ public class V_crearCobro extends JDialog {
         jpTotal.setBorder(new EtchedBorder(EtchedBorder.RAISED));
         jpTotal.add(jlTotal);
         jpTotal.add(jftTotal);
-
+        
         JPanel jpDetalleAux = new JPanel(new MigLayout());
         jpDetalleAux.add(jpSouthAux, "growx,wrap");
         jpDetalleAux.add(jpTotal, "growx, wrap");
-        jpCenter.add(jspReciboDetalle, BorderLayout.CENTER);
+        jpCenter.add(jspNotaCreditoDetalle, BorderLayout.CENTER);
         jpCenter.add(jpDetalleAux, BorderLayout.EAST);
     }
-
+    
     private void initSouth() {
         jpSouth = new JPanel();
         Insets insets = new Insets(10, 10, 10, 10);
-        jbAceptar = new JButton("Confirmar cobro [F1]");
+        jbAceptar = new JButton("Confirmar Nota de crédito [F1]");
         jbAceptar.setMargin(insets);
         jbImprimir = new JButton("Imprimir [F2]");
         jbImprimir.setMargin(insets);
+        jbImprimir.setVisible(false);
         jbSalir = new JButton("Salir [ESC]");
         jbSalir.setMargin(insets);
         jpSouth.add(jbAceptar);

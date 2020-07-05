@@ -457,7 +457,7 @@ public class C_gestionVentas implements GestionInterface, RecibirEmpleadoCallbac
     }
 
     private void mostrarOpciones() {
-        Object[] options = {"Notas de crédito", "Historial de Facturación"};
+        Object[] options = {"Historial de Facturación", "Notas de crédito"};
         int n = JOptionPane.showOptionDialog(this.vista,
                 "Eliga su opción",
                 "Atención",

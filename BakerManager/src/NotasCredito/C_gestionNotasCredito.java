@@ -8,16 +8,19 @@ package NotasCredito;
 import Cliente.Seleccionar_cliente;
 import Empleado.Seleccionar_funcionario;
 import Entities.E_tipoOperacion;
+import Entities.Estado;
 import Entities.M_cliente;
 import Entities.M_funcionario;
-import Interface.GestionInterface;
 import Interface.RecibirClienteCallback;
 import Interface.RecibirEmpleadoCallback;
 import bakermanager.C_inicio;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -26,7 +29,7 @@ import java.util.Date;
  *
  * @author Ramiro
  */
-public class C_gestionNotasCredito implements GestionInterface, RecibirEmpleadoCallback, RecibirClienteCallback {
+public class C_gestionNotasCredito implements ActionListener, MouseListener, KeyListener, RecibirEmpleadoCallback, RecibirClienteCallback {
 
     public M_gestionNotasCredito modelo;
     public V_gestionNotasCredito vista;
@@ -40,13 +43,16 @@ public class C_gestionNotasCredito implements GestionInterface, RecibirEmpleadoC
         concederPermisos();
     }
 
-    @Override
     public final void inicializarVista() {
         this.vista.jtCabecera.setModel(modelo.getTm());
         this.vista.jtDetalle.setModel(modelo.getTmDetalle());
         ArrayList<E_tipoOperacion> condVenta = modelo.obtenerTipoOperaciones();
         for (int i = 0; i < condVenta.size(); i++) {
             this.vista.jcbCondVenta.addItem(condVenta.get(i));
+        }
+        ArrayList<Estado> estados = modelo.obtenerEstados();
+        for (int i = 0; i < estados.size(); i++) {
+            this.vista.jcbEstado.addItem(estados.get(i));
         }
         Date today = Calendar.getInstance().getTime();
         Calendar longAgo = Calendar.getInstance();
@@ -55,7 +61,6 @@ public class C_gestionNotasCredito implements GestionInterface, RecibirEmpleadoC
         this.vista.jddFinal.setDate(today);
     }
 
-    @Override
     public final void concederPermisos() {
         /*ArrayList<M_menu_item> accesos = DatosUsuario.getRol_usuario().getAccesos();
         for (int i = 0; i < accesos.size(); i++) {
@@ -77,6 +82,8 @@ public class C_gestionNotasCredito implements GestionInterface, RecibirEmpleadoC
             }
         }*/
         //TODO remove
+        
+        this.vista.jbNueva.addActionListener(this);
         this.vista.jbBorrar.addActionListener(this);
         this.vista.jbSalir.addActionListener(this);
         this.vista.jbBuscar.addActionListener(this);
@@ -96,29 +103,28 @@ public class C_gestionNotasCredito implements GestionInterface, RecibirEmpleadoC
         this.vista.jcbCondVenta.addKeyListener(this);
         this.vista.jbBorrar.addKeyListener(this);
         this.vista.jbSalir.addKeyListener(this);
+        this.vista.jbNueva.addKeyListener(this);
     }
 
-    @Override
     public final void mostrarVista() {
         this.vista.setVisible(true);
     }
 
-    @Override
     public final void cerrar() {
         this.vista.dispose();
     }
 
     @Override
     public void recibirCliente(M_cliente cliente) {
-        this.modelo.cabecera.setCliente(cliente);
-        String nombre = this.modelo.cabecera.getCliente().getNombre();
-        String entidad = this.modelo.cabecera.getCliente().getEntidad();
+        this.modelo.getCabecera().setCliente(cliente);
+        String nombre = this.modelo.getCabecera().getCliente().getNombre();
+        String entidad = this.modelo.getCabecera().getCliente().getEntidad();
         this.vista.jtfCliente.setText(nombre + "-(" + entidad + ")");
     }
 
     @Override
     public void recibirFuncionario(M_funcionario funcionario) {
-        this.modelo.cabecera.setFuncionario(funcionario);
+        this.modelo.getCabecera().setFuncionario(funcionario);
         this.vista.jtfEmpleado.setText(this.modelo.obtenerNombreFuncionario());
     }
 
@@ -134,14 +140,16 @@ public class C_gestionNotasCredito implements GestionInterface, RecibirEmpleadoC
         EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
-                int idFuncionario = modelo.cabecera.getFuncionario().getId_funcionario();
-                int idCliente = modelo.cabecera.getCliente().getIdCliente();
+                int idFuncionario = modelo.getCabecera().getFuncionario().getId_funcionario();
+                int idCliente = modelo.getCabecera().getCliente().getIdCliente();
                 int nroNotaCredito = obtenerNroNotaCredito();
                 E_tipoOperacion tiop = vista.jcbCondVenta.getItemAt(vista.jcbCondVenta.getSelectedIndex());
                 int idCondVenta = tiop.getId();
+                Estado estado = vista.jcbEstado.getItemAt(vista.jcbEstado.getSelectedIndex());
+                int idEstado = estado.getId();
                 Date fechaInicio = vista.jddInicio.getDate();
                 Date fechaFinal = vista.jddFinal.getDate();
-                modelo.getTm().setList(modelo.obtenerNotasCreditoCabecera(idCliente, idFuncionario, nroNotaCredito, fechaInicio, fechaFinal, idCondVenta));
+                modelo.getTm().setList(modelo.obtenerNotasCreditoCabecera(idCliente, idFuncionario, nroNotaCredito, fechaInicio, fechaFinal, idCondVenta, idEstado));
                 Utilities.c_packColumn.packColumns(vista.jtDetalle, 1);
             }
         });
@@ -169,7 +177,7 @@ public class C_gestionNotasCredito implements GestionInterface, RecibirEmpleadoC
         EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
-                int fila = vista.jtDetalle.getSelectedRow();
+                int fila = vista.jtCabecera.getSelectedRow();
                 if (fila > -1) {
                     int idNotaCreditoCabecera = modelo.getTm().getList().get(fila).getId();
                     modelo.getTmDetalle().setList(modelo.obtenerNotasCreditoDetalle(idNotaCreditoCabecera));
@@ -177,6 +185,11 @@ public class C_gestionNotasCredito implements GestionInterface, RecibirEmpleadoC
                 }
             }
         });
+    }
+
+    private void crearNotaCredito() {
+        CrearNotaCredito cnc = new CrearNotaCredito(c_inicio);
+        cnc.mostrarVista();
     }
 
     @Override
@@ -198,6 +211,9 @@ public class C_gestionNotasCredito implements GestionInterface, RecibirEmpleadoC
         if (source.equals(this.vista.jbBorrar)) {
             borrarDatos();
         }
+        if (source.equals(this.vista.jbNueva)) {
+            crearNotaCredito();
+        }
         if (source.equals(this.vista.jbSalir)) {
             cerrar();
         }
@@ -207,9 +223,9 @@ public class C_gestionNotasCredito implements GestionInterface, RecibirEmpleadoC
     public void mouseClicked(MouseEvent e) {
         Object source = e.getSource();
         if (source.equals(this.vista.jtCabecera)) {
+            consultarNotasCreditoDetalle();
         }
         if (source.equals(this.vista.jtDetalle)) {
-            consultarNotasCreditoDetalle();
         }
     }
 
@@ -252,7 +268,7 @@ public class C_gestionNotasCredito implements GestionInterface, RecibirEmpleadoC
     @Override
     public void keyReleased(KeyEvent e) {
         if (this.vista.jtCabecera.hasFocus()) {
-            consultarNotasCredito();
+            consultarNotasCreditoDetalle();
         }
     }
 }
