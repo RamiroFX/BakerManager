@@ -63,7 +63,6 @@ public class DB_NotaCredito {
                 + "nc.id_funcionario = f.id_funcionario AND "
                 + "nc.id_cliente = c.id_cliente AND "
                 + "nc.tiempo BETWEEN ?  AND ? ";
-        //String groupBy = " GROUP BY FAC.ID_FACTURACION_CABECERA,FAC.NRO_FACTURA, C.ENTIDAD, FAC.TIEMPO,F.ID_PERSONA, FAC.ID_COND_VENTA ";
         String orderBy = "ORDER BY nc.tiempo";
         String groupBy = "GROUP BY nc.id_nota_credito_cabecera, nro_nota_credito, nro_factura, c.entidad, \"FUNCIONARIO\", nc.tiempo, fc.id_cond_venta, \"COND_VENTA\", fc.id_estado,\"ESTADO\" ";
         if (idCliente > 0) {
@@ -135,7 +134,7 @@ public class DB_NotaCredito {
                 list.add(nc);
             }
         } catch (SQLException ex) {
-            Logger lgr = Logger.getLogger(DB_Egreso.class.getName());
+            Logger lgr = Logger.getLogger(DB_NotaCredito.class.getName());
             lgr.log(Level.SEVERE, ex.getMessage(), ex);
         } finally {
             try {
@@ -146,7 +145,7 @@ public class DB_NotaCredito {
                     pst.close();
                 }
             } catch (SQLException ex) {
-                Logger lgr = Logger.getLogger(DB_Egreso.class.getName());
+                Logger lgr = Logger.getLogger(DB_NotaCredito.class.getName());
                 lgr.log(Level.WARNING, ex.getMessage(), ex);
             }
         }

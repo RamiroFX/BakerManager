@@ -113,7 +113,7 @@ public class M_crearNotaCredito {
         return total;
     }
 
-    public void modificarDetalle(int index, E_cuentaCorrienteDetalle detalle) {
+    public void modificarDetalle(int index, E_NotaCreditoDetalle detalle) {
         //getNotaCreditoDetalleTm().modificarDatos(index, detalle);
     }
 

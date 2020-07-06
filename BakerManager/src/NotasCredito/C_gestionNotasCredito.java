@@ -181,7 +181,7 @@ public class C_gestionNotasCredito implements ActionListener, MouseListener, Key
                 if (fila > -1) {
                     int idNotaCreditoCabecera = modelo.getTm().getList().get(fila).getId();
                     modelo.getTmDetalle().setList(modelo.obtenerNotasCreditoDetalle(idNotaCreditoCabecera));
-                    Utilities.c_packColumn.packColumns(vista.jtDetalle, 1);
+                    Utilities.c_packColumn.packColumns(vista.jtCabecera, 1);
                 }
             }
         });

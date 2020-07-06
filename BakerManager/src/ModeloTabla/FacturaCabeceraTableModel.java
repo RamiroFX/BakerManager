@@ -6,6 +6,7 @@
 package ModeloTabla;
 
 import Entities.M_facturaCabecera;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,11 +18,14 @@ import javax.swing.table.AbstractTableModel;
  */
 public class FacturaCabeceraTableModel extends AbstractTableModel {
 
-    private SimpleDateFormat dateFormater = new SimpleDateFormat("dd/MM/YYYY hh:mm:ss");
+    private DecimalFormat decimalFormat;
+    private SimpleDateFormat dateFormater;
     private List<M_facturaCabecera> facturaCabeceraList;
     private final String[] colNames = {"Id.", "Nro Factura", "Cliente", "Funcionario", "Tiempo", "Total", "Cond. venta"};
 
     public FacturaCabeceraTableModel() {
+        this.dateFormater = new SimpleDateFormat("dd/MM/YYYY hh:mm:ss");
+        this.decimalFormat = new DecimalFormat("#,##0.##");
         this.facturaCabeceraList = new ArrayList<>();
     }
 
@@ -64,10 +68,10 @@ public class FacturaCabeceraTableModel extends AbstractTableModel {
         M_facturaCabecera fc = this.facturaCabeceraList.get(rowIndex);
         switch (colIndex) {
             case 0: {
-                return fc.getIdFacturaCabecera();
+                return decimalFormat.format(fc.getIdFacturaCabecera());
             }
             case 1: {
-                return fc.getNroFactura();
+                return decimalFormat.format(fc.getNroFactura());
             }
             case 2: {
                 return fc.getCliente().getEntidad();
@@ -79,7 +83,7 @@ public class FacturaCabeceraTableModel extends AbstractTableModel {
                 return dateFormater.format(fc.getTiempo());
             }
             case 5: {
-                return fc.getTotal();
+                return decimalFormat.format(fc.getTotal());
             }
             case 6: {
                 return fc.getCondVenta().getDescripcion();

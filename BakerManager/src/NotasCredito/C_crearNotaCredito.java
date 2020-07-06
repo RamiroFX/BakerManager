@@ -9,10 +9,14 @@ import Cobros.*;
 import Cliente.Seleccionar_cliente;
 import Entities.E_NotaCreditoDetalle;
 import Entities.E_cuentaCorrienteDetalle;
-import Entities.E_facturaSinPago;
+import Entities.E_facturaCabecera;
+import Entities.E_facturaDetalle;
 import Entities.M_cliente;
+import Entities.M_producto;
 import Interface.RecibirClienteCallback;
-import Interface.RecibirCtaCteDetalleCallback;
+import Interface.RecibirFacturaCabeceraCallback;
+import Interface.RecibirProductoCallback;
+import Producto.SeleccionarCantidadProduducto;
 import bakermanager.C_inicio;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
@@ -21,8 +25,10 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import javax.swing.JOptionPane;
 
 /**
@@ -30,7 +36,7 @@ import javax.swing.JOptionPane;
  * @author Ramiro Ferreira
  */
 public class C_crearNotaCredito extends MouseAdapter implements ActionListener, KeyListener,
-        RecibirClienteCallback {
+        RecibirClienteCallback, RecibirFacturaCabeceraCallback, RecibirProductoCallback {
 
     private static final String VALIDAR_RESPONSABLE_MSG = "Seleccione un cobrador",
             VALIDAR_CLIENTE_MSG = "Seleccione un cliente",
@@ -109,16 +115,8 @@ public class C_crearNotaCredito extends MouseAdapter implements ActionListener, 
         int fila = this.vista.jtNotaCreditoDetalle.getSelectedRow();
         if (fila > -1) {
             E_NotaCreditoDetalle notaCreditoDetalle = modelo.getNotaCreditoDetalleTm().getList().get(fila);
-            /*E_facturaSinPago cabecera = new E_facturaSinPago();
-            cabecera.setClienteEntidad(modelo.getCabecera().getCliente().getEntidad());
-            cabecera.setIdCabecera(notaCreditoDetalle.getIdFacturaCabecera());
-            cabecera.setNroFactura(notaCreditoDetalle.getNroFactura());
-            cabecera.setMonto((int) notaCreditoDetalle.getMonto());
-            vista.jbAceptar.setEnabled(true);
-            ReciboCobro rp = new ReciboCobro(this.vista);
-            rp.modificarDetalle(fila, cabecera, notaCreditoDetalle);
-            rp.setInterface(this);
-            rp.mostrarVista();*/
+            SeleccionarCantidadProduducto scp = new SeleccionarCantidadProduducto(vista, notaCreditoDetalle.getProducto(), this, fila);
+            scp.setVisible(true);
         }
     }
 
@@ -218,9 +216,9 @@ public class C_crearNotaCredito extends MouseAdapter implements ActionListener, 
         if (!validarCliente()) {
             return;
         }
-        int idCliente = modelo.getCabecera().getCliente().getIdCliente();
-        SeleccionarFacturaPendiente sc = new SeleccionarFacturaPendiente(this.vista, idCliente);
-        //sc.setCallback(this);
+        SeleccionarVenta sc = new SeleccionarVenta(this.vista);
+        sc.setCallback(this);
+        sc.setCliente(modelo.getCabecera().getCliente());
         sc.mostrarVista();
     }
 
@@ -232,7 +230,7 @@ public class C_crearNotaCredito extends MouseAdapter implements ActionListener, 
         sc.setCallback(this);
         sc.mostrarVista();
     }
-    
+
     private void sumarTotal() {
         this.vista.jftTotal.setValue(modelo.getTotal());
     }
@@ -310,12 +308,56 @@ public class C_crearNotaCredito extends MouseAdapter implements ActionListener, 
     }
 
     public void modificarCtaCteDetalle(int index, E_cuentaCorrienteDetalle detalle, int montoTotalPendiente) {
-        if (this.modelo.controlarMontoIngresado(detalle.getIdFacturaCabecera(), (int) detalle.getMonto(), montoTotalPendiente)) {
+        /*if (this.modelo.controlarMontoIngresado(detalle.getIdFacturaCabecera(), (int) detalle.getMonto(), montoTotalPendiente)) {
             this.modelo.modificarDetalle(index, detalle);
         } else {
             JOptionPane.showMessageDialog(vista, VALIDAR_MONTO_A_PAGAR, VALIDAR_TITULO, JOptionPane.WARNING_MESSAGE);
         }
         sumarTotal();
-        Utilities.c_packColumn.packColumns(vista.jtNotaCreditoDetalle, 1);
+        Utilities.c_packColumn.packColumns(vista.jtNotaCreditoDetalle, 1);*/
+    }
+
+    @Override
+    public void recibirVenta(E_facturaCabecera facturaCabecera, List<E_facturaDetalle> facturaDetalle) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void recibirFacturaCabecera(E_facturaCabecera facturaCabecera) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void recibirFacturaDetalle(List<E_facturaDetalle> facturaDetalle) {
+        List<E_NotaCreditoDetalle> notaCreditoDetalle = new ArrayList<>();
+        for (E_facturaDetalle fade : facturaDetalle) {
+            fade.getProducto().setPrecioVenta(fade.getPrecio());
+            E_NotaCreditoDetalle nd = new E_NotaCreditoDetalle();
+            nd.setCantidad(fade.getCantidad());
+            nd.setDescuento(fade.getDescuento());
+            nd.setFacturaDetalle(fade);
+            nd.setObservacion(fade.getObservacion());
+            nd.setPrecio(fade.getPrecio());
+            nd.setProducto(fade.getProducto());
+            notaCreditoDetalle.add(nd);
+        }
+        this.modelo.getNotaCreditoDetalleTm().setList(notaCreditoDetalle);
+        sumarTotal();
+    }
+
+    @Override
+    public void recibirProducto(double cantidad, int precio, double descuento, M_producto producto, String observacion) {
+        System.out.println("NotasCredito.C_crearNotaCredito.recibirProducto()");
+    }
+
+    @Override
+    public void modificarProducto(int posicion, double cantidad, int precio, double descuento, M_producto producto, String observacion) {
+        E_NotaCreditoDetalle nd = new E_NotaCreditoDetalle();
+        nd.setCantidad(cantidad);
+        nd.setDescuento(descuento);
+        nd.setObservacion(observacion);
+        nd.setPrecio(precio);
+        nd.setProducto(producto);
+        this.modelo.modificarDetalle(posicion, nd);
     }
 }

@@ -4,19 +4,9 @@
  */
 package NotasCredito;
 
-import Entities.E_facturaCabecera;
 import Entities.E_tipoOperacion;
-import bauplast.*;
-import Entities.Estado;
 import Entities.M_facturaCabecera;
-import Entities.M_menu_item;
-import Entities.M_producto;
-import Entities.ProductoCategoria;
-import Interface.InterfaceRecibirProduccionFilm;
-import Interface.RecibirProductoCallback;
-import MenuPrincipal.DatosUsuario;
-import Produccion.SeleccionCantidadProductoSimple;
-import Producto.C_crear_producto;
+import Interface.RecibirFacturaCabeceraCallback;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -25,11 +15,12 @@ import java.awt.EventQueue;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.KeyStroke;
-import javax.swing.SwingUtilities;
 
 /**
  *
@@ -41,26 +32,17 @@ public class C_seleccionarVenta extends MouseAdapter implements ActionListener, 
 
     private M_seleccionarVenta modelo;
     private V_seleccionarVenta vista;
-    private InterfaceRecibirProduccionFilm callback;
-    private RecibirProductoCallback productoCallback;
-    private boolean isProductoTerminado;//productoTerminado=true;rollo=false
+    private RecibirFacturaCabeceraCallback callback;
 
     public C_seleccionarVenta(M_seleccionarVenta modelo, V_seleccionarVenta vista) {
         this.vista = vista;
         this.modelo = modelo;
-        this.isProductoTerminado = false;
         inicializarVista();
         agregarListeners();
     }
 
-    public void setCallback(InterfaceRecibirProduccionFilm callback) {
-        this.isProductoTerminado = false;
+    public void setCallback(RecibirFacturaCabeceraCallback callback) {
         this.callback = callback;
-    }
-
-    public void setProductoCallback(RecibirProductoCallback productoCallback) {
-        this.isProductoTerminado = true;
-        this.productoCallback = productoCallback;
     }
 
     public void mostrarVista() {
@@ -70,8 +52,6 @@ public class C_seleccionarVenta extends MouseAdapter implements ActionListener, 
     }
 
     private void inicializarVista() {
-        this.vista.jbAceptar.setEnabled(false);
-        ArrayList<M_menu_item> accesos = DatosUsuario.getRol_usuario().getAccesos();
         this.vista.jtVentaCabecera.setModel(modelo.getTm());
         KeyStroke enter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
         this.vista.jtVentaCabecera.getInputMap(JTable.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(enter, ENTER_KEY);
@@ -82,11 +62,13 @@ public class C_seleccionarVenta extends MouseAdapter implements ActionListener, 
             }
         });
         Utilities.c_packColumn.packColumns(this.vista.jtVentaCabecera, 1);
-
         ArrayList<E_tipoOperacion> tipoOperacion = modelo.obtenerTipoOperacion();
         for (int i = 0; i < tipoOperacion.size(); i++) {
             this.vista.jcbTipoOperacion.addItem(tipoOperacion.get(i));
         }
+        Calendar calendar = Calendar.getInstance();
+        this.vista.jddInicio.setDate(calendar.getTime());
+        this.vista.jddFinal.setDate(calendar.getTime());
     }
 
     private void agregarListeners() {
@@ -119,9 +101,14 @@ public class C_seleccionarVenta extends MouseAdapter implements ActionListener, 
                     JOptionPane.showMessageDialog(vista, "El texto ingresado supera el máximo permitido de 50 caracteres.", "Atención", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
+                if (!validarFechas()) {
+                    return;
+                }
                 int jcbTipoOperacionIndex = vista.jcbTipoOperacion.getSelectedIndex();
                 E_tipoOperacion tiop = vista.jcbTipoOperacion.getItemAt(jcbTipoOperacionIndex);
-                //modelo.consultarVenta(tiop);
+                Date fechaInicio = vista.jddInicio.getDate();
+                Date fechaFinal = vista.jddFinal.getDate();
+                modelo.consultarVenta(fechaInicio, fechaFinal, tiop, true);
                 Utilities.c_packColumn.packColumns(vista.jtVentaCabecera, 1);
             }
         });
@@ -138,11 +125,27 @@ public class C_seleccionarVenta extends MouseAdapter implements ActionListener, 
         this.vista.jcbTipoOperacion.setSelectedIndex(1);
     }
 
+    private boolean validarFechas() {
+        Date inicio = vista.jddInicio.getDate();
+        Date fin = vista.jddFinal.getDate();
+        if (inicio != null && fin != null) {
+            int dateValue = inicio.compareTo(fin);
+            if (dateValue <= 0) {
+                return true;
+            }
+        }
+        vista.jddFinal.setDate(vista.jddInicio.getDate());
+        vista.jddFinal.updateUI();
+        JOptionPane.showMessageDialog(vista, "La fecha inicio debe ser menor que fecha final", "Atención", JOptionPane.WARNING_MESSAGE);
+        return false;
+    }
+
     private void seleccionarVenta() {
         int fila = vista.jtVentaCabecera.getSelectedRow();
         if (fila > -1) {
             M_facturaCabecera faca = modelo.getTm().getFacturaCabeceraList().get(fila);
-
+            callback.recibirFacturaDetalle(modelo.obtenerFacturaDetalle(faca.getIdFacturaCabecera()));
+            cerrar();
         }
     }
 
@@ -150,13 +153,6 @@ public class C_seleccionarVenta extends MouseAdapter implements ActionListener, 
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == this.vista.jbAceptar) {
             seleccionarVenta();
-            this.vista.jtfBuscar.requestFocusInWindow();
-            SwingUtilities.invokeLater(new Runnable() {
-                @Override
-                public void run() {
-                    vista.jtfBuscar.selectAll();
-                }
-            });
         }
         if (e.getSource() == this.vista.jtfBuscar) {
             displayQueryResults();
@@ -177,6 +173,9 @@ public class C_seleccionarVenta extends MouseAdapter implements ActionListener, 
         int fila = this.vista.jtVentaCabecera.rowAtPoint(e.getPoint());
         int columna = this.vista.jtVentaCabecera.columnAtPoint(e.getPoint());
         if ((fila > -1) && (columna > -1)) {
+            if (e.getClickCount() == 2) {
+                seleccionarVenta();
+            }
         }
     }
 
