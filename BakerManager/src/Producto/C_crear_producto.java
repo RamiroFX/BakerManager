@@ -6,6 +6,7 @@ package Producto;
 
 import Entities.M_producto;
 import Entities.M_proveedor;
+import Interface.RecibirProductoCallback;
 import Proveedor.Seleccionar_proveedor;
 import com.nitido.utils.toaster.Toaster;
 import java.awt.event.ActionEvent;
@@ -20,7 +21,7 @@ import javax.swing.JOptionPane;
  *
  * @author Ramiro Ferreira
  */
-public class C_crear_producto implements ActionListener, KeyListener {
+public class C_crear_producto implements ActionListener, KeyListener, RecibirProductoCallback {
 
     public C_gestion_producto c_producto;
     private M_crear_producto modelo;
@@ -68,6 +69,7 @@ public class C_crear_producto implements ActionListener, KeyListener {
     private void agregarListeners() {
         this.vista.jbAceptar.addActionListener(this);
         this.vista.jbCancelar.addActionListener(this);
+        this.vista.jbCopiar.addActionListener(this);
         this.vista.jckBProveedor.addActionListener(this);
         this.vista.jbProveedor.addActionListener(this);
         /*
@@ -75,6 +77,7 @@ public class C_crear_producto implements ActionListener, KeyListener {
          */
         this.vista.jbAceptar.addKeyListener(this);
         this.vista.jbCancelar.addKeyListener(this);
+        this.vista.jbCopiar.addKeyListener(this);
         this.vista.jckBProveedor.addKeyListener(this);
         this.vista.jbProveedor.addKeyListener(this);
         this.vista.jtfCodigo.addKeyListener(this);
@@ -171,6 +174,24 @@ public class C_crear_producto implements ActionListener, KeyListener {
         popUp.showToaster(message);
     }
 
+    private void seleccionarProducto() {
+        SeleccionarProducto sp = new SeleccionarProducto(vista, this);
+        sp.activarModoCreacion();
+        sp.mostrarVista();
+    }
+
+    private void copiarDatosDeProducto(M_producto producto) {
+        this.vista.jtfProducto.setText(producto.getDescripcion());
+        this.vista.jtfCodigo.setText(String.valueOf(producto.getCodBarra()));
+        this.vista.jtfPrecioCosto.setText(producto.getPrecioCosto() + "");
+        this.vista.jtfPrecioMayorista.setText(producto.getPrecioMayorista()+"");
+        this.vista.jtfPrecioVta.setText(producto.getPrecioVenta()+"");
+        this.vista.jcbCategoria.setSelectedItem(producto.getCategoria());
+        this.vista.jcbImpuesto.setSelectedItem(producto.getImpuesto()+"");
+        this.vista.jcbMarca.setSelectedItem(producto.getMarca());
+    }
+
+    @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == this.vista.jbAceptar) {
             creaProducto();
@@ -181,6 +202,8 @@ public class C_crear_producto implements ActionListener, KeyListener {
             sp.mostrarVista();
         } else if (e.getSource() == this.vista.jbCancelar) {
             cerrar();
+        } else if (e.getSource() == this.vista.jbCopiar) {
+            seleccionarProducto();
         }
     }
 
@@ -217,5 +240,14 @@ public class C_crear_producto implements ActionListener, KeyListener {
 
     @Override
     public void keyReleased(KeyEvent e) {
+    }
+
+    @Override
+    public void recibirProducto(double cantidad, int precio, double descuento, M_producto producto, String observacion) {
+        copiarDatosDeProducto(producto);
+    }
+
+    @Override
+    public void modificarProducto(int posicion, double cantidad, int precio, double descuento, M_producto producto, String observacion) {
     }
 }

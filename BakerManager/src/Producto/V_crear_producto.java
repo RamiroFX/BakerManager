@@ -30,7 +30,7 @@ public class V_crear_producto extends JDialog {
             jtfPrecioVta, jtfPrecioMayorista, jtfProveedor;
     public JTextArea jtaIngredientes;
     public JComboBox jcbImpuesto, jcbMarca, jcbCategoria;
-    public JButton jbAceptar, jbCancelar, jbProveedor;
+    public JButton jbAceptar, jbCancelar, jbProveedor, jbCopiar;
     private JPanel jpPrincipal, jpBotones;
     JCheckBox jckBProveedor;
 
@@ -125,8 +125,10 @@ public class V_crear_producto extends JDialog {
             jpBotones = new JPanel();
             jbAceptar = new JButton("Aceptar");
             jbCancelar = new JButton("Cancelar");
+            jbCopiar = new JButton("Copiar de otro");
             jpBotones.add(jbAceptar);
             jpBotones.add(jbCancelar);
+            jpBotones.add(jbCopiar);
         }
         return jpBotones;
     }

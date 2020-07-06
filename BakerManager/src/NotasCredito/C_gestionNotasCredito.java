@@ -150,7 +150,7 @@ public class C_gestionNotasCredito implements ActionListener, MouseListener, Key
                 Date fechaInicio = vista.jddInicio.getDate();
                 Date fechaFinal = vista.jddFinal.getDate();
                 modelo.getTm().setList(modelo.obtenerNotasCreditoCabecera(idCliente, idFuncionario, nroNotaCredito, fechaInicio, fechaFinal, idCondVenta, idEstado));
-                Utilities.c_packColumn.packColumns(vista.jtDetalle, 1);
+                Utilities.c_packColumn.packColumns(vista.jtCabecera, 1);
             }
         });
     }

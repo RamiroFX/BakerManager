@@ -56,6 +56,7 @@ public class C_seleccionarProducto extends MouseAdapter implements ActionListene
     C_verPedido verPedido;
 
     private RecibirProductoCallback callback;
+    private boolean esModoCreacion;
 
     public C_seleccionarProducto(V_seleccionarProducto vista, RecibirProductoCallback callback) {
         this.tipo = CREAR_EGRESO;
@@ -110,7 +111,12 @@ public class C_seleccionarProducto extends MouseAdapter implements ActionListene
         this.vista.requestFocus();
     }
 
+    public void activarModoCreacion() {
+        this.esModoCreacion = true;
+    }
+
     private void inicializarVista() {
+        this.esModoCreacion = false;
         this.vista.jbCrearProducto.setEnabled(false);
         this.vista.jbAceptar.setEnabled(false);
         ArrayList<M_menu_item> accesos = DatosUsuario.getRol_usuario().getAccesos();
@@ -236,39 +242,25 @@ public class C_seleccionarProducto extends MouseAdapter implements ActionListene
         int fila = vista.jtProducto.getSelectedRow();
         int columna = vista.jtProducto.getSelectedColumn();
         if ((fila > -1) && (columna > -1)) {
-            idProducto = Integer.valueOf(String.valueOf(vista.jtProducto.getValueAt(fila, 0)));
-            producto = DB_Producto.obtenerDatosProductoID(idProducto);
-            vista.jbAceptar.setEnabled(true);
-            SeleccionarCantidadProduducto scp = new SeleccionarCantidadProduducto(this, producto);
-            scp.setCallback(callback);
-            scp.setVisible(true);
-            vista.jtfBuscar.requestFocusInWindow();
-        }/*
-        final C_seleccionarProducto cp = this;
-        EventQueue.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                int fila = vista.jtProducto.getSelectedRow();
-                int columna = vista.jtProducto.getSelectedColumn();
-                if ((fila > -1) && (columna > -1)) {
-                    idProducto = Integer.valueOf(String.valueOf(vista.jtProducto.getValueAt(fila, 0)));
-                    producto = DB_Producto.obtenerDatosProductoID(idProducto);
-                    vista.jbAceptar.setEnabled(true);
-                    SeleccionarCantidadProduducto scp = new SeleccionarCantidadProduducto(cp, producto);
-                    scp.setVisible(true);
-                    vista.jtfBuscar.requestFocusInWindow();
-                }
+            if (esModoCreacion) {
+                callback.recibirProducto(0, producto.getPrecioVenta(), 0, producto, "");
+                cerrar();
+            } else {
+                idProducto = Integer.valueOf(String.valueOf(vista.jtProducto.getValueAt(fila, 0)));
+                producto = DB_Producto.obtenerDatosProductoID(idProducto);
+                vista.jbAceptar.setEnabled(true);
+                SeleccionarCantidadProduducto scp = new SeleccionarCantidadProduducto(this, producto);
+                scp.setCallback(callback);
+                scp.setVisible(true);
+                vista.jtfBuscar.requestFocusInWindow();
             }
-        });*/
+        }
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == this.vista.jbAceptar) {
-            SeleccionarCantidadProduducto scp = new SeleccionarCantidadProduducto(this, producto);
-            scp.setCallback(callback);
-            scp.setVisible(true);
-            this.vista.jtfBuscar.requestFocusInWindow();
+            seleccionarProducto();
             SwingUtilities.invokeLater(new Runnable() {
                 @Override
                 public void run() {
@@ -308,10 +300,7 @@ public class C_seleccionarProducto extends MouseAdapter implements ActionListene
         if ((fila > -1) && (columna > -1)) {
             this.vista.jbAceptar.setEnabled(true);
             if (e.getClickCount() == 2) {
-                SeleccionarCantidadProduducto scp = new SeleccionarCantidadProduducto(this, producto);
-                scp.setCallback(callback);
-                scp.setVisible(true);
-                this.vista.jtfBuscar.requestFocusInWindow();
+                seleccionarProducto();
             }
         }
     }

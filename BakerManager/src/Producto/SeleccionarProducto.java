@@ -54,4 +54,8 @@ public class SeleccionarProducto {
     public void mostrarVista() {
         controlador.mostrarVista();
     }
+
+    public void activarModoCreacion() {
+        this.controlador.activarModoCreacion();
+    }
 }
