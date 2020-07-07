@@ -10,6 +10,7 @@ import Entities.E_NotaCreditoCabecera;
 import Entities.E_NotaCreditoDetalle;
 import Entities.E_cuentaCorrienteCabecera;
 import Entities.E_cuentaCorrienteDetalle;
+import Entities.E_facturaDetalle;
 import Entities.E_formaPago;
 import MenuPrincipal.DatosUsuario;
 import ModeloTabla.CtaCteDetalleTableModel;
@@ -24,12 +25,22 @@ public class M_crearNotaCredito {
 
     private E_NotaCreditoCabecera notaCreditoCabecera;
     private NotaCreditoDetalleTableModel notaCreditoDetalleTm;
+    private ArrayList<E_facturaDetalle> detalles;
 
     public M_crearNotaCredito() {
         this.notaCreditoCabecera = new E_NotaCreditoCabecera();
         this.notaCreditoCabecera.setFuncionario(DatosUsuario.getRol_usuario().getFuncionario());
         this.notaCreditoCabecera.getCliente().setIdCliente(-1);
         this.notaCreditoDetalleTm = new NotaCreditoDetalleTableModel();
+        this.detalles = new ArrayList<>();
+    }
+
+    public ArrayList<E_facturaDetalle> getDetalles() {
+        return detalles;
+    }
+
+    public void setDetalles(ArrayList<E_facturaDetalle> detalles) {
+        this.detalles = detalles;
     }
 
     /**
@@ -113,8 +124,12 @@ public class M_crearNotaCredito {
         return total;
     }
 
+    public boolean cantidadNuevaMayorAActual(int index, E_NotaCreditoDetalle detalle) {
+        return (detalle.getCantidad() > getDetalles().get(index).getCantidad());
+    }
+
     public void modificarDetalle(int index, E_NotaCreditoDetalle detalle) {
-        //getNotaCreditoDetalleTm().modificarDatos(index, detalle);
+        getNotaCreditoDetalleTm().modificarCantidadDetalle(index, detalle.getCantidad());
     }
 
     boolean existeRecibo(int nroRecibo) {

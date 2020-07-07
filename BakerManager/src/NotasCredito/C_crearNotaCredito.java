@@ -342,6 +342,8 @@ public class C_crearNotaCredito extends MouseAdapter implements ActionListener, 
             notaCreditoDetalle.add(nd);
         }
         this.modelo.getNotaCreditoDetalleTm().setList(notaCreditoDetalle);
+        this.modelo.getDetalles().clear();
+        this.modelo.getDetalles().addAll(facturaDetalle);
         sumarTotal();
     }
 
@@ -358,6 +360,11 @@ public class C_crearNotaCredito extends MouseAdapter implements ActionListener, 
         nd.setObservacion(observacion);
         nd.setPrecio(precio);
         nd.setProducto(producto);
+        if (modelo.cantidadNuevaMayorAActual(posicion, nd)) {
+            JOptionPane.showMessageDialog(vista, "La cantidad ingresada no puede ser mayor a la actual", "Atención", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
         this.modelo.modificarDetalle(posicion, nd);
+        sumarTotal();
     }
 }

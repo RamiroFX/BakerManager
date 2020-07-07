@@ -125,4 +125,10 @@ public class NotaCreditoDetalleTableModel extends AbstractTableModel {
     public void updateTable() {
         fireTableDataChanged();
     }
+
+    public void modificarCantidadDetalle(int index, double cantidad) {
+        this.list.get(index).setCantidad(cantidad);
+        fireTableCellUpdated(index, 1);
+        fireTableDataChanged();
+    }
 }
