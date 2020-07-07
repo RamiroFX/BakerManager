@@ -12,7 +12,6 @@ import Entities.E_produccionTipo;
 import Entities.E_produccionTipoBaja;
 import Entities.E_productoClasificacion;
 import Entities.Estado;
-import Entities.M_facturaCabecera;
 import Entities.M_funcionario;
 import Entities.M_producto;
 import ModeloTabla.RolloProducidoTableModel;

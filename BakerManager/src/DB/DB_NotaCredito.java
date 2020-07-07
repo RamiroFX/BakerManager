@@ -209,4 +209,49 @@ public class DB_NotaCredito {
         return detalles;
     }
 
+    public static E_NotaCreditoDetalle obtenerNotaCreditoDetalle(int idFacturaDetalle) {
+        E_NotaCreditoDetalle nd = null;
+        String query = "SELECT "
+                + "nd.id_nota_credito_detalle, nd.id_factura_detalle,  "
+                + "nd.cantidad, nd.id_producto, nd.precio, nd.descuento, "
+                + "p.descripcion, p.codigo, p.id_producto "
+                + "FROM nota_credito_detalle nd, producto p "
+                + "WHERE nd.id_producto = p.id_producto"
+                + "AND id_factura_detalle = ?;";
+        try {
+            pst = DB_manager.getConection().prepareStatement(query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            pst.setInt(1, idFacturaDetalle);
+            rs = pst.executeQuery();
+            while (rs.next()) {
+                E_facturaDetalle fd = new E_facturaDetalle();
+                fd.setIdFacturaDetalle(rs.getInt("id_factura_detalle"));
+                M_producto producto = new M_producto();
+                producto.setId(rs.getInt("id_producto"));
+                producto.setDescripcion(rs.getString("descripcion"));
+                producto.setCodigo(rs.getString("codigo"));
+                nd = new E_NotaCreditoDetalle();
+                nd.setId(rs.getInt("id_nota_credito_detalle"));
+                nd.setFacturaDetalle(fd);
+                nd.setCantidad(rs.getDouble("cantidad"));
+                nd.setDescuento(rs.getDouble("descuento"));
+                nd.setProducto(producto);
+            }
+        } catch (SQLException ex) {
+            Logger lgr = Logger.getLogger(DB_NotaCredito.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (pst != null) {
+                    pst.close();
+                }
+            } catch (SQLException ex) {
+                Logger lgr = Logger.getLogger(DB_NotaCredito.class.getName());
+                lgr.log(Level.WARNING, ex.getMessage(), ex);
+            }
+        }
+        return nd;
+    }
 }

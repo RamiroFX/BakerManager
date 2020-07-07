@@ -98,6 +98,8 @@ public class C_crearNotaCredito extends MouseAdapter implements ActionListener, 
         this.vista.jbModificarDetalle.addActionListener(this);
         this.vista.jbSalir.addActionListener(this);
         this.vista.jbAgregarFactura.addKeyListener(this);
+        this.vista.jtfNroFactura.addKeyListener(this);
+        this.vista.jtfNroRecibo.addKeyListener(this);
         this.vista.jbCliente.addKeyListener(this);
         this.vista.jbAceptar.addKeyListener(this);
         this.vista.jbSalir.addKeyListener(this);
