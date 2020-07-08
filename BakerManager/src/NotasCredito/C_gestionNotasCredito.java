@@ -7,6 +7,7 @@ package NotasCredito;
 
 import Cliente.Seleccionar_cliente;
 import Empleado.Seleccionar_funcionario;
+import Entities.E_NotaCreditoCabecera;
 import Entities.E_tipoOperacion;
 import Entities.Estado;
 import Entities.M_cliente;
@@ -24,6 +25,7 @@ import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -44,6 +46,7 @@ public class C_gestionNotasCredito implements ActionListener, MouseListener, Key
     }
 
     public final void inicializarVista() {
+        this.vista.jbResumen.setEnabled(false);
         this.vista.jtCabecera.setModel(modelo.getTm());
         this.vista.jtDetalle.setModel(modelo.getTmDetalle());
         ArrayList<E_tipoOperacion> condVenta = modelo.obtenerTipoOperaciones();
@@ -82,7 +85,8 @@ public class C_gestionNotasCredito implements ActionListener, MouseListener, Key
             }
         }*/
         //TODO remove
-        
+
+        this.vista.jbAnular.addActionListener(this);
         this.vista.jbNueva.addActionListener(this);
         this.vista.jbBorrar.addActionListener(this);
         this.vista.jbSalir.addActionListener(this);
@@ -104,6 +108,7 @@ public class C_gestionNotasCredito implements ActionListener, MouseListener, Key
         this.vista.jbBorrar.addKeyListener(this);
         this.vista.jbSalir.addKeyListener(this);
         this.vista.jbNueva.addKeyListener(this);
+        this.vista.jbAnular.addKeyListener(this);
     }
 
     public final void mostrarVista() {
@@ -192,6 +197,29 @@ public class C_gestionNotasCredito implements ActionListener, MouseListener, Key
         cnc.mostrarVista();
     }
 
+    private void anularNotaCredito() {
+        int opcion = JOptionPane.showConfirmDialog(vista, "¿Está seguro que desea continuar? Accion irreversible.", "Atención", JOptionPane.WARNING_MESSAGE, JOptionPane.YES_NO_OPTION);
+        if (opcion == JOptionPane.YES_OPTION) {
+            int fila = this.vista.jtCabecera.getSelectedRow();
+            if (fila > -1) {
+                E_NotaCreditoCabecera cab = modelo.getTm().getList().get(fila);
+                if (cab.getNroNotaCredito() > 0) {
+                    int opcion2 = JOptionPane.showConfirmDialog(vista, "¿Desea recuperar el número de Nota de crédito?.", "Atención", JOptionPane.WARNING_MESSAGE, JOptionPane.YES_NO_OPTION);
+                    if (opcion2 == JOptionPane.YES_OPTION) {
+                        modelo.anularNotaCredito(cab.getId(), Estado.INACTIVO, true);
+                    } else {
+                        modelo.anularNotaCredito(cab.getId(), Estado.INACTIVO, false);
+                    }
+                } else {
+                    modelo.anularNotaCredito(cab.getId(), Estado.INACTIVO, false);
+                }
+            }
+        }
+        consultarNotasCredito();
+        this.vista.jbDetalle.setEnabled(false);
+        this.vista.jbAnular.setEnabled(false);
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         Object source = e.getSource();
@@ -216,6 +244,9 @@ public class C_gestionNotasCredito implements ActionListener, MouseListener, Key
         }
         if (source.equals(this.vista.jbSalir)) {
             cerrar();
+        }
+        if (source.equals(this.vista.jbAnular)) {
+            anularNotaCredito();
         }
     }
 

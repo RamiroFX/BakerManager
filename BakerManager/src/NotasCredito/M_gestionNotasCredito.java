@@ -5,6 +5,7 @@
  */
 package NotasCredito;
 
+import DB.DB_Egreso;
 import DB.DB_NotaCredito;
 import DB.DB_manager;
 import Entities.E_NotaCreditoCabecera;
@@ -128,5 +129,9 @@ public class M_gestionNotasCredito {
         ArrayList<Estado> estados = DB_manager.obtenerEstados();
         estados.add(new Estado(-1, "Todos"));
         return estados;
+    }
+
+    public void anularNotaCredito(int idNotaCreditoCabecera, int idEstado, boolean recuperarNroNotaCredito) {
+        DB_NotaCredito.anularNotaCredito(idNotaCreditoCabecera, idEstado, recuperarNroNotaCredito);
     }
 }

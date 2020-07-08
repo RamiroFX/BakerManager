@@ -6,6 +6,7 @@
 package NotasCredito;
 
 import DB.DB_Cobro;
+import DB.DB_NotaCredito;
 import Entities.E_NotaCreditoCabecera;
 import Entities.E_NotaCreditoDetalle;
 import Entities.E_cuentaCorrienteCabecera;
@@ -132,12 +133,18 @@ public class M_crearNotaCredito {
         getNotaCreditoDetalleTm().modificarCantidadDetalle(index, detalle.getCantidad());
     }
 
-    boolean existeRecibo(int nroRecibo) {
-        return DB_Cobro.existeNroRecibo(nroRecibo);
+    boolean existeNotaCredito(int nroNotaCredito) {
+        return DB_NotaCredito.existeNroNotaCredito(nroNotaCredito);
     }
 
-    public void guardarCobro() {
-        /*ArrayList<E_cuentaCorrienteDetalle> detalles = new ArrayList<>(getNotaCreditoDetalleTm().getList());
-        DB_Cobro.guardarCobro(getCabecera(), detalles);*/
+    public E_NotaCreditoDetalle obtenerNotaCreditoDetalle(int idFacturaDetalle) {
+        E_NotaCreditoDetalle detalle = null;
+        detalle = DB_NotaCredito.obtenerNotaCreditoDetalle(idFacturaDetalle);
+        return detalle;
+    }
+
+    public void guardarNotaCredito() {
+        ArrayList<E_NotaCreditoDetalle> listaDetalles = new ArrayList<>(getNotaCreditoDetalleTm().getList());
+        DB_NotaCredito.guardarNotaCredito(getCabecera(), listaDetalles);
     }
 }
