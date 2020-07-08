@@ -216,12 +216,16 @@ public class DB_NotaCredito {
     public static E_NotaCreditoDetalle obtenerNotaCreditoDetalle(int idFacturaDetalle) {
         E_NotaCreditoDetalle nd = null;
         String query = "SELECT "
-                + "nd.id_nota_credito_detalle, nd.id_factura_detalle,  "
-                + "nd.cantidad, nd.id_producto, nd.precio, nd.descuento, "
+                + "nd.id_factura_detalle,  "
+                + "SUM(nd.cantidad) \"CANTIDAD\", nd.id_producto, nd.precio, nd.descuento, "
                 + "p.descripcion, p.codigo, p.id_producto "
-                + "FROM nota_credito_detalle nd, producto p "
+                + "FROM nota_credito_cabecera nc, nota_credito_detalle nd, producto p "
                 + "WHERE nd.id_producto = p.id_producto "
-                + "AND nd.id_factura_detalle = ?;";
+                + "AND nd.id_factura_detalle = ? "
+                + "AND nd.id_nota_credito_cabecera = nc.id_nota_credito_cabecera "
+                + "AND nc.id_estado = 1 "
+                + "GROUP BY nd.id_factura_detalle, "
+                + "nd.id_producto, nd.precio, nd.descuento, p.descripcion, p.codigo, p.id_producto;";
         try {
             pst = DB_manager.getConection().prepareStatement(query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             pst.setInt(1, idFacturaDetalle);
@@ -234,9 +238,8 @@ public class DB_NotaCredito {
                 producto.setDescripcion(rs.getString("descripcion"));
                 producto.setCodigo(rs.getString("codigo"));
                 nd = new E_NotaCreditoDetalle();
-                nd.setId(rs.getInt("id_nota_credito_detalle"));
                 nd.setFacturaDetalle(fd);
-                nd.setCantidad(rs.getDouble("cantidad"));
+                nd.setCantidad(rs.getDouble("CANTIDAD"));
                 nd.setDescuento(rs.getDouble("descuento"));
                 nd.setProducto(producto);
             }
@@ -351,5 +354,45 @@ public class DB_NotaCredito {
             }
         }
         return (int) sq_cabecera;
+    }
+
+    public static void anularNotaCredito(int idCabecera, int idEstado, boolean recuperarNroNotaCredito) {
+        String UPDATE_NOTACREDITO = "UPDATE NOTA_CREDITO_CABECERA SET ID_ESTADO = ? WHERE ID_NOTA_CREDITO_CABECERA = ?";
+        if (recuperarNroNotaCredito) {
+            UPDATE_NOTACREDITO = "UPDATE NOTA_CREDITO_CABECERA SET ID_ESTADO = ?, NRO_NOTA_CREDITO = NULL WHERE ID_NOTA_CREDITO_CABECERA = ?";
+        }
+        try {
+            DB_manager.habilitarTransaccionManual();
+            pst = DB_manager.getConection().prepareStatement(UPDATE_NOTACREDITO);
+            pst.setInt(1, idEstado);
+            pst.setInt(2, idCabecera);
+            pst.executeUpdate();
+            pst.close();
+            //se devuelve al stock lo que se anuló
+            /*ArrayList<E_NotaCreditoDetalle> detalle = new ArrayList<>(obtenerNotasCreditoDetalle(idCabecera));
+            for (int i = 0; i < detalle.size(); i++) {
+                String query = "UPDATE PRODUCTO SET "
+                        + "CANT_ACTUAL = "
+                        + "((SELECT CANT_ACTUAL FROM PRODUCTO WHERE ID_PRODUCTO = " + detalle.get(i).getProducto().getId() + ")-" + detalle.get(i).getCantidad() + ") "
+                        + "WHERE ID_PRODUCTO =" + detalle.get(i).getProducto().getId();
+                st = DB_manager.getConection().createStatement();
+                st.executeUpdate(query);
+            }*/
+            DB_manager.establecerTransaccion();
+        } catch (SQLException ex) {
+            System.out.println(ex.getNextException());
+            if (DB_manager.getConection() != null) {
+                try {
+                    DB_manager.getConection().rollback();
+                } catch (SQLException ex1) {
+                    Logger lgr = Logger.getLogger(DB_Egreso.class
+                            .getName());
+                    lgr.log(Level.WARNING, ex1.getMessage(), ex1);
+                }
+            }
+            Logger lgr = Logger.getLogger(DB_Egreso.class
+                    .getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        }
     }
 }

@@ -43,6 +43,7 @@ public class C_crearNotaCredito extends MouseAdapter implements ActionListener, 
             VALIDAR_NRO_NOTA_CREDITO_MSG_2 = "Ingrese solo números enteros en Número de Nota de Crédito",
             VALIDAR_NRO_NOTA_CREDITO_MSG_3 = "Ingrese solo números enteros y positivos en Número de Nota de Crédito",
             VALIDAR_NRO_NOTA_CREDITO_MSG_4 = "El Número de Nota de Crédito ingresado ya se encuentra en uso.",
+            VALIDAR_NRO_NOTA_CREDITO_MSG_5 = "Ingrese una cantidad superior a 0 (cero).",
             VALIDAR_FECHA_NOTA_CREDITO_MSG_1 = "La fecha seleccionada no es valida.",
             VALIDAR_CANT_DETALLE_MSG = "Nota de credito vacía.",
             VALIDAR_MONTO_A_PAGAR = "El saldo a pagar no puede ser mayor al total",
@@ -191,6 +192,10 @@ public class C_crearNotaCredito extends MouseAdapter implements ActionListener, 
             JOptionPane.showMessageDialog(vista, VALIDAR_NRO_NOTA_CREDITO_MSG_3, VALIDAR_TITULO, JOptionPane.WARNING_MESSAGE);
             return false;
         }
+        if (!validadTotal()) {
+            JOptionPane.showMessageDialog(vista, VALIDAR_NRO_NOTA_CREDITO_MSG_5, VALIDAR_TITULO, JOptionPane.WARNING_MESSAGE);
+            return false;
+        }
         if (modelo.existeNotaCredito(nroNotaCredito)) {
             JOptionPane.showMessageDialog(vista, VALIDAR_NRO_NOTA_CREDITO_MSG_4, VALIDAR_TITULO, JOptionPane.WARNING_MESSAGE);
             return false;
@@ -204,6 +209,10 @@ public class C_crearNotaCredito extends MouseAdapter implements ActionListener, 
             return false;
         }
         return true;
+    }
+
+    private boolean validadTotal() {
+        return modelo.getTotal() > 0;
     }
 
     private void limpiarCampos() {
@@ -380,7 +389,7 @@ public class C_crearNotaCredito extends MouseAdapter implements ActionListener, 
         nd.setPrecio(precio);
         nd.setProducto(producto);
         if (modelo.cantidadNuevaMayorAActual(posicion, nd)) {
-            JOptionPane.showMessageDialog(vista, "La cantidad ingresada no puede ser mayor a la actual", "Atención", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(vista, "La cantidad ingresada no puede ser mayor a la disponible", "Atención", JOptionPane.WARNING_MESSAGE);
             return;
         }
         this.modelo.modificarDetalle(posicion, nd);
