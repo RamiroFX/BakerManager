@@ -91,7 +91,7 @@ public class C_crear_producto implements ActionListener, KeyListener, RecibirPro
     private void creaProducto() {
         try {
             String descripcion = this.vista.jtfProducto.getText().trim();
-            if (descripcion.isEmpty() || descripcion.length() > 50) {
+            if (descripcion.isEmpty() || descripcion.length() > 80) {
                 javax.swing.JOptionPane.showMessageDialog(this.vista, "Verifique el nombre del producto. Máximo 50 caracteres permitidos.", "Parametros incorrectos",
                         javax.swing.JOptionPane.OK_OPTION);
                 return;

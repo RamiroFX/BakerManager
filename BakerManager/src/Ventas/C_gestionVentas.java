@@ -257,9 +257,9 @@ public class C_gestionVentas implements GestionInterface, RecibirEmpleadoCallbac
 
     private void obtenerEgresoDetalle(MouseEvent e) {
         int fila = this.vista.jtIngresoCabecera.rowAtPoint(e.getPoint());
-        int columna = this.vista.jtIngresoCabecera.columnAtPoint(e.getPoint());
-        Integer idIngresoCabecera = Integer.valueOf(String.valueOf(this.vista.jtIngresoCabecera.getValueAt(fila, 0)));
+        int columna = this.vista.jtIngresoCabecera.columnAtPoint(e.getPoint());;
         if ((fila > -1) && (columna > -1)) {
+            Integer idIngresoCabecera = modelo.getTm().getFacturaCabeceraList().get(fila).getIdFacturaCabecera();
             verificarPermiso();
             this.vista.jtIngresoDetalle.setModel(DB_Ingreso.obtenerIngresoDetalle(idIngresoCabecera));
         } else {
@@ -267,6 +267,7 @@ public class C_gestionVentas implements GestionInterface, RecibirEmpleadoCallbac
         }
         if (e.getClickCount() == 2) {
             if (vista.jbDetalle.isEnabled()) {
+                Integer idIngresoCabecera = modelo.getTm().getFacturaCabeceraList().get(fila).getIdFacturaCabecera();
                 Ver_ingreso ver_egreso = new Ver_ingreso(c_inicio, idIngresoCabecera);
                 ver_egreso.mostrarVista();
                 this.vista.jbDetalle.setEnabled(false);
@@ -332,7 +333,7 @@ public class C_gestionVentas implements GestionInterface, RecibirEmpleadoCallbac
             public void run() {
                 int fila = vista.jtIngresoCabecera.getSelectedRow();
                 if (fila > -1) {
-                    int idIngresoCabecera = Integer.valueOf(String.valueOf(vista.jtIngresoCabecera.getValueAt(fila, 0).toString()));
+                    int idIngresoCabecera = modelo.getTm().getFacturaCabeceraList().get(fila).getIdFacturaCabecera();
                     vista.jtIngresoDetalle.setModel(DB_Ingreso.obtenerIngresoDetalle(idIngresoCabecera));
                     Utilities.c_packColumn.packColumns(vista.jtIngresoDetalle, 1);
                 }
@@ -359,8 +360,8 @@ public class C_gestionVentas implements GestionInterface, RecibirEmpleadoCallbac
         if (opcion == JOptionPane.YES_OPTION) {
             int fila = this.vista.jtIngresoCabecera.getSelectedRow();
             if (fila > -1) {
-                Integer idIngresoCabecera = Integer.valueOf(String.valueOf(this.vista.jtIngresoCabecera.getValueAt(fila, 0)));
-                Object nroFactura = this.vista.jtIngresoCabecera.getValueAt(fila, 1);
+                Integer idIngresoCabecera = modelo.getTm().getFacturaCabeceraList().get(fila).getIdFacturaCabecera();
+                Object nroFactura = modelo.getTm().getFacturaCabeceraList().get(fila).getNroFactura();
                 if (nroFactura != null) {
                     int opcion2 = JOptionPane.showConfirmDialog(vista, "¿Desea recuperar el número de factura?.", "Atención", JOptionPane.WARNING_MESSAGE, JOptionPane.YES_NO_OPTION);
                     if (opcion2 == JOptionPane.YES_OPTION) {
@@ -535,7 +536,7 @@ public class C_gestionVentas implements GestionInterface, RecibirEmpleadoCallbac
         if (e.getSource().equals(this.vista.jbDetalle)) {
             int fila = this.vista.jtIngresoCabecera.getSelectedRow();
             if (fila > -1) {
-                Integer idIngresoCabecera = Integer.valueOf(String.valueOf(this.vista.jtIngresoCabecera.getValueAt(fila, 0)));
+                Integer idIngresoCabecera = modelo.getTm().getFacturaCabeceraList().get(fila).getIdFacturaCabecera();
                 Ver_ingreso ver_egreso = new Ver_ingreso(c_inicio, idIngresoCabecera);
                 ver_egreso.mostrarVista();
                 this.vista.jbDetalle.setEnabled(false);
