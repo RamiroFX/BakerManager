@@ -5,7 +5,6 @@
  */
 package NotasCredito;
 
-import Cobros.*;
 import Cliente.Seleccionar_cliente;
 import Entities.E_NotaCreditoDetalle;
 import Entities.E_cuentaCorrienteDetalle;
@@ -40,14 +39,15 @@ public class C_crearNotaCredito extends MouseAdapter implements ActionListener, 
 
     private static final String VALIDAR_RESPONSABLE_MSG = "Seleccione un cobrador",
             VALIDAR_CLIENTE_MSG = "Seleccione un cliente",
-            VALIDAR_NRO_RECIBO_MSG_1 = "Ingrese un Número de recibo",
-            VALIDAR_NRO_RECIBO_MSG_2 = "Ingrese solo números enteros en Número de recibo",
-            VALIDAR_NRO_RECIBO_MSG_3 = "Ingrese solo números enteros y positivos en Número de recibo",
-            VALIDAR_NRO_RECIBO_MSG_4 = "El Número de recibo ingresado ya se encuentra en uso.",
-            VALIDAR_FECHA_RECIBO_MSG_1 = "La fecha seleccionada no es valida.",
+            VALIDAR_NRO_NOTA_CREDITO_MSG_1 = "Ingrese un Número de Nota de Crédito",
+            VALIDAR_NRO_NOTA_CREDITO_MSG_2 = "Ingrese solo números enteros en Número de Nota de Crédito",
+            VALIDAR_NRO_NOTA_CREDITO_MSG_3 = "Ingrese solo números enteros y positivos en Número de Nota de Crédito",
+            VALIDAR_NRO_NOTA_CREDITO_MSG_4 = "El Número de Nota de Crédito ingresado ya se encuentra en uso.",
+            VALIDAR_FECHA_NOTA_CREDITO_MSG_1 = "La fecha seleccionada no es valida.",
+            VALIDAR_CANT_DETALLE_MSG = "Nota de credito vacía.",
             VALIDAR_MONTO_A_PAGAR = "El saldo a pagar no puede ser mayor al total",
-            VALIDAR_DETALLE_RECIBO = "Existen detalles de cobros pendiente. Vacíe la lista para seleccionar otro cliente",
-            CONFIRMAR_SALIR_MSG = "¿Cancelar cobro?",
+            VALIDAR_DETALLE_NOTA_CREDITO = "Existen detalles de Nota de Crédito pendiente. Vacíe la lista para seleccionar otro cliente",
+            CONFIRMAR_SALIR_MSG = "¿Cancelar Nota de Crédito?",
             VALIDAR_TITULO = "Atención";
     public M_crearNotaCredito modelo;
     public V_crearNotaCredito vista;
@@ -99,7 +99,7 @@ public class C_crearNotaCredito extends MouseAdapter implements ActionListener, 
         this.vista.jbSalir.addActionListener(this);
         this.vista.jbAgregarFactura.addKeyListener(this);
         this.vista.jtfNroFactura.addKeyListener(this);
-        this.vista.jtfNroRecibo.addKeyListener(this);
+        this.vista.jtfNroNotaCredito.addKeyListener(this);
         this.vista.jbCliente.addKeyListener(this);
         this.vista.jbAceptar.addKeyListener(this);
         this.vista.jbSalir.addKeyListener(this);
@@ -126,7 +126,7 @@ public class C_crearNotaCredito extends MouseAdapter implements ActionListener, 
         if (!validarCliente()) {
             return;
         }
-        if (!validarNroRecibo()) {
+        if (!validarNroNotaCredito()) {
             return;
         }
         if (!validarFechaUtilizacion()) {
@@ -135,11 +135,11 @@ public class C_crearNotaCredito extends MouseAdapter implements ActionListener, 
         if (!validarCantidadFacturas()) {
             return;
         }
-        Date fechaPago = vista.jdcFechaotaCredito.getDate();
-        int nroNotaCredito = Integer.valueOf(this.vista.jtfNroRecibo.getText().trim());
-        modelo.getCabecera().setTiempo(fechaPago);
+        Date fechaNotaCredito = vista.jdcFechaotaCredito.getDate();
+        int nroNotaCredito = Integer.valueOf(this.vista.jtfNroNotaCredito.getText().trim());
+        modelo.getCabecera().setTiempo(fechaNotaCredito);
         modelo.getCabecera().setNroNotaCredito(nroNotaCredito);
-        modelo.guardarCobro();
+        modelo.guardarNotaCredito();
         limpiarCampos();
         cerrar();
     }
@@ -149,11 +149,11 @@ public class C_crearNotaCredito extends MouseAdapter implements ActionListener, 
         try {
             entrega = vista.jdcFechaotaCredito.getDate();
         } catch (Exception ex) {
-            JOptionPane.showMessageDialog(vista, VALIDAR_FECHA_RECIBO_MSG_1, "Fecha inválida", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(vista, VALIDAR_FECHA_NOTA_CREDITO_MSG_1, "Fecha inválida", JOptionPane.WARNING_MESSAGE);
             return false;
         }
         if (entrega == null) {
-            JOptionPane.showMessageDialog(vista, VALIDAR_FECHA_RECIBO_MSG_1, "Fecha inválida", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(vista, VALIDAR_FECHA_NOTA_CREDITO_MSG_1, "Fecha inválida", JOptionPane.WARNING_MESSAGE);
             return false;
         }
         return true;
@@ -169,52 +169,52 @@ public class C_crearNotaCredito extends MouseAdapter implements ActionListener, 
 
     private boolean validarDetalleReciboVacio() {
         if (!this.modelo.getNotaCreditoDetalleTm().getList().isEmpty()) {
-            JOptionPane.showMessageDialog(vista, VALIDAR_DETALLE_RECIBO, VALIDAR_TITULO, JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(vista, VALIDAR_DETALLE_NOTA_CREDITO, VALIDAR_TITULO, JOptionPane.WARNING_MESSAGE);
             return false;
         }
         return true;
     }
 
-    private boolean validarNroRecibo() {
-        int nroRecibo = -1;
-        if (this.vista.jtfNroRecibo.getText().trim().isEmpty()) {
-            JOptionPane.showMessageDialog(vista, VALIDAR_NRO_RECIBO_MSG_1, VALIDAR_TITULO, JOptionPane.WARNING_MESSAGE);
+    private boolean validarNroNotaCredito() {
+        int nroNotaCredito = -1;
+        if (this.vista.jtfNroNotaCredito.getText().trim().isEmpty()) {
+            JOptionPane.showMessageDialog(vista, VALIDAR_NRO_NOTA_CREDITO_MSG_1, VALIDAR_TITULO, JOptionPane.WARNING_MESSAGE);
             return false;
         }
         try {
-            nroRecibo = Integer.valueOf(this.vista.jtfNroRecibo.getText().trim());
+            nroNotaCredito = Integer.valueOf(this.vista.jtfNroNotaCredito.getText().trim());
         } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(vista, VALIDAR_NRO_RECIBO_MSG_2, VALIDAR_TITULO, JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(vista, VALIDAR_NRO_NOTA_CREDITO_MSG_2, VALIDAR_TITULO, JOptionPane.WARNING_MESSAGE);
             return false;
         }
-        if (nroRecibo < 0) {
-            JOptionPane.showMessageDialog(vista, VALIDAR_NRO_RECIBO_MSG_3, VALIDAR_TITULO, JOptionPane.WARNING_MESSAGE);
+        if (nroNotaCredito < 0) {
+            JOptionPane.showMessageDialog(vista, VALIDAR_NRO_NOTA_CREDITO_MSG_3, VALIDAR_TITULO, JOptionPane.WARNING_MESSAGE);
             return false;
         }
-//        if (modelo.existeRecibo(nroRecibo)) {
-//            JOptionPane.showMessageDialog(vista, VALIDAR_NRO_RECIBO_MSG_4, VALIDAR_TITULO, JOptionPane.WARNING_MESSAGE);
-//            return false;
-//        }
+        if (modelo.existeNotaCredito(nroNotaCredito)) {
+            JOptionPane.showMessageDialog(vista, VALIDAR_NRO_NOTA_CREDITO_MSG_4, VALIDAR_TITULO, JOptionPane.WARNING_MESSAGE);
+            return false;
+        }
         return true;
     }
 
     private boolean validarCantidadFacturas() {
-        /*if (modelo.getTm().getList().isEmpty()) {
-            JOptionPane.showMessageDialog(vista, VALIDAR_CANT_PRODUCTOS_MSG, VALIDAR_TITULO, JOptionPane.WARNING_MESSAGE);
+        if (modelo.getNotaCreditoDetalleTm().getList().isEmpty()) {
+            JOptionPane.showMessageDialog(vista, VALIDAR_CANT_DETALLE_MSG, VALIDAR_TITULO, JOptionPane.WARNING_MESSAGE);
             return false;
-        }*/
+        }
         return true;
     }
 
     private void limpiarCampos() {
         this.modelo.limpiarCampos();
         this.vista.jtfCliente.setText("");
-        this.vista.jtfNroRecibo.setText("");
+        this.vista.jtfNroNotaCredito.setText("");
         Calendar calendar = Calendar.getInstance();
         this.vista.jdcFechaotaCredito.setDate(calendar.getTime());
     }
 
-    private void invocarVistaSeleccionFacturaPendiente() {
+    private void invocarVistaSeleccionFactura() {
         if (!validarCliente()) {
             return;
         }
@@ -243,7 +243,7 @@ public class C_crearNotaCredito extends MouseAdapter implements ActionListener, 
         if (source.equals(this.vista.jbAceptar)) {
             guardar();
         } else if (source.equals(this.vista.jbAgregarFactura)) {
-            invocarVistaSeleccionFacturaPendiente();
+            invocarVistaSeleccionFactura();
         } else if (source.equals(this.vista.jbCliente)) {
             invocarVistaSeleccionCliente();
         } else if (source.equals(this.vista.jbEliminarDetalle)) {
@@ -279,7 +279,7 @@ public class C_crearNotaCredito extends MouseAdapter implements ActionListener, 
                 break;
             }
             case KeyEvent.VK_F4: {
-
+                invocarVistaSeleccionFactura();
                 break;
             }
             case KeyEvent.VK_ESCAPE: {
@@ -321,7 +321,39 @@ public class C_crearNotaCredito extends MouseAdapter implements ActionListener, 
 
     @Override
     public void recibirVenta(E_facturaCabecera facturaCabecera, List<E_facturaDetalle> facturaDetalle) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        this.modelo.getCabecera().setFacturaCabecera(facturaCabecera);
+        List<E_NotaCreditoDetalle> notaCreditoDetalle = new ArrayList<>();
+        for (E_facturaDetalle fade : facturaDetalle) {
+            //BUSCAR NOTAS DE CREDITO ANTERIORES PARA CONTROLAR LA CANTIDAD DEL DETALLE DE VENTA
+            E_NotaCreditoDetalle aux = modelo.obtenerNotaCreditoDetalle(fade.getIdFacturaDetalle());
+            if (aux != null) {
+                double cantActual = fade.getCantidad() - aux.getCantidad();
+                fade.setCantidad(cantActual);
+                fade.getProducto().setPrecioVenta(fade.getPrecio());
+                E_NotaCreditoDetalle nd = new E_NotaCreditoDetalle();
+                nd.setCantidad(cantActual);
+                nd.setDescuento(fade.getDescuento());
+                nd.setFacturaDetalle(fade);
+                nd.setObservacion(fade.getObservacion());
+                nd.setPrecio(fade.getPrecio());
+                nd.setProducto(fade.getProducto());
+                notaCreditoDetalle.add(nd);
+            } else {
+                fade.getProducto().setPrecioVenta(fade.getPrecio());
+                E_NotaCreditoDetalle nd = new E_NotaCreditoDetalle();
+                nd.setCantidad(fade.getCantidad());
+                nd.setDescuento(fade.getDescuento());
+                nd.setFacturaDetalle(fade);
+                nd.setObservacion(fade.getObservacion());
+                nd.setPrecio(fade.getPrecio());
+                nd.setProducto(fade.getProducto());
+                notaCreditoDetalle.add(nd);
+            }
+        }
+        this.modelo.getNotaCreditoDetalleTm().setList(notaCreditoDetalle);
+        this.modelo.getDetalles().clear();
+        this.modelo.getDetalles().addAll(facturaDetalle);
+        sumarTotal();
     }
 
     @Override
@@ -331,22 +363,7 @@ public class C_crearNotaCredito extends MouseAdapter implements ActionListener, 
 
     @Override
     public void recibirFacturaDetalle(List<E_facturaDetalle> facturaDetalle) {
-        List<E_NotaCreditoDetalle> notaCreditoDetalle = new ArrayList<>();
-        for (E_facturaDetalle fade : facturaDetalle) {
-            fade.getProducto().setPrecioVenta(fade.getPrecio());
-            E_NotaCreditoDetalle nd = new E_NotaCreditoDetalle();
-            nd.setCantidad(fade.getCantidad());
-            nd.setDescuento(fade.getDescuento());
-            nd.setFacturaDetalle(fade);
-            nd.setObservacion(fade.getObservacion());
-            nd.setPrecio(fade.getPrecio());
-            nd.setProducto(fade.getProducto());
-            notaCreditoDetalle.add(nd);
-        }
-        this.modelo.getNotaCreditoDetalleTm().setList(notaCreditoDetalle);
-        this.modelo.getDetalles().clear();
-        this.modelo.getDetalles().addAll(facturaDetalle);
-        sumarTotal();
+
     }
 
     @Override

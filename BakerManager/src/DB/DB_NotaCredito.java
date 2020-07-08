@@ -7,8 +7,11 @@ package DB;
 
 import Entities.E_NotaCreditoCabecera;
 import Entities.E_NotaCreditoDetalle;
+import Entities.E_cuentaCorrienteCabecera;
+import Entities.E_cuentaCorrienteDetalle;
 import Entities.E_facturaCabecera;
 import Entities.E_facturaDetalle;
+import Entities.E_formaPago;
 import Entities.E_tipoOperacion;
 import Entities.Estado;
 import Entities.M_cliente;
@@ -18,6 +21,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -216,8 +220,8 @@ public class DB_NotaCredito {
                 + "nd.cantidad, nd.id_producto, nd.precio, nd.descuento, "
                 + "p.descripcion, p.codigo, p.id_producto "
                 + "FROM nota_credito_detalle nd, producto p "
-                + "WHERE nd.id_producto = p.id_producto"
-                + "AND id_factura_detalle = ?;";
+                + "WHERE nd.id_producto = p.id_producto "
+                + "AND nd.id_factura_detalle = ?;";
         try {
             pst = DB_manager.getConection().prepareStatement(query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             pst.setInt(1, idFacturaDetalle);
@@ -253,5 +257,99 @@ public class DB_NotaCredito {
             }
         }
         return nd;
+    }
+
+    public static boolean existeNroNotaCredito(int nroNotaCredito) {
+        String Query = "SELECT nro_nota_credito  FROM nota_credito_cabecera WHERE nro_nota_credito = ?";
+        try {
+            pst = DB_manager.getConection().prepareStatement(Query);
+            pst.setInt(1, nroNotaCredito);
+            rs = pst.executeQuery();
+            return rs.next();
+        } catch (SQLException ex) {
+            Logger lgr = Logger.getLogger(DB_NotaCredito.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (st != null) {
+                    st.close();
+                }
+            } catch (SQLException ex) {
+                Logger lgr = Logger.getLogger(DB_NotaCredito.class.getName());
+                lgr.log(Level.WARNING, ex.getMessage(), ex);
+            }
+        }
+        return false;
+    }
+
+    public static int guardarNotaCredito(E_NotaCreditoCabecera cabecera, ArrayList<E_NotaCreditoDetalle> listaDetalles) {
+        String INSERT_CABECERA = "INSERT INTO nota_credito_cabecera "
+                + "(nro_nota_credito, id_factura_cabecera, id_cliente, id_funcionario, tiempo, id_estado) VALUES"
+                + "(?, ?, ?, ?, ?, ?);";
+        //LA SGBD SE ENCARGA DE INSERTAR EL TIMESTAMP.
+        String INSERT_DETALLE = "INSERT INTO nota_credito_detalle "
+                + "(id_nota_credito_cabecera, id_factura_detalle, id_producto, cantidad, monto, precio, descuento) VALUES"
+                + "(?, ?, ?, ?, ?, ?, ?);";
+        long sq_cabecera = -1L;
+        try {
+            DB_manager.getConection().setAutoCommit(false);
+            pst = DB_manager.getConection().prepareStatement(INSERT_CABECERA, PreparedStatement.RETURN_GENERATED_KEYS);
+            pst.setInt(1, cabecera.getNroNotaCredito());
+            pst.setInt(2, cabecera.getFacturaCabecera().getIdFacturaCabecera());
+            pst.setInt(3, cabecera.getCliente().getIdCliente());
+            pst.setInt(4, cabecera.getFuncionario().getId_funcionario());
+            pst.setTimestamp(5, new Timestamp(cabecera.getTiempo().getTime()));
+            pst.setInt(6, Estado.ACTIVO);//ESTADO ACTIVO
+            pst.executeUpdate();
+            rs = pst.getGeneratedKeys();
+            if (rs != null && rs.next()) {
+                sq_cabecera = rs.getLong(1);
+            }
+            pst.close();
+            rs.close();
+            for (E_NotaCreditoDetalle unDetalle : listaDetalles) {
+                //id_nota_credito_cabecera, id_factura_detalle, id_producto, cantidad, monto, precio, descuento
+                pst = DB_manager.getConection().prepareStatement(INSERT_DETALLE);
+                pst.setInt(1, (int) sq_cabecera);
+                pst.setInt(2, unDetalle.getFacturaDetalle().getIdFacturaDetalle());
+                pst.setInt(3, unDetalle.getProducto().getId());
+                pst.setDouble(4, unDetalle.getCantidad());
+                pst.setInt(5, unDetalle.getSubTotal());
+                pst.setInt(6, unDetalle.getPrecio());
+                pst.setDouble(7, unDetalle.getDescuento());
+                pst.executeUpdate();
+                pst.close();
+            }
+            DB_manager.establecerTransaccion();
+        } catch (SQLException ex) {
+            System.out.println(ex.getNextException());
+            if (DB_manager.getConection() != null) {
+                try {
+                    DB_manager.getConection().rollback();
+                } catch (SQLException ex1) {
+                    Logger lgr = Logger.getLogger(DB_NotaCredito.class.getName());
+                    lgr.log(Level.WARNING, ex1.getMessage(), ex1);
+                }
+            }
+            Logger lgr = Logger.getLogger(DB_NotaCredito.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        } finally {
+            try {
+                if (pst != null) {
+                    pst.close();
+                }
+                if (rs != null) {
+                    rs.close();
+                }
+            } catch (SQLException ex) {
+                Logger lgr = Logger.getLogger(DB_NotaCredito.class.getName());
+                lgr.log(Level.WARNING, ex.getMessage(), ex);
+            }
+        }
+        return (int) sq_cabecera;
     }
 }

@@ -41,7 +41,7 @@ public class V_crearNotaCredito extends JDialog {
 
     //NORTE
     JPanel jpNorth;
-    public JTextField jtfCliente, jtfNroRecibo, jtfClieRuc, jtfNroFactura;
+    public JTextField jtfCliente, jtfNroNotaCredito, jtfClieRuc, jtfNroFactura;
     public JButton jbCliente;
     public JLabel jlNroNotaCredito, jlFechaNotaCredito;
     public JDateChooser jdcFechaotaCredito;
@@ -89,14 +89,14 @@ public class V_crearNotaCredito extends JDialog {
         jtfCliente = new JTextField(30);
         jtfCliente.setEditable(false);
         jlNroNotaCredito = new JLabel("Nro. Nota de crédito");
-        jtfNroRecibo = new JTextField(20);
+        jtfNroNotaCredito = new JTextField(20);
         jlFechaNotaCredito = new JLabel("Fecha");
         jdcFechaotaCredito = new JDateChooser();
         jdcFechaotaCredito.setPreferredSize(new Dimension(150, 20));
         jpNorth.add(jbCliente, "growx");
         jpNorth.add(jtfCliente);
         jpNorth.add(jlNroNotaCredito);
-        jpNorth.add(jtfNroRecibo);
+        jpNorth.add(jtfNroNotaCredito);
         jpNorth.add(jlFechaNotaCredito);
         jpNorth.add(jdcFechaotaCredito);
     }

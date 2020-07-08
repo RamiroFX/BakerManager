@@ -4,6 +4,7 @@
  */
 package NotasCredito;
 
+import Entities.E_facturaCabecera;
 import Entities.E_tipoOperacion;
 import Entities.M_facturaCabecera;
 import Interface.RecibirFacturaCabeceraCallback;
@@ -144,7 +145,11 @@ public class C_seleccionarVenta extends MouseAdapter implements ActionListener, 
         int fila = vista.jtVentaCabecera.getSelectedRow();
         if (fila > -1) {
             M_facturaCabecera faca = modelo.getTm().getFacturaCabeceraList().get(fila);
-            callback.recibirFacturaDetalle(modelo.obtenerFacturaDetalle(faca.getIdFacturaCabecera()));
+            E_facturaCabecera facturaCabecera = new E_facturaCabecera();
+            facturaCabecera.setCliente(faca.getCliente());
+            facturaCabecera.setFuncionario(faca.getFuncionario());
+            facturaCabecera.setIdFacturaCabecera(faca.getIdFacturaCabecera());
+            callback.recibirVenta(facturaCabecera, modelo.obtenerFacturaDetalle(faca.getIdFacturaCabecera()));
             cerrar();
         }
     }
