@@ -138,7 +138,9 @@ public class DB_Ingreso {
                 + "FC.TIEMPO,"//5
                 + "FC.ID_COND_VENTA, " //6
                 + "(SELECT DESCRIPCION FROM TIPO_OPERACION WHERE TIPO_OPERACION.ID_TIPO_OPERACION = FC.ID_COND_VENTA)\"TIPO_OPERACION\" ,"//7
-                + "(SUM (FADE.CANTIDAD*(FADE.PRECIO-(FADE.PRECIO*FADE.DESCUENTO)/100)))\"TOTAL\" "//8
+                + "(SUM (FADE.CANTIDAD*(FADE.PRECIO-(FADE.PRECIO*FADE.DESCUENTO)/100)))\"TOTAL\", "//8
+                + "FC.ID_ESTADO, "//9
+                + "(SELECT DESCRIPCION FROM ESTADO WHERE ESTADO.ID_ESTADO = FC.ID_ESTADO)\"TIPO_OPERACION\"  "//10
                 + "FROM FACTURA_CABECERA FC, "
                 + "     FACTURA_DETALLE FADE,"
                 + "     CLIENTE C,"
@@ -198,6 +200,9 @@ public class DB_Ingreso {
             }
             rs = pst.executeQuery();
             while (rs.next()) {
+                Estado estado = new Estado();
+                estado.setId(rs.getInt(9));
+                estado.setDescripcion(rs.getString(10));
                 M_cliente cliente = new M_cliente();
                 cliente.setEntidad(rs.getString(3));
                 M_funcionario f = new M_funcionario();
@@ -213,6 +218,7 @@ public class DB_Ingreso {
                 fc.setCliente(cliente);
                 fc.setFuncionario(f);
                 fc.setTotalFromDouble(rs.getDouble(8));
+                fc.setEstado(estado);
                 list.add(fc);
             }
         } catch (SQLException ex) {

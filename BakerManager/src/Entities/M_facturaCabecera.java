@@ -18,11 +18,13 @@ public class M_facturaCabecera {
     private M_cliente cliente;
     private M_funcionario funcionario;
     private E_tipoOperacion condVenta;
+    private Estado estado;
 
     public M_facturaCabecera() {
         this.funcionario = new M_funcionario();
         this.cliente = new M_cliente();
         this.condVenta = new E_tipoOperacion();
+        this.estado = new Estado();
     }
 
     public M_funcionario getFuncionario() {
@@ -142,6 +144,14 @@ public class M_facturaCabecera {
      */
     public void setCondVenta(E_tipoOperacion condVenta) {
         this.condVenta = condVenta;
+    }
+
+    public Estado getEstado() {
+        return estado;
+    }
+
+    public void setEstado(Estado estado) {
+        this.estado = estado;
     }
 
 }

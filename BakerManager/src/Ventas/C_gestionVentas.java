@@ -21,6 +21,8 @@ import Facturacion.HistorialFacturacion;
 import Interface.RecibirClienteCallback;
 import Interface.RecibirEmpleadoCallback;
 import NotasCredito.GestionNotasCredito;
+import Utilities.CellRenderers.FacturaCabeceraStatusCellRenderer;
+import Utilities.StatusCellRenderer;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -44,6 +46,7 @@ public class C_gestionVentas implements GestionInterface, RecibirEmpleadoCallbac
     public V_gestionVentas vista;
     public C_inicio c_inicio;
     private final C_gestionVentas gestionVentas;
+    private FacturaCabeceraStatusCellRenderer scr;
 
     public C_gestionVentas(M_gestionVentas modelo, V_gestionVentas vista, C_inicio c_inicio) {
         this.modelo = modelo;
@@ -80,6 +83,8 @@ public class C_gestionVentas implements GestionInterface, RecibirEmpleadoCallbac
         this.vista.jbFacturar.setEnabled(false);
         this.vista.jbHistorialFacturacion.setEnabled(false);
         this.vista.jtIngresoCabecera.setModel(modelo.getTm());
+        this.scr = new FacturaCabeceraStatusCellRenderer(this.modelo.getTm().getFacturaCabeceraList());
+        this.vista.jtIngresoCabecera.setDefaultRenderer(Object.class, scr);
     }
 
     @Override
@@ -186,11 +191,11 @@ public class C_gestionVentas implements GestionInterface, RecibirEmpleadoCallbac
                 Date fechaInicio = vista.jddInicio.getDate();
                 Date fechaFinal = vista.jddFinal.getDate();
                 E_tipoOperacion condVenta = vista.jcbCondVenta.getItemAt(vista.jcbCondVenta.getSelectedIndex());
-
                 M_cliente cliente = modelo.getCabecera().getCliente();
                 M_funcionario funcionario = modelo.getCabecera().getFuncionario();
                 long startTime = System.nanoTime();
                 modelo.getTm().setFacturaCabeceraList(modelo.obtenerVentas(cliente, funcionario, fechaInicio, fechaFinal, condVenta, nroFactura, estado));
+                scr.setList(modelo.getTm().getFacturaCabeceraList());
                 long elapsedTime = System.nanoTime() - startTime;
                 System.out.println("ventas: Tiempo total de busqueda  in millis: " + elapsedTime / 1000000);
                 Utilities.c_packColumn.packColumns(vista.jtIngresoCabecera, 1);

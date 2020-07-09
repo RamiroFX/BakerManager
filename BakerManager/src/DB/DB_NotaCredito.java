@@ -52,8 +52,8 @@ public class DB_NotaCredito {
                 + "nc.tiempo, "
                 + "fc.id_cond_venta, "
                 + "(SELECT descripcion FROM tipo_operacion tiop WHERE tiop.id_tipo_operacion = fc.id_cond_venta) \"COND_VENTA\", "
-                + "fc.id_estado, "
-                + "(SELECT descripcion FROM estado esta WHERE esta.id_estado = fc.id_estado) \"ESTADO\", "
+                + "nc.id_estado, "
+                + "(SELECT descripcion FROM estado esta WHERE esta.id_estado = nc.id_estado) \"ESTADO\", "
                 + "SUM (nd.CANTIDAD*(nd.PRECIO-(nd.PRECIO*nd.DESCUENTO)/100)) \"TOTAL\" "
                 + "FROM  "
                 + "nota_credito_cabecera nc, "
@@ -359,7 +359,7 @@ public class DB_NotaCredito {
     public static void anularNotaCredito(int idCabecera, int idEstado, boolean recuperarNroNotaCredito) {
         String UPDATE_NOTACREDITO = "UPDATE NOTA_CREDITO_CABECERA SET ID_ESTADO = ? WHERE ID_NOTA_CREDITO_CABECERA = ?";
         if (recuperarNroNotaCredito) {
-            UPDATE_NOTACREDITO = "UPDATE NOTA_CREDITO_CABECERA SET ID_ESTADO = ?, NRO_NOTA_CREDITO = NULL WHERE ID_NOTA_CREDITO_CABECERA = ?";
+            UPDATE_NOTACREDITO = "UPDATE NOTA_CREDITO_CABECERA SET ID_ESTADO = ?, NRO_NOTA_CREDITO = 0 WHERE ID_NOTA_CREDITO_CABECERA = ?";
         }
         try {
             DB_manager.habilitarTransaccionManual();

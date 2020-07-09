@@ -14,6 +14,7 @@ import Entities.M_cliente;
 import Entities.M_funcionario;
 import Interface.RecibirClienteCallback;
 import Interface.RecibirEmpleadoCallback;
+import Utilities.CellRenderers.NotaCreditoStatusCellRenderer;
 import bakermanager.C_inicio;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
@@ -36,6 +37,7 @@ public class C_gestionNotasCredito implements ActionListener, MouseListener, Key
     public M_gestionNotasCredito modelo;
     public V_gestionNotasCredito vista;
     public C_inicio c_inicio;
+    private NotaCreditoStatusCellRenderer scr;
 
     public C_gestionNotasCredito(M_gestionNotasCredito modelo, V_gestionNotasCredito vista, C_inicio c_inicio) {
         this.modelo = modelo;
@@ -46,8 +48,10 @@ public class C_gestionNotasCredito implements ActionListener, MouseListener, Key
     }
 
     public final void inicializarVista() {
+        this.scr = new NotaCreditoStatusCellRenderer();
         this.vista.jbResumen.setEnabled(false);
         this.vista.jtCabecera.setModel(modelo.getTm());
+        this.vista.jtCabecera.setDefaultRenderer(Object.class, scr);
         this.vista.jtDetalle.setModel(modelo.getTmDetalle());
         ArrayList<E_tipoOperacion> condVenta = modelo.obtenerTipoOperaciones();
         for (int i = 0; i < condVenta.size(); i++) {
@@ -155,6 +159,7 @@ public class C_gestionNotasCredito implements ActionListener, MouseListener, Key
                 Date fechaInicio = vista.jddInicio.getDate();
                 Date fechaFinal = vista.jddFinal.getDate();
                 modelo.getTm().setList(modelo.obtenerNotasCreditoCabecera(idCliente, idFuncionario, nroNotaCredito, fechaInicio, fechaFinal, idCondVenta, idEstado));
+                scr.setList(modelo.getTm().getList());
                 Utilities.c_packColumn.packColumns(vista.jtCabecera, 1);
             }
         });
