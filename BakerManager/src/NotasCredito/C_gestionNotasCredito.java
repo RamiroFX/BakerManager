@@ -49,7 +49,6 @@ public class C_gestionNotasCredito implements ActionListener, MouseListener, Key
 
     public final void inicializarVista() {
         this.scr = new NotaCreditoStatusCellRenderer();
-        this.vista.jbResumen.setEnabled(false);
         this.vista.jtCabecera.setModel(modelo.getTm());
         this.vista.jtCabecera.setDefaultRenderer(Object.class, scr);
         this.vista.jtDetalle.setModel(modelo.getTmDetalle());
@@ -89,6 +88,7 @@ public class C_gestionNotasCredito implements ActionListener, MouseListener, Key
             }
         }*/
         //TODO remove
+        this.vista.jbResumen.addActionListener(this);
         this.vista.jbDetalle.addActionListener(this);
         this.vista.jbAnular.addActionListener(this);
         this.vista.jbNueva.addActionListener(this);
@@ -114,6 +114,7 @@ public class C_gestionNotasCredito implements ActionListener, MouseListener, Key
         this.vista.jbNueva.addKeyListener(this);
         this.vista.jbAnular.addKeyListener(this);
         this.vista.jbDetalle.addKeyListener(this);
+        this.vista.jbResumen.addKeyListener(this);
     }
 
     public final void mostrarVista() {
@@ -246,6 +247,12 @@ public class C_gestionNotasCredito implements ActionListener, MouseListener, Key
         }
     }
 
+    private void invocarVistaResumen() {
+        ResumenNotaCredito resumen = new ResumenNotaCredito(c_inicio);
+        resumen.inicializarDatos(modelo.getTm());
+        resumen.mostrarVista();
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         Object source = e.getSource();
@@ -276,6 +283,9 @@ public class C_gestionNotasCredito implements ActionListener, MouseListener, Key
         }
         if (source.equals(this.vista.jbDetalle)) {
             invocarVistaVerNotaCreditoDetalle();
+        }
+        if (source.equals(this.vista.jbResumen)) {
+            invocarVistaResumen();
         }
     }
 

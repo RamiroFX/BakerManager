@@ -7,11 +7,8 @@ package DB;
 
 import Entities.E_NotaCreditoCabecera;
 import Entities.E_NotaCreditoDetalle;
-import Entities.E_cuentaCorrienteCabecera;
-import Entities.E_cuentaCorrienteDetalle;
 import Entities.E_facturaCabecera;
 import Entities.E_facturaDetalle;
-import Entities.E_formaPago;
 import Entities.E_tipoOperacion;
 import Entities.Estado;
 import Entities.M_cliente;
@@ -398,5 +395,66 @@ public class DB_NotaCredito {
                     .getName());
             lgr.log(Level.SEVERE, ex.getMessage(), ex);
         }
+    }
+
+    public static List<E_NotaCreditoDetalle> consultarDetalleAgrupado(List<E_NotaCreditoCabecera> cadenaCabeceras) {
+        List<E_NotaCreditoDetalle> list = new ArrayList<>();
+        boolean b = true;
+        StringBuilder builder = new StringBuilder();
+        for (E_NotaCreditoCabecera notaCredito : cadenaCabeceras) {
+            builder.append("?,");
+            b = false;
+        }
+        //para controlar que la lista contenga por lo menos una venta seleccionada
+        if (b) {
+            return list;
+        }
+        String QUERY = "SELECT "
+                + "ND.ID_PRODUCTO,"
+                + "(SELECT P.DESCRIPCION FROM PRODUCTO P WHERE P.ID_PRODUCTO = ND.ID_PRODUCTO)\"PRODUCTO\", "
+                + "(SELECT P.ID_IMPUESTO FROM PRODUCTO P WHERE P.ID_PRODUCTO = ND.ID_PRODUCTO)\"ID_IMPUESTO\", "
+                + "(SELECT P.CODIGO FROM PRODUCTO P WHERE P.ID_PRODUCTO = ND.ID_PRODUCTO)\"CODIGO_PROD\", "
+                + "SUM(ND.CANTIDAD) \"CANTIDAD\", "
+                + "ND.PRECIO , "
+                + "SUM(ND.DESCUENTO) \"DESCUENTO\" "
+                + "FROM NOTA_CREDITO_DETALLE ND, FACTURA_DETALLE FD "
+                + "WHERE ND.ID_FACTURA_DETALLE = FD.ID_FACTURA_DETALLE "
+                + "AND ND.ID_NOTA_CREDITO_CABECERA IN ("
+                + builder.substring(0, builder.length() - 1) + ") ";
+
+        String PIE = "GROUP BY ND.ID_PRODUCTO, ND.PRECIO, \"PRODUCTO\", \"ID_IMPUESTO\", \"CODIGO_PROD\" "
+                + "ORDER BY \"PRODUCTO\" ;";
+        QUERY = QUERY + PIE;
+        try {
+            pst = DB_manager.getConection().prepareStatement(QUERY, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            int index = 1;
+            for (E_NotaCreditoCabecera notaCredito : cadenaCabeceras) {
+                pst.setInt(index, notaCredito.getId());
+                index++;
+            }
+            rs = pst.executeQuery();
+            while (rs.next()) {
+//                E_facturaDetalle fd = new E_facturaDetalle();
+//                fd.setIdFacturaDetalle(rs.getInt("ID_FACTURA_DETALLE"));
+                E_NotaCreditoDetalle notaCreditoDetalle = new E_NotaCreditoDetalle();
+                M_producto producto = new M_producto();
+                producto.setId(rs.getInt("ID_PRODUCTO"));
+                producto.setCodigo(rs.getString("CODIGO_PROD"));
+                producto.setDescripcion(rs.getString("PRODUCTO"));
+                producto.setIdImpuesto(rs.getInt("ID_IMPUESTO"));
+                //notaCreditoDetalle.setId(rs.getInt("ID_NOTA_CREDITO_DETALLE"));
+                //notaCreditoDetalle.setFacturaDetalle(fd);
+                notaCreditoDetalle.setProducto(producto);
+                notaCreditoDetalle.setCantidad(rs.getDouble("CANTIDAD"));
+                notaCreditoDetalle.setPrecio(rs.getInt("PRECIO"));
+                notaCreditoDetalle.setDescuento(rs.getDouble("DESCUENTO"));
+                notaCreditoDetalle.setObservacion("");
+                list.add(notaCreditoDetalle);
+            }
+        } catch (SQLException ex) {
+            Logger lgr = Logger.getLogger(DB_NotaCredito.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        }
+        return list;
     }
 }
