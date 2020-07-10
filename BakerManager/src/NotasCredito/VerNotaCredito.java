@@ -5,6 +5,7 @@
  */
 package NotasCredito;
 
+import Entities.E_NotaCreditoCabecera;
 import javax.swing.JFrame;
 
 /**
@@ -27,8 +28,8 @@ public class VerNotaCredito {
         this.controlador.mostrarVista();
     }
 
-    public void establecerIdNotaCredito(int idNotacredito) {
-        //this.controlador.setId();
+    public void inicializarDatos(E_NotaCreditoCabecera cabecera) {
+        this.controlador.inicializarDatos(cabecera);
     }
 
 }

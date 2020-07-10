@@ -48,6 +48,8 @@ public class DB_NotaCredito {
                 + "nro_nota_credito, "
                 + "fc.nro_factura, "
                 + "c.entidad, "
+                + "c.ruc, "
+                + "c.ruc_identificador, "
                 + "(SELECT nombre ||' '||apellido FROM persona pers WHERE pers.id_persona = f.id_persona) \"FUNCIONARIO\", "
                 + "nc.tiempo, "
                 + "fc.id_cond_venta, "
@@ -68,7 +70,7 @@ public class DB_NotaCredito {
                 + "nc.id_cliente = c.id_cliente AND "
                 + "nc.tiempo BETWEEN ?  AND ? ";
         String orderBy = "ORDER BY nc.tiempo";
-        String groupBy = "GROUP BY nc.id_nota_credito_cabecera, nro_nota_credito, nro_factura, c.entidad, \"FUNCIONARIO\", nc.tiempo, fc.id_cond_venta, \"COND_VENTA\", fc.id_estado,\"ESTADO\" ";
+        String groupBy = "GROUP BY nc.id_nota_credito_cabecera, nro_nota_credito, nro_factura, c.entidad, c.ruc, c.ruc_identificador, \"FUNCIONARIO\", nc.tiempo, fc.id_cond_venta, \"COND_VENTA\", fc.id_estado,\"ESTADO\" ";
         if (idCliente > 0) {
             query = query + " AND nc.ID_CLIENTE = ? ";
         }
@@ -114,6 +116,8 @@ public class DB_NotaCredito {
             while (rs.next()) {
                 M_cliente cliente = new M_cliente();
                 cliente.setEntidad(rs.getString("entidad"));
+                cliente.setRuc(rs.getString("ruc"));
+                cliente.setRucId(rs.getString("ruc_identificador"));
                 M_funcionario f = new M_funcionario();
                 f.setNombre(rs.getString("FUNCIONARIO"));
                 E_tipoOperacion tiop = new E_tipoOperacion();

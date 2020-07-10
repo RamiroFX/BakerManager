@@ -41,7 +41,7 @@ public class V_crearNotaCredito extends JDialog {
 
     //NORTE
     JPanel jpNorth;
-    public JTextField jtfCliente, jtfNroNotaCredito, jtfClieRuc, jtfNroFactura;
+    public JTextField jtfCliente, jtfNroNotaCredito, jtfNroFactura;
     public JButton jbCliente;
     public JLabel jlNroNotaCredito, jlFechaNotaCredito;
     public JDateChooser jdcFechaotaCredito;

@@ -7,7 +7,6 @@ package NotasCredito;
 
 import Cliente.Seleccionar_cliente;
 import Entities.E_NotaCreditoDetalle;
-import Entities.E_cuentaCorrienteDetalle;
 import Entities.E_facturaCabecera;
 import Entities.E_facturaDetalle;
 import Entities.M_cliente;
@@ -37,8 +36,7 @@ import javax.swing.JOptionPane;
 public class C_crearNotaCredito extends MouseAdapter implements ActionListener, KeyListener,
         RecibirClienteCallback, RecibirFacturaCabeceraCallback, RecibirProductoCallback {
 
-    private static final String VALIDAR_RESPONSABLE_MSG = "Seleccione un cobrador",
-            VALIDAR_CLIENTE_MSG = "Seleccione un cliente",
+    private static final String VALIDAR_CLIENTE_MSG = "Seleccione un cliente",
             VALIDAR_NRO_NOTA_CREDITO_MSG_1 = "Ingrese un Número de Nota de Crédito",
             VALIDAR_NRO_NOTA_CREDITO_MSG_2 = "Ingrese solo números enteros en Número de Nota de Crédito",
             VALIDAR_NRO_NOTA_CREDITO_MSG_3 = "Ingrese solo números enteros y positivos en Número de Nota de Crédito",
@@ -46,7 +44,6 @@ public class C_crearNotaCredito extends MouseAdapter implements ActionListener, 
             VALIDAR_NRO_NOTA_CREDITO_MSG_5 = "Ingrese una cantidad superior a 0 (cero).",
             VALIDAR_FECHA_NOTA_CREDITO_MSG_1 = "La fecha seleccionada no es valida.",
             VALIDAR_CANT_DETALLE_MSG = "Nota de credito vacía.",
-            VALIDAR_MONTO_A_PAGAR = "El saldo a pagar no puede ser mayor al total",
             VALIDAR_DETALLE_NOTA_CREDITO = "Existen detalles de Nota de Crédito pendiente. Vacíe la lista para seleccionar otro cliente",
             CONFIRMAR_SALIR_MSG = "¿Cancelar Nota de Crédito?",
             VALIDAR_TITULO = "Atención";
@@ -308,26 +305,6 @@ public class C_crearNotaCredito extends MouseAdapter implements ActionListener, 
         this.vista.jtfCliente.setText(cliente.getEntidad() + "(" + cliente.getRuc() + "-" + cliente.getRucId() + ")");
     }
 
-    public void recibirCtaCteDetalle(E_NotaCreditoDetalle detalle, int montoTotalPendiente) {
-        if (this.modelo.controlarMontoIngresado(detalle.getId(), (int) detalle.getSubTotal(), montoTotalPendiente)) {
-            this.modelo.agregarDatos(detalle);
-        } else {
-            JOptionPane.showMessageDialog(vista, VALIDAR_MONTO_A_PAGAR, VALIDAR_TITULO, JOptionPane.WARNING_MESSAGE);
-        }
-        sumarTotal();
-        Utilities.c_packColumn.packColumns(vista.jtNotaCreditoDetalle, 1);
-    }
-
-    public void modificarCtaCteDetalle(int index, E_cuentaCorrienteDetalle detalle, int montoTotalPendiente) {
-        /*if (this.modelo.controlarMontoIngresado(detalle.getIdFacturaCabecera(), (int) detalle.getMonto(), montoTotalPendiente)) {
-            this.modelo.modificarDetalle(index, detalle);
-        } else {
-            JOptionPane.showMessageDialog(vista, VALIDAR_MONTO_A_PAGAR, VALIDAR_TITULO, JOptionPane.WARNING_MESSAGE);
-        }
-        sumarTotal();
-        Utilities.c_packColumn.packColumns(vista.jtNotaCreditoDetalle, 1);*/
-    }
-
     @Override
     public void recibirVenta(E_facturaCabecera facturaCabecera, List<E_facturaDetalle> facturaDetalle) {
         this.modelo.getCabecera().setFacturaCabecera(facturaCabecera);
@@ -367,7 +344,6 @@ public class C_crearNotaCredito extends MouseAdapter implements ActionListener, 
 
     @Override
     public void recibirFacturaCabecera(E_facturaCabecera facturaCabecera) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
@@ -377,7 +353,6 @@ public class C_crearNotaCredito extends MouseAdapter implements ActionListener, 
 
     @Override
     public void recibirProducto(double cantidad, int precio, double descuento, M_producto producto, String observacion) {
-        System.out.println("NotasCredito.C_crearNotaCredito.recibirProducto()");
     }
 
     @Override

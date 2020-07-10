@@ -89,7 +89,7 @@ public class C_gestionNotasCredito implements ActionListener, MouseListener, Key
             }
         }*/
         //TODO remove
-
+        this.vista.jbDetalle.addActionListener(this);
         this.vista.jbAnular.addActionListener(this);
         this.vista.jbNueva.addActionListener(this);
         this.vista.jbBorrar.addActionListener(this);
@@ -113,6 +113,7 @@ public class C_gestionNotasCredito implements ActionListener, MouseListener, Key
         this.vista.jbSalir.addKeyListener(this);
         this.vista.jbNueva.addKeyListener(this);
         this.vista.jbAnular.addKeyListener(this);
+        this.vista.jbDetalle.addKeyListener(this);
     }
 
     public final void mostrarVista() {
@@ -225,6 +226,26 @@ public class C_gestionNotasCredito implements ActionListener, MouseListener, Key
         this.vista.jbAnular.setEnabled(false);
     }
 
+    private void invocarVistaVerNotaCreditoDetalle() {
+        int fila = this.vista.jtCabecera.getSelectedRow();
+        if (fila > -1) {
+            E_NotaCreditoCabecera cab = modelo.getTm().getList().get(fila);
+            VerNotaCredito vnc = new VerNotaCredito(c_inicio.vista);
+            vnc.inicializarDatos(cab);
+            vnc.mostrarVista();
+            this.vista.jbDetalle.setEnabled(false);
+            this.vista.jbAnular.setEnabled(false);
+        }
+    }
+
+    private void validarPermiso() {
+        int fila = this.vista.jtCabecera.getSelectedRow();
+        if (fila > -1) {
+            this.vista.jbDetalle.setEnabled(true);
+            this.vista.jbAnular.setEnabled(true);
+        }
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         Object source = e.getSource();
@@ -253,13 +274,20 @@ public class C_gestionNotasCredito implements ActionListener, MouseListener, Key
         if (source.equals(this.vista.jbAnular)) {
             anularNotaCredito();
         }
+        if (source.equals(this.vista.jbDetalle)) {
+            invocarVistaVerNotaCreditoDetalle();
+        }
     }
 
     @Override
     public void mouseClicked(MouseEvent e) {
         Object source = e.getSource();
         if (source.equals(this.vista.jtCabecera)) {
+            validarPermiso();
             consultarNotasCreditoDetalle();
+            if (e.getClickCount() == 2) {
+                invocarVistaVerNotaCreditoDetalle();
+            }
         }
         if (source.equals(this.vista.jtDetalle)) {
         }
