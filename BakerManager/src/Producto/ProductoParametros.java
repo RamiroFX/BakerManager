@@ -4,8 +4,11 @@
  */
 package Producto;
 
+import DB.DB_Producto;
 import DB.DB_Proveedor;
 import DB.DB_manager;
+import ModeloTabla.ProductoCategoriaTableModel;
+import ModeloTabla.ProductoSubCategoriaTableModel;
 import bakermanager.C_inicio;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -29,15 +32,16 @@ public class ProductoParametros extends javax.swing.JDialog implements ActionLis
     private javax.swing.JButton jbCrear, jbModificar, jbEliminar;
     private JTabbedPane jtpCenter;
     private JPanel jpSouth;
-    JScrollPane jspMarcas, jspCategorias;
-    JTable jtMarcas, jtCategorias;
+    JScrollPane jspMarcas, jspCategorias, jspSubCategorias;
+    JTable jtMarcas, jtCategorias, jtSubCategorias;
     C_gestion_producto gestion_producto;
+    ProductoCategoriaTableModel productoCategoriaTm;
+    ProductoSubCategoriaTableModel productoSubCategoriaTm;
 
     public ProductoParametros(C_inicio c_inicio) {
         super(c_inicio.vista, true);
-        setTitle("Parametros");
-        setSize(new java.awt.Dimension(400, 300));
-        setLocationRelativeTo(c_inicio.vista);
+        construirLayout(c_inicio);
+        initializarLogica();
         initComponents();
         inicializarVista();
         agregarListener();
@@ -46,19 +50,36 @@ public class ProductoParametros extends javax.swing.JDialog implements ActionLis
     ProductoParametros(C_inicio c_inicio, C_gestion_producto aThis) {
         super(c_inicio.vista, true);
         gestion_producto = aThis;
-        setTitle("Parametros");
-        setSize(new java.awt.Dimension(400, 300));
-        setLocationRelativeTo(c_inicio.vista);
+        construirLayout(c_inicio);
+        initializarLogica();
         initComponents();
         inicializarVista();
         agregarListener();
+    }
+
+    private void construirLayout(C_inicio c_inicio) {
+        setTitle("Parametros");
+        setSize(new java.awt.Dimension(500, 300));
+        setLocationRelativeTo(c_inicio.vista);
+    }
+
+    private void initializarLogica() {
+        this.productoCategoriaTm = new ProductoCategoriaTableModel();
+        this.productoCategoriaTm.setList(DB_Producto.obtenerProductoCategoria());
+        this.productoSubCategoriaTm = new ProductoSubCategoriaTableModel();
+        this.productoSubCategoriaTm.setList(DB_Producto.obtenerProductoSubCategoria());
     }
 
     private void inicializarVista() {
         jbEliminar.setEnabled(false);
         jbModificar.setEnabled(false);
         jtMarcas.setModel(DB_manager.consultarMarca());
-        jtCategorias.setModel(DB_manager.consultarCategoria());
+        //jtCategorias.setModel(DB_manager.consultarCategoria());
+        jtCategorias.setModel(productoCategoriaTm);
+        jtSubCategorias.setModel(productoSubCategoriaTm);
+        Utilities.c_packColumn.packColumns(jtMarcas, 1);
+        Utilities.c_packColumn.packColumns(jtCategorias, 1);
+        Utilities.c_packColumn.packColumns(jtSubCategorias, 1);
     }
 
     private void initMarcas() {
@@ -71,7 +92,10 @@ public class ProductoParametros extends javax.swing.JDialog implements ActionLis
     private void initCategorias() {
         jtCategorias = new JTable();
         jtCategorias.getTableHeader().setReorderingAllowed(false);
+        jtSubCategorias = new JTable();
+        jtSubCategorias.getTableHeader().setReorderingAllowed(false);
         jspCategorias = new JScrollPane(jtCategorias);
+        jspSubCategorias = new JScrollPane(jtSubCategorias);
     }
 
     private void initComponents() {
@@ -80,6 +104,7 @@ public class ProductoParametros extends javax.swing.JDialog implements ActionLis
         jtpCenter = new JTabbedPane();
         jtpCenter.add("Marcas", jspMarcas);
         jtpCenter.add("Categorias", jspCategorias);
+        jtpCenter.add("Sub Categorias", jspSubCategorias);
         jpSouth = new JPanel();
         jbCrear = new javax.swing.JButton("Agregar");
         jbModificar = new javax.swing.JButton("Modificar");
@@ -95,15 +120,17 @@ public class ProductoParametros extends javax.swing.JDialog implements ActionLis
     private void agregarListener() {
         jtpCenter.addMouseListener(this);
         jtCategorias.addMouseListener(this);
+        jtSubCategorias.addMouseListener(this);
         jtMarcas.addMouseListener(this);
         jbCrear.addActionListener(this);
         jbModificar.addActionListener(this);
         jbEliminar.addActionListener(this);
         /*
         KEYLISTENERS
-        */
+         */
         jtpCenter.addKeyListener(this);
         jtCategorias.addKeyListener(this);
+        jtSubCategorias.addKeyListener(this);
         jtMarcas.addKeyListener(this);
         jbCrear.addKeyListener(this);
         jbModificar.addKeyListener(this);
@@ -189,7 +216,7 @@ public class ProductoParametros extends javax.swing.JDialog implements ActionLis
             DB_Proveedor.insertarCategoria(c);
             this.jbModificar.setEnabled(false);
             this.jbEliminar.setEnabled(false);
-            this.jtCategorias.setModel(DB_manager.consultarCategoria());
+            this.productoCategoriaTm.setList(DB_Producto.obtenerProductoCategoria());
         } else {
             JOptionPane.showMessageDialog(this, "Categoría existente.", "Alerta", JOptionPane.ERROR_MESSAGE);
         }
@@ -211,7 +238,7 @@ public class ProductoParametros extends javax.swing.JDialog implements ActionLis
             DB_Proveedor.modificarCategoria(idCategoria, categoria);
             this.jbModificar.setEnabled(false);
             this.jbEliminar.setEnabled(false);
-            this.jtCategorias.setModel(DB_manager.consultarCategoria());
+            this.productoCategoriaTm.setList(DB_Producto.obtenerProductoCategoria());
         } else {
             JOptionPane.showMessageDialog(this, "Categoría existente.", "Alerta", JOptionPane.ERROR_MESSAGE);
         }
@@ -227,7 +254,7 @@ public class ProductoParametros extends javax.swing.JDialog implements ActionLis
                     DB_Proveedor.eliminarProductoCategoria(idCategoria);
                     this.jbModificar.setEnabled(false);
                     this.jbEliminar.setEnabled(false);
-                    this.jtCategorias.setModel(DB_manager.consultarCategoria());
+                    this.productoCategoriaTm.setList(DB_Producto.obtenerProductoCategoria());
                 } catch (Exception e) {
                     e.printStackTrace();
                     return;
@@ -238,36 +265,6 @@ public class ProductoParametros extends javax.swing.JDialog implements ActionLis
         }
     }
 
-    /*
-     private void agregarImpuesto(String impuesto) {
-     DB_Proveedor.insertarImpuesto(impuesto);
-     this.jbModificar.setEnabled(false);
-     this.jbEliminar.setEnabled(false);
-     this.jtImpuesto.setModel(DB_manager.consultarImpuesto());
-     }
-     private void modificarImpuesto(String impuesto) {
-     int idImpuesto = Integer.valueOf(String.valueOf(this.jtImpuesto.getValueAt(jtImpuesto.getSelectedRow(), 0)));
-     DB_Proveedor.modificarCategoria(idImpuesto, impuesto);
-     this.jbModificar.setEnabled(false);
-     this.jbEliminar.setEnabled(false);
-     this.jtImpuesto.setModel(DB_manager.consultarImpuesto());
-     }
-     private void eliminarImpuesto() {
-     int option = JOptionPane.showConfirmDialog(this, "¿Desea confirmar esta operación?", "Atención", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-     if (option == JOptionPane.YES_OPTION) {
-     try {
-     int idImpuesto = Integer.valueOf(String.valueOf(this.jtImpuesto.getValueAt(jtImpuesto.getSelectedRow(), 0)));
-     DB_Proveedor.eliminarProductoCategoria(idImpuesto);
-     this.jbModificar.setEnabled(false);
-     this.jbEliminar.setEnabled(false);
-     this.jtImpuesto.setModel(DB_manager.consultarImpuesto());
-     } catch (Exception e) {
-     e.printStackTrace();
-     return;
-     }
-     }
-     }
-     */
     private void createButtonHandler() {
         if (this.jtpCenter.getSelectedComponent().equals(this.jspMarcas)) {
             String marca = JOptionPane.showInputDialog(this, "Inserte el nombre de la marca", "Insertar marca", JOptionPane.PLAIN_MESSAGE);

@@ -7,6 +7,7 @@ package DB;
 import Entities.M_producto;
 import Entities.E_productoClasificacion;
 import Entities.Estado;
+import Entities.ProductoCategoria;
 import java.sql.CallableStatement;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -14,6 +15,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Types;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -889,6 +891,85 @@ public class DB_Producto {
                 E_productoClasificacion tiop = new E_productoClasificacion();
                 tiop.setId(rs.getInt("id_producto_clasificacion"));
                 tiop.setDescripcion(rs.getString("descripcion"));
+                list.add(tiop);
+            }
+        } catch (SQLException ex) {
+            Logger lgr = Logger.getLogger(DB_Producto.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (st != null) {
+                    st.close();
+                }
+            } catch (SQLException ex) {
+                Logger lgr = Logger.getLogger(DB_Producto.class.getName());
+                lgr.log(Level.WARNING, ex.getMessage(), ex);
+            }
+        }
+        return list;
+    }
+
+    public static List<ProductoCategoria> obtenerProductoCategoria() {
+        List<ProductoCategoria> list = null;
+        String q = "SELECT id_producto_categoria, id_padre, descripcion FROM producto_categoria "
+                + "WHERE id_padre = 0 "
+                + "ORDER BY id_producto_categoria;";
+        try {
+            st = DB_manager.getConection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            rs = st.executeQuery(q);
+            list = new ArrayList();
+            while (rs.next()) {
+                ProductoCategoria padre = new ProductoCategoria();
+                padre.setId(rs.getInt("id_padre"));
+                ProductoCategoria tiop = new ProductoCategoria();
+                tiop.setId(rs.getInt("id_producto_categoria"));
+                tiop.setDescripcion(rs.getString("descripcion"));
+                tiop.setPadre(padre);
+                list.add(tiop);
+            }
+        } catch (SQLException ex) {
+            Logger lgr = Logger.getLogger(DB_Producto.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (st != null) {
+                    st.close();
+                }
+            } catch (SQLException ex) {
+                Logger lgr = Logger.getLogger(DB_Producto.class.getName());
+                lgr.log(Level.WARNING, ex.getMessage(), ex);
+            }
+        }
+        return list;
+    }
+
+    public static List<ProductoCategoria> obtenerProductoSubCategoria() {
+        List<ProductoCategoria> list = null;
+        String q = "SELECT P.id_producto_categoria, "
+                + "P.descripcion, "
+                + "P.id_padre,  "
+                + "(SELECT producto_categoria.descripcion FROM producto_categoria WHERE producto_categoria.id_producto_categoria = P.id_padre ) \"DESCRIPCION_PADRE\" "
+                + "FROM producto_categoria P "
+                + "WHERE P.id_padre > 0 "
+                + "ORDER BY \"DESCRIPCION_PADRE\";";
+        try {
+            st = DB_manager.getConection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            rs = st.executeQuery(q);
+            list = new ArrayList();
+            while (rs.next()) {
+                ProductoCategoria padre = new ProductoCategoria();
+                padre.setId(rs.getInt("id_padre"));
+                padre.setDescripcion(rs.getString("descripcion_padre"));
+                ProductoCategoria tiop = new ProductoCategoria();
+                tiop.setId(rs.getInt("id_producto_categoria"));
+                tiop.setDescripcion(rs.getString("descripcion"));
+                tiop.setPadre(padre);
                 list.add(tiop);
             }
         } catch (SQLException ex) {

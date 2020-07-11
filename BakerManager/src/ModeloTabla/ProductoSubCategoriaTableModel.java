@@ -30,7 +30,7 @@ public class ProductoSubCategoriaTableModel extends AbstractTableModel {
 
     @Override
     public Class<?> getColumnClass(int columnIndex) {
-        return getValueAt(0, columnIndex).getClass();
+         return getValueAt(0, columnIndex).getClass();
     }
 
     @Override
