@@ -6,7 +6,7 @@ package Reportes;
 
 import DB.DB_manager;
 import Entities.ProductoCategoria;
-import ModeloTabla.ProductoCategoriaTableModel;
+import ModeloTabla.SeleccionProductoCategoriaTableModel;
 import ModeloTabla.SeleccionProductoCategoria;
 import bakermanager.C_inicio;
 import com.toedter.calendar.JDateChooser;
@@ -102,7 +102,7 @@ public class FiltroReporte_Cate extends JDialog implements ActionListener, KeyLi
     }
 
     private void completarCampos() {
-        ProductoCategoriaTableModel tm = new ProductoCategoriaTableModel();
+        SeleccionProductoCategoriaTableModel tm = new SeleccionProductoCategoriaTableModel();
         ArrayList<SeleccionProductoCategoria> seleccionProductoCategorias = new ArrayList<>();
         for (ProductoCategoria obtenerCategoria : DB_manager.obtenerCategorias()) {
             seleccionProductoCategorias.add(new SeleccionProductoCategoria(obtenerCategoria, true));

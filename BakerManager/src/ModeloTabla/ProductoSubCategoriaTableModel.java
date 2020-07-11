@@ -14,12 +14,12 @@ import javax.swing.table.AbstractTableModel;
  *
  * @author Ramiro Ferreira
  */
-public class ProductoCategoriaTableModel extends AbstractTableModel {
+public class ProductoSubCategoriaTableModel extends AbstractTableModel {
 
     List<ProductoCategoria> list;
-    private String[] colNames = {"Id", "Descripcion"};
+    private String[] colNames = {"Id", "Categoría", "Sub categoría"};
 
-    public ProductoCategoriaTableModel() {
+    public ProductoSubCategoriaTableModel() {
         list = new ArrayList<>();
     }
 
@@ -56,6 +56,9 @@ public class ProductoCategoriaTableModel extends AbstractTableModel {
                 return productoCategoria.getId();
             }
             case 1: {
+                return productoCategoria.getPadre().getDescripcion();
+            }
+            case 2: {
                 return productoCategoria.getDescripcion();
             }
             default: {
