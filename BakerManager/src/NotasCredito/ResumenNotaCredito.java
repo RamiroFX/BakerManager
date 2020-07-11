@@ -9,7 +9,7 @@ import DB.DB_NotaCredito;
 import Entities.E_NotaCreditoCabecera;
 import Entities.E_tipoOperacion;
 import Entities.Estado;
-import Entities.M_cliente;
+import Excel.ExportarNotaCredito;
 import Interface.InterfaceFacturaDetalle;
 import ModeloTabla.NotaCreditoCabeceraTableModel;
 import ModeloTabla.NotaCreditoDetalleTableModel;
@@ -23,6 +23,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Date;
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -158,16 +159,16 @@ public class ResumenNotaCredito extends JDialog implements ActionListener, KeyLi
         jbImportarXLS.addActionListener(this);
     }
 
-    private void importarExcelCompleto(M_cliente cliente, Integer nro_factura, String idEmpleado, String tipo_operacion, Estado estado) {
-        /*ArrayList<M_facturaCabecera> ed = new ArrayList(this.tm.getFacturaCabeceraList());
-        ExportarVentas ce = new ExportarVentas("Resumen de ingresos", ed);
-        ce.exportacionCompleta();*/
+    private void importarExcelCompleto() {
+        ArrayList<E_NotaCreditoCabecera> ed = new ArrayList<>(this.tm.getList());
+        ExportarNotaCredito ce = new ExportarNotaCredito("Resumen de nota de crédito", ed);
+        ce.exportacionCompleta();
     }
 
-    private void importarExcelResumido(M_cliente cliente, Integer nro_factura, String idEmpleado, String tipo_operacion, Estado estado) {
-        /*ArrayList<M_facturaCabecera> ed = new ArrayList(this.tm.getFacturaCabeceraList());
-        ExportarVentas ce = new ExportarVentas("Resumen de ingresos", ed);
-        ce.exportacionResumida();*/
+    private void importarExcelResumido() {
+        ArrayList<E_NotaCreditoCabecera> ed = new ArrayList<>(this.tm.getList());
+        ExportarNotaCredito ce = new ExportarNotaCredito("Resumen de nota de crédito", ed);
+        ce.exportacionResumida();;
     }
 
     private void exportHandler() {
@@ -187,7 +188,7 @@ public class ResumenNotaCredito extends JDialog implements ActionListener, KeyLi
                 EventQueue.invokeLater(new Runnable() {
                     @Override
                     public void run() {
-                        //importarExcelCompleto(cliente, nro_factura, idEmpleado, tipo_operacion, estado);
+                        importarExcelCompleto();
                     }
                 });
                 break;
@@ -197,7 +198,7 @@ public class ResumenNotaCredito extends JDialog implements ActionListener, KeyLi
                 EventQueue.invokeLater(new Runnable() {
                     @Override
                     public void run() {
-                        //importarExcelResumido(cliente, nro_factura, idEmpleado, tipo_operacion, estado);
+                        importarExcelResumido();
                     }
                 });
                 break;
