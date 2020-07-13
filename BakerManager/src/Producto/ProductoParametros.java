@@ -80,7 +80,6 @@ public class ProductoParametros extends javax.swing.JDialog implements ActionLis
         jbEliminar.setEnabled(false);
         jbModificar.setEnabled(false);
         jtMarcas.setModel(DB_manager.consultarMarca());
-        //jtCategorias.setModel(DB_manager.consultarCategoria());
         jtCategorias.setModel(productoCategoriaTm);
         jtSubCategorias.setModel(productoSubCategoriaTm);
         Utilities.c_packColumn.packColumns(jtMarcas, 1);
@@ -311,7 +310,7 @@ public class ProductoParametros extends javax.swing.JDialog implements ActionLis
             JOptionPane.showMessageDialog(this, "Máximo permitido " + MAX_LENGTH + " caracteres.", "Alerta", JOptionPane.ERROR_MESSAGE);
             return;
         }
-        if (jtCategorias.getSelectedRow() < 0) {
+        if (jtSubCategorias.getSelectedRow() < 0) {
             JOptionPane.showMessageDialog(this, "Seleccione nuevamente la Categoría a modificar.", "Alerta", JOptionPane.ERROR_MESSAGE);
             return;
         }
@@ -376,7 +375,7 @@ public class ProductoParametros extends javax.swing.JDialog implements ActionLis
                 }
             }
         } else if (this.jtpCenter.getSelectedComponent().equals(this.jspSubCategorias)) {
-            mostrarDialogoCreacionSubCategoria(CREAR_SUB_CATEGORIA);
+            mostrarDialogoCreacionSubCategoria(CREAR_SUB_CATEGORIA, null);
         }
         gestion_producto.actualizarVista();
     }
@@ -397,7 +396,12 @@ public class ProductoParametros extends javax.swing.JDialog implements ActionLis
                 }
             }
         } else if (this.jtpCenter.getSelectedComponent().equals(this.jspSubCategorias)) {
-            mostrarDialogoCreacionSubCategoria(MODIFICAR_SUB_CATEGORIA);
+            int fila = jtSubCategorias.getSelectedRow();
+            if (fila < 0) {
+                return;
+            }
+            ProductoCategoria prodCat = productoSubCategoriaTm.getList().get(fila);
+            mostrarDialogoCreacionSubCategoria(MODIFICAR_SUB_CATEGORIA, prodCat);
         }
         gestion_producto.actualizarVista();
     }
@@ -459,6 +463,18 @@ public class ProductoParametros extends javax.swing.JDialog implements ActionLis
                 this.jbEliminar.setEnabled(false);
             }
         }
+
+        if (e.getSource().equals(this.jtSubCategorias)) {
+            int fila = this.jtSubCategorias.rowAtPoint(e.getPoint());
+            int columna = this.jtSubCategorias.columnAtPoint(e.getPoint());
+            if ((fila > -1) && (columna > -1)) {
+                this.jbModificar.setEnabled(true);
+                this.jbEliminar.setEnabled(true);
+            } else {
+                this.jbModificar.setEnabled(false);
+                this.jbEliminar.setEnabled(false);
+            }
+        }
     }
 
     @Override
@@ -495,16 +511,8 @@ public class ProductoParametros extends javax.swing.JDialog implements ActionLis
     public void keyReleased(KeyEvent e) {
     }
 
-    public void mostrarDialogoCreacionSubCategoria(int tipo) {
+    public void mostrarDialogoCreacionSubCategoria(int tipo, ProductoCategoria categoria) {
         String titulo = "Crear/Modificar sub categoría";
-        switch (tipo) {
-            case CREAR_SUB_CATEGORIA:
-                titulo = "Crear sub categoría";
-                break;
-            case MODIFICAR_SUB_CATEGORIA:
-                titulo = "Modificar sub categoría";
-                break;
-        }
         JPanel fields = new JPanel(new GridLayout(3, 1));
         JTextField info = new JTextField("Seleccione la categoría e ingrese el nombre de la subcategoría");
         info.setEditable(false);
@@ -512,6 +520,17 @@ public class ProductoParametros extends javax.swing.JDialog implements ActionLis
         JComboBox<ProductoCategoria> comboBox = new JComboBox();
         for (ProductoCategoria productoCategoria : productoCategoriaTm.getList()) {
             comboBox.addItem(productoCategoria);
+        }
+        switch (tipo) {
+            case CREAR_SUB_CATEGORIA:
+                titulo = "Crear sub categoría";
+                break;
+            case MODIFICAR_SUB_CATEGORIA:
+                titulo = "Modificar sub categoría";
+                nombreSubCategoria.setText(categoria.getDescripcion());
+                comboBox.setSelectedItem(categoria);
+                comboBox.setEditable(false);
+                break;
         }
         fields.add(info);
         fields.add(comboBox);
