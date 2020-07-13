@@ -7,20 +7,24 @@ package Producto;
 import DB.DB_Producto;
 import DB.DB_Proveedor;
 import DB.DB_manager;
+import Entities.ProductoCategoria;
 import ModeloTabla.ProductoCategoriaTableModel;
 import ModeloTabla.ProductoSubCategoriaTableModel;
 import bakermanager.C_inicio;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
+import javax.swing.JTextField;
 import net.miginfocom.swing.MigLayout;
 
 /**
@@ -28,6 +32,8 @@ import net.miginfocom.swing.MigLayout;
  * @author Ramiro Ferreira
  */
 public class ProductoParametros extends javax.swing.JDialog implements ActionListener, MouseListener, KeyListener {
+
+    private static final int MAX_LENGTH = 50, CREAR_SUB_CATEGORIA = 1, MODIFICAR_SUB_CATEGORIA = 2;
 
     private javax.swing.JButton jbCrear, jbModificar, jbEliminar;
     private JTabbedPane jtpCenter;
@@ -65,8 +71,8 @@ public class ProductoParametros extends javax.swing.JDialog implements ActionLis
 
     private void initializarLogica() {
         this.productoCategoriaTm = new ProductoCategoriaTableModel();
-        this.productoCategoriaTm.setList(DB_Producto.obtenerProductoCategoria());
         this.productoSubCategoriaTm = new ProductoSubCategoriaTableModel();
+        this.productoCategoriaTm.setList(DB_Producto.obtenerProductoCategoria());
         this.productoSubCategoriaTm.setList(DB_Producto.obtenerProductoSubCategoria());
     }
 
@@ -143,8 +149,8 @@ public class ProductoParametros extends javax.swing.JDialog implements ActionLis
             JOptionPane.showMessageDialog(this, "Inserte 1 caracter por lo menos.", "Alerta", JOptionPane.ERROR_MESSAGE);
             return;
         }
-        if (m.length() > 30) {
-            JOptionPane.showMessageDialog(this, "Máximo permitido 30 caracteres.", "Alerta", JOptionPane.ERROR_MESSAGE);
+        if (m.length() > MAX_LENGTH) {
+            JOptionPane.showMessageDialog(this, "Máximo permitido " + MAX_LENGTH + " caracteres.", "Alerta", JOptionPane.ERROR_MESSAGE);
             return;
         }
         Integer b = DB_manager.obtenerIdMarca(m);
@@ -164,8 +170,8 @@ public class ProductoParametros extends javax.swing.JDialog implements ActionLis
             JOptionPane.showMessageDialog(this, "Inserte 1 caracter por lo menos.", "Alerta", JOptionPane.ERROR_MESSAGE);
             return;
         }
-        if (m.length() > 30) {
-            JOptionPane.showMessageDialog(this, "Máximo permitido 30 caracteres.", "Alerta", JOptionPane.ERROR_MESSAGE);
+        if (m.length() > MAX_LENGTH) {
+            JOptionPane.showMessageDialog(this, "Máximo permitido " + MAX_LENGTH + " caracteres.", "Alerta", JOptionPane.ERROR_MESSAGE);
             return;
         }
         Integer b = DB_manager.obtenerIdMarca(m);
@@ -207,8 +213,8 @@ public class ProductoParametros extends javax.swing.JDialog implements ActionLis
             JOptionPane.showMessageDialog(this, "Inserte 1 caracter por lo menos.", "Alerta", JOptionPane.ERROR_MESSAGE);
             return;
         }
-        if (c.length() > 30) {
-            JOptionPane.showMessageDialog(this, "Máximo permitido 30 caracteres.", "Alerta", JOptionPane.ERROR_MESSAGE);
+        if (c.length() > MAX_LENGTH) {
+            JOptionPane.showMessageDialog(this, "Máximo permitido " + MAX_LENGTH + " caracteres.", "Alerta", JOptionPane.ERROR_MESSAGE);
             return;
         }
         Integer b = DB_manager.obtenerIdProductoCategoria(c);
@@ -228,13 +234,17 @@ public class ProductoParametros extends javax.swing.JDialog implements ActionLis
             JOptionPane.showMessageDialog(this, "Inserte 1 caracter por lo menos.", "Alerta", JOptionPane.ERROR_MESSAGE);
             return;
         }
-        if (c.length() > 30) {
-            JOptionPane.showMessageDialog(this, "Máximo permitido 30 caracteres.", "Alerta", JOptionPane.ERROR_MESSAGE);
+        if (c.length() > MAX_LENGTH) {
+            JOptionPane.showMessageDialog(this, "Máximo permitido " + MAX_LENGTH + " caracteres.", "Alerta", JOptionPane.ERROR_MESSAGE);
             return;
         }
         Integer b = DB_manager.obtenerIdProductoCategoria(c);
         if (b == null) {
-            int idCategoria = Integer.valueOf(String.valueOf(this.jtCategorias.getValueAt(jtCategorias.getSelectedRow(), 0)));
+            if (jtCategorias.getSelectedRow() < 0) {
+                JOptionPane.showMessageDialog(this, "Seleccione nuevamente la Categoría a modificar.", "Alerta", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            int idCategoria = productoCategoriaTm.getList().get(jtCategorias.getSelectedRow()).getId();
             DB_Proveedor.modificarCategoria(idCategoria, categoria);
             this.jbModificar.setEnabled(false);
             this.jbEliminar.setEnabled(false);
@@ -245,7 +255,11 @@ public class ProductoParametros extends javax.swing.JDialog implements ActionLis
     }
 
     private void eliminarCategoria() {
-        int idCategoria = Integer.valueOf(String.valueOf(this.jtCategorias.getValueAt(jtCategorias.getSelectedRow(), 0)));
+        if (jtCategorias.getSelectedRow() < 0) {
+            JOptionPane.showMessageDialog(this, "Seleccione nuevamente la Categoría a eliminar.", "Alerta", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        int idCategoria = productoCategoriaTm.getList().get(jtCategorias.getSelectedRow()).getId();
         boolean m = DB_manager.productCategoriaEnUso(idCategoria);
         if (m) {
             int option = JOptionPane.showConfirmDialog(this, "¿Desea confirmar esta operación?", "Atención", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
@@ -255,6 +269,87 @@ public class ProductoParametros extends javax.swing.JDialog implements ActionLis
                     this.jbModificar.setEnabled(false);
                     this.jbEliminar.setEnabled(false);
                     this.productoCategoriaTm.setList(DB_Producto.obtenerProductoCategoria());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    return;
+                }
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "Existe productos que se encuentran utilizando la categoría seleccionada.", "Alerta", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void agregarSubCategoria(String subCategoria, ProductoCategoria padre) {
+        String c = subCategoria.trim();
+        if (c.length() < 1 || c.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Inserte 1 caracter por lo menos.", "Alerta", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        if (c.length() > MAX_LENGTH) {
+            JOptionPane.showMessageDialog(this, "Máximo permitido 30 caracteres.", "Alerta", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        boolean b = DB_manager.existeSubCategoria(c, padre.getId());
+        System.out.println("Producto.ProductoParametros.agregarSubCategoria().b: " + b);
+        if (!b) {
+            DB_manager.insertarSubCategoria(c, padre);
+            this.jbModificar.setEnabled(false);
+            this.jbEliminar.setEnabled(false);
+            this.productoSubCategoriaTm.setList(DB_Producto.obtenerProductoSubCategoria());
+        } else {
+            JOptionPane.showMessageDialog(this, "Sub Categoría existente.", "Alerta", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void modificarSubCategoria(String categoria, ProductoCategoria padre) {
+        String c = categoria.trim();
+        if (c.length() < 1 || c.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Inserte 1 caracter por lo menos.", "Alerta", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        if (c.length() > MAX_LENGTH) {
+            JOptionPane.showMessageDialog(this, "Máximo permitido " + MAX_LENGTH + " caracteres.", "Alerta", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        if (jtCategorias.getSelectedRow() < 0) {
+            JOptionPane.showMessageDialog(this, "Seleccione nuevamente la Categoría a modificar.", "Alerta", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        boolean b = DB_manager.existeSubCategoria(c, padre.getId());
+        int idCategoria = productoSubCategoriaTm.getList().get(jtSubCategorias.getSelectedRow()).getId();
+        if (!b) {
+            DB_Proveedor.modificarCategoria(idCategoria, categoria);
+            this.jbModificar.setEnabled(false);
+            this.jbEliminar.setEnabled(false);
+            this.productoCategoriaTm.setList(DB_Producto.obtenerProductoCategoria());
+        } else {
+            String subCategoria = productoSubCategoriaTm.getList().get(jtSubCategorias.getSelectedRow()).getDescripcion();
+            if (c.toLowerCase().equals(subCategoria.toLowerCase())) {
+                DB_Proveedor.modificarCategoria(idCategoria, categoria);
+                this.jbModificar.setEnabled(false);
+                this.jbEliminar.setEnabled(false);
+                this.productoCategoriaTm.setList(DB_Producto.obtenerProductoCategoria());
+            } else {
+                JOptionPane.showMessageDialog(this, "Categoría existente.", "Alerta", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
+
+    private void eliminarSubCategoria() {
+        if (jtSubCategorias.getSelectedRow() < 0) {
+            JOptionPane.showMessageDialog(this, "Seleccione nuevamente la Sub Categoría a eliminar.", "Alerta", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        int idCategoria = productoSubCategoriaTm.getList().get(jtSubCategorias.getSelectedRow()).getId();
+        boolean m = DB_manager.productCategoriaEnUso(idCategoria);
+        if (m) {
+            int option = JOptionPane.showConfirmDialog(this, "¿Desea confirmar esta operación?", "Atención", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+            if (option == JOptionPane.YES_OPTION) {
+                try {
+                    DB_Proveedor.eliminarProductoCategoria(idCategoria);
+                    this.jbModificar.setEnabled(false);
+                    this.jbEliminar.setEnabled(false);
+                    this.productoSubCategoriaTm.setList(DB_Producto.obtenerProductoSubCategoria());
                 } catch (Exception e) {
                     e.printStackTrace();
                     return;
@@ -280,6 +375,8 @@ public class ProductoParametros extends javax.swing.JDialog implements ActionLis
                     agregarCategoria(rubro);
                 }
             }
+        } else if (this.jtpCenter.getSelectedComponent().equals(this.jspSubCategorias)) {
+            mostrarDialogoCreacionSubCategoria(CREAR_SUB_CATEGORIA);
         }
         gestion_producto.actualizarVista();
     }
@@ -299,6 +396,8 @@ public class ProductoParametros extends javax.swing.JDialog implements ActionLis
                     modificarCategoria(rubro);
                 }
             }
+        } else if (this.jtpCenter.getSelectedComponent().equals(this.jspSubCategorias)) {
+            mostrarDialogoCreacionSubCategoria(MODIFICAR_SUB_CATEGORIA);
         }
         gestion_producto.actualizarVista();
     }
@@ -308,6 +407,8 @@ public class ProductoParametros extends javax.swing.JDialog implements ActionLis
             eliminarMarca();
         } else if (this.jtpCenter.getSelectedComponent().equals(this.jspCategorias)) {
             eliminarCategoria();
+        } else if (this.jtpCenter.getSelectedComponent().equals(this.jspSubCategorias)) {
+            eliminarSubCategoria();
         }
         gestion_producto.actualizarVista();
     }
@@ -392,5 +493,44 @@ public class ProductoParametros extends javax.swing.JDialog implements ActionLis
 
     @Override
     public void keyReleased(KeyEvent e) {
+    }
+
+    public void mostrarDialogoCreacionSubCategoria(int tipo) {
+        String titulo = "Crear/Modificar sub categoría";
+        switch (tipo) {
+            case CREAR_SUB_CATEGORIA:
+                titulo = "Crear sub categoría";
+                break;
+            case MODIFICAR_SUB_CATEGORIA:
+                titulo = "Modificar sub categoría";
+                break;
+        }
+        JPanel fields = new JPanel(new GridLayout(3, 1));
+        JTextField info = new JTextField("Seleccione la categoría e ingrese el nombre de la subcategoría");
+        info.setEditable(false);
+        JTextField nombreSubCategoria = new JTextField(10);
+        JComboBox<ProductoCategoria> comboBox = new JComboBox();
+        for (ProductoCategoria productoCategoria : productoCategoriaTm.getList()) {
+            comboBox.addItem(productoCategoria);
+        }
+        fields.add(info);
+        fields.add(comboBox);
+        fields.add(nombreSubCategoria);
+
+        int result = JOptionPane.showConfirmDialog(this, fields, titulo, JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+        switch (result) {
+            case JOptionPane.OK_OPTION:
+                System.out.println("nombreSubCategoria: " + nombreSubCategoria.getText());
+                System.out.println("comboBox: " + comboBox.getSelectedItem());
+                switch (tipo) {
+                    case CREAR_SUB_CATEGORIA:
+                        agregarSubCategoria(nombreSubCategoria.getText(), comboBox.getItemAt(comboBox.getSelectedIndex()));
+                        break;
+                    case MODIFICAR_SUB_CATEGORIA:
+                        modificarSubCategoria(nombreSubCategoria.getText(), comboBox.getItemAt(comboBox.getSelectedIndex()));
+                        break;
+                }
+                break;
+        }
     }
 }

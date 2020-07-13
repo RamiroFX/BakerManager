@@ -877,6 +877,26 @@ public class DB_manager {
         return idCategoria;
     }
 
+    public static boolean existeSubCategoria(String subCategoria, int idPadre) {
+        boolean enUso = false;
+        String q = "SELECT DESCRIPCION "
+                + "FROM PRODUCTO_CATEGORIA "
+                + "WHERE LOWER(DESCRIPCION) LIKE ? "
+                + "AND id_padre = ?;";
+        System.out.println("DB.DB_manager.existeSubCategoria()");
+        System.out.println(q);
+        try {
+            pst = con.prepareStatement(q, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            pst.setString(1, subCategoria.toLowerCase());
+            pst.setInt(2, idPadre);
+            rs = pst.executeQuery();
+            return rs.isBeforeFirst();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return enUso;
+    }
+
     public static boolean productCategoriaEnUso(int idCategoria) {
         boolean enUso = false;
         String q = "SELECT DISTINCT ID_CATEGORIA "
@@ -1773,6 +1793,34 @@ public class DB_manager {
                 }
             }
             Logger lgr = Logger.getLogger(DB_Proveedor.class
+                    .getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        }
+    }
+
+    public static void insertarSubCategoria(String categoria, ProductoCategoria padre) {
+        String insert = "INSERT INTO PRODUCTO_CATEGORIA("
+                + "DESCRIPCION, ID_PADRE"
+                + ")VALUES (?, ?);";
+        try {
+            DB_manager.habilitarTransaccionManual();
+            pst = DB_manager.getConection().prepareStatement(insert);
+            pst.setString(1, categoria);
+            pst.setInt(2, padre.getId());
+            pst.executeUpdate();
+            DB_manager.establecerTransaccion();
+        } catch (SQLException ex) {
+            System.out.println(ex.getNextException());
+            if (DB_manager.getConection() != null) {
+                try {
+                    DB_manager.getConection().rollback();
+                } catch (SQLException ex1) {
+                    Logger lgr = Logger.getLogger(DB_manager.class
+                            .getName());
+                    lgr.log(Level.WARNING, ex1.getMessage(), ex1);
+                }
+            }
+            Logger lgr = Logger.getLogger(DB_manager.class
                     .getName());
             lgr.log(Level.SEVERE, ex.getMessage(), ex);
         }

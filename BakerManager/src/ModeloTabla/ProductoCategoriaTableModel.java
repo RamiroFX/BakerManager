@@ -69,6 +69,10 @@ public class ProductoCategoriaTableModel extends AbstractTableModel {
         updateTable();
     }
 
+    public List<ProductoCategoria> getList() {
+        return list;
+    }
+
     public void updateTable() {
         fireTableDataChanged();
     }

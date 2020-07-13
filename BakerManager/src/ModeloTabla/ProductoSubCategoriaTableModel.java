@@ -30,7 +30,7 @@ public class ProductoSubCategoriaTableModel extends AbstractTableModel {
 
     @Override
     public Class<?> getColumnClass(int columnIndex) {
-         return getValueAt(0, columnIndex).getClass();
+        return getValueAt(0, columnIndex).getClass();
     }
 
     @Override
@@ -70,6 +70,10 @@ public class ProductoSubCategoriaTableModel extends AbstractTableModel {
     public void setList(List<ProductoCategoria> list) {
         this.list = list;
         updateTable();
+    }
+
+    public List<ProductoCategoria> getList() {
+        return this.list;
     }
 
     public void updateTable() {
