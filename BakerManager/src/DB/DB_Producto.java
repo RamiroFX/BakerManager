@@ -218,7 +218,7 @@ public class DB_Producto {
         return rstm;
     }
 
-    public static ResultSetTableModel consultaSimpleProducto(String descripcion, String proveedor, String marca, String rubro, String impuesto, String estado, String ordenarPor, String existencia) {
+    public static ResultSetTableModel consultaSimpleProducto(String descripcion, String proveedor, String marca, int idCategoria, int idSubCategoria, String impuesto, String estado, String ordenarPor, String existencia) {
         ResultSetTableModel rstm = null;
         try {
             if (DB_manager.getConection() == null) {
@@ -272,12 +272,19 @@ public class DB_Producto {
             } else {
                 marc = "AND PROD.ID_MARCA = (SELECT MARC.ID_MARCA FROM MARCA MARC WHERE MARC.DESCRIPCION LIKE '" + marca + "' )";
             }
-
-            String rubr;
-            if ("Todos".equals(rubro)) {
-                rubr = "";
+            String rubr = "";
+            if (idCategoria > 0) {
+                if (idSubCategoria > 0) {
+                    rubr = "AND PROD.ID_CATEGORIA = " + idSubCategoria + "";
+                } else {
+                    rubr = "AND PROD.ID_CATEGORIA IN (SELECT PRCA.ID_PRODUCTO_CATEGORIA FROM PRODUCTO_CATEGORIA PRCA WHERE PRCA.ID_PADRE = " + idCategoria + ")";
+                }
             } else {
-                rubr = "AND PROD.ID_CATEGORIA = (SELECT PRCA.ID_PRODUCTO_CATEGORIA FROM PRODUCTO_CATEGORIA PRCA WHERE PRCA.DESCRIPCION LIKE '" + rubro + "' )";
+                if (idSubCategoria > 0) {
+                    rubr = "AND PROD.ID_CATEGORIA = " + idSubCategoria + "";
+                } else {
+                    rubr = "";
+                }
             }
             String estad;
             if ("Todos".equals(estado)) {

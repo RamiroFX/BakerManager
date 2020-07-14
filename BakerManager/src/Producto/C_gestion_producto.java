@@ -151,6 +151,7 @@ public class C_gestion_producto implements ActionListener, KeyListener, MouseLis
 //                this.vista.jbEliminar.addActionListener(this);
 //            }
         }
+        this.vista.jcbCategoria.addActionListener(this);
         this.vista.jtfBuscar.addKeyListener(this);
         this.vista.jbBuscar.addKeyListener(this);
         this.vista.jbBorrar.addKeyListener(this);
@@ -175,6 +176,8 @@ public class C_gestion_producto implements ActionListener, KeyListener, MouseLis
                 String desc = vista.jtfBuscar.getText();
                 String marca = vista.jcbMarca.getSelectedItem().toString();
                 String rubro = vista.jcbCategoria.getSelectedItem().toString();
+                ProductoCategoria categoria = vista.jcbCategoria.getItemAt(vista.jcbCategoria.getSelectedIndex());
+                ProductoCategoria subCategoria = vista.jcbSubCategoria.getItemAt(vista.jcbSubCategoria.getSelectedIndex());
                 String impuesto = vista.jcbImpuesto.getSelectedItem().toString();
                 String estado = vista.jcbEstado.getSelectedItem().toString();
                 String orderBy = vista.jcbOrderBy.getSelectedItem().toString();
@@ -185,7 +188,7 @@ public class C_gestion_producto implements ActionListener, KeyListener, MouseLis
                  * para los resultados del query.
                  */
 
-                vista.jtProducto.setModel(DB_Producto.consultaSimpleProducto(desc.toLowerCase(), proveedor, marca, rubro, impuesto, estado, orderBy, existence));
+                vista.jtProducto.setModel(DB_Producto.consultaSimpleProducto(desc.toLowerCase(), proveedor, marca, categoria.getId(), subCategoria.getId(), impuesto, estado, orderBy, existence));
                 Utilities.c_packColumn.packColumns(vista.jtProducto, 1);
             }
         });
@@ -295,6 +298,17 @@ public class C_gestion_producto implements ActionListener, KeyListener, MouseLis
         });
     }
 
+    private void actualizarJCBsubCategoria() {
+        int index = this.vista.jcbCategoria.getSelectedIndex();
+        ProductoCategoria pc = this.vista.jcbCategoria.getItemAt(index);
+        this.vista.jcbSubCategoria.removeAllItems();
+        ProductoCategoria unaSubCategoria = new ProductoCategoria(-1, "Todas");
+        this.vista.jcbSubCategoria.addItem(unaSubCategoria);
+        for (ProductoCategoria productoCategoria : DB_Producto.obtenerProductoSubCategoria(pc.getId())) {
+            this.vista.jcbSubCategoria.addItem(productoCategoria);
+        }
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == this.vista.jtfBuscar) {
@@ -325,6 +339,8 @@ public class C_gestion_producto implements ActionListener, KeyListener, MouseLis
         } else if (e.getSource() == this.vista.jbProveedor) {
             Seleccionar_proveedor sp = new Seleccionar_proveedor(this);
             sp.mostrarVista();
+        } else if (e.getSource() == this.vista.jcbCategoria) {
+            actualizarJCBsubCategoria();
         }
     }
 
