@@ -883,8 +883,6 @@ public class DB_manager {
                 + "FROM PRODUCTO_CATEGORIA "
                 + "WHERE LOWER(DESCRIPCION) LIKE ? "
                 + "AND id_padre = ?;";
-        System.out.println("DB.DB_manager.existeSubCategoria()");
-        System.out.println(q);
         try {
             pst = con.prepareStatement(q, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             pst.setString(1, subCategoria.toLowerCase());

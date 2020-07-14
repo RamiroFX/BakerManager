@@ -4,6 +4,7 @@
  */
 package Producto;
 
+import Entities.ProductoCategoria;
 import Interface.CommonFormat;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -35,7 +36,8 @@ public class V_gestion_producto extends JInternalFrame {
     public JTextField jtfBuscar, jtfProducto, jtfCodigo, jtfPrecioCosto,
             jtfPrecioVta, jtfPrecioMayorista, jtfImpuesto, jtfMarca,
             jtfSuspendido, jtfRubro, jtfCantActual, jtfObservacion, jtfProveedor;
-    public JComboBox jcbImpuesto, jcbMarca, jcbEstado, jcbRubro, jcbOrderBy, jcbExistence;
+    public JComboBox jcbImpuesto, jcbMarca, jcbEstado, jcbOrderBy, jcbExistence;
+    public JComboBox<ProductoCategoria> jcbCategoria, jcbSubCategoria;
     private JPanel jpTop, jpBotonesTop, jpJtextFieldTop, jpMid, jpBot, jpMid1;
     public JTable jtProducto;
     private JSplitPane jspMid;
@@ -66,13 +68,16 @@ public class V_gestion_producto extends JInternalFrame {
         jcbMarca = new JComboBox();
         jcbEstado = new JComboBox();
         jcbOrderBy = new JComboBox();
-        jcbRubro = new JComboBox();
+        jcbCategoria = new JComboBox();
+        jcbSubCategoria = new JComboBox();
         jpFiltros.add(new JLabel("Existencia:"));
         jpFiltros.add(jcbExistence);
         jpFiltros.add(new JLabel("Marca:"));
         jpFiltros.add(jcbMarca);
-        jpFiltros.add(new JLabel("Rubro:"));
-        jpFiltros.add(jcbRubro, "wrap");
+        jpFiltros.add(new JLabel("Categoría:"));
+        jpFiltros.add(jcbCategoria);
+        jpFiltros.add(new JLabel("Sub-Categoría:"));
+        jpFiltros.add(jcbSubCategoria, "wrap");
         jpFiltros.add(new JLabel("Impuesto:"));
         jpFiltros.add(jcbImpuesto);
         jpFiltros.add(new JLabel("Estado:"));

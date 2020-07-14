@@ -9,6 +9,7 @@ import DB.DB_manager;
 import Entities.M_menu_item;
 import Entities.M_producto;
 import Entities.M_proveedor;
+import Entities.ProductoCategoria;
 import Excel.ExportarProducto;
 import MenuPrincipal.DatosUsuario;
 import Proveedor.Seleccionar_proveedor;
@@ -22,7 +23,6 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.beans.PropertyVetoException;
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.ArrayList;
@@ -70,10 +70,17 @@ public class C_gestion_producto implements ActionListener, KeyListener, MouseLis
         for (int i = 0; i < marca.size(); i++) {
             this.vista.jcbMarca.addItem(marca.get(i));
         }
-        Vector rubro = DB_manager.obtenerCategoria();
-        this.vista.jcbRubro.addItem("Todos");
-        for (int i = 0; i < rubro.size(); i++) {
-            this.vista.jcbRubro.addItem(rubro.get(i));
+        ArrayList<ProductoCategoria> categorias = new ArrayList<>(DB_Producto.obtenerProductoCategoria());
+        ProductoCategoria unaCategoria = new ProductoCategoria(-1, "Todas");
+        this.vista.jcbCategoria.addItem(unaCategoria);
+        for (int i = 0; i < categorias.size(); i++) {
+            this.vista.jcbCategoria.addItem(categorias.get(i));
+        }
+        ArrayList<ProductoCategoria> subCategorias = new ArrayList<>(DB_Producto.obtenerProductoSubCategoria(-1));
+        ProductoCategoria unaSubCategoria = new ProductoCategoria(-1, "Todas");
+        this.vista.jcbSubCategoria.addItem(unaSubCategoria);
+        for (int i = 0; i < subCategorias.size(); i++) {
+            this.vista.jcbSubCategoria.addItem(subCategorias.get(i));
         }
         Vector impuesto = DB_manager.obtenerImpuesto();
         this.vista.jcbImpuesto.addItem("Todos");
@@ -167,7 +174,7 @@ public class C_gestion_producto implements ActionListener, KeyListener, MouseLis
             public void run() {
                 String desc = vista.jtfBuscar.getText();
                 String marca = vista.jcbMarca.getSelectedItem().toString();
-                String rubro = vista.jcbRubro.getSelectedItem().toString();
+                String rubro = vista.jcbCategoria.getSelectedItem().toString();
                 String impuesto = vista.jcbImpuesto.getSelectedItem().toString();
                 String estado = vista.jcbEstado.getSelectedItem().toString();
                 String orderBy = vista.jcbOrderBy.getSelectedItem().toString();
@@ -219,11 +226,20 @@ public class C_gestion_producto implements ActionListener, KeyListener, MouseLis
         for (int i = 0; i < marca.size(); i++) {
             this.vista.jcbMarca.addItem(marca.get(i));
         }
-        Vector rubro = DB_manager.obtenerCategoria();
-        this.vista.jcbRubro.removeAllItems();
-        this.vista.jcbRubro.addItem("Todos");
-        for (int i = 0; i < rubro.size(); i++) {
-            this.vista.jcbRubro.addItem(rubro.get(i));
+        this.vista.jcbCategoria.removeAllItems();
+        this.vista.jcbSubCategoria.removeAllItems();
+
+        ArrayList<ProductoCategoria> categorias = new ArrayList<>(DB_Producto.obtenerProductoCategoria());
+        ProductoCategoria unaCategoria = new ProductoCategoria(-1, "Todas");
+        this.vista.jcbCategoria.addItem(unaCategoria);
+        for (int i = 0; i < categorias.size(); i++) {
+            this.vista.jcbCategoria.addItem(categorias.get(i));
+        }
+        ArrayList<ProductoCategoria> subCategorias = new ArrayList<>(DB_Producto.obtenerProductoSubCategoria(-1));
+        ProductoCategoria unaSubCategoria = new ProductoCategoria(-1, "Todas");
+        this.vista.jcbSubCategoria.addItem(unaSubCategoria);
+        for (int i = 0; i < subCategorias.size(); i++) {
+            this.vista.jcbSubCategoria.addItem(subCategorias.get(i));
         }
         Vector impuesto = DB_manager.obtenerImpuesto();
         this.vista.jcbImpuesto.removeAllItems();
@@ -266,7 +282,7 @@ public class C_gestion_producto implements ActionListener, KeyListener, MouseLis
             public void run() {
                 String desc = vista.jtfBuscar.getText();
                 String marca = vista.jcbMarca.getSelectedItem().toString();
-                String rubro = vista.jcbRubro.getSelectedItem().toString();
+                String rubro = vista.jcbCategoria.getSelectedItem().toString();
                 String impuesto = vista.jcbImpuesto.getSelectedItem().toString();
                 String estado = vista.jcbEstado.getSelectedItem().toString();
                 String orderBy = vista.jcbOrderBy.getSelectedItem().toString();

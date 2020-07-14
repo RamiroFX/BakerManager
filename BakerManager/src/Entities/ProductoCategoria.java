@@ -49,7 +49,7 @@ public class ProductoCategoria {
 
     @Override
     public String toString() {
-        return getId() + " - " + getDescripcion();
+        return getDescripcion();
     }
 
     public ProductoCategoria getPadre() {
@@ -69,6 +69,26 @@ public class ProductoCategoria {
             return false;
         }
         return false;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        // If the object is compared with itself then return true   
+        if (o == this) {
+            return true;
+        }
+
+        /* Check if o is an instance of Complex or not 
+          "null instanceof [type]" also returns false */
+        if (!(o instanceof ProductoCategoria)) {
+            return false;
+        }
+
+        // typecast o to Complex so that we can compare data members  
+        ProductoCategoria c = (ProductoCategoria) o;
+
+        // Compare the data members and return accordingly  
+        return this.getId() == c.getId();
     }
 
 }

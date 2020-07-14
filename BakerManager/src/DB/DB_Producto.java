@@ -991,6 +991,56 @@ public class DB_Producto {
         return list;
     }
 
+    public static List<ProductoCategoria> obtenerProductoSubCategoria(int idPadre) {
+        List<ProductoCategoria> list = null;
+        String q = "SELECT P.id_producto_categoria, "
+                + "P.descripcion, "
+                + "P.id_padre,  "
+                + "(SELECT producto_categoria.descripcion FROM producto_categoria WHERE producto_categoria.id_producto_categoria = P.id_padre ) \"DESCRIPCION_PADRE\" "
+                + "FROM producto_categoria P "
+                + "WHERE  ";
+        if (idPadre > 0) {
+            q = q + "P.id_padre = ? ";
+        } else {
+            q = q + "P.id_padre > 0 ";
+        }
+        q = q + "ORDER BY \"DESCRIPCION_PADRE\";";
+        try {
+            pst = DB_manager.getConection().prepareStatement(q, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            if (idPadre > 0) {
+                pst.setInt(1, idPadre);
+            }
+            rs = pst.executeQuery();
+            list = new ArrayList();
+            while (rs.next()) {
+                ProductoCategoria padre = new ProductoCategoria();
+                padre.setId(rs.getInt("id_padre"));
+                padre.setDescripcion(rs.getString("descripcion_padre"));
+                ProductoCategoria tiop = new ProductoCategoria();
+                tiop.setId(rs.getInt("id_producto_categoria"));
+                tiop.setDescripcion(rs.getString("descripcion"));
+                tiop.setPadre(padre);
+                list.add(tiop);
+            }
+        } catch (SQLException ex) {
+            Logger lgr = Logger.getLogger(DB_Producto.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (st != null) {
+                    st.close();
+                }
+            } catch (SQLException ex) {
+                Logger lgr = Logger.getLogger(DB_Producto.class.getName());
+                lgr.log(Level.WARNING, ex.getMessage(), ex);
+            }
+        }
+        return list;
+    }
+
     public static ArrayList<E_productoClasificacion> obtenerProductoCategoriaBauplast() {
         ArrayList<E_productoClasificacion> list = null;
         String q = "SELECT *  "
