@@ -44,7 +44,8 @@ public class M_seleccionarProductoPorClasif {
     }
 
     public ArrayList<ProductoCategoria> obtenerCategorias() {
-        return DB_manager.obtenerCategorias();
+        //return DB_manager.obtenerCategorias();
+        return new ArrayList<>(DB_Producto.obtenerProductoCategoria());
     }
 
     public void consultarRollos(String descripcion, Estado estado, String buscarPor, ProductoCategoria categoria) {

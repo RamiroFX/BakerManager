@@ -1118,16 +1118,8 @@ public class DB_Producto {
                     productoClasificacion = "";
                     break;
                 }
-                case E_productoClasificacion.PROD_TERMINADO: {
-                    productoClasificacion = "AND PROD.ID_CATEGORIA = " + E_productoClasificacion.PROD_TERMINADO + " ";
-                    break;
-                }
-                case E_productoClasificacion.MATERIA_PRIMA: {
-                    productoClasificacion = "AND PROD.ID_CATEGORIA = " + E_productoClasificacion.MATERIA_PRIMA + " ";
-                    break;
-                }
                 default: {
-                    productoClasificacion = "AND PROD.ID_CATEGORIA = " + clasificacion.getId() + " ";
+                    productoClasificacion = "AND PROD.ID_CATEGORIA IN (SELECT PRCA.ID_PRODUCTO_CATEGORIA FROM PRODUCTO_CATEGORIA PRCA WHERE PRCA.ID_PADRE = " + clasificacion.getId() + ")";
                     break;
                 }
             }
