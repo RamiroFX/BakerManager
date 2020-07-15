@@ -229,16 +229,16 @@ public class C_gestion_producto implements ActionListener, KeyListener, MouseLis
         for (int i = 0; i < marca.size(); i++) {
             this.vista.jcbMarca.addItem(marca.get(i));
         }
-        this.vista.jcbCategoria.removeAllItems();
-        this.vista.jcbSubCategoria.removeAllItems();
 
         ArrayList<ProductoCategoria> categorias = new ArrayList<>(DB_Producto.obtenerProductoCategoria());
+        this.vista.jcbCategoria.removeAllItems();
         ProductoCategoria unaCategoria = new ProductoCategoria(-1, "Todas");
         this.vista.jcbCategoria.addItem(unaCategoria);
         for (int i = 0; i < categorias.size(); i++) {
             this.vista.jcbCategoria.addItem(categorias.get(i));
         }
         ArrayList<ProductoCategoria> subCategorias = new ArrayList<>(DB_Producto.obtenerProductoSubCategoria(-1));
+        this.vista.jcbSubCategoria.removeAllItems();
         ProductoCategoria unaSubCategoria = new ProductoCategoria(-1, "Todas");
         this.vista.jcbSubCategoria.addItem(unaSubCategoria);
         for (int i = 0; i < subCategorias.size(); i++) {
@@ -300,6 +300,10 @@ public class C_gestion_producto implements ActionListener, KeyListener, MouseLis
 
     private void actualizarJCBsubCategoria() {
         int index = this.vista.jcbCategoria.getSelectedIndex();
+        if (index < 0) {
+            //para prevenir nullpointer exception mientras se actualiza la lista
+            return;
+        }
         ProductoCategoria pc = this.vista.jcbCategoria.getItemAt(index);
         this.vista.jcbSubCategoria.removeAllItems();
         ProductoCategoria unaSubCategoria = new ProductoCategoria(-1, "Todas");

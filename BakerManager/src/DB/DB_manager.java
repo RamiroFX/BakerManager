@@ -910,6 +910,22 @@ public class DB_manager {
         }
         return enUso;
     }
+    
+    public static boolean productoSubCategoriaEnUso(int idCategoria) {
+        boolean enUso = false;
+        String q = "SELECT DISTINCT ID_PRODUCTO_CATEGORIA "
+                + "FROM PRODUCTO_CATEGORIA "
+                + "WHERE ID_PADRE = ? ;";
+        try {
+            pst = con.prepareStatement(q);
+            pst.setInt(1, idCategoria);
+            rs = pst.executeQuery();
+            return rs.isBeforeFirst();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return enUso;
+    }
 
     public static Integer obtenerIdImpuesto(int impuesto) {
         Integer idMarca = null;

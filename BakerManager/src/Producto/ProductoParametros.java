@@ -267,29 +267,38 @@ public class ProductoParametros extends javax.swing.JDialog implements ActionLis
     }
 
     private void eliminarCategoria() {
+        System.out.println("Producto.ProductoParametros.eliminarCategoria()");
         if (jtCategorias.getSelectedRow() < 0) {
             JOptionPane.showMessageDialog(this, "Seleccione nuevamente la Categoría a eliminar.", "Alerta", JOptionPane.ERROR_MESSAGE);
             return;
         }
         int idCategoria = productoCategoriaTm.getList().get(jtCategorias.getSelectedRow()).getId();
         boolean m = DB_manager.productCategoriaEnUso(idCategoria);
-        if (m) {
-            int option = JOptionPane.showConfirmDialog(this, "¿Desea confirmar esta operación?", "Atención", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-            if (option == JOptionPane.YES_OPTION) {
-                try {
-                    DB_Proveedor.eliminarProductoCategoria(idCategoria);
-                    this.jbModificar.setEnabled(false);
-                    this.jbEliminar.setEnabled(false);
-                    this.productoCategoriaTm.setList(DB_Producto.obtenerProductoCategoria());
-                    actualizarComboBox();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    return;
-                }
-            }
+        boolean n = DB_manager.productoSubCategoriaEnUso(idCategoria);
+        System.out.println("m: " + m);
+        if (n) {
+            System.out.println("Sub categoria en uso: " + n);
         } else {
-            JOptionPane.showMessageDialog(this, "Existe productos que se encuentran utilizando la categoría seleccionada.", "Alerta", JOptionPane.ERROR_MESSAGE);
+            System.out.println("Sub categoria sin uso: " + n);
         }
+//        
+//        if (m || !n) {
+//            int option = JOptionPane.showConfirmDialog(this, "¿Desea confirmar esta operación?", "Atención", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+//            if (option == JOptionPane.YES_OPTION) {
+//                try {
+//                    DB_Proveedor.eliminarProductoCategoria(idCategoria);
+//                    this.jbModificar.setEnabled(false);
+//                    this.jbEliminar.setEnabled(false);
+//                    this.productoCategoriaTm.setList(DB_Producto.obtenerProductoCategoria());
+//                    actualizarComboBox();
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                    return;
+//                }
+//            }
+//        } else {
+//            JOptionPane.showMessageDialog(this, "Existe productos que se encuentran utilizando la categoría seleccionada.", "Alerta", JOptionPane.ERROR_MESSAGE);
+//        }
     }
 
     private void agregarSubCategoria(String subCategoria, ProductoCategoria padre) {
