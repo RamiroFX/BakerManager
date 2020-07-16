@@ -277,7 +277,8 @@ public class DB_Producto {
                 if (idSubCategoria > 0) {
                     rubr = "AND PROD.ID_CATEGORIA = " + idSubCategoria + "";
                 } else {
-                    rubr = "AND PROD.ID_CATEGORIA IN (SELECT PRCA.ID_PRODUCTO_CATEGORIA FROM PRODUCTO_CATEGORIA PRCA WHERE PRCA.ID_PADRE = " + idCategoria + ")";
+                    rubr = "AND (PROD.ID_CATEGORIA IN (SELECT PRCA.ID_PRODUCTO_CATEGORIA FROM PRODUCTO_CATEGORIA PRCA WHERE PRCA.ID_PADRE = " + idCategoria + ") "
+                            + "OR PROD.ID_CATEGORIA IN (" + idCategoria + ")) ";
                 }
             } else {
                 if (idSubCategoria > 0) {
@@ -307,8 +308,8 @@ public class DB_Producto {
                     + existenciaSQL
                     + finalQuery;
             System.out.println("DB.DB_Producto.consultaSimpleProducto()");
-            System.out.println("idCategoria: "+idCategoria);
-            System.out.println("idSubCategoria: "+idSubCategoria);
+            System.out.println("idCategoria: " + idCategoria);
+            System.out.println("idSubCategoria: " + idSubCategoria);
             System.out.println(Query);
             //SELECT PROD.id_producto   "ID producto"  ,  PROD.descripcion  "Descripcion"   FROM producto
             //se crea una sentencia
@@ -1123,7 +1124,8 @@ public class DB_Producto {
                     break;
                 }
                 default: {
-                    productoClasificacion = "AND PROD.ID_CATEGORIA IN (SELECT PRCA.ID_PRODUCTO_CATEGORIA FROM PRODUCTO_CATEGORIA PRCA WHERE PRCA.ID_PADRE = " + clasificacion.getId() + ")";
+                    productoClasificacion = "AND (PROD.ID_CATEGORIA IN (SELECT PRCA.ID_PRODUCTO_CATEGORIA FROM PRODUCTO_CATEGORIA PRCA WHERE PRCA.ID_PADRE = " + clasificacion.getId() + ") "
+                            + "OR PROD.ID_CATEGORIA IN (" + clasificacion.getId() + ")) ";
                     break;
                 }
             }
