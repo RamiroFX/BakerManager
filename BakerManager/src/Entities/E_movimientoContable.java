@@ -14,19 +14,20 @@ import java.util.Date;
 public class E_movimientoContable {
 
     public static final String STR_TIPO_COMPRA = "Factura compra", STR_TIPO_VENTA = "Factura", STR_TIPO_PAGO = "Recibo pago",
-            STR_TIPO_COBRO = "Recibo", STR_TIPO_SALDO_INICIAL = "Saldo inicial";
+            STR_TIPO_COBRO = "Recibo", STR_TIPO_SALDO_INICIAL = "Saldo inicial", STR_TIPO_NOTA_CREDITO = "Nota de crédito";
     public static final int TIPO_COMPRA = 1, TIPO_VENTA = 2, TIPO_PAGO = 3,
-            TIPO_COBRO = 4, TIPO_SALDO_INICIAL = 5;
+            TIPO_COBRO = 4, TIPO_SALDO_INICIAL = 5, TIPO_NOTA_CREDITO = 6;
     private int id;
     private int tipo;
     private String tipoDescripcion;
+    private E_NotaCreditoCabecera notaCredito;
     private E_facturaSinPago venta;
     private M_egreso_cabecera compra;
     private E_cuentaCorrienteCabecera cobro;
     private E_reciboPagoCabecera pago;
     private M_cliente clienteSaldoInicial;
     //AUX
-    private Date fechaSaldoInicial; 
+    private Date fechaSaldoInicial;
 
     public E_movimientoContable() {
     }
@@ -143,6 +144,14 @@ public class E_movimientoContable {
 
     public void setFechaSaldoInicial(Date fechaSaldoInicial) {
         this.fechaSaldoInicial = fechaSaldoInicial;
+    }
+
+    public E_NotaCreditoCabecera getNotaCredito() {
+        return notaCredito;
+    }
+
+    public void setNotaCredito(E_NotaCreditoCabecera notaCredito) {
+        this.notaCredito = notaCredito;
     }
 
 }

@@ -4,6 +4,7 @@
  */
 package DB;
 
+import Entities.E_NotaCreditoCabecera;
 import Entities.E_cuentaCorrienteCabecera;
 import Entities.E_facturaSinPago;
 import Entities.E_movimientoContable;
@@ -1426,8 +1427,6 @@ public class DB_Cliente {
                 + "FROM public.v_documentos_comerciales_ventas "
                 + "WHERE id_cliente = ? "
                 + "ORDER BY fecha;";
-
-        QUERY = QUERY;
         try {
             pst = DB_manager.getConection().prepareStatement(QUERY, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             pst.setInt(1, idCliente);
@@ -1457,7 +1456,7 @@ public class DB_Cliente {
                         fsp.setIdCabecera(rs.getInt("id_cabecera"));
                         fsp.setNroFactura(rs.getInt("nro_factura"));
                         movCont.setTipo(E_movimientoContable.TIPO_VENTA);
-                        movCont.setTipoDescripcion("Factura");
+                        movCont.setTipoDescripcion(E_movimientoContable.STR_TIPO_VENTA);
                         movCont.setVenta(fsp);
                         break;
                     }
@@ -1472,9 +1471,23 @@ public class DB_Cliente {
                         recibo.setId(rs.getInt("id_cabecera"));
                         recibo.setNroRecibo(rs.getInt("nro_recibo"));
                         movCont.setTipo(E_movimientoContable.TIPO_COBRO);
-                        movCont.setTipoDescripcion("Recibo");
+                        movCont.setTipoDescripcion(E_movimientoContable.STR_TIPO_COBRO);
                         movCont.setCobro(recibo);
-
+                        break;
+                    }
+                    case E_movimientoContable.STR_TIPO_NOTA_CREDITO: {
+                        M_cliente cliente = new M_cliente();
+                        cliente.setIdCliente(rs.getInt("id_cliente"));
+                        cliente.setEntidad(rs.getString("cliente"));
+                        E_NotaCreditoCabecera notaCredito = new E_NotaCreditoCabecera();
+                        notaCredito.setCliente(cliente);
+                        notaCredito.setTotal(rs.getInt("pago"));
+                        notaCredito.setTiempo(rs.getDate("fecha"));
+                        notaCredito.setId(rs.getInt("id_cabecera"));
+                        notaCredito.setNroNotaCredito(rs.getInt("nro_recibo"));
+                        movCont.setTipo(E_movimientoContable.TIPO_NOTA_CREDITO);
+                        movCont.setTipoDescripcion(E_movimientoContable.STR_TIPO_NOTA_CREDITO);
+                        movCont.setNotaCredito(notaCredito);
                         break;
                     }
                 }

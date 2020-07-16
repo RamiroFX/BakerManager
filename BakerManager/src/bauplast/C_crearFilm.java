@@ -51,6 +51,9 @@ public class C_crearFilm implements ActionListener, KeyListener {
 
     private void inicializarVista() {
         ArrayList<E_productoClasificacion> productoClasificacion = modelo.obtenerTipoMateriaPrima();
+        if (productoClasificacion.isEmpty()) {
+            JOptionPane.showMessageDialog(vista, "No existen las categorias.", "Atención", JOptionPane.ERROR_MESSAGE);
+        }
         for (int i = 0; i < productoClasificacion.size(); i++) {
             this.vista.jcbTipoMateriaPrima.addItem(productoClasificacion.get(i));
         }

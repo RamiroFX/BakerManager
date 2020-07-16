@@ -307,11 +307,6 @@ public class DB_Producto {
                     + estad
                     + existenciaSQL
                     + finalQuery;
-            System.out.println("DB.DB_Producto.consultaSimpleProducto()");
-            System.out.println("idCategoria: " + idCategoria);
-            System.out.println("idSubCategoria: " + idSubCategoria);
-            System.out.println(Query);
-            //SELECT PROD.id_producto   "ID producto"  ,  PROD.descripcion  "Descripcion"   FROM producto
             //se crea una sentencia
             pst = DB_manager.getConection().prepareStatement(Query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             pst.setString(1, "%" + descripcion + "%");
