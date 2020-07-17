@@ -79,12 +79,13 @@ public class C_gestionProduccion implements GestionInterface, RecibirEmpleadoCal
         this.vista.jbBuscar.addActionListener(this);
         this.vista.jbBuscarDetalle.addActionListener(this);
         this.vista.jbBorrar.addActionListener(this);
-        this.vista.jbBorrar.addKeyListener(this);
         this.vista.jbAnular.addActionListener(this);
-        this.vista.jbAnular.addKeyListener(this);
         this.vista.jbDetalle.addActionListener(this);
-        this.vista.jbDetalle.addKeyListener(this);
         this.vista.jbResumen.addActionListener(this);
+        this.vista.jbEmpleado.addKeyListener(this);
+        this.vista.jbBorrar.addKeyListener(this);
+        this.vista.jbAnular.addKeyListener(this);
+        this.vista.jbDetalle.addKeyListener(this);
         this.vista.jbResumen.addKeyListener(this);
         this.vista.jtProduccionCabecera.addMouseListener(this);
         this.vista.jtProduccionCabecera.addKeyListener(this);
@@ -317,6 +318,24 @@ public class C_gestionProduccion implements GestionInterface, RecibirEmpleadoCal
 
     @Override
     public void keyPressed(KeyEvent e) {
+        switch (e.getKeyCode()) {
+            case KeyEvent.VK_F1: {
+                invocarCrearRolloMenu();
+                break;
+            }
+            case KeyEvent.VK_F2: {
+                invocarCrearProductoTerminadonMenu();
+                break;
+            }
+            case KeyEvent.VK_F3: {
+                resumenProduccion();
+                break;
+            }
+            case KeyEvent.VK_ESCAPE: {
+                cerrar();
+                break;
+            }
+        }
     }
 
     @Override

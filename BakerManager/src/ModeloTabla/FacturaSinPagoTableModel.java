@@ -6,6 +6,8 @@
 package ModeloTabla;
 
 import Entities.E_facturaSinPago;
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.table.AbstractTableModel;
@@ -16,10 +18,15 @@ import javax.swing.table.AbstractTableModel;
  */
 public class FacturaSinPagoTableModel extends AbstractTableModel {
 
+    private SimpleDateFormat dateFormater;
+    private DecimalFormat decimalFormat;
+
     private List<E_facturaSinPago> list;
     private final String[] colNames = {"Id.", "Nro Factura", "Cliente", "Fecha", "Monto", "Pago", "Saldo"};
 
     public FacturaSinPagoTableModel() {
+        this.dateFormater = new SimpleDateFormat("dd/MM/YYYY hh:mm:ss");
+        this.decimalFormat = new DecimalFormat("###,###");
         this.list = new ArrayList<>();
     }
 
@@ -62,25 +69,25 @@ public class FacturaSinPagoTableModel extends AbstractTableModel {
         E_facturaSinPago row = this.list.get(rowIndex);
         switch (colIndex) {
             case 0: {
-                return row.getIdCabecera();
+                return decimalFormat.format(row.getIdCabecera());
             }
             case 1: {
-                return row.getNroFactura();
+                return decimalFormat.format(row.getNroFactura());
             }
             case 2: {
                 return row.getClienteEntidad();
             }
             case 3: {
-                return row.getFecha();
+                return dateFormater.format(row.getFecha());
             }
             case 4: {
-                return row.getMonto();
+                return decimalFormat.format(row.getMonto());
             }
             case 5: {
-                return row.getPago();
+                return decimalFormat.format(row.getPago());
             }
             case 6: {
-                return row.getSaldo();
+                return decimalFormat.format(row.getSaldo());
             }
             default: {
                 return null;

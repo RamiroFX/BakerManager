@@ -273,7 +273,7 @@ public class C_cobroPendiente extends MouseAdapter implements ActionListener, Ke
         int fila = this.vista.jtCobroCabecera.rowAtPoint(e.getPoint());
         int columna = this.vista.jtCobroCabecera.columnAtPoint(e.getPoint());
         if ((fila > -1) && (columna > -1)) {
-            Integer idCabecera = Integer.valueOf(String.valueOf(this.vista.jtCobroCabecera.getValueAt(fila, 0)));
+            Integer idCabecera = modelo.getTm().getList().get(fila).getIdCabecera();
             this.vista.jbDetalleCobro.setEnabled(true);
             this.modelo.actualizarDetalle(idCabecera);
             if (e.getClickCount() == 2) {

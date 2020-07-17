@@ -127,7 +127,7 @@ public class DB_Cobro {
                 fsp.setFecha(rs.getTimestamp("fecha"));
                 fsp.setMonto(rs.getInt("monto"));
                 fsp.setPago(rs.getInt("pago"));
-                fsp.setSaldo(rs.getInt("saldo"));
+                fsp.setSaldo(fsp.getMonto() - fsp.getPago());
                 fsp.setRuc(rs.getString("ruc"));
                 fsp.setRuc(rs.getString("ruc_identificador"));
                 list.add(fsp);
