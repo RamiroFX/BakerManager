@@ -76,7 +76,7 @@ public class M_gestionVentas {
         return false;
     }
 
-    public List<M_facturaCabecera> obtenerVentas(M_cliente cliente, M_funcionario funcionario, Date fechaInicio, Date fechaFin, E_tipoOperacion condCompra, int nroFactura, Estado estado) {
+    public List<M_facturaCabecera> obtenerVentas(M_cliente cliente, M_funcionario funcionario, Date fechaInicio, Date fechaFin, E_tipoOperacion condCompra, int nroFactura, Estado estado, boolean conFecha) {
         Calendar calendarInicio = Calendar.getInstance();
         calendarInicio.setTime(fechaInicio);
         calendarInicio.set(Calendar.HOUR_OF_DAY, 0);
@@ -89,9 +89,7 @@ public class M_gestionVentas {
         calendarFinal.set(Calendar.MINUTE, 59);
         calendarFinal.set(Calendar.SECOND, 59);
         calendarFinal.set(Calendar.MILLISECOND, 999);
-        //return DB_Ingreso.obtenerIngreso(fechaInicio, fechaFinal, condVenta, getCabecera(), idEstado);
-        //(Date fechaInicio, Date fechaFinal, int idCliente, int idFuncionario, int idCondVenta, int nroFactura, int idEstado, boolean conFechas) {
-        return DB_Ingreso.obtenerIngreso2(calendarInicio.getTime(), calendarFinal.getTime(), cliente.getIdCliente(), funcionario.getId_funcionario(), condCompra.getId(), nroFactura, estado.getId(), true);
+        return DB_Ingreso.obtenerIngreso2(calendarInicio.getTime(), calendarFinal.getTime(), cliente.getIdCliente(), funcionario.getId_funcionario(), condCompra.getId(), nroFactura, estado.getId(), conFecha);
     }
 
     public void borrarDatos() {

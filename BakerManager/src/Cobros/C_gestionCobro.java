@@ -142,6 +142,7 @@ public class C_gestionCobro implements GestionInterface, RecibirEmpleadoCallback
         this.vista.jbBuscarCobro.addKeyListener(this);
         this.vista.jbEmpCobro.addKeyListener(this);
         this.vista.jbBorrarCobro.addKeyListener(this);
+        this.vista.jtfNroRecibo.addKeyListener(this);
     }
 
     private void verificarPermiso() {
@@ -175,7 +176,7 @@ public class C_gestionCobro implements GestionInterface, RecibirEmpleadoCallback
         }
     }
 
-    private void consultarCobros() {
+    private void consultarCobros(final boolean conFecha) {
         EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
@@ -195,7 +196,7 @@ public class C_gestionCobro implements GestionInterface, RecibirEmpleadoCallback
                 M_funcionario funcionario = modelo.getFuncionario();
                 Estado estado = vista.jcbEstado.getItemAt(vista.jcbEstado.getSelectedIndex());
 
-                modelo.getTm().setList(modelo.obtenerCobro(cliente, funcionario, fechaInicio, fechaFinal, estado, nroRecibo));
+                modelo.getTm().setList(modelo.obtenerCobro(cliente, funcionario, fechaInicio, fechaFinal, estado, nroRecibo, conFecha));
                 Utilities.c_packColumn.packColumns(vista.jtCobroCabecera, 1);
                 modelo.limpiarDetalle();
             }
@@ -223,9 +224,9 @@ public class C_gestionCobro implements GestionInterface, RecibirEmpleadoCallback
         }
         int opcion = JOptionPane.showConfirmDialog(vista, "¿Esta seguro que desea continuar?", "Atenciòn", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
         if (opcion == JOptionPane.YES_OPTION) {
-            Integer idCabecera = Integer.valueOf(String.valueOf(this.vista.jtCobroCabecera.getValueAt(fila, 0)));
+            Integer idCabecera = modelo.getTm().getList().get(fila).getId();
             this.modelo.anularCobro(idCabecera);
-            consultarCobros();
+            consultarCobros(true);
             modelo.limpiarDetalle();
             Utilities.c_packColumn.packColumns(this.vista.jtCobroCabecera, 1);
             this.vista.jbDetalleCobro.setEnabled(false);
@@ -402,7 +403,7 @@ public class C_gestionCobro implements GestionInterface, RecibirEmpleadoCallback
         if (src.equals(this.vista.jbCobro)) {
             invocarVistaCobrar();
         } else if (src.equals(this.vista.jbBuscarCobro)) {
-            consultarCobros();
+            consultarCobros(true);
         } else if (src.equals(this.vista.jbAnular)) {
             anularCobro();
         } else if (src.equals(this.vista.jbBanco)) {
@@ -437,7 +438,7 @@ public class C_gestionCobro implements GestionInterface, RecibirEmpleadoCallback
         int fila = this.vista.jtCobroCabecera.rowAtPoint(e.getPoint());
         int columna = this.vista.jtCobroCabecera.columnAtPoint(e.getPoint());
         if ((fila > -1) && (columna > -1)) {
-            Integer idCabecera = Integer.valueOf(String.valueOf(this.vista.jtCobroCabecera.getValueAt(fila, 0)));
+            Integer idCabecera = modelo.getTm().getList().get(fila).getId();
             /*this.vista.jbCobro.setEnabled(true);
             this.vista.jbDetalleCobro.setEnabled(true);
             this.vista.jbAnular.setEnabled(true);*/
@@ -479,6 +480,12 @@ public class C_gestionCobro implements GestionInterface, RecibirEmpleadoCallback
             case KeyEvent.VK_F1: {
                 if (vista.jbCobro.isEnabled()) {
                     invocarVistaCobrar();
+                }
+                break;
+            }
+            case KeyEvent.VK_ENTER: {
+                if (vista.jtfNroRecibo.hasFocus()) {
+                    consultarCobros(false);
                 }
                 break;
             }

@@ -6,6 +6,8 @@
 package ModeloTabla;
 
 import Entities.E_cuentaCorrienteCabecera;
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.table.AbstractTableModel;
@@ -16,10 +18,14 @@ import javax.swing.table.AbstractTableModel;
  */
 public class CtaCteCabeceraTableModel extends AbstractTableModel {
 
+    private DecimalFormat decimalFormat;
+    private SimpleDateFormat dateFormater;
     private List<E_cuentaCorrienteCabecera> list;
     private final String[] colNames = {"Id", "Nro Recibo", "Cliente", "Cobrador", "Fecha pago", "Monto"};
 
     public CtaCteCabeceraTableModel() {
+        this.dateFormater = new SimpleDateFormat("dd/MM/YYYY hh:mm:ss");
+        this.decimalFormat = new DecimalFormat("#,##0.##");
         this.list = new ArrayList<>();
     }
 
@@ -62,10 +68,10 @@ public class CtaCteCabeceraTableModel extends AbstractTableModel {
         E_cuentaCorrienteCabecera row = this.list.get(rowIndex);
         switch (colIndex) {
             case 0: {
-                return row.getId();
+                return decimalFormat.format(row.getId());
             }
             case 1: {
-                return row.getNroRecibo();
+                return decimalFormat.format(row.getNroRecibo());
             }
             case 2: {
                 return row.getCliente().getEntidad();
@@ -74,10 +80,10 @@ public class CtaCteCabeceraTableModel extends AbstractTableModel {
                 return row.getCobrador().getNombre();
             }
             case 4: {
-                return row.getFechaPago();
+                return dateFormater.format(row.getFechaPago());
             }
             case 5: {
-                return row.getDebito();
+                return decimalFormat.format(row.getDebito());
             }
             default: {
                 return null;

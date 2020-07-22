@@ -8,6 +8,7 @@ package ModeloTabla;
 import Entities.E_cuentaCorrienteDetalle;
 import Entities.E_formaPago;
 import Entities.E_tipoCheque;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,11 +21,14 @@ import javax.swing.table.AbstractTableModel;
  */
 public class CtaCteDetalleTableModel extends AbstractTableModel {
 
-    SimpleDateFormat dateFormater = new SimpleDateFormat("dd/MM/YYYY");
+    private DecimalFormat decimalFormat;
+    private SimpleDateFormat dateFormater;
     private List<E_cuentaCorrienteDetalle> list;
     private final String[] colNames = {"Monto a pagar", "Id venta", "Nro Factura", "Nro Cheque", "Banco", "Fecha cheque", "Fecha diferida"};
 
     public CtaCteDetalleTableModel() {
+        this.dateFormater = new SimpleDateFormat("dd/MM/YYYY hh:mm:ss");
+        this.decimalFormat = new DecimalFormat("#,##0.##");
         this.list = new ArrayList<>();
     }
 
@@ -67,17 +71,17 @@ public class CtaCteDetalleTableModel extends AbstractTableModel {
         E_cuentaCorrienteDetalle row = this.list.get(rowIndex);
         switch (colIndex) {
             case 0: {
-                return (int) row.getMonto();
+                return decimalFormat.format(row.getMonto());
             }
             case 1: {
-                return row.getIdFacturaCabecera();
+                return decimalFormat.format(row.getIdFacturaCabecera());
             }
             case 2: {
-                return row.getNroFactura();
+                return decimalFormat.format(row.getNroFactura());
             }
             case 3: {
                 if (row.getNroCheque() > 0) {
-                    return row.getNroCheque();
+                    return decimalFormat.format(row.getNroCheque());
                 } else {
                     return "";
                 }

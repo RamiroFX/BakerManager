@@ -96,6 +96,7 @@ public class C_gestionVentas implements GestionInterface, RecibirEmpleadoCallbac
             if (this.vista.jbBuscar.getName().equals(accesos.get(i).getItemDescripcion())) {
                 this.vista.jbBuscar.setEnabled(true);
                 this.vista.jbBuscar.addActionListener(this);
+                this.vista.jtfNroFactura.addActionListener(this);
                 this.vista.jbCliente.setEnabled(true);
                 this.vista.jbCliente.addActionListener(this);
                 this.vista.jbEmpleado.setEnabled(true);
@@ -143,6 +144,7 @@ public class C_gestionVentas implements GestionInterface, RecibirEmpleadoCallbac
         this.vista.jbBuscarDetalle.addKeyListener(this);
         this.vista.jbFacturar.addKeyListener(this);
         this.vista.jbHistorialFacturacion.addKeyListener(this);
+        this.vista.jtfNroFactura.addKeyListener(this);
     }
 
     private void verificarPermiso() {
@@ -171,7 +173,7 @@ public class C_gestionVentas implements GestionInterface, RecibirEmpleadoCallbac
         }
     }
 
-    private void displayQueryResults() {
+    private void displayQueryResults(final boolean conFecha) {
         EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
@@ -192,7 +194,7 @@ public class C_gestionVentas implements GestionInterface, RecibirEmpleadoCallbac
                 M_cliente cliente = modelo.getCabecera().getCliente();
                 M_funcionario funcionario = modelo.getCabecera().getFuncionario();
                 long startTime = System.nanoTime();
-                modelo.getTm().setFacturaCabeceraList(modelo.obtenerVentas(cliente, funcionario, fechaInicio, fechaFinal, condVenta, nroFactura, estado));
+                modelo.getTm().setFacturaCabeceraList(modelo.obtenerVentas(cliente, funcionario, fechaInicio, fechaFinal, condVenta, nroFactura, estado, conFecha));
                 scr.setList(modelo.getTm().getFacturaCabeceraList());
                 long elapsedTime = System.nanoTime() - startTime;
                 System.out.println("ventas: Tiempo total de busqueda  in millis: " + elapsedTime / 1000000);
@@ -377,7 +379,7 @@ public class C_gestionVentas implements GestionInterface, RecibirEmpleadoCallbac
                 }
             }
         }
-        displayQueryResults();
+        displayQueryResults(true);
         this.vista.jbDetalle.setEnabled(false);
         this.vista.jbAnular.setEnabled(false);
     }
@@ -512,7 +514,7 @@ public class C_gestionVentas implements GestionInterface, RecibirEmpleadoCallbac
             crearVentaRapida();
         }
         if (e.getSource().equals(this.vista.jbBuscar)) {
-            displayQueryResults();
+            displayQueryResults(true);
         }
         if (e.getSource().equals(this.vista.jbBuscarDetalle)) {
             buscarVentaDetalle();
@@ -547,6 +549,9 @@ public class C_gestionVentas implements GestionInterface, RecibirEmpleadoCallbac
         }
         if (e.getSource().equals(this.vista.jbFacturar)) {
             facturarVentas();
+        }
+        if (e.getSource().equals(this.vista.jtfNroFactura)) {
+            displayQueryResults(false);
         }
         if (e.getSource().equals(this.vista.jbHistorialFacturacion)) {
             historialFacturacion();

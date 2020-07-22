@@ -132,7 +132,7 @@ public class M_gestionCobroPago {
         this.facturaCabecera = facturaCabecera;
     }
 
-    public List<E_cuentaCorrienteCabecera> obtenerCobro(M_cliente cliente, M_funcionario funcionario, Date fechaInicio, Date fechaFin, Estado estado, int nroFactura) {
+    public List<E_cuentaCorrienteCabecera> obtenerCobro(M_cliente cliente, M_funcionario funcionario, Date fechaInicio, Date fechaFin, Estado estado, int nroFactura, boolean conFecha) {
         Calendar calendarInicio = Calendar.getInstance();
         calendarInicio.setTime(fechaInicio);
         calendarInicio.set(Calendar.HOUR_OF_DAY, 0);
@@ -145,7 +145,7 @@ public class M_gestionCobroPago {
         calendarFinal.set(Calendar.MINUTE, 59);
         calendarFinal.set(Calendar.SECOND, 59);
         calendarFinal.set(Calendar.MILLISECOND, 999);
-        return DB_Cobro.obtenerCobros(cliente.getIdCliente(), funcionario.getId_funcionario(), calendarInicio.getTime(), calendarFinal.getTime(), nroFactura, estado.getId());
+        return DB_Cobro.obtenerCobros(cliente.getIdCliente(), funcionario.getId_funcionario(), calendarInicio.getTime(), calendarFinal.getTime(), nroFactura, estado.getId(), conFecha);
     }
 
     /*

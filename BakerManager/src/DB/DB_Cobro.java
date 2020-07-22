@@ -188,7 +188,7 @@ public class DB_Cobro {
         return list;
     }
 
-    public static List<E_cuentaCorrienteCabecera> obtenerCobros(int idCliente, int idFuncionario, Date fechaInicio, Date fechaFinal, int nroRecibo, int idEstado) {
+    public static List<E_cuentaCorrienteCabecera> obtenerCobros(int idCliente, int idFuncionario, Date fechaInicio, Date fechaFinal, int nroRecibo, int idEstado, boolean conFecha) {
         List<E_cuentaCorrienteCabecera> list = new ArrayList();
         String query = "SELECT "
                 + "CCC.ID_CTA_CTE_CABECERA, "//1
@@ -206,9 +206,10 @@ public class DB_Cobro {
                 + "C.ENTIDAD "//13
                 + "FROM CUENTA_CORRIENTE_CABECERA CCC, CUENTA_CORRIENTE_DETALLE CCD, CLIENTE C "
                 + "WHERE CCC.ID_CTA_CTE_CABECERA = CCD.ID_CTA_CTE_CABECERA "
-                + "AND CCC.ID_CLIENTE = C.ID_CLIENTE "
-                + "AND CCC.FECHA_COBRO BETWEEN ?  AND ? ";
-
+                + "AND CCC.ID_CLIENTE = C.ID_CLIENTE ";
+        if (conFecha) {
+            query = query + " AND CCC.FECHA_COBRO BETWEEN ?  AND ? ";
+        }
         String groupBy = " GROUP BY CCC.ID_CTA_CTE_CABECERA, CCC.ID_CLIENTE, "
                 + "CCC.ID_FUNCIONARIO_COBRADOR, CCC.ID_FUNCIONARIO_REGISTRO, CCC.NRO_RECIBO, "
                 + "CCC.ID_ESTADO, CCC.FECHA_COBRO, CCC.FECHA_REGISTRO, C.ENTIDAD ";
@@ -230,11 +231,12 @@ public class DB_Cobro {
         int pos = 1;
         try {
             pst = DB_manager.getConection().prepareStatement(query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-
-            pst.setTimestamp(pos, new java.sql.Timestamp(fechaInicio.getTime()));
-            pos++;
-            pst.setTimestamp(pos, new java.sql.Timestamp(fechaFinal.getTime()));
-            pos++;
+            if (conFecha) {
+                pst.setTimestamp(pos, new java.sql.Timestamp(fechaInicio.getTime()));
+                pos++;
+                pst.setTimestamp(pos, new java.sql.Timestamp(fechaFinal.getTime()));
+                pos++;
+            }
             if (idCliente > 0) {
                 pst.setInt(pos, idCliente);
                 pos++;
