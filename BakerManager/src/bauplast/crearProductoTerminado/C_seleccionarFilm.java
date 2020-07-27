@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package bauplast;
+package bauplast.crearProductoTerminado;
 
 import Entities.E_produccionFilm;
 import Interface.InterfaceRecibirProduccionFilm;

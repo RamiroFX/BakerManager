@@ -77,7 +77,7 @@ public class M_gestionProduccion {
         return estados;
     }
 
-    public ProduccionCabeceraTableModel consultarProduccion(Date fechaInicio, Date fechaFin, E_produccionTipo prodTipo, int nroPedido, Estado estado) {
+    public void consultarProduccion(Date fechaInicio, Date fechaFin, E_produccionTipo prodTipo, int nroPedido, Estado estado, boolean conFecha) {
         Calendar calendarInicio = Calendar.getInstance();
         calendarInicio.setTime(fechaInicio);
         calendarInicio.set(Calendar.HOUR_OF_DAY, 0);
@@ -90,8 +90,7 @@ public class M_gestionProduccion {
         calendarFinal.set(Calendar.MINUTE, 59);
         calendarFinal.set(Calendar.SECOND, 59);
         calendarFinal.set(Calendar.MILLISECOND, 999);
-        getProduccionCabeceraTM().setList(DB_Produccion.consultarProduccion(calendarInicio.getTime(), calendarFinal.getTime(), prodTipo.getId(), nroPedido, estado.getId(), funcionario.getId_funcionario()));
-        return getProduccionCabeceraTM();
+        getProduccionCabeceraTM().setList(DB_Produccion.consultarProduccion(calendarInicio.getTime(), calendarFinal.getTime(), prodTipo.getId(), nroPedido, estado.getId(), funcionario.getId_funcionario(), conFecha));
     }
 
     public ArrayList<E_produccionTipo> obtenerProduccionTipo() {
@@ -101,9 +100,8 @@ public class M_gestionProduccion {
         return produccionTipos;
     }
 
-    public ProduccionDetalleTableModel obtenerProduccionDetalle(Integer idProduccion) {
+    public void obtenerProduccionDetalle(Integer idProduccion) {
         getProduccionDetalleTM().setList(DB_Produccion.consultarProduccionDetalle(idProduccion));
-        return getProduccionDetalleTM();
     }
 
     public void anularProduccion(int idProduccion) {

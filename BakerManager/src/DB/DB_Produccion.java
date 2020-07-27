@@ -192,7 +192,7 @@ public class DB_Produccion {
         return (int) sq_cabecera;
     }
 
-    public static List<E_produccionCabecera> consultarProduccion(Date inicio, Date fin, int idProdTipo, int nroPedido, int idEstado, int idFuncionario) {
+    public static List<E_produccionCabecera> consultarProduccion(Date inicio, Date fin, int idProdTipo, int nroPedido, int idEstado, int idFuncionario, boolean conFecha) {
         int pos = 1;
         List<E_produccionCabecera> list = new ArrayList<>();
         String Query = "SELECT id_produccion_cabecera, "
@@ -209,8 +209,11 @@ public class DB_Produccion {
                 + "(SELECT P.NOMBRE || ' '|| P.APELLIDO FROM FUNCIONARIO F, PERSONA P WHERE P.ID_PERSONA = F.ID_PERSONA AND F.ID_FUNCIONARIO = PC.id_funcionario_responsable )\"RESPONSABLE\", "
                 + "(SELECT P.NOMBRE || ' '|| P.APELLIDO FROM FUNCIONARIO F, PERSONA P WHERE P.ID_PERSONA = F.ID_PERSONA AND F.ID_FUNCIONARIO = PC.id_funcionario_usuario)\"USUARIO\" "
                 + "FROM produccion_cabecera PC "
-                + "WHERE  PC.fecha_produccion BETWEEN ?  AND ? ";
+                + "WHERE  1=1 ";
 
+        if (conFecha) {
+            Query = Query + "AND PC.fecha_produccion BETWEEN ?  AND ? ";
+        }
         if (idProdTipo > -1) {
             Query = Query + " AND PC.ID_PRODUCCION_TIPO = ? ";
         }
@@ -226,10 +229,12 @@ public class DB_Produccion {
         Query = Query + " ORDER BY fecha_produccion ;";
         try {
             pst = DB_manager.getConection().prepareStatement(Query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-            pst.setTimestamp(pos, new Timestamp(inicio.getTime()));
-            pos++;
-            pst.setTimestamp(pos, new Timestamp(fin.getTime()));
-            pos++;
+            if (conFecha) {
+                pst.setTimestamp(pos, new Timestamp(inicio.getTime()));
+                pos++;
+                pst.setTimestamp(pos, new Timestamp(fin.getTime()));
+                pos++;
+            }
             if (idProdTipo > -1) {
                 pst.setInt(pos, idProdTipo);
                 pos++;

@@ -6,6 +6,7 @@
 package ModeloTabla;
 
 import Entities.E_produccionCabecera;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,11 +18,14 @@ import javax.swing.table.AbstractTableModel;
  */
 public class ProduccionCabeceraTableModel extends AbstractTableModel {
 
-    SimpleDateFormat dateFormater = new SimpleDateFormat("dd/MM/YYYY");
+    private DecimalFormat decimalFormat;
+    private SimpleDateFormat dateFormater;
     private List<E_produccionCabecera> produccionList;
     private final String[] colNames = {"ID", "O.T.", "Fecha producción", "Responsable", "Tipo"};
 
     public ProduccionCabeceraTableModel() {
+        this.dateFormater = new SimpleDateFormat("dd/MM/YYYY hh:mm:ss");
+        this.decimalFormat = new DecimalFormat("#,##0.##");
         this.produccionList = new ArrayList<>();
     }
 
@@ -31,7 +35,7 @@ public class ProduccionCabeceraTableModel extends AbstractTableModel {
 
     public void setList(List<E_produccionCabecera> produccionList) {
         this.produccionList = produccionList;
-        fireTableDataChanged();
+        updateTable();
     }
 
     @Override
@@ -64,10 +68,10 @@ public class ProduccionCabeceraTableModel extends AbstractTableModel {
         E_produccionCabecera produccion = this.produccionList.get(rowIndex);
         switch (colIndex) {
             case 0: {
-                return produccion.getId();
+                return decimalFormat.format(produccion.getId());
             }
             case 1: {
-                return produccion.getNroOrdenTrabajo();
+                return decimalFormat.format(produccion.getNroOrdenTrabajo());
             }
             case 2: {
                 return dateFormater.format(produccion.getFechaProduccion());
@@ -86,17 +90,17 @@ public class ProduccionCabeceraTableModel extends AbstractTableModel {
 
     public void agregarDetalle(E_produccionCabecera produccion) {
         this.produccionList.add(produccion);
-        fireTableDataChanged();
+        updateTable();
     }
 
     public void quitarDetalle(int index) {
         this.produccionList.remove(index);
-        fireTableDataChanged();
+        updateTable();
     }
 
     public void vaciarLista() {
         this.produccionList.clear();
-        fireTableDataChanged();
+        updateTable();
     }
 
     public void updateTable() {

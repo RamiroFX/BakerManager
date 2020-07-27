@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package bauplast;
+package bauplast.crearProductoTerminado;
 
 import Entities.E_produccionCabecera;
 import bakermanager.C_inicio;

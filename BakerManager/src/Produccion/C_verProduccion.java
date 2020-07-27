@@ -59,6 +59,8 @@ public class C_verProduccion extends MouseAdapter implements ActionListener, Key
 
     private void agregarListeners() {
         this.vista.jbSalir.addActionListener(this);
+        this.vista.jtfFuncionario.addKeyListener(this);
+        this.vista.jtfNroOrdenTrabajo.addKeyListener(this);
         this.vista.jbSalir.addKeyListener(this);
     }
 

@@ -15,7 +15,7 @@ import javax.swing.table.AbstractTableModel;
  * @author Ramiro Ferreira
  */
 public class ProduccionDetalleTableModel extends AbstractTableModel {
-    
+
     private List<E_produccionDetalle> produccionList;
     private final String[] colNames = {"Cantidad", "Código", "Descripcion"};
 
@@ -29,6 +29,7 @@ public class ProduccionDetalleTableModel extends AbstractTableModel {
 
     public void setList(List<E_produccionDetalle> produccionList) {
         this.produccionList = produccionList;
+        updateTable();
     }
 
     @Override
