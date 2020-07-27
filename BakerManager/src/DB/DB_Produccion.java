@@ -657,6 +657,17 @@ public class DB_Produccion {
                 st = DB_manager.getConection().createStatement();
                 st.executeUpdate(query);
             }
+            //se resta al stock lo que se gasta (rollos) para productos terminados
+            for (int i = 0; i < rollosList.size(); i++) {
+                int idProducto = rollosList.get(i).getProducto().getId();
+                double cantidad = rollosList.get(i).getPeso();
+                String query = "UPDATE PRODUCTO SET "
+                        + "CANT_ACTUAL = "
+                        + "((SELECT CANT_ACTUAL FROM PRODUCTO WHERE ID_PRODUCTO = " + idProducto + ")-" + cantidad + ") "
+                        + "WHERE ID_PRODUCTO =" + idProducto;
+                st = DB_manager.getConection().createStatement();
+                st.executeUpdate(query);
+            }
             DB_manager.establecerTransaccion();
         } catch (SQLException ex) {
             System.out.println(ex.getNextException());
@@ -771,7 +782,7 @@ public class DB_Produccion {
                 }
             }
 
-            String Query = "SELECT id_cabecera, nro_orden_trabajo, nro_film, fecha, codigo,"
+            String Query = "SELECT id_cabecera, nro_orden_trabajo, nro_film, fecha, id_producto, codigo,"
                     + "producto, cono, medida, micron, peso, peso_utilizado, peso_actual,"
                     + "id_categoria, categoria "
                     + fromQuery
@@ -798,6 +809,7 @@ public class DB_Produccion {
                 film.setNroFilm(rs.getInt("nro_film"));
                 film.setFechaCreacion(rs.getDate("fecha"));
                 M_producto prod = new M_producto();
+                prod.setId(rs.getInt("id_producto"));
                 prod.setCodigo(rs.getString("codigo"));
                 prod.setDescripcion(rs.getString("producto"));
                 film.setProducto(prod);
