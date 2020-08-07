@@ -149,6 +149,7 @@ class C_crearProductoTerminado extends MouseAdapter implements ActionListener, K
             M_producto producto = modelo.getProductosTerminadosTM().getList().get(fila).getProducto();
             SeleccionCantidadProductoSimple scp = new SeleccionCantidadProductoSimple(this.vista, fila);
             scp.setProducto(producto);
+            scp.setTipo(SeleccionCantidadProductoSimple.PROD_TERMINADO_MODIFICAR_PROD);
             scp.setProductoCallback(this);
             scp.inicializarVista();
             scp.setVisible(true);
@@ -161,6 +162,7 @@ class C_crearProductoTerminado extends MouseAdapter implements ActionListener, K
             E_produccionFilm film = modelo.getRolloUtilizadoTm().getList().get(fila);
             SeleccionCantidadProductoSimple scp = new SeleccionCantidadProductoSimple(this.vista, fila);
             scp.setFilm(film);
+            scp.setTipo(SeleccionCantidadProductoSimple.PROD_TERMINADO_MODIFICAR_ROLLO);
             scp.setFilmCallback(this);
             scp.inicializarVista();
             scp.setVisible(true);
@@ -286,6 +288,9 @@ class C_crearProductoTerminado extends MouseAdapter implements ActionListener, K
 
     private void invocarSeleccionarFilmDisponible() {
         SeleccionarFilm sf = new SeleccionarFilm(vista);
+        if (!esModoCreacion) {
+            sf.desactivarModoCreacion();
+        }
         sf.setCallback(this);
         sf.mostrarVista();
     }
@@ -383,6 +388,12 @@ class C_crearProductoTerminado extends MouseAdapter implements ActionListener, K
     @Override
     public void modificarFilm(int index, E_produccionFilm detalle) {
         modelo.modifacarRolloUtilizado(index, detalle);
+    }
+
+    @Override
+    public void recibirFilmPosterior(E_produccionFilm detalle) {
+        System.out.println("bauplast.C_crearProductoTerminado.recibirFilmPosterior()");
+        System.out.println("detalle: " + detalle.getProducto().getDescripcion());
     }
 
     @Override

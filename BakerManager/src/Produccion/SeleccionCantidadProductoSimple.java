@@ -23,11 +23,17 @@ import net.miginfocom.swing.MigLayout;
  */
 public class SeleccionCantidadProductoSimple extends javax.swing.JDialog implements ActionListener, KeyListener {
 
+    public static final int PROD_TERMINADO_AGREGAR_ROLLO = 1,
+            PROD_TERMINADO_MODIFICAR_ROLLO = 2,
+            PROD_TERMINADO_ACTUALIZAR_ROLLO = 3,
+            PROD_TERMINADO_AGREGAR_PROD = 4,
+            PROD_TERMINADO_MODIFICAR_PROD = 5;
     private javax.swing.JButton jbCancel;
     private javax.swing.JButton jbOK;
     private javax.swing.JLabel jlProducto, jlCantidad;
     private javax.swing.JTextField jtfProducto, jtfCantidad;
     int row;
+    int tipo;
     M_producto producto;
     E_produccionFilm film;
     Double cantidad;
@@ -44,6 +50,10 @@ public class SeleccionCantidadProductoSimple extends javax.swing.JDialog impleme
         this.row = index;//row > -1 si es para modificar
         this.isProductoTerminado = false;
         initComponents();
+    }
+
+    public void setTipo(int tipo) {
+        this.tipo = tipo;
     }
 
     public void setProducto(M_producto producto) {
@@ -110,30 +120,37 @@ public class SeleccionCantidadProductoSimple extends javax.swing.JDialog impleme
             return;
         }
         cantidad = Double.valueOf(String.valueOf(jtfCantidad.getText().trim()));
-        //observacion = String.valueOf(jtfObservacion.getText().trim());
-        /*if (observacion.length() > 120) {
-            JOptionPane.showMessageDialog(null, "Observacion sobrepaso el máximo de 120 caracteres permitidos.", "Atención", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-        if (observacion.isEmpty()) {
-            observacion = null;
-        }*/
         if (isProductoTerminado) {
-            if (row > -1) {
-                productoCallback.modificarProducto(row, cantidad, 0, 0, producto, "");
-            } else {
-                productoCallback.recibirProducto(cantidad, 0, 0, producto, "");
+            switch (tipo) {
+                case PROD_TERMINADO_AGREGAR_PROD: {
+                    productoCallback.recibirProducto(cantidad, 0, 0, producto, "");
+                    break;
+                }
+                case PROD_TERMINADO_MODIFICAR_PROD: {
+                    productoCallback.modificarProducto(row, cantidad, 0, 0, producto, "");
+                    break;
+                }
             }
         } else {
             if (!validarPeso()) {
                 return;
             }
-            if (row > -1) {
-                film.setPeso(cantidad);
-                filmCallback.modificarFilm(row, film);
-            } else {
-                film.setPeso(cantidad);
-                filmCallback.recibirFilm(film);
+            switch (tipo) {
+                case PROD_TERMINADO_AGREGAR_ROLLO: {
+                    film.setPeso(cantidad);
+                    filmCallback.recibirFilm(film);
+                    break;
+                }
+                case PROD_TERMINADO_MODIFICAR_ROLLO: {
+                    film.setPeso(cantidad);
+                    filmCallback.modificarFilm(row, film);
+                    break;
+                }
+                case PROD_TERMINADO_ACTUALIZAR_ROLLO: {
+                    film.setPeso(cantidad);
+                    filmCallback.recibirFilmPosterior(film);
+                    break;
+                }
             }
         }
         dispose();

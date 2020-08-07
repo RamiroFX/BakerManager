@@ -163,6 +163,7 @@ public class C_seleccionarProductoPorClasif extends MouseAdapter implements Acti
                 SeleccionCantidadProductoSimple scp = new SeleccionCantidadProductoSimple(vista, -1);
                 scp.setProducto(producto);
                 scp.setProductoCallback(productoCallback);
+                scp.setTipo(SeleccionCantidadProductoSimple.PROD_TERMINADO_AGREGAR_PROD);
                 scp.inicializarVista();
                 scp.setVisible(true);
             } else {
@@ -226,6 +227,7 @@ public class C_seleccionarProductoPorClasif extends MouseAdapter implements Acti
                     SeleccionCantidadProductoSimple scp = new SeleccionCantidadProductoSimple(vista, -1);
                     scp.setProducto(producto);
                     scp.setProductoCallback(productoCallback);
+                    scp.setTipo(SeleccionCantidadProductoSimple.PROD_TERMINADO_AGREGAR_PROD);
                     scp.inicializarVista();
                     scp.setVisible(true);
                 } else {

@@ -31,12 +31,18 @@ public class C_seleccionarFilm extends MouseAdapter implements ActionListener, K
     private M_seleccionarFilm modelo;
     private V_seleccionarFilm vista;
     private InterfaceRecibirProduccionFilm callback;
+    private boolean esModoCreacion;
 
     public C_seleccionarFilm(M_seleccionarFilm modelo, V_seleccionarFilm vista) {
         this.vista = vista;
         this.modelo = modelo;
+        this.esModoCreacion = true;
         inicializarVista();
         agregarListeners();
+    }
+
+    public void desactivarModoCreacion() {
+        esModoCreacion = false;
     }
 
     public void setCallback(InterfaceRecibirProduccionFilm callback) {
@@ -62,7 +68,7 @@ public class C_seleccionarFilm extends MouseAdapter implements ActionListener, K
         });
         Utilities.c_packColumn.packColumns(this.vista.jtProducto, 1);
 
-                this.vista.jcbBuscarPor.addItem("Todos");
+        this.vista.jcbBuscarPor.addItem("Todos");
         this.vista.jcbBuscarPor.addItem("Nro. Film");
         this.vista.jcbBuscarPor.addItem("OT");
         this.vista.jcbBuscarPor.addItem("Producto");
@@ -137,6 +143,11 @@ public class C_seleccionarFilm extends MouseAdapter implements ActionListener, K
             System.out.println("pf: " + pf.getProductoClasificacion().getDescripcion());
             System.out.println("pf.prod.getCategoria: " + pf.getProducto().getCategoria());
             SeleccionCantidadProductoSimple scp = new SeleccionCantidadProductoSimple(vista, -1);
+            if (esModoCreacion) {
+                scp.setTipo(SeleccionCantidadProductoSimple.PROD_TERMINADO_AGREGAR_ROLLO);
+            } else {
+                scp.setTipo(SeleccionCantidadProductoSimple.PROD_TERMINADO_ACTUALIZAR_ROLLO);
+            }
             scp.setFilm(pf);
             scp.setFilmCallback(callback);
             scp.inicializarVista();
@@ -184,6 +195,7 @@ public class C_seleccionarFilm extends MouseAdapter implements ActionListener, K
                 E_produccionFilm pf = modelo.getTm().getList().get(fila);
                 SeleccionCantidadProductoSimple scp = new SeleccionCantidadProductoSimple(vista, -1);
                 scp.setFilm(pf);
+                scp.setTipo(SeleccionCantidadProductoSimple.PROD_TERMINADO_AGREGAR_ROLLO);
                 scp.setFilmCallback(callback);
                 scp.inicializarVista();
                 scp.setVisible(true);

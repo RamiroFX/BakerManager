@@ -41,4 +41,5 @@ public class SeleccionarProductoPorClasif {
     public void setProductoCallback(RecibirProductoCallback callback) {
         this.controlador.setProductoCallback(callback);
     }
+    
 }

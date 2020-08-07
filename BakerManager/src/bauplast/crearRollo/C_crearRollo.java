@@ -324,4 +324,8 @@ class C_crearRollo extends MouseAdapter implements ActionListener, KeyListener,
         Utilities.c_packColumn.packColumns(vista.jtProduccionDetalle, 1);
     }
 
+    @Override
+    public void recibirFilmPosterior(E_produccionFilm detalle) {
+    }
+
 }

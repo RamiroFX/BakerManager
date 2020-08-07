@@ -5,7 +5,6 @@
  */
 package bauplast.crearProductoTerminado;
 
-import Entities.E_productoClasificacion;
 import Interface.InterfaceRecibirProduccionFilm;
 import javax.swing.JDialog;
 
@@ -31,5 +30,9 @@ public class SeleccionarFilm {
 
     public void setCallback(InterfaceRecibirProduccionFilm callback) {
         this.controlador.setCallback(callback);
+    }
+
+    public void desactivarModoCreacion() {
+        this.controlador.desactivarModoCreacion();
     }
 }

@@ -17,4 +17,9 @@ public interface InterfaceRecibirProduccionFilm {
 
     public void modificarFilm(int index, E_produccionFilm detalle);
 
+    /*
+    Se utiliza cuando se crea un producto terminado antes de la carga de rollos
+    */
+    public void recibirFilmPosterior(E_produccionFilm detalle);
+
 }
