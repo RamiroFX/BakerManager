@@ -34,12 +34,19 @@ import javax.swing.JOptionPane;
 public class C_ver_ingreso implements ActionListener, KeyListener {
 
     public V_crearVentaRapida vista;
-    int idEgresoCabecera;
+    int idEgresoCabecera, nroFactura;
     M_facturaCabecera faca;
     M_cliente cliente;
 
     public C_ver_ingreso(int idEgresoCabecera, V_crearVentaRapida vista) {
         this.idEgresoCabecera = idEgresoCabecera;
+        this.vista = vista;
+        inicializarVista();
+        agregarListeners();
+    }
+
+    public C_ver_ingreso(V_crearVentaRapida vista, int nroFactura) {
+        this.nroFactura = nroFactura;
         this.vista = vista;
         inicializarVista();
         agregarListeners();
@@ -92,13 +99,17 @@ public class C_ver_ingreso implements ActionListener, KeyListener {
     }
 
     private void inicializarVista() {
-        faca = DB_Ingreso.obtenerIngresoCabeceraID(idEgresoCabecera);
+        if (idEgresoCabecera < 1) {
+            faca = DB_Ingreso.obtenerIngresoCabeceraNroFactura(nroFactura);
+        } else {
+            faca = DB_Ingreso.obtenerIngresoCabeceraID(idEgresoCabecera);
+        }
         cliente = DB_Cliente.obtenerDatosClienteID(faca.getIdCliente());
         M_funcionario funcionario = DB_Funcionario.obtenerDatosFuncionarioID(faca.getIdFuncionario());
         faca.setCliente(cliente);
         faca.setFuncionario(funcionario);
         this.vista.jtfCliente.setText(cliente.getNombre() + " - " + cliente.getEntidad());
-        this.vista.jtFacturaDetalle.setModel(DB_Ingreso.obtenerIngresoDetalle(idEgresoCabecera));
+        this.vista.jtFacturaDetalle.setModel(DB_Ingreso.obtenerIngresoDetalle(faca.getIdFacturaCabecera()));
         Vector condCompra = obtenerTipoOperacion();
         for (int i = 0; i < condCompra.size(); i++) {
             this.vista.jcbCondVenta.addItem(condCompra.get(i));

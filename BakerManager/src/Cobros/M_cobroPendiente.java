@@ -129,8 +129,8 @@ public class M_cobroPendiente {
         this.getFacturaCabecera().getCliente().setIdCliente(-1);
     }
 
-    public void actualizarDetalle(int idFactura) {
-        this.getTmDetalle().setFacturaDetalleList(DB_Ingreso.obtenerVentaDetalles(idFactura));
+    public void actualizarDetalle(int nroFactura) {
+        this.getTmDetalle().setFacturaDetalleList(DB_Ingreso.obtenerVentaDetallesNroFactura(nroFactura));
     }
 
     public List<E_facturaSinPago> obtenerCobroPendiente(M_cliente cliente, Date fechaInicio, Date fechaFin, int nroFactura, boolean conFecha) {

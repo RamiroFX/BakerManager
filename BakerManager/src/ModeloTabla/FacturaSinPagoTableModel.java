@@ -22,7 +22,7 @@ public class FacturaSinPagoTableModel extends AbstractTableModel {
     private DecimalFormat decimalFormat;
 
     private List<E_facturaSinPago> list;
-    private final String[] colNames = {"Id.", "Nro Factura", "Cliente", "Fecha", "Monto", "Pago", "Saldo"};
+    private final String[] colNames = {"Nro Factura", "Cliente", "Fecha", "Monto", "Pago", "Saldo"};
 
     public FacturaSinPagoTableModel() {
         this.dateFormater = new SimpleDateFormat("dd/MM/YYYY hh:mm:ss");
@@ -68,25 +68,25 @@ public class FacturaSinPagoTableModel extends AbstractTableModel {
     public Object getValueAt(int rowIndex, int colIndex) {
         E_facturaSinPago row = this.list.get(rowIndex);
         switch (colIndex) {
+//            case 0: {
+//                return decimalFormat.format(0);
+//            }
             case 0: {
-                return decimalFormat.format(row.getIdCabecera());
-            }
-            case 1: {
                 return decimalFormat.format(row.getNroFactura());
             }
-            case 2: {
+            case 1: {
                 return row.getClienteEntidad();
             }
-            case 3: {
+            case 2: {
                 return dateFormater.format(row.getFecha());
             }
-            case 4: {
+            case 3: {
                 return decimalFormat.format(row.getMonto());
             }
-            case 5: {
+            case 4: {
                 return decimalFormat.format(row.getPago());
             }
-            case 6: {
+            case 5: {
                 return decimalFormat.format(row.getSaldo());
             }
             default: {

@@ -5,8 +5,6 @@
  */
 package Cobros;
 
-import Entities.E_tipoOperacion;
-import Entities.Estado;
 import Interface.CommonFormat;
 import com.toedter.calendar.JDateChooser;
 import java.awt.BorderLayout;
@@ -16,9 +14,7 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
-import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
-import javax.swing.JInternalFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;

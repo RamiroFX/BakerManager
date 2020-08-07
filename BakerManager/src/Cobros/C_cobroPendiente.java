@@ -179,8 +179,14 @@ public class C_cobroPendiente extends MouseAdapter implements ActionListener, Ke
             E_facturaSinPago fsp = modelo.getTm().getList().get(fila);
             int idFactura = fsp.getIdCabecera();
             if (idFactura == 0) {
-                NumberFormat nf = NumberFormat.getInstance();
-                JOptionPane.showMessageDialog(vista, "Saldo inicial del cliente:\n" + nf.format(fsp.getMonto()), "Saldo inicial", JOptionPane.INFORMATION_MESSAGE);
+                int nroFactura = modelo.getTm().getList().get(fila).getNroFactura();
+                if (nroFactura > 0) {
+                    Ver_ingreso vc = new Ver_ingreso(nroFactura, this.vista);
+                    vc.mostrarVista();
+                } else {
+                    NumberFormat nf = NumberFormat.getInstance();
+                    JOptionPane.showMessageDialog(vista, "Saldo inicial del cliente:\n" + nf.format(fsp.getMonto()), "Saldo inicial", JOptionPane.INFORMATION_MESSAGE);
+                }
             } else {
                 Ver_ingreso vc = new Ver_ingreso(this.vista, idFactura);
                 vc.mostrarVista();
@@ -273,9 +279,10 @@ public class C_cobroPendiente extends MouseAdapter implements ActionListener, Ke
         int fila = this.vista.jtCobroCabecera.rowAtPoint(e.getPoint());
         int columna = this.vista.jtCobroCabecera.columnAtPoint(e.getPoint());
         if ((fila > -1) && (columna > -1)) {
-            Integer idCabecera = modelo.getTm().getList().get(fila).getIdCabecera();
+            //Integer idCabecera = modelo.getTm().getList().get(fila).getIdCabecera();
+            Integer nroFactura = modelo.getTm().getList().get(fila).getNroFactura();
             this.vista.jbDetalleCobro.setEnabled(true);
-            this.modelo.actualizarDetalle(idCabecera);
+            this.modelo.actualizarDetalle(nroFactura);
             if (e.getClickCount() == 2) {
                 invocarVistaVerDetalle();
             }

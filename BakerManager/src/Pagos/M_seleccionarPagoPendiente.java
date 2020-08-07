@@ -9,9 +9,7 @@ import DB.DB_Pago;
 import DB.DB_manager;
 import Entities.E_tipoOperacion;
 import Entities.M_egreso_cabecera;
-import Entities.M_facturaCabecera;
 import ModeloTabla.EgresoSinPagoTableModel;
-import ModeloTabla.FacturaSinPagoTableModel;
 import java.util.ArrayList;
 
 /**

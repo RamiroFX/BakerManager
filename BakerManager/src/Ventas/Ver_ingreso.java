@@ -26,6 +26,11 @@ public class Ver_ingreso {
         this.controlador = new C_ver_ingreso(idIngresoCabecera, this.vista);
     }
 
+    public Ver_ingreso(Integer nroFactura, JDialog c_inicio) {
+        this.vista = new V_crearVentaRapida(c_inicio);
+        this.controlador = new C_ver_ingreso(this.vista, nroFactura);
+    }
+
     public void mostrarVista() {
         this.controlador.mostrarVista();
     }

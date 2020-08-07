@@ -70,7 +70,7 @@ public class DB_Cobro {
             rs = pst.executeQuery();
             while (rs.next()) {
                 E_facturaSinPago fsp = new E_facturaSinPago();
-                fsp.setIdCabecera(rs.getInt("id_cabecera"));
+                fsp.setIdCabecera(0);
                 fsp.setIdCliente(rs.getInt("id_cliente"));
                 fsp.setNroFactura(rs.getInt("nro_factura"));
                 fsp.setClienteEntidad(rs.getString("cliente"));
@@ -120,7 +120,7 @@ public class DB_Cobro {
             rs = pst.executeQuery();
             while (rs.next()) {
                 E_facturaSinPago fsp = new E_facturaSinPago();
-                fsp.setIdCabecera(rs.getInt("id_cabecera"));
+                fsp.setIdCabecera(0);
                 fsp.setIdCliente(rs.getInt("id_cliente"));
                 fsp.setNroFactura(rs.getInt("nro_factura"));
                 fsp.setClienteEntidad(rs.getString("cliente"));
@@ -302,7 +302,7 @@ public class DB_Cobro {
         String query = "SELECT "
                 + "CCD.ID_CTA_CTE_DETALLE, "//1
                 + "CCD.ID_CTA_CTE_CABECERA, "//2
-                + "CCD.ID_FACTURA_CABECERA, "//3
+                + "CCD.NRO_FACTURA, "//3
                 + "CCD.NRO_RECIBO, "//4
                 + "CCD.MONTO, "//5
                 + "CCD.NRO_CHEQUE, "//6
@@ -310,7 +310,7 @@ public class DB_Cobro {
                 + "CCD.CHEQUE_FECHA, "//8
                 + "CCD.CHEQUE_FECHA_DIFERIDA, "//9
                 + "(SELECT B.DESCRIPCION FROM BANCO B WHERE B.ID_BANCO = CCD.ID_BANCO) \"BANCO\", "//10
-                + "(SELECT FC.NRO_FACTURA FROM FACTURA_CABECERA FC WHERE FC.ID_FACTURA_CABECERA = CCD.ID_FACTURA_CABECERA) \"NRO_FACTURA\" "//11
+                + "(SELECT FC.NRO_FACTURA FROM FACTURA_CABECERA FC WHERE FC.ID_FACTURA_CABECERA = CCD.NRO_FACTURA) \"NRO_FACTURA\" "//11
                 + "FROM CUENTA_CORRIENTE_DETALLE CCD "
                 + "WHERE CCD.ID_CTA_CTE_CABECERA = ?;";
         try {

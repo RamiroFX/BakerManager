@@ -4,7 +4,6 @@
  */
 package DB;
 
-import Entities.E_cuentaCorrienteCabecera;
 import Entities.E_cuentaCorrienteConcepto;
 import Entities.E_facturaCabecera;
 import Entities.E_facturaCabeceraFX;
@@ -625,6 +624,47 @@ public class DB_Ingreso {
                 + "NRO_FACTURA "
                 + "FROM FACTURA_CABECERA "
                 + "WHERE ID_FACTURA_CABECERA = " + idIngresoCabecera;
+        try {
+            pst = DB_manager.getConection().prepareStatement(query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            rs = pst.executeQuery();
+            while (rs.next()) {
+                ingreso_cabecera = new M_facturaCabecera();
+                ingreso_cabecera.setIdFacturaCabecera(rs.getInt("ID_FACTURA_CABECERA"));
+                ingreso_cabecera.setIdCliente(rs.getInt("ID_CLIENTE"));
+                ingreso_cabecera.setIdCondVenta(rs.getInt("ID_COND_VENTA"));
+                ingreso_cabecera.setIdFuncionario(rs.getInt("ID_FUNCIONARIO"));
+                ingreso_cabecera.setNroFactura(rs.getInt("NRO_FACTURA"));
+                ingreso_cabecera.setTiempo(rs.getTimestamp("TIEMPO"));
+            }
+        } catch (SQLException ex) {
+            Logger lgr = Logger.getLogger(DB_Ingreso.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (pst != null) {
+                    pst.close();
+                }
+            } catch (SQLException ex) {
+                Logger lgr = Logger.getLogger(DB_Ingreso.class.getName());
+                lgr.log(Level.WARNING, ex.getMessage(), ex);
+            }
+        }
+        return ingreso_cabecera;
+    }
+    
+    public static M_facturaCabecera obtenerIngresoCabeceraNroFactura(Integer nroFactura) {
+        M_facturaCabecera ingreso_cabecera = null;
+        String query = "SELECT ID_FACTURA_CABECERA, "
+                + "ID_FUNCIONARIO, "
+                + "ID_CLIENTE, "
+                + "TIEMPO, "
+                + "ID_COND_VENTA, "
+                + "NRO_FACTURA "
+                + "FROM FACTURA_CABECERA "
+                + "WHERE NRO_FACTURA = " + nroFactura;
         try {
             pst = DB_manager.getConection().prepareStatement(query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             rs = pst.executeQuery();
@@ -1435,6 +1475,59 @@ public class DB_Ingreso {
         return detalles;
     }
 
+    public static ArrayList<M_facturaDetalle> obtenerVentaDetallesNroFactura(Integer nroFactura) {
+        ArrayList<M_facturaDetalle> detalles = null;
+        String query = "SELECT ID_FACTURA_DETALLE, "
+                + "FD.ID_FACTURA_CABECERA, ID_PRODUCTO,"
+                + "(SELECT P.DESCRIPCION FROM PRODUCTO P WHERE P.ID_PRODUCTO = FD.ID_PRODUCTO)\"PRODUCTO\", "
+                + "(SELECT P.ID_IMPUESTO FROM PRODUCTO P WHERE P.ID_PRODUCTO = FD.ID_PRODUCTO)\"ID_IMPUESTO\", "
+                + "(SELECT P.CODIGO FROM PRODUCTO P WHERE P.ID_PRODUCTO = FD.ID_PRODUCTO)\"CODIGO_PROD\", "
+                + "CANTIDAD, "
+                + "PRECIO, "
+                + "DESCUENTO, "
+                + "OBSERVACION "
+                + "FROM FACTURA_DETALLE FD, FACTURA_CABECERA FC "
+                + "WHERE FD.ID_FACTURA_CABECERA = FC.ID_FACTURA_CABECERA "
+                + "AND FC.NRO_FACTURA = " + nroFactura;
+        try {
+            st = DB_manager.getConection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            rs = st.executeQuery(query);
+            detalles = new ArrayList();
+            while (rs.next()) {
+                M_facturaDetalle detalle = new M_facturaDetalle();
+                detalle.setCantidad(rs.getDouble("CANTIDAD"));
+                detalle.setDescuento(rs.getDouble("DESCUENTO"));
+                detalle.setIdFacturaCabecera(rs.getInt("ID_FACTURA_CABECERA"));
+                detalle.setIdFacturaDetalle(rs.getInt("ID_FACTURA_DETALLE"));
+                detalle.setObservacion(rs.getString("OBSERVACION"));
+                detalle.setPrecio(rs.getInt("PRECIO"));
+                M_producto producto = new M_producto();
+                producto.setId(rs.getInt("ID_PRODUCTO"));
+                producto.setDescripcion(rs.getString("PRODUCTO"));
+                producto.setIdImpuesto(rs.getInt("ID_IMPUESTO"));
+                producto.setCodigo(rs.getString("CODIGO_PROD"));
+                detalle.setProducto(producto);
+                detalles.add(detalle);
+            }
+        } catch (SQLException ex) {
+            Logger lgr = Logger.getLogger(DB_Egreso.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (st != null) {
+                    st.close();
+                }
+            } catch (SQLException ex) {
+                Logger lgr = Logger.getLogger(DB_Egreso.class.getName());
+                lgr.log(Level.WARNING, ex.getMessage(), ex);
+            }
+        }
+        return detalles;
+    }
+    
     public static ArrayList<E_facturaDetalleFX> obtenerVentaDetalles(String clienteEntidad,
             Integer nro_factura, String idEmpleado, String inicio, String fin,
             String tipo_operacion, Estado estado) {

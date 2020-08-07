@@ -20,6 +20,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -84,6 +85,7 @@ public class ReciboCobro extends javax.swing.JDialog implements ActionListener, 
     private RecibirCtaCteDetalleCallback callback;
     private E_facturaSinPago facturaCabecera;
     private boolean modificarDetalle;
+    private DecimalFormat decimalFormat;
 
     public ReciboCobro(JDialog vista) {
         super(vista, TITULO, true);
@@ -127,10 +129,10 @@ public class ReciboCobro extends javax.swing.JDialog implements ActionListener, 
         modificarDetalle = false;
         facturaCabecera = fsp;
         jtfCliente.setText(facturaCabecera.getClienteEntidad());
-        jtfIdVenta.setText(facturaCabecera.getIdCabecera() + "");
-        jtfNroFactura.setText(facturaCabecera.getNroFactura() + "");
-        jtfTotalFactura.setText(facturaCabecera.getMonto() + "");
-        jtfTotalPendiente.setText(facturaCabecera.getSaldo() + "");
+        jtfIdVenta.setText(decimalFormat.format(facturaCabecera.getIdCabecera()));
+        jtfNroFactura.setText(decimalFormat.format(facturaCabecera.getNroFactura()));
+        jtfTotalFactura.setText(decimalFormat.format(facturaCabecera.getMonto()));
+        jtfTotalPendiente.setText(decimalFormat.format(facturaCabecera.getSaldo()));
     }
 
     public void modificarDetalle(int index, E_facturaSinPago fsp, E_cuentaCorrienteDetalle detalle) {
@@ -188,6 +190,7 @@ public class ReciboCobro extends javax.swing.JDialog implements ActionListener, 
         getContentPane().setLayout(new MigLayout());
         //FECHA
         Calendar calendar = Calendar.getInstance();
+        decimalFormat = new DecimalFormat("###,###");
         jlFecha = new javax.swing.JLabel(S_FECHA);
         jftFecha = new JFormattedTextField(
                 new DefaultFormatterFactory(
