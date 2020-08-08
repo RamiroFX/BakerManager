@@ -7,12 +7,12 @@ package NotasCredito;
 
 import Cliente.Seleccionar_cliente;
 import Entities.E_NotaCreditoDetalle;
-import Entities.E_facturaCabecera;
 import Entities.E_facturaDetalle;
+import Entities.E_facturaSinPago;
 import Entities.M_cliente;
 import Entities.M_producto;
 import Interface.RecibirClienteCallback;
-import Interface.RecibirFacturaCabeceraCallback;
+import Interface.RecibirFacturaSinPagoCallback;
 import Interface.RecibirProductoCallback;
 import Producto.SeleccionarCantidadProduducto;
 import bakermanager.C_inicio;
@@ -23,6 +23,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -34,7 +35,7 @@ import javax.swing.JOptionPane;
  * @author Ramiro Ferreira
  */
 public class C_crearNotaCredito extends MouseAdapter implements ActionListener, KeyListener,
-        RecibirClienteCallback, RecibirFacturaCabeceraCallback, RecibirProductoCallback {
+        RecibirClienteCallback, RecibirFacturaSinPagoCallback, RecibirProductoCallback {
 
     private static final String VALIDAR_CLIENTE_MSG = "Seleccione un cliente",
             VALIDAR_NRO_NOTA_CREDITO_MSG_1 = "Ingrese un Número de Nota de Crédito",
@@ -42,6 +43,7 @@ public class C_crearNotaCredito extends MouseAdapter implements ActionListener, 
             VALIDAR_NRO_NOTA_CREDITO_MSG_3 = "Ingrese solo números enteros y positivos en Número de Nota de Crédito",
             VALIDAR_NRO_NOTA_CREDITO_MSG_4 = "El Número de Nota de Crédito ingresado ya se encuentra en uso.",
             VALIDAR_NRO_NOTA_CREDITO_MSG_5 = "Ingrese una cantidad superior a 0 (cero).",
+            VALIDAR_NRO_NOTA_CREDITO_MSG_6 = "El total super al saldo pendiente.",
             VALIDAR_FECHA_NOTA_CREDITO_MSG_1 = "La fecha seleccionada no es valida.",
             VALIDAR_CANT_DETALLE_MSG = "Nota de credito vacía.",
             VALIDAR_DETALLE_NOTA_CREDITO = "Existen detalles de Nota de Crédito pendiente. Vacíe la lista para seleccionar otro cliente",
@@ -130,7 +132,7 @@ public class C_crearNotaCredito extends MouseAdapter implements ActionListener, 
         if (!validarFechaUtilizacion()) {
             return;
         }
-        if (!validarCantidadFacturas()) {
+        if (!validarCantidadItems()) {
             return;
         }
         Date fechaNotaCredito = vista.jdcFechaotaCredito.getDate();
@@ -193,6 +195,12 @@ public class C_crearNotaCredito extends MouseAdapter implements ActionListener, 
             JOptionPane.showMessageDialog(vista, VALIDAR_NRO_NOTA_CREDITO_MSG_5, VALIDAR_TITULO, JOptionPane.WARNING_MESSAGE);
             return false;
         }
+        if (!validadMontoExcedido()) {
+            int saldoPendiente = modelo.getFacturaSinPago().getSaldo();
+            DecimalFormat decimalFormat = new DecimalFormat("#,##0.##");
+            JOptionPane.showMessageDialog(vista, VALIDAR_NRO_NOTA_CREDITO_MSG_6 + " (" + decimalFormat.format(saldoPendiente) + ")", VALIDAR_TITULO, JOptionPane.WARNING_MESSAGE);
+            return false;
+        }
         if (modelo.existeNotaCredito(nroNotaCredito)) {
             JOptionPane.showMessageDialog(vista, VALIDAR_NRO_NOTA_CREDITO_MSG_4, VALIDAR_TITULO, JOptionPane.WARNING_MESSAGE);
             return false;
@@ -200,7 +208,7 @@ public class C_crearNotaCredito extends MouseAdapter implements ActionListener, 
         return true;
     }
 
-    private boolean validarCantidadFacturas() {
+    private boolean validarCantidadItems() {
         if (modelo.getNotaCreditoDetalleTm().getList().isEmpty()) {
             JOptionPane.showMessageDialog(vista, VALIDAR_CANT_DETALLE_MSG, VALIDAR_TITULO, JOptionPane.WARNING_MESSAGE);
             return false;
@@ -210,6 +218,13 @@ public class C_crearNotaCredito extends MouseAdapter implements ActionListener, 
 
     private boolean validadTotal() {
         return modelo.getTotal() > 0;
+    }
+
+    private boolean validadMontoExcedido() {
+        if (modelo.getTotal() > modelo.getFacturaSinPago().getSaldo()) {
+            return false;
+        }
+        return true;
     }
 
     private void limpiarCampos() {
@@ -306,8 +321,29 @@ public class C_crearNotaCredito extends MouseAdapter implements ActionListener, 
     }
 
     @Override
-    public void recibirVenta(E_facturaCabecera facturaCabecera, List<E_facturaDetalle> facturaDetalle) {
+    public void recibirProducto(double cantidad, int precio, double descuento, M_producto producto, String observacion) {
+    }
+
+    @Override
+    public void modificarProducto(int posicion, double cantidad, int precio, double descuento, M_producto producto, String observacion) {
+        E_NotaCreditoDetalle nd = new E_NotaCreditoDetalle();
+        nd.setCantidad(cantidad);
+        nd.setDescuento(descuento);
+        nd.setObservacion(observacion);
+        nd.setPrecio(precio);
+        nd.setProducto(producto);
+        if (modelo.cantidadNuevaMayorAActual(posicion, nd)) {
+            JOptionPane.showMessageDialog(vista, "La cantidad ingresada no puede ser mayor a la disponible", "Atención", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        this.modelo.modificarDetalle(posicion, nd);
+        sumarTotal();
+    }
+
+    @Override
+    public void recibirVentaPendientePago(E_facturaSinPago facturaCabecera, List<E_facturaDetalle> facturaDetalle) {
         this.modelo.getCabecera().setFacturaCabecera(facturaCabecera);
+        this.modelo.setFacturaSinPago(facturaCabecera);
         List<E_NotaCreditoDetalle> notaCreditoDetalle = new ArrayList<>();
         for (E_facturaDetalle fade : facturaDetalle) {
             //BUSCAR NOTAS DE CREDITO ANTERIORES PARA CONTROLAR LA CANTIDAD DEL DETALLE DE VENTA
@@ -343,31 +379,10 @@ public class C_crearNotaCredito extends MouseAdapter implements ActionListener, 
     }
 
     @Override
-    public void recibirFacturaCabecera(E_facturaCabecera facturaCabecera) {
+    public void recibirFacturaCabeceraPendientePago(E_facturaSinPago facturaCabecera) {
     }
 
     @Override
-    public void recibirFacturaDetalle(List<E_facturaDetalle> facturaDetalle) {
-
-    }
-
-    @Override
-    public void recibirProducto(double cantidad, int precio, double descuento, M_producto producto, String observacion) {
-    }
-
-    @Override
-    public void modificarProducto(int posicion, double cantidad, int precio, double descuento, M_producto producto, String observacion) {
-        E_NotaCreditoDetalle nd = new E_NotaCreditoDetalle();
-        nd.setCantidad(cantidad);
-        nd.setDescuento(descuento);
-        nd.setObservacion(observacion);
-        nd.setPrecio(precio);
-        nd.setProducto(producto);
-        if (modelo.cantidadNuevaMayorAActual(posicion, nd)) {
-            JOptionPane.showMessageDialog(vista, "La cantidad ingresada no puede ser mayor a la disponible", "Atención", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-        this.modelo.modificarDetalle(posicion, nd);
-        sumarTotal();
+    public void recibirFacturaDetallePendientePago(List<E_facturaDetalle> facturaDetalle) {
     }
 }

@@ -8,7 +8,9 @@ package NotasCredito;
 import DB.DB_NotaCredito;
 import Entities.E_NotaCreditoCabecera;
 import Entities.E_NotaCreditoDetalle;
+import Entities.E_facturaCabecera;
 import Entities.E_facturaDetalle;
+import Entities.E_facturaSinPago;
 import MenuPrincipal.DatosUsuario;
 import ModeloTabla.NotaCreditoDetalleTableModel;
 import java.util.ArrayList;
@@ -20,11 +22,13 @@ import java.util.ArrayList;
 public class M_crearNotaCredito {
 
     private E_NotaCreditoCabecera notaCreditoCabecera;
+    private E_facturaSinPago facturaSinPago;
     private NotaCreditoDetalleTableModel notaCreditoDetalleTm;
     private ArrayList<E_facturaDetalle> detalles;
 
     public M_crearNotaCredito() {
         this.notaCreditoCabecera = new E_NotaCreditoCabecera();
+        this.facturaSinPago = new E_facturaSinPago();
         this.notaCreditoCabecera.setFuncionario(DatosUsuario.getRol_usuario().getFuncionario());
         this.notaCreditoCabecera.getCliente().setIdCliente(-1);
         this.notaCreditoDetalleTm = new NotaCreditoDetalleTableModel();
@@ -100,5 +104,13 @@ public class M_crearNotaCredito {
     public void guardarNotaCredito() {
         ArrayList<E_NotaCreditoDetalle> listaDetalles = new ArrayList<>(getNotaCreditoDetalleTm().getList());
         DB_NotaCredito.guardarNotaCredito(getCabecera(), listaDetalles);
+    }
+
+    public E_facturaSinPago getFacturaSinPago() {
+        return facturaSinPago;
+    }
+
+    public void setFacturaSinPago(E_facturaSinPago facturaSinPago) {
+        this.facturaSinPago = facturaSinPago;
     }
 }

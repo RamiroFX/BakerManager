@@ -1474,7 +1474,7 @@ public class DB_Ingreso {
         }
         return detalles;
     }
-
+    
     public static ArrayList<M_facturaDetalle> obtenerVentaDetallesNroFactura(Integer nroFactura) {
         ArrayList<M_facturaDetalle> detalles = null;
         String query = "SELECT ID_FACTURA_DETALLE, "
@@ -1485,7 +1485,7 @@ public class DB_Ingreso {
                 + "CANTIDAD, "
                 + "PRECIO, "
                 + "DESCUENTO, "
-                + "OBSERVACION "
+                + "FD.OBSERVACION "
                 + "FROM FACTURA_DETALLE FD, FACTURA_CABECERA FC "
                 + "WHERE FD.ID_FACTURA_CABECERA = FC.ID_FACTURA_CABECERA "
                 + "AND FC.NRO_FACTURA = " + nroFactura;

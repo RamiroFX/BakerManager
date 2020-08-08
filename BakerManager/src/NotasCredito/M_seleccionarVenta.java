@@ -5,18 +5,21 @@
  */
 package NotasCredito;
 
+import DB.DB_Cobro;
 import DB.DB_Ingreso;
 import bauplast.*;
 import DB.DB_Producto;
 import DB.DB_manager;
 import Entities.E_facturaCabecera;
 import Entities.E_facturaDetalle;
+import Entities.E_facturaSinPago;
 import Entities.E_productoClasificacion;
 import Entities.E_tipoOperacion;
 import Entities.Estado;
 import Entities.M_facturaDetalle;
 import Entities.ProductoCategoria;
 import ModeloTabla.FacturaCabeceraTableModel;
+import ModeloTabla.FacturaSinPagoTableModel;
 import ModeloTabla.SeleccionarProductoRolloTableModel;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -29,27 +32,27 @@ import java.util.List;
  */
 public class M_seleccionarVenta {
 
-    private FacturaCabeceraTableModel tm;
-    private E_facturaCabecera cabecera;
+    private FacturaSinPagoTableModel tm;
+    private E_facturaSinPago cabecera;
 
     public M_seleccionarVenta() {
-        this.tm = new FacturaCabeceraTableModel();
-        this.cabecera = new E_facturaCabecera();
+        this.tm = new FacturaSinPagoTableModel();
+        this.cabecera = new E_facturaSinPago();
     }
 
-    public FacturaCabeceraTableModel getTm() {
+    public FacturaSinPagoTableModel getTm() {
         return tm;
     }
 
-    public void setTm(FacturaCabeceraTableModel tm) {
+    public void setTm(FacturaSinPagoTableModel tm) {
         this.tm = tm;
     }
 
-    public void setPc(E_facturaCabecera faca) {
+    public void setPc(E_facturaSinPago faca) {
         this.cabecera = faca;
     }
 
-    public E_facturaCabecera getCabecera() {
+    public E_facturaSinPago getCabecera() {
         return cabecera;
     }
 
@@ -77,13 +80,12 @@ public class M_seleccionarVenta {
         calendarFinal.set(Calendar.MINUTE, 59);
         calendarFinal.set(Calendar.SECOND, 59);
         calendarFinal.set(Calendar.MILLISECOND, 999);
-        this.tm.setFacturaCabeceraList(DB_Ingreso.obtenerIngreso2(
-                calendarInicio.getTime(), calendarFinal.getTime(), getCabecera().getCliente().getIdCliente(), -1, tiop.getId(), -1, -1, conFechas));
+        this.tm.setList(DB_Cobro.consultarFacturasPendiente(getCabecera().getCliente().getIdCliente()));
     }
 
-    public List<E_facturaDetalle> obtenerFacturaDetalle(Integer idFacturaCabecera) {
+    public List<E_facturaDetalle> obtenerFacturaDetalle(int nroFactura) {
         List<E_facturaDetalle> detalles = new ArrayList<>();
-        for (M_facturaDetalle ventaDetalle : DB_Ingreso.obtenerVentaDetalles(idFacturaCabecera)) {
+        for (M_facturaDetalle ventaDetalle : DB_Ingreso.obtenerVentaDetallesNroFactura(nroFactura)) {
             E_facturaDetalle fd = new E_facturaDetalle();
             fd.setProducto(ventaDetalle.getProducto());
             fd.setDescuento(ventaDetalle.getDescuento());

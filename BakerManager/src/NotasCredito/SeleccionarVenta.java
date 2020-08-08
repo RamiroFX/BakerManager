@@ -6,7 +6,7 @@
 package NotasCredito;
 
 import Entities.M_cliente;
-import Interface.RecibirFacturaCabeceraCallback;
+import Interface.RecibirFacturaSinPagoCallback;
 import javax.swing.JDialog;
 
 /**
@@ -29,7 +29,7 @@ public class SeleccionarVenta {
         this.controlador.mostrarVista();
     }
 
-    public void setCallback(RecibirFacturaCabeceraCallback callback) {
+    public void setCallback(RecibirFacturaSinPagoCallback callback) {
         this.controlador.setCallback(callback);
     }
 

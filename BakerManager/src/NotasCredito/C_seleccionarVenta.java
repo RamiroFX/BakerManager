@@ -5,9 +5,12 @@
 package NotasCredito;
 
 import Entities.E_facturaCabecera;
+import Entities.E_facturaSinPago;
 import Entities.E_tipoOperacion;
 import Entities.M_facturaCabecera;
+import Interface.RecibirCtaCteDetalleCallback;
 import Interface.RecibirFacturaCabeceraCallback;
+import Interface.RecibirFacturaSinPagoCallback;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -33,7 +36,7 @@ public class C_seleccionarVenta extends MouseAdapter implements ActionListener, 
 
     private M_seleccionarVenta modelo;
     private V_seleccionarVenta vista;
-    private RecibirFacturaCabeceraCallback callback;
+    private RecibirFacturaSinPagoCallback callback;
 
     public C_seleccionarVenta(M_seleccionarVenta modelo, V_seleccionarVenta vista) {
         this.vista = vista;
@@ -42,7 +45,7 @@ public class C_seleccionarVenta extends MouseAdapter implements ActionListener, 
         agregarListeners();
     }
 
-    public void setCallback(RecibirFacturaCabeceraCallback callback) {
+    public void setCallback(RecibirFacturaSinPagoCallback callback) {
         this.callback = callback;
     }
 
@@ -144,12 +147,8 @@ public class C_seleccionarVenta extends MouseAdapter implements ActionListener, 
     private void seleccionarVenta() {
         int fila = vista.jtVentaCabecera.getSelectedRow();
         if (fila > -1) {
-            M_facturaCabecera faca = modelo.getTm().getFacturaCabeceraList().get(fila);
-            E_facturaCabecera facturaCabecera = new E_facturaCabecera();
-            facturaCabecera.setCliente(faca.getCliente());
-            facturaCabecera.setFuncionario(faca.getFuncionario());
-            facturaCabecera.setIdFacturaCabecera(faca.getIdFacturaCabecera());
-            callback.recibirVenta(facturaCabecera, modelo.obtenerFacturaDetalle(faca.getIdFacturaCabecera()));
+            E_facturaSinPago faca = modelo.getTm().getList().get(fila);
+            callback.recibirVentaPendientePago(faca, modelo.obtenerFacturaDetalle(faca.getNroFactura()));
             cerrar();
         }
     }
