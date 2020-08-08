@@ -144,8 +144,10 @@ public class C_seleccionarFilm extends MouseAdapter implements ActionListener, K
             System.out.println("pf.prod.getCategoria: " + pf.getProducto().getCategoria());
             SeleccionCantidadProductoSimple scp = new SeleccionCantidadProductoSimple(vista, -1);
             if (esModoCreacion) {
+                System.out.println("PROD_TERMINADO_AGREGAR_ROLLO");
                 scp.setTipo(SeleccionCantidadProductoSimple.PROD_TERMINADO_AGREGAR_ROLLO);
             } else {
+                System.out.println("PROD_TERMINADO_ACTUALIZAR_ROLLO");
                 scp.setTipo(SeleccionCantidadProductoSimple.PROD_TERMINADO_ACTUALIZAR_ROLLO);
             }
             scp.setFilm(pf);
@@ -188,17 +190,9 @@ public class C_seleccionarFilm extends MouseAdapter implements ActionListener, K
         int fila = this.vista.jtProducto.rowAtPoint(e.getPoint());
         int columna = this.vista.jtProducto.columnAtPoint(e.getPoint());
         if ((fila > -1) && (columna > -1)) {
-            int index = this.vista.jtProducto.getSelectedRow();
-            E_produccionFilm producto = modelo.getTm().getList().get(index);
             this.vista.jbAceptar.setEnabled(true);
             if (e.getClickCount() == 2) {
-                E_produccionFilm pf = modelo.getTm().getList().get(fila);
-                SeleccionCantidadProductoSimple scp = new SeleccionCantidadProductoSimple(vista, -1);
-                scp.setFilm(pf);
-                scp.setTipo(SeleccionCantidadProductoSimple.PROD_TERMINADO_AGREGAR_ROLLO);
-                scp.setFilmCallback(callback);
-                scp.inicializarVista();
-                scp.setVisible(true);
+                seleccionarRollo();
                 this.vista.jtfBuscar.requestFocusInWindow();
             }
         }

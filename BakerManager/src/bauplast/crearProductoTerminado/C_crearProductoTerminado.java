@@ -70,7 +70,6 @@ class C_crearProductoTerminado extends MouseAdapter implements ActionListener, K
         this.vista.jbSeleccionarProducto.setEnabled(false);
         this.vista.jbEliminarProducto.setEnabled(false);
         this.vista.jbModificarProducto.setEnabled(false);
-        this.vista.jbSeleccionarRollo.setEnabled(false);
         this.vista.jbModificarRollo.setEnabled(false);
         this.vista.jbEliminarRollo.setEnabled(false);
         this.vista.jbFuncionario.setEnabled(false);
@@ -289,6 +288,10 @@ class C_crearProductoTerminado extends MouseAdapter implements ActionListener, K
     private void invocarSeleccionarFilmDisponible() {
         SeleccionarFilm sf = new SeleccionarFilm(vista);
         if (!esModoCreacion) {
+            int opcion = JOptionPane.showConfirmDialog(vista, "Al cargar un nuevo rollo ya no se podrá revertir la acción. ¿Está seguro que desea continuar?.", "Atención", JOptionPane.WARNING_MESSAGE, JOptionPane.YES_NO_OPTION);
+            if (opcion != JOptionPane.YES_OPTION) {
+                return;
+            }
             sf.desactivarModoCreacion();
         }
         sf.setCallback(this);
@@ -380,8 +383,6 @@ class C_crearProductoTerminado extends MouseAdapter implements ActionListener, K
 
     @Override
     public void recibirFilm(E_produccionFilm detalle) {
-        System.out.println("bauplast.C_crearProductoTerminado.recibirFilm()");
-        System.out.println("detalle: " + detalle.getProductoClasificacion().getDescripcion());
         modelo.agregarRolloUtilizado(detalle);
     }
 
@@ -392,8 +393,8 @@ class C_crearProductoTerminado extends MouseAdapter implements ActionListener, K
 
     @Override
     public void recibirFilmPosterior(E_produccionFilm detalle) {
-        System.out.println("bauplast.C_crearProductoTerminado.recibirFilmPosterior()");
-        System.out.println("detalle: " + detalle.getProducto().getDescripcion());
+        modelo.actualizarRolloUtilizado(detalle);
+        modelo.consultarProduccion();
     }
 
     @Override

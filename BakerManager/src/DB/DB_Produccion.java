@@ -170,11 +170,11 @@ public class DB_Produccion {
                 try {
                     DB_manager.getConection().rollback();
                 } catch (SQLException ex1) {
-                    Logger lgr = Logger.getLogger(DB_Ingreso.class.getName());
+                    Logger lgr = Logger.getLogger(DB_Produccion.class.getName());
                     lgr.log(Level.WARNING, ex1.getMessage(), ex1);
                 }
             }
-            Logger lgr = Logger.getLogger(DB_Ingreso.class.getName());
+            Logger lgr = Logger.getLogger(DB_Produccion.class.getName());
             lgr.log(Level.SEVERE, ex.getMessage(), ex);
         } finally {
             try {
@@ -185,7 +185,7 @@ public class DB_Produccion {
                     rs.close();
                 }
             } catch (SQLException ex) {
-                Logger lgr = Logger.getLogger(DB_Ingreso.class.getName());
+                Logger lgr = Logger.getLogger(DB_Produccion.class.getName());
                 lgr.log(Level.WARNING, ex.getMessage(), ex);
             }
         }
@@ -566,11 +566,11 @@ public class DB_Produccion {
                 try {
                     DB_manager.getConection().rollback();
                 } catch (SQLException ex1) {
-                    Logger lgr = Logger.getLogger(DB_Ingreso.class.getName());
+                    Logger lgr = Logger.getLogger(DB_Produccion.class.getName());
                     lgr.log(Level.WARNING, ex1.getMessage(), ex1);
                 }
             }
-            Logger lgr = Logger.getLogger(DB_Ingreso.class.getName());
+            Logger lgr = Logger.getLogger(DB_Produccion.class.getName());
             lgr.log(Level.SEVERE, ex.getMessage(), ex);
         } finally {
             try {
@@ -581,7 +581,7 @@ public class DB_Produccion {
                     rs.close();
                 }
             } catch (SQLException ex) {
-                Logger lgr = Logger.getLogger(DB_Ingreso.class.getName());
+                Logger lgr = Logger.getLogger(DB_Produccion.class.getName());
                 lgr.log(Level.WARNING, ex.getMessage(), ex);
             }
         }
@@ -675,11 +675,11 @@ public class DB_Produccion {
                 try {
                     DB_manager.getConection().rollback();
                 } catch (SQLException ex1) {
-                    Logger lgr = Logger.getLogger(DB_Ingreso.class.getName());
+                    Logger lgr = Logger.getLogger(DB_Produccion.class.getName());
                     lgr.log(Level.WARNING, ex1.getMessage(), ex1);
                 }
             }
-            Logger lgr = Logger.getLogger(DB_Ingreso.class.getName());
+            Logger lgr = Logger.getLogger(DB_Produccion.class.getName());
             lgr.log(Level.SEVERE, ex.getMessage(), ex);
         } finally {
             try {
@@ -690,7 +690,68 @@ public class DB_Produccion {
                     rs.close();
                 }
             } catch (SQLException ex) {
-                Logger lgr = Logger.getLogger(DB_Ingreso.class.getName());
+                Logger lgr = Logger.getLogger(DB_Produccion.class.getName());
+                lgr.log(Level.WARNING, ex.getMessage(), ex);
+            }
+        }
+        return (int) sq_cabecera;
+    }
+
+    public static int insertarProduccionProdTerminadosPosterior(E_produccionCabecera produccionCabecera, E_produccionFilm prodFilm) {
+        String INSERT_PRODUCCION_FILM_BAJA = "INSERT INTO produccion_film_baja(id_produccion_film, id_produccion_cabecera, peso_utilizado, fecha_utilizado, id_produccion_tipo_baja)VALUES (?, ?, ?, ?, ?);";
+        long sq_cabecera = produccionCabecera.getId();
+        try {
+            DB_manager.getConection().setAutoCommit(false);
+            //id_produccion_film, id_produccion_cabecera, peso_utilizado, fecha_utilizado, id_produccion_tipo_baja
+            pst = DB_manager.getConection().prepareStatement(INSERT_PRODUCCION_FILM_BAJA);
+            pst.setInt(1, prodFilm.getId());
+            pst.setInt(2, (int) sq_cabecera);
+            pst.setDouble(3, prodFilm.getPeso());
+            pst.setTimestamp(4, new Timestamp(produccionCabecera.getFechaProduccion().getTime()));
+            pst.setInt(5, E_produccionTipoBaja.PRODUCCION);
+            pst.executeUpdate();
+            pst.close();
+            //ACTUALIZAR PESO DE ROLLOS UTILIZADOS
+            double pesoUtilizado = prodFilm.getPeso();
+            double pesoActual = prodFilm.getPesoActual();
+            if ((pesoActual - pesoUtilizado) <= 0) {
+                int idProduccionFilm = prodFilm.getId();
+                String query = "UPDATE produccion_film SET ID_ESTADO = 2 WHERE id_produccion_film =" + idProduccionFilm;
+                st = DB_manager.getConection().createStatement();
+                st.executeUpdate(query);
+            }
+            //se resta al stock lo que se gasta (rollos) para productos terminados
+            int idProducto = prodFilm.getProducto().getId();
+            double cantidad = prodFilm.getPeso();
+            String query = "UPDATE PRODUCTO SET "
+                    + "CANT_ACTUAL = "
+                    + "((SELECT CANT_ACTUAL FROM PRODUCTO WHERE ID_PRODUCTO = " + idProducto + ")-" + cantidad + ") "
+                    + "WHERE ID_PRODUCTO =" + idProducto;
+            st = DB_manager.getConection().createStatement();
+            st.executeUpdate(query);
+            DB_manager.establecerTransaccion();
+        } catch (SQLException ex) {
+            System.out.println(ex.getNextException());
+            if (DB_manager.getConection() != null) {
+                try {
+                    DB_manager.getConection().rollback();
+                } catch (SQLException ex1) {
+                    Logger lgr = Logger.getLogger(DB_Produccion.class.getName());
+                    lgr.log(Level.WARNING, ex1.getMessage(), ex1);
+                }
+            }
+            Logger lgr = Logger.getLogger(DB_Produccion.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        } finally {
+            try {
+                if (pst != null) {
+                    pst.close();
+                }
+                if (rs != null) {
+                    rs.close();
+                }
+            } catch (SQLException ex) {
+                Logger lgr = Logger.getLogger(DB_Produccion.class.getName());
                 lgr.log(Level.WARNING, ex.getMessage(), ex);
             }
         }

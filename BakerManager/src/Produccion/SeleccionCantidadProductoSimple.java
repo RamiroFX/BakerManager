@@ -119,6 +119,8 @@ public class SeleccionCantidadProductoSimple extends javax.swing.JDialog impleme
         if (!checkearCantidad()) {
             return;
         }
+        System.err.println("isProductoTerminado: " + isProductoTerminado);
+        System.err.println("tipo: " + tipo);
         cantidad = Double.valueOf(String.valueOf(jtfCantidad.getText().trim()));
         if (isProductoTerminado) {
             switch (tipo) {
@@ -135,6 +137,7 @@ public class SeleccionCantidadProductoSimple extends javax.swing.JDialog impleme
             if (!validarPeso()) {
                 return;
             }
+            System.err.println("tipo: " + tipo);
             switch (tipo) {
                 case PROD_TERMINADO_AGREGAR_ROLLO: {
                     film.setPeso(cantidad);

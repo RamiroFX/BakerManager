@@ -112,4 +112,8 @@ public class M_crearProductoTerminado {
         SimpleDateFormat sdfs = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
         return sdfs.format(getProduccionCabecera().getFechaRegistro());
     }
+
+    public void actualizarRolloUtilizado(E_produccionFilm detalle) {
+        DB_Produccion.insertarProduccionProdTerminadosPosterior(getProduccionCabecera(), detalle);
+    }
 }
