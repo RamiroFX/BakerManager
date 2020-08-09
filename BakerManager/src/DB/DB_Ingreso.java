@@ -654,7 +654,7 @@ public class DB_Ingreso {
         }
         return ingreso_cabecera;
     }
-    
+
     public static M_facturaCabecera obtenerIngresoCabeceraNroFactura(Integer nroFactura) {
         M_facturaCabecera ingreso_cabecera = null;
         String query = "SELECT ID_FACTURA_CABECERA, "
@@ -694,6 +694,53 @@ public class DB_Ingreso {
             }
         }
         return ingreso_cabecera;
+    }
+
+    public static E_facturaCabecera obtenerFacturaCabeceraNroFactura(int nroFactura) {
+        E_facturaCabecera facturaCabecera = null;
+        String query = "SELECT ID_FACTURA_CABECERA, "
+                + "ID_FUNCIONARIO, "
+                + "ID_CLIENTE, "
+                + "TIEMPO, "
+                + "ID_COND_VENTA, "
+                + "NRO_FACTURA "
+                + "FROM FACTURA_CABECERA "
+                + "WHERE NRO_FACTURA = " + nroFactura;
+        try {
+            pst = DB_manager.getConection().prepareStatement(query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            rs = pst.executeQuery();
+            while (rs.next()) {
+                M_cliente cliente = new M_cliente();
+                cliente.setIdCliente(rs.getInt("ID_CLIENTE"));
+                E_tipoOperacion tipoOperacion = new E_tipoOperacion();
+                tipoOperacion.setId(rs.getInt("ID_COND_VENTA"));
+                M_funcionario funcionario = new M_funcionario();
+                funcionario.setId_funcionario(rs.getInt("ID_FUNCIONARIO"));
+                facturaCabecera = new E_facturaCabecera();
+                facturaCabecera.setIdFacturaCabecera(rs.getInt("ID_FACTURA_CABECERA"));
+                facturaCabecera.setCliente(cliente);
+                facturaCabecera.setTipoOperacion(tipoOperacion);
+                facturaCabecera.setFuncionario(funcionario);
+                facturaCabecera.setNroFactura(rs.getInt("NRO_FACTURA"));
+                facturaCabecera.setTiempo(rs.getTimestamp("TIEMPO"));
+            }
+        } catch (SQLException ex) {
+            Logger lgr = Logger.getLogger(DB_Ingreso.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (pst != null) {
+                    pst.close();
+                }
+            } catch (SQLException ex) {
+                Logger lgr = Logger.getLogger(DB_Ingreso.class.getName());
+                lgr.log(Level.WARNING, ex.getMessage(), ex);
+            }
+        }
+        return facturaCabecera;
     }
 
     public static M_facturaCabecera obtenerIngresoCabeceraCompleto(Integer idIngresoCabecera) {
@@ -1474,7 +1521,7 @@ public class DB_Ingreso {
         }
         return detalles;
     }
-    
+
     public static ArrayList<M_facturaDetalle> obtenerVentaDetallesNroFactura(Integer nroFactura) {
         ArrayList<M_facturaDetalle> detalles = null;
         String query = "SELECT ID_FACTURA_DETALLE, "
@@ -1527,7 +1574,7 @@ public class DB_Ingreso {
         }
         return detalles;
     }
-    
+
     public static ArrayList<E_facturaDetalleFX> obtenerVentaDetalles(String clienteEntidad,
             Integer nro_factura, String idEmpleado, String inicio, String fin,
             String tipo_operacion, Estado estado) {

@@ -5,6 +5,7 @@
  */
 package NotasCredito;
 
+import DB.DB_Ingreso;
 import DB.DB_NotaCredito;
 import Entities.E_NotaCreditoCabecera;
 import Entities.E_NotaCreditoDetalle;
@@ -55,6 +56,10 @@ public class M_crearNotaCredito {
      */
     public void setCabecera(E_NotaCreditoCabecera notaCreditoCabecera) {
         this.notaCreditoCabecera = notaCreditoCabecera;
+    }
+
+    public void establecerFacturaCabecera(int nroFactura) {
+        this.getCabecera().setFacturaCabecera(DB_Ingreso.obtenerFacturaCabeceraNroFactura(nroFactura));
     }
 
     public NotaCreditoDetalleTableModel getNotaCreditoDetalleTm() {

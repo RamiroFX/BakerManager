@@ -43,7 +43,7 @@ public class C_crearNotaCredito extends MouseAdapter implements ActionListener, 
             VALIDAR_NRO_NOTA_CREDITO_MSG_3 = "Ingrese solo números enteros y positivos en Número de Nota de Crédito",
             VALIDAR_NRO_NOTA_CREDITO_MSG_4 = "El Número de Nota de Crédito ingresado ya se encuentra en uso.",
             VALIDAR_NRO_NOTA_CREDITO_MSG_5 = "Ingrese una cantidad superior a 0 (cero).",
-            VALIDAR_NRO_NOTA_CREDITO_MSG_6 = "El total super al saldo pendiente.",
+            VALIDAR_NRO_NOTA_CREDITO_MSG_6 = "El total supera al saldo pendiente.",
             VALIDAR_FECHA_NOTA_CREDITO_MSG_1 = "La fecha seleccionada no es valida.",
             VALIDAR_CANT_DETALLE_MSG = "Nota de credito vacía.",
             VALIDAR_DETALLE_NOTA_CREDITO = "Existen detalles de Nota de Crédito pendiente. Vacíe la lista para seleccionar otro cliente",
@@ -342,7 +342,7 @@ public class C_crearNotaCredito extends MouseAdapter implements ActionListener, 
 
     @Override
     public void recibirVentaPendientePago(E_facturaSinPago facturaCabecera, List<E_facturaDetalle> facturaDetalle) {
-        this.modelo.getCabecera().setFacturaCabecera(facturaCabecera);
+        this.modelo.establecerFacturaCabecera(facturaCabecera.getNroFactura());
         this.modelo.setFacturaSinPago(facturaCabecera);
         List<E_NotaCreditoDetalle> notaCreditoDetalle = new ArrayList<>();
         for (E_facturaDetalle fade : facturaDetalle) {
