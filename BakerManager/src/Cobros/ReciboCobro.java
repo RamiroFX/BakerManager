@@ -10,6 +10,7 @@ import DB.DB_manager;
 import Entities.E_Divisa;
 import Entities.E_banco;
 import Entities.E_cuentaCorrienteDetalle;
+import Entities.E_facturaCabecera;
 import Entities.E_facturaSinPago;
 import Entities.E_formaPago;
 import Entities.E_tipoCheque;
@@ -128,6 +129,8 @@ public class ReciboCobro extends javax.swing.JDialog implements ActionListener, 
     public void nuevoPago(E_facturaSinPago fsp) {
         modificarDetalle = false;
         facturaCabecera = fsp;
+        E_facturaCabecera faca = DB_Ingreso.obtenerFacturaCabeceraNroFactura(fsp.getNroFactura());
+        facturaCabecera.setIdCabecera(faca.getIdFacturaCabecera());
         jtfCliente.setText(facturaCabecera.getClienteEntidad());
         jtfIdVenta.setText(decimalFormat.format(facturaCabecera.getIdCabecera()));
         jtfNroFactura.setText(decimalFormat.format(facturaCabecera.getNroFactura()));

@@ -310,7 +310,8 @@ public class DB_Cobro {
                 + "CCD.CHEQUE_FECHA, "//8
                 + "CCD.CHEQUE_FECHA_DIFERIDA, "//9
                 + "(SELECT B.DESCRIPCION FROM BANCO B WHERE B.ID_BANCO = CCD.ID_BANCO) \"BANCO\", "//10
-                + "(SELECT FC.NRO_FACTURA FROM FACTURA_CABECERA FC WHERE FC.ID_FACTURA_CABECERA = CCD.NRO_FACTURA) \"NRO_FACTURA\" "//11
+                //+ "(SELECT FC.NRO_FACTURA FROM FACTURA_CABECERA FC WHERE FC.ID_FACTURA_CABECERA = CCD.NRO_FACTURA) \"NRO_FACTURA\" "//11
+                + "CCD.ID_FACTURA_CABECERA "//11
                 + "FROM CUENTA_CORRIENTE_DETALLE CCD "
                 + "WHERE CCD.ID_CTA_CTE_CABECERA = ?;";
         try {
@@ -324,8 +325,8 @@ public class DB_Cobro {
                 banco.setDescripcion(rs.getString(10));
                 detalle.setId(rs.getInt(1));
                 detalle.setIdCuentaCorrienteCabecera(rs.getInt(2));
-                detalle.setIdFacturaCabecera(rs.getInt(3));
-                detalle.setNroFactura(rs.getInt(11));
+                detalle.setIdFacturaCabecera(rs.getInt(11));
+                detalle.setNroFactura(rs.getInt(3));
                 detalle.setNroRecibo(rs.getInt(4));
                 detalle.setMonto(rs.getInt(5));
                 detalle.setNroCheque(rs.getInt(6));
@@ -418,9 +419,9 @@ public class DB_Cobro {
                 + "id_funcionario_registro, nro_recibo, id_estado, fecha_cobro, control, id_caja_y)"
                 + "VALUES (?, ?, ?, ?, ?, ?, ?, ?);";
         //LA SGBD SE ENCARGA DE INSERTAR EL TIMESTAMP.
-        String INSERT_DETALLE_CHEQUE_DIFERIDO = "INSERT INTO cuenta_corriente_detalle(id_cta_cte_cabecera, id_factura_cabecera, nro_recibo, monto, nro_cheque, id_banco, cheque_fecha, cheque_fecha_diferida, id_estado_cheque, observacion)VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);";
-        String INSERT_DETALLE_CHEQUE = "INSERT INTO cuenta_corriente_detalle(id_cta_cte_cabecera, id_factura_cabecera, nro_recibo, monto, nro_cheque, id_banco, cheque_fecha, observacion)VALUES (?, ?, ?, ?, ?, ?, ?, ?);";
-        String INSERT_DETALLE_EFECTIVO = "INSERT INTO cuenta_corriente_detalle(id_cta_cte_cabecera, id_factura_cabecera, nro_recibo, monto, observacion)VALUES (?, ?, ?, ?, ?);";
+        String INSERT_DETALLE_CHEQUE_DIFERIDO = "INSERT INTO cuenta_corriente_detalle(id_cta_cte_cabecera, id_factura_cabecera, nro_recibo, nro_factura, monto, nro_cheque, id_banco, cheque_fecha, cheque_fecha_diferida, id_estado_cheque, observacion)VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);";
+        String INSERT_DETALLE_CHEQUE = "INSERT INTO cuenta_corriente_detalle(id_cta_cte_cabecera, id_factura_cabecera, nro_recibo, nro_factura, monto, nro_cheque, id_banco, cheque_fecha, observacion)VALUES (?, ?, ?, ?, ?, ?, ?, ?);";
+        String INSERT_DETALLE_EFECTIVO = "INSERT INTO cuenta_corriente_detalle(id_cta_cte_cabecera, id_factura_cabecera, nro_recibo, nro_factura, monto, observacion)VALUES (?, ?, ?, ?, ?);";
         long sq_cabecera = -1L;
         try {
             DB_manager.getConection().setAutoCommit(false);
@@ -456,14 +457,15 @@ public class DB_Cobro {
                             pst.setInt(2, unDetalle.getIdFacturaCabecera());
                         }
                         pst.setInt(3, cabecera.getNroRecibo());
-                        pst.setInt(4, (int) unDetalle.getMonto());
+                        pst.setInt(4, unDetalle.getNroFactura());
+                        pst.setInt(5, (int) unDetalle.getMonto());
                         /*
                             en caso de que pague el saldo inicial entonces se comentara en la observacion
                          */
                         if (unDetalle.getIdFacturaCabecera() == 0) {
-                            pst.setString(5, "Saldo inicial");
+                            pst.setString(6, "Saldo inicial");
                         } else {
-                            pst.setNull(5, java.sql.Types.VARCHAR);
+                            pst.setNull(6, java.sql.Types.VARCHAR);
                         }
                         pst.executeUpdate();
                         pst.close();
@@ -483,19 +485,20 @@ public class DB_Cobro {
                                 pst.setInt(2, unDetalle.getIdFacturaCabecera());
                             }
                             pst.setInt(3, cabecera.getNroRecibo());
-                            pst.setInt(4, (int) unDetalle.getMonto());
-                            pst.setInt(5, unDetalle.getNroCheque());
-                            pst.setInt(6, unDetalle.getBanco().getId());
-                            pst.setTimestamp(7, new Timestamp(unDetalle.getFechaCheque().getTime()));
-                            pst.setTimestamp(8, new Timestamp(unDetalle.getFechaDiferidaCheque().getTime()));
-                            pst.setInt(9, Estado.INACTIVO);
+                            pst.setInt(4, unDetalle.getNroFactura());
+                            pst.setInt(5, (int) unDetalle.getMonto());
+                            pst.setInt(6, unDetalle.getNroCheque());
+                            pst.setInt(7, unDetalle.getBanco().getId());
+                            pst.setTimestamp(8, new Timestamp(unDetalle.getFechaCheque().getTime()));
+                            pst.setTimestamp(9, new Timestamp(unDetalle.getFechaDiferidaCheque().getTime()));
+                            pst.setInt(10, Estado.INACTIVO);
                             /*
                             en caso de que pague el saldo inicial entonces se comentara en la observacion
                              */
                             if (unDetalle.getIdFacturaCabecera() == 0) {
-                                pst.setString(10, "Saldo inicial");
+                                pst.setString(1, "Saldo inicial");
                             } else {
-                                pst.setNull(10, java.sql.Types.VARCHAR);
+                                pst.setNull(11, java.sql.Types.VARCHAR);
                             }
                             pst.executeUpdate();
                             pst.close();
@@ -512,17 +515,18 @@ public class DB_Cobro {
                                 pst.setInt(2, unDetalle.getIdFacturaCabecera());
                             }
                             pst.setInt(3, cabecera.getNroRecibo());
-                            pst.setInt(4, (int) unDetalle.getMonto());
-                            pst.setInt(5, unDetalle.getNroCheque());
-                            pst.setInt(6, unDetalle.getBanco().getId());
-                            pst.setTimestamp(7, new Timestamp(unDetalle.getFechaCheque().getTime()));
+                            pst.setInt(4, unDetalle.getNroFactura());
+                            pst.setInt(5, (int) unDetalle.getMonto());
+                            pst.setInt(6, unDetalle.getNroCheque());
+                            pst.setInt(7, unDetalle.getBanco().getId());
+                            pst.setTimestamp(8, new Timestamp(unDetalle.getFechaCheque().getTime()));
                             /*
                             en caso de que pague el saldo inicial entonces se comentara en la observacion
                              */
                             if (unDetalle.getIdFacturaCabecera() == 0) {
-                                pst.setString(8, "Saldo inicial");
+                                pst.setString(9, "Saldo inicial");
                             } else {
-                                pst.setNull(8, java.sql.Types.VARCHAR);
+                                pst.setNull(9, java.sql.Types.VARCHAR);
                             }
                             pst.executeUpdate();
                             pst.close();

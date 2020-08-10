@@ -66,8 +66,12 @@ public class C_gestionVentas implements GestionInterface, RecibirEmpleadoCallbac
         for (int i = 0; i < estados.size(); i++) {
             this.vista.jcbEstado.addItem(estados.get(i));
         }
+        Calendar legacy = Calendar.getInstance();
+        legacy.set(Calendar.DAY_OF_MONTH, 1);
+        legacy.set(Calendar.MONTH, 1);
+        legacy.set(Calendar.YEAR, 2020);
         Date today = Calendar.getInstance().getTime();
-        this.vista.jddInicio.setDate(today);
+        this.vista.jddInicio.setDate(legacy.getTime());
         this.vista.jddFinal.setDate(today);
         this.vista.jbAgregar.setEnabled(false);
         this.vista.jbBuscar.setEnabled(false);
@@ -273,7 +277,7 @@ public class C_gestionVentas implements GestionInterface, RecibirEmpleadoCallbac
         if (e.getClickCount() == 2) {
             if (vista.jbDetalle.isEnabled()) {
                 Integer idIngresoCabecera = modelo.getTm().getFacturaCabeceraList().get(fila).getIdFacturaCabecera();
-                Ver_ingreso ver_egreso = new Ver_ingreso(c_inicio, idIngresoCabecera);
+                Ver_ingreso ver_egreso = new Ver_ingreso(c_inicio, idIngresoCabecera, false);
                 ver_egreso.mostrarVista();
                 this.vista.jbDetalle.setEnabled(false);
             }
@@ -542,7 +546,7 @@ public class C_gestionVentas implements GestionInterface, RecibirEmpleadoCallbac
             int fila = this.vista.jtIngresoCabecera.getSelectedRow();
             if (fila > -1) {
                 Integer idIngresoCabecera = modelo.getTm().getFacturaCabeceraList().get(fila).getIdFacturaCabecera();
-                Ver_ingreso ver_egreso = new Ver_ingreso(c_inicio, idIngresoCabecera);
+                Ver_ingreso ver_egreso = new Ver_ingreso(c_inicio, idIngresoCabecera, false);
                 ver_egreso.mostrarVista();
                 this.vista.jbDetalle.setEnabled(false);
             }

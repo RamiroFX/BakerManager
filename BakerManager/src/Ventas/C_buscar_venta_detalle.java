@@ -214,7 +214,7 @@ public class C_buscar_venta_detalle extends MouseAdapter implements ActionListen
             borrarParametros();
         } else if (e.getSource() == this.vista.jbDetalle) {
             Integer idEgresoCabecera = Integer.valueOf(String.valueOf(this.vista.jtCabecera.getValueAt(this.vista.jtCabecera.getSelectedRow(), 0)));
-            Ver_ingreso ver_ingreso = new Ver_ingreso(c_inicio, idEgresoCabecera);
+            Ver_ingreso ver_ingreso = new Ver_ingreso(c_inicio, idEgresoCabecera, false);
             ver_ingreso.mostrarVista();
             this.vista.jbDetalle.setEnabled(false);
 
@@ -250,7 +250,7 @@ public class C_buscar_venta_detalle extends MouseAdapter implements ActionListen
                 Integer idEgresoCabecera = Integer.valueOf(String.valueOf(this.vista.jtCabecera.getValueAt(fila, 0)));
                 this.vista.jbDetalle.setEnabled(true);
                 if (e.getClickCount() == 2) {
-                    Ver_ingreso ver_egreso = new Ver_ingreso(c_inicio, idEgresoCabecera);
+                    Ver_ingreso ver_egreso = new Ver_ingreso(c_inicio, idEgresoCabecera, false);
                     ver_egreso.mostrarVista();
                     this.vista.jbDetalle.setEnabled(false);
                 }

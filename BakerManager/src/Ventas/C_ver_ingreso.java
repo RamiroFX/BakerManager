@@ -10,6 +10,7 @@ import DB.DB_Funcionario;
 import DB.DB_Ingreso;
 import DB.DB_Preferencia;
 import Entities.E_impresionTipo;
+import Entities.E_impuesto;
 import Entities.M_cliente;
 import Entities.M_facturaCabecera;
 import Entities.M_facturaDetalle;
@@ -17,12 +18,16 @@ import Entities.M_funcionario;
 import Entities.M_telefono;
 import MenuPrincipal.DatosUsuario;
 import Impresora.Impresora;
+import ModeloTabla.FacturaDetalleTableModel;
+import Parametros.Impuesto;
 import Parametros.TipoVenta;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.Vector;
 import javax.swing.JOptionPane;
@@ -37,6 +42,7 @@ public class C_ver_ingreso implements ActionListener, KeyListener {
     int idEgresoCabecera, nroFactura;
     M_facturaCabecera faca;
     M_cliente cliente;
+    FacturaDetalleTableModel fadeTM;
 
     public C_ver_ingreso(int idEgresoCabecera, V_crearVentaRapida vista) {
         this.idEgresoCabecera = idEgresoCabecera;
@@ -54,6 +60,7 @@ public class C_ver_ingreso implements ActionListener, KeyListener {
 
     public void mostrarVista() {
         this.vista.setVisible(true);
+        this.vista.jbSalir.requestFocusInWindow();
     }
 
     private void agregarListeners() {
@@ -80,11 +87,21 @@ public class C_ver_ingreso implements ActionListener, KeyListener {
         Integer totalIva5 = 0;
         Integer totalIva10 = 0;
         Integer total = 0;
-        int cantRow = this.vista.jtFacturaDetalle.getRowCount();
-        for (int i = 0; i < cantRow; i++) {
-            exenta = exenta + Integer.valueOf(String.valueOf(this.vista.jtFacturaDetalle.getValueAt(i, 5)));
-            total5 = total5 + Integer.valueOf(String.valueOf(this.vista.jtFacturaDetalle.getValueAt(i, 6)));
-            total10 = total10 + Integer.valueOf(String.valueOf(this.vista.jtFacturaDetalle.getValueAt(i, 7)));
+        for (M_facturaDetalle m_facturaDetalle : fadeTM.getFacturaDetalleList()) {
+            switch (m_facturaDetalle.getProducto().getIdImpuesto()) {
+                case E_impuesto.EXENTA: {
+                    exenta = exenta + m_facturaDetalle.calcularSubTotal();
+                    break;
+                }
+                case E_impuesto.IVA5: {
+                    total5 = total5 + m_facturaDetalle.calcularSubTotal();
+                    break;
+                }
+                case E_impuesto.IVA10: {
+                    total10 = total10 + m_facturaDetalle.calcularSubTotal();
+                    break;
+                }
+            }
         }
         total = exenta + total5 + total10;
         totalIva5 = total5 / 21;
@@ -109,7 +126,9 @@ public class C_ver_ingreso implements ActionListener, KeyListener {
         faca.setCliente(cliente);
         faca.setFuncionario(funcionario);
         this.vista.jtfCliente.setText(cliente.getNombre() + " - " + cliente.getEntidad());
-        this.vista.jtFacturaDetalle.setModel(DB_Ingreso.obtenerIngresoDetalle(faca.getIdFacturaCabecera()));
+        fadeTM = new FacturaDetalleTableModel();
+        fadeTM.setFacturaDetalleList(DB_Ingreso.obtenerVentaDetalles(faca.getIdFacturaCabecera()));
+        this.vista.jtFacturaDetalle.setModel(fadeTM);
         Vector condCompra = obtenerTipoOperacion();
         for (int i = 0; i < condCompra.size(); i++) {
             this.vista.jcbCondVenta.addItem(condCompra.get(i));

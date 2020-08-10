@@ -255,7 +255,7 @@ public class C_historialFacturacion implements GestionInterface, RecibirEmpleado
         if (fila > -1) {
             //verificarPermiso();
             Integer idVentaCabecera = Integer.valueOf(String.valueOf(this.vista.jtVentas.getValueAt(fila, 0)));
-            Ver_ingreso ver_egreso = new Ver_ingreso(c_inicio, idVentaCabecera);
+            Ver_ingreso ver_egreso = new Ver_ingreso(c_inicio, idVentaCabecera, false);
             ver_egreso.mostrarVista();
             this.vista.jbVentaDetalle.setEnabled(false);
         }

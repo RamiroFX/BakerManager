@@ -110,7 +110,6 @@ public class C_gestionCobro implements GestionInterface, RecibirEmpleadoCallback
             if (this.vista.jbCheques.getName().equals(acceso.getItemDescripcion())) {
                 this.vista.jbCheques.setEnabled(true);
                 this.vista.jbCheques.addActionListener(this);
-                System.out.println("Cobros.C_gestionCobroPago.actionPerformed().jbCheques");
             }
         }
         this.vista.jbMasOpciones.addActionListener(this);

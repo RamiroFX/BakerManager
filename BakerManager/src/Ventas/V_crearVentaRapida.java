@@ -55,8 +55,9 @@ public class V_crearVentaRapida extends JDialog {
     //SUR
     JPanel jpSouth;
     public JButton jbAceptar, jbImprimir, jbSalir;
+    public boolean esModoCreacion;
 
-    public V_crearVentaRapida(JFrame frame) {
+    public V_crearVentaRapida(JFrame frame, boolean esModoCreacion_) {
         super(frame, "Crear venta", JDialog.ModalityType.APPLICATION_MODAL);
         setSize(950, 700);
         setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
@@ -66,14 +67,19 @@ public class V_crearVentaRapida extends JDialog {
         getContentPane().add(jpNorth, BorderLayout.NORTH);
         getContentPane().add(jpCenter, BorderLayout.CENTER);
         getContentPane().add(jpSouth, BorderLayout.SOUTH);
+        this.esModoCreacion = esModoCreacion_;
         addWindowListener(new WindowAdapter() {
             public void windowOpened(WindowEvent e) {
-                jtfCodProd.requestFocus();
+                if (esModoCreacion) {
+                    jtfCodProd.requestFocusInWindow();
+                } else {
+                    jbSalir.requestFocusInWindow();
+                }
             }
         });
     }
-    
-        public V_crearVentaRapida(JDialog frame) {
+
+    public V_crearVentaRapida(JDialog frame) {
         super(frame, "Crear venta", JDialog.ModalityType.APPLICATION_MODAL);
         setSize(950, 700);
         setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
@@ -132,7 +138,7 @@ public class V_crearVentaRapida extends JDialog {
     }
 
     private void initCenter() {
-        int columns= 8;
+        int columns = 8;
         jpCenter = new JPanel(new BorderLayout());
         jpCenter.setBorder(new EtchedBorder(EtchedBorder.RAISED));
         jtFacturaDetalle = new JTable();
