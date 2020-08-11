@@ -5,6 +5,7 @@
  */
 package Cobros;
 
+import DB.DB_Cobro;
 import DB.DB_Ingreso;
 import DB.DB_manager;
 import Entities.E_Divisa;
@@ -87,6 +88,7 @@ public class ReciboCobro extends javax.swing.JDialog implements ActionListener, 
     private E_facturaSinPago facturaCabecera;
     private boolean modificarDetalle;
     private DecimalFormat decimalFormat;
+    private int index;//para modificar filas
 
     public ReciboCobro(JDialog vista) {
         super(vista, TITULO, true);
@@ -139,17 +141,20 @@ public class ReciboCobro extends javax.swing.JDialog implements ActionListener, 
     }
 
     public void modificarDetalle(int index, E_facturaSinPago fsp, E_cuentaCorrienteDetalle detalle) {
+        this.index = index;
         modificarDetalle = true;
         /*
         ACTUALIZAR VISTA CON LOS DATOS
          */
-        facturaCabecera = fsp;
+        facturaCabecera = DB_Cobro.obtenerFacturaSinPago(fsp.getNroFactura());
+        //el id no esta presente en la vista V_facturas sinpago, por eso lo extraemos del detalle recibido
+        facturaCabecera.setIdFacturaCabecera(detalle.getIdFacturaCabecera());
         facturaCabecera.setMonto(this.totalFactura(fsp.getIdCabecera()));
         jtfCliente.setText(facturaCabecera.getClienteEntidad());
-        jtfIdVenta.setText(facturaCabecera.getIdCabecera() + "");
-        jtfNroFactura.setText(facturaCabecera.getNroFactura() + "");
-        jtfTotalFactura.setText(facturaCabecera.getMonto() + "");
-        jtfTotalPendiente.setText(facturaCabecera.getSaldo() + "");
+        jtfIdVenta.setText(decimalFormat.format(facturaCabecera.getIdCabecera()));
+        jtfNroFactura.setText(decimalFormat.format(facturaCabecera.getNroFactura()));
+        jtfTotalFactura.setText(decimalFormat.format(facturaCabecera.getMonto()));
+        jtfTotalPendiente.setText(decimalFormat.format(facturaCabecera.getSaldo()));
         E_formaPago fp = detalle.getFormaPago();
         jcbFormaPago.setSelectedItem(fp);
         jcbFormaPago.setEnabled(false);
@@ -354,7 +359,7 @@ public class ReciboCobro extends javax.swing.JDialog implements ActionListener, 
             }
         }
         if (modificarDetalle) {
-            callback.modificarCtaCteDetalle(1, detalle, facturaCabecera.getMonto());
+            callback.modificarCtaCteDetalle(index, detalle, facturaCabecera.getMonto());
         } else {
             callback.recibirCtaCteDetalle(detalle, facturaCabecera.getMonto());
         }

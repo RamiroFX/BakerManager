@@ -110,6 +110,28 @@ public class M_crearCobro {
         return true;
     }
 
+    public boolean controlarMontoModificado(int idFacturaCabecera, int aPagar, int totalPendiente) {
+        //OBTENER EL TOTAL DE LA FACTURA ACUMULADO EN LA OPERACION DE COBRO
+        int totalFactura = 0;
+        for (E_cuentaCorrienteDetalle ctaCteDetalle : getCtaCteDetalleTm().getList()) {
+            if (ctaCteDetalle.getIdFacturaCabecera() == idFacturaCabecera) {
+                totalFactura = totalFactura + (int) ctaCteDetalle.getMonto();
+            }
+        }
+        //VERIFICAR QUE EL NUEVO MONTO INGRESADO PARA LA MISMA FACTURA NO PASE
+        //EL MONTO TOTAL
+        for (int i = 0; i < getCtaCteDetalleTm().getList().size(); i++) {
+            E_cuentaCorrienteDetalle get = getCtaCteDetalleTm().getList().get(i);
+            if (get.getIdFacturaCabecera() == idFacturaCabecera) {
+                int subTotalApagar = totalFactura + aPagar;
+                if (subTotalApagar > totalPendiente) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
     public int getTotal() {
         int total = 0;
         for (int i = 0; i < getCtaCteDetalleTm().getList().size(); i++) {

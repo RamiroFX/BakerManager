@@ -419,9 +419,9 @@ public class DB_Cobro {
                 + "id_funcionario_registro, nro_recibo, id_estado, fecha_cobro, control, id_caja_y)"
                 + "VALUES (?, ?, ?, ?, ?, ?, ?, ?);";
         //LA SGBD SE ENCARGA DE INSERTAR EL TIMESTAMP.
-        String INSERT_DETALLE_CHEQUE_DIFERIDO = "INSERT INTO cuenta_corriente_detalle(id_cta_cte_cabecera, id_factura_cabecera, nro_recibo, nro_factura, monto, nro_cheque, id_banco, cheque_fecha, cheque_fecha_diferida, id_estado_cheque, observacion)VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);";
-        String INSERT_DETALLE_CHEQUE = "INSERT INTO cuenta_corriente_detalle(id_cta_cte_cabecera, id_factura_cabecera, nro_recibo, nro_factura, monto, nro_cheque, id_banco, cheque_fecha, observacion)VALUES (?, ?, ?, ?, ?, ?, ?, ?);";
-        String INSERT_DETALLE_EFECTIVO = "INSERT INTO cuenta_corriente_detalle(id_cta_cte_cabecera, id_factura_cabecera, nro_recibo, nro_factura, monto, observacion)VALUES (?, ?, ?, ?, ?);";
+        String INSERT_DETALLE_CHEQUE_DIFERIDO = "INSERT INTO cuenta_corriente_detalle(id_cta_cte_cabecera, id_factura_cabecera, nro_recibo, nro_factura, monto, nro_cheque, id_banco, cheque_fecha, cheque_fecha_diferida, id_estado_cheque, observacion)VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
+        String INSERT_DETALLE_CHEQUE = "INSERT INTO cuenta_corriente_detalle(id_cta_cte_cabecera, id_factura_cabecera, nro_recibo, nro_factura, monto, nro_cheque, id_banco, cheque_fecha, observacion)VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);";
+        String INSERT_DETALLE_EFECTIVO = "INSERT INTO cuenta_corriente_detalle(id_cta_cte_cabecera, id_factura_cabecera, nro_recibo, nro_factura, monto, observacion)VALUES (?, ?, ?, ?, ?, ?);";
         long sq_cabecera = -1L;
         try {
             DB_manager.getConection().setAutoCommit(false);
@@ -789,6 +789,33 @@ public class DB_Cobro {
             }
         }
         return list;
+    }
+
+    public static E_facturaSinPago obtenerFacturaSinPago(int nroFactura) {
+        E_facturaSinPago fsp = null;
+        String Query = "SELECT * FROM v_facturas_sin_pago WHERE nro_factura = ? ;";
+        try {
+            pst = DB_manager.getConection().prepareStatement(Query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            pst.setInt(1, nroFactura);
+            rs = pst.executeQuery();
+            while (rs.next()) {
+                fsp = new E_facturaSinPago();
+                fsp.setIdCabecera(0);
+                fsp.setIdCliente(rs.getInt("id_cliente"));
+                fsp.setNroFactura(rs.getInt("nro_factura"));
+                fsp.setClienteEntidad(rs.getString("cliente"));
+                fsp.setFecha(rs.getTimestamp("fecha"));
+                fsp.setMonto(rs.getInt("monto"));
+                fsp.setPago(rs.getInt("pago"));
+                fsp.setSaldo(rs.getInt("saldo"));
+                fsp.setRuc(rs.getString("ruc"));
+                fsp.setRuc(rs.getString("ruc_identificador"));
+            }
+        } catch (SQLException ex) {
+            Logger lgr = Logger.getLogger(DB_Cobro.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        }
+        return fsp;
     }
 
 }
