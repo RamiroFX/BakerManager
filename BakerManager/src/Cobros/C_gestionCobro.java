@@ -6,6 +6,7 @@
 package Cobros;
 
 import Cliente.Seleccionar_cliente;
+import Cobros.Retencion.GestionRetencion;
 import Empleado.Seleccionar_funcionario;
 import Entities.E_cuentaCorrienteConcepto;
 import Entities.Estado;
@@ -331,7 +332,7 @@ public class C_gestionCobro implements GestionInterface, RecibirEmpleadoCallback
     }
 
     private void mostrarOpciones() {
-        Object[] options = {"Estado de cuenta"};
+        Object[] options = {"Estado de cuenta", "Retención de I.V.A."};
         int n = JOptionPane.showOptionDialog(this.vista,
                 "Eliga su opción",
                 "Atención",
@@ -350,6 +351,15 @@ public class C_gestionCobro implements GestionInterface, RecibirEmpleadoCallback
                 });
                 break;
             }
+            case 1: {
+                EventQueue.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        invocarRetencionIVA();
+                    }
+                });
+                break;
+            }
         }
     }
 
@@ -357,6 +367,11 @@ public class C_gestionCobro implements GestionInterface, RecibirEmpleadoCallback
         this.tipoCliente = TIPO_ESTADO_CUENTA;
         Seleccionar_cliente sc = new Seleccionar_cliente(this.c_inicio.vista);
         sc.setCallback(this);
+        sc.mostrarVista();
+    }
+
+    private void invocarRetencionIVA() {
+        GestionRetencion sc = new GestionRetencion(this.c_inicio);
         sc.mostrarVista();
     }
 
