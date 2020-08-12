@@ -8,14 +8,20 @@ package Cobros.Retencion;
 import com.toedter.calendar.JDateChooser;
 import java.awt.BorderLayout;
 import static java.awt.Dialog.DEFAULT_MODALITY_TYPE;
+import java.awt.Dimension;
 import java.awt.GridLayout;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
+import javax.swing.JFormattedTextField;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import static javax.swing.WindowConstants.DISPOSE_ON_CLOSE;
+import javax.swing.border.EtchedBorder;
+import net.miginfocom.swing.MigLayout;
 
 /**
  *
@@ -32,17 +38,24 @@ public class V_crearRetencion extends JDialog {
     public JSpinner spPorcentaje;
     public JButton jbAceptar, jbCancelar;
     private JPanel jpPrincipal, jpBotones;
+    public static final String CREATE_TITLE = "Crear Retención";
 
     public V_crearRetencion(JDialog vista) {
-        super(vista, "Crear Retención", DEFAULT_MODALITY_TYPE);
-        setName("jdCrearRetencion");
-        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        super(vista);
         initializeComponents();
         constructLayout();
+        constructAppWindow(vista);
+    }
+
+    public V_crearRetencion(JFrame vista) {
+        super(vista);
+        initializeComponents();
+        constructLayout();
+        constructAppWindow(vista);
     }
 
     private void initializeComponents() {
-        jpPrincipal = new JPanel(new GridLayout(10, 2));
+        jpPrincipal = new JPanel(new GridLayout(2, 1));
 
         //Labels
         jlNroFactura = new JLabel("Nro. Factura");
@@ -64,34 +77,47 @@ public class V_crearRetencion extends JDialog {
         //TextFields
         jtfNroFactura = new JTextField();
         jtfCliente = new JTextField();
+        jtfCliente.setEditable(false);
         jdcFechaRetencion = new JDateChooser();
         jtfPorcentajeRetencion = new JTextField();
         jtfMontoConIVA = new JTextField();
+        jtfMontoConIVA.setEditable(false);
         jtfMontoSinIVA = new JTextField();
+        jtfMontoSinIVA.setEditable(false);
         jtfIVA = new JTextField();
+        jtfIVA.setEditable(false);
         jtfNroRetencion = new JTextField();
         //Spinner
         spPorcentaje = new JSpinner();
-        JPanel jpPorcentaje = new JPanel();
-        jpPorcentaje.add(jtfPorcentajeRetencion);
+        JComponent editor = spPorcentaje.getEditor();
+        JFormattedTextField tf = ((JSpinner.DefaultEditor) editor).getTextField();
+        tf.setColumns(4);
+        JPanel jpPorcentaje = new JPanel(new MigLayout());
+        jpPorcentaje.add(jtfPorcentajeRetencion, "pushx, growx");
         jpPorcentaje.add(spPorcentaje);
 
-        jpPrincipal.add(jlNroFactura);
-        jpPrincipal.add(jtfNroFactura);
-        jpPrincipal.add(jlCliente);
-        jpPrincipal.add(jtfCliente);
-        jpPrincipal.add(jlMontoSinIVA);
-        jpPrincipal.add(jtfMontoSinIVA);
-        jpPrincipal.add(jlIVA);
-        jpPrincipal.add(jtfIVA);
-        jpPrincipal.add(jlNroRetencion);
-        jpPrincipal.add(jtfNroRetencion);
-        jpPrincipal.add(jlMontoConIVA);
-        jpPrincipal.add(jtfMontoConIVA);
-        jpPrincipal.add(jlFechaRetencion);
-        jpPrincipal.add(jdcFechaRetencion);
-        jpPrincipal.add(jlPorcentajeRetencion);
-        jpPrincipal.add(jpPorcentaje);
+        JPanel jpDatosFactura = new JPanel(new MigLayout());
+        jpDatosFactura.setBorder(new EtchedBorder());
+        JPanel jpDatosRetencion = new JPanel(new MigLayout());
+        jpDatosRetencion.setBorder(new EtchedBorder());
+        jpDatosFactura.add(jlNroFactura);
+        jpDatosFactura.add(jtfNroFactura, "pushx, growx, wrap");
+        jpDatosFactura.add(jlCliente);
+        jpDatosFactura.add(jtfCliente, "pushx, growx, wrap");
+        jpDatosFactura.add(jlMontoSinIVA);
+        jpDatosFactura.add(jtfMontoSinIVA, "pushx, growx, wrap");
+        jpDatosFactura.add(jlIVA);
+        jpDatosFactura.add(jtfIVA, "pushx, growx, wrap");
+        jpDatosRetencion.add(jlNroRetencion);
+        jpDatosRetencion.add(jtfNroRetencion, "pushx, growx, wrap");
+        jpDatosRetencion.add(jlMontoConIVA);
+        jpDatosRetencion.add(jtfMontoConIVA, "pushx, growx, wrap");
+        jpDatosRetencion.add(jlFechaRetencion);
+        jpDatosRetencion.add(jdcFechaRetencion, "pushx, growx, wrap");
+        jpDatosRetencion.add(jlPorcentajeRetencion);
+        jpDatosRetencion.add(jpPorcentaje, "pushx, growx");
+        jpPrincipal.add(jpDatosFactura);
+        jpPrincipal.add(jpDatosRetencion);
 
         jpBotones = new JPanel();
         jbAceptar = new JButton("Aceptar");
@@ -105,5 +131,22 @@ public class V_crearRetencion extends JDialog {
         getContentPane().setLayout(new BorderLayout());
         getContentPane().add(jpPrincipal, BorderLayout.CENTER);
         getContentPane().add(jpBotones, BorderLayout.SOUTH);
+    }
+
+    private void constructAppWindow(JDialog jDialog) {
+        setTitle(CREATE_TITLE);
+        setName("jdCrearRetencion");
+        setPreferredSize(new Dimension(400, 300));
+        setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+        pack();
+        setLocationRelativeTo(jDialog);
+        setVisible(true);
+    }
+
+    private void constructAppWindow(JFrame frame) {
+        setTitle(CREATE_TITLE);
+        setName("jdCrearRetencion");
+        setPreferredSize(new Dimension(400, 320));
+        setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
     }
 }

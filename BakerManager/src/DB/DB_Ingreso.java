@@ -7,6 +7,7 @@ package DB;
 import Entities.E_cuentaCorrienteConcepto;
 import Entities.E_facturaCabecera;
 import Entities.E_facturaCabeceraFX;
+import Entities.E_facturaDetalle;
 import Entities.E_facturaDetalleFX;
 import Entities.E_facturacionCabecera;
 import Entities.E_tipoOperacion;
@@ -1492,6 +1493,57 @@ public class DB_Ingreso {
                 detalle.setCantidad(rs.getDouble("CANTIDAD"));
                 detalle.setDescuento(rs.getDouble("DESCUENTO"));
                 detalle.setIdFacturaCabecera(rs.getInt("ID_FACTURA_CABECERA"));
+                detalle.setIdFacturaDetalle(rs.getInt("ID_FACTURA_DETALLE"));
+                detalle.setObservacion(rs.getString("OBSERVACION"));
+                detalle.setPrecio(rs.getInt("PRECIO"));
+                M_producto producto = new M_producto();
+                producto.setId(rs.getInt("ID_PRODUCTO"));
+                producto.setDescripcion(rs.getString("PRODUCTO"));
+                producto.setIdImpuesto(rs.getInt("ID_IMPUESTO"));
+                producto.setCodigo(rs.getString("CODIGO_PROD"));
+                detalle.setProducto(producto);
+                detalles.add(detalle);
+            }
+        } catch (SQLException ex) {
+            Logger lgr = Logger.getLogger(DB_Egreso.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (st != null) {
+                    st.close();
+                }
+            } catch (SQLException ex) {
+                Logger lgr = Logger.getLogger(DB_Egreso.class.getName());
+                lgr.log(Level.WARNING, ex.getMessage(), ex);
+            }
+        }
+        return detalles;
+    }
+
+    public static List<E_facturaDetalle> obtenerVentaDetalles2(int idFacturaCabecera) {
+        List<E_facturaDetalle> detalles = null;
+        String query = "SELECT ID_FACTURA_DETALLE, "
+                + "ID_FACTURA_CABECERA, ID_PRODUCTO,"
+                + "(SELECT P.DESCRIPCION FROM PRODUCTO P WHERE P.ID_PRODUCTO = FD.ID_PRODUCTO)\"PRODUCTO\", "
+                + "(SELECT P.ID_IMPUESTO FROM PRODUCTO P WHERE P.ID_PRODUCTO = FD.ID_PRODUCTO)\"ID_IMPUESTO\", "
+                + "(SELECT P.CODIGO FROM PRODUCTO P WHERE P.ID_PRODUCTO = FD.ID_PRODUCTO)\"CODIGO_PROD\", "
+                + "CANTIDAD, "
+                + "PRECIO, "
+                + "DESCUENTO, "
+                + "OBSERVACION "
+                + "FROM FACTURA_DETALLE FD "
+                + "WHERE FD.ID_FACTURA_CABECERA = " + idFacturaCabecera;
+        try {
+            st = DB_manager.getConection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            rs = st.executeQuery(query);
+            detalles = new ArrayList();
+            while (rs.next()) {
+                E_facturaDetalle detalle = new E_facturaDetalle();
+                detalle.setCantidad(rs.getDouble("CANTIDAD"));
+                detalle.setDescuento(rs.getDouble("DESCUENTO"));
                 detalle.setIdFacturaDetalle(rs.getInt("ID_FACTURA_DETALLE"));
                 detalle.setObservacion(rs.getString("OBSERVACION"));
                 detalle.setPrecio(rs.getInt("PRECIO"));

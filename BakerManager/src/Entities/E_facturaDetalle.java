@@ -76,6 +76,11 @@ public class E_facturaDetalle {
         this.producto = producto;
     }
 
+    public Integer calcularSubTotal() {
+        Integer Precio = getPrecio() - Math.round(Math.round(((getPrecio() * getDescuento()) / 100)));
+        return Math.round(Math.round((getCantidad() * Precio)));
+    }
+
     @Override
     public String toString() {
         return getCantidad() + "|" + getProducto().getDescripcion() + "|" + getPrecio();

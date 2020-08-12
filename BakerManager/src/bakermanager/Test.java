@@ -7,6 +7,7 @@ package bakermanager;
 import Caja.V_SaldarCaja;
 import Charts.DiagramaVentaPorTiempo;
 import Charts.Diagramas;
+import Cobros.Retencion.GestionRetencion;
 import DB.DB_Caja;
 import DB.DB_Cliente;
 import DB.DB_Cobro;
@@ -52,7 +53,7 @@ public class Test {
 
     public static void main(String[] args) throws SQLException {
 
-        testearParametrosProducto();
+        testearRetencionVentas();
         //testearDiagramaPedido();
         /*DB_manager.conectarBD("postgres", "postgres");
         M_facturaCabecera faca;
@@ -109,5 +110,14 @@ public class Test {
         i.conectarBD();
         ProductoParametros param = new ProductoParametros(i.controlador);
         param.setVisible(true);
+    }
+    
+    public static void testearRetencionVentas(){
+        Inicio i = new Inicio();
+        i.conectarBD();
+
+        GestionRetencion gnc = new GestionRetencion(i.controlador);
+        gnc.mostrarVista();
+        
     }
 }

@@ -40,9 +40,11 @@ public class C_gestionRetencion implements ActionListener, MouseListener, KeyLis
     }
 
     public final void inicializarVista() {
+        
     }
 
     public final void concederPermisos() {
+        this.vista.jbNueva.addActionListener(this);
     }
 
     public final void mostrarVista() {
@@ -72,6 +74,10 @@ public class C_gestionRetencion implements ActionListener, MouseListener, KeyLis
         if (source.equals(this.vista.jbCliente)) {
             Seleccionar_cliente sc = new Seleccionar_cliente(this.c_inicio.vista);
             sc.setCallback(this);
+            sc.mostrarVista();
+        }
+        if (source.equals(this.vista.jbNueva)) {
+            CrearRetencionVenta sc = new CrearRetencionVenta(this.c_inicio.vista);
             sc.mostrarVista();
         }
         if (source.equals(this.vista.jbEmpleado)) {
