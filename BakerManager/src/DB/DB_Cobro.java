@@ -10,6 +10,7 @@ import Entities.E_cuentaCorrienteCabecera;
 import Entities.E_cuentaCorrienteDetalle;
 import Entities.E_facturaSinPago;
 import Entities.E_formaPago;
+import Entities.E_retencionVenta;
 import Entities.Estado;
 import Entities.M_cliente;
 import Entities.M_funcionario;
@@ -816,6 +817,70 @@ public class DB_Cobro {
             lgr.log(Level.SEVERE, ex.getMessage(), ex);
         }
         return fsp;
+    }
+
+    public static int insertarRetencion(E_retencionVenta cabecera) {
+        String INSERT_CABECERA = "INSERT INTO retencion_venta("
+                + "nro_retencion, id_funcionario, id_factura_cabecera, porcentaje, monto, tiempo)"
+                + "VALUES (?, ?, ?, ?, ?, ?);";
+        long sq_cabecera = -1L;
+        try {
+            DB_manager.getConection().setAutoCommit(false);
+            pst = DB_manager.getConection().prepareStatement(INSERT_CABECERA, PreparedStatement.RETURN_GENERATED_KEYS);
+            pst.setInt(1, cabecera.getNroRetencion());
+            pst.setInt(2, cabecera.getFuncionario().getId_funcionario());
+            pst.setInt(3, cabecera.getVenta().getIdFacturaCabecera());
+            pst.setDouble(4, cabecera.getPorcentaje());
+            pst.setInt(5, cabecera.getMonto());
+            pst.setTimestamp(6, new Timestamp(cabecera.getFecha().getTime()));
+            pst.executeUpdate();
+            rs = pst.getGeneratedKeys();
+            if (rs != null && rs.next()) {
+                sq_cabecera = rs.getLong(1);
+            }
+            pst.close();
+            rs.close();
+            DB_manager.establecerTransaccion();
+        } catch (SQLException ex) {
+            System.out.println(ex.getNextException());
+            if (DB_manager.getConection() != null) {
+                try {
+                    DB_manager.getConection().rollback();
+                } catch (SQLException ex1) {
+                    Logger lgr = Logger.getLogger(DB_Cobro.class.getName());
+                    lgr.log(Level.WARNING, ex1.getMessage(), ex1);
+                }
+            }
+            Logger lgr = Logger.getLogger(DB_Cobro.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        } finally {
+            try {
+                if (pst != null) {
+                    pst.close();
+                }
+                if (rs != null) {
+                    rs.close();
+                }
+            } catch (SQLException ex) {
+                Logger lgr = Logger.getLogger(DB_Cobro.class.getName());
+                lgr.log(Level.WARNING, ex.getMessage(), ex);
+            }
+        }
+        return (int) sq_cabecera;
+    }
+
+    public static boolean nroRetencionEnUso(int nroRetencion) {
+        String QUERY = "SELECT nro_retencion FROM retencion_venta WHERE nro_retencion = " + nroRetencion;
+        try {
+            st = DB_manager.getConection().createStatement();
+            // se ejecuta el query y se obtienen los resultados en un ResultSet
+            rs = st.executeQuery(QUERY);
+            return !rs.isBeforeFirst();
+        } catch (SQLException ex) {
+            Logger lgr = Logger.getLogger(DB_Cobro.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        }
+        return false;
     }
 
 }

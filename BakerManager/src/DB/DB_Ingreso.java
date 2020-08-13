@@ -699,20 +699,22 @@ public class DB_Ingreso {
 
     public static E_facturaCabecera obtenerFacturaCabeceraNroFactura(int nroFactura) {
         E_facturaCabecera facturaCabecera = null;
-        String query = "SELECT ID_FACTURA_CABECERA, "
-                + "ID_FUNCIONARIO, "
-                + "ID_CLIENTE, "
-                + "TIEMPO, "
-                + "ID_COND_VENTA, "
-                + "NRO_FACTURA "
-                + "FROM FACTURA_CABECERA "
-                + "WHERE NRO_FACTURA = " + nroFactura;
+        String query = "SELECT FC.ID_FACTURA_CABECERA, "
+                + "FC.ID_FUNCIONARIO, "
+                + "FC.ID_CLIENTE, "
+                + "(SELECT ENTIDAD FROM CLIENTE C WHERE FC.ID_CLIENTE = C.ID_CLIENTE) \"CLIENTE\", "
+                + "FC.TIEMPO, "
+                + "FC.ID_COND_VENTA, "
+                + "FC.NRO_FACTURA "
+                + "FROM FACTURA_CABECERA FC "
+                + "WHERE FC.NRO_FACTURA = " + nroFactura;
         try {
             pst = DB_manager.getConection().prepareStatement(query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             rs = pst.executeQuery();
             while (rs.next()) {
                 M_cliente cliente = new M_cliente();
                 cliente.setIdCliente(rs.getInt("ID_CLIENTE"));
+                cliente.setEntidad(rs.getString("CLIENTE"));
                 E_tipoOperacion tipoOperacion = new E_tipoOperacion();
                 tipoOperacion.setId(rs.getInt("ID_COND_VENTA"));
                 M_funcionario funcionario = new M_funcionario();

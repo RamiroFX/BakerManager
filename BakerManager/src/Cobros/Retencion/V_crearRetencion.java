@@ -7,7 +7,6 @@ package Cobros.Retencion;
 
 import com.toedter.calendar.JDateChooser;
 import java.awt.BorderLayout;
-import static java.awt.Dialog.DEFAULT_MODALITY_TYPE;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import javax.swing.JButton;
@@ -19,7 +18,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
-import static javax.swing.WindowConstants.DISPOSE_ON_CLOSE;
 import javax.swing.border.EtchedBorder;
 import net.miginfocom.swing.MigLayout;
 
@@ -32,10 +30,10 @@ public class V_crearRetencion extends JDialog {
     private JLabel jlNroFactura, jlCliente, jlMontoSinIVA, jlIVA, jlMontoConIVA, jlNroRetencion,
             jlFechaRetencion, jlPorcentajeRetencion, jlMontoConRetencion;
     public JTextField jtfNroFactura, jtfCliente, jtfMontoConIVA,
-            jtfPorcentajeRetencion;
+            jtfPorcentajeRetencion, jtfMontoConRetencion;
     public JDateChooser jdcFechaRetencion;
     public JTextField jtfMontoSinIVA, jtfNroRetencion, jtfIVA;
-    public JSpinner spPorcentaje;
+    public JSpinner jsPorcentaje;
     public JButton jbAceptar, jbCancelar;
     private JPanel jpPrincipal, jpBotones;
     public static final String CREATE_TITLE = "Crear Retención";
@@ -44,14 +42,14 @@ public class V_crearRetencion extends JDialog {
         super(vista);
         initializeComponents();
         constructLayout();
-        constructAppWindow(vista);
+        constructAppWindow();
     }
 
     public V_crearRetencion(JFrame vista) {
         super(vista);
         initializeComponents();
         constructLayout();
-        constructAppWindow(vista);
+        constructAppWindow();
     }
 
     private void initializeComponents() {
@@ -74,6 +72,8 @@ public class V_crearRetencion extends JDialog {
         jlFechaRetencion.setHorizontalAlignment(JLabel.CENTER);
         jlPorcentajeRetencion = new JLabel("Porcentaje de retención");
         jlPorcentajeRetencion.setHorizontalAlignment(JLabel.CENTER);
+        jlMontoConRetencion = new JLabel("Monto de retención");
+        jlMontoConRetencion.setHorizontalAlignment(JLabel.CENTER);
         //TextFields
         jtfNroFactura = new JTextField();
         jtfCliente = new JTextField();
@@ -87,14 +87,15 @@ public class V_crearRetencion extends JDialog {
         jtfIVA = new JTextField();
         jtfIVA.setEditable(false);
         jtfNroRetencion = new JTextField();
+        jtfMontoConRetencion = new JTextField();
         //Spinner
-        spPorcentaje = new JSpinner();
-        JComponent editor = spPorcentaje.getEditor();
+        jsPorcentaje = new JSpinner();
+        JComponent editor = jsPorcentaje.getEditor();
         JFormattedTextField tf = ((JSpinner.DefaultEditor) editor).getTextField();
         tf.setColumns(4);
         JPanel jpPorcentaje = new JPanel(new MigLayout());
         jpPorcentaje.add(jtfPorcentajeRetencion, "pushx, growx");
-        jpPorcentaje.add(spPorcentaje);
+        jpPorcentaje.add(jsPorcentaje);
 
         JPanel jpDatosFactura = new JPanel(new MigLayout());
         jpDatosFactura.setBorder(new EtchedBorder());
@@ -108,14 +109,16 @@ public class V_crearRetencion extends JDialog {
         jpDatosFactura.add(jtfMontoSinIVA, "pushx, growx, wrap");
         jpDatosFactura.add(jlIVA);
         jpDatosFactura.add(jtfIVA, "pushx, growx, wrap");
+        jpDatosFactura.add(jlMontoConIVA);
+        jpDatosFactura.add(jtfMontoConIVA, "pushx, growx, wrap");
         jpDatosRetencion.add(jlNroRetencion);
         jpDatosRetencion.add(jtfNroRetencion, "pushx, growx, wrap");
-        jpDatosRetencion.add(jlMontoConIVA);
-        jpDatosRetencion.add(jtfMontoConIVA, "pushx, growx, wrap");
         jpDatosRetencion.add(jlFechaRetencion);
         jpDatosRetencion.add(jdcFechaRetencion, "pushx, growx, wrap");
         jpDatosRetencion.add(jlPorcentajeRetencion);
-        jpDatosRetencion.add(jpPorcentaje, "pushx, growx");
+        jpDatosRetencion.add(jpPorcentaje, "pushx, growx, wrap");
+        jpDatosRetencion.add(jlMontoConRetencion);
+        jpDatosRetencion.add(jtfMontoConRetencion, "pushx, growx");
         jpPrincipal.add(jpDatosFactura);
         jpPrincipal.add(jpDatosRetencion);
 
@@ -133,20 +136,10 @@ public class V_crearRetencion extends JDialog {
         getContentPane().add(jpBotones, BorderLayout.SOUTH);
     }
 
-    private void constructAppWindow(JDialog jDialog) {
+    private void constructAppWindow() {
         setTitle(CREATE_TITLE);
         setName("jdCrearRetencion");
-        setPreferredSize(new Dimension(400, 300));
-        setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-        pack();
-        setLocationRelativeTo(jDialog);
-        setVisible(true);
-    }
-
-    private void constructAppWindow(JFrame frame) {
-        setTitle(CREATE_TITLE);
-        setName("jdCrearRetencion");
-        setPreferredSize(new Dimension(400, 320));
+        setPreferredSize(new Dimension(400, 350));
         setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
     }
 }

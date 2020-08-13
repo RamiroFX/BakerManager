@@ -18,6 +18,7 @@ public class E_retencionVenta {
     private int monto;
     private double porcentaje;
     private E_facturaCabecera venta;
+    private M_funcionario funcionario;
     private Date fecha;
 
     public E_retencionVenta() {
@@ -105,5 +106,19 @@ public class E_retencionVenta {
      */
     public void setFecha(Date fecha) {
         this.fecha = fecha;
+    }
+
+    /**
+     * @return the funcionario
+     */
+    public M_funcionario getFuncionario() {
+        return funcionario;
+    }
+
+    /**
+     * @param funcionario the funcionario to set
+     */
+    public void setFuncionario(M_funcionario funcionario) {
+        this.funcionario = funcionario;
     }
 }

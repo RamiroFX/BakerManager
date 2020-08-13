@@ -5,11 +5,12 @@
  */
 package Cobros.Retencion;
 
+import DB.DB_Cobro;
 import DB.DB_Ingreso;
 import Entities.E_facturaCabecera;
 import Entities.E_facturaDetalle;
 import Entities.E_impuesto;
-import Entities.M_facturaDetalle;
+import Entities.E_retencionVenta;
 import java.util.ArrayList;
 import javax.swing.SpinnerModel;
 import javax.swing.SpinnerNumberModel;
@@ -20,18 +21,19 @@ import javax.swing.SpinnerNumberModel;
  */
 public class M_crearRetencion {
 
-    private SpinnerModel value;
+    private SpinnerModel spinnerModel;
     private E_facturaCabecera facturaCabecera;
     private ArrayList<E_facturaDetalle> facturaDetalles;
+    private E_retencionVenta retencion;
 
     public M_crearRetencion() {
         facturaCabecera = new E_facturaCabecera();
         facturaDetalles = new ArrayList<>();
-        value = new SpinnerNumberModel(5, 0, 100, 1);
+        spinnerModel = new SpinnerNumberModel(5.0, 0.0, 100, 1.0);
     }
 
     public SpinnerModel getSpinnerModel() {
-        return value;
+        return spinnerModel;
     }
 
     public E_facturaCabecera getFacturaCabecera() {
@@ -69,4 +71,24 @@ public class M_crearRetencion {
         return iva5 + iva10;
     }
 
+    public boolean existeNroFactura(int nroFactura) {
+        return DB_Ingreso.nroFacturaEnUso(nroFactura);
+    }
+
+    public boolean existeNroRetencion(int nroRetencion) {
+        return DB_Cobro.nroRetencionEnUso(nroRetencion);
+    }
+
+    public boolean validarMontoExistente() {
+        return obtenerMontoConIva() > 0;
+    }
+
+    public double calcularMontoRetencion(double porcentajeRetencion) {
+        double iva = obtenerMontoConIva() - obtenerMontoSinIva();
+        return (iva * porcentajeRetencion) / 100;
+    }
+
+    public void guardarRetencion() {
+        DB_Cobro.insertarRetencion(retencion);
+    }
 }
