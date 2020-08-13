@@ -8,6 +8,7 @@ package DB;
 import Entities.E_banco;
 import Entities.E_cuentaCorrienteCabecera;
 import Entities.E_cuentaCorrienteDetalle;
+import Entities.E_facturaCabecera;
 import Entities.E_facturaSinPago;
 import Entities.E_formaPago;
 import Entities.E_retencionVenta;
@@ -832,7 +833,7 @@ public class DB_Cobro {
             pst.setInt(3, cabecera.getVenta().getIdFacturaCabecera());
             pst.setDouble(4, cabecera.getPorcentaje());
             pst.setInt(5, cabecera.getMonto());
-            pst.setTimestamp(6, new Timestamp(cabecera.getFecha().getTime()));
+            pst.setTimestamp(6, new Timestamp(cabecera.getTiempo().getTime()));
             pst.executeUpdate();
             rs = pst.getGeneratedKeys();
             if (rs != null && rs.next()) {
@@ -888,7 +889,6 @@ public class DB_Cobro {
                 + "WHERE retencion_venta.id_factura_cabecera = factura_cabecera.id_factura_cabecera "
                 + "AND retencion_venta.id_estado = 1 "
                 + "AND factura_cabecera.nro_factura = " + nroFactura;
-        System.out.println(QUERY);
         try {
             st = DB_manager.getConection().createStatement();
             // se ejecuta el query y se obtienen los resultados en un ResultSet
@@ -901,4 +901,140 @@ public class DB_Cobro {
         return false;
     }
 
+    public static List<E_retencionVenta> obtenerRetenciones(int idCliente,
+            int idFuncionario, int nroRetencion, Date fechaInicio, Date fechaFinal,
+            int idEstado) {
+        List<E_retencionVenta> list = new ArrayList<>();
+        String query = "SELECT "
+                + "rv.id_retencion_venta, "
+                + "rv.id_factura_cabecera, "
+                + "rv.nro_retencion, "
+                + "fc.nro_factura, "
+                + "c.entidad, "
+                + "c.ruc, "
+                + "c.ruc_identificador, "
+                + "(SELECT nombre ||' '||apellido FROM persona pers WHERE pers.id_persona = f.id_persona) \"FUNCIONARIO\", "
+                + "rv.tiempo, "
+                + "rv.id_estado, "
+                + "(SELECT descripcion FROM estado esta WHERE esta.id_estado = rv.id_estado) \"ESTADO\", "
+                + "rv.porcentaje \"PORCENTAJE\", "
+                + "rv.monto \"TOTAL\" "
+                + "FROM  "
+                + "retencion_venta rv, "
+                + "factura_cabecera fc, "
+                + "funcionario f, "
+                + "cliente c "
+                + "WHERE "
+                + "rv.id_factura_cabecera = fc.id_factura_cabecera AND "
+                + "rv.id_funcionario = f.id_funcionario AND "
+                + "rv.id_cliente = c.id_cliente AND "
+                + "rv.tiempo BETWEEN ?  AND ? ";
+        String orderBy = "ORDER BY rv.tiempo";
+        if (idCliente > 0) {
+            query = query + " AND rv.ID_CLIENTE = ? ";
+        }
+        if (idFuncionario > 0) {
+            query = query + " AND rv.ID_FUNCIONARIO = ? ";
+        }
+        if (nroRetencion > 0) {
+            query = query + " AND rv.nro_retencion = ? ";
+        }
+        if (idEstado > 0) {
+            query = query + " AND rv.id_estado = ? ";
+        }
+        query = query + orderBy;
+        int pos = 3;
+        try {
+            pst = DB_manager.getConection().prepareStatement(query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            pst.setTimestamp(1, new java.sql.Timestamp(fechaInicio.getTime()));
+            pst.setTimestamp(2, new java.sql.Timestamp(fechaFinal.getTime()));
+            if (idCliente > 0) {
+                pst.setInt(pos, idCliente);
+                pos++;
+            }
+            if (idFuncionario > 0) {
+                pst.setInt(pos, idFuncionario);
+                pos++;
+            }
+            if (nroRetencion > 0) {
+                pst.setInt(pos, nroRetencion);
+                pos++;
+            }
+            if (idEstado > 0) {
+                pst.setInt(pos, idEstado);
+                pos++;
+            }
+            rs = pst.executeQuery();
+            while (rs.next()) {
+                M_cliente cliente = new M_cliente();
+                cliente.setEntidad(rs.getString("entidad"));
+                cliente.setRuc(rs.getString("ruc"));
+                cliente.setRucId(rs.getString("ruc_identificador"));
+                M_funcionario f = new M_funcionario();
+                f.setNombre(rs.getString("FUNCIONARIO"));
+                Estado estado = new Estado();
+                estado.setId(rs.getInt("id_estado"));
+                estado.setDescripcion(rs.getString("ESTADO"));
+                E_facturaCabecera facturaCabecera = new E_facturaCabecera();
+                facturaCabecera.setIdFacturaCabecera(rs.getInt("id_factura_cabecera"));
+                facturaCabecera.setNroFactura(rs.getInt("nro_factura"));
+                facturaCabecera.setCliente(cliente);
+                E_retencionVenta rv = new E_retencionVenta();
+                rv.setId(rs.getInt("id_retencion_venta"));
+                rv.setTiempo(rs.getTimestamp("tiempo"));
+                rv.setVenta(facturaCabecera);
+                rv.setNroRetencion(rs.getInt("nro_retencion"));
+                rv.setFuncionario(f);
+                rv.setMonto(rs.getInt("MONTO"));
+                rv.setEstado(estado);
+                list.add(rv);
+            }
+        } catch (SQLException ex) {
+            Logger lgr = Logger.getLogger(DB_Cobro.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (pst != null) {
+                    pst.close();
+                }
+            } catch (SQLException ex) {
+                Logger lgr = Logger.getLogger(DB_Cobro.class.getName());
+                lgr.log(Level.WARNING, ex.getMessage(), ex);
+            }
+        }
+        return list;
+    }
+
+    public static void anularRetencion(int idCabecera, int idEstado, boolean recuperarNroRetencion) {
+        String UPDATE_NOTACREDITO = "UPDATE RETENCION_VENTA SET ID_ESTADO = ? WHERE ID_RETENCION_VENTA = ?";
+        if (recuperarNroRetencion) {
+            UPDATE_NOTACREDITO = "UPDATE RETENCION_VENTA SET ID_ESTADO = ?, NRO_RETENCION = 0 WHERE ID_RETENCION_VENTA = ?";
+        }
+        try {
+            DB_manager.habilitarTransaccionManual();
+            pst = DB_manager.getConection().prepareStatement(UPDATE_NOTACREDITO);
+            pst.setInt(1, idEstado);
+            pst.setInt(2, idCabecera);
+            pst.executeUpdate();
+            pst.close();
+            DB_manager.establecerTransaccion();
+        } catch (SQLException ex) {
+            System.out.println(ex.getNextException());
+            if (DB_manager.getConection() != null) {
+                try {
+                    DB_manager.getConection().rollback();
+                } catch (SQLException ex1) {
+                    Logger lgr = Logger.getLogger(DB_Egreso.class
+                            .getName());
+                    lgr.log(Level.WARNING, ex1.getMessage(), ex1);
+                }
+            }
+            Logger lgr = Logger.getLogger(DB_Egreso.class
+                    .getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        }
+    }
 }

@@ -73,8 +73,8 @@ public class C_crearRetencion implements ActionListener, KeyListener, ChangeList
         this.vista.jtfNroFactura.addKeyListener(this);
         this.vista.jtfNroRetencion.addActionListener(this);
         this.vista.jtfNroRetencion.addKeyListener(this);
-        this.vista.jtfPorcentajeRetencion.addActionListener(this);
-        this.vista.jtfPorcentajeRetencion.addKeyListener(this);
+        this.vista.jftPorcentajeRetencion.addActionListener(this);
+        this.vista.jftPorcentajeRetencion.addKeyListener(this);
         this.vista.jbAceptar.addActionListener(this);
         this.vista.jbCancelar.addActionListener(this);
     }
@@ -131,19 +131,20 @@ public class C_crearRetencion implements ActionListener, KeyListener, ChangeList
         if (validarPorcentaje()) {
             return false;
         }
-        double porcentajeRetencion = Double.valueOf(this.vista.jtfPorcentajeRetencion.getText().trim().replace(".", ""));
+        double porcentajeRetencion = (double) this.vista.jftPorcentajeRetencion.getValue();
         double montoRetencion = modelo.calcularMontoRetencion(porcentajeRetencion);
+        System.err.println("montoRetencion: " + montoRetencion);
         return montoRetencion > 0;
     }
 
     private boolean validarPorcentaje() {
         double porcentajeRetencion = -1;
-        if (this.vista.jtfPorcentajeRetencion.getText().trim().isEmpty()) {
+        if (this.vista.jftPorcentajeRetencion.getText().trim().isEmpty()) {
             JOptionPane.showMessageDialog(vista, VALIDAR_PORCENTAJE_RETENCION_3, "Atención", JOptionPane.WARNING_MESSAGE);
             return false;
         } else {
             try {
-                porcentajeRetencion = Double.valueOf(this.vista.jtfPorcentajeRetencion.getText().trim());
+                porcentajeRetencion = (double) this.vista.jftPorcentajeRetencion.getValue();
             } catch (NumberFormatException e) {
                 JOptionPane.showMessageDialog(vista, VALIDAR_PORCENTAJE_RETENCION_1, "Atención", JOptionPane.WARNING_MESSAGE);
                 return false;
@@ -195,15 +196,15 @@ public class C_crearRetencion implements ActionListener, KeyListener, ChangeList
             JOptionPane.showMessageDialog(vista, "Ingrese un porcentaje de retención válido", "Atención", JOptionPane.WARNING_MESSAGE);
             return;
         }
-        double porcentajeRetencion = Double.valueOf(this.vista.jtfPorcentajeRetencion.getText().trim());
+        double porcentajeRetencion = (double) this.vista.jftPorcentajeRetencion.getValue();
         double montoRetencion = modelo.calcularMontoRetencion(porcentajeRetencion);
-        this.vista.jtfMontoConRetencion.setText(decimalFormat.format(montoRetencion));
+        this.vista.jftMontoRetencion.setText(decimalFormat.format(montoRetencion));
         this.vista.jsPorcentaje.setValue(porcentajeRetencion);
     }
 
     private void handleSpinnerModel() {
         Double currentValue = Double.valueOf(modelo.getSpinnerModel().getValue() + "");
-        this.vista.jtfPorcentajeRetencion.setText(currentValue + "");
+        this.vista.jftPorcentajeRetencion.setValue(currentValue);
         if (!validarMontoExistente()) {
             JOptionPane.showMessageDialog(vista, "Ingrese una factura válida antes de calcular la retención", "Atención", JOptionPane.WARNING_MESSAGE);
             return;
@@ -214,7 +215,7 @@ public class C_crearRetencion implements ActionListener, KeyListener, ChangeList
         }
         Double porcentajeRetencion = currentValue;
         Double montoRetencion = modelo.calcularMontoRetencion(porcentajeRetencion);
-        this.vista.jtfMontoConRetencion.setText(decimalFormat.format(montoRetencion));
+        this.vista.jftMontoRetencion.setText(decimalFormat.format(montoRetencion));
         this.vista.jsPorcentaje.setValue(porcentajeRetencion);
     }
 
@@ -232,7 +233,7 @@ public class C_crearRetencion implements ActionListener, KeyListener, ChangeList
             JOptionPane.showMessageDialog(vista, "La factura ingresada ya posee una retención existente", "Atención", JOptionPane.ERROR_MESSAGE);
             return;
         }
-        if (!validarMontoRetencion()) {
+        if (validarMontoRetencion()) {
             JOptionPane.showMessageDialog(vista, "Ingrese el monto de retención", "Atención", JOptionPane.ERROR_MESSAGE);
             return;
         }
@@ -241,13 +242,13 @@ public class C_crearRetencion implements ActionListener, KeyListener, ChangeList
             return;
         }
         int nroRetencion = Integer.valueOf(this.vista.jtfNroRetencion.getText().trim());
-        double porcentajeRetencion = Double.valueOf(this.vista.jtfPorcentajeRetencion.getText().trim());
-        int montoRetencion = Integer.valueOf(this.vista.jtfMontoConRetencion.getText().trim());
+        double porcentajeRetencion = (double) this.vista.jftPorcentajeRetencion.getValue();
+        int montoRetencion = Integer.valueOf(this.vista.jftMontoRetencion.getText().trim().replace(".", ""));
         Date fecha = this.vista.jdcFechaRetencion.getDate();
         modelo.getRetencion().setNroRetencion(nroRetencion);
         modelo.getRetencion().setPorcentaje(porcentajeRetencion);
         modelo.getRetencion().setMonto(montoRetencion);
-        modelo.getRetencion().setFecha(fecha);
+        modelo.getRetencion().setTiempo(fecha);
         modelo.getRetencion().getVenta().setIdFacturaCabecera(modelo.getFacturaCabecera().getIdFacturaCabecera());
         modelo.guardarRetencion();
         cerrar();
@@ -262,7 +263,7 @@ public class C_crearRetencion implements ActionListener, KeyListener, ChangeList
         if (source.equals(vista.jtfNroFactura)) {
             consultarNroFactura();
         }
-        if (source.equals(vista.jtfPorcentajeRetencion)) {
+        if (source.equals(vista.jftPorcentajeRetencion)) {
             calcularMontoRetencion();
         }
         if (source.equals(vista.jbCancelar)) {

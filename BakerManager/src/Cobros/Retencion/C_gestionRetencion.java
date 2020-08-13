@@ -12,6 +12,7 @@ import Entities.M_funcionario;
 import Interface.RecibirClienteCallback;
 import Interface.RecibirEmpleadoCallback;
 import Utilities.CellRenderers.NotaCreditoStatusCellRenderer;
+import Utilities.CellRenderers.RetencionVentaStatusCellRenderer;
 import bakermanager.C_inicio;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -29,7 +30,7 @@ public class C_gestionRetencion implements ActionListener, MouseListener, KeyLis
     public M_gestionRetencion modelo;
     public V_gestionRetencion vista;
     public C_inicio c_inicio;
-    private NotaCreditoStatusCellRenderer scr;
+    private RetencionVentaStatusCellRenderer scr;
 
     public C_gestionRetencion(M_gestionRetencion modelo, V_gestionRetencion vista, C_inicio c_inicio) {
         this.modelo = modelo;

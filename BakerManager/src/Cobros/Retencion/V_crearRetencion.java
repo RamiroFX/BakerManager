@@ -29,8 +29,8 @@ public class V_crearRetencion extends JDialog {
 
     private JLabel jlNroFactura, jlCliente, jlMontoSinIVA, jlIVA, jlMontoConIVA, jlNroRetencion,
             jlFechaRetencion, jlPorcentajeRetencion, jlMontoConRetencion;
-    public JTextField jtfNroFactura, jtfCliente, jtfMontoConIVA,
-            jtfPorcentajeRetencion, jtfMontoConRetencion;
+    public JTextField jtfNroFactura, jtfCliente, jtfMontoConIVA;
+    public JFormattedTextField jftPorcentajeRetencion, jftMontoRetencion;
     public JDateChooser jdcFechaRetencion;
     public JTextField jtfMontoSinIVA, jtfNroRetencion, jtfIVA;
     public JSpinner jsPorcentaje;
@@ -79,7 +79,7 @@ public class V_crearRetencion extends JDialog {
         jtfCliente = new JTextField();
         jtfCliente.setEditable(false);
         jdcFechaRetencion = new JDateChooser();
-        jtfPorcentajeRetencion = new JTextField();
+        jftPorcentajeRetencion = new JFormattedTextField(0.0);
         jtfMontoConIVA = new JTextField();
         jtfMontoConIVA.setEditable(false);
         jtfMontoSinIVA = new JTextField();
@@ -87,14 +87,14 @@ public class V_crearRetencion extends JDialog {
         jtfIVA = new JTextField();
         jtfIVA.setEditable(false);
         jtfNroRetencion = new JTextField();
-        jtfMontoConRetencion = new JTextField();
+        jftMontoRetencion = new JFormattedTextField();
         //Spinner
         jsPorcentaje = new JSpinner();
         JComponent editor = jsPorcentaje.getEditor();
         JFormattedTextField tf = ((JSpinner.DefaultEditor) editor).getTextField();
         tf.setColumns(4);
         JPanel jpPorcentaje = new JPanel(new MigLayout());
-        jpPorcentaje.add(jtfPorcentajeRetencion, "pushx, growx");
+        jpPorcentaje.add(jftPorcentajeRetencion, "pushx, growx");
         jpPorcentaje.add(jsPorcentaje);
 
         JPanel jpDatosFactura = new JPanel(new MigLayout());
@@ -118,7 +118,7 @@ public class V_crearRetencion extends JDialog {
         jpDatosRetencion.add(jlPorcentajeRetencion);
         jpDatosRetencion.add(jpPorcentaje, "pushx, growx, wrap");
         jpDatosRetencion.add(jlMontoConRetencion);
-        jpDatosRetencion.add(jtfMontoConRetencion, "pushx, growx");
+        jpDatosRetencion.add(jftMontoRetencion, "pushx, growx");
         jpPrincipal.add(jpDatosFactura);
         jpPrincipal.add(jpDatosRetencion);
 

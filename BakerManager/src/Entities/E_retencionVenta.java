@@ -19,7 +19,8 @@ public class E_retencionVenta {
     private double porcentaje;
     private E_facturaCabecera venta;
     private M_funcionario funcionario;
-    private Date fecha;
+    private Date tiempo;
+    private Estado estado;
 
     public E_retencionVenta() {
         this.venta = new E_facturaCabecera();
@@ -97,17 +98,17 @@ public class E_retencionVenta {
     }
 
     /**
-     * @return the fecha
+     * @return the tiempo
      */
-    public Date getFecha() {
-        return fecha;
+    public Date getTiempo() {
+        return tiempo;
     }
 
     /**
-     * @param fecha the fecha to set
+     * @param tiempo the tiempo to set
      */
-    public void setFecha(Date fecha) {
-        this.fecha = fecha;
+    public void setTiempo(Date tiempo) {
+        this.tiempo = tiempo;
     }
 
     /**
@@ -122,5 +123,19 @@ public class E_retencionVenta {
      */
     public void setFuncionario(M_funcionario funcionario) {
         this.funcionario = funcionario;
+    }
+
+    /**
+     * @return the estado
+     */
+    public Estado getEstado() {
+        return estado;
+    }
+
+    /**
+     * @param estado the estado to set
+     */
+    public void setEstado(Estado estado) {
+        this.estado = estado;
     }
 }

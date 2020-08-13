@@ -5,7 +5,6 @@
  */
 package NotasCredito;
 
-import DB.DB_Egreso;
 import DB.DB_NotaCredito;
 import DB.DB_manager;
 import Entities.E_NotaCreditoCabecera;
