@@ -11,6 +11,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.text.DecimalFormat;
 import java.util.Calendar;
+import java.util.Date;
 import javax.swing.JOptionPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -126,6 +127,15 @@ public class C_crearRetencion implements ActionListener, KeyListener, ChangeList
         return modelo.validarMontoExistente();
     }
 
+    private boolean validarMontoRetencion() {
+        if (validarPorcentaje()) {
+            return false;
+        }
+        double porcentajeRetencion = Double.valueOf(this.vista.jtfPorcentajeRetencion.getText().trim().replace(".", ""));
+        double montoRetencion = modelo.calcularMontoRetencion(porcentajeRetencion);
+        return montoRetencion > 0;
+    }
+
     private boolean validarPorcentaje() {
         double porcentajeRetencion = -1;
         if (this.vista.jtfPorcentajeRetencion.getText().trim().isEmpty()) {
@@ -144,6 +154,20 @@ public class C_crearRetencion implements ActionListener, KeyListener, ChangeList
             }
         }
         return true;
+    }
+
+    private boolean validarRetencionExistente() {
+        if (!validarNroFactura()) {
+            return false;
+        }
+        int nroFactura = Integer.valueOf(this.vista.jtfNroFactura.getText().trim());
+        return modelo.existeRetencion(nroFactura);
+    }
+
+    private boolean validarFecha() {
+        Date fechaVenta = modelo.getFacturaCabecera().getTiempo();
+        Date fechaRetencion = this.vista.jdcFechaRetencion.getDate();
+        return fechaRetencion.after(fechaVenta);
     }
 
     private void consultarNroFactura() {
@@ -204,16 +228,45 @@ public class C_crearRetencion implements ActionListener, KeyListener, ChangeList
         if (!validarMontoExistente()) {
             return;
         }
+        if (validarRetencionExistente()) {
+            JOptionPane.showMessageDialog(vista, "La factura ingresada ya posee una retención existente", "Atención", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        if (!validarMontoRetencion()) {
+            JOptionPane.showMessageDialog(vista, "Ingrese el monto de retención", "Atención", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        if (!validarFecha()) {
+            JOptionPane.showMessageDialog(vista, "La fecha de retención es menor a la fecha de venta", "Atención", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        int nroRetencion = Integer.valueOf(this.vista.jtfNroRetencion.getText().trim());
+        double porcentajeRetencion = Double.valueOf(this.vista.jtfPorcentajeRetencion.getText().trim());
+        int montoRetencion = Integer.valueOf(this.vista.jtfMontoConRetencion.getText().trim());
+        Date fecha = this.vista.jdcFechaRetencion.getDate();
+        modelo.getRetencion().setNroRetencion(nroRetencion);
+        modelo.getRetencion().setPorcentaje(porcentajeRetencion);
+        modelo.getRetencion().setMonto(montoRetencion);
+        modelo.getRetencion().setFecha(fecha);
+        modelo.getRetencion().getVenta().setIdFacturaCabecera(modelo.getFacturaCabecera().getIdFacturaCabecera());
+        modelo.guardarRetencion();
+        cerrar();
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         Object source = e.getSource();
+        if (source.equals(vista.jbAceptar)) {
+            guardar();
+        }
         if (source.equals(vista.jtfNroFactura)) {
             consultarNroFactura();
         }
         if (source.equals(vista.jtfPorcentajeRetencion)) {
             calcularMontoRetencion();
+        }
+        if (source.equals(vista.jbCancelar)) {
+            cerrar();
         }
     }
 

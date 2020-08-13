@@ -22,6 +22,8 @@ public class E_retencionVenta {
     private Date fecha;
 
     public E_retencionVenta() {
+        this.venta = new E_facturaCabecera();
+        this.funcionario = new M_funcionario();
     }
 
     /**

@@ -139,7 +139,8 @@ public class V_crearRetencion extends JDialog {
     private void constructAppWindow() {
         setTitle(CREATE_TITLE);
         setName("jdCrearRetencion");
-        setPreferredSize(new Dimension(400, 350));
+        setPreferredSize(new Dimension(400, 380));
         setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+        setModal(true);
     }
 }

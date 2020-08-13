@@ -875,7 +875,25 @@ public class DB_Cobro {
             st = DB_manager.getConection().createStatement();
             // se ejecuta el query y se obtienen los resultados en un ResultSet
             rs = st.executeQuery(QUERY);
-            return !rs.isBeforeFirst();
+            return rs.isBeforeFirst();
+        } catch (SQLException ex) {
+            Logger lgr = Logger.getLogger(DB_Cobro.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        }
+        return false;
+    }
+
+    public static boolean existeRetencion(int nroFactura) {
+        String QUERY = "SELECT retencion_venta.id_factura_cabecera FROM retencion_venta, factura_cabecera "
+                + "WHERE retencion_venta.id_factura_cabecera = factura_cabecera.id_factura_cabecera "
+                + "AND retencion_venta.id_estado = 1 "
+                + "AND factura_cabecera.nro_factura = " + nroFactura;
+        System.out.println(QUERY);
+        try {
+            st = DB_manager.getConection().createStatement();
+            // se ejecuta el query y se obtienen los resultados en un ResultSet
+            rs = st.executeQuery(QUERY);
+            return rs.isBeforeFirst();
         } catch (SQLException ex) {
             Logger lgr = Logger.getLogger(DB_Cobro.class.getName());
             lgr.log(Level.SEVERE, ex.getMessage(), ex);

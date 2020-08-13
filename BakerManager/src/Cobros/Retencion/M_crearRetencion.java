@@ -11,6 +11,7 @@ import Entities.E_facturaCabecera;
 import Entities.E_facturaDetalle;
 import Entities.E_impuesto;
 import Entities.E_retencionVenta;
+import MenuPrincipal.DatosUsuario;
 import java.util.ArrayList;
 import javax.swing.SpinnerModel;
 import javax.swing.SpinnerNumberModel;
@@ -28,6 +29,7 @@ public class M_crearRetencion {
 
     public M_crearRetencion() {
         facturaCabecera = new E_facturaCabecera();
+        retencion = new E_retencionVenta();
         facturaDetalles = new ArrayList<>();
         spinnerModel = new SpinnerNumberModel(5.0, 0.0, 100, 1.0);
     }
@@ -38,6 +40,10 @@ public class M_crearRetencion {
 
     public E_facturaCabecera getFacturaCabecera() {
         return facturaCabecera;
+    }
+
+    public E_retencionVenta getRetencion() {
+        return retencion;
     }
 
     public void consultarNroFactura(int nroFactura) {
@@ -89,6 +95,12 @@ public class M_crearRetencion {
     }
 
     public void guardarRetencion() {
+        int idFuncionario = DatosUsuario.getRol_usuario().getFuncionario().getId_funcionario();
+        getRetencion().getFuncionario().setId_funcionario(idFuncionario);
         DB_Cobro.insertarRetencion(retencion);
+    }
+
+    public boolean existeRetencion(int nroFactura) {
+        return DB_Cobro.existeRetencion(nroFactura);
     }
 }
