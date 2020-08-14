@@ -6,8 +6,10 @@ package DB;
 
 import Entities.E_NotaCreditoCabecera;
 import Entities.E_cuentaCorrienteCabecera;
+import Entities.E_facturaCabecera;
 import Entities.E_facturaSinPago;
 import Entities.E_movimientoContable;
+import Entities.E_retencionVenta;
 import Entities.M_cliente;
 import Entities.M_cliente_contacto;
 import Entities.M_sucursal;
@@ -1488,6 +1490,23 @@ public class DB_Cliente {
                         movCont.setTipo(E_movimientoContable.TIPO_NOTA_CREDITO);
                         movCont.setTipoDescripcion(E_movimientoContable.STR_TIPO_NOTA_CREDITO);
                         movCont.setNotaCredito(notaCredito);
+                        break;
+                    }                    
+                    case E_movimientoContable.STR_TIPO_RETENCION_VENTA: {
+                        M_cliente cliente = new M_cliente();
+                        cliente.setIdCliente(rs.getInt("id_cliente"));
+                        cliente.setEntidad(rs.getString("cliente"));
+                        E_facturaCabecera faca = new E_facturaCabecera();
+                        faca.setCliente(cliente);
+                        E_retencionVenta retencion = new E_retencionVenta();
+                        retencion.setVenta(faca);
+                        retencion.setMonto(rs.getInt("pago"));
+                        retencion.setTiempo(rs.getDate("fecha"));
+                        retencion.setId(rs.getInt("id_cabecera"));
+                        retencion.setNroRetencion(rs.getInt("nro_recibo"));
+                        movCont.setTipo(E_movimientoContable.TIPO_RETENCION_VENTA);
+                        movCont.setTipoDescripcion(E_movimientoContable.STR_TIPO_RETENCION_VENTA);
+                        movCont.setRetencionVenta(retencion);
                         break;
                     }
                 }

@@ -13,10 +13,20 @@ import java.util.Date;
  */
 public class E_movimientoContable {
 
-    public static final String STR_TIPO_COMPRA = "Factura compra", STR_TIPO_VENTA = "Factura", STR_TIPO_PAGO = "Recibo pago",
-            STR_TIPO_COBRO = "Recibo", STR_TIPO_SALDO_INICIAL = "Saldo inicial", STR_TIPO_NOTA_CREDITO = "Nota de crédito";
-    public static final int TIPO_COMPRA = 1, TIPO_VENTA = 2, TIPO_PAGO = 3,
-            TIPO_COBRO = 4, TIPO_SALDO_INICIAL = 5, TIPO_NOTA_CREDITO = 6;
+    public static final String STR_TIPO_COMPRA = "Factura compra",
+            STR_TIPO_VENTA = "Factura",
+            STR_TIPO_PAGO = "Recibo pago",
+            STR_TIPO_COBRO = "Recibo",
+            STR_TIPO_SALDO_INICIAL = "Saldo inicial",
+            STR_TIPO_NOTA_CREDITO = "Nota de crédito",
+            STR_TIPO_RETENCION_VENTA = "Retención";
+    public static final int TIPO_COMPRA = 1,
+            TIPO_VENTA = 2,
+            TIPO_PAGO = 3,
+            TIPO_COBRO = 4,
+            TIPO_SALDO_INICIAL = 5,
+            TIPO_NOTA_CREDITO = 6,
+            TIPO_RETENCION_VENTA = 7;
     private int id;
     private int tipo;
     private String tipoDescripcion;
@@ -26,6 +36,7 @@ public class E_movimientoContable {
     private E_cuentaCorrienteCabecera cobro;
     private E_reciboPagoCabecera pago;
     private M_cliente clienteSaldoInicial;
+    private E_retencionVenta retencionVenta;
     //AUX
     private Date fechaSaldoInicial;
 
@@ -152,6 +163,20 @@ public class E_movimientoContable {
 
     public void setNotaCredito(E_NotaCreditoCabecera notaCredito) {
         this.notaCredito = notaCredito;
+    }
+
+    /**
+     * @return the retencionVenta
+     */
+    public E_retencionVenta getRetencionVenta() {
+        return retencionVenta;
+    }
+
+    /**
+     * @param retencionVenta the retencionVenta to set
+     */
+    public void setRetencionVenta(E_retencionVenta retencionVenta) {
+        this.retencionVenta = retencionVenta;
     }
 
 }

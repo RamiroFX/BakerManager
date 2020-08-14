@@ -261,6 +261,24 @@ public class ExportarEstadoCuentaCliente {
                     rowDetalle.getCell(6).setCellStyle(style4);
                     break;
                 }
+                case E_movimientoContable.TIPO_RETENCION_VENTA: {
+                    credito = credito + (int) unDetalle.getRetencionVenta().getMonto();
+                    total = deuda - credito;
+                    rowDetalle.createCell(0).setCellValue(unDetalle.getRetencionVenta().getTiempo());
+                    rowDetalle.getCell(0).setCellStyle(dateCellStyle);
+                    rowDetalle.createCell(1).setCellValue(unDetalle.getTipoDescripcion());
+                    rowDetalle.createCell(2).setCellValue(unDetalle.getRetencionVenta().getNroRetencion());
+                    rowDetalle.getCell(2).setCellStyle(style4);
+                    rowDetalle.createCell(3).setCellValue(unDetalle.getRetencionVenta().getMonto());
+                    rowDetalle.getCell(3).setCellStyle(style4);
+                    rowDetalle.createCell(4).setCellValue(0);
+                    rowDetalle.getCell(4).setCellStyle(style4);
+                    rowDetalle.createCell(5).setCellValue(credito);
+                    rowDetalle.getCell(5).setCellStyle(style4);
+                    rowDetalle.createCell(6).setCellValue(total);
+                    rowDetalle.getCell(6).setCellStyle(style4);
+                    break;
+                }
             }
         }
         rowTotal.createCell(1).setCellValue(total);
@@ -347,6 +365,16 @@ public class ExportarEstadoCuentaCliente {
                 }
                 case E_movimientoContable.TIPO_VENTA: {
                     facturado = facturado + (int) unDetalle.getVenta().getMonto();
+                    balance = cobrado - facturado;
+                    break;
+                }
+                case E_movimientoContable.TIPO_NOTA_CREDITO: {
+                    cobrado = cobrado + (int) unDetalle.getNotaCredito().getTotal();
+                    balance = cobrado - facturado;
+                    break;
+                }
+                case E_movimientoContable.TIPO_RETENCION_VENTA: {
+                    cobrado = cobrado + (int) unDetalle.getRetencionVenta().getMonto();
                     balance = cobrado - facturado;
                     break;
                 }
