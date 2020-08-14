@@ -70,13 +70,23 @@ public class C_crearRetencion implements ActionListener, KeyListener, ChangeList
     private void agregarListeners() {
         this.modelo.getSpinnerModel().addChangeListener(this);
         this.vista.jtfNroFactura.addActionListener(this);
-        this.vista.jtfNroFactura.addKeyListener(this);
         this.vista.jtfNroRetencion.addActionListener(this);
-        this.vista.jtfNroRetencion.addKeyListener(this);
         this.vista.jftPorcentajeRetencion.addActionListener(this);
-        this.vista.jftPorcentajeRetencion.addKeyListener(this);
         this.vista.jbAceptar.addActionListener(this);
         this.vista.jbCancelar.addActionListener(this);
+        this.vista.jftPorcentajeRetencion.addKeyListener(this);
+        this.vista.jtfNroFactura.addKeyListener(this);
+        this.vista.jtfCliente.addKeyListener(this);
+        this.vista.jtfMontoSinIVA.addKeyListener(this);
+        this.vista.jtfIVA.addKeyListener(this);
+        this.vista.jtfMontoConIVA.addKeyListener(this);
+        this.vista.jtfNroRetencion.addKeyListener(this);
+        this.vista.jdcFechaRetencion.addKeyListener(this);
+        this.vista.jftPorcentajeRetencion.addKeyListener(this);
+        this.vista.jsPorcentaje.addKeyListener(this);
+        this.vista.jftMontoRetencion.addKeyListener(this);
+        //this.vista.jbAceptar.addKeyListener(this);
+        this.vista.jbCancelar.addKeyListener(this);
     }
 
     private boolean validarNroFactura() {
@@ -190,6 +200,7 @@ public class C_crearRetencion implements ActionListener, KeyListener, ChangeList
         this.vista.jtfMontoConIVA.setText(decimalFormat.format(modelo.obtenerMontoConIva()));
         this.vista.jtfIVA.setText(decimalFormat.format(modelo.obtenerMontoConIva() - modelo.obtenerMontoSinIva()));
         this.vista.jtfMontoSinIVA.setText(decimalFormat.format(modelo.obtenerMontoSinIva()));
+        this.vista.jtfNroRetencion.requestFocusInWindow();
     }
 
     private void calcularMontoRetencion() {
@@ -222,6 +233,20 @@ public class C_crearRetencion implements ActionListener, KeyListener, ChangeList
         Double montoRetencion = modelo.calcularMontoRetencion(porcentajeRetencion);
         this.vista.jftMontoRetencion.setText(decimalFormat.format(montoRetencion));
         this.vista.jsPorcentaje.setValue(porcentajeRetencion);
+    }
+
+    private void establecerNroRetencion() {
+        if (!validarNroRetencion()) {
+            return;
+        }
+        this.vista.jftPorcentajeRetencion.requestFocus();
+    }
+
+    private void establecerPorcentaje() {
+        if (!validarPorcentaje()) {
+            return;
+        }
+        this.vista.jbAceptar.requestFocusInWindow();
     }
 
     private void guardar() {
@@ -275,6 +300,12 @@ public class C_crearRetencion implements ActionListener, KeyListener, ChangeList
         if (source.equals(vista.jbCancelar)) {
             cerrar();
         }
+        if (source.equals(vista.jtfNroRetencion)) {
+            establecerNroRetencion();
+        }
+        if (source.equals(vista.jftPorcentajeRetencion)) {
+            establecerPorcentaje();
+        }
     }
 
     @Override
@@ -290,6 +321,12 @@ public class C_crearRetencion implements ActionListener, KeyListener, ChangeList
         switch (e.getKeyCode()) {
             case KeyEvent.VK_ESCAPE: {
                 cerrar();
+                break;
+            }
+            case KeyEvent.VK_ENTER: {
+                if (vista.jbAceptar.hasFocus()) {
+                    guardar();
+                }
                 break;
             }
         }
