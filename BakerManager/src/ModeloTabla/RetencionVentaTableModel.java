@@ -24,7 +24,7 @@ public class RetencionVentaTableModel extends AbstractTableModel {
     private final String[] colNames = {"Id.", "Nro. Retención", "Nro. Factura", "Cliente", "Funcionario", "Tiempo", "Retención(%)", "Total retención"};
 
     public RetencionVentaTableModel() {
-        this.dateFormater = new SimpleDateFormat("dd/MM/YYYY hh:mm:ss");
+        this.dateFormater = new SimpleDateFormat("dd/MM/YYYY HH:mm:ss");
         this.decimalFormat = new DecimalFormat("###,###.### '%'");
         this.integerFormat = new DecimalFormat("###,###");
         this.list = new ArrayList<>();
@@ -81,7 +81,7 @@ public class RetencionVentaTableModel extends AbstractTableModel {
                 return rv.getVenta().getCliente().getEntidad();
             }
             case 4: {
-                return rv.getVenta().getFuncionario().getNombre();
+                return rv.getFuncionario().getNombre();
             }
             case 5: {
                 return dateFormater.format(rv.getTiempo());

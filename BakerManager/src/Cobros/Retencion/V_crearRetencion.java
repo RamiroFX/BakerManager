@@ -36,7 +36,7 @@ public class V_crearRetencion extends JDialog {
     public JSpinner jsPorcentaje;
     public JButton jbAceptar, jbCancelar;
     private JPanel jpPrincipal, jpBotones;
-    public static final String CREATE_TITLE = "Crear Retención";
+    public static final String CREATE_TITLE = "Crear Retención", READ_TITLE = "Ver Retención";
 
     public V_crearRetencion(JDialog vista) {
         super(vista);
@@ -139,8 +139,9 @@ public class V_crearRetencion extends JDialog {
     private void constructAppWindow() {
         setTitle(CREATE_TITLE);
         setName("jdCrearRetencion");
-        setPreferredSize(new Dimension(400, 380));
+        setSize(new Dimension(430, 430));
         setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+        setLocationRelativeTo(null);
         setModal(true);
     }
 }

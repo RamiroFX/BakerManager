@@ -22,7 +22,8 @@ public class RetencionVentaStatusCellRenderer extends DefaultTableCellRenderer {
 
     private List<E_retencionVenta> list;
 
-    public RetencionVentaStatusCellRenderer() {
+    public RetencionVentaStatusCellRenderer(List<E_retencionVenta> list) {
+        this.list = list;
     }
 
     public void setList(List<E_retencionVenta> list) {

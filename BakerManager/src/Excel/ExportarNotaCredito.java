@@ -5,7 +5,6 @@
  */
 package Excel;
 
-import DB.DB_Ingreso;
 import DB.DB_NotaCredito;
 import Entities.E_NotaCreditoCabecera;
 import Entities.E_NotaCreditoDetalle;

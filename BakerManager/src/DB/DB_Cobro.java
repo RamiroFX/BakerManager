@@ -903,7 +903,7 @@ public class DB_Cobro {
 
     public static List<E_retencionVenta> obtenerRetenciones(int idCliente,
             int idFuncionario, int nroRetencion, Date fechaInicio, Date fechaFinal,
-            int idEstado) {
+            int idEstado, boolean conFechas) {
         List<E_retencionVenta> list = new ArrayList<>();
         String query = "SELECT "
                 + "rv.id_retencion_venta, "
@@ -918,7 +918,7 @@ public class DB_Cobro {
                 + "rv.id_estado, "
                 + "(SELECT descripcion FROM estado esta WHERE esta.id_estado = rv.id_estado) \"ESTADO\", "
                 + "rv.porcentaje \"PORCENTAJE\", "
-                + "rv.monto \"TOTAL\" "
+                + "rv.monto \"MONTO\" "
                 + "FROM  "
                 + "retencion_venta rv, "
                 + "factura_cabecera fc, "
@@ -927,11 +927,13 @@ public class DB_Cobro {
                 + "WHERE "
                 + "rv.id_factura_cabecera = fc.id_factura_cabecera AND "
                 + "rv.id_funcionario = f.id_funcionario AND "
-                + "rv.id_cliente = c.id_cliente AND "
-                + "rv.tiempo BETWEEN ?  AND ? ";
+                + "FC.id_cliente = c.id_cliente ";
         String orderBy = "ORDER BY rv.tiempo";
+        if (conFechas) {
+            query = query + "AND rv.TIEMPO BETWEEN ?  AND ? ";
+        }
         if (idCliente > 0) {
-            query = query + " AND rv.ID_CLIENTE = ? ";
+            query = query + " AND FC.ID_CLIENTE = ? ";
         }
         if (idFuncionario > 0) {
             query = query + " AND rv.ID_FUNCIONARIO = ? ";
@@ -943,11 +945,15 @@ public class DB_Cobro {
             query = query + " AND rv.id_estado = ? ";
         }
         query = query + orderBy;
-        int pos = 3;
+        int pos = 1;
         try {
             pst = DB_manager.getConection().prepareStatement(query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-            pst.setTimestamp(1, new java.sql.Timestamp(fechaInicio.getTime()));
-            pst.setTimestamp(2, new java.sql.Timestamp(fechaFinal.getTime()));
+            if (conFechas) {
+                pst.setTimestamp(pos, new java.sql.Timestamp(fechaInicio.getTime()));
+                pos++;
+                pst.setTimestamp(pos, new java.sql.Timestamp(fechaFinal.getTime()));
+                pos++;
+            }
             if (idCliente > 0) {
                 pst.setInt(pos, idCliente);
                 pos++;
@@ -986,6 +992,7 @@ public class DB_Cobro {
                 rv.setNroRetencion(rs.getInt("nro_retencion"));
                 rv.setFuncionario(f);
                 rv.setMonto(rs.getInt("MONTO"));
+                rv.setPorcentaje(rs.getDouble("PORCENTAJE"));
                 rv.setEstado(estado);
                 list.add(rv);
             }

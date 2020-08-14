@@ -71,8 +71,7 @@ public class M_gestionRetencion {
         return false;
     }
 
-    public List<E_retencionVenta> obtenerRetenciones(int idCliente, int idFuncionario, int nroRetencion, Date fechaInicio, Date fechaFinal,
-            int idEstado) {
+    public List<E_retencionVenta> obtenerRetenciones(Date fechaInicio, Date fechaFinal, int nroRetencion, Estado estado, boolean conFecha) {
         Calendar calendarInicio = Calendar.getInstance();
         calendarInicio.setTime(fechaInicio);
         calendarInicio.set(Calendar.HOUR_OF_DAY, 0);
@@ -85,8 +84,11 @@ public class M_gestionRetencion {
         calendarFinal.set(Calendar.MINUTE, 59);
         calendarFinal.set(Calendar.SECOND, 59);
         calendarFinal.set(Calendar.MILLISECOND, 999);
+        int idEstado = estado.getId();
+        int idCliente = getCabecera().getVenta().getCliente().getIdCliente();
+        int idFuncionario = getCabecera().getFuncionario().getId_funcionario();
         return DB_Cobro.obtenerRetenciones(idCliente, idFuncionario, nroRetencion,
-                calendarInicio.getTime(), calendarFinal.getTime(), idEstado);
+                calendarInicio.getTime(), calendarFinal.getTime(), idEstado, conFecha);
 
     }
 

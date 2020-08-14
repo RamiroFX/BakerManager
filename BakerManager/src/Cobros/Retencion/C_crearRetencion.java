@@ -5,6 +5,7 @@
  */
 package Cobros.Retencion;
 
+import com.nitido.utils.toaster.Toaster;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -31,7 +32,8 @@ public class C_crearRetencion implements ActionListener, KeyListener, ChangeList
             VALIDAR_NRO_RETENCION_1 = "Ingrese solo números enteros en número de retención",
             VALIDAR_NRO_RETENCION_2 = "Ingrese solo números enteros y positivos en número de retención",
             VALIDAR_NRO_RETENCION_3 = "Ingrese un número de retención",
-            VALIDAR_NRO_RETENCION_4 = "El número de retención ingresado se encuentra en uso.";
+            VALIDAR_NRO_RETENCION_4 = "El número de retención ingresado se encuentra en uso.",
+            WITHHOLDING_TAX_SUCCESS = "Retención creada";
 
     private M_crearRetencion modelo;
     private V_crearRetencion vista;
@@ -53,8 +55,6 @@ public class C_crearRetencion implements ActionListener, KeyListener, ChangeList
     }
 
     public void mostrarVista() {
-        this.vista.pack();
-        this.vista.setLocationRelativeTo(null);
         this.vista.setVisible(true);
     }
 
@@ -171,6 +171,11 @@ public class C_crearRetencion implements ActionListener, KeyListener, ChangeList
         return fechaRetencion.after(fechaVenta);
     }
 
+    private void mostrarMensaje(String message) {
+        Toaster popUp = new Toaster();
+        popUp.showToaster(message);
+    }
+
     private void consultarNroFactura() {
         if (!validarNroFactura()) {
             return;
@@ -251,6 +256,7 @@ public class C_crearRetencion implements ActionListener, KeyListener, ChangeList
         modelo.getRetencion().setTiempo(fecha);
         modelo.getRetencion().getVenta().setIdFacturaCabecera(modelo.getFacturaCabecera().getIdFacturaCabecera());
         modelo.guardarRetencion();
+        mostrarMensaje(WITHHOLDING_TAX_SUCCESS);
         cerrar();
     }
 
