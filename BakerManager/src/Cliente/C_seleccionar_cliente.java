@@ -132,6 +132,14 @@ public class C_seleccionar_cliente extends MouseAdapter implements ActionListene
         }
     }
 
+    private void esperar() {
+        try {
+            Thread.sleep(250);
+        } catch (InterruptedException xe) {
+            xe.printStackTrace();
+        }
+    }
+
     @Override
     public void actionPerformed(ActionEvent ae) {
         if (ae.getSource() == this.vista.jbAceptar) {
@@ -176,8 +184,13 @@ public class C_seleccionar_cliente extends MouseAdapter implements ActionListene
 
     @Override
     public void keyPressed(KeyEvent e) {
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
         if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
             cerrar();
+
         }
         if (this.vista.jtfBuscar.hasFocus()) {
             if (e.getKeyCode() == KeyEvent.VK_DOWN) {
@@ -189,10 +202,6 @@ public class C_seleccionar_cliente extends MouseAdapter implements ActionListene
                 controlarFilaSeleccionada();
             }
         }
-    }
-
-    @Override
-    public void keyReleased(KeyEvent e) {
     }
 
     @Override

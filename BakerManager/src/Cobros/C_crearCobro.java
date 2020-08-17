@@ -22,10 +22,12 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 
 /**
@@ -197,7 +199,6 @@ public class C_crearCobro extends MouseAdapter implements ActionListener, KeyLis
     private boolean validarCliente() {
         if (this.vista.jtfCliente.getText().isEmpty()) {
             JOptionPane.showMessageDialog(vista, VALIDAR_CLIENTE_MSG, VALIDAR_TITULO, JOptionPane.WARNING_MESSAGE);
-            esperar();
             return false;
         }
         return true;
@@ -282,7 +283,7 @@ public class C_crearCobro extends MouseAdapter implements ActionListener, KeyLis
 
     private void esperar() {
         try {
-            Thread.sleep(1000);
+            Thread.sleep(250);
         } catch (InterruptedException ex) {
             Logger.getLogger(C_gestionCobro.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -328,22 +329,27 @@ public class C_crearCobro extends MouseAdapter implements ActionListener, KeyLis
     public void keyReleased(KeyEvent e) {
         switch (e.getKeyCode()) {
             case KeyEvent.VK_F1: {
+                esperar();
                 guardar();
                 break;
             }
             case KeyEvent.VK_F3: {
+                esperar();
                 invocarVistaSeleccionCliente();
                 break;
             }
             case KeyEvent.VK_F4: {
+                esperar();
                 invocarVistaSeleccionFacturaPendiente();
                 break;
             }
             case KeyEvent.VK_F5: {
+                esperar();
                 invocarVistaSeleccionFuncionario();
                 break;
             }
             case KeyEvent.VK_ESCAPE: {
+                esperar();
                 cerrar();
                 break;
             }

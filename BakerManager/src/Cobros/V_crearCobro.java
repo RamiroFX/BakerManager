@@ -75,6 +75,23 @@ public class V_crearCobro extends JDialog {
         initNorth();
         initCenter();
         initSouth();
+        establecerNombres();
+    }
+
+    private void establecerNombres() {
+        jbAceptar.setName("jbAceptarV_crearCobro");
+        jbCliente.setName("jbClienteV_crearCobro");
+        jtfCliente.setName("jtfClienteV_crearCobro");
+        jtfNroRecibo.setName("jtfNroReciboV_crearCobro");
+        jbFuncionario.setName("jbFuncionarioV_crearCobro");
+        jtfFuncionario.setName("jtfFuncionarioV_crearCobro");
+        jtfNroFactura.setName("jtfNroFacturaV_crearCobro");
+        jdcFechaCobro.setName("jdcFechaCobroV_crearCobro");
+        jbAgregarFactura.setName("jbAgregarFacturaV_crearCobro");
+        jbEliminarDetalle.setName("jbEliminarDetalleV_crearCobro");
+        jbModificarDetalle.setName("jbModificarDetalleV_crearCobro");
+        jbSalir.setName("jbSalirV_crearCobro");
+        jbImprimir.setName("jbImprimirV_crearCobro");
     }
 
     private void initNorth() {
@@ -90,7 +107,7 @@ public class V_crearCobro extends JDialog {
         jlFechaCobro = new JLabel("Fecha");
         jdcFechaCobro = new JDateChooser();
         jdcFechaCobro.setPreferredSize(new Dimension(150, 20));
-        jpNorth.add(jbCliente,"growx");
+        jpNorth.add(jbCliente, "growx");
         jpNorth.add(jtfCliente);
         jpNorth.add(jlNroRecibo);
         jpNorth.add(jtfNroRecibo);

@@ -54,6 +54,7 @@ public class V_seleccionar_cliente extends JDialog {
         jpBotones.add(jbAceptar);
         jpBotones.add(jbCancelar);
         jtfBuscar = new JTextField();
+        jtfBuscar.setName("jtfBuscarClienteSeleccionarCliente");
         jckbEntidadNombre = new JCheckBox("Entidad o nombre");
         jckbEntidadNombre.setSelected(true);
         jckbRUC = new JCheckBox("R.U.C.");
