@@ -5,6 +5,7 @@
  */
 package Cobros.Retencion;
 
+import Entities.E_facturaSinPago;
 import com.nitido.utils.toaster.Toaster;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -181,6 +182,28 @@ public class C_crearRetencion implements ActionListener, KeyListener, ChangeList
         return fechaRetencion.after(fechaVenta);
     }
 
+    private boolean validarSaldoPendiente() {
+        if (!validarNroFactura()) {
+            return false;
+        }
+        int nroFactura = Integer.valueOf(this.vista.jtfNroFactura.getText().trim());
+        E_facturaSinPago fsp = modelo.validarSaldoPendiente(nroFactura);
+        int saldoPendiente = fsp.getSaldo();
+        System.out.println("saldoPendiente: " + saldoPendiente);
+        if (saldoPendiente > 0) {
+            int montoRetencion = Integer.valueOf(this.vista.jftMontoRetencion.getText().trim().replace(".", ""));
+            System.out.println("montoRetencion: " + montoRetencion);
+            if (montoRetencion <= saldoPendiente) {
+                System.out.println("true");
+                return true;
+            }
+
+        } else {
+            return false;
+        }
+        return false;
+    }
+
     private void mostrarMensaje(String message) {
         Toaster popUp = new Toaster();
         popUp.showToaster(message);
@@ -193,6 +216,10 @@ public class C_crearRetencion implements ActionListener, KeyListener, ChangeList
         int nroFactura = Integer.valueOf(this.vista.jtfNroFactura.getText().trim());
         if (modelo.existeNroFactura(nroFactura)) {
             JOptionPane.showMessageDialog(vista, "No existe el numero de factura ingresado", "Atención", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        if (!modelo.facturaPendientePago(nroFactura)) {
+            JOptionPane.showMessageDialog(vista, "El numero de factura ingresado ya esta pagado.", "Atención", JOptionPane.ERROR_MESSAGE);
             return;
         }
         modelo.consultarNroFactura(nroFactura);
@@ -269,6 +296,14 @@ public class C_crearRetencion implements ActionListener, KeyListener, ChangeList
         }
         if (!validarFecha()) {
             JOptionPane.showMessageDialog(vista, "La fecha de retención es menor a la fecha de venta", "Atención", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        if (!validarSaldoPendiente()) {
+            int nroFactura = Integer.valueOf(this.vista.jtfNroFactura.getText().trim());
+            E_facturaSinPago fsp = modelo.validarSaldoPendiente(nroFactura);
+            String saldoPendiente = decimalFormat.format(fsp.getSaldo());
+            String montoRetencion = this.vista.jftMontoRetencion.getText();
+            JOptionPane.showMessageDialog(vista, "El saldo pendiente es menor al monto de retención.\n Saldo pendiente: " + saldoPendiente + " \n Monto de retención: " + montoRetencion, "Atención", JOptionPane.ERROR_MESSAGE);
             return;
         }
         int nroRetencion = Integer.valueOf(this.vista.jtfNroRetencion.getText().trim());

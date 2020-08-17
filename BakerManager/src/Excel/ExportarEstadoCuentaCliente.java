@@ -12,6 +12,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import javax.swing.JFileChooser;
@@ -39,6 +40,7 @@ public class ExportarEstadoCuentaCliente {
     HSSFSheet sheet;
     CellStyle style1, style2, style3, style4, style5;
     HSSFCellStyle dateCellStyle;
+    DecimalFormat decimalFormat;
 
     public ExportarEstadoCuentaCliente(String nombreHoja, M_cliente cliente) {
         this.nombreHoja = nombreHoja;
@@ -49,6 +51,7 @@ public class ExportarEstadoCuentaCliente {
     }
 
     private void inicializarVariables() {
+        this.decimalFormat = new DecimalFormat("#,##0.##");
         cabeceraList = DB_Cliente.obtenerEstadoCuenta(this.cliente.getIdCliente());
         /*this.fechaInic = cabeceraList.get(0).getFechaPago();
         this.fechaFinal = cabeceraList.get(cabeceraList.size() - 1).getFechaPago();*/
@@ -133,65 +136,59 @@ public class ExportarEstadoCuentaCliente {
         cabeceraProduccionDetalle.getCell(0).setCellStyle(style1);
         cabeceraProduccionDetalle.createCell(1).setCellValue(new HSSFRichTextString("Documento"));
         cabeceraProduccionDetalle.getCell(1).setCellStyle(style1);
-        cabeceraProduccionDetalle.createCell(2).setCellValue(new HSSFRichTextString("Nro"));
+        cabeceraProduccionDetalle.createCell(2).setCellValue(new HSSFRichTextString("Debe"));
         cabeceraProduccionDetalle.getCell(2).setCellStyle(style1);
-        cabeceraProduccionDetalle.createCell(3).setCellValue(new HSSFRichTextString("Monto"));
+        cabeceraProduccionDetalle.createCell(3).setCellValue(new HSSFRichTextString("Haber"));
         cabeceraProduccionDetalle.getCell(3).setCellStyle(style1);
-        cabeceraProduccionDetalle.createCell(4).setCellValue(new HSSFRichTextString("Débito"));
+        cabeceraProduccionDetalle.createCell(4).setCellValue(new HSSFRichTextString("Saldo"));
         cabeceraProduccionDetalle.getCell(4).setCellStyle(style1);
-        cabeceraProduccionDetalle.createCell(5).setCellValue(new HSSFRichTextString("Credito"));
-        cabeceraProduccionDetalle.getCell(5).setCellStyle(style1);
-        cabeceraProduccionDetalle.createCell(6).setCellValue(new HSSFRichTextString("Balance"));
-        cabeceraProduccionDetalle.getCell(6).setCellStyle(style1);
         //FIN CABECERA DETALLE
 
         //INICIO DETALLE
-        int deuda = 0;
-        int credito = 0;
-        int total = 0;
+        int debe = 0;
+        int haber = 0;
+        int saldo = 0;
         for (int i = 0; i < cabeceraList.size(); i++) {
             Row rowDetalle = sheet.createRow(filaActual);
             filaActual++;
             E_movimientoContable unDetalle = cabeceraList.get(i);
             switch (unDetalle.getTipo()) {
                 case E_movimientoContable.TIPO_SALDO_INICIAL: {
-                    deuda = deuda + (int) unDetalle.getClienteSaldoInicial().getSaldoInicial();
-                    total = deuda - credito;
+                    debe = debe + (int) unDetalle.getClienteSaldoInicial().getSaldoInicial();
+                    saldo = debe - haber;
                     rowDetalle.createCell(0).setCellValue(unDetalle.getFechaSaldoInicial());
                     rowDetalle.getCell(0).setCellStyle(dateCellStyle);
                     rowDetalle.createCell(1).setCellValue(unDetalle.getTipoDescripcion());
                     //rowDetalle.createCell(2).setCellValue();
-                    rowDetalle.createCell(3).setCellValue(unDetalle.getClienteSaldoInicial().getSaldoInicial());
+                    rowDetalle.createCell(2).setCellValue(unDetalle.getClienteSaldoInicial().getSaldoInicial());
+                    rowDetalle.getCell(2).setCellStyle(style4);
+                    rowDetalle.createCell(3).setCellValue(0);
                     rowDetalle.getCell(3).setCellStyle(style4);
-                    rowDetalle.createCell(4).setCellValue(deuda);
+                    rowDetalle.createCell(4).setCellValue(saldo);
                     rowDetalle.getCell(4).setCellStyle(style4);
-                    rowDetalle.createCell(5).setCellValue(0);
-                    rowDetalle.getCell(5).setCellStyle(style4);
-                    rowDetalle.createCell(6).setCellValue(total);
-                    rowDetalle.getCell(6).setCellStyle(style4);
                     break;
                 }
                 case E_movimientoContable.TIPO_COBRO: {
-                    credito = credito + (int) unDetalle.getCobro().getDebito();
-                    total = deuda - credito;
-                    rowDetalle.createCell(0).setCellValue(unDetalle.getCobro().getFechaPago());
+                    haber = haber + (int) unDetalle.getCobro().getMonto();
+                    saldo = debe - haber;
+                    int nroFactura = unDetalle.getCobro().getFacturaVenta().getNroFactura();
+                    int nroRecibo = unDetalle.getCobro().getCuentaCorrienteCabecera().getNroRecibo();
+                    String sNroFactura = decimalFormat.format(nroFactura);
+                    String sNroRecibo = decimalFormat.format(nroRecibo);
+                    rowDetalle.createCell(0).setCellValue(unDetalle.getCobro().getCuentaCorrienteCabecera().getFechaPago());
                     rowDetalle.getCell(0).setCellStyle(dateCellStyle);
-                    rowDetalle.createCell(1).setCellValue(unDetalle.getTipoDescripcion());
-                    rowDetalle.createCell(2).setCellValue(unDetalle.getCobro().getNroRecibo());
+                    rowDetalle.createCell(1).setCellValue(unDetalle.getTipoDescripcion() + " N° " + sNroRecibo + " (Fact. N° " + sNroFactura + ")");
+                    rowDetalle.createCell(2).setCellValue(0);
                     rowDetalle.getCell(2).setCellStyle(style4);
-                    rowDetalle.createCell(3).setCellValue(unDetalle.getCobro().getDebito());
+                    rowDetalle.createCell(3).setCellValue(unDetalle.getCobro().getMonto());
                     rowDetalle.getCell(3).setCellStyle(style4);
-                    rowDetalle.createCell(4).setCellValue(0);
+                    rowDetalle.createCell(4).setCellValue(saldo);
                     rowDetalle.getCell(4).setCellStyle(style4);
-                    rowDetalle.createCell(5).setCellValue(credito);
-                    rowDetalle.getCell(5).setCellStyle(style4);
-                    rowDetalle.createCell(6).setCellValue(total);
-                    rowDetalle.getCell(6).setCellStyle(style4);
                     break;
                 }
-                case E_movimientoContable.TIPO_COMPRA: {
-                    deuda = deuda + (int) unDetalle.getCompra().getTotal();
-                    total = deuda - credito;
+                /*case E_movimientoContable.TIPO_COMPRA: {
+                    debe = debe + (int) unDetalle.getCompra().getTotal();
+                    saldo = debe - haber;
                     rowDetalle.createCell(0).setCellValue(unDetalle.getCompra().getTiempo());
                     rowDetalle.getCell(0).setCellStyle(dateCellStyle);
                     rowDetalle.createCell(1).setCellValue(unDetalle.getTipoDescripcion());
@@ -199,17 +196,17 @@ public class ExportarEstadoCuentaCliente {
                     rowDetalle.getCell(2).setCellStyle(style4);
                     rowDetalle.createCell(3).setCellValue(unDetalle.getCompra().getTotal());
                     rowDetalle.getCell(3).setCellStyle(style4);
-                    rowDetalle.createCell(4).setCellValue(deuda);
+                    rowDetalle.createCell(4).setCellValue(debe);
                     rowDetalle.getCell(4).setCellStyle(style4);
                     rowDetalle.createCell(5).setCellValue(0);
                     rowDetalle.getCell(5).setCellStyle(style4);
-                    rowDetalle.createCell(6).setCellValue(total);
+                    rowDetalle.createCell(6).setCellValue(saldo);
                     rowDetalle.getCell(6).setCellStyle(style4);
                     break;
-                }
-                case E_movimientoContable.TIPO_PAGO: {
-                    credito = credito + (int) unDetalle.getPago().getMonto();
-                    total = deuda - credito;
+                }*/
+ /*case E_movimientoContable.TIPO_PAGO: {
+                    haber = haber + (int) unDetalle.getPago().getMonto();
+                    saldo = debe - haber;
                     rowDetalle.createCell(0).setCellValue(unDetalle.getPago().getFechaPago());
                     rowDetalle.getCell(0).setCellStyle(dateCellStyle);
                     rowDetalle.createCell(1).setCellValue(unDetalle.getTipoDescripcion());
@@ -219,69 +216,66 @@ public class ExportarEstadoCuentaCliente {
                     rowDetalle.getCell(3).setCellStyle(style4);
                     rowDetalle.createCell(4).setCellValue(0);
                     rowDetalle.getCell(4).setCellStyle(style4);
-                    rowDetalle.createCell(5).setCellValue(credito);
+                    rowDetalle.createCell(5).setCellValue(haber);
                     rowDetalle.getCell(5).setCellStyle(style4);
-                    rowDetalle.createCell(6).setCellValue(total);
+                    rowDetalle.createCell(6).setCellValue(saldo);
                     rowDetalle.getCell(6).setCellStyle(style4);
                     break;
-                }
+                }*/
                 case E_movimientoContable.TIPO_VENTA: {
-                    deuda = deuda + (int) unDetalle.getVenta().getMonto();
-                    total = deuda - credito;
+                    debe = debe + (int) unDetalle.getVenta().getMonto();
+                    saldo = debe - haber;
+                    int nroFactura = unDetalle.getVenta().getNroFactura();
+                    String sNroFactura = decimalFormat.format(nroFactura);
                     rowDetalle.createCell(0).setCellValue(unDetalle.getVenta().getFecha());
                     rowDetalle.getCell(0).setCellStyle(dateCellStyle);
-                    rowDetalle.createCell(1).setCellValue(unDetalle.getTipoDescripcion());
-                    rowDetalle.createCell(2).setCellValue(unDetalle.getVenta().getNroFactura());
+                    rowDetalle.createCell(1).setCellValue(unDetalle.getTipoDescripcion() + " N° " + sNroFactura);
+                    rowDetalle.createCell(2).setCellValue(unDetalle.getVenta().getMonto());
                     rowDetalle.getCell(2).setCellStyle(style4);
-                    rowDetalle.createCell(3).setCellValue(unDetalle.getVenta().getMonto());
+                    rowDetalle.createCell(3).setCellValue(0);
                     rowDetalle.getCell(3).setCellStyle(style4);
-                    rowDetalle.createCell(4).setCellValue(deuda);
+                    rowDetalle.createCell(4).setCellValue(saldo);
                     rowDetalle.getCell(4).setCellStyle(style4);
-                    rowDetalle.createCell(5).setCellValue(0);
-                    rowDetalle.getCell(5).setCellStyle(style4);
-                    rowDetalle.createCell(6).setCellValue(total);
-                    rowDetalle.getCell(6).setCellStyle(style4);
                     break;
                 }
                 case E_movimientoContable.TIPO_NOTA_CREDITO: {
-                    credito = credito + (int) unDetalle.getNotaCredito().getTotal();
-                    total = deuda - credito;
+                    haber = haber + (int) unDetalle.getNotaCredito().getTotal();
+                    saldo = debe - haber;
+                    int nroFactura = unDetalle.getNotaCredito().getFacturaCabecera().getNroFactura();
+                    int nroNotaCredito = unDetalle.getNotaCredito().getNroNotaCredito();
+                    String sNroFactura = decimalFormat.format(nroFactura);
+                    String sNroNotaCredito = decimalFormat.format(nroNotaCredito);
                     rowDetalle.createCell(0).setCellValue(unDetalle.getNotaCredito().getTiempo());
                     rowDetalle.getCell(0).setCellStyle(dateCellStyle);
-                    rowDetalle.createCell(1).setCellValue(unDetalle.getTipoDescripcion());
-                    rowDetalle.createCell(2).setCellValue(unDetalle.getNotaCredito().getNroNotaCredito());
+                    rowDetalle.createCell(1).setCellValue(unDetalle.getTipoDescripcion() + " N° " + sNroNotaCredito + " (Fact. N° " + sNroFactura + ")");
+                    rowDetalle.createCell(2).setCellValue(0);
                     rowDetalle.getCell(2).setCellStyle(style4);
                     rowDetalle.createCell(3).setCellValue(unDetalle.getNotaCredito().getTotal());
                     rowDetalle.getCell(3).setCellStyle(style4);
-                    rowDetalle.createCell(4).setCellValue(0);
+                    rowDetalle.createCell(4).setCellValue(saldo);
                     rowDetalle.getCell(4).setCellStyle(style4);
-                    rowDetalle.createCell(5).setCellValue(credito);
-                    rowDetalle.getCell(5).setCellStyle(style4);
-                    rowDetalle.createCell(6).setCellValue(total);
-                    rowDetalle.getCell(6).setCellStyle(style4);
                     break;
                 }
                 case E_movimientoContable.TIPO_RETENCION_VENTA: {
-                    credito = credito + (int) unDetalle.getRetencionVenta().getMonto();
-                    total = deuda - credito;
+                    haber = haber + (int) unDetalle.getRetencionVenta().getMonto();
+                    saldo = debe - haber;
+                    int nroRetencion = unDetalle.getRetencionVenta().getNroRetencion();
+                    String sNroFactura = decimalFormat.format(unDetalle.getRetencionVenta().getVenta().getNroFactura());
+                    String sNroRetencion = decimalFormat.format(nroRetencion);
                     rowDetalle.createCell(0).setCellValue(unDetalle.getRetencionVenta().getTiempo());
                     rowDetalle.getCell(0).setCellStyle(dateCellStyle);
-                    rowDetalle.createCell(1).setCellValue(unDetalle.getTipoDescripcion());
-                    rowDetalle.createCell(2).setCellValue(unDetalle.getRetencionVenta().getNroRetencion());
+                    rowDetalle.createCell(1).setCellValue(unDetalle.getTipoDescripcion() + " N° " + sNroRetencion + " (Fact. N° " + sNroFactura + ")");
+                    rowDetalle.createCell(2).setCellValue(0);
                     rowDetalle.getCell(2).setCellStyle(style4);
                     rowDetalle.createCell(3).setCellValue(unDetalle.getRetencionVenta().getMonto());
                     rowDetalle.getCell(3).setCellStyle(style4);
-                    rowDetalle.createCell(4).setCellValue(0);
+                    rowDetalle.createCell(4).setCellValue(saldo);
                     rowDetalle.getCell(4).setCellStyle(style4);
-                    rowDetalle.createCell(5).setCellValue(credito);
-                    rowDetalle.getCell(5).setCellStyle(style4);
-                    rowDetalle.createCell(6).setCellValue(total);
-                    rowDetalle.getCell(6).setCellStyle(style4);
                     break;
                 }
             }
         }
-        rowTotal.createCell(1).setCellValue(total);
+        rowTotal.createCell(1).setCellValue(saldo);
         rowTotal.getCell(1).setCellStyle(style4);
         filaActual++;
 
@@ -291,8 +285,6 @@ public class ExportarEstadoCuentaCliente {
         sheet.autoSizeColumn(2);
         sheet.autoSizeColumn(3);
         sheet.autoSizeColumn(4);
-        sheet.autoSizeColumn(5);
-        sheet.autoSizeColumn(6);
         //FIN AJUSTAR COLUMNAS
         try {
             FileOutputStream out = new FileOutputStream(directory.getPath() + ".xls");
@@ -359,7 +351,7 @@ public class ExportarEstadoCuentaCliente {
                     break;
                 }
                 case E_movimientoContable.TIPO_COBRO: {
-                    cobrado = cobrado + (int) unDetalle.getCobro().getDebito();
+                    cobrado = cobrado + (int) unDetalle.getCobro().getMonto();
                     balance = cobrado - facturado;
                     break;
                 }

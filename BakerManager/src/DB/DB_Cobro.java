@@ -901,6 +901,21 @@ public class DB_Cobro {
         return false;
     }
 
+
+    public static boolean facturaPendientePago(int nroFactura) {
+        String QUERY = "SELECT nro_factura FROM v_facturas_sin_pago WHERE nro_factura = " + nroFactura;
+        try {
+            st = DB_manager.getConection().createStatement();
+            // se ejecuta el query y se obtienen los resultados en un ResultSet
+            rs = st.executeQuery(QUERY);
+            return rs.isBeforeFirst();
+        } catch (SQLException ex) {
+            Logger lgr = Logger.getLogger(DB_Cobro.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        }
+        return false;
+    }
+
     public static List<E_retencionVenta> obtenerRetenciones(int idCliente,
             int idFuncionario, int nroRetencion, Date fechaInicio, Date fechaFinal,
             int idEstado, boolean conFechas) {

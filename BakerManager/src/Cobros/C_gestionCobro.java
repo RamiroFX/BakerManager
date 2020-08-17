@@ -19,6 +19,7 @@ import Interface.InterfaceNotificarCambio;
 import Interface.RecibirClienteCallback;
 import Interface.RecibirEmpleadoCallback;
 import MenuPrincipal.DatosUsuario;
+import Utilities.CellRenderers.CobroClienteStatusCellRenderer;
 import bakermanager.C_inicio;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
@@ -28,7 +29,13 @@ import java.beans.PropertyVetoException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.JComponent;
 import javax.swing.JOptionPane;
+import javax.swing.KeyStroke;
 
 /**
  *
@@ -42,6 +49,7 @@ public class C_gestionCobro implements GestionInterface, RecibirEmpleadoCallback
     public C_inicio c_inicio;
     private int tipoCliente;//para utilizar en el buscado de clientes
     private static final int TIPO_BUSCADOR = 1, TIPO_ESTADO_CUENTA = 2;
+    private CobroClienteStatusCellRenderer scr;
 
     public C_gestionCobro(V_gestionCobro vista, M_gestionCobroPago modelo, C_inicio c_inicio) {
         this.vista = vista;
@@ -69,6 +77,8 @@ public class C_gestionCobro implements GestionInterface, RecibirEmpleadoCallback
             this.vista.jcbEstado.addItem(estados.get(i));
         }
         this.vista.jtCobroCabecera.setModel(this.modelo.getTm());
+        this.scr = new CobroClienteStatusCellRenderer(this.modelo.getTm().getList());
+        this.vista.jtCobroCabecera.setDefaultRenderer(Object.class, scr);
         this.vista.jtCobroDetalle.setModel(this.modelo.getTmDetalle());
     }
 
@@ -104,10 +114,10 @@ public class C_gestionCobro implements GestionInterface, RecibirEmpleadoCallback
                 this.vista.jbCobroPendientes.setEnabled(true);
                 this.vista.jbCobroPendientes.addActionListener(this);
             }
-            if (this.vista.jbBanco.getName().equals(acceso.getItemDescripcion())) {
+            /*if (this.vista.jbBanco.getName().equals(acceso.getItemDescripcion())) {
                 this.vista.jbBanco.setEnabled(true);
                 this.vista.jbBanco.addActionListener(this);
-            }
+            }*/
             if (this.vista.jbCheques.getName().equals(acceso.getItemDescripcion())) {
                 this.vista.jbCheques.setEnabled(true);
                 this.vista.jbCheques.addActionListener(this);
@@ -133,16 +143,44 @@ public class C_gestionCobro implements GestionInterface, RecibirEmpleadoCallback
          * **ESCAPE HOTKEY/
          */
         //cobro
-        this.vista.jbMasOpciones.addKeyListener(this);
-        this.vista.jbCobro.addKeyListener(this);
-        this.vista.jbResumen.addKeyListener(this);
-        this.vista.jbAnular.addKeyListener(this);
-        this.vista.jbBanco.addKeyListener(this);
-        this.vista.jbDetalleCobro.addKeyListener(this);
-        this.vista.jbBuscarCobro.addKeyListener(this);
+        String cerrar = "cerrar";
+        String crearCobro = "Referesh";
+        this.vista.jbCliente.addKeyListener(this);
+        Action buttonAction = new AbstractAction(crearCobro) {
+            @Override
+            public void actionPerformed(ActionEvent evt) {
+                invocarVistaCobrar();
+            }
+        };
+        Action cerrarAction = new AbstractAction(cerrar) {
+            @Override
+            public void actionPerformed(ActionEvent evt) {
+                cerrar();
+            }
+        };
+        this.vista.jbCobro.setAction(buttonAction);
+        this.vista.jbCobro.setAction(cerrarAction);
+        this.vista.jbCobro.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+                KeyStroke.getKeyStroke(KeyEvent.VK_F5, 0), crearCobro);
+        this.vista.jbCobro.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+                KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), cerrar);
+        this.vista.jbCobro.getActionMap().put(crearCobro, buttonAction);
+        this.vista.jbCobro.getActionMap().put(cerrar, cerrarAction);
+
         this.vista.jbEmpCobro.addKeyListener(this);
+        this.vista.jddInicioCobro.addKeyListener(this);
+        this.vista.jddFinalCobro.addKeyListener(this);
+        this.vista.jcbEstado.addKeyListener(this);
+        this.vista.jbBuscarCobro.addKeyListener(this);
         this.vista.jbBorrarCobro.addKeyListener(this);
+        this.vista.jbCobroPendientes.addKeyListener(this);
         this.vista.jtfNroRecibo.addKeyListener(this);
+        this.vista.jbCobro.addKeyListener(this);
+        this.vista.jbDetalleCobro.addKeyListener(this);
+        this.vista.jbAnular.addKeyListener(this);
+        this.vista.jbResumen.addKeyListener(this);
+        //this.vista.jbBanco.addKeyListener(this);
+        this.vista.jbMasOpciones.addKeyListener(this);
     }
 
     private void verificarPermiso() {
@@ -197,6 +235,7 @@ public class C_gestionCobro implements GestionInterface, RecibirEmpleadoCallback
                 Estado estado = vista.jcbEstado.getItemAt(vista.jcbEstado.getSelectedIndex());
 
                 modelo.getTm().setList(modelo.obtenerCobro(cliente, funcionario, fechaInicio, fechaFinal, estado, nroRecibo, conFecha));
+                scr.setList(modelo.getTm().getList());
                 Utilities.c_packColumn.packColumns(vista.jtCobroCabecera, 1);
                 modelo.limpiarDetalle();
             }
@@ -331,8 +370,16 @@ public class C_gestionCobro implements GestionInterface, RecibirEmpleadoCallback
         return false;
     }
 
+    private void esperar() {
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(C_gestionCobro.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
     private void mostrarOpciones() {
-        Object[] options = {"Estado de cuenta", "Retención de I.V.A."};
+        Object[] options = {"Estado de cuenta", "Retención de I.V.A.", "Bancos"};
         int n = JOptionPane.showOptionDialog(this.vista,
                 "Eliga su opción",
                 "Atención",
@@ -358,6 +405,19 @@ public class C_gestionCobro implements GestionInterface, RecibirEmpleadoCallback
                         invocarRetencionIVA();
                     }
                 });
+                break;
+            }
+            case 3: {
+                EventQueue.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        invocarVistaBancos();
+                    }
+                });
+                break;
+            }
+            default: {
+
                 break;
             }
         }
@@ -420,8 +480,6 @@ public class C_gestionCobro implements GestionInterface, RecibirEmpleadoCallback
             consultarCobros(true);
         } else if (src.equals(this.vista.jbAnular)) {
             anularCobro();
-        } else if (src.equals(this.vista.jbBanco)) {
-            invocarVistaBancos();
         } else if (src.equals(this.vista.jbCheques)) {
             System.out.println("Cobros.C_gestionCobroPago.actionPerformed().jbCheques");
             invocarVistaChequesPendientes();
@@ -486,6 +544,10 @@ public class C_gestionCobro implements GestionInterface, RecibirEmpleadoCallback
 
     @Override
     public void keyPressed(KeyEvent e) {
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
         switch (e.getKeyCode()) {
             case KeyEvent.VK_ESCAPE: {
                 cerrar();
@@ -495,6 +557,22 @@ public class C_gestionCobro implements GestionInterface, RecibirEmpleadoCallback
                 if (vista.jbCobro.isEnabled()) {
                     invocarVistaCobrar();
                 }
+                break;
+            }
+            case KeyEvent.VK_F2: {
+                if (vista.jbResumen.isEnabled()) {
+                    invocarVistaResumen();
+                }
+                break;
+            }
+            case KeyEvent.VK_F3: {
+                if (vista.jbCobroPendientes.isEnabled()) {
+                    consultarCobrosPendiente();
+                }
+                break;
+            }
+            case KeyEvent.VK_F4: {
+                mostrarOpciones();
                 break;
             }
             case KeyEvent.VK_ENTER: {
@@ -507,13 +585,8 @@ public class C_gestionCobro implements GestionInterface, RecibirEmpleadoCallback
     }
 
     @Override
-    public void keyReleased(KeyEvent e) {
-    }
-
-    @Override
     public void notificarCambio() {
         JOptionPane.showMessageDialog(vista, "Cobro registrado con éxito");
-
     }
 
 }

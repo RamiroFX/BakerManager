@@ -21,6 +21,8 @@ public class E_cuentaCorrienteDetalle {
     private double monto;
     private E_formaPago formaPago;
     private E_tipoCheque tipoCheque;
+    private E_cuentaCorrienteCabecera cuentaCorrienteCabecera;
+    private E_facturaCabecera facturaVenta;
     private int nroCheque;//opcional
     private E_banco banco;//opcional
     private Date fechaCheque;//opcional
@@ -29,6 +31,8 @@ public class E_cuentaCorrienteDetalle {
     public E_cuentaCorrienteDetalle() {
         this.formaPago = new E_formaPago();
         this.tipoCheque = new E_tipoCheque();
+        this.facturaVenta = new E_facturaCabecera();
+        this.cuentaCorrienteCabecera = new E_cuentaCorrienteCabecera();
     }
 
     /**
@@ -221,5 +225,33 @@ public class E_cuentaCorrienteDetalle {
             return true;
         }
         return false;
+    }
+
+    /**
+     * @return the facturaVenta
+     */
+    public E_facturaCabecera getFacturaVenta() {
+        return facturaVenta;
+    }
+
+    /**
+     * @param facturaVenta the facturaVenta to set
+     */
+    public void setFacturaVenta(E_facturaCabecera facturaVenta) {
+        this.facturaVenta = facturaVenta;
+    }
+
+    /**
+     * @return the cuentaCorrienteCabecera
+     */
+    public E_cuentaCorrienteCabecera getCuentaCorrienteCabecera() {
+        return cuentaCorrienteCabecera;
+    }
+
+    /**
+     * @param cuentaCorrienteCabecera the cuentaCorrienteCabecera to set
+     */
+    public void setCuentaCorrienteCabecera(E_cuentaCorrienteCabecera cuentaCorrienteCabecera) {
+        this.cuentaCorrienteCabecera = cuentaCorrienteCabecera;
     }
 }

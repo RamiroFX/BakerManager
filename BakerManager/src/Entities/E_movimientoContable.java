@@ -33,7 +33,7 @@ public class E_movimientoContable {
     private E_NotaCreditoCabecera notaCredito;
     private E_facturaSinPago venta;
     private M_egreso_cabecera compra;
-    private E_cuentaCorrienteCabecera cobro;
+    private E_cuentaCorrienteDetalle cobro;
     private E_reciboPagoCabecera pago;
     private M_cliente clienteSaldoInicial;
     private E_retencionVenta retencionVenta;
@@ -116,14 +116,14 @@ public class E_movimientoContable {
     /**
      * @return the cobro
      */
-    public E_cuentaCorrienteCabecera getCobro() {
+    public E_cuentaCorrienteDetalle getCobro() {
         return cobro;
     }
 
     /**
      * @param cobro the cobro to set
      */
-    public void setCobro(E_cuentaCorrienteCabecera cobro) {
+    public void setCobro(E_cuentaCorrienteDetalle cobro) {
         this.cobro = cobro;
     }
 

@@ -104,7 +104,7 @@ public class MovimientoContableTM extends AbstractTableModel {
             case 2: {
                 switch (row.getTipo()) {
                     case E_movimientoContable.TIPO_COBRO: {
-                        return row.getCobro().getCliente().getEntidad();
+                        return row.getCobro().getFacturaVenta().getCliente().getEntidad();
                     }
                     case E_movimientoContable.TIPO_COMPRA: {
                         return row.getCompra().getProveedor().getEntidad();
@@ -123,7 +123,7 @@ public class MovimientoContableTM extends AbstractTableModel {
             case 3: {
                 switch (row.getTipo()) {
                     case E_movimientoContable.TIPO_COBRO: {
-                        return row.getCobro().getFechaOperacion();
+                        return row.getCobro().getCuentaCorrienteCabecera().getFechaOperacion();
                     }
                     case E_movimientoContable.TIPO_COMPRA: {
                         return row.getCompra().getTiempo();
@@ -142,7 +142,7 @@ public class MovimientoContableTM extends AbstractTableModel {
             case 4: {
                 switch (row.getTipo()) {
                     case E_movimientoContable.TIPO_COBRO: {
-                        return row.getCobro().getDebito();
+                        return row.getCobro().getMonto();
                     }
                     case E_movimientoContable.TIPO_COMPRA: {
                         return row.getCompra().getTotal();
@@ -161,7 +161,7 @@ public class MovimientoContableTM extends AbstractTableModel {
             case 5: {//pago
                 switch (row.getTipo()) {
                     case E_movimientoContable.TIPO_COBRO: {
-                        return row.getCobro().getDebito();
+                        return row.getCobro().getMonto();
                     }
                     case E_movimientoContable.TIPO_COMPRA: {
                         return row.getCompra().getTotal();

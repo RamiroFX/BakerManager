@@ -9,6 +9,7 @@ import DB.DB_Cobro;
 import DB.DB_Ingreso;
 import Entities.E_facturaCabecera;
 import Entities.E_facturaDetalle;
+import Entities.E_facturaSinPago;
 import Entities.E_impuesto;
 import Entities.E_retencionVenta;
 import MenuPrincipal.DatosUsuario;
@@ -102,5 +103,13 @@ public class M_crearRetencion {
 
     public boolean existeRetencion(int nroFactura) {
         return DB_Cobro.existeRetencion(nroFactura);
+    }
+
+    public boolean facturaPendientePago(int nroFactura) {
+        return DB_Cobro.facturaPendientePago(nroFactura);
+    }
+
+    public E_facturaSinPago validarSaldoPendiente(int nroFactura) {
+        return DB_Cobro.obtenerFacturaSinPago(nroFactura);
     }
 }

@@ -58,15 +58,10 @@ public class BancosParametros extends javax.swing.JDialog implements ActionListe
         c_packColumn.packColumns(jtBancos, 1);
     }
 
-    private void initMarcas() {
+    private void initComponents() {
         jtBancos = new JTable();
         jtBancos.getTableHeader().setReorderingAllowed(false);
         jspBancos = new JScrollPane(jtBancos);
-
-    }
-
-    private void initComponents() {
-        initMarcas();
         jpSouth = new JPanel();
         jbCrear = new javax.swing.JButton("Agregar");
         jbModificar = new javax.swing.JButton("Modificar");

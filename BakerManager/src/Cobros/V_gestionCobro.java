@@ -35,8 +35,9 @@ public class V_gestionCobro extends JInternalFrame {
     //NORTH VARIABLES
     //COBRO
     public JButton jbBuscarCobro, jbBorrarCobro, jbDetalleCobro, jbAnular,
-            jbCliente, jbEmpCobro, jbCobro, jbCobroPendientes, jbResumen, jbBanco,
+            jbCliente, jbEmpCobro, jbCobro, jbCobroPendientes, jbResumen, 
             jbCheques, jbMasOpciones;
+    //public JButton jbBanco;
     public JTextField jtfNroRecibo, jtfCliente, jtfEmpCobro;
     public JComboBox jcbEmpleado, jcbEstadoPedido;
     public JComboBox<Estado> jcbEstado;
@@ -95,7 +96,7 @@ public class V_gestionCobro extends JInternalFrame {
         jpCobroBotonesTop.setBorder(new EtchedBorder(EtchedBorder.RAISED));
         jbBuscarCobro = new JButton("Buscar");
         jbBuscarCobro.setName("buscar cobro");
-        jbCobroPendientes = new JButton("Cobro pendiente");
+        jbCobroPendientes = new JButton("Cobro pendiente [F3]");
         jbCobroPendientes.setName("buscar cobro pendiente");
         jbBorrarCobro = new JButton("Borrar");
         jpCobroBotonesTop.add(jbBorrarCobro);
@@ -113,7 +114,7 @@ public class V_gestionCobro extends JInternalFrame {
         //jspCobroMid.setDividerLocation(this.getWidth() / 2);
         jspCobroMid.setOneTouchExpandable(true);
         //SOUTH VARIABLES
-        jbCobro = new JButton("Cobrar");
+        jbCobro = new JButton("Cobrar [F1]");
         jbCobro.setName("crear cobro");
         jbCobro.setFont(CommonFormat.fuente);
         jbCobro.setMargin(insets);
@@ -121,19 +122,19 @@ public class V_gestionCobro extends JInternalFrame {
         jbAnular.setName("anular cobro");
         jbAnular.setFont(CommonFormat.fuente);
         jbAnular.setMargin(insets);
-        jbResumen = new JButton("Resumen");
+        jbResumen = new JButton("Resumen [F2]");
         jbResumen.setName("resumen cobro");
         jbResumen.setFont(CommonFormat.fuente);
         jbResumen.setMargin(insets);
-        jbBanco = new JButton("Bancos");
-        jbBanco.setName("gestión bancos cobro");
-        jbBanco.setFont(CommonFormat.fuente);
-        jbBanco.setMargin(insets);
+//        jbBanco = new JButton("Bancos");
+//        jbBanco.setName("gestión bancos cobro");
+//        jbBanco.setFont(CommonFormat.fuente);
+//        jbBanco.setMargin(insets);
         jbCheques = new JButton("Cheques pendientes");
         jbCheques.setName("cheques pendientes cobro");
         jbCheques.setFont(CommonFormat.fuente);
         jbCheques.setMargin(insets);
-        jbMasOpciones = new JButton("Más opciones");
+        jbMasOpciones = new JButton("Más opciones [F4]");
         jbMasOpciones.setFont(CommonFormat.fuente);
         jbMasOpciones.setMargin(insets);
 
@@ -154,7 +155,7 @@ public class V_gestionCobro extends JInternalFrame {
         jpCobroBot.add(jbDetalleCobro);
         jpCobroBot.add(jbAnular);
         jpCobroBot.add(jbResumen);
-        jpCobroBot.add(jbBanco);
+        //jpCobroBot.add(jbBanco);
         jpCobroBot.add(jbCheques);
         jpCobroBot.add(jbMasOpciones);
         jpCobros = new JPanel(new BorderLayout());

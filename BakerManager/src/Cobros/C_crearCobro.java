@@ -24,6 +24,8 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
 /**
@@ -85,19 +87,33 @@ public class C_crearCobro extends MouseAdapter implements ActionListener, KeyLis
     }
 
     private void agregarListeners() {
-        this.vista.jtReciboDetalle.addMouseListener(this);
-        this.vista.jbAceptar.addActionListener(this);
-        this.vista.jbAgregarFactura.addActionListener(this);
+        //ACTION LISTENERS
         this.vista.jbCliente.addActionListener(this);
+        this.vista.jtfNroRecibo.addActionListener(this);
         this.vista.jbFuncionario.addActionListener(this);
+        this.vista.jtfNroFactura.addActionListener(this);
+        this.vista.jbAgregarFactura.addActionListener(this);
         this.vista.jbEliminarDetalle.addActionListener(this);
         this.vista.jbModificarDetalle.addActionListener(this);
+        this.vista.jbAceptar.addActionListener(this);
+        this.vista.jbImprimir.addActionListener(this);
         this.vista.jbSalir.addActionListener(this);
-        this.vista.jbAgregarFactura.addKeyListener(this);
+        //MOUSE LISTENERS
+        this.vista.jtReciboDetalle.addMouseListener(this);
+        //KEY LISTENERS
         this.vista.jbCliente.addKeyListener(this);
+        this.vista.jtfCliente.addKeyListener(this);
+        this.vista.jtfNroRecibo.addKeyListener(this);
         this.vista.jbFuncionario.addKeyListener(this);
+        this.vista.jtfFuncionario.addKeyListener(this);
+        this.vista.jtfNroFactura.addKeyListener(this);
+        this.vista.jdcFechaCobro.addKeyListener(this);
+        this.vista.jbAgregarFactura.addKeyListener(this);
+        this.vista.jbEliminarDetalle.addKeyListener(this);
+        this.vista.jbModificarDetalle.addKeyListener(this);
         this.vista.jbAceptar.addKeyListener(this);
         this.vista.jbSalir.addKeyListener(this);
+        this.vista.jbImprimir.addKeyListener(this);
     }
 
     private void eliminarDetalle() {
@@ -126,28 +142,33 @@ public class C_crearCobro extends MouseAdapter implements ActionListener, KeyLis
     }
 
     private void guardar() {
-        if (!validarCliente()) {
-            return;
-        }
-        if (!validarNroRecibo()) {
-            return;
-        }
-        if (!validarResponsable()) {
-            return;
-        }
-        if (!validarFechaUtilizacion()) {
-            return;
-        }
-        if (!validarCantidadFacturas()) {
-            return;
-        }
-        Date fechaPago = vista.jdcFechaCobro.getDate();
-        int nroRecibo = Integer.valueOf(this.vista.jtfNroRecibo.getText().trim());
-        modelo.getCabecera().setFechaPago(fechaPago);
-        modelo.getCabecera().setNroRecibo(nroRecibo);
-        modelo.guardarCobro();
-        limpiarCampos();
-        cerrar();
+        EventQueue.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                if (!validarCliente()) {
+                    return;
+                }
+                if (!validarNroRecibo()) {
+                    return;
+                }
+                if (!validarResponsable()) {
+                    return;
+                }
+                if (!validarFechaUtilizacion()) {
+                    return;
+                }
+                if (!validarCantidadFacturas()) {
+                    return;
+                }
+                Date fechaPago = vista.jdcFechaCobro.getDate();
+                int nroRecibo = Integer.valueOf(vista.jtfNroRecibo.getText().trim());
+                modelo.getCabecera().setFechaPago(fechaPago);
+                modelo.getCabecera().setNroRecibo(nroRecibo);
+                modelo.guardarCobro();
+                limpiarCampos();
+                cerrar();
+            }
+        });
     }
 
     private boolean validarFechaUtilizacion() {
@@ -176,6 +197,7 @@ public class C_crearCobro extends MouseAdapter implements ActionListener, KeyLis
     private boolean validarCliente() {
         if (this.vista.jtfCliente.getText().isEmpty()) {
             JOptionPane.showMessageDialog(vista, VALIDAR_CLIENTE_MSG, VALIDAR_TITULO, JOptionPane.WARNING_MESSAGE);
+            esperar();
             return false;
         }
         return true;
@@ -258,6 +280,14 @@ public class C_crearCobro extends MouseAdapter implements ActionListener, KeyLis
         this.vista.jftTotal.setValue(modelo.getTotal());
     }
 
+    private void esperar() {
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(C_gestionCobro.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         Object source = e.getSource();
@@ -292,6 +322,10 @@ public class C_crearCobro extends MouseAdapter implements ActionListener, KeyLis
 
     @Override
     public void keyPressed(KeyEvent e) {
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
         switch (e.getKeyCode()) {
             case KeyEvent.VK_F1: {
                 guardar();
@@ -301,12 +335,12 @@ public class C_crearCobro extends MouseAdapter implements ActionListener, KeyLis
                 invocarVistaSeleccionCliente();
                 break;
             }
-            case KeyEvent.VK_F5: {
-                invocarVistaSeleccionFuncionario();
+            case KeyEvent.VK_F4: {
+                invocarVistaSeleccionFacturaPendiente();
                 break;
             }
-            case KeyEvent.VK_F4: {
-
+            case KeyEvent.VK_F5: {
+                invocarVistaSeleccionFuncionario();
                 break;
             }
             case KeyEvent.VK_ESCAPE: {
@@ -314,10 +348,6 @@ public class C_crearCobro extends MouseAdapter implements ActionListener, KeyLis
                 break;
             }
         }
-    }
-
-    @Override
-    public void keyReleased(KeyEvent e) {
     }
 
     @Override

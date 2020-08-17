@@ -6,6 +6,7 @@ package DB;
 
 import Entities.E_NotaCreditoCabecera;
 import Entities.E_cuentaCorrienteCabecera;
+import Entities.E_cuentaCorrienteDetalle;
 import Entities.E_facturaCabecera;
 import Entities.E_facturaSinPago;
 import Entities.E_movimientoContable;
@@ -1423,12 +1424,12 @@ public class DB_Cliente {
 
     public static ArrayList<E_movimientoContable> obtenerEstadoCuenta(int idCliente) {
         ArrayList<E_movimientoContable> list = new ArrayList<>();
-        String QUERY = "SELECT tipo_documento, id_cabecera, nro_factura, nro_recibo, "
+        String QUERY = "SELECT tipo_documento, nro_factura, nro_recibo, nro_nota_credito, nro_retencion, "
                 + "fecha, id_cliente, cliente, monto, pago, saldo, ruc, "
                 + "ruc_identificador "
                 + "FROM public.v_documentos_comerciales_ventas "
                 + "WHERE id_cliente = ? "
-                + "ORDER BY fecha;";
+                + "ORDER BY fecha asc;";
         try {
             pst = DB_manager.getConection().prepareStatement(QUERY, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             pst.setInt(1, idCliente);
@@ -1455,13 +1456,13 @@ public class DB_Cliente {
                         fsp.setCliente(cliente);
                         fsp.setMonto(rs.getInt("monto"));
                         fsp.setFecha(rs.getDate("fecha"));
-                        fsp.setIdCabecera(rs.getInt("id_cabecera"));
+                        fsp.setIdCabecera(0);
                         fsp.setNroFactura(rs.getInt("nro_factura"));
                         movCont.setTipo(E_movimientoContable.TIPO_VENTA);
                         movCont.setTipoDescripcion(E_movimientoContable.STR_TIPO_VENTA);
                         movCont.setVenta(fsp);
                         break;
-                    }
+                    }/*
                     case E_movimientoContable.STR_TIPO_COBRO: {
                         M_cliente cliente = new M_cliente();
                         cliente.setIdCliente(rs.getInt("id_cliente"));
@@ -1470,8 +1471,29 @@ public class DB_Cliente {
                         recibo.setCliente(cliente);
                         recibo.setDebito(rs.getInt("pago"));
                         recibo.setFechaPago(rs.getDate("fecha"));
-                        recibo.setId(rs.getInt("id_cabecera"));
+                        recibo.setId(0);
                         recibo.setNroRecibo(rs.getInt("nro_recibo"));
+                        recibo.setNroRecibo(rs.getInt("nro_recibo"));
+                        movCont.setTipo(E_movimientoContable.TIPO_COBRO);
+                        movCont.setTipoDescripcion(E_movimientoContable.STR_TIPO_COBRO);
+                        movCont.setCobro(recibo);
+                        break;
+                    }*/
+                    case E_movimientoContable.STR_TIPO_COBRO: {
+                        M_cliente cliente = new M_cliente();
+                        cliente.setIdCliente(rs.getInt("id_cliente"));
+                        cliente.setEntidad(rs.getString("cliente"));
+                        E_facturaCabecera facturaCabecera = new E_facturaCabecera();
+                        facturaCabecera.setCliente(cliente);
+                        facturaCabecera.setNroFactura(rs.getInt("nro_factura"));
+                        E_cuentaCorrienteCabecera reciboCabecera = new E_cuentaCorrienteCabecera();
+                        reciboCabecera.setNroRecibo(rs.getInt("nro_recibo"));
+                        reciboCabecera.setFechaPago(rs.getDate("fecha"));
+                        E_cuentaCorrienteDetalle recibo = new E_cuentaCorrienteDetalle();
+                        recibo.setCuentaCorrienteCabecera(reciboCabecera);
+                        recibo.setFacturaVenta(facturaCabecera);
+                        recibo.setMonto(rs.getInt("pago"));
+                        recibo.setId(0);
                         movCont.setTipo(E_movimientoContable.TIPO_COBRO);
                         movCont.setTipoDescripcion(E_movimientoContable.STR_TIPO_COBRO);
                         movCont.setCobro(recibo);
@@ -1483,27 +1505,31 @@ public class DB_Cliente {
                         cliente.setEntidad(rs.getString("cliente"));
                         E_NotaCreditoCabecera notaCredito = new E_NotaCreditoCabecera();
                         notaCredito.setCliente(cliente);
+                        E_facturaCabecera facturaCabecera = new E_facturaCabecera();
+                        facturaCabecera.setNroFactura(rs.getInt("nro_factura"));
+                        notaCredito.setFacturaCabecera(facturaCabecera);
                         notaCredito.setTotal(rs.getInt("pago"));
                         notaCredito.setTiempo(rs.getDate("fecha"));
-                        notaCredito.setId(rs.getInt("id_cabecera"));
-                        notaCredito.setNroNotaCredito(rs.getInt("nro_recibo"));
+                        notaCredito.setId(0);
+                        notaCredito.setNroNotaCredito(rs.getInt("nro_nota_credito"));
                         movCont.setTipo(E_movimientoContable.TIPO_NOTA_CREDITO);
                         movCont.setTipoDescripcion(E_movimientoContable.STR_TIPO_NOTA_CREDITO);
                         movCont.setNotaCredito(notaCredito);
                         break;
-                    }                    
+                    }
                     case E_movimientoContable.STR_TIPO_RETENCION_VENTA: {
                         M_cliente cliente = new M_cliente();
                         cliente.setIdCliente(rs.getInt("id_cliente"));
                         cliente.setEntidad(rs.getString("cliente"));
-                        E_facturaCabecera faca = new E_facturaCabecera();
-                        faca.setCliente(cliente);
+                        E_facturaCabecera facturaCabecera = new E_facturaCabecera();
+                        facturaCabecera.setNroFactura(rs.getInt("nro_factura"));
+                        facturaCabecera.setCliente(cliente);
                         E_retencionVenta retencion = new E_retencionVenta();
-                        retencion.setVenta(faca);
+                        retencion.setVenta(facturaCabecera);
                         retencion.setMonto(rs.getInt("pago"));
                         retencion.setTiempo(rs.getDate("fecha"));
-                        retencion.setId(rs.getInt("id_cabecera"));
-                        retencion.setNroRetencion(rs.getInt("nro_recibo"));
+                        retencion.setId(0);
+                        retencion.setNroRetencion(rs.getInt("nro_retencion"));
                         movCont.setTipo(E_movimientoContable.TIPO_RETENCION_VENTA);
                         movCont.setTipoDescripcion(E_movimientoContable.STR_TIPO_RETENCION_VENTA);
                         movCont.setRetencionVenta(retencion);
