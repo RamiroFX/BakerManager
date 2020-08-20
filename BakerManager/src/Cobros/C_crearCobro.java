@@ -22,12 +22,10 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 
 /**
@@ -323,10 +321,6 @@ public class C_crearCobro extends MouseAdapter implements ActionListener, KeyLis
 
     @Override
     public void keyPressed(KeyEvent e) {
-    }
-
-    @Override
-    public void keyReleased(KeyEvent e) {
         switch (e.getKeyCode()) {
             case KeyEvent.VK_F1: {
                 esperar();
@@ -354,6 +348,10 @@ public class C_crearCobro extends MouseAdapter implements ActionListener, KeyLis
                 break;
             }
         }
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
     }
 
     @Override

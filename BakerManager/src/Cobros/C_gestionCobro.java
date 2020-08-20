@@ -284,7 +284,6 @@ public class C_gestionCobro implements GestionInterface, RecibirEmpleadoCallback
     }
 
     private void invocarVistaChequesPendientes() {
-        System.out.println("Cobros.C_gestionCobroPago.invocarVistaChequesPendientes()");
         ChequesPendientes bp = new ChequesPendientes(this.c_inicio.vista, E_cuentaCorrienteConcepto.VENTAS);
         bp.setVisible(true);
     }
@@ -407,7 +406,7 @@ public class C_gestionCobro implements GestionInterface, RecibirEmpleadoCallback
                 });
                 break;
             }
-            case 3: {
+            case 2: {
                 EventQueue.invokeLater(new Runnable() {
                     @Override
                     public void run() {
@@ -481,7 +480,6 @@ public class C_gestionCobro implements GestionInterface, RecibirEmpleadoCallback
         } else if (src.equals(this.vista.jbAnular)) {
             anularCobro();
         } else if (src.equals(this.vista.jbCheques)) {
-            System.out.println("Cobros.C_gestionCobroPago.actionPerformed().jbCheques");
             invocarVistaChequesPendientes();
         } else if (src.equals(this.vista.jbEmpCobro)) {
             Seleccionar_funcionario sf = new Seleccionar_funcionario(this.c_inicio.vista);
@@ -544,10 +542,6 @@ public class C_gestionCobro implements GestionInterface, RecibirEmpleadoCallback
 
     @Override
     public void keyPressed(KeyEvent e) {
-    }
-
-    @Override
-    public void keyReleased(KeyEvent e) {
         switch (e.getKeyCode()) {
             case KeyEvent.VK_ESCAPE: {
                 cerrar();
@@ -582,6 +576,10 @@ public class C_gestionCobro implements GestionInterface, RecibirEmpleadoCallback
                 break;
             }
         }
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
     }
 
     @Override
