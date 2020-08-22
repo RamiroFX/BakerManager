@@ -12,6 +12,7 @@ package Entities;
 public class E_produccionTipo {
 
     public static final int PRODUCTO_TERMINADO = 1, ROLLO = 2;
+    public static final String PRODUCTO_TERMINADO_STRING = "Producto terminado", ROLLO_STRING = "Rollo";    
 
     private int id;
     private String descripcion;

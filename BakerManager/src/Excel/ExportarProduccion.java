@@ -36,9 +36,11 @@ public class ExportarProduccion {
     String nombreHoja;
     Date fechaInic, fechaFinal;
     ArrayList<E_produccionCabecera> prodCabeceraList;
+    ArrayList<E_produccionCabecera> prodTerminadosList, rollosProducidosList, rollosUtilizadosList, rollosDisponiblesList;
     ArrayList<E_produccionFilm> produccionFilmCabecera;
     HSSFWorkbook workbook;
     HSSFSheet sheet;
+    private ArrayList<HSSFSheet> sheets;
     CellStyle style1, style2, styleNumber1, styleNumber2, style5;
     HSSFCellStyle dateCellStyle;
 
@@ -58,9 +60,41 @@ public class ExportarProduccion {
         createCellStyles();
     }
 
+    public ExportarProduccion() {
+        this.sheets = new ArrayList<>();
+        createFullWorkBook();
+        createCellStyles();
+    }
+
     private void createWorkBook() {
         workbook = new HSSFWorkbook();
         sheet = workbook.createSheet(nombreHoja);
+    }
+
+    public void cargarDatos(ArrayList<E_produccionCabecera> prodTerminadosList,
+            ArrayList<E_produccionCabecera> rollosProducidosList,
+            ArrayList<E_produccionCabecera> rollosUtilizadosList,
+            ArrayList<E_produccionCabecera> rollosDisponiblesList) {
+        this.prodTerminadosList = prodTerminadosList;
+        this.rollosProducidosList = rollosProducidosList;
+        this.rollosUtilizadosList = rollosUtilizadosList;
+        this.rollosDisponiblesList = rollosDisponiblesList;
+        if (!prodTerminadosList.isEmpty()) {
+            this.sheets.add(workbook.createSheet("Productos terminados"));
+        }
+        if (!rollosProducidosList.isEmpty()) {
+            this.sheets.add(workbook.createSheet("Rollos producidos"));
+        }
+        if (!rollosUtilizadosList.isEmpty()) {
+            this.sheets.add(workbook.createSheet("Rollos utilizados"));
+        }
+        if (!rollosDisponiblesList.isEmpty()) {
+            this.sheets.add(workbook.createSheet("Rollos disponibles"));
+        }
+    }
+
+    private void createFullWorkBook() {
+        workbook = new HSSFWorkbook();
     }
 
     private void createCellStyles() {
@@ -487,5 +521,29 @@ public class ExportarProduccion {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public void generarInformeCompleto() {
+        File directory = null;
+        String desktop = System.getProperty("user.home") + "\\Desktop";
+        JFileChooser chooser = new JFileChooser(desktop);
+        if (chooser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
+            directory = chooser.getSelectedFile();
+            directory.setWritable(true);
+            directory.setExecutable(true);
+            directory.setReadable(true);
+        } else {
+            return;
+        }
+        try {
+            FileOutputStream out = new FileOutputStream(directory.getPath() + ".xls");
+            workbook.write(out);
+            out.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 }

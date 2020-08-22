@@ -283,6 +283,92 @@ public class DB_Produccion {
         return list;
     }
 
+    public static List<E_produccionCabecera> consultarRollosUtilizados(Date inicio, Date fin, int nroOT, int idEstado, int idFuncionario, boolean conFecha) {
+        int pos = 1;
+        List<E_produccionCabecera> list = new ArrayList<>();
+        String Query = "SELECT id_cabecera, "
+                + "id_produccion_cabecera, "
+                + "nro_orden_trabajo, "
+                + "nro_film, "
+                + "estado, "
+                + "fecha, "
+                + "id_producto, "
+                + "producto_codigo, "
+                + "producto, "
+                + "id_categoria, "
+                + "categoria, "
+                + "peso, "
+                + "cono, "
+                + "medida, "
+                + "micron "
+                + "FROM v_produccion_film_baja "
+                + "WHERE  1=1 ";
+
+        if (conFecha) {
+            Query = Query + "AND fecha BETWEEN ?  AND ? ";
+        }
+        if (idEstado > -1) {
+            Query = Query + " AND estado = ? ";
+        }
+        if (idFuncionario > -1) {
+            Query = Query + " AND id_funcionario_responsable = ? ";
+        }
+        if (nroOT > -1) {
+            Query = Query + " AND nro_orden_trabajo = ? ";
+        }
+        Query = Query + " ORDER BY fecha ;";
+        try {
+            pst = DB_manager.getConection().prepareStatement(Query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            if (conFecha) {
+                pst.setTimestamp(pos, new Timestamp(inicio.getTime()));
+                pos++;
+                pst.setTimestamp(pos, new Timestamp(fin.getTime()));
+                pos++;
+            }
+            if (idEstado > -1) {
+                pst.setInt(pos, idEstado);
+                pos++;
+            }
+            if (idFuncionario > -1) {
+                pst.setInt(pos, idFuncionario);
+                pos++;
+            }
+            if (nroOT > -1) {
+                pst.setInt(pos, nroOT);
+            }
+            rs = pst.executeQuery();
+            while (rs.next()) {
+                M_funcionario responsable = new M_funcionario();
+                responsable.setId_funcionario(rs.getInt("id_funcionario_responsable"));
+                responsable.setNombre(rs.getString("RESPONSABLE"));
+                M_funcionario usuario = new M_funcionario();
+                usuario.setId_funcionario(rs.getInt("id_funcionario_usuario"));
+                usuario.setNombre(rs.getString("USUARIO"));
+                Estado estado = new Estado();
+                estado.setId(rs.getInt("id_estado"));
+                estado.setDescripcion(rs.getString("ESTADO"));
+                E_produccionTipo pt = new E_produccionTipo();
+                pt.setId(E_produccionTipo.ROLLO);
+                pt.setDescripcion(E_produccionTipo.ROLLO_STRING);
+                E_produccionCabecera pc = new E_produccionCabecera();
+                pc.setFuncionarioProduccion(responsable);
+                pc.setFuncionarioSistema(usuario);
+                pc.setTipo(pt);
+                pc.setEstado(estado);
+                pc.setId(rs.getInt("id_produccion_cabecera"));
+                pc.setNroOrdenTrabajo(rs.getInt("nro_orden_trabajo"));
+                pc.setFechaProduccion(rs.getDate("fecha_produccion"));
+                pc.setFechaRegistro(rs.getDate("fecha_registro"));
+                pc.setFechaVencimiento(rs.getDate("fecha_vencimiento"));
+                list.add(pc);
+            }
+        } catch (SQLException ex) {
+            Logger lgr = Logger.getLogger(DB_Produccion.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        }
+        return list;
+    }
+
     public static List<E_produccionDetalle> consultarProduccionDetalle(Integer idProduccion) {
         List<E_produccionDetalle> list = new ArrayList<>();
         String QUERY = "SELECT ID_PRODUCCION_DETALLE, "
