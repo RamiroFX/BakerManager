@@ -15,18 +15,18 @@ import javax.swing.JFrame;
 public class CrearTimbrado {
 
     M_crearTimbrado modelo;
-    V_CrearTimbrado vista;
+    V_crearTimbrado vista;
     C_crearTimbrado controlador;
 
     public CrearTimbrado(JFrame frame) {
         this.modelo = new M_crearTimbrado();
-        this.vista = new V_CrearTimbrado(frame);
+        this.vista = new V_crearTimbrado(frame);
         this.controlador = new C_crearTimbrado(modelo, vista);
     }
 
     public CrearTimbrado(JDialog dialog) {
         this.modelo = new M_crearTimbrado();
-        this.vista = new V_CrearTimbrado(dialog);
+        this.vista = new V_crearTimbrado(dialog);
         this.controlador = new C_crearTimbrado(modelo, vista);
     }
 

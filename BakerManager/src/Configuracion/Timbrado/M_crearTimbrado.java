@@ -23,6 +23,19 @@ public class M_crearTimbrado {
         timbrado = new E_Timbrado();
     }
 
+    /**
+     * @return the timbrado
+     */
+    public E_Timbrado getTimbrado() {
+        return timbrado;
+    }
+
+    /**
+     * @param timbrado the timbrado to set
+     */
+    public void setTimbrado(E_Timbrado timbrado) {
+        this.timbrado = timbrado;
+    }
 
     public boolean existeNroRetencion(int nroRetencion) {
         return DB_Cobro.nroRetencionEnUso(nroRetencion);
@@ -46,17 +59,8 @@ public class M_crearTimbrado {
         return DB_Cobro.obtenerFacturaSinPago(nroFactura);
     }
 
-    /**
-     * @return the timbrado
-     */
-    public E_Timbrado getTimbrado() {
-        return timbrado;
-    }
-
-    /**
-     * @param timbrado the timbrado to set
-     */
-    public void setTimbrado(E_Timbrado timbrado) {
-        this.timbrado = timbrado;
+    public boolean comprobarTimbradoExistente(int nroTimbrado, int nroSucursal, int nroPVTA, int nroBoletaInicial, int nroBoletaFinal) {
+        E_Timbrado unTimbrado = DB_Timbrado.obtenerTimbrado(nroTimbrado, nroSucursal, nroPVTA, nroBoletaInicial, nroBoletaFinal);
+        return unTimbrado != null;
     }
 }

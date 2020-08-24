@@ -21,7 +21,7 @@ public class TimbradoVentaTableModel extends AbstractTableModel {
     private SimpleDateFormat dateFormater;
     private DecimalFormat integerFormat;
     private List<E_Timbrado> list;
-    private final String[] colNames = {"Id.", "Nro. Timbrado-sucursal-punto venta", "Factura inicial", "Factura final", "Fecha vencimiento", "Fecha creación", "Funcionario"};
+    private final String[] colNames = {"Id.", "Nro. Timbrado-Sucursal-Punto venta", "Factura inicial", "Factura final", "Fecha vencimiento", "Fecha creación", "Funcionario"};
 
     public TimbradoVentaTableModel() {
         this.dateFormater = new SimpleDateFormat("dd/MM/YYYY HH:mm:ss");
@@ -71,7 +71,7 @@ public class TimbradoVentaTableModel extends AbstractTableModel {
                 return integerFormat.format(timbrado.getId());
             }
             case 1: {
-                return integerFormat.format(timbrado.descripcion());
+                return timbrado.descripcion();
             }
             case 2: {
                 return integerFormat.format(timbrado.getNroBoletaInicial());
@@ -86,7 +86,7 @@ public class TimbradoVentaTableModel extends AbstractTableModel {
                 return dateFormater.format(timbrado.getFechaCreacion());
             }
             case 6: {
-                return integerFormat.format(timbrado.getCreador().getNombre());
+                return timbrado.getCreador().getNombre();
             }
             default: {
                 return null;

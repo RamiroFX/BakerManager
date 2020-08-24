@@ -89,7 +89,7 @@ public class M_gestionTimbrado {
         calendarFinal.set(Calendar.MILLISECOND, 999);
         int idEstado = estado.getId();
         int idFuncionario = getCabecera().getCreador().getId_funcionario();
-        return DB_Timbrado.obtenerTimbrados(idFuncionario, nroTimbrado, fechaInicio, fechaFinal, tipoFecha, idEstado, conFecha);
+        return DB_Timbrado.obtenerTimbrados(idFuncionario, nroTimbrado, calendarInicio.getTime(), calendarFinal.getTime(), tipoFecha, idEstado, conFecha);
 
     }
 
@@ -99,8 +99,8 @@ public class M_gestionTimbrado {
         return estados;
     }
 
-    public void anularRetencion(int idRetencion, int idEstado, boolean recuperarNroRetencion) {
-        DB_Cobro.anularRetencion(idRetencion, Estado.INACTIVO, recuperarNroRetencion);
+    public void anularTimbrado(int idTimbrado, int idEstado, boolean recuperarNroRetencion) {
+        DB_Timbrado.anularTimbrado(idTimbrado, Estado.INACTIVO, recuperarNroRetencion);
     }
 
     /**

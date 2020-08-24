@@ -102,8 +102,8 @@ public class DB_Timbrado {
                 E_Timbrado unTimbrado = new E_Timbrado();
                 unTimbrado.setId(rs.getInt("ID_TIMBRADO_VENTA"));
                 unTimbrado.setCreador(f);
-                unTimbrado.setFechaCreacion(rs.getDate("TIEMPO_CREACION"));
-                unTimbrado.setFechaVencimiento(rs.getDate("TIEMPO_VENCIMIENTO"));
+                unTimbrado.setFechaCreacion(rs.getTimestamp("TIEMPO_CREACION"));
+                unTimbrado.setFechaVencimiento(rs.getTimestamp("TIEMPO_VENCIMIENTO"));
                 unTimbrado.setNroBoletaFinal(rs.getInt("NRO_BOLETA_FINAL"));
                 unTimbrado.setNroBoletaInicial(rs.getInt("NRO_BOLETA_INICIAL"));
                 unTimbrado.setNroPuntoVenta(rs.getInt("NRO_PUNTO_VENTA"));
@@ -131,7 +131,7 @@ public class DB_Timbrado {
         return list;
     }
 
-    public static E_Timbrado obtenerTimbrado(int nroTimbrado, int nroSucursal, int nroPVTA) {
+    public static E_Timbrado obtenerTimbrado(int nroTimbrado, int nroSucursal, int nroPVTA, int nroBoletaInicial, int nroBoletaFinal) {
         E_Timbrado unTimbrado = null;
         String query = "SELECT "
                 + "TV.ID_TIMBRADO_VENTA, "
@@ -151,12 +151,77 @@ public class DB_Timbrado {
                 + "WHERE TV.id_funcionario = f.id_funcionario "
                 + "AND TV.NRO_TIMBRADO = ? "
                 + "AND TV.NRO_SUCURSAL = ? "
-                + "AND TV.NRO_PUNTO_VENTA = ?";
+                + "AND TV.NRO_PUNTO_VENTA = ? "
+                + "AND TV.NRO_BOLETA_INICIAL = ? "
+                + "AND TV.NRO_BOLETA_FINAL = ? "
+                + "AND TV.id_estado = 1 ";
         try {
             pst = DB_manager.getConection().prepareStatement(query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             pst.setInt(1, nroTimbrado);
             pst.setInt(2, nroSucursal);
             pst.setInt(3, nroPVTA);
+            pst.setInt(4, nroBoletaInicial);
+            pst.setInt(5, nroBoletaFinal);
+            rs = pst.executeQuery();
+            while (rs.next()) {
+                M_funcionario f = new M_funcionario();
+                f.setNombre(rs.getString("FUNCIONARIO"));
+                Estado estado = new Estado();
+                estado.setId(rs.getInt("id_estado"));
+                estado.setDescripcion(rs.getString("ESTADO"));
+                unTimbrado = new E_Timbrado();
+                unTimbrado.setId(rs.getInt("ID_TIMBRADO_VENTA"));
+                unTimbrado.setCreador(f);
+                unTimbrado.setFechaCreacion(rs.getDate("TIEMPO_CREACION"));
+                unTimbrado.setFechaVencimiento(rs.getDate("TIEMPO_VENCIMIENTO"));
+                unTimbrado.setNroBoletaFinal(rs.getInt("NRO_BOLETA_FINAL"));
+                unTimbrado.setNroBoletaInicial(rs.getInt("NRO_BOLETA_INICIAL"));
+                unTimbrado.setNroPuntoVenta(rs.getInt("NRO_PUNTO_VENTA"));
+                unTimbrado.setNroSucursal(rs.getInt("NRO_SUCURSAL"));
+                unTimbrado.setNroTimbrado(rs.getInt("NRO_TIMBRADO"));
+                unTimbrado.setEstado(estado);
+            }
+        } catch (SQLException ex) {
+            Logger lgr = Logger.getLogger(DB_Timbrado.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (pst != null) {
+                    pst.close();
+                }
+            } catch (SQLException ex) {
+                Logger lgr = Logger.getLogger(DB_Timbrado.class.getName());
+                lgr.log(Level.WARNING, ex.getMessage(), ex);
+            }
+        }
+        return unTimbrado;
+    }
+
+    public static E_Timbrado obtenerTimbrado(int idTimbrado) {
+        E_Timbrado unTimbrado = null;
+        String query = "SELECT "
+                + "TV.ID_TIMBRADO_VENTA, "
+                + "TV.NRO_TIMBRADO, "
+                + "TV.NRO_SUCURSAL, "
+                + "TV.NRO_PUNTO_VENTA, "
+                + "TV.NRO_BOLETA_INICIAL, "
+                + "TV.NRO_BOLETA_FINAL, "
+                + "(SELECT nombre ||' '||apellido FROM persona pers WHERE pers.id_persona = f.id_persona) \"FUNCIONARIO\", "
+                + "TV.TIEMPO_CREACION, "
+                + "TV.TIEMPO_VENCIMIENTO, "
+                + "(SELECT descripcion FROM ESTADO ESTA WHERE ESTA.id_estado = TV.id_estado) \"ESTADO\", "
+                + "TV.id_estado "
+                + "FROM  "
+                + "TIMBRADO_VENTA TV, "
+                + "funcionario f "
+                + "WHERE TV.id_funcionario = f.id_funcionario "
+                + "AND TV.ID_TIMBRADO_VENTA = ? ";
+        try {
+            pst = DB_manager.getConection().prepareStatement(query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            pst.setInt(1, idTimbrado);
             rs = pst.executeQuery();
             while (rs.next()) {
                 M_funcionario f = new M_funcionario();
@@ -281,10 +346,10 @@ public class DB_Timbrado {
         return false;
     }
 
-    public static void anularNotaCredito(int idCabecera, int idEstado, boolean recuperarNroNotaCredito) {
-        String UPDATE_NOTACREDITO = "UPDATE NOTA_CREDITO_CABECERA SET ID_ESTADO = ? WHERE ID_NOTA_CREDITO_CABECERA = ?";
+    public static void anularTimbrado(int idCabecera, int idEstado, boolean recuperarNroNotaCredito) {
+        String UPDATE_NOTACREDITO = "UPDATE timbrado_venta SET ID_ESTADO = ? WHERE id_timbrado_venta = ?";
         if (recuperarNroNotaCredito) {
-            UPDATE_NOTACREDITO = "UPDATE NOTA_CREDITO_CABECERA SET ID_ESTADO = ?, NRO_NOTA_CREDITO = 0 WHERE ID_NOTA_CREDITO_CABECERA = ?";
+            UPDATE_NOTACREDITO = "UPDATE timbrado_venta SET ID_ESTADO = ?, NRO_TIMBRADO = 0 WHERE id_timbrado_venta = ?";
         }
         try {
             DB_manager.habilitarTransaccionManual();
@@ -293,16 +358,6 @@ public class DB_Timbrado {
             pst.setInt(2, idCabecera);
             pst.executeUpdate();
             pst.close();
-            //se devuelve al stock lo que se anuló
-            /*ArrayList<E_NotaCreditoDetalle> detalle = new ArrayList<>(obtenerNotasCreditoDetalle(idCabecera));
-            for (int i = 0; i < detalle.size(); i++) {
-                String query = "UPDATE PRODUCTO SET "
-                        + "CANT_ACTUAL = "
-                        + "((SELECT CANT_ACTUAL FROM PRODUCTO WHERE ID_PRODUCTO = " + detalle.get(i).getProducto().getId() + ")-" + detalle.get(i).getCantidad() + ") "
-                        + "WHERE ID_PRODUCTO =" + detalle.get(i).getProducto().getId();
-                st = DB_manager.getConection().createStatement();
-                st.executeUpdate(query);
-            }*/
             DB_manager.establecerTransaccion();
         } catch (SQLException ex) {
             System.out.println(ex.getNextException());

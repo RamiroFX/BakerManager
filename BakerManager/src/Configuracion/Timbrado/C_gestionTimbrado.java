@@ -56,6 +56,7 @@ public class C_gestionTimbrado implements ActionListener, MouseListener, KeyList
         this.vista.jddInicio.setDate(today);
         this.vista.jddFinal.setDate(today);
         this.vista.jtCabecera.setModel(modelo.getTm());
+        Utilities.c_packColumn.packColumns(vista.jtCabecera, 1);
         this.scr = new TimbradoVentaStatusCellRenderer(this.modelo.getTm().getList());
         this.vista.jtCabecera.setDefaultRenderer(Object.class, scr);
     }
@@ -186,8 +187,9 @@ public class C_gestionTimbrado implements ActionListener, MouseListener, KeyList
                 Date fechaInicio = vista.jddInicio.getDate();
                 Date fechaFinal = vista.jddFinal.getDate();
                 String tipoFecha = vista.jcbFecha.getSelectedItem() + "";
+                boolean esConFecha = vista.jcbActivarFecha.isSelected();
                 long startTime = System.nanoTime();
-                modelo.getTm().setList(modelo.obtenerTimbradoVentas(fechaInicio, fechaFinal, nroTimbrado, estado, conFecha, tipoFecha));
+                modelo.getTm().setList(modelo.obtenerTimbradoVentas(fechaInicio, fechaFinal, nroTimbrado, estado, esConFecha, tipoFecha));
                 scr.setList(modelo.getTm().getList());
                 long elapsedTime = System.nanoTime() - startTime;
                 System.out.println("timbrados: Tiempo total de busqueda  in millis: " + elapsedTime / 1000000);
@@ -199,10 +201,10 @@ public class C_gestionTimbrado implements ActionListener, MouseListener, KeyList
     private void invocarVistaVerTimbrado() {
         int fila = this.vista.jtCabecera.getSelectedRow();
         if (fila > -1) {
-            /*E_Timbrado unTimbrado = modelo.getTm().getList().get(fila);
-            VerRetencion vr = new VerRetencion(c_inicio.vista);
-            vr.cargarDatos(unTimbrado);
-            vr.mostrarVista();*/
+            E_Timbrado unTimbrado = modelo.getTm().getList().get(fila);
+            VerTimbrado vt = new VerTimbrado(c_inicio);
+            vt.cargarDatos(unTimbrado);
+            vt.mostrarVista();
             this.vista.jbDetalle.setEnabled(false);
             this.vista.jbAnular.setEnabled(false);
         }
@@ -219,16 +221,7 @@ public class C_gestionTimbrado implements ActionListener, MouseListener, KeyList
             int opcion = JOptionPane.showConfirmDialog(vista, "¿Está seguro que desea continuar? Accion irreversible.", "Atención", JOptionPane.WARNING_MESSAGE, JOptionPane.YES_NO_OPTION);
             if (opcion == JOptionPane.YES_OPTION) {
                 E_Timbrado cab = modelo.getTm().getList().get(fila);
-                if (cab.getNroTimbrado() > 0) {
-                    int opcion2 = JOptionPane.showConfirmDialog(vista, "¿Desea recuperar el número de timbrado?.", "Atención", JOptionPane.WARNING_MESSAGE, JOptionPane.YES_NO_OPTION);
-                    if (opcion2 == JOptionPane.YES_OPTION) {
-                        modelo.anularRetencion(cab.getId(), Estado.INACTIVO, true);
-                    } else {
-                        modelo.anularRetencion(cab.getId(), Estado.INACTIVO, false);
-                    }
-                } else {
-                    modelo.anularRetencion(cab.getId(), Estado.INACTIVO, false);
-                }
+                modelo.anularTimbrado(cab.getId(), Estado.INACTIVO, false);
             }
             displayQueryResults(true);
             this.vista.jbDetalle.setEnabled(false);
