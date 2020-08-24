@@ -250,7 +250,7 @@ public class C_gestionProduccion implements GestionInterface, RecibirEmpleadoCal
         }
         int opcion = JOptionPane.showConfirmDialog(vista, CONFIRMAR_MSG, VALIDAR_TITULO, JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
         if (opcion == JOptionPane.YES_OPTION) {
-            Integer idProduccion = Integer.valueOf(String.valueOf(this.vista.jtProduccionCabecera.getValueAt(fila, 0)));
+            Integer idProduccion = modelo.getProduccionCabeceraTM().getList().get(fila).getId();
             this.modelo.anularProduccion(idProduccion);
             ConsultarProduccion(true);
             Utilities.c_packColumn.packColumns(this.vista.jtProduccionCabecera, 1);

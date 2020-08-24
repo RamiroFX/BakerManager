@@ -21,8 +21,8 @@ public class V_BarraMenu extends JMenuBar {
 
     public JMenu jmInicio, jmAyuda, jmHerramientas, jmOpciones;
     public JMenuItem jmiCerrar, jmiAcerca, jmiPersonalizar, jmiConfigImpresion,
-            jmiConfigImpresionTicket, jmiConfigImpresionBoleta, jmiEmpresa, 
-            jmiProduccion,jmiMateriaPrima;
+            jmiConfigImpresionTicket, jmiConfigImpresionBoleta, jmiEmpresa,
+            jmiProduccion, jmiMateriaPrima, jmiGestionTimbrado;
     //public JMenuItem  jmiLogIn,jmiLogOut, jmiMenuPrincipal;
     private V_inicio frame; //referencia al frame principal.
     //private boolean loginActivo=true;
@@ -62,6 +62,9 @@ public class V_BarraMenu extends JMenuBar {
             jmiConfigImpresion = new JMenuItem("Config. factura");
             jmiConfigImpresion.setEnabled(false);
             jmiConfigImpresion.setName("configuracion factura");
+            jmiGestionTimbrado= new JMenuItem("Gestión de timbrado");
+            //jmiGestionTimbrado.setEnabled(false);
+            jmiGestionTimbrado.setName("gestion timbrado");
             jmiConfigImpresionTicket = new JMenuItem("Config. ticket");
             jmiConfigImpresionTicket.setEnabled(false);
             jmiConfigImpresionTicket.setName("configuracion ticket");
@@ -72,6 +75,7 @@ public class V_BarraMenu extends JMenuBar {
             getjmHerramientas().add(jmiConfigImpresion);
             getjmHerramientas().add(jmiConfigImpresionTicket);
             getjmHerramientas().add(jmiConfigImpresionBoleta);
+            getjmHerramientas().add(jmiGestionTimbrado);
         }
         return jmHerramientas;
     }
@@ -90,9 +94,9 @@ public class V_BarraMenu extends JMenuBar {
             jmOpciones = new JMenu("Opciones");
             jmiEmpresa = new JMenuItem("Empresa");
             //TODO remove
-            jmiProduccion= new JMenuItem("Produccion");
+            jmiProduccion = new JMenuItem("Produccion");
             jmiProduccion.setName("Gestión producción");
-            jmiMateriaPrima= new JMenuItem("Materia Prima");
+            jmiMateriaPrima = new JMenuItem("Materia Prima");
             jmiMateriaPrima.setName("Gestión uso materia prima");
             jmiEmpresa.setEnabled(false);
             jmiEmpresa.setName("configuracion empresa");

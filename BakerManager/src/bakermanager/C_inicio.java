@@ -7,6 +7,7 @@ package bakermanager;
 import Configuracion.ConfiguracionBoleta;
 import Configuracion.ConfiguracionFactura;
 import Configuracion.ConfiguracionTicket;
+import Configuracion.Timbrado.GestionTimbrado;
 import Empresa.Empresa;
 import Entities.M_rol_usuario;
 import Login.Login;
@@ -55,6 +56,7 @@ public class C_inicio implements ActionListener {
         vista.getJMenuBar().jmiConfigImpresion.addActionListener(this);
         vista.getJMenuBar().jmiConfigImpresionTicket.addActionListener(this);
         vista.getJMenuBar().jmiConfigImpresionBoleta.addActionListener(this);
+        vista.getJMenuBar().jmiGestionTimbrado.addActionListener(this);
         vista.getJMenuBar().jmiEmpresa.addActionListener(this);
         //TODO remove
         vista.getJMenuBar().jmiProduccion.addActionListener(this);
@@ -153,6 +155,9 @@ public class C_inicio implements ActionListener {
         } else if (fuente == vista.getJMenuBar().jmiConfigImpresionBoleta) {
             ConfiguracionBoleta config = new ConfiguracionBoleta(vista);
             config.mostrarVista();
+        } else if (fuente == vista.getJMenuBar().jmiGestionTimbrado) {
+            GestionTimbrado gestionTimbrado = new GestionTimbrado(this);
+            gestionTimbrado.mostrarVista();
         } else if (fuente == vista.getJMenuBar().jmiEmpresa) {
             Empresa empresa = new Empresa(vista);
             empresa.mostrarVista();
