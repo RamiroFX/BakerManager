@@ -5,7 +5,6 @@
  */
 package Configuracion.Timbrado;
 
-import DB.DB_Cobro;
 import DB.DB_Timbrado;
 import DB.DB_manager;
 import Entities.E_Timbrado;
@@ -90,7 +89,6 @@ public class M_gestionTimbrado {
         int idEstado = estado.getId();
         int idFuncionario = getCabecera().getCreador().getId_funcionario();
         return DB_Timbrado.obtenerTimbrados(idFuncionario, nroTimbrado, calendarInicio.getTime(), calendarFinal.getTime(), tipoFecha, idEstado, conFecha);
-
     }
 
     public ArrayList<Estado> obtenerEstados() {

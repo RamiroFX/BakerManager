@@ -15,4 +15,6 @@ public interface RecibirTimbradoVentaCallback {
 
     public void recibirTimbrado(E_Timbrado timbrado);
 
+    public void recibirTimbradoNroFactura(E_Timbrado timbrado, int nroFactura);
+
 }

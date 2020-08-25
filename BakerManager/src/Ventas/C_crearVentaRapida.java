@@ -108,6 +108,7 @@ public class C_crearVentaRapida implements GestionInterface, InterfaceFacturaDet
         this.vista.jbAgregarProducto.addActionListener(this);
         this.vista.jbImprimir.addActionListener(this);
         this.vista.jbCliente.addActionListener(this);
+        this.vista.jbNroFactura.addActionListener(this);
         this.vista.jtFacturaDetalle.addMouseListener(this);
         this.vista.jbEliminarDetalle.addActionListener(this);
         this.vista.jbModificarDetalle.addActionListener(this);
@@ -449,9 +450,10 @@ public class C_crearVentaRapida implements GestionInterface, InterfaceFacturaDet
         if (e.getSource().equals(this.vista.jcbTipoVenta)) {
             establecerTipoVenta();
         }
-        /*if (e.getSource().equals(this.vista.jrbCredito)) {
-            establecerCondicionVenta();
-        }*/
+        if (e.getSource().equals(this.vista.jbNroFactura)) {
+            SeleccionarTimbrado st = new SeleccionarTimbrado(this.vista, this);
+            st.mostrarVista();
+        }
         if (e.getSource().equals(this.vista.jbModificarDetalle)) {
             SeleccionarCantidadProduducto scp = new SeleccionarCantidadProduducto(this, this.vista.jtFacturaDetalle.getSelectedRow());
             scp.setVisible(true);
@@ -547,6 +549,12 @@ public class C_crearVentaRapida implements GestionInterface, InterfaceFacturaDet
 
     @Override
     public void recibirTimbrado(E_Timbrado timbrado) {
+    }
+
+    @Override
+    public void recibirTimbradoNroFactura(E_Timbrado timbrado, int NroFactura) {
+        this.vista.jcbTipoVenta.setSelectedItem(new E_impresionTipo(E_impresionTipo.FACTURA, "factura"));
+        this.vista.jtfNroFactura.setText(timbrado.descripcion());
         System.out.println("Ventas.C_crearVentaRapida.recibirTimbrado()");
         System.out.println("timbrado: " + timbrado);
     }
