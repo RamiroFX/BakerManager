@@ -5,7 +5,9 @@
 package Ventas;
 
 import Cliente.Seleccionar_cliente;
+import Configuracion.Timbrado.SeleccionarTimbrado;
 import DB.DB_Cliente;
+import Entities.E_Timbrado;
 import Entities.E_impresionTipo;
 import Entities.M_cliente;
 import Entities.M_facturaDetalle;
@@ -20,6 +22,7 @@ import Producto.SeleccionarProducto;
 import Impresora.Impresora;
 import Interface.InterfaceNotificarCambio;
 import Interface.RecibirClienteCallback;
+import Interface.RecibirTimbradoVentaCallback;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -32,7 +35,7 @@ import javax.swing.JOptionPane;
  *
  * @author Ramiro Ferreira
  */
-public class C_crearVentaRapida implements GestionInterface, InterfaceFacturaDetalle, RecibirClienteCallback, InterfaceNotificarCambio {
+public class C_crearVentaRapida implements GestionInterface, InterfaceFacturaDetalle, RecibirClienteCallback, InterfaceNotificarCambio, RecibirTimbradoVentaCallback {
 
     private static final String TITULO_ERROR = "Error";
     private static final String PRODUCTO_NO_EXISTE = "El producto no existe";
@@ -520,6 +523,11 @@ public class C_crearVentaRapida implements GestionInterface, InterfaceFacturaDet
                 sp.mostrarVista();
                 break;
             }
+            case KeyEvent.VK_F5: {
+                SeleccionarTimbrado st = new SeleccionarTimbrado(this.vista, this);
+                st.mostrarVista();
+                break;
+            }
         }
     }
 
@@ -535,5 +543,11 @@ public class C_crearVentaRapida implements GestionInterface, InterfaceFacturaDet
     @Override
     public void notificarCambio() {
         guardarVenta();
+    }
+
+    @Override
+    public void recibirTimbrado(E_Timbrado timbrado) {
+        System.out.println("Ventas.C_crearVentaRapida.recibirTimbrado()");
+        System.out.println("timbrado: " + timbrado);
     }
 }

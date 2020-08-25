@@ -7,6 +7,7 @@ package ModeloTabla;
 
 import Entities.E_Timbrado;
 import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +21,7 @@ public class TimbradoVentaTableModel extends AbstractTableModel {
 
     private SimpleDateFormat dateFormater;
     private DecimalFormat integerFormat;
+    NumberFormat nfSmall, nfLarge;
     private List<E_Timbrado> list;
     private final String[] colNames = {"Id.", "Nro. Timbrado-Sucursal-Punto venta", "Factura inicial", "Factura final", "Fecha vencimiento", "Fecha creación", "Funcionario"};
 
@@ -27,6 +29,8 @@ public class TimbradoVentaTableModel extends AbstractTableModel {
         this.dateFormater = new SimpleDateFormat("dd/MM/YYYY HH:mm:ss");
         this.integerFormat = new DecimalFormat("###,###");
         this.list = new ArrayList<>();
+        nfSmall = new DecimalFormat("000");
+        nfLarge = new DecimalFormat("0000000");
     }
 
     public void setList(List<E_Timbrado> list) {
@@ -71,7 +75,7 @@ public class TimbradoVentaTableModel extends AbstractTableModel {
                 return integerFormat.format(timbrado.getId());
             }
             case 1: {
-                return timbrado.descripcion();
+                return nfLarge.format(timbrado.getNroTimbrado()) + " - " + nfSmall.format(timbrado.getNroSucursal()) + " - " + nfSmall.format(timbrado.getNroPuntoVenta());
             }
             case 2: {
                 return integerFormat.format(timbrado.getNroBoletaInicial());

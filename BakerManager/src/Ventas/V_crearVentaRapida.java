@@ -7,7 +7,6 @@ package Ventas;
 import Entities.E_impresionTipo;
 import java.awt.BorderLayout;
 import java.awt.Font;
-import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -40,8 +39,8 @@ public class V_crearVentaRapida extends JDialog {
     JPanel jpNorth;
     public JTextField jtfCliente, jtfNroFactura, jtfClieDireccion, jtfClieTelefono,
             jtfClieRuc, jtfCodProd;
-    public JButton jbCliente;
-    public JLabel jlNroFactura;
+    public JButton jbCliente, jbNroFactura;
+    //public JLabel jlNroFactura;
     //public JRadioButton jrbContado, jrbCredito;
     public JComboBox jcbCondVenta;
     public JComboBox<E_impresionTipo> jcbTipoVenta;
@@ -105,9 +104,10 @@ public class V_crearVentaRapida extends JDialog {
     private void initNorth() {
         jpNorth = new JPanel(new MigLayout());
         jbCliente = new JButton("Agregar cliente [F3]");
+        jbNroFactura = new JButton("Nro. Factura [F5]");
         jtfCliente = new JTextField(30);
         jtfCliente.setEditable(false);
-        jlNroFactura = new JLabel("Nro. Factura");
+        //jlNroFactura = new JLabel("Nro. Factura");
         jtfNroFactura = new JTextField(30);
         //jtfNroFactura.setEditable(false);
         jcbCondVenta = new JComboBox();
@@ -125,7 +125,7 @@ public class V_crearVentaRapida extends JDialog {
         bg1.add(jrbCredito);*/
         jpNorth.add(jbCliente);
         jpNorth.add(jtfCliente);
-        jpNorth.add(jlNroFactura);
+        jpNorth.add(jbNroFactura);
         jpNorth.add(jtfNroFactura);
         jpNorth.add(jcbCondVenta);
         jpNorth.add(jcbTipoVenta, "wrap");

@@ -40,7 +40,6 @@ public class C_crearTimbrado implements ActionListener, KeyListener {
 
     private M_crearTimbrado modelo;
     private V_crearTimbrado vista;
-    private DecimalFormat decimalFormat;
 
     public C_crearTimbrado(M_crearTimbrado modelo, V_crearTimbrado vista) {
         this.modelo = modelo;
@@ -51,7 +50,6 @@ public class C_crearTimbrado implements ActionListener, KeyListener {
     }
 
     private void inicializarVista() {
-        decimalFormat = new DecimalFormat("###,###");
         Calendar calendar = Calendar.getInstance();
         this.vista.jdcFechaVencimiento.setDate(calendar.getTime());
     }
@@ -241,7 +239,7 @@ public class C_crearTimbrado implements ActionListener, KeyListener {
             return;
         }
         if (!validarFecha()) {
-            JOptionPane.showMessageDialog(vista, "La fecha de retención es menor a la fecha de venta", "Atención", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(vista, "La fecha de vencimiento es menor a la fecha actual", "Atención", JOptionPane.ERROR_MESSAGE);
             return;
         }
         int nroTimbrado = Integer.valueOf(this.vista.jtfNroTimbrado.getText().trim());

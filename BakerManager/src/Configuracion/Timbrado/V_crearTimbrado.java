@@ -25,7 +25,7 @@ import net.miginfocom.swing.MigLayout;
  *
  * @author Ramiro Ferreira
  */
-public class V_CrearTimbrado extends JDialog {
+public class V_crearTimbrado extends JDialog {
 
     private JLabel jlNroTimbrado, jlNroSucursal, jlPuntoVenta, jlBoletaInicial, jlBoletaFinal, 
             jlFechaVencimiento;
@@ -35,14 +35,14 @@ public class V_CrearTimbrado extends JDialog {
     private JPanel jpPrincipal, jpBotones;
     public static final String CREATE_TITLE = "Crear timbrado de venta", READ_TITLE = "Ver timbrado de venta";
 
-    public V_CrearTimbrado(JDialog vista) {
+    public V_crearTimbrado(JDialog vista) {
         super(vista);
         initializeComponents();
         constructLayout();
         constructAppWindow();
     }
 
-    public V_CrearTimbrado(JFrame vista) {
+    public V_crearTimbrado(JFrame vista) {
         super(vista);
         initializeComponents();
         constructLayout();
