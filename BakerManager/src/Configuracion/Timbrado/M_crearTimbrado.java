@@ -5,10 +5,8 @@
  */
 package Configuracion.Timbrado;
 
-import DB.DB_Cobro;
 import DB.DB_Timbrado;
 import Entities.E_Timbrado;
-import Entities.E_facturaSinPago;
 import MenuPrincipal.DatosUsuario;
 
 /**
@@ -37,26 +35,10 @@ public class M_crearTimbrado {
         this.timbrado = timbrado;
     }
 
-    public boolean existeNroRetencion(int nroRetencion) {
-        return DB_Cobro.nroRetencionEnUso(nroRetencion);
-    }
-
     public void guardarTimbrado() {
         int idFuncionario = DatosUsuario.getRol_usuario().getFuncionario().getId_funcionario();
         getTimbrado().getCreador().setId_funcionario(idFuncionario);
         DB_Timbrado.insertarTimbrado(getTimbrado());
-    }
-
-    public boolean existeRetencion(int nroFactura) {
-        return DB_Cobro.existeRetencion(nroFactura);
-    }
-
-    public boolean facturaPendientePago(int nroFactura) {
-        return DB_Cobro.facturaPendientePago(nroFactura);
-    }
-
-    public E_facturaSinPago validarSaldoPendiente(int nroFactura) {
-        return DB_Cobro.obtenerFacturaSinPago(nroFactura);
     }
 
     public boolean comprobarTimbradoExistente(int nroTimbrado, int nroSucursal, int nroPVTA, int nroBoletaInicial, int nroBoletaFinal) {

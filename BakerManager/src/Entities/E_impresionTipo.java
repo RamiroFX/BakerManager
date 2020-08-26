@@ -15,6 +15,8 @@ public class E_impresionTipo {
     public static final int FACTURA = 2;
     public static final int BOLETA = 3;
 
+    public static final String TICKET_STRING = "ticket", FACTURA_STRING = "factura", BOLETA_STRING = "boleta";
+
     private int id;
     private String descripcion;
 
@@ -66,5 +68,5 @@ public class E_impresionTipo {
         // Compare the data members and return accordingly  
         return this.getDescripcion().equals(c.getDescripcion());
     }
-    
+
 }

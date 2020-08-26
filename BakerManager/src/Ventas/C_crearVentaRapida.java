@@ -59,7 +59,7 @@ public class C_crearVentaRapida implements GestionInterface, InterfaceFacturaDet
 
     @Override
     public final void inicializarVista() {
-        this.modelo.getCabecera().setFuncionario(this.gestionVentas.c_inicio.modelo.getRol_usuario().getFuncionario());
+        this.vista.jtfNroFactura.setEditable(false);
         this.vista.jtfNroFactura.setText(this.modelo.getNroFactura() + "");
         this.vista.jtfClieDireccion.setText(this.modelo.getCabecera().getCliente().getDireccion());
         this.vista.jtfCliente.setText(this.modelo.getCabecera().getCliente().getEntidad() + "(" + this.modelo.getCabecera().getCliente().getNombre() + ")");
@@ -123,6 +123,9 @@ public class C_crearVentaRapida implements GestionInterface, InterfaceFacturaDet
         this.vista.jbModificarDetalle.addKeyListener(this);
         this.vista.jbEliminarDetalle.addKeyListener(this);
         this.vista.jtFacturaDetalle.addKeyListener(this);
+        this.vista.jcbCondVenta.addKeyListener(this);
+        this.vista.jcbTipoVenta.addKeyListener(this);
+        this.vista.jbNroFactura.addKeyListener(this);
     }
 
     @Override
@@ -344,19 +347,21 @@ public class C_crearVentaRapida implements GestionInterface, InterfaceFacturaDet
     private void establecerTipoVenta() {
         E_impresionTipo tipoVenta = this.vista.jcbTipoVenta.getItemAt(this.vista.jcbTipoVenta.getSelectedIndex());
         switch (tipoVenta.getDescripcion()) {
-            case "ticket": {
+            case E_impresionTipo.TICKET_STRING: {
                 this.vista.jtfNroFactura.setText("");
                 this.vista.jtfNroFactura.setEnabled(false);
                 this.modelo.setTipoVenta(tipoVenta);
                 break;
             }
-            case "factura": {
-                this.vista.jtfNroFactura.setText(modelo.getNroFactura() + "");
+            case E_impresionTipo.FACTURA_STRING: {
+                //this.vista.jtfNroFactura.setText(modelo.getNroFactura() + "");
                 this.vista.jtfNroFactura.setEnabled(true);
                 this.modelo.setTipoVenta(tipoVenta);
+                SeleccionarTimbrado st = new SeleccionarTimbrado(this.vista, this);
+                st.mostrarVista();
                 break;
             }
-            case "boleta": {
+            case E_impresionTipo.BOLETA_STRING: {
                 this.vista.jtfNroFactura.setText("");
                 this.vista.jtfNroFactura.setEnabled(false);
                 this.modelo.setTipoVenta(tipoVenta);
@@ -553,9 +558,11 @@ public class C_crearVentaRapida implements GestionInterface, InterfaceFacturaDet
 
     @Override
     public void recibirTimbradoNroFactura(E_Timbrado timbrado, int NroFactura) {
+        E_impresionTipo tipoVenta = new E_impresionTipo(E_impresionTipo.FACTURA, E_impresionTipo.FACTURA_STRING);
         modelo.getCabecera().setIdTimbrado(timbrado.getId());
         modelo.getCabecera().setNroFactura(NroFactura);
-        this.vista.jcbTipoVenta.setSelectedItem(new E_impresionTipo(E_impresionTipo.FACTURA, "factura"));
+        modelo.setTipoVenta(tipoVenta);
+        this.vista.jcbTipoVenta.setSelectedItem(tipoVenta);
         String nroTimbrado = modelo.getNfLarge().format(timbrado.getNroTimbrado());
         String nroSucursal = modelo.getNfSmall().format(timbrado.getNroSucursal());
         String nroPuntoVenta = modelo.getNfSmall().format(timbrado.getNroPuntoVenta());

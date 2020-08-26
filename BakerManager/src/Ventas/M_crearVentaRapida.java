@@ -59,7 +59,8 @@ public class M_crearVentaRapida {
     public M_crearVentaRapida(InterfaceFacturaDetalle interfaceFacturaDetalle) {
         this.cabecera = new M_facturaCabecera();
         this.cabecera.setCliente(DB_Cliente.obtenerDatosClienteID(1));//mostrador
-        this.cabecera.setNroFactura(getNroFactura());
+        this.cabecera.setFuncionario(DatosUsuario.getRol_usuario().getFuncionario());
+        this.cabecera.setIdTimbrado(1);//Timbrado por defecto
         this.cabecera.setIdCondVenta(TipoOperacion.CONTADO);
         try {
             this.telefono = DB_Cliente.obtenerTelefonoCliente(this.cabecera.getCliente().getIdCliente()).get(1);
