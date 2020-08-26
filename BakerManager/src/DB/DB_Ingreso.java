@@ -87,12 +87,102 @@ public class DB_Ingreso {
         return (int) nroFactura;
     }
 
+    public static int obtenerUltimoNroFactura(int idTimbrado) {
+        String Query = "SELECT nro_factura FROM factura_cabecera "
+                + "WHERE nro_factura IS NOT NULL "
+                + "AND id_timbrado = ?  "
+                + "ORDER BY id_factura_cabecera DESC LIMIT 1;";
+        long nroFactura = 0;
+        try {
+            DB_manager.getConection().setAutoCommit(false);
+            pst = DB_manager.getConection().prepareStatement(Query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            pst.setInt(1, idTimbrado);
+            rs = pst.executeQuery();
+            while (rs.next()) {
+                nroFactura = rs.getInt(1);
+            }
+            pst.close();
+            rs.close();
+            DB_manager.establecerTransaccion();
+        } catch (SQLException ex) {
+            System.out.println(ex.getNextException());
+            if (DB_manager.getConection() != null) {
+                try {
+                    DB_manager.getConection().rollback();
+                } catch (SQLException ex1) {
+                    Logger lgr = Logger.getLogger(DB_Ingreso.class.getName());
+                    lgr.log(Level.WARNING, ex1.getMessage(), ex1);
+                }
+            }
+            Logger lgr = Logger.getLogger(DB_Ingreso.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        } finally {
+            try {
+                if (pst != null) {
+                    pst.close();
+                }
+                if (rs != null) {
+                    rs.close();
+                }
+            } catch (SQLException ex) {
+                Logger lgr = Logger.getLogger(DB_Ingreso.class.getName());
+                lgr.log(Level.WARNING, ex.getMessage(), ex);
+            }
+        }
+        return (int) nroFactura;
+    }
+
     public static int obtenerUltimoNroFacturacion() {
         String Query = "SELECT nro_factura FROM facturacion_cabecera WHERE nro_factura IS NOT NULL  ORDER BY id_facturacion_cabecera DESC LIMIT 1;";
         long nroFactura = 0;
         try {
             DB_manager.getConection().setAutoCommit(false);
             pst = DB_manager.getConection().prepareStatement(Query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            rs = pst.executeQuery();
+            while (rs.next()) {
+                nroFactura = rs.getInt(1);
+            }
+            pst.close();
+            rs.close();
+            DB_manager.establecerTransaccion();
+        } catch (SQLException ex) {
+            System.out.println(ex.getNextException());
+            if (DB_manager.getConection() != null) {
+                try {
+                    DB_manager.getConection().rollback();
+                } catch (SQLException ex1) {
+                    Logger lgr = Logger.getLogger(DB_Ingreso.class.getName());
+                    lgr.log(Level.WARNING, ex1.getMessage(), ex1);
+                }
+            }
+            Logger lgr = Logger.getLogger(DB_Ingreso.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        } finally {
+            try {
+                if (pst != null) {
+                    pst.close();
+                }
+                if (rs != null) {
+                    rs.close();
+                }
+            } catch (SQLException ex) {
+                Logger lgr = Logger.getLogger(DB_Ingreso.class.getName());
+                lgr.log(Level.WARNING, ex.getMessage(), ex);
+            }
+        }
+        return (int) nroFactura;
+    }
+
+    public static int obtenerUltimoNroFacturacion(int idTimbrado) {
+        String Query = "SELECT nro_factura FROM facturacion_cabecera "
+                + "WHERE nro_factura IS NOT NULL  "
+                + "AND id_timbrado = ? "
+                + "ORDER BY id_facturacion_cabecera DESC LIMIT 1;";
+        long nroFactura = 0;
+        try {
+            DB_manager.getConection().setAutoCommit(false);
+            pst = DB_manager.getConection().prepareStatement(Query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            pst.setInt(1, idTimbrado);
             rs = pst.executeQuery();
             while (rs.next()) {
                 nroFactura = rs.getInt(1);
@@ -2055,6 +2145,26 @@ public class DB_Ingreso {
             lgr.log(Level.SEVERE, ex.getMessage(), ex);
         }
         return false;
+    }
+
+    public static boolean nroFacturaEnUso(int nroFactura, int idTimbrado) {
+        String QUERY = "SELECT nro_factura FROM factura_cabecera "
+                + "WHERE nro_factura = ? "
+                + "AND id_timbrado = ? ;";
+        boolean enUso = false;
+        try {
+            pst = DB_manager.getConection().prepareStatement(QUERY, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            pst.setInt(1, nroFactura);
+            pst.setInt(2, idTimbrado);
+            rs = pst.executeQuery();
+            enUso = rs.isBeforeFirst();
+            pst.close();
+            rs.close();
+        } catch (SQLException ex) {
+            Logger lgr = Logger.getLogger(DB_Ingreso.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        }
+        return enUso;
     }
 
     public static void anularVenta(int idVenta, int idEstado, boolean recuperarNroFact) {

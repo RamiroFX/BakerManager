@@ -553,9 +553,14 @@ public class C_crearVentaRapida implements GestionInterface, InterfaceFacturaDet
 
     @Override
     public void recibirTimbradoNroFactura(E_Timbrado timbrado, int NroFactura) {
+        modelo.getCabecera().setIdTimbrado(timbrado.getId());
+        modelo.getCabecera().setNroFactura(NroFactura);
         this.vista.jcbTipoVenta.setSelectedItem(new E_impresionTipo(E_impresionTipo.FACTURA, "factura"));
-        this.vista.jtfNroFactura.setText(timbrado.descripcion());
-        System.out.println("Ventas.C_crearVentaRapida.recibirTimbrado()");
-        System.out.println("timbrado: " + timbrado);
+        String nroTimbrado = modelo.getNfLarge().format(timbrado.getNroTimbrado());
+        String nroSucursal = modelo.getNfSmall().format(timbrado.getNroSucursal());
+        String nroPuntoVenta = modelo.getNfSmall().format(timbrado.getNroPuntoVenta());
+        String nroFactura = modelo.getNfLarge().format(NroFactura);
+        String nroFacturaCompleto = nroTimbrado + "-" + nroSucursal + "-" + nroPuntoVenta + "-" + nroFactura;
+        this.vista.jtfNroFactura.setText(nroFacturaCompleto);
     }
 }

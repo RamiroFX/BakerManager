@@ -11,6 +11,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import javax.swing.SwingUtilities;
+import javax.swing.event.AncestorEvent;
+import javax.swing.event.AncestorListener;
 
 /**
  *
@@ -18,26 +21,55 @@ import java.awt.event.KeyListener;
  */
 public class C_seleccionarNroFactura implements ActionListener, KeyListener {
 
+    private static final String VALIDAR_NRO_FACTURA_1 = "Ingrese un número de factura";
+    private static final String VALIDAR_NRO_FACTURA_2 = "Asegurese de colocar un numero positivo en el número de factura";
+    private static final String VALIDAR_NRO_FACTURA_3 = "El número de factura ingresado se encuentra en uso";
     private M_seleccionarNroFactura modelo;
     private V_selecionarNroFactura vista;
 
-    public C_seleccionarNroFactura(M_seleccionarNroFactura modelo, V_selecionarNroFactura vista) {
+    public C_seleccionarNroFactura(M_seleccionarNroFactura modelo, V_selecionarNroFactura vista, RecibirTimbradoVentaCallback callback, E_Timbrado timbrado) {
         this.modelo = modelo;
+        this.modelo.setCallback(callback);
+        this.modelo.setTimbrado(timbrado);
         this.vista = vista;
         agregarListeners();
         cargarDatos();
     }
 
-    public void setCallback(RecibirTimbradoVentaCallback callback) {
-        modelo.setCallback(callback);
-    }
-
-    public void setTimbrado(E_Timbrado timbrado) {
-        modelo.setTimbrado(timbrado);
-    }
-
     private void cargarDatos() {
+        this.vista.jtfNroTimbrado.setText(modelo.getTimbrado().getNroTimbrado() + "");
+        this.vista.jtfNroSucursal.setText(modelo.getTimbrado().getNroSucursal() + "");
+        this.vista.jtfNroPuntoVenta.setText(modelo.getTimbrado().getNroPuntoVenta() + "");
+        this.vista.jtfRangoFacturas.setText(modelo.getTimbrado().getNroBoletaInicial() + "-" + modelo.getTimbrado().getNroBoletaFinal());
+        this.vista.jtfNroTimbrado.setEditable(false);
+        this.vista.jtfNroSucursal.setEditable(false);
+        this.vista.jtfNroPuntoVenta.setEditable(false);
+        this.vista.jtfRangoFacturas.setEditable(false);
+        this.vista.jtfNroFactura.setText(modelo.obtenerUltimoNroFactura()+ "");
+        this.vista.jtfNroFactura.addAncestorListener(new AncestorListener() {
+            @Override
+            public void ancestorRemoved(AncestorEvent pEvent) {
+            }
 
+            @Override
+            public void ancestorMoved(AncestorEvent pEvent) {
+            }
+
+            @Override
+            public void ancestorAdded(AncestorEvent pEvent) {
+                // TextField is added to its parent => request focus in Event Dispatch Thread
+                SwingUtilities.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        vista.jtfNroFactura.requestFocusInWindow();
+                    }
+                });
+            }
+        });
+    }
+
+    public void mostrarVista() {
+        this.vista.setVisible(true);
     }
 
     private void cerrar() {
@@ -52,10 +84,35 @@ public class C_seleccionarNroFactura implements ActionListener, KeyListener {
         this.vista.jtfNroSucursal.addKeyListener(this);
         this.vista.jtfNroPuntoVenta.addKeyListener(this);
         this.vista.jtfRangoFacturas.addKeyListener(this);
+        this.vista.jtfNroFactura.addActionListener(this);
     }
 
     private boolean validarNroFactura() {
-
+        int nroFactura = -1;
+        if (this.vista.jtfNroFactura.getText().trim().isEmpty()) {
+            javax.swing.JOptionPane.showMessageDialog(this.vista, VALIDAR_NRO_FACTURA_1, "Atención",
+                    javax.swing.JOptionPane.OK_OPTION);
+            return false;
+        }
+        try {
+            String nroFacturaString = this.vista.jtfNroFactura.getText().trim();
+            nroFactura = Integer.valueOf(nroFacturaString);
+        } catch (Exception e) {
+            javax.swing.JOptionPane.showMessageDialog(this.vista, VALIDAR_NRO_FACTURA_2, "Atención",
+                    javax.swing.JOptionPane.OK_OPTION);
+            return false;
+        }
+        if (nroFactura < 1) {
+            javax.swing.JOptionPane.showMessageDialog(this.vista, VALIDAR_NRO_FACTURA_2, "Atención",
+                    javax.swing.JOptionPane.OK_OPTION);
+            return false;
+        }
+        if (modelo.nroFacturaEnUso(nroFactura)) {
+            javax.swing.JOptionPane.showMessageDialog(this.vista, VALIDAR_NRO_FACTURA_3, "Atención",
+                    javax.swing.JOptionPane.OK_OPTION);
+            return false;
+        }
+        modelo.setNroFactura(nroFactura);
         return true;
     }
 
@@ -63,7 +120,7 @@ public class C_seleccionarNroFactura implements ActionListener, KeyListener {
         if (!validarNroFactura()) {
             return;
         }
-        int nroFactura = 0;
+        int nroFactura = Integer.valueOf(this.vista.jtfNroFactura.getText().trim());
         modelo.getCallback().recibirTimbradoNroFactura(modelo.getTimbrado(), nroFactura);
         cerrar();
     }
@@ -74,6 +131,8 @@ public class C_seleccionarNroFactura implements ActionListener, KeyListener {
             enviarNroFactura();
         } else if (e.getSource().equals(this.vista.jbCancel)) {
             cerrar();
+        } else if (e.getSource().equals(this.vista.jtfNroFactura)) {
+            enviarNroFactura();
         }
     }
 

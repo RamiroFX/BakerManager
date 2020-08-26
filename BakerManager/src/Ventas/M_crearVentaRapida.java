@@ -21,6 +21,8 @@ import Interface.InterfaceFacturaDetalle;
 import Parametros.TipoOperacion;
 import Impresora.Impresora;
 import java.sql.Timestamp;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Vector;
@@ -52,6 +54,8 @@ public class M_crearVentaRapida {
     private boolean ventaMultiple = false;
     private ArrayList<Integer> cabeceraMultiple;
 
+    NumberFormat nfSmall, nfLarge;
+
     public M_crearVentaRapida(InterfaceFacturaDetalle interfaceFacturaDetalle) {
         this.cabecera = new M_facturaCabecera();
         this.cabecera.setCliente(DB_Cliente.obtenerDatosClienteID(1));//mostrador
@@ -67,6 +71,16 @@ public class M_crearVentaRapida {
         preferenciaFactura = DB_Preferencia.obtenerPreferenciaImpresionFactura();
         maxProdCant = preferenciaFactura.getMaxProducts();
         cabeceraMultiple = new ArrayList<>();
+        this.nfSmall = new DecimalFormat("000");
+        this.nfLarge = new DecimalFormat("0000000");
+    }
+
+    public NumberFormat getNfLarge() {
+        return nfLarge;
+    }
+
+    public NumberFormat getNfSmall() {
+        return nfSmall;
     }
 
     public M_facturaCabecera getCabecera() {

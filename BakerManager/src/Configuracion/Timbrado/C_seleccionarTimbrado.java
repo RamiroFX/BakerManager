@@ -182,7 +182,8 @@ public class C_seleccionarTimbrado extends MouseAdapter implements ActionListene
         int columna = vista.jtTimbrado.getSelectedColumn();
         if ((fila > -1) && (columna > -1)) {
             E_Timbrado timbrado = modelo.getTm().getList().get(fila);
-            callback.recibirTimbrado(timbrado);
+            SeleccionarNroFactura snf = new SeleccionarNroFactura(vista, callback, timbrado);
+            snf.mostrarVista();
             cerrar();
         }
     }
