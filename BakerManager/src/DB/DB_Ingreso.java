@@ -606,7 +606,7 @@ public class DB_Ingreso {
     public static int insertarIngreso(M_facturaCabecera cabecera, ArrayList<M_facturaDetalle> detalle) {
         String INSERT_DETALLE = "INSERT INTO FACTURA_DETALLE(ID_FACTURA_CABECERA, ID_PRODUCTO, CANTIDAD, PRECIO, DESCUENTO, OBSERVACION)VALUES (?, ?, ?, ?, ?, ?);";
         //LA SGBD SE ENCARGA DE INSERTAR EL TIMESTAMP.
-        String INSERT_CABECERA = "INSERT INTO FACTURA_CABECERA(ID_FUNCIONARIO, ID_CLIENTE, ID_COND_VENTA, NRO_FACTURA)VALUES (?, ?, ?, ?);";
+        String INSERT_CABECERA = "INSERT INTO FACTURA_CABECERA(ID_FUNCIONARIO, ID_CLIENTE, ID_COND_VENTA, NRO_FACTURA, ID_TIMBRADO)VALUES (?, ?, ?, ?, ?);";
         String INSERT_CTA_CTE = "INSERT INTO cuenta_corriente(id_cliente, id_factura_cabecera, id_cta_cte_concepto, debito)VALUES (?, ?, ?, ?);";
         long sq_cabecera = -1L;
         try {
@@ -624,6 +624,7 @@ public class DB_Ingreso {
             } catch (Exception e) {
                 pst.setNull(4, Types.BIGINT);
             }
+            pst.setInt(5, cabecera.getIdTimbrado());
             pst.executeUpdate();
             rs = pst.getGeneratedKeys();
             if (rs != null && rs.next()) {

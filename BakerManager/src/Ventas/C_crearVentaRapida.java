@@ -48,11 +48,13 @@ public class C_crearVentaRapida implements GestionInterface, InterfaceFacturaDet
     public M_crearVentaRapida modelo;
     public V_crearVentaRapida vista;
     private C_gestionVentas gestionVentas;
+    private boolean isJCBTrigger;
 
     public C_crearVentaRapida(V_crearVentaRapida vista, C_gestionVentas gestionVentas) {
         this.modelo = new M_crearVentaRapida(this);
         this.vista = vista;
         this.gestionVentas = gestionVentas;
+        this.isJCBTrigger = true;
         inicializarVista();
         concederPermisos();
     }
@@ -60,7 +62,7 @@ public class C_crearVentaRapida implements GestionInterface, InterfaceFacturaDet
     @Override
     public final void inicializarVista() {
         this.vista.jtfNroFactura.setEditable(false);
-        this.vista.jtfNroFactura.setText(this.modelo.getNroFactura() + "");
+        //this.vista.jtfNroFactura.setText(this.modelo.getNroFactura() + "");
         this.vista.jtfClieDireccion.setText(this.modelo.getCabecera().getCliente().getDireccion());
         this.vista.jtfCliente.setText(this.modelo.getCabecera().getCliente().getEntidad() + "(" + this.modelo.getCabecera().getCliente().getNombre() + ")");
         try {
@@ -326,9 +328,9 @@ public class C_crearVentaRapida implements GestionInterface, InterfaceFacturaDet
             JOptionPane.showConfirmDialog(vista, VENTA_VACIA, ATENCION, JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
             return;
         }
-        if (!checkearNroFactura()) {
+        /*if (!checkearNroFactura()) {
             return;
-        }
+        }*/
         ConfirmarVenta cv = new ConfirmarVenta(vista);
         cv.inicializarVista(this.vista.jftTotal.getValue() + "");
         cv.setInterface(this);
@@ -354,11 +356,11 @@ public class C_crearVentaRapida implements GestionInterface, InterfaceFacturaDet
                 break;
             }
             case E_impresionTipo.FACTURA_STRING: {
-                //this.vista.jtfNroFactura.setText(modelo.getNroFactura() + "");
-                this.vista.jtfNroFactura.setEnabled(true);
-                this.modelo.setTipoVenta(tipoVenta);
-                SeleccionarTimbrado st = new SeleccionarTimbrado(this.vista, this);
-                st.mostrarVista();
+                if (isJCBTrigger) {
+                    this.modelo.setTipoVenta(tipoVenta);
+                    SeleccionarTimbrado st = new SeleccionarTimbrado(this.vista, this);
+                    st.mostrarVista();
+                }
                 break;
             }
             case E_impresionTipo.BOLETA_STRING: {
@@ -392,7 +394,7 @@ public class C_crearVentaRapida implements GestionInterface, InterfaceFacturaDet
             }
         });
     }
-
+/*
     private boolean checkearNroFactura() {
         Integer nroFactura = null;
         if (this.vista.jtfNroFactura.getText().trim().isEmpty()) {
@@ -407,7 +409,7 @@ public class C_crearVentaRapida implements GestionInterface, InterfaceFacturaDet
                     + "en el campo Nro. factura.",
                     "Parametros incorrectos",
                     javax.swing.JOptionPane.OK_OPTION);
-            this.vista.jtfNroFactura.setText(modelo.getNroFactura() + "");
+            //this.vista.jtfNroFactura.setText(modelo.getNroFactura() + "");
             return false;
         }
         if (!modelo.nroFacturaEnUso(nroFactura)) {
@@ -416,12 +418,12 @@ public class C_crearVentaRapida implements GestionInterface, InterfaceFacturaDet
                     + "se encuentra en uso.",
                     "Parametros incorrectos",
                     javax.swing.JOptionPane.OK_OPTION);
-            this.vista.jtfNroFactura.setText(modelo.getNroFactura() + "");
+            //this.vista.jtfNroFactura.setText(modelo.getNroFactura() + "");
             return false;
         }
         modelo.getCabecera().setNroFactura(nroFactura);
         return true;
-    }
+    }*/
 
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -544,7 +546,7 @@ public class C_crearVentaRapida implements GestionInterface, InterfaceFacturaDet
     }
 
     private void establecerNroFactura() {
-        this.vista.jtfNroFactura.setText(this.modelo.getNroFactura() + "");
+        this.vista.jtfNroFactura.setText(this.modelo.obtenerUltimoNroFactura() + "");
     }
 
     @Override
@@ -562,6 +564,7 @@ public class C_crearVentaRapida implements GestionInterface, InterfaceFacturaDet
         modelo.getCabecera().setIdTimbrado(timbrado.getId());
         modelo.getCabecera().setNroFactura(NroFactura);
         modelo.setTipoVenta(tipoVenta);
+        isJCBTrigger = false;
         this.vista.jcbTipoVenta.setSelectedItem(tipoVenta);
         String nroTimbrado = modelo.getNfLarge().format(timbrado.getNroTimbrado());
         String nroSucursal = modelo.getNfSmall().format(timbrado.getNroSucursal());
@@ -569,5 +572,7 @@ public class C_crearVentaRapida implements GestionInterface, InterfaceFacturaDet
         String nroFactura = modelo.getNfLarge().format(NroFactura);
         String nroFacturaCompleto = nroTimbrado + "-" + nroSucursal + "-" + nroPuntoVenta + "-" + nroFactura;
         this.vista.jtfNroFactura.setText(nroFacturaCompleto);
+        this.vista.jtfNroFactura.setEnabled(true);
+        isJCBTrigger = true;
     }
 }

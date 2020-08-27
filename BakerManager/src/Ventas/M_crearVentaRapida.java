@@ -179,7 +179,7 @@ public class M_crearVentaRapida {
             for (int i = 0; i < cantVentas; i++) {
                 currentList = new ArrayList<>(totalList.subList(index1, index2));
                 if (tipoImpresion.getId() == E_impresionTipo.FACTURA) {
-                    getCabecera().setNroFactura(getNroFactura());//para la siguiente venta
+                    getCabecera().setNroFactura(obtenerUltimoNroFactura());//para la siguiente venta
                 } else {
                     this.cabecera.setNroFactura(null);
                 }
@@ -261,13 +261,13 @@ public class M_crearVentaRapida {
     public void limpiarCampos() {
         this.cabecera.setCliente(DB_Cliente.obtenerDatosClienteID(1));//mostrador
         this.cabecera.setIdCondVenta(TipoOperacion.CONTADO);
-        this.cabecera.setNroFactura(getNroFactura());
+        this.cabecera.setNroFactura(-1);
+        this.cabecera.setIdTimbrado(1);
         try {
             this.telefono = DB_Cliente.obtenerTelefonoCliente(this.cabecera.getCliente().getIdCliente()).get(1);
         } catch (Exception e) {
             this.telefono = null;
         }
-//        this.detalle = new M_facturaDetalle();
         this.dtm.vaciarLista();
         cabeceraMultiple.clear();
     }
@@ -281,20 +281,25 @@ public class M_crearVentaRapida {
         return unProducto;
     }
 
-    public int getNroFactura() {
-        int nroFactura = DB_Ingreso.obtenerUltimoNroFactura() + 1;
-        int nroFacturacion = DB_Ingreso.obtenerUltimoNroFacturacion() + 1;
-        if (nroFactura >= nroFacturacion) {
-            return nroFactura;
+    public int obtenerUltimoNroFactura() {
+        int idTimbrado = getCabecera().getIdTimbrado();
+        int ultimoNroFactura = DB_Ingreso.obtenerUltimoNroFactura(idTimbrado) + 1;
+        int ultimoNroFacturacion = DB_Ingreso.obtenerUltimoNroFacturacion(idTimbrado) + 1;
+        if (ultimoNroFactura >= ultimoNroFacturacion) {
+            return ultimoNroFactura;
         } else {
-            return nroFacturacion;
+            return ultimoNroFacturacion;
         }
     }
 
     public boolean nroFacturaEnUso(int nroFactura) {
-        return DB_Ingreso.nroFacturaEnUso(nroFactura);
+        return DB_Ingreso.nroFacturaEnUso(nroFactura, getCabecera().getIdTimbrado());
     }
 
+    /*
+    public boolean nroFacturaEnUso(int nroFactura) {
+        return DB_Ingreso.nroFacturaEnUso(nroFactura);
+    }*/
     public Vector obtenerTipoOperacion() {
         return DB_Egreso.obtenerTipoOperacion();
     }
