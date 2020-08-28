@@ -396,36 +396,6 @@ public class C_crearVentaRapida implements GestionInterface, InterfaceFacturaDet
             }
         });
     }
-/*
-    private boolean checkearNroFactura() {
-        Integer nroFactura = null;
-        if (this.vista.jtfNroFactura.getText().trim().isEmpty()) {
-            return true;
-        }
-        try {
-            String cantidad = this.vista.jtfNroFactura.getText().trim();
-            nroFactura = Integer.valueOf(cantidad);
-        } catch (Exception e) {
-            javax.swing.JOptionPane.showMessageDialog(this.vista, "Verifique en uno de los campos el parametro:"
-                    + "Asegurese de colocar un numero valido\n"
-                    + "en el campo Nro. factura.",
-                    "Parametros incorrectos",
-                    javax.swing.JOptionPane.OK_OPTION);
-            //this.vista.jtfNroFactura.setText(modelo.getNroFactura() + "");
-            return false;
-        }
-        if (!modelo.nroFacturaEnUso(nroFactura)) {
-            javax.swing.JOptionPane.showMessageDialog(this.vista, "Verifique en uno de los campos el parametro:"
-                    + "El número de factura introducido ya\n"
-                    + "se encuentra en uso.",
-                    "Parametros incorrectos",
-                    javax.swing.JOptionPane.OK_OPTION);
-            //this.vista.jtfNroFactura.setText(modelo.getNroFactura() + "");
-            return false;
-        }
-        modelo.getCabecera().setNroFactura(nroFactura);
-        return true;
-    }*/
 
     @Override
     public void actionPerformed(ActionEvent e) {

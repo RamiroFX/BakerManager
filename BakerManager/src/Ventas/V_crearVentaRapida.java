@@ -32,6 +32,8 @@ import net.miginfocom.swing.MigLayout;
  */
 public class V_crearVentaRapida extends JDialog {
 
+    public static final String TITLE_CREATE = "Crear venta", TITLE_READ = "Ver venta";
+
     private static final String INGRESAR_COD_PROD = "Ingresar código de producto";
     private static final String COD_PROD = "Código de producto";
 
@@ -57,7 +59,7 @@ public class V_crearVentaRapida extends JDialog {
     public boolean esModoCreacion;
 
     public V_crearVentaRapida(JFrame frame, boolean esModoCreacion_) {
-        super(frame, "Crear venta", JDialog.ModalityType.APPLICATION_MODAL);
+        super(frame, TITLE_CREATE, JDialog.ModalityType.APPLICATION_MODAL);
         setSize(950, 700);
         setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
         initComponents();
@@ -79,7 +81,7 @@ public class V_crearVentaRapida extends JDialog {
     }
 
     public V_crearVentaRapida(JDialog frame) {
-        super(frame, "Crear venta", JDialog.ModalityType.APPLICATION_MODAL);
+        super(frame, TITLE_CREATE, JDialog.ModalityType.APPLICATION_MODAL);
         setSize(950, 700);
         setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
         initComponents();

@@ -19,15 +19,11 @@ import Entities.M_telefono;
 import MenuPrincipal.DatosUsuario;
 import Impresora.Impresora;
 import ModeloTabla.FacturaDetalleTableModel;
-import Parametros.Impuesto;
-import Parametros.TipoVenta;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.Vector;
 import javax.swing.JOptionPane;
@@ -116,6 +112,7 @@ public class C_ver_ingreso implements ActionListener, KeyListener {
     }
 
     private void inicializarVista() {
+        this.vista.setTitle(V_crearVentaRapida.TITLE_READ);
         if (idEgresoCabecera < 1) {
             faca = DB_Ingreso.obtenerIngresoCabeceraNroFactura(nroFactura);
         } else {
