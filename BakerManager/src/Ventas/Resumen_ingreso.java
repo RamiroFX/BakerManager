@@ -98,7 +98,7 @@ public class Resumen_ingreso extends JDialog implements ActionListener, KeyListe
 
     public void inicializarDatos(E_facturacionCabecera facturacionCabecera) {
         this.facturacionCabecera = facturacionCabecera;
-        FacturaCabeceraTableModel tm = new FacturaCabeceraTableModel();
+        FacturaCabeceraTableModel tm = new FacturaCabeceraTableModel(FacturaCabeceraTableModel.COMPLETO);
         tm.setFacturaCabeceraList(DB_Ingreso.obtenerVentasPorFacturacion(facturacionCabecera.getId()));
         jtIngreso.setModel(tm);
         Utilities.c_packColumn.packColumns(jtIngreso, 1);

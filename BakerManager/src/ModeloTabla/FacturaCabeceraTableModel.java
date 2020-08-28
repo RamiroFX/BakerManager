@@ -7,6 +7,7 @@ package ModeloTabla;
 
 import Entities.M_facturaCabecera;
 import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,14 +19,20 @@ import javax.swing.table.AbstractTableModel;
  */
 public class FacturaCabeceraTableModel extends AbstractTableModel {
 
+    public static final int SIMPLE = 1, MEDIANO = 2, COMPLETO = 3;
     private DecimalFormat decimalFormat;
     private SimpleDateFormat dateFormater;
+    private NumberFormat nfSmall, nfLarge;
     private List<M_facturaCabecera> facturaCabeceraList;
     private final String[] colNames = {"Id.", "Nro Factura", "Cliente", "Funcionario", "Tiempo", "Total", "Cond. venta"};
+    private int formato;
 
-    public FacturaCabeceraTableModel() {
+    public FacturaCabeceraTableModel(int formato) {
+        this.formato = formato;
         this.dateFormater = new SimpleDateFormat("dd/MM/YYYY hh:mm:ss");
         this.decimalFormat = new DecimalFormat("#,##0.##");
+        this.nfSmall = new DecimalFormat("000");
+        this.nfLarge = new DecimalFormat("0000000");
         this.facturaCabeceraList = new ArrayList<>();
     }
 
@@ -71,7 +78,26 @@ public class FacturaCabeceraTableModel extends AbstractTableModel {
                 return decimalFormat.format(fc.getIdFacturaCabecera());
             }
             case 1: {
-                return decimalFormat.format(fc.getNroFactura());
+                switch (formato) {
+                    case SIMPLE: {
+                        return decimalFormat.format(fc.getNroFactura());
+                    }
+                    case MEDIANO: {
+                        String sucursal = this.nfSmall.format(fc.getTimbrado().getNroSucursal());
+                        String ptva = this.nfSmall.format(fc.getTimbrado().getNroPuntoVenta());
+                        String nroFactura = decimalFormat.format(fc.getNroFactura());
+                        String value = sucursal + "-" + ptva + "-" + nroFactura;
+                        return value;
+                    }
+                    case COMPLETO: {
+                        String timbrado = this.nfLarge.format(fc.getTimbrado().getNroTimbrado());
+                        String sucursal = this.nfSmall.format(fc.getTimbrado().getNroSucursal());
+                        String ptva = this.nfSmall.format(fc.getTimbrado().getNroPuntoVenta());
+                        String nroFactura = decimalFormat.format(fc.getNroFactura());
+                        String value = timbrado + "-" + sucursal + "-" + ptva + "-" + nroFactura;
+                        return value;
+                    }
+                }
             }
             case 2: {
                 return fc.getCliente().getEntidad();

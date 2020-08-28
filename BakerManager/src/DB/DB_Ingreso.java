@@ -4,6 +4,7 @@
  */
 package DB;
 
+import Entities.E_Timbrado;
 import Entities.E_cuentaCorrienteConcepto;
 import Entities.E_facturaCabecera;
 import Entities.E_facturaCabeceraFX;
@@ -230,7 +231,11 @@ public class DB_Ingreso {
                 + "(SELECT DESCRIPCION FROM TIPO_OPERACION WHERE TIPO_OPERACION.ID_TIPO_OPERACION = FC.ID_COND_VENTA)\"TIPO_OPERACION\" ,"//7
                 + "(SUM (FADE.CANTIDAD*(FADE.PRECIO-(FADE.PRECIO*FADE.DESCUENTO)/100)))\"TOTAL\", "//8
                 + "FC.ID_ESTADO, "//9
-                + "(SELECT DESCRIPCION FROM ESTADO WHERE ESTADO.ID_ESTADO = FC.ID_ESTADO)\"TIPO_OPERACION\"  "//10
+                + "(SELECT DESCRIPCION FROM ESTADO WHERE ESTADO.ID_ESTADO = FC.ID_ESTADO)\"TIPO_OPERACION\",  "//10
+                + "(SELECT ID_TIMBRADO_VENTA FROM TIMBRADO_VENTA WHERE TIMBRADO_VENTA.ID_TIMBRADO_VENTA = FC.ID_TIMBRADO)\"ID_TIMBRADO_VENTA\",  "//11
+                + "(SELECT NRO_TIMBRADO FROM TIMBRADO_VENTA WHERE TIMBRADO_VENTA.ID_TIMBRADO_VENTA = FC.ID_TIMBRADO)\"NRO_TIMBRADO\",  "//12
+                + "(SELECT NRO_SUCURSAL FROM TIMBRADO_VENTA WHERE TIMBRADO_VENTA.ID_TIMBRADO_VENTA = FC.ID_TIMBRADO)\"NRO_SUCURSAL\",  "//13
+                + "(SELECT NRO_PUNTO_VENTA FROM TIMBRADO_VENTA WHERE TIMBRADO_VENTA.ID_TIMBRADO_VENTA = FC.ID_TIMBRADO)\"NRO_PUNTO_VENTA\"  "//14
                 + "FROM FACTURA_CABECERA FC, "
                 + "     FACTURA_DETALLE FADE,"
                 + "     CLIENTE C,"
@@ -290,6 +295,11 @@ public class DB_Ingreso {
             }
             rs = pst.executeQuery();
             while (rs.next()) {
+                E_Timbrado timbrado = new E_Timbrado();
+                timbrado.setId(rs.getInt(11));
+                timbrado.setNroTimbrado(rs.getInt(12));
+                timbrado.setNroSucursal(rs.getInt(13));
+                timbrado.setNroPuntoVenta(rs.getInt(14));
                 Estado estado = new Estado();
                 estado.setId(rs.getInt(9));
                 estado.setDescripcion(rs.getString(10));
@@ -309,6 +319,7 @@ public class DB_Ingreso {
                 fc.setFuncionario(f);
                 fc.setTotalFromDouble(rs.getDouble(8));
                 fc.setEstado(estado);
+                fc.setTimbrado(timbrado);
                 list.add(fc);
             }
         } catch (SQLException ex) {
@@ -2545,8 +2556,12 @@ public class DB_Ingreso {
                 + "(SELECT DESCRIPCION FROM TIPO_OPERACION WHERE TIPO_OPERACION.ID_TIPO_OPERACION = FC.ID_COND_VENTA)\"TIPO_OPERACION\" , "//5
                 + "(SELECT NOMBRE FROM PERSONA WHERE PERSONA.ID_PERSONA = F.ID_PERSONA)\"NOMBRE_FUNCIONARIO\", "//6
                 + "FC.TIEMPO, "//7
-                + "ROUND(SUM (FADE.CANTIDAD*(FADE.PRECIO-(FADE.PRECIO*FADE.DESCUENTO)/100)))\"TOTAL\" "//8
-                + "FROM FACTURACION_CABECERA FAC, FACTURACION_DETALLE FACDE, "
+                + "ROUND(SUM (FADE.CANTIDAD*(FADE.PRECIO-(FADE.PRECIO*FADE.DESCUENTO)/100)))\"TOTAL\", "//8
+                + "FC.ID_TIMBRADO, "//9
+                + "TIM.NRO_TIMBRADO, "//10
+                + "TIM.NRO_SUCURSAL, "//11
+                + "TIM.NRO_PUNTO_VENTA "//12
+                + "FROM FACTURACION_CABECERA FAC, FACTURACION_DETALLE FACDE, TIMBRADO_VENTA TIM "
                 + "FACTURA_CABECERA FC, FACTURA_DETALLE FADE, CLIENTE C, FUNCIONARIO F "
                 + "WHERE FAC.ID_FACTURACION_CABECERA = FACDE.ID_FACTURACION_CABECERA "
                 + "AND FACDE.ID_FACTURA_CABECERA = FC.ID_FACTURA_CABECERA "
@@ -2555,8 +2570,10 @@ public class DB_Ingreso {
                 + "AND FAC.ID_FUNCIONARIO = F.ID_FUNCIONARIO "
                 + "AND FAC.ID_FACTURACION_CABECERA = ? "
                 + "AND FC.ID_ESTADO = 1 "
+                + "AND FC.ID_TIMBRADO = TIM.ID_TIMBRADO_VENTA "
                 + "GROUP BY FC.ID_FACTURA_CABECERA,FC.NRO_FACTURA, C.ENTIDAD, "
-                + "FC.TIEMPO, F.ID_PERSONA, FC.ID_COND_VENTA "
+                + "FC.TIEMPO, F.ID_PERSONA, FC.ID_COND_VENTA, FC.ID_TIMBRADO, "
+                + "TIM.NRO_TIMBRADO, TIM.NRO_SUCURSAL,  TIM.NRO_PUNTO_VENTA "
                 + "ORDER BY FC.ID_FACTURA_CABECERA";
         try {
             pst = DB_manager.getConection().prepareStatement(query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
@@ -2573,6 +2590,12 @@ public class DB_Ingreso {
                 condVenta.setId(rs.getInt(4));
                 condVenta.setDescripcion(rs.getString(5));
 
+                E_Timbrado tim = new E_Timbrado();
+                tim.setId(rs.getInt(9));
+                tim.setNroTimbrado(rs.getInt(10));
+                tim.setNroSucursal(rs.getInt(11));
+                tim.setNroPuntoVenta(rs.getInt(12));
+
                 M_facturaCabecera fc = new M_facturaCabecera();
                 fc.setIdFacturaCabecera(rs.getInt(1));
                 fc.setTiempo(rs.getTimestamp(7));
@@ -2582,6 +2605,7 @@ public class DB_Ingreso {
                 fc.setFuncionario(f);
                 fc.setCondVenta(condVenta);
                 fc.setTotal(rs.getInt(8));
+                fc.setTimbrado(tim);
                 list.add(fc);
             }
         } catch (SQLException ex) {

@@ -19,6 +19,7 @@ public class M_facturaCabecera {
     private M_cliente cliente;
     private M_funcionario funcionario;
     private E_tipoOperacion condVenta;
+    private E_Timbrado timbrado;
     private Estado estado;
 
     public M_facturaCabecera() {
@@ -167,6 +168,20 @@ public class M_facturaCabecera {
      */
     public void setIdTimbrado(Integer idTimbrado) {
         this.idTimbrado = idTimbrado;
+    }
+
+    /**
+     * @return the timbrado
+     */
+    public E_Timbrado getTimbrado() {
+        return timbrado;
+    }
+
+    /**
+     * @param timbrado the timbrado to set
+     */
+    public void setTimbrado(E_Timbrado timbrado) {
+        this.timbrado = timbrado;
     }
 
 }

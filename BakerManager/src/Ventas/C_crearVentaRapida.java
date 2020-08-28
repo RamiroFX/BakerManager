@@ -352,6 +352,7 @@ public class C_crearVentaRapida implements GestionInterface, InterfaceFacturaDet
             case E_impresionTipo.TICKET_STRING: {
                 this.vista.jtfNroFactura.setText("");
                 this.vista.jtfNroFactura.setEnabled(false);
+                this.modelo.getCabecera().setIdTimbrado(1);
                 this.modelo.setTipoVenta(tipoVenta);
                 break;
             }
@@ -366,6 +367,7 @@ public class C_crearVentaRapida implements GestionInterface, InterfaceFacturaDet
             case E_impresionTipo.BOLETA_STRING: {
                 this.vista.jtfNroFactura.setText("");
                 this.vista.jtfNroFactura.setEnabled(false);
+                this.modelo.getCabecera().setIdTimbrado(1);
                 this.modelo.setTipoVenta(tipoVenta);
                 break;
             }

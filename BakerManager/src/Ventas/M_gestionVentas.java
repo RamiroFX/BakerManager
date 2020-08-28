@@ -38,7 +38,7 @@ public class M_gestionVentas {
         this.cabecera.getCliente().setIdCliente(-1);
         this.detalle = new M_facturaDetalle();
         this.detalles = new ArrayList<>();
-        this.tm = new FacturaCabeceraTableModel();
+        this.tm = new FacturaCabeceraTableModel(FacturaCabeceraTableModel.COMPLETO);
         this.accesos = DatosUsuario.getRol_usuario().getAccesos();
     }
 
