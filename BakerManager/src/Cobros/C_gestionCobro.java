@@ -580,6 +580,14 @@ public class C_gestionCobro implements GestionInterface, RecibirEmpleadoCallback
 
     @Override
     public void keyReleased(KeyEvent e) {
+        if (e.getSource().equals(this.vista.jtCobroCabecera)) {
+            int row = this.vista.jtCobroCabecera.getSelectedRow();
+            if (row > -1) {
+                int idCabecera = modelo.getTm().getList().get(row).getId();
+                verificarPermiso();
+                this.modelo.actualizarDetalle(idCabecera);
+            }
+        }
     }
 
     @Override

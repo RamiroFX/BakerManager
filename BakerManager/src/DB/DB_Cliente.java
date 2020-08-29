@@ -1429,7 +1429,7 @@ public class DB_Cliente {
                 + "ruc_identificador "
                 + "FROM public.v_documentos_comerciales_ventas "
                 + "WHERE id_cliente = ? "
-                + "ORDER BY fecha asc;";
+                + "ORDER BY fecha, nro_recibo, nro_factura, nro_nota_credito, nro_retencion  asc;";
         try {
             pst = DB_manager.getConection().prepareStatement(QUERY, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             pst.setInt(1, idCliente);

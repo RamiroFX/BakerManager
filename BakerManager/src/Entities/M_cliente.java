@@ -4,6 +4,8 @@
  */
 package Entities;
 
+import java.util.Date;
+
 /**
  *
  * @author Ramiro Ferreira
@@ -12,8 +14,10 @@ public class M_cliente {
 
     private Integer idCliente, idTipo, idCategoria, saldoInicial;
     private String nombre, entidad, ruc, rucId, direccion, email, paginaWeb, tipo, categoria, observacion;
+    private Date fechaCreacion;
 
     public M_cliente() {
+        this.fechaCreacion = new Date();
     }
 
     public Integer getIdCliente() {
@@ -148,5 +152,13 @@ public class M_cliente {
             }
         }
         return rucCompleto;
+    }
+
+    public Date getFechaCreacion() {
+        return fechaCreacion;
+    }
+
+    public void setFechaCreacion(Date fechaCreacion) {
+        this.fechaCreacion = fechaCreacion;
     }
 }
