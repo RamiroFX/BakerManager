@@ -724,7 +724,8 @@ public class DB_Ingreso {
                 + "ID_CLIENTE, "
                 + "TIEMPO, "
                 + "ID_COND_VENTA, "
-                + "NRO_FACTURA "
+                + "NRO_FACTURA, "
+                + "ID_TIMBRADO "
                 + "FROM FACTURA_CABECERA "
                 + "WHERE ID_FACTURA_CABECERA = " + idIngresoCabecera;
         try {
@@ -738,6 +739,7 @@ public class DB_Ingreso {
                 ingreso_cabecera.setIdFuncionario(rs.getInt("ID_FUNCIONARIO"));
                 ingreso_cabecera.setNroFactura(rs.getInt("NRO_FACTURA"));
                 ingreso_cabecera.setTiempo(rs.getTimestamp("TIEMPO"));
+                ingreso_cabecera.setIdTimbrado(rs.getInt("ID_TIMBRADO"));
             }
         } catch (SQLException ex) {
             Logger lgr = Logger.getLogger(DB_Ingreso.class.getName());
@@ -758,24 +760,29 @@ public class DB_Ingreso {
         return ingreso_cabecera;
     }
 
-    public static M_facturaCabecera obtenerIngresoCabeceraNroFactura(Integer nroFactura) {
+    public static M_facturaCabecera obtenerIngresoCabeceraNroFactura(Integer nroFactura, int idTimbrado) {
         M_facturaCabecera ingreso_cabecera = null;
         String query = "SELECT ID_FACTURA_CABECERA, "
                 + "ID_FUNCIONARIO, "
                 + "ID_CLIENTE, "
                 + "TIEMPO, "
                 + "ID_COND_VENTA, "
-                + "NRO_FACTURA "
+                + "NRO_FACTURA, "
+                + "ID_TIMBRADO "
                 + "FROM FACTURA_CABECERA "
-                + "WHERE NRO_FACTURA = " + nroFactura;
+                + "WHERE NRO_FACTURA = " + nroFactura
+                + " AND ID_TIMBRADO = " + idTimbrado;
         try {
             pst = DB_manager.getConection().prepareStatement(query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             rs = pst.executeQuery();
             while (rs.next()) {
+                E_Timbrado tim = new E_Timbrado();
+                tim.setId(rs.getInt("ID_TIMBRADO"));
                 ingreso_cabecera = new M_facturaCabecera();
                 ingreso_cabecera.setIdFacturaCabecera(rs.getInt("ID_FACTURA_CABECERA"));
                 ingreso_cabecera.setIdCliente(rs.getInt("ID_CLIENTE"));
                 ingreso_cabecera.setIdCondVenta(rs.getInt("ID_COND_VENTA"));
+                ingreso_cabecera.setTimbrado(tim);
                 ingreso_cabecera.setIdFuncionario(rs.getInt("ID_FUNCIONARIO"));
                 ingreso_cabecera.setNroFactura(rs.getInt("NRO_FACTURA"));
                 ingreso_cabecera.setTiempo(rs.getTimestamp("TIEMPO"));

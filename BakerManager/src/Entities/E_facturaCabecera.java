@@ -22,6 +22,7 @@ public class E_facturaCabecera {
     private Date tiempo;
     private E_formaPago formaPago;
     private Estado estado;
+    private E_Timbrado timbrado;
     private List<E_facturaDetalle> detalle;
 
     public E_facturaCabecera() {
@@ -31,6 +32,7 @@ public class E_facturaCabecera {
         tipoOperacion = new E_tipoOperacion();
         formaPago = new E_formaPago();
         estado = new Estado();
+        timbrado = new E_Timbrado();
     }
 
     public Integer getIdFacturaCabecera() {
@@ -122,5 +124,19 @@ public class E_facturaCabecera {
      */
     public void setTotal(Integer total) {
         this.total = total;
+    }
+
+    /**
+     * @return the timbrado
+     */
+    public E_Timbrado getTimbrado() {
+        return timbrado;
+    }
+
+    /**
+     * @param timbrado the timbrado to set
+     */
+    public void setTimbrado(E_Timbrado timbrado) {
+        this.timbrado = timbrado;
     }
 }

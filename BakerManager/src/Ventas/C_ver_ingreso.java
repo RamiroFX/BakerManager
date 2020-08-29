@@ -6,19 +6,14 @@ package Ventas;
 
 import DB.DB_Cliente;
 import DB.DB_Egreso;
-import DB.DB_Funcionario;
 import DB.DB_Ingreso;
 import DB.DB_Preferencia;
 import Entities.E_impresionTipo;
 import Entities.E_impuesto;
-import Entities.M_cliente;
-import Entities.M_facturaCabecera;
 import Entities.M_facturaDetalle;
-import Entities.M_funcionario;
 import Entities.M_telefono;
 import MenuPrincipal.DatosUsuario;
 import Impresora.Impresora;
-import ModeloTabla.FacturaDetalleTableModel;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -35,20 +30,20 @@ import javax.swing.JOptionPane;
 public class C_ver_ingreso implements ActionListener, KeyListener {
 
     public V_crearVentaRapida vista;
-    int idEgresoCabecera, nroFactura;
-    M_facturaCabecera faca;
-    M_cliente cliente;
-    FacturaDetalleTableModel fadeTM;
+    public M_verIngreso modelo;
 
-    public C_ver_ingreso(int idEgresoCabecera, V_crearVentaRapida vista) {
-        this.idEgresoCabecera = idEgresoCabecera;
+    public C_ver_ingreso(M_verIngreso modelo, V_crearVentaRapida vista, int idEgresoCabecera) {
+        this.modelo = modelo;
+        this.modelo.setIdEgresoCabecera(idEgresoCabecera);
         this.vista = vista;
         inicializarVista();
         agregarListeners();
     }
 
-    public C_ver_ingreso(V_crearVentaRapida vista, int nroFactura) {
-        this.nroFactura = nroFactura;
+    public C_ver_ingreso(M_verIngreso modelo, V_crearVentaRapida vista, int nroFactura, int idTimbrado) {
+        this.modelo = modelo;
+        this.modelo.setNroFactura(nroFactura);
+        this.modelo.setIdTimbrado(idTimbrado);
         this.vista = vista;
         inicializarVista();
         agregarListeners();
@@ -83,7 +78,7 @@ public class C_ver_ingreso implements ActionListener, KeyListener {
         Integer totalIva5 = 0;
         Integer totalIva10 = 0;
         Integer total = 0;
-        for (M_facturaDetalle m_facturaDetalle : fadeTM.getFacturaDetalleList()) {
+        for (M_facturaDetalle m_facturaDetalle : modelo.getFadeTM().getFacturaDetalleList()) {
             switch (m_facturaDetalle.getProducto().getIdImpuesto()) {
                 case E_impuesto.EXENTA: {
                     exenta = exenta + m_facturaDetalle.calcularSubTotal();
@@ -113,19 +108,13 @@ public class C_ver_ingreso implements ActionListener, KeyListener {
 
     private void inicializarVista() {
         this.vista.setTitle(V_crearVentaRapida.TITLE_READ);
-        if (idEgresoCabecera < 1) {
-            faca = DB_Ingreso.obtenerIngresoCabeceraNroFactura(nroFactura);
+        if (modelo.getIdIngresoCabecera() < 1) {
+            modelo.establecerVentaPorNroFactura();
         } else {
-            faca = DB_Ingreso.obtenerIngresoCabeceraID(idEgresoCabecera);
+            modelo.establecerVentaPorID();
         }
-        cliente = DB_Cliente.obtenerDatosClienteID(faca.getIdCliente());
-        M_funcionario funcionario = DB_Funcionario.obtenerDatosFuncionarioID(faca.getIdFuncionario());
-        faca.setCliente(cliente);
-        faca.setFuncionario(funcionario);
-        this.vista.jtfCliente.setText(cliente.getNombre() + " - " + cliente.getEntidad());
-        fadeTM = new FacturaDetalleTableModel();
-        fadeTM.setFacturaDetalleList(DB_Ingreso.obtenerVentaDetalles(faca.getIdFacturaCabecera()));
-        this.vista.jtFacturaDetalle.setModel(fadeTM);
+        modelo.establecerModeloTabla();
+        this.vista.jtFacturaDetalle.setModel(modelo.getFadeTM());
         Vector condCompra = obtenerTipoOperacion();
         for (int i = 0; i < condCompra.size(); i++) {
             this.vista.jcbCondVenta.addItem(condCompra.get(i));
@@ -145,7 +134,7 @@ public class C_ver_ingreso implements ActionListener, KeyListener {
         this.vista.jftIva10.setFont(fuente); // NOI18N
         this.vista.jftTotal.setFormatterFactory(dff);
         this.vista.jftTotal.setFont(fuente); // NOI18N
-        switch (faca.getIdCondVenta()) {
+        switch (modelo.getFaca().getIdCondVenta()) {
             case Parametros.TipoOperacion.CONTADO: {
                 this.vista.jcbCondVenta.setSelectedIndex(0);
                 break;
@@ -155,21 +144,21 @@ public class C_ver_ingreso implements ActionListener, KeyListener {
                 break;
             }
         }
-        String nombre = cliente.getNombre();
-        String entidad = cliente.getEntidad();
-        String ruc = cliente.getRuc() + "-" + cliente.getRucId();
-        String direccion = cliente.getDireccion();
-        ArrayList<M_telefono> telefono = DB_Cliente.obtenerTelefonoCliente(cliente.getIdCliente());
+        String nombre = modelo.getCliente().getNombre();
+        String entidad = modelo.getCliente().getEntidad();
+        String ruc = modelo.getCliente().getRuc() + "-" + modelo.getCliente().getRucId();
+        String direccion = modelo.getCliente().getDireccion();
+        ArrayList<M_telefono> telefono = DB_Cliente.obtenerTelefonoCliente(modelo.getCliente().getIdCliente());
         this.vista.jtfCliente.setText(nombre + " (" + entidad + ")");
         this.vista.jtfClieRuc.setText(ruc);
         this.vista.jtfClieDireccion.setText(direccion);
         if (!telefono.isEmpty()) {
             this.vista.jtfClieTelefono.setText(telefono.get(0).getNumero());
         }
-        this.vista.jtfNroFactura.setText(faca.getNroFactura() + "");
+        this.vista.jtfNroFactura.setText(modelo.obtenerNroFacturaCompleto());
         this.vista.jtfNroFactura.setEditable(false);
-        if (faca.getNroFactura() < 1) {
-            E_impresionTipo tipoFactura = new E_impresionTipo(2, "factura");
+        if (modelo.getFaca().getNroFactura() < 1) {
+            E_impresionTipo tipoFactura = new E_impresionTipo(2, E_impresionTipo.FACTURA_STRING);
             this.vista.jcbTipoVenta.removeItem(tipoFactura);
         }
         this.vista.jtfCodProd.setEnabled(false);
@@ -179,6 +168,7 @@ public class C_ver_ingreso implements ActionListener, KeyListener {
         this.vista.jcbCondVenta.setEnabled(false);
         this.vista.jbCliente.setEnabled(false);
         this.vista.jbAceptar.setEnabled(false);
+        this.vista.jbNroFactura.setEnabled(false);
         sumarTotal();
     }
 
@@ -209,23 +199,23 @@ public class C_ver_ingreso implements ActionListener, KeyListener {
                     case "factura": {
                         int opcion = JOptionPane.showConfirmDialog(vista, "¿Desea imprimir la factura?", "Atención", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
                         if (opcion == JOptionPane.YES_OPTION) {
-                            ArrayList<M_facturaDetalle> fade = DB_Ingreso.obtenerVentaDetalles(idEgresoCabecera);
-                            Impresora.imprimirFacturaVenta(faca, fade);
+                            ArrayList<M_facturaDetalle> fade = DB_Ingreso.obtenerVentaDetalles(modelo.getIdIngresoCabecera());
+                            Impresora.imprimirFacturaVenta(modelo.getFaca(), fade);
                         }
                         break;
                     }
                     case "boleta": {
                         int opcion = JOptionPane.showConfirmDialog(vista, "¿Desea imprimir la boleta?", "Atención", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
                         if (opcion == JOptionPane.YES_OPTION) {
-                            ArrayList<M_facturaDetalle> facturaDetalle = DB_Ingreso.obtenerVentaDetalles(idEgresoCabecera);
-                            Impresora.imprimirBoletaVenta(faca, facturaDetalle);
+                            ArrayList<M_facturaDetalle> facturaDetalle = DB_Ingreso.obtenerVentaDetalles(modelo.getIdIngresoCabecera());
+                            Impresora.imprimirBoletaVenta(modelo.getFaca(), facturaDetalle);
                         }
                         break;
                     }
                     case "ticket": {
                         int opcion = JOptionPane.showConfirmDialog(vista, "¿Desea imprimir el ticket?", "Atención", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
                         if (opcion == JOptionPane.YES_OPTION) {
-                            Impresora.imprimirTicketVentaGuardada(DatosUsuario.getRol_usuario(), faca);
+                            Impresora.imprimirTicketVentaGuardada(DatosUsuario.getRol_usuario(), modelo.getFaca());
                         }
                         break;
                     }

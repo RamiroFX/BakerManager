@@ -180,16 +180,17 @@ public class C_cobroPendiente extends MouseAdapter implements ActionListener, Ke
             int idFactura = fsp.getIdCabecera();
             if (idFactura == 0) {
                 int nroFactura = modelo.getTm().getList().get(fila).getNroFactura();
+                int idTimbrado = modelo.getTm().getList().get(fila).getTimbrado().getId();
                 if (nroFactura > 0) {
-                    Ver_ingreso vc = new Ver_ingreso(nroFactura, this.vista);
-                    vc.mostrarVista();
+                    /*Ver_ingreso vc = new Ver_ingreso(nroFactura, idTimbrado, this.vista);
+                    vc.mostrarVista();*/
                 } else {
                     NumberFormat nf = NumberFormat.getInstance();
                     JOptionPane.showMessageDialog(vista, "Saldo inicial del cliente:\n" + nf.format(fsp.getMonto()), "Saldo inicial", JOptionPane.INFORMATION_MESSAGE);
                 }
             } else {
-                Ver_ingreso vc = new Ver_ingreso(this.vista, idFactura);
-                vc.mostrarVista();
+               /* Ver_ingreso vc = new Ver_ingreso(this.vista, idFactura);
+                vc.mostrarVista();*/
             }
         }
         this.vista.jbDetalleCobro.setEnabled(false);

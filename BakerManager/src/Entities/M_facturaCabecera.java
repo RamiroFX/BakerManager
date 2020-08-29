@@ -12,8 +12,8 @@ import java.sql.Timestamp;
  */
 public class M_facturaCabecera {
 
-    private Integer idFacturaCabecera, idCliente, idFuncionario, idCondVenta, idNotaRemision,
-            idTimbrado;
+    private Integer idFacturaCabecera, idCliente, idFuncionario, idCondVenta, idNotaRemision;
+    private int idTimbrado;
     private Integer nroFactura, total;
     private Timestamp tiempo;
     private M_cliente cliente;
@@ -27,6 +27,7 @@ public class M_facturaCabecera {
         this.cliente = new M_cliente();
         this.condVenta = new E_tipoOperacion();
         this.estado = new Estado();
+        this.timbrado = new E_Timbrado();
     }
 
     public M_funcionario getFuncionario() {
@@ -159,14 +160,14 @@ public class M_facturaCabecera {
     /**
      * @return the idTimbrado
      */
-    public Integer getIdTimbrado() {
+    public int getIdTimbrado() {
         return idTimbrado;
     }
 
     /**
      * @param idTimbrado the idTimbrado to set
      */
-    public void setIdTimbrado(Integer idTimbrado) {
+    public void setIdTimbrado(int idTimbrado) {
         this.idTimbrado = idTimbrado;
     }
 
@@ -183,5 +184,4 @@ public class M_facturaCabecera {
     public void setTimbrado(E_Timbrado timbrado) {
         this.timbrado = timbrado;
     }
-
 }

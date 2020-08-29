@@ -266,7 +266,7 @@ public class C_gestionVentas implements GestionInterface, RecibirEmpleadoCallbac
 
     private void obtenerEgresoDetalle(MouseEvent e) {
         int fila = this.vista.jtIngresoCabecera.rowAtPoint(e.getPoint());
-        int columna = this.vista.jtIngresoCabecera.columnAtPoint(e.getPoint());;
+        int columna = this.vista.jtIngresoCabecera.columnAtPoint(e.getPoint());
         if ((fila > -1) && (columna > -1)) {
             Integer idIngresoCabecera = modelo.getTm().getFacturaCabeceraList().get(fila).getIdFacturaCabecera();
             verificarPermiso();

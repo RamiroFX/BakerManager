@@ -53,7 +53,6 @@ public class M_crearVentaRapida {
      */
     private boolean ventaMultiple = false;
     private ArrayList<Integer> cabeceraMultiple;
-
     NumberFormat nfSmall, nfLarge;
 
     public M_crearVentaRapida(InterfaceFacturaDetalle interfaceFacturaDetalle) {
