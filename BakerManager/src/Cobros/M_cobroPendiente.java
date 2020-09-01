@@ -9,6 +9,7 @@ import DB.DB_Cobro;
 import DB.DB_Ingreso;
 import DB.DB_manager;
 import Entities.E_facturaSinPago;
+import Entities.E_movimientoContable;
 import Entities.E_tipoOperacion;
 import Entities.Estado;
 import Entities.M_cliente;
@@ -129,11 +130,11 @@ public class M_cobroPendiente {
         this.getFacturaCabecera().getCliente().setIdCliente(-1);
     }
 
-    public void actualizarDetalle(int nroFactura) {
-        this.getTmDetalle().setFacturaDetalleList(DB_Ingreso.obtenerVentaDetallesNroFactura(nroFactura));
+    public void actualizarDetalle(int idFacturaCabecera) {
+        this.getTmDetalle().setFacturaDetalleList(DB_Ingreso.obtenerVentaDetalles(idFacturaCabecera));
     }
 
-    public List<E_facturaSinPago> obtenerCobroPendiente(M_cliente cliente, Date fechaInicio, Date fechaFin, int nroFactura, boolean conFecha) {
+    public List<E_movimientoContable> obtenerCobroPendiente(M_cliente cliente, Date fechaInicio, Date fechaFin, int nroFactura, boolean conFecha) {
         Calendar calendarInicio = Calendar.getInstance();
         calendarInicio.setTime(fechaInicio);
         calendarInicio.set(Calendar.HOUR_OF_DAY, 0);
@@ -146,6 +147,6 @@ public class M_cobroPendiente {
         calendarFinal.set(Calendar.MINUTE, 59);
         calendarFinal.set(Calendar.SECOND, 59);
         calendarFinal.set(Calendar.MILLISECOND, 999);
-        return DB_Cobro.consultarFacturasPendiente(fechaInicio, fechaFin, cliente.getIdCliente(), nroFactura, conFecha);
+        return DB_Cobro.consultarPagosPendiente(fechaInicio, fechaFin, cliente.getIdCliente(), nroFactura, conFecha);
     }
 }

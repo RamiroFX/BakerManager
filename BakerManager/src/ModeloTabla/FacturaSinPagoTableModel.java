@@ -6,6 +6,7 @@
 package ModeloTabla;
 
 import Entities.E_facturaSinPago;
+import Entities.E_movimientoContable;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -21,8 +22,8 @@ public class FacturaSinPagoTableModel extends AbstractTableModel {
     private SimpleDateFormat dateFormater;
     private DecimalFormat decimalFormat;
 
-    private List<E_facturaSinPago> list;
-    private final String[] colNames = {"Nro Factura", "Cliente", "Fecha", "Monto", "Pago", "Saldo"};
+    private List<E_movimientoContable> list;
+    private final String[] colNames = {"Tipo documento", "Nro doc.", "Cliente", "Fecha", "Monto", "Pago", "Saldo"};
 
     public FacturaSinPagoTableModel() {
         this.dateFormater = new SimpleDateFormat("dd/MM/YYYY hh:mm:ss");
@@ -30,12 +31,12 @@ public class FacturaSinPagoTableModel extends AbstractTableModel {
         this.list = new ArrayList<>();
     }
 
-    public void setList(List<E_facturaSinPago> facturaCabeceraList) {
+    public void setList(List<E_movimientoContable> facturaCabeceraList) {
         this.list = facturaCabeceraList;
         updateTable();
     }
 
-    public List<E_facturaSinPago> getList() {
+    public List<E_movimientoContable> getList() {
         return list;
     }
 
@@ -66,28 +67,43 @@ public class FacturaSinPagoTableModel extends AbstractTableModel {
 
     @Override
     public Object getValueAt(int rowIndex, int colIndex) {
-        E_facturaSinPago row = this.list.get(rowIndex);
+        E_movimientoContable row = this.list.get(rowIndex);
+        //{"Tipo documento", "Nro Factura", "Cliente", "Fecha", "Monto", "Pago", "Saldo"};
         switch (colIndex) {
-//            case 0: {
-//                return decimalFormat.format(0);
-//            }
             case 0: {
-                return decimalFormat.format(row.getNroFactura());
+                return row.getTipoDescripcion();
             }
             case 1: {
-                return row.getClienteEntidad();
+                switch (row.getTipo()) {
+                    case E_movimientoContable.TIPO_VENTA: {
+                        return decimalFormat.format(row.getVenta().getNroFactura());
+                    }
+                    case E_movimientoContable.TIPO_SALDO_INICIAL: {
+                        return decimalFormat.format(row.getVenta().getCliente().getIdCliente());
+                    }
+                }
             }
             case 2: {
-                return dateFormater.format(row.getFecha());
+                return row.getVenta().getCliente().getEntidad();
             }
             case 3: {
-                return decimalFormat.format(row.getMonto());
+                switch (row.getTipo()) {
+                    case E_movimientoContable.TIPO_VENTA: {
+                        return dateFormater.format(row.getVenta().getFecha());
+                    }
+                    case E_movimientoContable.TIPO_SALDO_INICIAL: {
+                        return dateFormater.format(row.getVenta().getCliente().getFechaCreacion());
+                    }
+                }
             }
             case 4: {
-                return decimalFormat.format(row.getPago());
+                return decimalFormat.format(row.getVenta().getMonto());
             }
             case 5: {
-                return decimalFormat.format(row.getSaldo());
+                return decimalFormat.format(row.getVenta().getPago());
+            }
+            case 6: {
+                return decimalFormat.format(row.getVenta().getSaldo());
             }
             default: {
                 return null;
@@ -95,7 +111,7 @@ public class FacturaSinPagoTableModel extends AbstractTableModel {
         }
     }
 
-    public void agregarDatos(E_facturaSinPago data) {
+    public void agregarDatos(E_movimientoContable data) {
         this.list.add(data);
         fireTableDataChanged();
     }

@@ -6,6 +6,7 @@ package NotasCredito;
 
 import Entities.E_facturaCabecera;
 import Entities.E_facturaSinPago;
+import Entities.E_movimientoContable;
 import Entities.E_tipoOperacion;
 import Entities.M_facturaCabecera;
 import Interface.RecibirCtaCteDetalleCallback;
@@ -147,7 +148,12 @@ public class C_seleccionarVenta extends MouseAdapter implements ActionListener, 
     private void seleccionarVenta() {
         int fila = vista.jtVentaCabecera.getSelectedRow();
         if (fila > -1) {
-            E_facturaSinPago faca = modelo.getTm().getList().get(fila);
+            E_movimientoContable mc = modelo.getTm().getList().get(fila);
+            if (mc.getTipo() != E_movimientoContable.TIPO_VENTA) {
+                JOptionPane.showMessageDialog(vista, "Solo se permiten facturas de venta", "Atención", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+            E_facturaSinPago faca = mc.getVenta();
             callback.recibirVentaPendientePago(faca, modelo.obtenerFacturaDetalle(faca.getNroFactura()));
             cerrar();
         }

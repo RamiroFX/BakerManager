@@ -7,6 +7,7 @@ package Cobros;
 
 import DB.DB_Ingreso;
 import Entities.E_facturaSinPago;
+import Entities.E_movimientoContable;
 import Entities.M_facturaCabecera;
 import Excel.ExportarFacturaPendiente;
 import ModeloTabla.FacturaDetalleTableModel;
@@ -114,10 +115,10 @@ public class ResumenCobroPendiente extends JDialog implements ActionListener, Ke
         jtCobros.setModel(tm);
         BigInteger total = new BigInteger("0");
         ArrayList<M_facturaCabecera> cadenaCabeceras = new ArrayList<>();
-        for (E_facturaSinPago e_facturaSinPago : cabeceraTableModel.getList()) {
+        for (E_movimientoContable e_facturaSinPago : cabeceraTableModel.getList()) {
             M_facturaCabecera faca = new M_facturaCabecera();
-            faca.setIdFacturaCabecera(e_facturaSinPago.getIdCabecera());
-            total = total.add(new BigInteger(e_facturaSinPago.getSaldo() + ""));
+            faca.setIdFacturaCabecera(e_facturaSinPago.getVenta().getIdCabecera());
+            total = total.add(new BigInteger(e_facturaSinPago.getVenta().getSaldo() + ""));
             cadenaCabeceras.add(faca);
         }
         if (cadenaCabeceras.isEmpty()) {
@@ -135,15 +136,15 @@ public class ResumenCobroPendiente extends JDialog implements ActionListener, Ke
     }
 
     private void importarExcelCompleto() {
-        ArrayList<E_facturaSinPago> pagosPendientes = new ArrayList<>(cabeceraTableModel.getList());
-        ExportarFacturaPendiente efp = new ExportarFacturaPendiente("Resumen cobro pendiente", pagosPendientes);
-        efp.exportacionResumida();
+        ArrayList<E_movimientoContable> pagosPendientes = new ArrayList<>(cabeceraTableModel.getList());
+        /*ExportarFacturaPendiente efp = new ExportarFacturaPendiente("Resumen cobro pendiente", pagosPendientes);
+        efp.exportacionResumida();*/
     }
 
     private void importarExcelResumido() {
-        ArrayList<E_facturaSinPago> pagosPendientes = new ArrayList<>(cabeceraTableModel.getList());
-        ExportarFacturaPendiente efp = new ExportarFacturaPendiente("Resumen cobro pendiente", pagosPendientes);
-        efp.exportacionIndividual();
+        ArrayList<E_movimientoContable> pagosPendientes = new ArrayList<>(cabeceraTableModel.getList());
+        /*ExportarFacturaPendiente efp = new ExportarFacturaPendiente("Resumen cobro pendiente", pagosPendientes);
+        efp.exportacionIndividual();*/
     }
 
     private void exportHandler() {

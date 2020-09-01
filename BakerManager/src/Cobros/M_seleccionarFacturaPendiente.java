@@ -11,6 +11,7 @@ import Entities.E_tipoOperacion;
 import Entities.M_facturaCabecera;
 import ModeloTabla.FacturaSinPagoTableModel;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 /**
  *
@@ -85,7 +86,7 @@ public class M_seleccionarFacturaPendiente {
 
     public void consultarFacturasPendiente() {
         int idCliente = this.facturaCabecera.getCliente().getIdCliente();
-        getTableModel().setList(DB_Cobro.consultarFacturasPendiente(idCliente));
+        getTableModel().setList(DB_Cobro.consultarPagosPendiente(null, null, idCliente, -1, false));
     }
 
 }

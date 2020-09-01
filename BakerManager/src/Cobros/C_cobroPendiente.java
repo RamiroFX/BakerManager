@@ -6,7 +6,7 @@
 package Cobros;
 
 import Cliente.Seleccionar_cliente;
-import Entities.E_facturaSinPago;
+import Entities.E_movimientoContable;
 import Entities.M_cliente;
 import Entities.M_funcionario;
 import Entities.M_menu_item;
@@ -176,21 +176,19 @@ public class C_cobroPendiente extends MouseAdapter implements ActionListener, Ke
         int fila = this.vista.jtCobroCabecera.getSelectedRow();
         int columna = this.vista.jtCobroCabecera.getSelectedColumn();
         if ((fila > -1) && (columna > -1)) {
-            E_facturaSinPago fsp = modelo.getTm().getList().get(fila);
-            int idFactura = fsp.getIdCabecera();
-            if (idFactura == 0) {
-                int nroFactura = modelo.getTm().getList().get(fila).getNroFactura();
-                int idTimbrado = modelo.getTm().getList().get(fila).getTimbrado().getId();
-                if (nroFactura > 0) {
-                    /*Ver_ingreso vc = new Ver_ingreso(nroFactura, idTimbrado, this.vista);
-                    vc.mostrarVista();*/
-                } else {
-                    NumberFormat nf = NumberFormat.getInstance();
-                    JOptionPane.showMessageDialog(vista, "Saldo inicial del cliente:\n" + nf.format(fsp.getMonto()), "Saldo inicial", JOptionPane.INFORMATION_MESSAGE);
+            E_movimientoContable mc = modelo.getTm().getList().get(fila);
+            switch (mc.getTipo()) {
+                case E_movimientoContable.TIPO_VENTA: {
+                    Ver_ingreso vc = new Ver_ingreso(this.vista, mc.getVenta().getIdCabecera(), false);
+                    vc.mostrarVista();
+                    break;
                 }
-            } else {
-               /* Ver_ingreso vc = new Ver_ingreso(this.vista, idFactura);
-                vc.mostrarVista();*/
+                case E_movimientoContable.TIPO_SALDO_INICIAL: {
+                    NumberFormat nf = NumberFormat.getInstance();
+                    JOptionPane.showMessageDialog(vista, "Saldo inicial del cliente:\n" + nf.format(mc.getVenta().getMonto()), "Saldo inicial", JOptionPane.INFORMATION_MESSAGE);
+                    break;
+                }
+
             }
         }
         this.vista.jbDetalleCobro.setEnabled(false);
@@ -280,12 +278,13 @@ public class C_cobroPendiente extends MouseAdapter implements ActionListener, Ke
         int fila = this.vista.jtCobroCabecera.rowAtPoint(e.getPoint());
         int columna = this.vista.jtCobroCabecera.columnAtPoint(e.getPoint());
         if ((fila > -1) && (columna > -1)) {
-            //Integer idCabecera = modelo.getTm().getList().get(fila).getIdCabecera();
-            Integer nroFactura = modelo.getTm().getList().get(fila).getNroFactura();
-            this.vista.jbDetalleCobro.setEnabled(true);
-            this.modelo.actualizarDetalle(nroFactura);
-            if (e.getClickCount() == 2) {
-                invocarVistaVerDetalle();
+            Integer idCabecera = modelo.getTm().getList().get(fila).getVenta().getIdCabecera();
+            if (idCabecera > 0) {
+                this.vista.jbDetalleCobro.setEnabled(true);
+                this.modelo.actualizarDetalle(idCabecera);
+                if (e.getClickCount() == 2) {
+                    invocarVistaVerDetalle();
+                }
             }
         }
     }

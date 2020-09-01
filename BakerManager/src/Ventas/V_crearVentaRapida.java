@@ -80,19 +80,24 @@ public class V_crearVentaRapida extends JDialog {
         });
     }
 
-    public V_crearVentaRapida(JDialog frame) {
-        super(frame, TITLE_CREATE, JDialog.ModalityType.APPLICATION_MODAL);
+    public V_crearVentaRapida(JDialog dialog, boolean esModoCreacion_) {
+        super(dialog, TITLE_CREATE, JDialog.ModalityType.APPLICATION_MODAL);
         setSize(950, 700);
         setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
         initComponents();
-        setLocationRelativeTo(frame);
+        setLocationRelativeTo(dialog);
         getContentPane().setLayout(new BorderLayout());
         getContentPane().add(jpNorth, BorderLayout.NORTH);
         getContentPane().add(jpCenter, BorderLayout.CENTER);
         getContentPane().add(jpSouth, BorderLayout.SOUTH);
+        this.esModoCreacion = esModoCreacion_;
         addWindowListener(new WindowAdapter() {
             public void windowOpened(WindowEvent e) {
-                jtfCodProd.requestFocus();
+                if (esModoCreacion) {
+                    jtfCodProd.requestFocusInWindow();
+                } else {
+                    jbSalir.requestFocusInWindow();
+                }
             }
         });
     }

@@ -80,7 +80,7 @@ public class M_seleccionarVenta {
         calendarFinal.set(Calendar.MINUTE, 59);
         calendarFinal.set(Calendar.SECOND, 59);
         calendarFinal.set(Calendar.MILLISECOND, 999);
-        this.tm.setList(DB_Cobro.consultarFacturasPendiente(getCabecera().getCliente().getIdCliente()));
+        this.tm.setList(DB_Cobro.consultarPagosPendiente(null, null, getCabecera().getCliente().getIdCliente(), -1, false));
     }
 
     public List<E_facturaDetalle> obtenerFacturaDetalle(int nroFactura) {

@@ -5,6 +5,7 @@
 package Cobros;
 
 import Entities.E_facturaSinPago;
+import Entities.E_movimientoContable;
 import Interface.RecibirCtaCteDetalleCallback;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -113,10 +114,10 @@ public class C_seleccionarFacturaPendiente extends MouseAdapter implements Actio
         int fila = vista.jtFacturaPendiente.getSelectedRow();
         int columna = vista.jtFacturaPendiente.getSelectedColumn();
         if ((fila > -1) && (columna > -1)) {
-            E_facturaSinPago cabecera = modelo.getTableModel().getList().get(fila);
+            E_movimientoContable cabecera = modelo.getTableModel().getList().get(fila);
             vista.jbAceptar.setEnabled(true);
             ReciboCobro rp = new ReciboCobro(this.vista);
-            rp.nuevoPago(cabecera);
+            rp.nuevoPago(cabecera.getVenta());
             rp.setInterface(callback);
             rp.mostrarVista();
             vista.jtfBuscar.requestFocusInWindow();

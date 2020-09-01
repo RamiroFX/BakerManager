@@ -11,6 +11,7 @@ import Entities.E_cuentaCorrienteDetalle;
 import Entities.E_facturaCabecera;
 import Entities.E_facturaSinPago;
 import Entities.E_formaPago;
+import Entities.E_movimientoContable;
 import Entities.E_retencionVenta;
 import Entities.Estado;
 import Entities.M_cliente;
@@ -133,6 +134,71 @@ public class DB_Cobro {
                 fsp.setRuc(rs.getString("ruc"));
                 fsp.setRuc(rs.getString("ruc_identificador"));
                 list.add(fsp);
+            }
+        } catch (SQLException ex) {
+            Logger lgr = Logger.getLogger(DB_Cobro.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        }
+        return list;
+    }
+
+    public static List<E_movimientoContable> consultarPagosPendiente(Date fechaInicio, Date fechaFin, int idCliente, int nroFactura, boolean conFecha) {
+        List<E_movimientoContable> list = new ArrayList<>();
+        String Query = "SELECT * FROM v_facturas_sin_pago4 WHERE 1=1 ";
+        if (conFecha) {
+            Query = Query + "AND FECHA BETWEEN ? AND ? ";
+        }
+        if (idCliente > 0) {
+            Query = Query + " AND ID_CLIENTE = ? ";
+        }
+        if (nroFactura > 0) {
+            Query = Query + " AND NRO_FACTURA = ? ";
+        }
+        int pos = 1;
+        try {
+            pst = DB_manager.getConection().prepareStatement(Query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            if (conFecha) {
+                pst.setTimestamp(pos, new Timestamp(fechaInicio.getTime()));
+                pos++;
+                pst.setTimestamp(pos, new Timestamp(fechaFin.getTime()));
+                pos++;
+            }
+            if (idCliente > 0) {
+                pst.setInt(pos, idCliente);
+                pos++;
+            }
+            if (nroFactura > 0) {
+                pst.setInt(pos, nroFactura);
+            }
+            rs = pst.executeQuery();
+            while (rs.next()) {
+                E_facturaSinPago fsp = new E_facturaSinPago();
+                fsp.setIdCabecera(0);
+                fsp.setIdCliente(rs.getInt("id_cliente"));
+                fsp.setNroFactura(rs.getInt("nro_factura"));
+                fsp.setClienteEntidad(rs.getString("cliente"));
+                fsp.setFecha(rs.getTimestamp("fecha"));
+                fsp.setMonto(rs.getInt("monto"));
+                fsp.setPago(rs.getInt("pago"));
+                fsp.setSaldo(fsp.getMonto() - fsp.getPago());
+                fsp.setRuc(rs.getString("ruc"));
+                fsp.setRuc(rs.getString("ruc_identificador"));
+                String tipo = rs.getString("tipo_documento");
+                E_movimientoContable mc = new E_movimientoContable();
+                switch (tipo) {
+                    case E_movimientoContable.STR_TIPO_VENTA: {
+                        mc.setTipo(E_movimientoContable.TIPO_VENTA);
+                        mc.setTipoDescripcion(tipo);
+                        break;
+                    }
+                    case E_movimientoContable.STR_TIPO_SALDO_INICIAL: {
+                        mc.setTipo(E_movimientoContable.TIPO_SALDO_INICIAL);
+                        mc.setTipoDescripcion(tipo);
+                        break;
+                    }
+                }
+                mc.setVenta(fsp);
+                list.add(mc);
             }
         } catch (SQLException ex) {
             Logger lgr = Logger.getLogger(DB_Cobro.class.getName());
@@ -900,7 +966,6 @@ public class DB_Cobro {
         }
         return false;
     }
-
 
     public static boolean facturaPendientePago(int nroFactura) {
         String QUERY = "SELECT nro_factura FROM v_facturas_sin_pago WHERE nro_factura = " + nroFactura;
