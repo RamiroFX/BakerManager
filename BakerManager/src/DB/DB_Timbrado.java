@@ -33,7 +33,7 @@ public class DB_Timbrado {
             String tipoFecha, int idEstado, boolean conFecha) {
         List<E_Timbrado> list = new ArrayList<>();
         String query = "SELECT "
-                + "TV.ID_TIMBRADO_VENTA, "
+                + "TV.ID_TIMBRADO, "
                 + "TV.NRO_TIMBRADO, "
                 + "TV.NRO_SUCURSAL, "
                 + "TV.NRO_PUNTO_VENTA, "
@@ -45,10 +45,10 @@ public class DB_Timbrado {
                 + "(SELECT descripcion FROM ESTADO ESTA WHERE ESTA.id_estado = TV.id_estado) \"ESTADO\", "
                 + "TV.id_estado "
                 + "FROM  "
-                + "TIMBRADO_VENTA TV, "
+                + "TIMBRADO TV, "
                 + "funcionario f "
                 + "WHERE TV.id_funcionario = f.id_funcionario ";
-        String orderBy = "ORDER BY TV.ID_TIMBRADO_VENTA";
+        String orderBy = "ORDER BY TV.ID_TIMBRADO";
         if (conFecha) {
             switch (tipoFecha) {
                 case "Fecha vencimiento": {
@@ -100,7 +100,7 @@ public class DB_Timbrado {
                 estado.setId(rs.getInt("id_estado"));
                 estado.setDescripcion(rs.getString("ESTADO"));
                 E_Timbrado unTimbrado = new E_Timbrado();
-                unTimbrado.setId(rs.getInt("ID_TIMBRADO_VENTA"));
+                unTimbrado.setId(rs.getInt("ID_TIMBRADO"));
                 unTimbrado.setCreador(f);
                 unTimbrado.setFechaCreacion(rs.getTimestamp("TIEMPO_CREACION"));
                 unTimbrado.setFechaVencimiento(rs.getTimestamp("TIEMPO_VENCIMIENTO"));
@@ -134,7 +134,7 @@ public class DB_Timbrado {
     public static E_Timbrado obtenerTimbrado(int nroTimbrado, int nroSucursal, int nroPVTA, int nroBoletaInicial, int nroBoletaFinal) {
         E_Timbrado unTimbrado = null;
         String query = "SELECT "
-                + "TV.ID_TIMBRADO_VENTA, "
+                + "TV.ID_TIMBRADO, "
                 + "TV.NRO_TIMBRADO, "
                 + "TV.NRO_SUCURSAL, "
                 + "TV.NRO_PUNTO_VENTA, "
@@ -146,7 +146,7 @@ public class DB_Timbrado {
                 + "(SELECT descripcion FROM ESTADO ESTA WHERE ESTA.id_estado = TV.id_estado) \"ESTADO\", "
                 + "TV.id_estado "
                 + "FROM  "
-                + "TIMBRADO_VENTA TV, "
+                + "TIMBRADO TV, "
                 + "funcionario f "
                 + "WHERE TV.id_funcionario = f.id_funcionario "
                 + "AND TV.NRO_TIMBRADO = ? "
@@ -170,7 +170,7 @@ public class DB_Timbrado {
                 estado.setId(rs.getInt("id_estado"));
                 estado.setDescripcion(rs.getString("ESTADO"));
                 unTimbrado = new E_Timbrado();
-                unTimbrado.setId(rs.getInt("ID_TIMBRADO_VENTA"));
+                unTimbrado.setId(rs.getInt("ID_TIMBRADO"));
                 unTimbrado.setCreador(f);
                 unTimbrado.setFechaCreacion(rs.getDate("TIEMPO_CREACION"));
                 unTimbrado.setFechaVencimiento(rs.getDate("TIEMPO_VENCIMIENTO"));
@@ -203,7 +203,7 @@ public class DB_Timbrado {
     public static E_Timbrado obtenerTimbrado(int idTimbrado) {
         E_Timbrado unTimbrado = null;
         String query = "SELECT "
-                + "TV.ID_TIMBRADO_VENTA, "
+                + "TV.ID_TIMBRADO, "
                 + "TV.NRO_TIMBRADO, "
                 + "TV.NRO_SUCURSAL, "
                 + "TV.NRO_PUNTO_VENTA, "
@@ -215,10 +215,10 @@ public class DB_Timbrado {
                 + "(SELECT descripcion FROM ESTADO ESTA WHERE ESTA.id_estado = TV.id_estado) \"ESTADO\", "
                 + "TV.id_estado "
                 + "FROM  "
-                + "TIMBRADO_VENTA TV, "
+                + "TIMBRADO TV, "
                 + "funcionario f "
                 + "WHERE TV.id_funcionario = f.id_funcionario "
-                + "AND TV.ID_TIMBRADO_VENTA = ? ";
+                + "AND TV.ID_TIMBRADO = ? ";
         try {
             pst = DB_manager.getConection().prepareStatement(query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             pst.setInt(1, idTimbrado);
@@ -230,7 +230,7 @@ public class DB_Timbrado {
                 estado.setId(rs.getInt("id_estado"));
                 estado.setDescripcion(rs.getString("ESTADO"));
                 unTimbrado = new E_Timbrado();
-                unTimbrado.setId(rs.getInt("ID_TIMBRADO_VENTA"));
+                unTimbrado.setId(rs.getInt("ID_TIMBRADO"));
                 unTimbrado.setCreador(f);
                 unTimbrado.setFechaCreacion(rs.getDate("TIEMPO_CREACION"));
                 unTimbrado.setFechaVencimiento(rs.getDate("TIEMPO_VENCIMIENTO"));
@@ -263,7 +263,7 @@ public class DB_Timbrado {
     public static E_Timbrado obtenerUltimoTimbradoUsado() {
         E_Timbrado unTimbrado = null;
         String query = "SELECT "
-                + "TV.ID_TIMBRADO_VENTA, "
+                + "TV.ID_TIMBRADO, "
                 + "TV.NRO_TIMBRADO, "
                 + "TV.NRO_SUCURSAL, "
                 + "TV.NRO_PUNTO_VENTA, "
@@ -275,7 +275,7 @@ public class DB_Timbrado {
                 + "(SELECT descripcion FROM ESTADO ESTA WHERE ESTA.id_estado = TV.id_estado) \"ESTADO\", "
                 + "TV.id_estado "
                 + "FROM  "
-                + "TIMBRADO_VENTA TV, "
+                + "TIMBRADO TV, "
                 + "funcionario f "
                 + "WHERE TV.id_funcionario = f.id_funcionario "
                 + "ORDER BY ID DESC LIMIT 1";
@@ -289,7 +289,7 @@ public class DB_Timbrado {
                 estado.setId(rs.getInt("id_estado"));
                 estado.setDescripcion(rs.getString("ESTADO"));
                 unTimbrado = new E_Timbrado();
-                unTimbrado.setId(rs.getInt("ID_TIMBRADO_VENTA"));
+                unTimbrado.setId(rs.getInt("ID_TIMBRADO"));
                 unTimbrado.setCreador(f);
                 unTimbrado.setFechaCreacion(rs.getDate("TIEMPO_CREACION"));
                 unTimbrado.setFechaVencimiento(rs.getDate("TIEMPO_VENCIMIENTO"));

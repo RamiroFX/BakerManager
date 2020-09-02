@@ -44,11 +44,12 @@ import javax.swing.KeyStroke;
 public class C_gestionCobro implements GestionInterface, RecibirEmpleadoCallback,
         RecibirClienteCallback, InterfaceNotificarCambio {
 
+    private static final int TIPO_BUSCADOR = 1, TIPO_ESTADO_CUENTA = 2, TIPO_PAGO_SALDO_INICIAL = 3;
+
     V_gestionCobro vista;
     M_gestionCobroPago modelo;
     public C_inicio c_inicio;
     private int tipoCliente;//para utilizar en el buscado de clientes
-    private static final int TIPO_BUSCADOR = 1, TIPO_ESTADO_CUENTA = 2;
     private CobroClienteStatusCellRenderer scr;
 
     public C_gestionCobro(V_gestionCobro vista, M_gestionCobroPago modelo, C_inicio c_inicio) {
@@ -143,29 +144,29 @@ public class C_gestionCobro implements GestionInterface, RecibirEmpleadoCallback
          * **ESCAPE HOTKEY/
          */
         //cobro
-        String cerrar = "cerrar";
-        String crearCobro = "Referesh";
+//        String cerrar = "cerrar";
+//        String crearCobro = "Referesh";
         this.vista.jbCliente.addKeyListener(this);
-        Action buttonAction = new AbstractAction(crearCobro) {
-            @Override
-            public void actionPerformed(ActionEvent evt) {
-                invocarVistaCobrar();
-            }
-        };
-        Action cerrarAction = new AbstractAction(cerrar) {
-            @Override
-            public void actionPerformed(ActionEvent evt) {
-                cerrar();
-            }
-        };
-        this.vista.jbCobro.setAction(buttonAction);
-        this.vista.jbCobro.setAction(cerrarAction);
-        this.vista.jbCobro.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
-                KeyStroke.getKeyStroke(KeyEvent.VK_F5, 0), crearCobro);
-        this.vista.jbCobro.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
-                KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), cerrar);
-        this.vista.jbCobro.getActionMap().put(crearCobro, buttonAction);
-        this.vista.jbCobro.getActionMap().put(cerrar, cerrarAction);
+//        Action buttonAction = new AbstractAction(crearCobro) {
+//            @Override
+//            public void actionPerformed(ActionEvent evt) {
+//                invocarVistaCobrar();
+//            }
+//        };
+//        Action cerrarAction = new AbstractAction(cerrar) {
+//            @Override
+//            public void actionPerformed(ActionEvent evt) {
+//                cerrar();
+//            }
+//        };
+//        this.vista.jbCobro.setAction(buttonAction);
+//        this.vista.jbCobro.setAction(cerrarAction);
+//        this.vista.jbCobro.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+//                KeyStroke.getKeyStroke(KeyEvent.VK_F5, 0), crearCobro);
+//        this.vista.jbCobro.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+//                KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), cerrar);
+//        this.vista.jbCobro.getActionMap().put(crearCobro, buttonAction);
+//        this.vista.jbCobro.getActionMap().put(cerrar, cerrarAction);
 
         this.vista.jbEmpCobro.addKeyListener(this);
         this.vista.jddInicioCobro.addKeyListener(this);
@@ -300,6 +301,13 @@ public class C_gestionCobro implements GestionInterface, RecibirEmpleadoCallback
         this.vista.jbDetalleCobro.setEnabled(false);
     }
 
+    private void invocarCobroSaldoInicial() {
+        this.tipoCliente = TIPO_PAGO_SALDO_INICIAL;
+        Seleccionar_cliente sc = new Seleccionar_cliente(this.c_inicio.vista);
+        sc.setCallback(this);
+        sc.mostrarVista();
+    }
+
     @Override
     public void recibirFuncionario(M_funcionario funcionario) {
         this.modelo.setFuncionario(funcionario);
@@ -317,6 +325,10 @@ public class C_gestionCobro implements GestionInterface, RecibirEmpleadoCallback
             case TIPO_ESTADO_CUENTA: {
                 modelo.setEstadoCuentaCliente(cliente);
                 prepararReporteEstadoCuentas();
+                break;
+            }
+            case TIPO_PAGO_SALDO_INICIAL: {
+                prepararPagoSaldoInicial();
                 break;
             }
         }
@@ -378,7 +390,7 @@ public class C_gestionCobro implements GestionInterface, RecibirEmpleadoCallback
     }
 
     private void mostrarOpciones() {
-        Object[] options = {"Estado de cuenta", "Retención de I.V.A.", "Bancos"};
+        Object[] options = {"Estado de cuenta", "Retención de I.V.A.", "Pago de saldo inicial", "Bancos"};
         int n = JOptionPane.showOptionDialog(this.vista,
                 "Eliga su opción",
                 "Atención",
@@ -407,6 +419,15 @@ public class C_gestionCobro implements GestionInterface, RecibirEmpleadoCallback
                 break;
             }
             case 2: {
+                EventQueue.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        invocarCobroSaldoInicial();
+                    }
+                });
+                break;
+            }
+            case 3: {
                 EventQueue.invokeLater(new Runnable() {
                     @Override
                     public void run() {
@@ -468,6 +489,10 @@ public class C_gestionCobro implements GestionInterface, RecibirEmpleadoCallback
                 break;
             }
         }
+    }
+
+    private void prepararPagoSaldoInicial() {
+        JOptionPane.showMessageDialog(vista, "Implementando", "Pago de saldo inicial", JOptionPane.INFORMATION_MESSAGE);
     }
 
     @Override

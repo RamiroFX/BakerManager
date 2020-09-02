@@ -5,6 +5,7 @@
  */
 package DB;
 
+import Entities.E_Timbrado;
 import Entities.E_banco;
 import Entities.E_cuentaCorrienteCabecera;
 import Entities.E_cuentaCorrienteDetalle;
@@ -144,7 +145,7 @@ public class DB_Cobro {
 
     public static List<E_movimientoContable> consultarPagosPendiente(Date fechaInicio, Date fechaFin, int idCliente, int nroFactura, boolean conFecha) {
         List<E_movimientoContable> list = new ArrayList<>();
-        String Query = "SELECT * FROM v_facturas_sin_pago4 WHERE 1=1 ";
+        String Query = "SELECT * FROM v_facturas_sin_pago WHERE 1=1 ";
         if (conFecha) {
             Query = Query + "AND FECHA BETWEEN ? AND ? ";
         }
@@ -172,9 +173,14 @@ public class DB_Cobro {
             }
             rs = pst.executeQuery();
             while (rs.next()) {
+                E_Timbrado timbrado = new E_Timbrado();
+                timbrado.setNroTimbrado(rs.getInt("nro_timbrado"));
+                timbrado.setNroSucursal(rs.getInt("nro_sucursal"));
+                timbrado.setNroPuntoVenta(rs.getInt("nro_punto_venta"));
                 E_facturaSinPago fsp = new E_facturaSinPago();
-                fsp.setIdCabecera(0);
+                fsp.setIdCabecera(rs.getInt("id_factura_cabecera"));
                 fsp.setIdCliente(rs.getInt("id_cliente"));
+                fsp.setTimbrado(timbrado);
                 fsp.setNroFactura(rs.getInt("nro_factura"));
                 fsp.setClienteEntidad(rs.getString("cliente"));
                 fsp.setFecha(rs.getTimestamp("fecha"));

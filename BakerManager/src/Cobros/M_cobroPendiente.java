@@ -36,7 +36,7 @@ public class M_cobroPendiente {
     private InterfaceFacturaDetalle interfaceFacturaDetalle;
 
     public M_cobroPendiente() {
-        this.facturaCabecera = new M_facturaCabecera();        
+        this.facturaCabecera = new M_facturaCabecera();
         this.facturaCabecera.getFuncionario().setId_funcionario(-1);
         this.facturaCabecera.getCliente().setIdCliente(-1);
         this.tm = new FacturaSinPagoTableModel();
@@ -132,6 +132,10 @@ public class M_cobroPendiente {
 
     public void actualizarDetalle(int idFacturaCabecera) {
         this.getTmDetalle().setFacturaDetalleList(DB_Ingreso.obtenerVentaDetalles(idFacturaCabecera));
+    }
+
+    public void vaciarDetalle() {
+        this.getTmDetalle().vaciarLista();
     }
 
     public List<E_movimientoContable> obtenerCobroPendiente(M_cliente cliente, Date fechaInicio, Date fechaFin, int nroFactura, boolean conFecha) {
