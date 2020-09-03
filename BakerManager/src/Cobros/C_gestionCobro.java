@@ -31,11 +31,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.JComponent;
 import javax.swing.JOptionPane;
-import javax.swing.KeyStroke;
 
 /**
  *
@@ -44,7 +40,7 @@ import javax.swing.KeyStroke;
 public class C_gestionCobro implements GestionInterface, RecibirEmpleadoCallback,
         RecibirClienteCallback, InterfaceNotificarCambio {
 
-    private static final int TIPO_BUSCADOR = 1, TIPO_ESTADO_CUENTA = 2, TIPO_PAGO_SALDO_INICIAL = 3;
+    private static final int TIPO_BUSCADOR = 1, TIPO_ESTADO_CUENTA = 2;
 
     V_gestionCobro vista;
     M_gestionCobroPago modelo;
@@ -301,11 +297,9 @@ public class C_gestionCobro implements GestionInterface, RecibirEmpleadoCallback
         this.vista.jbDetalleCobro.setEnabled(false);
     }
 
-    private void invocarCobroSaldoInicial() {
-        this.tipoCliente = TIPO_PAGO_SALDO_INICIAL;
-        Seleccionar_cliente sc = new Seleccionar_cliente(this.c_inicio.vista);
-        sc.setCallback(this);
-        sc.mostrarVista();
+    private void invocarCobroAnticipado() {
+        CrearCobroAnticipado cca = new CrearCobroAnticipado(this.c_inicio.vista, c_inicio);
+        cca.mostrarVista();
     }
 
     @Override
@@ -325,10 +319,6 @@ public class C_gestionCobro implements GestionInterface, RecibirEmpleadoCallback
             case TIPO_ESTADO_CUENTA: {
                 modelo.setEstadoCuentaCliente(cliente);
                 prepararReporteEstadoCuentas();
-                break;
-            }
-            case TIPO_PAGO_SALDO_INICIAL: {
-                prepararPagoSaldoInicial();
                 break;
             }
         }
@@ -390,7 +380,7 @@ public class C_gestionCobro implements GestionInterface, RecibirEmpleadoCallback
     }
 
     private void mostrarOpciones() {
-        Object[] options = {"Estado de cuenta", "Retención de I.V.A.", "Pago de saldo inicial", "Bancos"};
+        Object[] options = {"Estado de cuenta", "Retención de I.V.A.", "Pago anticipado", "Bancos"};
         int n = JOptionPane.showOptionDialog(this.vista,
                 "Eliga su opción",
                 "Atención",
@@ -422,7 +412,7 @@ public class C_gestionCobro implements GestionInterface, RecibirEmpleadoCallback
                 EventQueue.invokeLater(new Runnable() {
                     @Override
                     public void run() {
-                        invocarCobroSaldoInicial();
+                        invocarCobroAnticipado();
                     }
                 });
                 break;

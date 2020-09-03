@@ -3,9 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Cobros;
+package Cobros.CobroAnticipado;
 
 import Cliente.Seleccionar_cliente;
+import Cobros.C_gestionCobro;
+import Cobros.ReciboCobro;
+import Cobros.SeleccionarFacturaPendiente;
 import Empleado.Seleccionar_funcionario;
 import Entities.E_cuentaCorrienteDetalle;
 import Entities.E_facturaSinPago;
@@ -34,7 +37,7 @@ import javax.swing.JOptionPane;
  *
  * @author Ramiro Ferreira
  */
-public class C_crearCobro extends MouseAdapter implements ActionListener, KeyListener,
+public class C_cobroAnticipado extends MouseAdapter implements ActionListener, KeyListener,
         RecibirEmpleadoCallback, RecibirClienteCallback, RecibirCtaCteDetalleCallback {
 
     private static final String VALIDAR_RESPONSABLE_MSG = "Seleccione un cobrador",
@@ -48,11 +51,11 @@ public class C_crearCobro extends MouseAdapter implements ActionListener, KeyLis
             VALIDAR_DETALLE_RECIBO = "Existen detalles de cobros pendiente. Vacíe la lista para seleccionar otro cliente",
             CONFIRMAR_SALIR_MSG = "¿Cancelar cobro?",
             VALIDAR_TITULO = "Atención";
-    public M_crearCobro modelo;
-    public V_crearCobro vista;
+    public M_cobroAnticipado modelo;
+    public V_cobroAnticipado vista;
     private C_inicio inicio;
 
-    public C_crearCobro(M_crearCobro modelo, V_crearCobro vista, C_inicio inicio) {
+    public C_cobroAnticipado(M_cobroAnticipado modelo, V_cobroAnticipado vista, C_inicio inicio) {
         this.modelo = modelo;
         this.vista = vista;
         this.inicio = inicio;
@@ -93,8 +96,7 @@ public class C_crearCobro extends MouseAdapter implements ActionListener, KeyLis
         this.vista.jbCliente.addActionListener(this);
         this.vista.jtfNroRecibo.addActionListener(this);
         this.vista.jbFuncionario.addActionListener(this);
-        this.vista.jtfNroFactura.addActionListener(this);
-        this.vista.jbAgregarFactura.addActionListener(this);
+        this.vista.jbAgregarMonto.addActionListener(this);
         this.vista.jbEliminarDetalle.addActionListener(this);
         this.vista.jbModificarDetalle.addActionListener(this);
         this.vista.jbAceptar.addActionListener(this);
@@ -108,9 +110,8 @@ public class C_crearCobro extends MouseAdapter implements ActionListener, KeyLis
         this.vista.jtfNroRecibo.addKeyListener(this);
         this.vista.jbFuncionario.addKeyListener(this);
         this.vista.jtfFuncionario.addKeyListener(this);
-        this.vista.jtfNroFactura.addKeyListener(this);
         this.vista.jdcFechaCobro.addKeyListener(this);
-        this.vista.jbAgregarFactura.addKeyListener(this);
+        this.vista.jbAgregarMonto.addKeyListener(this);
         this.vista.jbEliminarDetalle.addKeyListener(this);
         this.vista.jbModificarDetalle.addKeyListener(this);
         this.vista.jbAceptar.addKeyListener(this);
@@ -134,17 +135,16 @@ public class C_crearCobro extends MouseAdapter implements ActionListener, KeyLis
             cabecera.setClienteEntidad(modelo.getCabecera().getCliente().getEntidad());
             cabecera.setIdCabecera(ctaCteDet.getIdFacturaCabecera());
             cabecera.setNroFactura(ctaCteDet.getNroFactura());
-            cabecera.setCliente(modelo.getCabecera().getCliente());
             cabecera.setMonto((int) ctaCteDet.getMonto());
             vista.jbAceptar.setEnabled(true);
             E_movimientoContable mc = new E_movimientoContable();
             mc.setVenta(cabecera);
-            switch(ctaCteDet.getTipoPago().getId()){
-                case E_reciboTipoPago.TIPO_FACTURA:{
+            switch (ctaCteDet.getTipoPago().getId()) {
+                case E_reciboTipoPago.TIPO_FACTURA: {
                     mc.setTipo(E_movimientoContable.TIPO_VENTA);
                     break;
                 }
-                case E_reciboTipoPago.TIPO_SALDO_INICIAL:{
+                case E_reciboTipoPago.TIPO_SALDO_INICIAL: {
                     mc.setTipo(E_movimientoContable.TIPO_SALDO_INICIAL);
                     break;
                 }
@@ -269,10 +269,13 @@ public class C_crearCobro extends MouseAdapter implements ActionListener, KeyLis
         if (!validarCliente()) {
             return;
         }
-        int idCliente = modelo.getCabecera().getCliente().getIdCliente();
-        SeleccionarFacturaPendiente sc = new SeleccionarFacturaPendiente(this.vista, idCliente);
-        sc.setCallback(this);
-        sc.mostrarVista();
+        E_movimientoContable cabecera = new E_movimientoContable();
+        cabecera.setTipo(E_movimientoContable.TIPO_PAGO);
+        vista.jbAceptar.setEnabled(true);
+        ReciboCobro rp = new ReciboCobro(this.vista);
+        rp.nuevoPago(cabecera);
+        rp.setInterface(this);
+        rp.mostrarVista();
     }
 
     private void invocarVistaSeleccionCliente() {
@@ -307,7 +310,7 @@ public class C_crearCobro extends MouseAdapter implements ActionListener, KeyLis
         Object source = e.getSource();
         if (source.equals(this.vista.jbAceptar)) {
             guardar();
-        } else if (source.equals(this.vista.jbAgregarFactura)) {
+        } else if (source.equals(this.vista.jbAgregarMonto)) {
             invocarVistaSeleccionFacturaPendiente();
         } else if (source.equals(this.vista.jbCliente)) {
             invocarVistaSeleccionCliente();

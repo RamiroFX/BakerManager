@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Cobros;
+package Cobros.CobroAnticipado;
 
 import DB.DB_Cobro;
 import Entities.E_cuentaCorrienteCabecera;
@@ -17,12 +17,12 @@ import java.util.ArrayList;
  *
  * @author Ramiro Ferreira
  */
-public class M_crearCobro {
+public class M_cobroAnticipado {
 
     private E_cuentaCorrienteCabecera ctaCteCabecera;
     private CtaCteDetalleTableModel ctaCteDetalleTm;
 
-    public M_crearCobro() {
+    public M_cobroAnticipado() {
         this.ctaCteCabecera = new E_cuentaCorrienteCabecera();
         this.ctaCteCabecera.getCobrador().setId_funcionario(-1);
         this.ctaCteCabecera.setFuncionario(DatosUsuario.getRol_usuario().getFuncionario());
