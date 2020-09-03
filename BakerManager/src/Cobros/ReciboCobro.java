@@ -15,6 +15,7 @@ import Entities.E_formaPago;
 import Entities.E_movimientoContable;
 import Entities.E_reciboTipoPago;
 import Entities.E_tipoCheque;
+import Entities.M_cliente;
 import Entities.M_facturaDetalle;
 import Interface.RecibirCtaCteDetalleCallback;
 import java.awt.GridLayout;
@@ -85,7 +86,7 @@ public class ReciboCobro extends javax.swing.JDialog implements ActionListener, 
     //VARIABLES TARJETA TODO
 
     private RecibirCtaCteDetalleCallback callback;
-    private E_movimientoContable facturaCabecera;
+    private E_movimientoContable movimientoContable;
     private boolean modificarDetalle;
     private DecimalFormat decimalFormat;
     private int index;//para modificar filas
@@ -130,11 +131,11 @@ public class ReciboCobro extends javax.swing.JDialog implements ActionListener, 
 
     public void nuevoPago(E_movimientoContable fsp) {
         modificarDetalle = false;
-        facturaCabecera = fsp;
+        movimientoContable = fsp;
         switch (fsp.getTipo()) {
             case E_movimientoContable.TIPO_VENTA: {
-                jtfIdVenta.setText(decimalFormat.format(facturaCabecera.getVenta().getIdCabecera()));
-                jtfNroFactura.setText(decimalFormat.format(facturaCabecera.getVenta().getNroFactura()));
+                jtfIdVenta.setText(decimalFormat.format(movimientoContable.getVenta().getIdCabecera()));
+                jtfNroFactura.setText(decimalFormat.format(movimientoContable.getVenta().getNroFactura()));
                 break;
             }
             case E_movimientoContable.TIPO_SALDO_INICIAL: {
@@ -143,27 +144,27 @@ public class ReciboCobro extends javax.swing.JDialog implements ActionListener, 
                 break;
             }
         }
-        jtfCliente.setText(facturaCabecera.getVenta().getClienteEntidad());
-        jtfTotalFactura.setText(decimalFormat.format(facturaCabecera.getVenta().getMonto()));
-        jtfTotalPendiente.setText(decimalFormat.format(facturaCabecera.getVenta().getSaldo()));
+        jtfCliente.setText(movimientoContable.getVenta().getClienteEntidad());
+        jtfTotalFactura.setText(decimalFormat.format(movimientoContable.getVenta().getMonto()));
+        jtfTotalPendiente.setText(decimalFormat.format(movimientoContable.getVenta().getSaldo()));
     }
 
     public void modificarDetalle(int index, E_movimientoContable fsp, E_cuentaCorrienteDetalle detalle) {
         this.index = index;
         modificarDetalle = true;
-        facturaCabecera = new E_movimientoContable();
+        movimientoContable = new E_movimientoContable();
         /*
         ACTUALIZAR VISTA CON LOS DATOS
          */
         switch (fsp.getTipo()) {
             case E_movimientoContable.TIPO_VENTA: {
-                facturaCabecera.setVenta(DB_Cobro.obtenerFacturaSinPagoPorId(fsp.getVenta().getIdCabecera()));
-                jtfIdVenta.setText(decimalFormat.format(facturaCabecera.getVenta().getIdCabecera()));
-                jtfNroFactura.setText(decimalFormat.format(facturaCabecera.getVenta().getNroFactura()));
+                movimientoContable.setVenta(DB_Cobro.obtenerFacturaSinPagoPorId(fsp.getVenta().getIdCabecera()));
+                jtfIdVenta.setText(decimalFormat.format(movimientoContable.getVenta().getIdCabecera()));
+                jtfNroFactura.setText(decimalFormat.format(movimientoContable.getVenta().getNroFactura()));
                 break;
             }
             case E_movimientoContable.TIPO_SALDO_INICIAL: {
-                facturaCabecera.setVenta(DB_Cobro.obtenerSaldoInicialPendiente(fsp.getVenta().getIdCliente()));
+                movimientoContable.setVenta(DB_Cobro.obtenerSaldoInicialPendiente(fsp.getVenta().getIdCliente()));
                 jtfIdVenta.setText("Saldo inicial");
                 jtfNroFactura.setText("Saldo inicial");
                 break;
@@ -172,9 +173,9 @@ public class ReciboCobro extends javax.swing.JDialog implements ActionListener, 
         //facturaCabecera = DB_Cobro.obtenerFacturaSinPago(fsp.getNroFactura());
         //el id no esta presente en la vista V_facturas sinpago, por eso lo extraemos del detalle recibido
         //facturaCabecera.setIdFacturaCabecera(detalle.getIdFacturaCabecera());
-        jtfCliente.setText(facturaCabecera.getVenta().getClienteEntidad());
-        jtfTotalFactura.setText(decimalFormat.format(facturaCabecera.getVenta().getMonto()));
-        jtfTotalPendiente.setText(decimalFormat.format(facturaCabecera.getVenta().getSaldo()));
+        jtfCliente.setText(movimientoContable.getVenta().getClienteEntidad());
+        jtfTotalFactura.setText(decimalFormat.format(movimientoContable.getVenta().getMonto()));
+        jtfTotalPendiente.setText(decimalFormat.format(movimientoContable.getVenta().getSaldo()));
         E_formaPago fp = detalle.getFormaPago();
         jcbFormaPago.setSelectedItem(fp);
         jcbFormaPago.setEnabled(false);
@@ -212,6 +213,15 @@ public class ReciboCobro extends javax.swing.JDialog implements ActionListener, 
 
     public void setInterface(RecibirCtaCteDetalleCallback interfaceNotificarCambio) {
         this.callback = interfaceNotificarCambio;
+    }
+
+    public void pagoAnticipado(M_cliente cliente) {
+        jtfIdVenta.setText("Pago anticipado");
+        jtfNroFactura.setText("Pago anticipado");
+        jtfCliente.setText(cliente.getEntidad());
+        jtfTotalFactura.setText(decimalFormat.format(0));
+        jtfTotalPendiente.setText(decimalFormat.format(0));        
+        //PENDIENTE
     }
 
     private void initComponents() {
@@ -349,11 +359,11 @@ public class ReciboCobro extends javax.swing.JDialog implements ActionListener, 
             return;
         }
         E_cuentaCorrienteDetalle detalle = new E_cuentaCorrienteDetalle();
-        switch (facturaCabecera.getTipo()) {
+        switch (movimientoContable.getTipo()) {
             case E_movimientoContable.TIPO_VENTA: {
                 detalle.setTipoPago(new E_reciboTipoPago(E_reciboTipoPago.TIPO_FACTURA, ""));
-                detalle.setIdFacturaCabecera(facturaCabecera.getVenta().getIdCabecera());
-                detalle.setNroFactura(facturaCabecera.getVenta().getNroFactura());
+                detalle.setIdFacturaCabecera(movimientoContable.getVenta().getIdCabecera());
+                detalle.setNroFactura(movimientoContable.getVenta().getNroFactura());
                 break;
             }
             case E_movimientoContable.TIPO_SALDO_INICIAL: {
@@ -391,9 +401,9 @@ public class ReciboCobro extends javax.swing.JDialog implements ActionListener, 
             }
         }
         if (modificarDetalle) {
-            callback.modificarCtaCteDetalle(index, detalle, facturaCabecera.getVenta().getMonto());
+            callback.modificarCtaCteDetalle(index, detalle, movimientoContable.getVenta().getSaldo());
         } else {
-            callback.recibirCtaCteDetalle(detalle, facturaCabecera.getVenta().getMonto());
+            callback.recibirCtaCteDetalle(detalle, movimientoContable.getVenta().getSaldo());
         }
         dispose();
     }
@@ -425,11 +435,11 @@ public class ReciboCobro extends javax.swing.JDialog implements ActionListener, 
             JOptionPane.showMessageDialog(this, "El importe debe ser mayor a 0 (cero)", "Atención", JOptionPane.ERROR_MESSAGE);
             return false;
         }
-        if (importe > facturaCabecera.getVenta().getMonto()) {
+        if (importe > movimientoContable.getVenta().getMonto()) {
             JOptionPane.showMessageDialog(this, "El importe ingresado supera al total a pagar", "Atención", JOptionPane.ERROR_MESSAGE);
             return false;
         }
-        if (importe > facturaCabecera.getVenta().getSaldo()) {
+        if (importe > movimientoContable.getVenta().getSaldo()) {
             JOptionPane.showMessageDialog(this, "El importe ingresado supera al saldo pendiente", "Atención", JOptionPane.ERROR_MESSAGE);
             return false;
         }

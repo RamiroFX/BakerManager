@@ -139,12 +139,12 @@ public class C_crearCobro extends MouseAdapter implements ActionListener, KeyLis
             vista.jbAceptar.setEnabled(true);
             E_movimientoContable mc = new E_movimientoContable();
             mc.setVenta(cabecera);
-            switch(ctaCteDet.getTipoPago().getId()){
-                case E_reciboTipoPago.TIPO_FACTURA:{
+            switch (ctaCteDet.getTipoPago().getId()) {
+                case E_reciboTipoPago.TIPO_FACTURA: {
                     mc.setTipo(E_movimientoContable.TIPO_VENTA);
                     break;
                 }
-                case E_reciboTipoPago.TIPO_SALDO_INICIAL:{
+                case E_reciboTipoPago.TIPO_SALDO_INICIAL: {
                     mc.setTipo(E_movimientoContable.TIPO_SALDO_INICIAL);
                     break;
                 }
