@@ -82,30 +82,27 @@ public class M_cobroAnticipado {
         getCtaCteDetalleTm().agregarDatos(data);
     }
 
-    public void eliminarDatos(int index) {
-        getCtaCteDetalleTm().quitarDatos(index);
-    }
-
-    public boolean controlarMontoIngresado(int idFacturaCabecera, int aPagar, int totalPendiente) {
-        //OBTENER EL TOTAL DE LA FACTURA ACUMULADO EN LA OPERACION DE COBRO
-        int totalFactura = 0;
-        for (E_cuentaCorrienteDetalle ctaCteDetalle : getCtaCteDetalleTm().getList()) {
-            if (ctaCteDetalle.getIdFacturaCabecera() == idFacturaCabecera) {
-                totalFactura = totalFactura + (int) ctaCteDetalle.getMonto();
+    public boolean validarDetalle(E_cuentaCorrienteDetalle data) {
+        switch (data.getFormaPago().getId()) {
+            case E_formaPago.EFECTIVO: {
+                return true;
             }
-        }
-        //VERIFICAR QUE EL NUEVO MONTO INGRESADO PARA LA MISMA FACTURA NO PASE
-        //EL MONTO TOTAL
-        for (int i = 0; i < getCtaCteDetalleTm().getList().size(); i++) {
-            E_cuentaCorrienteDetalle get = getCtaCteDetalleTm().getList().get(i);
-            if (get.getIdFacturaCabecera() == idFacturaCabecera) {
-                int subTotalApagar = totalFactura + aPagar;
-                if (subTotalApagar > totalPendiente) {
-                    return false;
+            case E_formaPago.CHEQUE: {
+                int nroChequeActual = data.getNroCheque();
+                int idBanco = data.getBanco().getId();
+                for (E_cuentaCorrienteDetalle unDetalle : getCtaCteDetalleTm().getList()) {
+                    if (nroChequeActual == unDetalle.getNroCheque() && idBanco == unDetalle.getBanco().getId()) {
+                        return false;
+                    }
                 }
+                return true;
             }
         }
         return true;
+    }
+
+    public void eliminarDatos(int index) {
+        getCtaCteDetalleTm().quitarDatos(index);
     }
 
     public boolean controlarMontoModificado(int idFacturaCabecera, int aPagar, int totalPendiente) {

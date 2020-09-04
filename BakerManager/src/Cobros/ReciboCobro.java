@@ -170,6 +170,13 @@ public class ReciboCobro extends javax.swing.JDialog implements ActionListener, 
                 jtfNroFactura.setText("Saldo inicial");
                 break;
             }
+            case E_movimientoContable.TIPO_COBRO_ADELANTADO: {
+                movimientoContable.setVenta(fsp.getVenta());
+                movimientoContable.setTipo(E_movimientoContable.TIPO_COBRO_ADELANTADO);
+                jtfIdVenta.setText("Adelanto");
+                jtfNroFactura.setText("Adelanto");
+                break;
+            }
         }
         //facturaCabecera = DB_Cobro.obtenerFacturaSinPago(fsp.getNroFactura());
         //el id no esta presente en la vista V_facturas sinpago, por eso lo extraemos del detalle recibido

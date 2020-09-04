@@ -8,7 +8,6 @@ package Cobros.CobroAnticipado;
 import Cliente.Seleccionar_cliente;
 import Cobros.C_gestionCobro;
 import Cobros.ReciboCobro;
-import Cobros.SeleccionarFacturaPendiente;
 import Empleado.Seleccionar_funcionario;
 import Entities.E_cuentaCorrienteDetalle;
 import Entities.E_facturaSinPago;
@@ -146,6 +145,10 @@ public class C_cobroAnticipado extends MouseAdapter implements ActionListener, K
                 }
                 case E_reciboTipoPago.TIPO_SALDO_INICIAL: {
                     mc.setTipo(E_movimientoContable.TIPO_SALDO_INICIAL);
+                    break;
+                }
+                case E_reciboTipoPago.TIPO_ADELANTO: {
+                    mc.setTipo(E_movimientoContable.TIPO_COBRO_ADELANTADO);
                     break;
                 }
             }
@@ -386,6 +389,10 @@ public class C_cobroAnticipado extends MouseAdapter implements ActionListener, K
 
     @Override
     public void recibirCtaCteDetalle(E_cuentaCorrienteDetalle detalle, int montoTotalPendiente) {
+        if (!modelo.validarDetalle(detalle)) {
+            JOptionPane.showMessageDialog(vista, "Ya se encuentra un cheque con la descripción ingresada", "Atención", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
         this.modelo.agregarDatos(detalle);
         sumarTotal();
         Utilities.c_packColumn.packColumns(vista.jtReciboDetalle, 1);
