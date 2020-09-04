@@ -11,6 +11,7 @@ import DB.DB_manager;
 import Entities.E_Divisa;
 import Entities.E_banco;
 import Entities.E_cuentaCorrienteDetalle;
+import Entities.E_facturaSinPago;
 import Entities.E_formaPago;
 import Entities.E_movimientoContable;
 import Entities.E_reciboTipoPago;
@@ -220,8 +221,10 @@ public class ReciboCobro extends javax.swing.JDialog implements ActionListener, 
         jtfNroFactura.setText("Pago anticipado");
         jtfCliente.setText(cliente.getEntidad());
         jtfTotalFactura.setText(decimalFormat.format(0));
-        jtfTotalPendiente.setText(decimalFormat.format(0));        
-        //PENDIENTE
+        jtfTotalPendiente.setText(decimalFormat.format(0));
+        movimientoContable = new E_movimientoContable();
+        movimientoContable.setTipo(E_movimientoContable.TIPO_COBRO_ADELANTADO);
+        movimientoContable.setVenta(new E_facturaSinPago());
     }
 
     private void initComponents() {
@@ -372,6 +375,12 @@ public class ReciboCobro extends javax.swing.JDialog implements ActionListener, 
                 detalle.setNroFactura(0);
                 break;
             }
+            case E_movimientoContable.TIPO_COBRO_ADELANTADO: {
+                detalle.setTipoPago(new E_reciboTipoPago(E_reciboTipoPago.TIPO_ADELANTO, ""));
+                detalle.setIdFacturaCabecera(0);
+                detalle.setNroFactura(0);
+                break;
+            }
         }
         E_formaPago fp = jcbFormaPago.getItemAt(jcbFormaPago.getSelectedIndex());
         detalle.setFormaPago(fp);
@@ -434,6 +443,9 @@ public class ReciboCobro extends javax.swing.JDialog implements ActionListener, 
         if (importe <= 0) {
             JOptionPane.showMessageDialog(this, "El importe debe ser mayor a 0 (cero)", "Atención", JOptionPane.ERROR_MESSAGE);
             return false;
+        }
+        if (movimientoContable.getTipo() == E_movimientoContable.TIPO_COBRO_ADELANTADO) {
+            return true;
         }
         if (importe > movimientoContable.getVenta().getMonto()) {
             JOptionPane.showMessageDialog(this, "El importe ingresado supera al total a pagar", "Atención", JOptionPane.ERROR_MESSAGE);

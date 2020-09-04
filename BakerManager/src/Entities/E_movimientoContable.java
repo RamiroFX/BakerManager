@@ -19,14 +19,16 @@ public class E_movimientoContable {
             STR_TIPO_COBRO = "Recibo",
             STR_TIPO_SALDO_INICIAL = "Saldo inicial",
             STR_TIPO_NOTA_CREDITO = "Nota de crédito",
-            STR_TIPO_RETENCION_VENTA = "Retención";
+            STR_TIPO_RETENCION_VENTA = "Retención",
+            STR_TIPO_COBRO_ADELANTADO = "Cobro adelantado";
     public static final int TIPO_COMPRA = 1,
             TIPO_VENTA = 2,
             TIPO_PAGO = 3,
             TIPO_COBRO = 4,
             TIPO_SALDO_INICIAL = 5,
             TIPO_NOTA_CREDITO = 6,
-            TIPO_RETENCION_VENTA = 7;
+            TIPO_RETENCION_VENTA = 7,
+            TIPO_COBRO_ADELANTADO = 8;
     private int id;
     private int tipo;
     private String tipoDescripcion;

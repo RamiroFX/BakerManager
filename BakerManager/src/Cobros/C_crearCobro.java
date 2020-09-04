@@ -383,11 +383,7 @@ public class C_crearCobro extends MouseAdapter implements ActionListener, KeyLis
 
     @Override
     public void recibirCtaCteDetalle(E_cuentaCorrienteDetalle detalle, int montoTotalPendiente) {
-        if (this.modelo.controlarMontoIngresado(detalle.getIdFacturaCabecera(), (int) detalle.getMonto(), montoTotalPendiente)) {
-            this.modelo.agregarDatos(detalle);
-        } else {
-            JOptionPane.showMessageDialog(vista, VALIDAR_MONTO_A_PAGAR, VALIDAR_TITULO, JOptionPane.WARNING_MESSAGE);
-        }
+        this.modelo.agregarDatos(detalle);
         sumarTotal();
         Utilities.c_packColumn.packColumns(vista.jtReciboDetalle, 1);
     }

@@ -273,7 +273,7 @@ public class C_cobroAnticipado extends MouseAdapter implements ActionListener, K
         cabecera.setTipo(E_movimientoContable.TIPO_PAGO);
         vista.jbAceptar.setEnabled(true);
         ReciboCobro rp = new ReciboCobro(this.vista);
-        rp.nuevoPago(cabecera);
+        rp.pagoAnticipado(modelo.getCabecera().getCliente());
         rp.setInterface(this);
         rp.mostrarVista();
     }

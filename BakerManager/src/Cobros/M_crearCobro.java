@@ -63,11 +63,6 @@ public class M_crearCobro {
     }
 
     public void agregarDatos(E_cuentaCorrienteDetalle data) {
-        /*if (data.getIdFacturaCabecera() == 0) {
-            //para manejar datos historicos (bauplast), su bd no almanacenaba el id de la venta(factura_cabecera)
-            E_facturaCabecera faca = DB_Ingreso.obtenerFacturaCabeceraNroFactura(data.getNroFactura());
-            data.setIdFacturaCabecera(faca.getIdFacturaCabecera());
-        }*/
         for (int i = 0; i < getCtaCteDetalleTm().getList().size(); i++) {
             E_cuentaCorrienteDetalle get = getCtaCteDetalleTm().getList().get(i);
             if (get.getIdFacturaCabecera() == data.getIdFacturaCabecera()) {
