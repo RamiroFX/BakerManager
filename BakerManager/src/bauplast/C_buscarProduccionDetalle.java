@@ -12,6 +12,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.Calendar;
+import java.util.Date;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.KeyStroke;
@@ -41,6 +43,11 @@ public class C_buscarProduccionDetalle extends MouseAdapter implements ActionLis
     }
 
     private void inicializarVista() {
+        Calendar calendarInicio = Calendar.getInstance();
+        calendarInicio.set(Calendar.DAY_OF_MONTH, 1);
+        Calendar calendar = Calendar.getInstance();
+        this.vista.jdcFechaInicio.setDate(calendarInicio.getTime());
+        this.vista.jdcFechaFinal.setDate(calendar.getTime());
         this.vista.jtProducto.setModel(modelo.getTm());
         KeyStroke enter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
         this.vista.jtProducto.getInputMap(JTable.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(enter, ENTER_KEY);
@@ -61,11 +68,23 @@ public class C_buscarProduccionDetalle extends MouseAdapter implements ActionLis
         this.vista.jcbEstado.addItem("Disponible");
         this.vista.jcbEstado.addItem("Agotado");
         this.vista.jcbEstado.addItem("Todos");
+        handleDateParams();
+    }
+
+    private void handleDateParams() {
+        if (this.vista.jcbActivarFecha.isSelected()) {
+            this.vista.jdcFechaFinal.setEnabled(true);
+            this.vista.jdcFechaInicio.setEnabled(true);
+        } else {
+            this.vista.jdcFechaFinal.setEnabled(false);
+            this.vista.jdcFechaInicio.setEnabled(false);
+        }
     }
 
     private void agregarListeners() {
         //ACTION LISTENERS
         //this.vista.jbCrearProducto.addActionListener(this);
+        this.vista.jcbActivarFecha.addActionListener(this);
         this.vista.jbSalir.addActionListener(this);
         this.vista.jbBuscar.addActionListener(this);
         this.vista.jbBorrar.addActionListener(this);
@@ -95,14 +114,35 @@ public class C_buscarProduccionDetalle extends MouseAdapter implements ActionLis
                     JOptionPane.showMessageDialog(vista, "El texto ingresado supera el máximo permitido de 50 caracteres.", "Atención", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
+                if (!validarFechas()) {
+                    return;
+                }
+                boolean porFecha = vista.jcbActivarFecha.isSelected();
+                Date fechaInicio = vista.jdcFechaInicio.getDate();
+                Date fechaFinal = vista.jdcFechaFinal.getDate();
                 String buscarPor = vista.jcbBuscarPor.getSelectedItem().toString();
                 String ordenarPor = vista.jcbOrdenarPor.getSelectedItem().toString();
                 String clasificarPor = vista.jcbClasificarPor.getSelectedItem().toString();
                 String estado = vista.jcbEstado.getSelectedItem().toString();
-                modelo.consultarRollos(desc.toLowerCase(), buscarPor, ordenarPor, clasificarPor, estado);
+                modelo.consultarRollos(desc.toLowerCase(), buscarPor, ordenarPor, clasificarPor, estado, porFecha, fechaInicio, fechaFinal);
                 Utilities.c_packColumn.packColumns(vista.jtProducto, 1);
             }
         });
+    }
+
+    private boolean validarFechas() {
+        Date inicio = vista.jdcFechaInicio.getDate();
+        Date fin = vista.jdcFechaFinal.getDate();
+        if (inicio != null && fin != null) {
+            int dateValue = inicio.compareTo(fin);
+            if (dateValue <= 0) {
+                return true;
+            }
+        }
+        vista.jdcFechaFinal.setDate(vista.jdcFechaInicio.getDate());
+        vista.jdcFechaFinal.updateUI();
+        JOptionPane.showMessageDialog(vista, "La fecha inicio debe ser menor que fecha final", "Atención", JOptionPane.WARNING_MESSAGE);
+        return false;
     }
 
     private void cerrar() {
@@ -123,7 +163,6 @@ public class C_buscarProduccionDetalle extends MouseAdapter implements ActionLis
 
     @Override
     public void actionPerformed(ActionEvent e) {
-
         if (e.getSource() == this.vista.jtfBuscar) {
             displayQueryResults();
         }
@@ -137,7 +176,11 @@ public class C_buscarProduccionDetalle extends MouseAdapter implements ActionLis
             borrarParametros();
         } else if (e.getSource() == this.vista.jbResumen) {
             invocarResumen();
-        } else if (e.getSource() == this.vista.jbSalir) {
+        }
+        if (e.getSource().equals(this.vista.jcbActivarFecha)) {
+            handleDateParams();
+        }
+        if (e.getSource() == this.vista.jbSalir) {
             cerrar();
         }
     }

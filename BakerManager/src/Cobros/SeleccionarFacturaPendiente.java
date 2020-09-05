@@ -6,6 +6,7 @@
 package Cobros;
 
 import Interface.RecibirCtaCteDetalleCallback;
+import Interface.RecibirFacturaSinPagoCallback;
 import javax.swing.JDialog;
 
 /**
@@ -18,8 +19,8 @@ public class SeleccionarFacturaPendiente {
     private V_seleccionarFacturaPendiente vista;
     private C_seleccionarFacturaPendiente controlador;
 
-    public SeleccionarFacturaPendiente(JDialog jdialog, int idCliente) {
-        this.modelo = new M_seleccionarFacturaPendiente(idCliente);
+    public SeleccionarFacturaPendiente(JDialog jdialog, int idCliente, int tipo) {
+        this.modelo = new M_seleccionarFacturaPendiente(idCliente, tipo);
         this.vista = new V_seleccionarFacturaPendiente(jdialog);
         this.controlador = new C_seleccionarFacturaPendiente(modelo, vista);
     }
@@ -30,5 +31,9 @@ public class SeleccionarFacturaPendiente {
 
     public void setCallback(RecibirCtaCteDetalleCallback callback) {
         this.controlador.setCallback(callback);
+    }
+
+    public void setFacturaSinPagoCallback(RecibirFacturaSinPagoCallback callback) {
+        this.controlador.setFacturaSinPagoCallback(callback);
     }
 }

@@ -844,17 +844,19 @@ public class DB_Produccion {
         return (int) sq_cabecera;
     }
 
-    public static ArrayList<E_produccionFilm> consultarFilmDisponible(String descripcion, String buscarPor, String ordenarPor, String clasificarPor, String estado) {
+    public static ArrayList<E_produccionFilm> consultarFilmDisponible(String descripcion, String buscarPor, String ordenarPor, String clasificarPor, String estado,
+            boolean porFecha, Date fechaInicio, Date fechaFinal) {
         ArrayList<E_produccionFilm> filmList = null;
         try {
             if (DB_manager.getConection() == null) {
                 throw new IllegalStateException("Connection already closed.");
             }
 
-            String fromQuery = "FROM v_film_actual V ";
+            String fromQuery = "FROM v_produccion_detalle V ";
             String finalQuery = "ORDER BY V.producto ";
             String buscarSQL = "";
             String estadoSQL = "";
+            String buscarPorFechaSQL = "";
             //BUSCAR 
             switch (buscarPor) {
                 case "Todos": {
@@ -878,6 +880,9 @@ public class DB_Produccion {
                     buscarSQL = "LOWER(v.codigo) LIKE ? ";
                     break;
                 }
+            }
+            if (porFecha) {
+                buscarPorFechaSQL = "AND fecha between ? AND ? ";
             }
             //CLASIFICAR 
             switch (clasificarPor) {
@@ -916,11 +921,11 @@ public class DB_Produccion {
             //ESTADO
             switch (estado) {
                 case "Disponible": {
-                    estadoSQL = "AND peso_actual > 0 ";
+                    estadoSQL = "AND peso_disponible > 0 ";
                     break;
                 }
                 case "Agotado": {
-                    estadoSQL = "AND peso_actual <= 0 ";
+                    estadoSQL = "AND peso_disponible <= 0 ";
                     break;
                 }
                 case "Todos": {
@@ -930,22 +935,27 @@ public class DB_Produccion {
             }
 
             String Query = "SELECT id_cabecera, nro_orden_trabajo, nro_film, fecha, id_producto, codigo,"
-                    + "producto, cono, medida, micron, peso, peso_utilizado, peso_actual,"
+                    + "producto, cono, medida, micron, peso_producido, peso_utilizado, peso_disponible,"
                     + "id_categoria, categoria "
                     + fromQuery
                     + "WHERE "
                     + buscarSQL
                     + estadoSQL
+                    + buscarPorFechaSQL
                     + finalQuery;
-
+            int pos = 1;
             pst = DB_manager.getConection().prepareStatement(Query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             if (buscarPor.equals("Todos")) {
-                pst.setString(1, "%" + descripcion + "%");
-                pst.setString(2, "%" + descripcion + "%");
-                pst.setString(3, "%" + descripcion + "%");
-                pst.setString(4, "%" + descripcion + "%");
+                pst.setString(pos++, "%" + descripcion + "%");
+                pst.setString(pos++, "%" + descripcion + "%");
+                pst.setString(pos++, "%" + descripcion + "%");
+                pst.setString(pos++, "%" + descripcion + "%");
             } else {
-                pst.setString(1, "%" + descripcion + "%");
+                pst.setString(pos++, "%" + descripcion + "%");
+            }
+            if (porFecha) {
+                pst.setTimestamp(pos++, new Timestamp(fechaInicio.getTime()));
+                pst.setTimestamp(pos++, new Timestamp(fechaFinal.getTime()));
             }
             rs = pst.executeQuery();
             filmList = new ArrayList();
@@ -963,9 +973,9 @@ public class DB_Produccion {
                 film.setCono(rs.getInt("cono"));
                 film.setMedida(rs.getInt("medida"));
                 film.setMicron(rs.getInt("micron"));
-                film.setPeso(rs.getDouble("peso"));
+                film.setPeso(rs.getDouble("peso_producido"));
                 film.setPesoUtilizado(rs.getDouble("peso_utilizado"));
-                film.setPesoActual(rs.getDouble("peso_actual"));
+                film.setPesoActual(rs.getDouble("peso_disponible"));
                 E_productoClasificacion productoClasificacion = new E_productoClasificacion();
                 productoClasificacion.setId(rs.getInt("id_categoria"));
                 productoClasificacion.setDescripcion(rs.getString("categoria"));

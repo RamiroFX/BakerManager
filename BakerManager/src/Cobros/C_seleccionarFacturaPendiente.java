@@ -6,6 +6,7 @@ package Cobros;
 
 import Entities.E_movimientoContable;
 import Interface.RecibirCtaCteDetalleCallback;
+import Interface.RecibirFacturaSinPagoCallback;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -25,10 +26,13 @@ import javax.swing.SwingUtilities;
  */
 public class C_seleccionarFacturaPendiente extends MouseAdapter implements ActionListener, KeyListener {
 
+    public static final int TIPO_COBRO = 1, TIPO_DIRECTO = 2;
+
     private static final String ENTER_KEY = "Entrar";
     public M_seleccionarFacturaPendiente modelo;
     public V_seleccionarFacturaPendiente vista;
     RecibirCtaCteDetalleCallback callback;
+    RecibirFacturaSinPagoCallback facturaSinPagoCB;
 
     public C_seleccionarFacturaPendiente(M_seleccionarFacturaPendiente modelo, V_seleccionarFacturaPendiente vista) {
         this.modelo = modelo;
@@ -59,6 +63,10 @@ public class C_seleccionarFacturaPendiente extends MouseAdapter implements Actio
 
     public void setCallback(RecibirCtaCteDetalleCallback callback) {
         this.callback = callback;
+    }
+
+    public void setFacturaSinPagoCallback(RecibirFacturaSinPagoCallback facturaSinPagoCB) {
+        this.facturaSinPagoCB = facturaSinPagoCB;
     }
 
     private void agregarListeners() {
@@ -114,12 +122,22 @@ public class C_seleccionarFacturaPendiente extends MouseAdapter implements Actio
         int columna = vista.jtFacturaPendiente.getSelectedColumn();
         if ((fila > -1) && (columna > -1)) {
             E_movimientoContable cabecera = modelo.getTableModel().getList().get(fila);
-            vista.jbAceptar.setEnabled(true);
-            ReciboCobro rp = new ReciboCobro(this.vista);
-            rp.nuevoPago(cabecera);
-            rp.setInterface(callback);
-            rp.mostrarVista();
-            vista.jtfBuscar.requestFocusInWindow();
+            switch (modelo.getTipo()) {
+                case TIPO_COBRO: {
+                    vista.jbAceptar.setEnabled(true);
+                    ReciboCobro rp = new ReciboCobro(this.vista);
+                    rp.nuevoPago(cabecera);
+                    rp.setInterface(callback);
+                    rp.mostrarVista();
+                    vista.jtfBuscar.requestFocusInWindow();
+                    break;
+                }
+                case TIPO_DIRECTO: {
+                    facturaSinPagoCB.recibirFacturaCabeceraPendientePago(cabecera.getVenta());
+                    cerrar();
+                    break;
+                }
+            }
         }
     }
 

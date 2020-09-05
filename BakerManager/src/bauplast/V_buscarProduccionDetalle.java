@@ -5,9 +5,11 @@
  */
 package bauplast;
 
+import com.toedter.calendar.JDateChooser;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -27,6 +29,8 @@ public class V_buscarProduccionDetalle extends JDialog {
 
     JButton jbSalir, jbBuscar, jbBorrar, jbResumen;
     JScrollPane jspProducto;
+    public JCheckBox jcbActivarFecha;
+    JDateChooser jdcFechaInicio, jdcFechaFinal;
     JTable jtProducto;
     JPanel jpBotones, jpTop, jpBotonesTop, jpJtextFieldTop;
     public JComboBox jcbBuscarPor, jcbOrdenarPor, jcbClasificarPor, jcbEstado;
@@ -57,8 +61,15 @@ public class V_buscarProduccionDetalle extends JDialog {
     private void initTop() {
         jpTop = new JPanel(new MigLayout("", "[fill][fill]", "[fill][]"));
         JPanel jpFiltros = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        jpFiltros.setBorder(new EtchedBorder());
+        JPanel jpFiltroFecha = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        jpFiltroFecha.setBorder(new EtchedBorder());
 
         jcbEstado = new JComboBox();
+        jcbActivarFecha = new JCheckBox("Buscar por fecha");
+        jcbActivarFecha.setSelected(true);
+        jdcFechaInicio = new JDateChooser();
+        jdcFechaFinal = new JDateChooser();
         jcbClasificarPor = new JComboBox();
         jcbBuscarPor = new JComboBox();
         jcbOrdenarPor = new JComboBox();
@@ -69,6 +80,11 @@ public class V_buscarProduccionDetalle extends JDialog {
         jpFiltros.add(jcbOrdenarPor);
         jpFiltros.add(new JLabel("Estado:"));
         jpFiltros.add(jcbEstado);
+        jpFiltroFecha.add(jcbActivarFecha);
+        jpFiltroFecha.add(new JLabel("Fecha inicio"));
+        jpFiltroFecha.add(jdcFechaInicio);
+        jpFiltroFecha.add(new JLabel("Fecha final"));
+        jpFiltroFecha.add(jdcFechaFinal);
         jpBotonesTop = new JPanel();
         jpJtextFieldTop = new JPanel(new BorderLayout());
         jtfBuscar = new JTextField();
@@ -81,6 +97,7 @@ public class V_buscarProduccionDetalle extends JDialog {
         jpBotonesTop.add(jbBorrar);
         jpTop.add(jpJtextFieldTop, "push x");
         jpTop.add(jpBotonesTop, "wrap");
+        jpTop.add(jpFiltroFecha, "span, grow");
         jpTop.add(jpFiltros, "span, grow");
         jpTop.setBorder(new EtchedBorder(EtchedBorder.RAISED));
     }

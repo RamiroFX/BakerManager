@@ -27,14 +27,14 @@ import net.miginfocom.swing.MigLayout;
  */
 public class V_crearRetencion extends JDialog {
 
-    private JLabel jlNroFactura, jlCliente, jlMontoSinIVA, jlIVA, jlMontoConIVA, jlNroRetencion,
+    private JLabel jlMontoSinIVA, jlIVA, jlMontoConIVA, jlNroRetencion,
             jlFechaRetencion, jlPorcentajeRetencion, jlMontoConRetencion;
     public JTextField jtfNroFactura, jtfCliente, jtfMontoConIVA;
     public JFormattedTextField jftPorcentajeRetencion, jftMontoRetencion;
     public JDateChooser jdcFechaRetencion;
     public JTextField jtfMontoSinIVA, jtfNroRetencion, jtfIVA;
     public JSpinner jsPorcentaje;
-    public JButton jbAceptar, jbCancelar;
+    public JButton jbCliente, jbNroFactura, jbAceptar, jbCancelar;
     private JPanel jpPrincipal, jpBotones;
     public static final String CREATE_TITLE = "Crear Retención", READ_TITLE = "Ver Retención";
 
@@ -56,10 +56,10 @@ public class V_crearRetencion extends JDialog {
         jpPrincipal = new JPanel(new GridLayout(2, 1));
 
         //Labels
-        jlNroFactura = new JLabel("Nro. Factura");
-        jlNroFactura.setHorizontalAlignment(JLabel.CENTER);
-        jlCliente = new JLabel("Cliente");
-        jlCliente.setHorizontalAlignment(JLabel.CENTER);
+        jbCliente = new JButton("Cliente");
+        jbCliente.setHorizontalAlignment(JLabel.CENTER);
+        jbNroFactura = new JButton("Factura");
+        jbNroFactura.setHorizontalAlignment(JLabel.CENTER);
         jlMontoSinIVA = new JLabel("Monto sin I.V.A.");
         jlMontoSinIVA.setHorizontalAlignment(JLabel.CENTER);
         jlIVA = new JLabel("I.V.A.");
@@ -101,10 +101,10 @@ public class V_crearRetencion extends JDialog {
         jpDatosFactura.setBorder(new EtchedBorder());
         JPanel jpDatosRetencion = new JPanel(new MigLayout());
         jpDatosRetencion.setBorder(new EtchedBorder());
-        jpDatosFactura.add(jlNroFactura);
-        jpDatosFactura.add(jtfNroFactura, "pushx, growx, wrap");
-        jpDatosFactura.add(jlCliente);
+        jpDatosFactura.add(jbCliente);
         jpDatosFactura.add(jtfCliente, "pushx, growx, wrap");
+        jpDatosFactura.add(jbNroFactura);
+        jpDatosFactura.add(jtfNroFactura, "pushx, growx, wrap");
         jpDatosFactura.add(jlMontoSinIVA);
         jpDatosFactura.add(jtfMontoSinIVA, "pushx, growx, wrap");
         jpDatosFactura.add(jlIVA);

@@ -7,12 +7,13 @@ package Cobros.Retencion;
 
 import DB.DB_Cobro;
 import DB.DB_Ingreso;
-import Entities.E_facturaCabecera;
 import Entities.E_facturaDetalle;
 import Entities.E_facturaSinPago;
 import Entities.E_impuesto;
 import Entities.E_retencionVenta;
 import MenuPrincipal.DatosUsuario;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import javax.swing.SpinnerModel;
 import javax.swing.SpinnerNumberModel;
@@ -24,22 +25,27 @@ import javax.swing.SpinnerNumberModel;
 public class M_crearRetencion {
 
     private SpinnerModel spinnerModel;
-    private E_facturaCabecera facturaCabecera;
+    private E_facturaSinPago facturaCabecera;
     private ArrayList<E_facturaDetalle> facturaDetalles;
     private E_retencionVenta retencion;
+    private NumberFormat nfSmall;
+    private NumberFormat nfLarge;
 
     public M_crearRetencion() {
-        facturaCabecera = new E_facturaCabecera();
+        facturaCabecera = new E_facturaSinPago();
+        facturaCabecera.getCliente().setIdCliente(-1);
         retencion = new E_retencionVenta();
         facturaDetalles = new ArrayList<>();
         spinnerModel = new SpinnerNumberModel(5.0, 0.0, 100, 1.0);
+        this.nfSmall = new DecimalFormat("000");
+        this.nfLarge = new DecimalFormat("0000000");
     }
 
     public SpinnerModel getSpinnerModel() {
         return spinnerModel;
     }
 
-    public E_facturaCabecera getFacturaCabecera() {
+    public E_facturaSinPago getFacturaCabecera() {
         return facturaCabecera;
     }
 
@@ -47,8 +53,8 @@ public class M_crearRetencion {
         return retencion;
     }
 
-    public void consultarNroFactura(int nroFactura) {
-        facturaCabecera = DB_Ingreso.obtenerFacturaCabeceraNroFactura(nroFactura);
+    public void consultarFactura(E_facturaSinPago fsp) {
+        facturaCabecera = fsp;
         facturaDetalles.clear();
         facturaDetalles.addAll(0, DB_Ingreso.obtenerVentaDetalles2(facturaCabecera.getIdFacturaCabecera()));
     }
@@ -101,15 +107,31 @@ public class M_crearRetencion {
         DB_Cobro.insertarRetencion(retencion);
     }
 
-    public boolean existeRetencion(int nroFactura) {
-        return DB_Cobro.existeRetencion(nroFactura);
+    public boolean existeRetencion(int idFacturaCabecera) {
+        return DB_Cobro.existeRetencion(idFacturaCabecera);
     }
 
     public boolean facturaPendientePago(int nroFactura) {
         return DB_Cobro.facturaPendientePago(nroFactura);
     }
 
-    public E_facturaSinPago validarSaldoPendiente(int nroFactura) {
-        return DB_Cobro.obtenerFacturaSinPago(nroFactura);
+    public E_facturaSinPago validarSaldoPendiente(int idFacturaCabecera) {
+        return DB_Cobro.obtenerFacturaSinPago(idFacturaCabecera);
+    }
+
+    public NumberFormat getNfSmall() {
+        return nfSmall;
+    }
+
+    public void setNfSmall(NumberFormat nfSmall) {
+        this.nfSmall = nfSmall;
+    }
+
+    public NumberFormat getNfLarge() {
+        return nfLarge;
+    }
+
+    public void setNfLarge(NumberFormat nfLarge) {
+        this.nfLarge = nfLarge;
     }
 }

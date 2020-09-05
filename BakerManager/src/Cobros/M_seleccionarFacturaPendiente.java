@@ -11,7 +11,6 @@ import Entities.E_tipoOperacion;
 import Entities.M_facturaCabecera;
 import ModeloTabla.FacturaSinPagoTableModel;
 import java.util.ArrayList;
-import java.util.Calendar;
 
 /**
  *
@@ -21,12 +20,14 @@ public class M_seleccionarFacturaPendiente {
 
     private M_facturaCabecera facturaCabecera;
     private FacturaSinPagoTableModel tm;
+    private int tipo;
 
-    public M_seleccionarFacturaPendiente(int idCliente) {
+    public M_seleccionarFacturaPendiente(int idCliente, int tipo) {
         this.facturaCabecera = new M_facturaCabecera();
         this.facturaCabecera.getFuncionario().setId_funcionario(-1);
         this.facturaCabecera.getCliente().setIdCliente(idCliente);
         this.tm = new FacturaSinPagoTableModel();
+        this.tipo = tipo;
     }
 
     public String obtenerNombreFuncionario() {
@@ -87,6 +88,14 @@ public class M_seleccionarFacturaPendiente {
     public void consultarFacturasPendiente() {
         int idCliente = this.facturaCabecera.getCliente().getIdCliente();
         getTableModel().setList(DB_Cobro.consultarPagosPendiente(null, null, idCliente, -1, false));
+    }
+
+    public int getTipo() {
+        return tipo;
+    }
+
+    public void setTipo(int tipo) {
+        this.tipo = tipo;
     }
 
 }

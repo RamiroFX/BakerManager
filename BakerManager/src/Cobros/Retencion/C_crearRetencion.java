@@ -5,7 +5,14 @@
  */
 package Cobros.Retencion;
 
+import Cliente.Seleccionar_cliente;
+import Cobros.C_seleccionarFacturaPendiente;
+import Cobros.SeleccionarFacturaPendiente;
+import Entities.E_facturaDetalle;
 import Entities.E_facturaSinPago;
+import Entities.M_cliente;
+import Interface.RecibirClienteCallback;
+import Interface.RecibirFacturaSinPagoCallback;
 import com.nitido.utils.toaster.Toaster;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -14,6 +21,7 @@ import java.awt.event.KeyListener;
 import java.text.DecimalFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -22,19 +30,19 @@ import javax.swing.event.ChangeListener;
  *
  * @author Ramiro Ferreira
  */
-public class C_crearRetencion implements ActionListener, KeyListener, ChangeListener {
+public class C_crearRetencion implements ActionListener, KeyListener, ChangeListener, RecibirClienteCallback,
+        RecibirFacturaSinPagoCallback {
 
-    private static final String VALIDAR_NRO_FACTURA_1 = "Ingrese solo números enteros en número de factura",
-            VALIDAR_NRO_FACTURA_2 = "Ingrese solo números enteros y positivos en número de factura",
-            VALIDAR_NRO_FACTURA_3 = "Ingrese un número de factura",
-            VALIDAR_PORCENTAJE_RETENCION_1 = "Ingrese solo números en porcentaje de retención",
+    private static final String VALIDAR_PORCENTAJE_RETENCION_1 = "Ingrese solo números en porcentaje de retención",
             VALIDAR_PORCENTAJE_RETENCION_2 = "Ingrese solo números positivos en porcentaje de retención",
             VALIDAR_PORCENTAJE_RETENCION_3 = "Ingrese un número en porcentaje de retención",
             VALIDAR_NRO_RETENCION_1 = "Ingrese solo números enteros en número de retención",
             VALIDAR_NRO_RETENCION_2 = "Ingrese solo números enteros y positivos en número de retención",
             VALIDAR_NRO_RETENCION_3 = "Ingrese un número de retención",
             VALIDAR_NRO_RETENCION_4 = "El número de retención ingresado se encuentra en uso.",
-            WITHHOLDING_TAX_SUCCESS = "Retención creada";
+            WITHHOLDING_TAX_SUCCESS = "Retención creada",
+            VALIDAR_CLIENTE_MSG = "Seleccione un cliente",
+            VALIDAR_TITULO = "Atención";
 
     private M_crearRetencion modelo;
     private V_crearRetencion vista;
@@ -45,7 +53,6 @@ public class C_crearRetencion implements ActionListener, KeyListener, ChangeList
         this.vista = vista;
         inicializarVista();
         agregarListeners();
-        loadData();
     }
 
     private void inicializarVista() {
@@ -53,6 +60,8 @@ public class C_crearRetencion implements ActionListener, KeyListener, ChangeList
         Calendar calendar = Calendar.getInstance();
         this.vista.jdcFechaRetencion.setDate(calendar.getTime());
         this.vista.jsPorcentaje.setModel(modelo.getSpinnerModel());
+        this.vista.jtfCliente.setEditable(false);
+        this.vista.jtfNroFactura.setEditable(false);
     }
 
     public void mostrarVista() {
@@ -63,14 +72,10 @@ public class C_crearRetencion implements ActionListener, KeyListener, ChangeList
         this.vista.dispose();
     }
 
-    private void loadData() {
-        int nroFactura = 22427;
-        this.vista.jtfNroFactura.setText(nroFactura + "");
-    }
-
     private void agregarListeners() {
         this.modelo.getSpinnerModel().addChangeListener(this);
-        this.vista.jtfNroFactura.addActionListener(this);
+        this.vista.jbCliente.addActionListener(this);
+        this.vista.jbNroFactura.addActionListener(this);
         this.vista.jtfNroRetencion.addActionListener(this);
         this.vista.jftPorcentajeRetencion.addActionListener(this);
         this.vista.jbAceptar.addActionListener(this);
@@ -88,26 +93,6 @@ public class C_crearRetencion implements ActionListener, KeyListener, ChangeList
         this.vista.jftMontoRetencion.addKeyListener(this);
         //this.vista.jbAceptar.addKeyListener(this);
         this.vista.jbCancelar.addKeyListener(this);
-    }
-
-    private boolean validarNroFactura() {
-        int nroFactura = -1;
-        if (this.vista.jtfNroFactura.getText().trim().isEmpty()) {
-            JOptionPane.showMessageDialog(vista, VALIDAR_NRO_FACTURA_3, "Atención", JOptionPane.WARNING_MESSAGE);
-            return false;
-        } else {
-            try {
-                nroFactura = Integer.valueOf(this.vista.jtfNroFactura.getText().trim());
-            } catch (NumberFormatException e) {
-                JOptionPane.showMessageDialog(vista, VALIDAR_NRO_FACTURA_1, "Atención", JOptionPane.WARNING_MESSAGE);
-                return false;
-            }
-            if (nroFactura < 0) {
-                JOptionPane.showMessageDialog(vista, VALIDAR_NRO_FACTURA_2, "Atención", JOptionPane.WARNING_MESSAGE);
-                return false;
-            }
-        }
-        return true;
     }
 
     private boolean validarNroRetencion() {
@@ -169,11 +154,8 @@ public class C_crearRetencion implements ActionListener, KeyListener, ChangeList
     }
 
     private boolean validarRetencionExistente() {
-        if (!validarNroFactura()) {
-            return false;
-        }
-        int nroFactura = Integer.valueOf(this.vista.jtfNroFactura.getText().trim());
-        return modelo.existeRetencion(nroFactura);
+        int idFacturaCabecera = modelo.getFacturaCabecera().getIdFacturaCabecera();
+        return modelo.existeRetencion(idFacturaCabecera);
     }
 
     private boolean validarFecha() {
@@ -183,11 +165,8 @@ public class C_crearRetencion implements ActionListener, KeyListener, ChangeList
     }
 
     private boolean validarSaldoPendiente() {
-        if (!validarNroFactura()) {
-            return false;
-        }
-        int nroFactura = Integer.valueOf(this.vista.jtfNroFactura.getText().trim());
-        E_facturaSinPago fsp = modelo.validarSaldoPendiente(nroFactura);
+        int idFacturaCabecera = modelo.getFacturaCabecera().getIdFacturaCabecera();
+        E_facturaSinPago fsp = modelo.validarSaldoPendiente(idFacturaCabecera);
         int saldoPendiente = fsp.getSaldo();
         System.out.println("saldoPendiente: " + saldoPendiente);
         if (saldoPendiente > 0) {
@@ -210,20 +189,6 @@ public class C_crearRetencion implements ActionListener, KeyListener, ChangeList
     }
 
     private void consultarNroFactura() {
-        if (!validarNroFactura()) {
-            return;
-        }
-        int nroFactura = Integer.valueOf(this.vista.jtfNroFactura.getText().trim());
-        if (modelo.existeNroFactura(nroFactura)) {
-            JOptionPane.showMessageDialog(vista, "No existe el numero de factura ingresado", "Atención", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-        if (!modelo.facturaPendientePago(nroFactura)) {
-            JOptionPane.showMessageDialog(vista, "El numero de factura ingresado ya esta pagado.", "Atención", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-        modelo.consultarNroFactura(nroFactura);
-        this.vista.jtfCliente.setText(modelo.getFacturaCabecera().getCliente().getEntidad());
         this.vista.jtfMontoConIVA.setText(decimalFormat.format(modelo.obtenerMontoConIva()));
         this.vista.jtfIVA.setText(decimalFormat.format(modelo.obtenerMontoConIva() - modelo.obtenerMontoSinIva()));
         this.vista.jtfMontoSinIVA.setText(decimalFormat.format(modelo.obtenerMontoSinIva()));
@@ -276,10 +241,34 @@ public class C_crearRetencion implements ActionListener, KeyListener, ChangeList
         this.vista.jbAceptar.requestFocusInWindow();
     }
 
-    private void guardar() {
-        if (!validarNroFactura()) {
+    private boolean validarCliente() {
+        if (modelo.getFacturaCabecera().getCliente().getIdCliente() < 1) {
+            JOptionPane.showMessageDialog(vista, VALIDAR_CLIENTE_MSG, VALIDAR_TITULO, JOptionPane.WARNING_MESSAGE);
+            return false;
+        }
+        return true;
+    }
+
+    private void invocarSeleccionCliente() {
+        Seleccionar_cliente sc = new Seleccionar_cliente(vista);
+        sc.setCallback(this);
+        sc.mostrarVista();
+    }
+
+    private void invocarVistaSeleccionFacturaPendiente() {
+        if (!validarCliente()) {
             return;
         }
+        int idCliente = modelo.getFacturaCabecera().getCliente().getIdCliente();
+        SeleccionarFacturaPendiente sc = new SeleccionarFacturaPendiente(this.vista, idCliente, C_seleccionarFacturaPendiente.TIPO_DIRECTO);
+        sc.setFacturaSinPagoCallback(this);
+        sc.mostrarVista();
+    }
+
+    private void guardar() {
+//        if (!validarNroFactura()) {
+//            return;
+//        }
         if (!validarNroRetencion()) {
             return;
         }
@@ -299,8 +288,8 @@ public class C_crearRetencion implements ActionListener, KeyListener, ChangeList
             return;
         }
         if (!validarSaldoPendiente()) {
-            int nroFactura = Integer.valueOf(this.vista.jtfNroFactura.getText().trim());
-            E_facturaSinPago fsp = modelo.validarSaldoPendiente(nroFactura);
+            int idFacturaCabecera = modelo.getFacturaCabecera().getIdFacturaCabecera();
+            E_facturaSinPago fsp = modelo.validarSaldoPendiente(idFacturaCabecera);
             String saldoPendiente = decimalFormat.format(fsp.getSaldo());
             String montoRetencion = this.vista.jftMontoRetencion.getText();
             JOptionPane.showMessageDialog(vista, "El saldo pendiente es menor al monto de retención.\n Saldo pendiente: " + saldoPendiente + " \n Monto de retención: " + montoRetencion, "Atención", JOptionPane.ERROR_MESSAGE);
@@ -326,8 +315,11 @@ public class C_crearRetencion implements ActionListener, KeyListener, ChangeList
         if (source.equals(vista.jbAceptar)) {
             guardar();
         }
-        if (source.equals(vista.jtfNroFactura)) {
-            consultarNroFactura();
+        if (source.equals(vista.jbCliente)) {
+            invocarSeleccionCliente();
+        }
+        if (source.equals(vista.jbNroFactura)) {
+            invocarVistaSeleccionFacturaPendiente();
         }
         if (source.equals(vista.jftPorcentajeRetencion)) {
             calcularMontoRetencion();
@@ -370,6 +362,34 @@ public class C_crearRetencion implements ActionListener, KeyListener, ChangeList
     @Override
     public void stateChanged(ChangeEvent e) {
         handleSpinnerModel();
+    }
+
+    @Override
+    public void recibirCliente(M_cliente cliente) {
+        modelo.getFacturaCabecera().setCliente(cliente);
+        String entidad = cliente.getEntidad();
+        String ruc = cliente.getRucCompleto();
+        this.vista.jtfCliente.setText(entidad + "(" + ruc + ")");
+    }
+
+    @Override
+    public void recibirVentaPendientePago(E_facturaSinPago facturaCabecera, List<E_facturaDetalle> facturaDetalle) {
+    }
+
+    @Override
+    public void recibirFacturaCabeceraPendientePago(E_facturaSinPago facturaCabecera) {
+        String nroTimbrado = modelo.getNfLarge().format(facturaCabecera.getTimbrado().getNroTimbrado());
+        String nroSucursal = modelo.getNfSmall().format(facturaCabecera.getTimbrado().getNroSucursal());
+        String nroPuntoVenta = modelo.getNfSmall().format(facturaCabecera.getTimbrado().getNroPuntoVenta());
+        String nroFactura = modelo.getNfLarge().format(facturaCabecera.getNroFactura());
+        String nroFacturaCompleto = nroTimbrado + "-" + nroSucursal + "-" + nroPuntoVenta + "-" + nroFactura;
+        this.vista.jtfNroFactura.setText(nroFacturaCompleto);
+        modelo.consultarFactura(facturaCabecera);
+        consultarNroFactura();
+    }
+
+    @Override
+    public void recibirFacturaDetallePendientePago(List<E_facturaDetalle> facturaDetalle) {
     }
 
 }

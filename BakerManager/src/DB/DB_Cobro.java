@@ -859,12 +859,12 @@ public class DB_Cobro {
         return list;
     }
 
-    public static E_facturaSinPago obtenerFacturaSinPago(int nroFactura) {
+    public static E_facturaSinPago obtenerFacturaSinPago(int idFacturaCabecera) {
         E_facturaSinPago fsp = null;
-        String Query = "SELECT * FROM v_facturas_sin_pago WHERE nro_factura = ? ;";
+        String Query = "SELECT * FROM v_facturas_sin_pago WHERE id_factura_cabecera = ? ;";
         try {
             pst = DB_manager.getConection().prepareStatement(Query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-            pst.setInt(1, nroFactura);
+            pst.setInt(1, idFacturaCabecera);
             rs = pst.executeQuery();
             while (rs.next()) {
                 fsp = new E_facturaSinPago();
@@ -1004,11 +1004,11 @@ public class DB_Cobro {
         return false;
     }
 
-    public static boolean existeRetencion(int nroFactura) {
+    public static boolean existeRetencion(int idFacturaCabecera) {
         String QUERY = "SELECT retencion_venta.id_factura_cabecera FROM retencion_venta, factura_cabecera "
                 + "WHERE retencion_venta.id_factura_cabecera = factura_cabecera.id_factura_cabecera "
                 + "AND retencion_venta.id_estado = 1 "
-                + "AND factura_cabecera.nro_factura = " + nroFactura;
+                + "AND factura_cabecera.id_factura_cabecera = " + idFacturaCabecera;
         try {
             st = DB_manager.getConection().createStatement();
             // se ejecuta el query y se obtienen los resultados en un ResultSet

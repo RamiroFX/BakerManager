@@ -270,7 +270,7 @@ public class C_crearCobro extends MouseAdapter implements ActionListener, KeyLis
             return;
         }
         int idCliente = modelo.getCabecera().getCliente().getIdCliente();
-        SeleccionarFacturaPendiente sc = new SeleccionarFacturaPendiente(this.vista, idCliente);
+        SeleccionarFacturaPendiente sc = new SeleccionarFacturaPendiente(this.vista, idCliente, C_seleccionarFacturaPendiente.TIPO_COBRO);
         sc.setCallback(this);
         sc.mostrarVista();
     }
