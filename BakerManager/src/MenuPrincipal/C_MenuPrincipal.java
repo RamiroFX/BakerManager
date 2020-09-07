@@ -12,7 +12,7 @@ import Entities.M_menu_item;
 import Pedido.GestionPedidos;
 import Producto.Gestion_Producto;
 import Proveedor.Gestion_proveedores;
-import Ventas.Gestion_Ventas;
+import Ventas.GestionVentas;
 import bakermanager.C_inicio;
 import Empleado.Gestion_empleado;
 import Pagos.GestionPago;
@@ -172,7 +172,7 @@ public class C_MenuPrincipal implements ActionListener, KeyListener {
             Gestion_empleado ges_usuario = new Gestion_empleado(c_inicio);
             ges_usuario.mostrarVista();
         } else if (src.equals(this.vista.jbVentas)) {
-            Gestion_Ventas gestionVenta = new Gestion_Ventas(c_inicio);
+            GestionVentas gestionVenta = new GestionVentas(c_inicio);
             gestionVenta.mostrarVista();
         } else if (src.equals(this.vista.jbProductos)) {
             Gestion_Producto gestionProducto = new Gestion_Producto(c_inicio);
@@ -233,7 +233,7 @@ public class C_MenuPrincipal implements ActionListener, KeyListener {
         switch (e.getKeyCode()) {
             case (KeyEvent.VK_F1): {
                 if (vista.jbVentas.isEnabled()) {
-                    Gestion_Ventas gestionVenta = new Gestion_Ventas(c_inicio);
+                    GestionVentas gestionVenta = new GestionVentas(c_inicio);
                     gestionVenta.mostrarVista();
                 }
                 break;

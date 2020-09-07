@@ -16,7 +16,7 @@ import Pedido.C_crearPedido;
 import Pedido.C_verPedido;
 import Proveedor.Seleccionar_proveedor;
 import Ventas.C_crearVentaRapida;
-import Ventas.C_verMesa;
+import Ventas.Mesas.C_verMesa;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;

@@ -145,7 +145,7 @@ public class ResumenProduccionDetalle extends JDialog implements ActionListener,
         jbImportarXLS.addActionListener(this);
     }
 
-    private void exportHandler() {
+    public void importarExcelAgrupado() {
         EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
@@ -153,6 +153,51 @@ public class ResumenProduccionDetalle extends JDialog implements ActionListener,
                 ep.exportacionAgrupadaPorDetalle();
             }
         });
+    }
+
+    public void importarExcelCompleto() {
+        EventQueue.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                ExportarProduccion ep = new ExportarProduccion("Produccion", new ArrayList<E_produccionFilm>(tm.getList()));
+                ep.generarInformeCompleto();
+            }
+        });
+    }
+
+    private void exportHandler() {
+        Object[] options = {"Completo",
+            "Agrupado"};
+        int n = JOptionPane.showOptionDialog(this,
+                "Eliga tipo de reporte",
+                "Atención",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                null, //do not use a custom Icon
+                options, //the titles of buttons
+                options[0]); //default button title
+        switch (n) {
+            case 0: {
+                //Completo
+                EventQueue.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        importarExcelCompleto();
+                    }
+                });
+                break;
+            }
+            case 1: {
+                //Minimalista
+                EventQueue.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        importarExcelAgrupado();
+                    }
+                });
+                break;
+            }
+        }
     }
 
     private void keyPressedHandler(final KeyEvent e) {

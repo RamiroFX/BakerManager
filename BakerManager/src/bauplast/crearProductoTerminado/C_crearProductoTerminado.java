@@ -67,7 +67,7 @@ class C_crearProductoTerminado extends MouseAdapter implements ActionListener, K
         //INABILITAR LOS CONTROLES
         this.vista.jtProduccionDetalle.removeMouseListener(this);
         this.vista.jbAceptar.setEnabled(false);
-        this.vista.jbSeleccionarProducto.setEnabled(false);
+        //this.vista.jbSeleccionarProducto.setEnabled(false);
         this.vista.jbEliminarProducto.setEnabled(false);
         this.vista.jbModificarProducto.setEnabled(false);
         this.vista.jbModificarRollo.setEnabled(false);
@@ -358,9 +358,9 @@ class C_crearProductoTerminado extends MouseAdapter implements ActionListener, K
                 break;
             }
             case KeyEvent.VK_F4: {
-                if (!esModoCreacion) {
-                    return;
-                }
+//                if (!esModoCreacion) {
+//                    return;
+//                }
                 invocarSeleccionarProducto();
                 break;
             }
@@ -399,7 +399,14 @@ class C_crearProductoTerminado extends MouseAdapter implements ActionListener, K
 
     @Override
     public void recibirProducto(double cantidad, int precio, double descuento, M_producto producto, String observacion) {
-        modelo.agregarProductoTerminado(cantidad, producto);
+        if (esModoCreacion) {
+            modelo.agregarProductoTerminado(cantidad, producto);
+        } else {
+            int opcion = JOptionPane.showConfirmDialog(vista, "Al cargar un nuevo producto ya no se podrá revertir la acción. ¿Está seguro que desea continuar?.", "Atención", JOptionPane.WARNING_MESSAGE, JOptionPane.YES_NO_OPTION);
+            if (opcion == JOptionPane.YES_OPTION) {
+                modelo.agregarProductoTerminadoPosterior(cantidad, producto);
+            }
+        }
     }
 
     @Override

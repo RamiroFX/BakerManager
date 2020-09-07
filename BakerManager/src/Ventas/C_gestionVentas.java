@@ -277,7 +277,7 @@ public class C_gestionVentas implements GestionInterface, RecibirEmpleadoCallbac
         if (e.getClickCount() == 2) {
             if (vista.jbDetalle.isEnabled()) {
                 Integer idIngresoCabecera = modelo.getTm().getFacturaCabeceraList().get(fila).getIdFacturaCabecera();
-                Ver_ingreso ver_egreso = new Ver_ingreso(c_inicio, idIngresoCabecera, false);
+                VerIngreso ver_egreso = new VerIngreso(c_inicio, idIngresoCabecera, false);
                 ver_egreso.mostrarVista();
                 this.vista.jbDetalle.setEnabled(false);
             }
@@ -332,7 +332,7 @@ public class C_gestionVentas implements GestionInterface, RecibirEmpleadoCallbac
         M_cliente cliente = cliente();
         String tiop = tipoOperacion();
         Estado estado = vista.jcbEstado.getItemAt(vista.jcbEstado.getSelectedIndex());
-        Resumen_ingreso re = new Resumen_ingreso(c_inicio, this.modelo.getTm(), cliente, nro_factura, empleado, vista.jddInicio.getDate(), vista.jddFinal.getDate(), tiop, estado);
+        ResumenIngreso re = new ResumenIngreso(c_inicio, this.modelo.getTm(), cliente, nro_factura, empleado, vista.jddInicio.getDate(), vista.jddFinal.getDate(), tiop, estado);
         re.setVisible(true);
     }
 
@@ -546,7 +546,7 @@ public class C_gestionVentas implements GestionInterface, RecibirEmpleadoCallbac
             int fila = this.vista.jtIngresoCabecera.getSelectedRow();
             if (fila > -1) {
                 Integer idIngresoCabecera = modelo.getTm().getFacturaCabeceraList().get(fila).getIdFacturaCabecera();
-                Ver_ingreso ver_egreso = new Ver_ingreso(c_inicio, idIngresoCabecera, false);
+                VerIngreso ver_egreso = new VerIngreso(c_inicio, idIngresoCabecera, false);
                 ver_egreso.mostrarVista();
                 this.vista.jbDetalle.setEnabled(false);
             }

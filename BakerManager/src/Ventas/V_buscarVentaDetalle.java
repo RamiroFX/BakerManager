@@ -25,7 +25,7 @@ import net.miginfocom.swing.MigLayout;
  *
  * @author Ramiro
  */
-public class V_buscar_venta_detalle extends JDialog {
+public class V_buscarVentaDetalle extends JDialog {
 
     public JButton jbBuscar, jbBorrar, jbCerrar, jbDetalle, jbCliente,
             jbFuncionario;
@@ -39,7 +39,7 @@ public class V_buscar_venta_detalle extends JDialog {
     public JDateChooser jddInicio, jddFinal;
     public JRadioButton jrbDescripcion, jrbObservacion;
 
-    public V_buscar_venta_detalle(C_inicio c_inicio) {
+    public V_buscarVentaDetalle(C_inicio c_inicio) {
         super(c_inicio.vista, "Buscar venta por detalle", JDialog.ModalityType.APPLICATION_MODAL);
         setSize(900, 600);
         setName("jdBuscarVentaDetalle");

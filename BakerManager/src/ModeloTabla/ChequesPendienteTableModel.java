@@ -8,7 +8,7 @@ package ModeloTabla;
 import Entities.E_cuentaCorrienteDetalle;
 import Entities.E_formaPago;
 import Entities.E_tipoCheque;
-import java.io.IOException;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -17,9 +17,6 @@ import java.util.Date;
 import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.table.AbstractTableModel;
-import org.joda.time.Days;
-import org.joda.time.Instant;
-import org.joda.time.ReadableInstant;
 
 /**
  *
@@ -27,12 +24,15 @@ import org.joda.time.ReadableInstant;
  */
 public class ChequesPendienteTableModel extends AbstractTableModel {
 
-    SimpleDateFormat dateFormater = new SimpleDateFormat("dd/MM/YYYY");
+    private SimpleDateFormat dateFormater;
+    private DecimalFormat decimalFormat;
     private List<E_cuentaCorrienteDetalle> list;
-    private final String[] colNames = {"Monto", "Id venta", "Nro Factura", "Nro Cheque", "Banco", "Fecha cheque", "Fecha diferida", "Días pendientes"};
+    private final String[] colNames = {"Cliente", "Monto", "Id venta", "Nro Factura", "Nro Cheque", "Banco", "Fecha cheque", "Fecha diferida", "Días pendientes"};
 
     public ChequesPendienteTableModel() {
         this.list = new ArrayList<>();
+        this.dateFormater = new SimpleDateFormat("dd/MM/YYYY");
+        this.decimalFormat = new DecimalFormat("###,###");
     }
 
     public void setList(List<E_cuentaCorrienteDetalle> facturaCabeceraList) {
@@ -75,22 +75,25 @@ public class ChequesPendienteTableModel extends AbstractTableModel {
         E_cuentaCorrienteDetalle row = this.list.get(rowIndex);
         switch (colIndex) {
             case 0: {
-                return (int) row.getMonto();
+                return row.getCuentaCorrienteCabecera().getCliente().getEntidad();
             }
             case 1: {
-                return row.getIdFacturaCabecera();
+                return decimalFormat.format(row.getMonto());
             }
             case 2: {
-                return row.getNroFactura();
+                return decimalFormat.format(row.getIdFacturaCabecera());
             }
             case 3: {
+                return decimalFormat.format(row.getNroFactura());
+            }
+            case 4: {
                 if (row.getNroCheque() > 0) {
-                    return row.getNroCheque();
+                    return decimalFormat.format(row.getNroCheque());
                 } else {
                     return "";
                 }
             }
-            case 4: {
+            case 5: {
                 if (row.getBanco() != null) {
                     if (row.getBanco().getDescripcion() != null) {
                         return row.getBanco().getDescripcion();
@@ -101,21 +104,21 @@ public class ChequesPendienteTableModel extends AbstractTableModel {
                     return "";
                 }
             }
-            case 5: {
+            case 6: {
                 if (row.getFechaCheque() != null) {
                     return dateFormater.format(row.getFechaCheque());
                 } else {
                     return "";
                 }
             }
-            case 6: {
+            case 7: {
                 if (row.getFechaDiferidaCheque() != null) {
                     return dateFormater.format(row.getFechaDiferidaCheque());
                 } else {
                     return "";
                 }
             }
-            case 7: {
+            case 8: {
                 if (row.getFechaDiferidaCheque() != null) {
                     Date date2 = Calendar.getInstance().getTime();
                     return betweenDates(date2, row.getFechaDiferidaCheque());

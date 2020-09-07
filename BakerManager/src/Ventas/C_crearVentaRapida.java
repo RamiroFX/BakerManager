@@ -61,7 +61,6 @@ public class C_crearVentaRapida implements GestionInterface, InterfaceFacturaDet
 
     @Override
     public final void inicializarVista() {
-        this.vista.jtfNroFactura.setEditable(false);
         //this.vista.jtfNroFactura.setText(this.modelo.getNroFactura() + "");
         this.vista.jtfClieDireccion.setText(this.modelo.getCabecera().getCliente().getDireccion());
         this.vista.jtfCliente.setText(this.modelo.getCabecera().getCliente().getEntidad() + "(" + this.modelo.getCabecera().getCliente().getNombre() + ")");

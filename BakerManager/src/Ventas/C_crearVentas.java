@@ -4,6 +4,7 @@
  */
 package Ventas;
 
+import Ventas.Mesas.ConfigurarMesa;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -19,9 +20,9 @@ import javax.swing.JOptionPane;
  */
 public class C_crearVentas extends MouseAdapter implements ActionListener, KeyListener {
 
-    V_crearVentas vista;
+    public V_crearVentas vista;
     M_crearVentas modelo;
-    C_gestionVentas gestionVentas;
+    public C_gestionVentas gestionVentas;
 
     public C_crearVentas(V_crearVentas vista, M_crearVentas modelo, C_gestionVentas gestionVentas) {
         this.vista = vista;
@@ -90,7 +91,7 @@ public class C_crearVentas extends MouseAdapter implements ActionListener, KeyLi
 
     private void verMesa() {
         int idMesa = Integer.valueOf(String.valueOf(this.vista.jtMesa.getValueAt(this.vista.jtMesa.getSelectedRow(), 0)));
-        Ver_mesa vi = new Ver_mesa(this, idMesa);
+        VerMesa vi = new VerMesa(this, idMesa);
         vi.mostrarVista();
         this.vista.jbVerMesa.setEnabled(false);
         this.vista.jbEliminarMesa.setEnabled(false);

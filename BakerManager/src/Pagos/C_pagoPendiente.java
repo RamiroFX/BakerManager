@@ -17,7 +17,7 @@ import Interface.RecibirEmpleadoCallback;
 import Interface.RecibirProveedorCallback;
 import MenuPrincipal.DatosUsuario;
 import Proveedor.Seleccionar_proveedor;
-import Ventas.Ver_ingreso;
+import Ventas.VerIngreso;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

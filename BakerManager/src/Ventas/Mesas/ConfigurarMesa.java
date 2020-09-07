@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package Ventas;
+package Ventas.Mesas;
 
 import Cliente.Seleccionar_cliente;
 import DB.DB_Cliente;
@@ -12,6 +12,8 @@ import Entities.M_mesa;
 import Entities.M_mesa_detalle;
 import Interface.RecibirClienteCallback;
 import Parametros.TipoOperacion;
+import Ventas.C_crearVentas;
+import Ventas.VerMesa;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.EventQueue;
@@ -135,7 +137,7 @@ public class ConfigurarMesa extends JDialog implements ActionListener, KeyListen
                 @Override
                 public void run() {
                     Integer id = (int) idMesa;
-                    Ver_mesa vm = new Ver_mesa(crearVentas, id);
+                    VerMesa vm = new VerMesa(crearVentas, id);
                     vm.mostrarVista();
                 }
             });
@@ -169,7 +171,7 @@ public class ConfigurarMesa extends JDialog implements ActionListener, KeyListen
         this.jtfCliente.setText(nombre + " (" + Entidad + ")");
     }
 
-    void mostrarVista() {
+    public void mostrarVista() {
         this.setVisible(true);
     }
 

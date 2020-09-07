@@ -4,18 +4,21 @@
  */
 package Ventas;
 
+import Ventas.Mesas.M_verMesa;
+import Ventas.Mesas.C_verMesa;
+
 /**
  *
  * @author Ramiro Ferreira
  */
-public class Ver_mesa {
+public class VerMesa {
 
     public M_verMesa modelo;
     public V_crearVentaRapida vista;
     public C_verMesa controlador;
     public C_crearVentas crearVentas;
 
-    public Ver_mesa(C_crearVentas crearVentas, int idMesa) {
+    public VerMesa(C_crearVentas crearVentas, int idMesa) {
         this.crearVentas = crearVentas;
         this.modelo = new M_verMesa(idMesa);
         this.vista = new V_crearVentaRapida(crearVentas.gestionVentas.c_inicio.vista, true);

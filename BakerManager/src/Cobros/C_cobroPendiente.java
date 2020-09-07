@@ -14,7 +14,7 @@ import Interface.InterfaceNotificarCambio;
 import Interface.RecibirClienteCallback;
 import Interface.RecibirEmpleadoCallback;
 import MenuPrincipal.DatosUsuario;
-import Ventas.Ver_ingreso;
+import Ventas.VerIngreso;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -179,7 +179,7 @@ public class C_cobroPendiente extends MouseAdapter implements ActionListener, Ke
             E_movimientoContable mc = modelo.getTm().getList().get(fila);
             switch (mc.getTipo()) {
                 case E_movimientoContable.TIPO_VENTA: {
-                    Ver_ingreso vc = new Ver_ingreso(this.vista, mc.getVenta().getIdCabecera(), false);
+                    VerIngreso vc = new VerIngreso(this.vista, mc.getVenta().getIdCabecera(), false);
                     vc.mostrarVista();
                     break;
                 }

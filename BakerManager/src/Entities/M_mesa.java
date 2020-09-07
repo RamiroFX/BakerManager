@@ -4,18 +4,16 @@
  */
 package Entities;
 
-import java.sql.Timestamp;
+import java.util.Date;
 
 /**
  *
  * @author Ramiro Ferreira
  */
-public class M_mesa {
+public class M_mesa extends E_facturaCabecera {
 
-    private Integer idMesa, idCondVenta, numeroMesa;
-    private Timestamp tiempo;
-    private M_cliente cliente;
-    private M_funcionario funcionario;
+    private Integer idMesa, numeroMesa;
+    private Date tiempo;
 
     public Integer getIdMesa() {
         return idMesa;
@@ -26,11 +24,11 @@ public class M_mesa {
     }
 
     public Integer getIdCondVenta() {
-        return idCondVenta;
+        return getTipoOperacion().getId();
     }
 
     public void setIdCondVenta(Integer idCondVenta) {
-        this.idCondVenta = idCondVenta;
+        this.getTipoOperacion().setId(idCondVenta);
     }
 
     public Integer getNumeroMesa() {
@@ -41,27 +39,4 @@ public class M_mesa {
         this.numeroMesa = numeroMesa;
     }
 
-    public Timestamp getTiempo() {
-        return tiempo;
-    }
-
-    public void setTiempo(Timestamp tiempo) {
-        this.tiempo = tiempo;
-    }
-
-    public M_cliente getCliente() {
-        return cliente;
-    }
-
-    public void setCliente(M_cliente cliente) {
-        this.cliente = cliente;
-    }
-
-    public M_funcionario getFuncionario() {
-        return funcionario;
-    }
-
-    public void setFuncionario(M_funcionario funcionario) {
-        this.funcionario = funcionario;
-    }
 }

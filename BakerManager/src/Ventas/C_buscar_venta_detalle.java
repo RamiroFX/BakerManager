@@ -33,13 +33,13 @@ import javax.swing.JOptionPane;
 public class C_buscar_venta_detalle extends MouseAdapter implements ActionListener,
         KeyListener, RecibirEmpleadoCallback, RecibirClienteCallback {
 
-    public V_buscar_venta_detalle vista;
+    public V_buscarVentaDetalle vista;
     M_cliente cliente;
     M_funcionario funcionario;
     public C_inicio c_inicio;
 
     public C_buscar_venta_detalle(C_inicio c_inicio) {
-        this.vista = new V_buscar_venta_detalle(c_inicio);
+        this.vista = new V_buscarVentaDetalle(c_inicio);
         this.c_inicio = c_inicio;
         inicializarVista();
         agregarListeners();
@@ -214,7 +214,7 @@ public class C_buscar_venta_detalle extends MouseAdapter implements ActionListen
             borrarParametros();
         } else if (e.getSource() == this.vista.jbDetalle) {
             Integer idEgresoCabecera = Integer.valueOf(String.valueOf(this.vista.jtCabecera.getValueAt(this.vista.jtCabecera.getSelectedRow(), 0)));
-            Ver_ingreso ver_ingreso = new Ver_ingreso(c_inicio, idEgresoCabecera, false);
+            VerIngreso ver_ingreso = new VerIngreso(c_inicio, idEgresoCabecera, false);
             ver_ingreso.mostrarVista();
             this.vista.jbDetalle.setEnabled(false);
 
@@ -250,7 +250,7 @@ public class C_buscar_venta_detalle extends MouseAdapter implements ActionListen
                 Integer idEgresoCabecera = Integer.valueOf(String.valueOf(this.vista.jtCabecera.getValueAt(fila, 0)));
                 this.vista.jbDetalle.setEnabled(true);
                 if (e.getClickCount() == 2) {
-                    Ver_ingreso ver_egreso = new Ver_ingreso(c_inicio, idEgresoCabecera, false);
+                    VerIngreso ver_egreso = new VerIngreso(c_inicio, idEgresoCabecera, false);
                     ver_egreso.mostrarVista();
                     this.vista.jbDetalle.setEnabled(false);
                 }

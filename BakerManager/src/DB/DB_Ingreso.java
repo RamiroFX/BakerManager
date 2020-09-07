@@ -24,6 +24,7 @@ import ModeloTabla.SeleccionVentaCabecera;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.SQLType;
 import java.sql.Statement;
 import java.sql.Timestamp;
 import java.sql.Types;
@@ -1171,6 +1172,59 @@ public class DB_Ingreso {
         return rstm;
     }
 
+    public static List<M_facturaDetalle> obtenerMesaDetalle2(int idMesa) {
+        List<M_facturaDetalle> detalles = null;
+        String QUERY = "SELECT "
+                + "MD.ID_MESA_DETALLE \"ID_MESA_DETALLE\", "
+                + "MD.ID_PRODUCTO \"ID_PRODUCTO\", "
+                + "P.CODIGO  \"CODIGO_PROD\", "
+                + "P.DESCRIPCION  \"PRODUCTO\", "
+                + "MD.CANTIDAD \"CANTIDAD\", "
+                + "MD.PRECIO \"PRECIO\", "
+                + "MD.DESCUENTO \"DESCUENTO\", "
+                + "P.ID_IMPUESTO \"ID_IMPUESTO\", "
+                + "MD.OBSERVACION \"OBSERVACION\" "
+                + "FROM MESA_DETALLE MD, PRODUCTO P "
+                + "WHERE  P.ID_PRODUCTO = MD.ID_PRODUCTO "
+                + "AND MD.ID_MESA = " + idMesa;
+        try {
+            st = DB_manager.getConection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            rs = st.executeQuery(QUERY);
+            detalles = new ArrayList();
+            while (rs.next()) {
+                M_facturaDetalle detalle = new M_facturaDetalle();
+                detalle.setCantidad(rs.getDouble("CANTIDAD"));
+                detalle.setDescuento(rs.getDouble("DESCUENTO"));
+                detalle.setIdFacturaDetalle(rs.getInt("ID_MESA_DETALLE"));
+                detalle.setObservacion(rs.getString("OBSERVACION"));
+                detalle.setPrecio(rs.getInt("PRECIO"));
+                M_producto producto = new M_producto();
+                producto.setId(rs.getInt("ID_PRODUCTO"));
+                producto.setDescripcion(rs.getString("PRODUCTO"));
+                producto.setIdImpuesto(rs.getInt("ID_IMPUESTO"));
+                producto.setCodigo(rs.getString("CODIGO_PROD"));
+                detalle.setProducto(producto);
+                detalles.add(detalle);
+            }
+        } catch (SQLException ex) {
+            Logger lgr = Logger.getLogger(DB_Ingreso.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (st != null) {
+                    st.close();
+                }
+            } catch (SQLException ex) {
+                Logger lgr = Logger.getLogger(DB_Ingreso.class.getName());
+                lgr.log(Level.WARNING, ex.getMessage(), ex);
+            }
+        }
+        return detalles;
+    }
+
     public static long insertarMesa(M_mesa mesa, ArrayList<M_mesa_detalle> detalle) {
         //LA SGBD SE ENCARGA DE INSERTAR EL TIMESTAMP.
         String INSERT_DETAIL = "INSERT INTO MESA_DETALLE(ID_MESA, ID_PRODUCTO, CANTIDAD, PRECIO, DESCUENTO, OBSERVACION)VALUES (?, ?, ?, ?, ?, ?);";
@@ -1513,7 +1567,7 @@ public class DB_Ingreso {
     public static int transferirMesaAVenta(M_mesa mesa, ArrayList<M_mesa_detalle> detalle) {
         String INSERT_DETALLE = "INSERT INTO FACTURA_DETALLE(ID_FACTURA_CABECERA, ID_PRODUCTO, CANTIDAD, PRECIO, DESCUENTO, OBSERVACION)VALUES (?, ?, ?, ?, ?, ?);";
         //LA SGBD SE ENCARGA DE INSERTAR EL TIMESTAMP.
-        String INSERT_CABECERA = "INSERT INTO FACTURA_CABECERA(ID_FUNCIONARIO, ID_CLIENTE, ID_COND_VENTA)VALUES (?, ?, ?);";
+        String INSERT_CABECERA = "INSERT INTO FACTURA_CABECERA(ID_FUNCIONARIO, ID_CLIENTE, ID_COND_VENTA, ID_TIMBRADO, NRO_FACTURA)VALUES (?, ?, ?, ?, ?);";
         String DELETE_DETAIL = "DELETE FROM MESA_DETALLE WHERE ID_MESA = " + mesa.getIdMesa();
         String DELETE_HEADER = "DELETE FROM MESA WHERE ID_MESA = " + mesa.getIdMesa();
         long sq_cabecera = -1L;
@@ -1523,6 +1577,12 @@ public class DB_Ingreso {
             pst.setInt(1, mesa.getFuncionario().getId_funcionario());
             pst.setInt(2, mesa.getCliente().getIdCliente());
             pst.setInt(3, mesa.getIdCondVenta());
+            pst.setInt(4, mesa.getTimbrado().getId());
+            if (mesa.getNroFactura() > 0) {
+                pst.setInt(5, mesa.getNroFactura());
+            } else {
+                pst.setNull(5, Types.NULL);
+            }
             pst.executeUpdate();
             rs = pst.getGeneratedKeys();
             if (rs != null && rs.next()) {

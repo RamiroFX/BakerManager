@@ -77,6 +77,14 @@ public class M_crearProductoTerminado {
         getProductosTerminadosTM().agregarDetalle(produccion);
     }
 
+    public void agregarProductoTerminadoPosterior(double cantidad, M_producto producto) {
+        E_produccionDetalle produccion = new E_produccionDetalle();
+        produccion.setCantidad(cantidad);
+        produccion.setProducto(producto);
+        DB_Produccion.insertarProduccionProdTerminadoPosterior(getProduccionCabecera(), produccion);
+        consultarProduccion();
+    }
+
     public void modificarProductoTerminado(int index, double peso) {
         getProductosTerminadosTM().modificarCantidadDetalle(index, peso);
     }
@@ -114,6 +122,6 @@ public class M_crearProductoTerminado {
     }
 
     public void actualizarRolloUtilizado(E_produccionFilm detalle) {
-        DB_Produccion.insertarProduccionProdTerminadosPosterior(getProduccionCabecera(), detalle);
+        DB_Produccion.insertarProduccionRolloPosterior(getProduccionCabecera(), detalle);
     }
 }

@@ -15,7 +15,7 @@ import MenuPrincipal.DatosUsuario;
 import Pedido.C_crearPedido;
 import Pedido.C_verPedido;
 import Ventas.C_crearVentaRapida;
-import Ventas.C_verMesa;
+import Ventas.Mesas.C_verMesa;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

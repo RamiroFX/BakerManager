@@ -40,7 +40,7 @@ public class ChequesPendientes extends javax.swing.JDialog implements ActionList
     public ChequesPendientes(JFrame vista, int tipoConcepto) {
         super(vista, true);
         setTitle("Cheques diferidos pendientes");
-        setSize(new java.awt.Dimension(700, 300));
+        setSize(new java.awt.Dimension(900, 300));
         setLocationRelativeTo(vista);
         this.concepto = tipoConcepto;
         initComponents();

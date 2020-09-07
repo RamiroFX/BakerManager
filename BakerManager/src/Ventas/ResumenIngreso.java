@@ -49,7 +49,7 @@ import javax.swing.SwingConstants;
  *
  * @author Ramiro Ferreira
  */
-public class Resumen_ingreso extends JDialog implements ActionListener, KeyListener, InterfaceFacturaDetalle {
+public class ResumenIngreso extends JDialog implements ActionListener, KeyListener, InterfaceFacturaDetalle {
 
     JScrollPane jspEgreso, jspDetalle;
     JTable jtIngreso, jtDetalle;
@@ -65,7 +65,7 @@ public class Resumen_ingreso extends JDialog implements ActionListener, KeyListe
     FacturaCabeceraTableModel tm;
     Estado estado;
 
-    public Resumen_ingreso(C_inicio c_inicio, FacturaCabeceraTableModel tm, M_cliente cliente_entidad,
+    public ResumenIngreso(C_inicio c_inicio, FacturaCabeceraTableModel tm, M_cliente cliente_entidad,
             Integer nro_factura, String idEmpleado, Date inicio, Date fin,
             String tipo_operacion, Estado estado) {
         super(c_inicio.vista, DEFAULT_MODALITY_TYPE);
@@ -86,7 +86,7 @@ public class Resumen_ingreso extends JDialog implements ActionListener, KeyListe
         agregarListener();
     }
 
-    public Resumen_ingreso(C_inicio c_inicio) {
+    public ResumenIngreso(C_inicio c_inicio) {
         super(c_inicio.vista, DEFAULT_MODALITY_TYPE);
         setTitle("Detalle de facturación");
         setSize(800, 600);

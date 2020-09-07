@@ -23,7 +23,7 @@ import net.miginfocom.swing.MigLayout;
  *
  * @author Ramiro Ferreira
  */
-public class V_ver_ingreso extends JDialog {
+public class V_verIngreso extends JDialog {
     //NORTE
 
     JPanel jpNorth;
@@ -39,7 +39,7 @@ public class V_ver_ingreso extends JDialog {
     JPanel jpSouth;
     public JButton jbImprimir, jbSalir;
 
-    public V_ver_ingreso(java.awt.Frame parent) {
+    public V_verIngreso(java.awt.Frame parent) {
         super(parent, true);
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Ingresos");

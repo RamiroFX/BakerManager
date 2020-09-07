@@ -16,6 +16,18 @@ public class M_mesa_detalle {
     private Double cantidad, descuento;
     private String observacion;
 
+    public M_mesa_detalle() {
+    }
+
+    public M_mesa_detalle(M_facturaDetalle detalle) {
+        this.idMesaDetalle = detalle.getIdFacturaDetalle();
+        this.cantidad = detalle.getCantidad();
+        this.descuento = detalle.getDescuento();
+        this.observacion = detalle.getObservacion();
+        this.precio = detalle.getPrecio();
+        this.producto = detalle.getProducto();
+    }
+
     public Integer getIdMesaDetalle() {
         return idMesaDetalle;
     }

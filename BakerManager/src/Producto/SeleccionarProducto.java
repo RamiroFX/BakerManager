@@ -9,7 +9,7 @@ import Interface.RecibirProductoCallback;
 import Pedido.C_crearPedido;
 import Pedido.C_verPedido;
 import Ventas.C_crearVentaRapida;
-import Ventas.C_verMesa;
+import Ventas.Mesas.C_verMesa;
 import javax.swing.JDialog;
 
 /**

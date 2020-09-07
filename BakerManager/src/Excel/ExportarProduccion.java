@@ -433,6 +433,30 @@ public class ExportarProduccion {
         }
         // Create a row and put some cells in it. Rows are 0 based.
         int filaActual = 0;
+        double totalProducido = 0;
+        double totalUtilizado = 0;
+        double totalDisponible = 0;
+        /*
+        FILA TOTAL PRODUCIDO
+         */
+        Row rowTotalProducido = sheet.createRow(filaActual);
+        filaActual++;
+        rowTotalProducido.createCell(0).setCellValue(new HSSFRichTextString("Total producido"));
+        rowTotalProducido.getCell(0).setCellStyle(style2);
+        /*
+        FILA TOTAL PRODUCIDO
+         */
+        Row rowTotalUtilizado = sheet.createRow(filaActual);
+        filaActual++;
+        rowTotalUtilizado.createCell(0).setCellValue(new HSSFRichTextString("Total utilizado"));
+        rowTotalUtilizado.getCell(0).setCellStyle(style2);
+        /*
+        FILA TOTAL PRODUCIDO
+         */
+        Row rowTotalDisponible = sheet.createRow(filaActual);
+        filaActual++;
+        rowTotalDisponible.createCell(0).setCellValue(new HSSFRichTextString("Total disponible"));
+        rowTotalDisponible.getCell(0).setCellStyle(style2);
         //INICIO CABECERA PRODUCCION DETALLE
         Row cabeceraProduccionDetalle = sheet.createRow(filaActual);
         filaActual++;
@@ -455,9 +479,6 @@ public class ExportarProduccion {
         //FIN CABECERA PRODUCCION DETALLE
 
         //INICIO DETALLE PRODUCCION DETALLE
-        double totalProducido = 0;
-        double totalUtilizado = 0;
-        double totalDisponible = 0;
         for (int i = 0; i < produccionFilmCabecera.size(); i++) {
             Row filaProdDetalle = sheet.createRow(filaActual);
             filaActual++;
@@ -475,31 +496,10 @@ public class ExportarProduccion {
             totalDisponible = totalDisponible + get.getPesoActual();
         }
         filaActual++;
-        /*
-        FILA TOTAL PRODUCIDO
-         */
-        Row rowTotalProducido = sheet.createRow(filaActual);
-        filaActual++;
-        rowTotalProducido.createCell(0).setCellValue(new HSSFRichTextString("Total producido"));
-        rowTotalProducido.getCell(0).setCellStyle(style2);
         rowTotalProducido.createCell(1).setCellValue(totalProducido);
         rowTotalProducido.getCell(1).setCellStyle(styleNumber1);
-        /*
-        FILA TOTAL PRODUCIDO
-         */
-        Row rowTotalUtilizado = sheet.createRow(filaActual);
-        filaActual++;
-        rowTotalUtilizado.createCell(0).setCellValue(new HSSFRichTextString("Total utilizado"));
-        rowTotalUtilizado.getCell(0).setCellStyle(style2);
         rowTotalUtilizado.createCell(1).setCellValue(totalUtilizado);
         rowTotalUtilizado.getCell(1).setCellStyle(styleNumber1);
-        /*
-        FILA TOTAL PRODUCIDO
-         */
-        Row rowTotalDisponible = sheet.createRow(filaActual);
-        filaActual++;
-        rowTotalDisponible.createCell(0).setCellValue(new HSSFRichTextString("Total disponible"));
-        rowTotalDisponible.getCell(0).setCellStyle(style2);
         rowTotalDisponible.createCell(1).setCellValue(totalDisponible);
         rowTotalDisponible.getCell(1).setCellStyle(styleNumber1);
         //INICIO AJUSTAR COLUMNAS
@@ -535,6 +535,103 @@ public class ExportarProduccion {
         } else {
             return;
         }
+        // Create a row and put some cells in it. Rows are 0 based.
+        int filaActual = 0;
+        double totalProducido = 0;
+        double totalUtilizado = 0;
+        double totalDisponible = 0;
+        /*
+        FILA TOTAL PRODUCIDO
+         */
+        Row rowTotalProducido = sheet.createRow(filaActual);
+        filaActual++;
+        rowTotalProducido.createCell(0).setCellValue(new HSSFRichTextString("Total producido"));
+        rowTotalProducido.getCell(0).setCellStyle(style2);
+        /*
+        FILA TOTAL PRODUCIDO
+         */
+        Row rowTotalUtilizado = sheet.createRow(filaActual);
+        filaActual++;
+        rowTotalUtilizado.createCell(0).setCellValue(new HSSFRichTextString("Total utilizado"));
+        rowTotalUtilizado.getCell(0).setCellStyle(style2);
+        /*
+        FILA TOTAL PRODUCIDO
+         */
+        Row rowTotalDisponible = sheet.createRow(filaActual);
+        filaActual++;
+        rowTotalDisponible.createCell(0).setCellValue(new HSSFRichTextString("Total disponible"));
+        rowTotalDisponible.getCell(0).setCellStyle(style2);
+        //INICIO CABECERA PRODUCCION DETALLE
+        Row cabeceraProduccionDetalle = sheet.createRow(filaActual);
+        filaActual++;
+        int col = 0;
+        cabeceraProduccionDetalle.createCell(col).setCellValue(new HSSFRichTextString("Fecha"));
+        cabeceraProduccionDetalle.getCell(col++).setCellStyle(style1);
+        cabeceraProduccionDetalle.createCell(col).setCellValue(new HSSFRichTextString("OT"));
+        cabeceraProduccionDetalle.getCell(col++).setCellStyle(style1);
+        cabeceraProduccionDetalle.createCell(col).setCellValue(new HSSFRichTextString("Nro. Film"));
+        cabeceraProduccionDetalle.getCell(col++).setCellStyle(style1);
+        cabeceraProduccionDetalle.createCell(col).setCellValue(new HSSFRichTextString("Cod."));
+        cabeceraProduccionDetalle.getCell(col++).setCellStyle(style1);
+        cabeceraProduccionDetalle.createCell(col).setCellValue(new HSSFRichTextString("Producto"));
+        cabeceraProduccionDetalle.getCell(col++).setCellStyle(style1);
+        cabeceraProduccionDetalle.createCell(col).setCellValue(new HSSFRichTextString("Cono"));
+        cabeceraProduccionDetalle.getCell(col++).setCellStyle(style1);
+        cabeceraProduccionDetalle.createCell(col).setCellValue(new HSSFRichTextString("Medida"));
+        cabeceraProduccionDetalle.getCell(col++).setCellStyle(style1);
+        cabeceraProduccionDetalle.createCell(col).setCellValue(new HSSFRichTextString("Micron"));
+        cabeceraProduccionDetalle.getCell(col++).setCellStyle(style1);
+        cabeceraProduccionDetalle.createCell(col).setCellValue(new HSSFRichTextString("Peso producido"));
+        cabeceraProduccionDetalle.getCell(col++).setCellStyle(style1);
+        cabeceraProduccionDetalle.createCell(col).setCellValue(new HSSFRichTextString("Peso utilizado"));
+        cabeceraProduccionDetalle.getCell(col++).setCellStyle(style1);
+        cabeceraProduccionDetalle.createCell(col).setCellValue(new HSSFRichTextString("Peso disponible"));
+        cabeceraProduccionDetalle.getCell(col++).setCellStyle(style1);
+        //FIN CABECERA PRODUCCION DETALLE
+
+        //INICIO DETALLE PRODUCCION DETALLE
+        for (int i = 0; i < produccionFilmCabecera.size(); i++) {
+            Row filaProdDetalle = sheet.createRow(filaActual);
+            filaActual++;
+            int c = 0;
+            E_produccionFilm get = produccionFilmCabecera.get(i);
+            filaProdDetalle.createCell(c).setCellValue(get.getFechaCreacion());
+            filaProdDetalle.getCell(c++).setCellStyle(dateCellStyle);
+            filaProdDetalle.createCell(c++).setCellValue(get.getOrdenTrabajoCabecera());
+            filaProdDetalle.createCell(c++).setCellValue(get.getNroFilm());
+            filaProdDetalle.createCell(c++).setCellValue(get.getProducto().getCodigo());
+            filaProdDetalle.createCell(c++).setCellValue(get.getProducto().getDescripcion());
+            filaProdDetalle.createCell(c++).setCellValue(get.getCono());
+            filaProdDetalle.createCell(c++).setCellValue(get.getMedida());
+            filaProdDetalle.createCell(c++).setCellValue(get.getMicron());
+            filaProdDetalle.createCell(c++).setCellValue(get.getPeso());
+            filaProdDetalle.createCell(c++).setCellValue(get.getPesoUtilizado());
+            filaProdDetalle.createCell(c++).setCellValue(get.getPesoActual());
+            totalProducido = totalProducido + get.getPeso();
+            totalUtilizado = totalUtilizado + get.getPesoUtilizado();
+            totalDisponible = totalDisponible + get.getPesoActual();
+        }
+        rowTotalDisponible.createCell(1).setCellValue(totalDisponible);
+        rowTotalDisponible.getCell(1).setCellStyle(styleNumber1);
+        rowTotalUtilizado.createCell(1).setCellValue(totalUtilizado);
+        rowTotalUtilizado.getCell(1).setCellStyle(styleNumber1);
+        rowTotalProducido.createCell(1).setCellValue(totalProducido);
+        rowTotalProducido.getCell(1).setCellStyle(styleNumber1);
+        filaActual++;
+        //INICIO AJUSTAR COLUMNAS
+        sheet.autoSizeColumn(0);
+        sheet.autoSizeColumn(1);
+        sheet.autoSizeColumn(2);
+        sheet.autoSizeColumn(3);
+        sheet.autoSizeColumn(4);
+        sheet.autoSizeColumn(5);
+        sheet.autoSizeColumn(6);
+        sheet.autoSizeColumn(7);
+        sheet.autoSizeColumn(8);
+        sheet.autoSizeColumn(9);
+        sheet.autoSizeColumn(10);
+        sheet.autoSizeColumn(11);
+        //FIN AJUSTAR COLUMNAS
         try {
             FileOutputStream out = new FileOutputStream(directory.getPath() + ".xls");
             workbook.write(out);
@@ -544,6 +641,5 @@ public class ExportarProduccion {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 }

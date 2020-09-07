@@ -18,8 +18,8 @@ import Interface.RecibirClienteCallback;
 import Interface.RecibirEmpleadoCallback;
 import MenuPrincipal.DatosUsuario;
 import ModeloTabla.FacturacionCabeceraTableModel;
-import Ventas.Resumen_ingreso;
-import Ventas.Ver_ingreso;
+import Ventas.ResumenIngreso;
+import Ventas.VerIngreso;
 import bakermanager.C_inicio;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
@@ -244,7 +244,7 @@ public class C_historialFacturacion implements GestionInterface, RecibirEmpleado
             Integer idFacturacion = Integer.valueOf(String.valueOf(this.vista.jtFacturacion.getValueAt(fila, 0)));
             FacturacionCabeceraTableModel tm = (FacturacionCabeceraTableModel) this.vista.jtFacturacion.getModel();
             E_facturacionCabecera facturacionCabecera = tm.getFacturacionCabeceraList().get(fila);
-            Resumen_ingreso re = new Resumen_ingreso(c_inicio);
+            ResumenIngreso re = new ResumenIngreso(c_inicio);
             re.inicializarDatos(facturacionCabecera);
             re.setVisible(true);
         }
@@ -255,7 +255,7 @@ public class C_historialFacturacion implements GestionInterface, RecibirEmpleado
         if (fila > -1) {
             //verificarPermiso();
             Integer idVentaCabecera = Integer.valueOf(String.valueOf(this.vista.jtVentas.getValueAt(fila, 0)));
-            Ver_ingreso ver_egreso = new Ver_ingreso(c_inicio, idVentaCabecera, false);
+            VerIngreso ver_egreso = new VerIngreso(c_inicio, idVentaCabecera, false);
             ver_egreso.mostrarVista();
             this.vista.jbVentaDetalle.setEnabled(false);
         }

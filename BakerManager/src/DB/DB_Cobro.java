@@ -442,7 +442,9 @@ public class DB_Cobro {
                 + "CCD.CHEQUE_FECHA_DIFERIDA, "//9
                 + "(SELECT B.DESCRIPCION FROM BANCO B WHERE B.ID_BANCO = CCD.ID_BANCO) \"BANCO\", "//10
                 + "CCD.ID_ESTADO_CHEQUE, "//11
-                + "(SELECT FC.NRO_FACTURA FROM FACTURA_CABECERA FC WHERE FC.ID_FACTURA_CABECERA = CCD.ID_FACTURA_CABECERA) \"NRO_FACTURA\" "//12
+                + "(SELECT FC.NRO_FACTURA FROM FACTURA_CABECERA FC WHERE FC.ID_FACTURA_CABECERA = CCD.ID_FACTURA_CABECERA) \"NRO_FACTURA\", "//12
+                + "(SELECT C.ENTIDAD FROM CLIENTE C WHERE C.ID_CLIENTE = CCC.ID_CLIENTE) \"CLIENTE\", "//13
+                + "(SELECT C.ID_CLIENTE FROM CLIENTE C WHERE C.ID_CLIENTE = CCC.ID_CLIENTE) \"ID_CLIENTE\" "//14
                 + "FROM CUENTA_CORRIENTE_DETALLE CCD, CUENTA_CORRIENTE_CABECERA CCC "
                 + "WHERE cheque_fecha_diferida >= now() "
                 + "AND CCC.ID_CTA_CTE_CABECERA = CCD.ID_CTA_CTE_CABECERA "
@@ -453,10 +455,16 @@ public class DB_Cobro {
             pst = DB_manager.getConection().prepareStatement(query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             rs = pst.executeQuery();
             while (rs.next()) {
-                E_cuentaCorrienteDetalle detalle = new E_cuentaCorrienteDetalle();
+                M_cliente cliente = new M_cliente();
+                cliente.setEntidad(rs.getString(13));
+                cliente.setIdCliente(rs.getInt(14));
+                E_cuentaCorrienteCabecera ccc = new E_cuentaCorrienteCabecera();
+                ccc.setCliente(cliente);
                 E_banco banco = new E_banco();
                 banco.setId(rs.getInt(7));
                 banco.setDescripcion(rs.getString(10));
+                E_cuentaCorrienteDetalle detalle = new E_cuentaCorrienteDetalle();
+                detalle.setCuentaCorrienteCabecera(ccc);
                 detalle.setId(rs.getInt(1));
                 detalle.setIdCuentaCorrienteCabecera(rs.getInt(2));
                 detalle.setIdFacturaCabecera(rs.getInt(3));
