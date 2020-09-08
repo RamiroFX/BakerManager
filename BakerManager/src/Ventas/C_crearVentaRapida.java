@@ -204,7 +204,7 @@ public class C_crearVentaRapida implements GestionInterface, InterfaceFacturaDet
     }
 
     public void modificarDetalle(Double cantidad, Integer precio, Double descuento, String observacion, int row) {
-        this.modelo.getTableModel().setValueAt(cantidad, row, 1);
+        /*this.modelo.getTableModel().setValueAt(cantidad, row, 1);
         this.modelo.getTableModel().setValueAt(precio, row, 3);
         this.modelo.getTableModel().setValueAt(descuento, row, 4);
         M_producto prod = this.modelo.getTableModel().getFacturaDetalleList().get(row).getProducto();
@@ -241,7 +241,8 @@ public class C_crearVentaRapida implements GestionInterface, InterfaceFacturaDet
         detalle.setPrecio(precio);
         detalle.setDescuento(descuento);
         detalle.setObservacion(observacion);
-        //this.vista.jtFacturaDetalle.updateUI();
+        //this.vista.jtFacturaDetalle.updateUI();*/
+        modelo.modificarDetalle(row, cantidad, descuento, precio, observacion);
         this.vista.jbEliminarDetalle.setEnabled(false);
         this.vista.jbModificarDetalle.setEnabled(false);
         Utilities.c_packColumn.packColumns(this.vista.jtFacturaDetalle, 1);
@@ -396,6 +397,17 @@ public class C_crearVentaRapida implements GestionInterface, InterfaceFacturaDet
         });
     }
 
+    private void invocarModificarDetalle() {
+        int row = this.vista.jtFacturaDetalle.getSelectedRow();
+        if (row < 0) {
+            return;
+        }
+        M_facturaDetalle fd = modelo.getTableModel().getFacturaDetalleList().get(row);
+        SeleccionarCantidadProduducto scp = new SeleccionarCantidadProduducto(this, row);
+        scp.cargarDatos(fd);
+        scp.setVisible(true);
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource().equals(this.vista.jbSalir)) {
@@ -433,8 +445,7 @@ public class C_crearVentaRapida implements GestionInterface, InterfaceFacturaDet
             st.mostrarVista();
         }
         if (e.getSource().equals(this.vista.jbModificarDetalle)) {
-            SeleccionarCantidadProduducto scp = new SeleccionarCantidadProduducto(this, this.vista.jtFacturaDetalle.getSelectedRow());
-            scp.setVisible(true);
+            invocarModificarDetalle();
         }
     }
 

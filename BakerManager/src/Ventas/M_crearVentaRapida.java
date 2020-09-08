@@ -311,6 +311,10 @@ public class M_crearVentaRapida {
         getTableModel().agregarDetalle(detalle);
     }
 
+    public void modificarDetalle(int index, double cantidad, double descuento, int precio, String obs) {
+        this.dtm.modificarDetalle(index, cantidad, descuento, precio, obs);
+    }
+
     public String obtenerRucCliente() {
         String ruc = "";
         String div = "";

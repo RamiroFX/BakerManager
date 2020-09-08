@@ -620,4 +620,13 @@ public class SeleccionarCantidadProduducto extends javax.swing.JDialog implement
             }
         }
     }
+
+    public void cargarDatos(M_facturaDetalle fd) {
+        jtfCantidad.setText(fd.getCantidad() + "");
+        jtfDescuento.setText(fd.getDescuento() + "");
+        jtfPrecio.setText(fd.getPrecio() + "");
+        if (fd.getObservacion() != null) {
+            jtfObservacion.setText(fd.getObservacion());
+        }
+    }
 }

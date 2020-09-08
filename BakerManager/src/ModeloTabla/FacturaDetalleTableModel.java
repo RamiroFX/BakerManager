@@ -240,6 +240,15 @@ public class FacturaDetalleTableModel extends AbstractTableModel {
         }
     }
 
+    public void modificarDetalle(int index, double cantidad, double descuento, int precio, String obs) {
+        this.facturaDetalleList.get(index).setCantidad(cantidad);
+        this.facturaDetalleList.get(index).setDescuento(descuento);
+        this.facturaDetalleList.get(index).setPrecio(precio);
+        this.facturaDetalleList.get(index).setObservacion(obs);
+        //fireTableCellUpdated(index, 0);
+        fireTableDataChanged();
+    }
+
     public void updateTable() {
         fireTableDataChanged();
     }
