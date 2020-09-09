@@ -19,6 +19,7 @@ public class E_Timbrado {
     private int nroPuntoVenta;
     private int nroBoletaInicial;
     private int nroBoletaFinal;
+    private String descripcion;
     private Date fechaCreacion;
     private Date fechaVencimiento;
     private M_funcionario creador;
@@ -169,13 +170,27 @@ public class E_Timbrado {
         this.estado = estado;
     }
 
-    public String descripcion() {
+    public String descripcionNumerica() {
         return getNroTimbrado() + "-" + getNroSucursal() + "-" + getNroPuntoVenta();
     }
 
     @Override
     public String toString() {
         return getNroTimbrado() + "";
+    }
+
+    /**
+     * @return the descripcion
+     */
+    public String getDescripcion() {
+        return descripcion;
+    }
+
+    /**
+     * @param descripcion the descripcion to set
+     */
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
     }
 
 }

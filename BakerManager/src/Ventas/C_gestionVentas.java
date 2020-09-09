@@ -71,7 +71,7 @@ public class C_gestionVentas implements GestionInterface, RecibirEmpleadoCallbac
         legacy.set(Calendar.MONTH, 1);
         legacy.set(Calendar.YEAR, 2020);
         Date today = Calendar.getInstance().getTime();
-        this.vista.jddInicio.setDate(legacy.getTime());
+        this.vista.jddInicio.setDate(today);
         this.vista.jddFinal.setDate(today);
         this.vista.jbAgregar.setEnabled(false);
         this.vista.jbBuscar.setEnabled(false);

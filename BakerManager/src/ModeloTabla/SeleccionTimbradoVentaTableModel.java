@@ -23,7 +23,7 @@ public class SeleccionTimbradoVentaTableModel extends AbstractTableModel {
     private DecimalFormat integerFormat;
     NumberFormat nfSmall, nfLarge;
     private List<E_Timbrado> list;
-    private final String[] colNames = {"Nro. Timbrado-Sucursal-Punto venta", "Factura inicial", "Factura final", "Fecha vencimiento"};
+    private final String[] colNames = {"Descripción", "Nro. Timbrado-Sucursal-Punto venta", "Factura inicial", "Factura final", "Fecha vencimiento"};
 
     public SeleccionTimbradoVentaTableModel() {
         this.dateFormater = new SimpleDateFormat("dd/MM/YYYY HH:mm:ss");
@@ -72,15 +72,21 @@ public class SeleccionTimbradoVentaTableModel extends AbstractTableModel {
         E_Timbrado timbrado = this.list.get(rowIndex);
         switch (colIndex) {
             case 0: {
-                return nfLarge.format(timbrado.getNroTimbrado()) + " - " + nfSmall.format(timbrado.getNroSucursal()) + " - " + nfSmall.format(timbrado.getNroPuntoVenta());
+                if (timbrado.getDescripcion() == null) {
+                    return "";
+                }
+                return timbrado.getDescripcion();
             }
             case 1: {
-                return integerFormat.format(timbrado.getNroBoletaInicial());
+                return nfLarge.format(timbrado.getNroTimbrado()) + " - " + nfSmall.format(timbrado.getNroSucursal()) + " - " + nfSmall.format(timbrado.getNroPuntoVenta());
             }
             case 2: {
-                return integerFormat.format(timbrado.getNroBoletaFinal());
+                return integerFormat.format(timbrado.getNroBoletaInicial());
             }
             case 3: {
+                return integerFormat.format(timbrado.getNroBoletaFinal());
+            }
+            case 4: {
                 return dateFormater.format(timbrado.getFechaVencimiento());
             }
             default: {

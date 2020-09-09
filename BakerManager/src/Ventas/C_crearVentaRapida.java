@@ -9,6 +9,7 @@ import Configuracion.Timbrado.SeleccionarTimbrado;
 import DB.DB_Cliente;
 import Entities.E_Timbrado;
 import Entities.E_impresionTipo;
+import Entities.E_impuesto;
 import Entities.M_cliente;
 import Entities.M_facturaDetalle;
 import Entities.M_producto;
@@ -256,10 +257,21 @@ public class C_crearVentaRapida implements GestionInterface, InterfaceFacturaDet
         Integer totalIva5 = 0;
         Integer totalIva10 = 0;
         Integer total = 0;
-        for (int i = 0; i < this.modelo.getTableModel().getRowCount(); i++) {
-            exenta = exenta + Integer.valueOf(String.valueOf(this.modelo.getTableModel().getValueAt(i, 5)));
-            total5 = total5 + Integer.valueOf(String.valueOf(this.modelo.getTableModel().getValueAt(i, 6)));
-            total10 = total10 + Integer.valueOf(String.valueOf(this.modelo.getTableModel().getValueAt(i, 7)));
+        for (M_facturaDetalle fade : modelo.getTableModel().getFacturaDetalleList()) {
+            switch (fade.getProducto().getIdImpuesto()) {
+                case E_impuesto.EXENTA: {
+                    exenta = exenta + fade.calcularSubTotal();
+                    break;
+                }
+                case E_impuesto.IVA5: {
+                    total5 = total5 + fade.calcularSubTotal();
+                    break;
+                }
+                case E_impuesto.IVA10: {
+                    total10 = total10 + fade.calcularSubTotal();
+                    break;
+                }
+            }
         }
         total = exenta + total5 + total10;
         totalIva5 = total5 / 21;

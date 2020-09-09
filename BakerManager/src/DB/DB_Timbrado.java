@@ -34,6 +34,7 @@ public class DB_Timbrado {
         List<E_Timbrado> list = new ArrayList<>();
         String query = "SELECT "
                 + "TV.ID_TIMBRADO, "
+                + "TV.DESCRIPCION, "
                 + "TV.NRO_TIMBRADO, "
                 + "TV.NRO_SUCURSAL, "
                 + "TV.NRO_PUNTO_VENTA, "
@@ -109,6 +110,7 @@ public class DB_Timbrado {
                 unTimbrado.setNroPuntoVenta(rs.getInt("NRO_PUNTO_VENTA"));
                 unTimbrado.setNroSucursal(rs.getInt("NRO_SUCURSAL"));
                 unTimbrado.setNroTimbrado(rs.getInt("NRO_TIMBRADO"));
+                unTimbrado.setDescripcion(rs.getString("DESCRIPCION"));
                 unTimbrado.setEstado(estado);
                 list.add(unTimbrado);
             }
@@ -320,7 +322,7 @@ public class DB_Timbrado {
     }
 
     public static boolean existeNroTimbrado(int nroTimbrado) {
-        String Query = "SELECT nro_timbrado  FROM timbrado_venta WHERE nro_timbrado = ?";
+        String Query = "SELECT nro_timbrado  FROM timbrado WHERE nro_timbrado = ?";
         try {
             pst = DB_manager.getConection().prepareStatement(Query);
             pst.setInt(1, nroTimbrado);
@@ -347,9 +349,9 @@ public class DB_Timbrado {
     }
 
     public static void anularTimbrado(int idCabecera, int idEstado, boolean recuperarNroNotaCredito) {
-        String UPDATE_NOTACREDITO = "UPDATE timbrado_venta SET ID_ESTADO = ? WHERE id_timbrado_venta = ?";
+        String UPDATE_NOTACREDITO = "UPDATE timbrado SET ID_ESTADO = ? WHERE id_timbrado = ?";
         if (recuperarNroNotaCredito) {
-            UPDATE_NOTACREDITO = "UPDATE timbrado_venta SET ID_ESTADO = ?, NRO_TIMBRADO = 0 WHERE id_timbrado_venta = ?";
+            UPDATE_NOTACREDITO = "UPDATE timbrado SET ID_ESTADO = ?, NRO_TIMBRADO = 0 WHERE id_timbrado = ?";
         }
         try {
             DB_manager.habilitarTransaccionManual();
@@ -377,15 +379,17 @@ public class DB_Timbrado {
     }
 
     public static int insertarTimbrado(E_Timbrado cabecera) {
-        String INSERT_CABECERA = "INSERT INTO timbrado_venta"
+        String INSERT_CABECERA = "INSERT INTO timbrado"
                 + "(nro_timbrado, "
                 + "nro_sucursal, "
                 + "nro_punto_venta, "
                 + "nro_boleta_inicial, "
                 + "nro_boleta_final, "
                 + "tiempo_vencimiento, "
-                + "id_funcionario)"
-                + "VALUES (?, ?, ?, ?, ?, ?, ?);";
+                + "id_funcionario, "
+                + "descripcion,"
+                + "id_timbrado_tipo)"
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);";
         long sq_cabecera = -1L;
         try {
             DB_manager.getConection().setAutoCommit(false);
@@ -397,6 +401,8 @@ public class DB_Timbrado {
             pst.setInt(5, cabecera.getNroBoletaFinal());
             pst.setTimestamp(6, new Timestamp(cabecera.getFechaVencimiento().getTime()));
             pst.setInt(7, cabecera.getCreador().getId_funcionario());
+            pst.setString(8, cabecera.getDescripcion());
+            pst.setInt(9, 1);
             pst.executeUpdate();
             rs = pst.getGeneratedKeys();
             if (rs != null && rs.next()) {

@@ -23,7 +23,7 @@ public class TimbradoVentaTableModel extends AbstractTableModel {
     private DecimalFormat integerFormat;
     NumberFormat nfSmall, nfLarge;
     private List<E_Timbrado> list;
-    private final String[] colNames = {"Id.", "Nro. Timbrado-Sucursal-Punto venta", "Factura inicial", "Factura final", "Fecha vencimiento", "Fecha creación", "Funcionario"};
+    private final String[] colNames = {"Id.", "Descripción", "Nro. Timbrado-Sucursal-Punto venta", "Factura inicial", "Factura final", "Fecha vencimiento", "Fecha creación", "Funcionario"};
 
     public TimbradoVentaTableModel() {
         this.dateFormater = new SimpleDateFormat("dd/MM/YYYY HH:mm:ss");
@@ -75,21 +75,27 @@ public class TimbradoVentaTableModel extends AbstractTableModel {
                 return integerFormat.format(timbrado.getId());
             }
             case 1: {
-                return nfLarge.format(timbrado.getNroTimbrado()) + " - " + nfSmall.format(timbrado.getNroSucursal()) + " - " + nfSmall.format(timbrado.getNroPuntoVenta());
+                if (timbrado.getDescripcion() == null) {
+                    return "";
+                }
+                return timbrado.getDescripcion();
             }
             case 2: {
-                return integerFormat.format(timbrado.getNroBoletaInicial());
+                return nfLarge.format(timbrado.getNroTimbrado()) + " - " + nfSmall.format(timbrado.getNroSucursal()) + " - " + nfSmall.format(timbrado.getNroPuntoVenta());
             }
             case 3: {
-                return integerFormat.format(timbrado.getNroBoletaFinal());
+                return integerFormat.format(timbrado.getNroBoletaInicial());
             }
             case 4: {
-                return dateFormater.format(timbrado.getFechaVencimiento());
+                return integerFormat.format(timbrado.getNroBoletaFinal());
             }
             case 5: {
-                return dateFormater.format(timbrado.getFechaCreacion());
+                return dateFormater.format(timbrado.getFechaVencimiento());
             }
             case 6: {
+                return dateFormater.format(timbrado.getFechaCreacion());
+            }
+            case 7: {
                 return timbrado.getCreador().getNombre();
             }
             default: {

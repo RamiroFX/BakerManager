@@ -68,7 +68,7 @@ public class C_gestionProduccion implements GestionInterface, RecibirEmpleadoCal
         calTest.set(Calendar.DAY_OF_MONTH, 1);
         Date date = Calendar.getInstance().getTime();
         this.vista.jddFinal.setDate(date);
-        this.vista.jddInicio.setDate(calTest.getTime());
+        this.vista.jddInicio.setDate(date);
         this.vista.jbDetalle.setEnabled(false);
         this.vista.jbAnular.setEnabled(false);
         this.vista.jtProduccionCabecera.setDefaultRenderer(Object.class, new ProductionCellRenderer(0));

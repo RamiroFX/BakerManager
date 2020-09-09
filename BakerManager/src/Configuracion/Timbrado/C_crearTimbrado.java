@@ -20,7 +20,9 @@ import javax.swing.JOptionPane;
  */
 public class C_crearTimbrado implements ActionListener, KeyListener {
 
-    private static final String VALIDAR_NRO_TIMBRADO_1 = "Ingrese solo números enteros en número de Timbrado",
+    private static final String VALIDAR_NOMBRE_TIMBRADO_1 = "Ingrese un nombre de Timbrado",
+            VALIDAR_NOMBRE_TIMBRADO_2 = "Solo se permiten 120 caracteres para nombre de Timbrado",
+            VALIDAR_NRO_TIMBRADO_1 = "Ingrese solo números enteros en número de Timbrado",
             VALIDAR_NRO_TIMBRADO_2 = "Ingrese solo números enteros y positivos en número de Timbrado",
             VALIDAR_NRO_TIMBRADO_3 = "Ingrese un número de Timbrado",
             VALIDAR_NRO_SUCURSAL_1 = "Ingrese solo números enteros en número de Sucursal",
@@ -45,7 +47,6 @@ public class C_crearTimbrado implements ActionListener, KeyListener {
         this.vista = vista;
         inicializarVista();
         agregarListeners();
-        loadData();
     }
 
     private void inicializarVista() {
@@ -61,12 +62,8 @@ public class C_crearTimbrado implements ActionListener, KeyListener {
         this.vista.dispose();
     }
 
-    private void loadData() {
-        int nroFactura = 22427;
-        this.vista.jtfNroTimbrado.setText(nroFactura + "");
-    }
-
     private void agregarListeners() {
+        this.vista.jtfDescripcion.addActionListener(this);
         this.vista.jtfNroTimbrado.addActionListener(this);
         this.vista.jtfNroSucursal.addActionListener(this);
         this.vista.jtfPuntoVenta.addActionListener(this);
@@ -81,6 +78,20 @@ public class C_crearTimbrado implements ActionListener, KeyListener {
         this.vista.jtfBoletaFinal.addKeyListener(this);
         //this.vista.jbAceptar.addKeyListener(this);
         this.vista.jbCancelar.addKeyListener(this);
+    }
+
+    private boolean validarDescripcion() {
+        String descripcion = "";
+        if (this.vista.jtfDescripcion.getText().trim().isEmpty()) {
+            JOptionPane.showMessageDialog(vista, VALIDAR_NOMBRE_TIMBRADO_1, "Atención", JOptionPane.WARNING_MESSAGE);
+            return false;
+        }
+        descripcion = this.vista.jtfDescripcion.getText().trim();
+        if (descripcion.length() > 120) {
+            JOptionPane.showMessageDialog(vista, VALIDAR_NOMBRE_TIMBRADO_2, "Atención", JOptionPane.WARNING_MESSAGE);
+            return false;
+        }
+        return true;
     }
 
     private boolean validarNroTimbrado() {
@@ -215,6 +226,9 @@ public class C_crearTimbrado implements ActionListener, KeyListener {
     }
 
     private void guardar() {
+        if (!validarDescripcion()) {
+            return;
+        }
         if (!validarNroTimbrado()) {
             return;
         }
@@ -241,12 +255,14 @@ public class C_crearTimbrado implements ActionListener, KeyListener {
             JOptionPane.showMessageDialog(vista, "La fecha de vencimiento es menor a la fecha actual", "Atención", JOptionPane.ERROR_MESSAGE);
             return;
         }
+        String nombreTimbrado = this.vista.jtfDescripcion.getText().trim();
         int nroTimbrado = Integer.valueOf(this.vista.jtfNroTimbrado.getText().trim());
         int nroSucursal = Integer.valueOf(this.vista.jtfNroSucursal.getText().trim());
         int nroPVTA = Integer.valueOf(this.vista.jtfPuntoVenta.getText().trim());
         int nroBoletaInicial = Integer.valueOf(this.vista.jtfBoletaInicial.getText().trim());
         int nroBoletaFinal = Integer.valueOf(this.vista.jtfBoletaFinal.getText().trim());
         Date fechaVencimiento = this.vista.jdcFechaVencimiento.getDate();
+        modelo.getTimbrado().setDescripcion(nombreTimbrado);
         modelo.getTimbrado().setNroTimbrado(nroTimbrado);
         modelo.getTimbrado().setNroSucursal(nroSucursal);
         modelo.getTimbrado().setNroPuntoVenta(nroPVTA);
