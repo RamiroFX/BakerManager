@@ -5,7 +5,6 @@
  */
 package ModeloTabla;
 
-import Entities.E_cuentaCorrienteCabecera;
 import Entities.E_movimientoContable;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -23,17 +22,53 @@ public class EstadoCuentaClienteTableModel extends AbstractTableModel {
     private SimpleDateFormat dateFormater;
     private List<E_movimientoContable> list;
     private final String[] colNames = {"Fecha", "Documento", "Debe", "Haber", "Saldo"};
-    private int debe = 0;
-    private int haber = 0;
-    private int saldo = 0;
+    private int debe;
+    private int haber;
+    private int saldo;
 
     public EstadoCuentaClienteTableModel() {
         this.dateFormater = new SimpleDateFormat("dd/MM/YYYY");
         this.decimalFormat = new DecimalFormat("#,##0.##");
         this.list = new ArrayList<>();
+        debe = 0;
+        haber = 0;
+        saldo = 0;
+
     }
 
     public void setList(List<E_movimientoContable> facturaCabeceraList) {
+        debe = 0;
+        haber = 0;
+        saldo = 0;
+        for (E_movimientoContable row : facturaCabeceraList) {
+            switch (row.getTipo()) {
+                case E_movimientoContable.TIPO_SALDO_INICIAL: {
+                    debe = debe + (int) row.getClienteSaldoInicial().getSaldoInicial();
+                    saldo = debe - haber;
+                    break;
+                }
+                case E_movimientoContable.TIPO_VENTA: {
+                    debe = debe + (int) row.getVenta().getMonto();
+                    saldo = debe - haber;
+                    break;
+                }
+                case E_movimientoContable.TIPO_COBRO: {
+                    haber = haber + (int) row.getCobro().getMonto();
+                    saldo = debe - haber;
+                    break;
+                }
+                case E_movimientoContable.TIPO_NOTA_CREDITO: {
+                    haber = haber + (int) row.getNotaCredito().getTotal();
+                    saldo = debe - haber;
+                    break;
+                }
+                case E_movimientoContable.TIPO_RETENCION_VENTA: {
+                    haber = haber + (int) row.getRetencionVenta().getMonto();
+                    saldo = debe - haber;
+                    break;
+                }
+            }
+        }
         this.list = facturaCabeceraList;
         updateTable();
     }
@@ -87,7 +122,7 @@ public class EstadoCuentaClienteTableModel extends AbstractTableModel {
                         return dateFormater.format(row.getNotaCredito().getTiempo());
                     }
                     case E_movimientoContable.TIPO_RETENCION_VENTA: {
-                        return dateFormater.format(row.getNotaCredito().getTiempo());
+                        return dateFormater.format(row.getRetencionVenta().getTiempo());
                     }
                 }
             }
@@ -102,8 +137,6 @@ public class EstadoCuentaClienteTableModel extends AbstractTableModel {
                         return row.getTipoDescripcion() + " N° " + sNroFactura;
                     }
                     case E_movimientoContable.TIPO_COBRO: {
-                        haber = haber + (int) row.getCobro().getMonto();
-                        saldo = debe - haber;
                         int nroFactura = row.getCobro().getFacturaVenta().getNroFactura();
                         int nroRecibo = row.getCobro().getCuentaCorrienteCabecera().getNroRecibo();
                         String sNroFactura = decimalFormat.format(nroFactura);
@@ -125,11 +158,15 @@ public class EstadoCuentaClienteTableModel extends AbstractTableModel {
                     }
                 }
             }
-            case 4: {
-                //return dateFormater.format(r);
+            case 2: {
+                return decimalFormat.format(debe);
             }
-            case 5: {
-                //return decimalFormat.format(row.getDebito());
+            case 3: {
+                return decimalFormat.format(haber);
+            }
+            case 4: {
+                return decimalFormat.format(saldo);
+
             }
             default: {
                 return null;
@@ -139,17 +176,17 @@ public class EstadoCuentaClienteTableModel extends AbstractTableModel {
 
     public void agregarDatos(E_movimientoContable data) {
         this.list.add(data);
-        fireTableDataChanged();
+        updateTable();
     }
 
     public void quitarDatos(int index) {
         this.list.remove(index);
-        fireTableDataChanged();
+        updateTable();
     }
 
     public void vaciarLista() {
         this.list.clear();
-        fireTableDataChanged();
+        updateTable();
     }
 
     public void updateTable() {

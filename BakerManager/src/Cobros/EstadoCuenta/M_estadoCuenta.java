@@ -5,8 +5,8 @@
  */
 package Cobros.EstadoCuenta;
 
-import ModeloTabla.CtaCteCabeceraTableModel;
-import ModeloTabla.CtaCteDetalleAgrupadoTableModel;
+import DB.DB_Cliente;
+import ModeloTabla.EstadoCuentaClienteTableModel;
 
 /**
  *
@@ -14,13 +14,17 @@ import ModeloTabla.CtaCteDetalleAgrupadoTableModel;
  */
 public class M_estadoCuenta {
 
-    CtaCteCabeceraTableModel cabeceraTableModel;
+    EstadoCuentaClienteTableModel cabeceraTableModel;
 
     public M_estadoCuenta() {
-        cabeceraTableModel = new CtaCteCabeceraTableModel();
+        cabeceraTableModel = new EstadoCuentaClienteTableModel();
     }
 
-    public CtaCteCabeceraTableModel obtenerTableModel() {
+    public EstadoCuentaClienteTableModel obtenerTableModel() {
         return cabeceraTableModel;
+    }
+
+    public void obtenerEstadoCuenta(int idCliente) {
+        this.cabeceraTableModel.setList(DB_Cliente.obtenerEstadoCuenta(idCliente));
     }
 }

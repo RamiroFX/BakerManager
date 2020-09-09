@@ -5,6 +5,10 @@
  */
 package Cobros.EstadoCuenta;
 
+import Cliente.SeleccionarCliente;
+import Entities.M_cliente;
+import Interface.RecibirClienteCallback;
+import Utilities.c_packColumn;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -17,7 +21,7 @@ import javax.swing.JOptionPane;
  *
  * @author Ramiro
  */
-public class C_estadoCuenta implements ActionListener, KeyListener {
+public class C_estadoCuenta implements ActionListener, KeyListener, RecibirClienteCallback {
 
     private M_estadoCuenta modelo;
     private V_estadoCuenta vista;
@@ -50,6 +54,7 @@ public class C_estadoCuenta implements ActionListener, KeyListener {
     }
 
     private void agregarListener() {
+        this.vista.jbCliente.addActionListener(this);
         this.vista.jbSalir.addActionListener(this);
         this.vista.jbImportarXLS.addActionListener(this);
     }
@@ -108,10 +113,18 @@ public class C_estadoCuenta implements ActionListener, KeyListener {
         });
     }
 
+    private void invocarVistaSeleccionCliente() {
+        SeleccionarCliente sc = new SeleccionarCliente(vista);
+        sc.setCallback(this);
+        sc.mostrarVista();
+    }
+
     @Override
     public void actionPerformed(ActionEvent ae) {
         if (ae.getSource().equals(this.vista.jbSalir)) {
             cerrar();
+        } else if (ae.getSource().equals(this.vista.jbCliente)) {
+            invocarVistaSeleccionCliente();
         } else if (ae.getSource().equals(this.vista.jbImportarXLS)) {
             exportHandler();
         }
@@ -128,6 +141,17 @@ public class C_estadoCuenta implements ActionListener, KeyListener {
 
     @Override
     public void keyReleased(KeyEvent e) {
+    }
+
+    @Override
+    public void recibirCliente(final M_cliente cliente) {
+        EventQueue.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                modelo.obtenerEstadoCuenta(cliente.getIdCliente());
+                c_packColumn.packColumns(vista.jtCobros, 1);
+            }
+        });
     }
 
 }
