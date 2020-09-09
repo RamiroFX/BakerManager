@@ -5,7 +5,7 @@
  */
 package NotasCredito;
 
-import Cliente.Seleccionar_cliente;
+import Cliente.SeleccionarCliente;
 import Entities.E_NotaCreditoDetalle;
 import Entities.E_facturaDetalle;
 import Entities.E_facturaSinPago;
@@ -249,7 +249,7 @@ public class C_crearNotaCredito extends MouseAdapter implements ActionListener, 
         if (!validarDetalleReciboVacio()) {
             return;
         }
-        Seleccionar_cliente sc = new Seleccionar_cliente(inicio.vista);
+        SeleccionarCliente sc = new SeleccionarCliente(inicio.vista);
         sc.setCallback(this);
         sc.mostrarVista();
     }

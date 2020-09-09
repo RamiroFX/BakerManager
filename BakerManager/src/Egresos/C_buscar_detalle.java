@@ -10,7 +10,7 @@ import Entities.M_funcionario;
 import Entities.M_proveedor;
 import Proveedor.Seleccionar_proveedor;
 import bakermanager.C_inicio;
-import Empleado.Seleccionar_funcionario;
+import Empleado.SeleccionarFuncionario;
 import Interface.RecibirEmpleadoCallback;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
@@ -221,7 +221,7 @@ public class C_buscar_detalle extends MouseAdapter implements ActionListener, Ke
             Seleccionar_proveedor sp = new Seleccionar_proveedor(this);
             sp.mostrarVista();
         } else if (e.getSource() == this.vista.jbFuncionario) {
-            Seleccionar_funcionario sf = new Seleccionar_funcionario(this.c_inicio.vista);
+            SeleccionarFuncionario sf = new SeleccionarFuncionario(this.c_inicio.vista);
             sf.setCallback(this);
             sf.mostrarVista();
         } else if (e.getSource() == this.vista.jbCerrar) {

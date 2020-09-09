@@ -5,8 +5,8 @@
  */
 package Facturacion;
 
-import Cliente.Seleccionar_cliente;
-import Empleado.Seleccionar_funcionario;
+import Cliente.SeleccionarCliente;
+import Empleado.SeleccionarFuncionario;
 import Entities.E_facturacionCabecera;
 import Entities.E_tipoOperacion;
 import Entities.Estado;
@@ -268,12 +268,12 @@ public class C_historialFacturacion implements GestionInterface, RecibirEmpleado
             consultarFacturaciones();
         }
         if (source.equals(this.vista.jbCliente)) {
-            Seleccionar_cliente sc = new Seleccionar_cliente(this.c_inicio.vista);
+            SeleccionarCliente sc = new SeleccionarCliente(this.c_inicio.vista);
             sc.setCallback(this);
             sc.mostrarVista();
         }
         if (source.equals(this.vista.jbEmpleado)) {
-            Seleccionar_funcionario sf = new Seleccionar_funcionario(this.c_inicio.vista);
+            SeleccionarFuncionario sf = new SeleccionarFuncionario(this.c_inicio.vista);
             sf.setCallback(this);
             sf.mostrarVista();
         }

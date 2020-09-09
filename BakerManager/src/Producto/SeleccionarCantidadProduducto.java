@@ -319,6 +319,10 @@ public class SeleccionarCantidadProduducto extends javax.swing.JDialog implement
                 JOptionPane.showMessageDialog(this, "Inserte un valor válido para Precio.", "Atención", JOptionPane.ERROR_MESSAGE);
                 return;
             }
+            if (precio < 1) {
+                JOptionPane.showMessageDialog(this, "Inserte un valor positivo para Precio.", "Atención", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
             observacion = String.valueOf(jtfObservacion.getText().trim());
             if (observacion.length() > 120) {
                 JOptionPane.showMessageDialog(null, "Observacion sobrepaso el máximo de 120 caracteres permitidos.", "Atención", JOptionPane.ERROR_MESSAGE);

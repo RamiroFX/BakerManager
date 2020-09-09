@@ -317,7 +317,9 @@ public class C_seleccionarProducto extends MouseAdapter implements ActionListene
         if (this.vista.jtfBuscar.hasFocus()) {
             switch (e.getKeyCode()) {
                 case KeyEvent.VK_DOWN: {
-                    vista.jtProducto.requestFocusInWindow();
+                    if (vista.jtProducto.getModel().getRowCount() > 0) {
+                        vista.jtProducto.requestFocusInWindow();
+                    }
                     break;
                 }
                 case KeyEvent.VK_ESCAPE: {

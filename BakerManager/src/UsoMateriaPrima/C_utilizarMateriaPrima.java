@@ -5,7 +5,7 @@
  */
 package UsoMateriaPrima;
 
-import Empleado.Seleccionar_funcionario;
+import Empleado.SeleccionarFuncionario;
 import Entities.M_funcionario;
 import Entities.M_producto;
 import Interface.RecibirEmpleadoCallback;
@@ -196,7 +196,7 @@ class C_utilizarMateriaPrima extends MouseAdapter implements ActionListener, Key
             SeleccionarProducto sp = new SeleccionarProducto(vista, this);
             sp.mostrarVista();
         } else if (source.equals(this.vista.jbFuncionario)) {
-            Seleccionar_funcionario sf = new Seleccionar_funcionario(this.vista);
+            SeleccionarFuncionario sf = new SeleccionarFuncionario(this.vista);
             sf.setCallback(this);
             sf.mostrarVista();
         } else if (source.equals(this.vista.jbEliminarDetalle)) {
@@ -228,7 +228,7 @@ class C_utilizarMateriaPrima extends MouseAdapter implements ActionListener, Key
                 break;
             }
             case KeyEvent.VK_F3: {
-                Seleccionar_funcionario sf = new Seleccionar_funcionario(this.vista);
+                SeleccionarFuncionario sf = new SeleccionarFuncionario(this.vista);
                 sf.setCallback(this);
                 sf.mostrarVista();
                 break;

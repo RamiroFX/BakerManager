@@ -5,7 +5,7 @@
  */
 package bauplast.crearRollo;
 
-import Empleado.Seleccionar_funcionario;
+import Empleado.SeleccionarFuncionario;
 import Entities.E_produccionCabecera;
 import Entities.E_produccionFilm;
 import Entities.E_produccionTipo;
@@ -241,7 +241,7 @@ class C_crearRollo extends MouseAdapter implements ActionListener, KeyListener,
         } else if (source.equals(this.vista.jbSeleccionarProducto)) {
             invocarSeleccionarRollo();
         } else if (source.equals(this.vista.jbFuncionario)) {
-            Seleccionar_funcionario sf = new Seleccionar_funcionario(this.vista);
+            SeleccionarFuncionario sf = new SeleccionarFuncionario(this.vista);
             sf.setCallback(this);
             sf.mostrarVista();
         } else if (source.equals(this.vista.jbEliminarDetalle)) {
@@ -283,7 +283,7 @@ class C_crearRollo extends MouseAdapter implements ActionListener, KeyListener,
                 if (!esModoCreacion) {
                     return;
                 }
-                Seleccionar_funcionario sf = new Seleccionar_funcionario(this.vista);
+                SeleccionarFuncionario sf = new SeleccionarFuncionario(this.vista);
                 sf.setCallback(this);
                 sf.mostrarVista();
                 break;

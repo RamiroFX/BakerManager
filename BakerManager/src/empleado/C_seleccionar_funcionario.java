@@ -1,6 +1,5 @@
 package Empleado;
 
-import DB.DB_Cliente;
 import DB.DB_Funcionario;
 import Entities.M_funcionario;
 import Interface.RecibirEmpleadoCallback;
@@ -11,6 +10,9 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import javax.swing.AbstractAction;
+import javax.swing.JTable;
+import javax.swing.KeyStroke;
 
 /**
  *
@@ -18,6 +20,7 @@ import java.awt.event.MouseEvent;
  */
 public class C_seleccionar_funcionario extends MouseAdapter implements ActionListener, KeyListener {
 
+    private static final String ENTER_KEY = "Entrar";
     int idFuncionario;
     M_funcionario funcionario;
     V_seleccionar_funcionario vista;
@@ -37,6 +40,14 @@ public class C_seleccionar_funcionario extends MouseAdapter implements ActionLis
     private void inicializarVista() {
         this.vista.jbAceptar.setEnabled(false);
         this.vista.jtFuncionario.setModel(DB_Funcionario.consultarFuncionario("", false, true, true));
+        KeyStroke enter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
+        this.vista.jtFuncionario.getInputMap(JTable.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(enter, ENTER_KEY);
+        this.vista.jtFuncionario.getActionMap().put(ENTER_KEY, new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                seleccionarFuncionario();
+            }
+        });
         Utilities.c_packColumn.packColumns(this.vista.jtFuncionario, 1);
     }
 
@@ -63,6 +74,21 @@ public class C_seleccionar_funcionario extends MouseAdapter implements ActionLis
     private void seleccionarFuncionario(M_funcionario funcionario) {
         this.callback.recibirFuncionario(funcionario);
         cerrar();
+    }
+
+    private void seleccionarFuncionario() {
+        EventQueue.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                int fila = vista.jtFuncionario.getSelectedRow();
+                int columna = vista.jtFuncionario.getSelectedColumn();
+                if ((fila > -1) && (columna > -1)) {
+                    idFuncionario = Integer.valueOf(String.valueOf(vista.jtFuncionario.getValueAt(fila, 0)));
+                    funcionario = DB_Funcionario.obtenerDatosFuncionarioID(idFuncionario);
+                    seleccionarFuncionario(funcionario);
+                }
+            }
+        });
     }
 
     private void displayQueryResults() {
@@ -125,5 +151,12 @@ public class C_seleccionar_funcionario extends MouseAdapter implements ActionLis
 
     @Override
     public void keyReleased(KeyEvent e) {
+        if (this.vista.jtfBuscar.hasFocus()) {
+            if (e.getKeyCode() == KeyEvent.VK_DOWN) {
+                if (vista.jtFuncionario.getModel().getRowCount() > 0) {
+                    vista.jtFuncionario.requestFocusInWindow();
+                }
+            }
+        }
     }
 }

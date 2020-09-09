@@ -9,6 +9,7 @@ import Entities.E_impuesto;
 import Interface.InterfaceFacturaDetalle;
 import Entities.M_facturaDetalle;
 import Parametros.Impuesto;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JOptionPane;
@@ -25,6 +26,7 @@ public class FacturaDetalleTableModel extends AbstractTableModel {
     private static final String ATENCION = "Atención";
 
     private List<M_facturaDetalle> facturaDetalleList;
+    private DecimalFormat integerFormat, decimalFormat;
     private final String[] colNames = {"Cod.", "Cantidad", "Descripcion", "Precio", "Descuento", "Exenta", "IVA 5%", "IVA 10%", "Observacion"};
 
     private InterfaceFacturaDetalle interfaceFacturaDetalle;
@@ -32,10 +34,14 @@ public class FacturaDetalleTableModel extends AbstractTableModel {
     public FacturaDetalleTableModel(InterfaceFacturaDetalle interfaceFacturaDetalle) {
         this.facturaDetalleList = new ArrayList<>();
         this.interfaceFacturaDetalle = interfaceFacturaDetalle;
+        this.integerFormat = new DecimalFormat("###,###");
+        this.decimalFormat = new DecimalFormat("#,##0.##");
     }
 
     public FacturaDetalleTableModel() {
         this.facturaDetalleList = new ArrayList<>();
+        this.integerFormat = new DecimalFormat("###,###");
+        this.decimalFormat = new DecimalFormat("#,##0.##");
     }
 
     public void setInterface(InterfaceFacturaDetalle interfaceFacturaDetalle) {
@@ -98,29 +104,26 @@ public class FacturaDetalleTableModel extends AbstractTableModel {
                 return fd.getProducto().getDescripcion();
             }
             case 3: {
-                return fd.getPrecio();
+                return integerFormat.format(fd.getPrecio());
             }
             case 4: {
                 return fd.getDescuento();
             }
             case 5: {
                 if (fd.getProducto().getIdImpuesto() == E_impuesto.EXENTA) {
-                    Integer Precio = fd.getPrecio() - Math.round(Math.round(((fd.getPrecio() * fd.getDescuento()) / 100)));
-                    return Math.round(Math.round((fd.getCantidad() * Precio)));
+                    return integerFormat.format(fd.calcularSubTotal());
                 }
                 return 0;
             }
             case 6: {
                 if (fd.getProducto().getIdImpuesto() == E_impuesto.IVA5) {
-                    Integer Precio = fd.getPrecio() - Math.round(Math.round(((fd.getPrecio() * fd.getDescuento()) / 100)));
-                    return Math.round(Math.round((fd.getCantidad() * Precio)));
+                    return integerFormat.format(fd.calcularSubTotal());
                 }
                 return 0;
             }
             case 7: {
                 if (fd.getProducto().getIdImpuesto() == E_impuesto.IVA10) {
-                    Integer Precio = fd.getPrecio() - Math.round(Math.round(((fd.getPrecio() * fd.getDescuento()) / 100)));
-                    return Math.round(Math.round((fd.getCantidad() * Precio)));
+                    return integerFormat.format(fd.calcularSubTotal());
                 }
                 return 0;
             }

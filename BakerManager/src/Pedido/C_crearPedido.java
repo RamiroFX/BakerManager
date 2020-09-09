@@ -4,7 +4,7 @@
  */
 package Pedido;
 
-import Cliente.Seleccionar_cliente;
+import Cliente.SeleccionarCliente;
 import Entities.M_cliente;
 import Entities.M_pedidoDetalle;
 import Entities.M_producto;
@@ -392,7 +392,7 @@ public class C_crearPedido extends MouseAdapter implements ActionListener, KeyLi
             SeleccionarProducto sp = new SeleccionarProducto(this);
             sp.mostrarVista();
         } else if (source.equals(this.vista.jbCliente)) {
-            Seleccionar_cliente sc = new Seleccionar_cliente(this.gestionPedido.c_inicio.vista);
+            SeleccionarCliente sc = new SeleccionarCliente(this.gestionPedido.c_inicio.vista);
             sc.setCallback(this);
             sc.mostrarVista();
         } else if (source.equals(this.vista.jbEliminarDetalle)) {
@@ -431,7 +431,7 @@ public class C_crearPedido extends MouseAdapter implements ActionListener, KeyLi
                 break;
             }
             case KeyEvent.VK_F3: {
-                Seleccionar_cliente sc = new Seleccionar_cliente(this.gestionPedido.c_inicio.vista);
+                SeleccionarCliente sc = new SeleccionarCliente(this.gestionPedido.c_inicio.vista);
                 sc.setCallback(this);
                 sc.mostrarVista();
                 break;

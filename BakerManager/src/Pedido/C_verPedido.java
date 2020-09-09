@@ -4,7 +4,7 @@
  */
 package Pedido;
 
-import Cliente.Seleccionar_cliente;
+import Cliente.SeleccionarCliente;
 import DB.DB_Ingreso;
 import Entities.E_impresionTipo;
 import Entities.M_cliente;
@@ -393,7 +393,7 @@ public class C_verPedido extends MouseAdapter implements ActionListener, KeyList
             SeleccionarProducto sp = new SeleccionarProducto(this);
             sp.mostrarVista();
         } else if (source.equals(this.vista.jbCliente)) {
-            Seleccionar_cliente sc = new Seleccionar_cliente(this.gestionPedido.c_inicio.vista);
+            SeleccionarCliente sc = new SeleccionarCliente(this.gestionPedido.c_inicio.vista);
             sc.setCallback(this);
             sc.mostrarVista();
         } else if (source.equals(this.vista.jbEliminarDetalle)) {
@@ -440,7 +440,7 @@ public class C_verPedido extends MouseAdapter implements ActionListener, KeyList
             sp.mostrarVista();
         }
         if (e.getKeyCode() == KeyEvent.VK_F3) {
-            Seleccionar_cliente sc = new Seleccionar_cliente(this.gestionPedido.c_inicio.vista);
+            SeleccionarCliente sc = new SeleccionarCliente(this.gestionPedido.c_inicio.vista);
             sc.setCallback(this);
             sc.mostrarVista();
         }

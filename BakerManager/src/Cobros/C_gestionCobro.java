@@ -5,9 +5,9 @@
  */
 package Cobros;
 
-import Cliente.Seleccionar_cliente;
+import Cliente.SeleccionarCliente;
 import Cobros.Retencion.GestionRetencion;
-import Empleado.Seleccionar_funcionario;
+import Empleado.SeleccionarFuncionario;
 import Entities.E_cuentaCorrienteConcepto;
 import Entities.Estado;
 import Entities.M_cliente;
@@ -380,7 +380,7 @@ public class C_gestionCobro implements GestionInterface, RecibirEmpleadoCallback
     }
 
     private void mostrarOpciones() {
-        Object[] options = {"Estado de cuenta", "Retención de I.V.A.", "Pago anticipado", "Bancos"};
+        Object[] options = {"Estado de cuenta", "Retención de I.V.A.", "Pago anticipado", "Bancos", "Test"};
         int n = JOptionPane.showOptionDialog(this.vista,
                 "Eliga su opción",
                 "Atención",
@@ -426,6 +426,16 @@ public class C_gestionCobro implements GestionInterface, RecibirEmpleadoCallback
                 });
                 break;
             }
+            case 4: {
+                EventQueue.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        EstadoCuentaCliente ecc = new EstadoCuentaCliente(c_inicio.vista);
+                        ecc.mostrarVista();
+                    }
+                });
+                break;
+            }
             default: {
 
                 break;
@@ -435,7 +445,7 @@ public class C_gestionCobro implements GestionInterface, RecibirEmpleadoCallback
 
     private void invocarEstadoCuentas() {
         this.tipoCliente = TIPO_ESTADO_CUENTA;
-        Seleccionar_cliente sc = new Seleccionar_cliente(this.c_inicio.vista);
+        SeleccionarCliente sc = new SeleccionarCliente(this.c_inicio.vista);
         sc.setCallback(this);
         sc.mostrarVista();
     }
@@ -497,12 +507,12 @@ public class C_gestionCobro implements GestionInterface, RecibirEmpleadoCallback
         } else if (src.equals(this.vista.jbCheques)) {
             invocarVistaChequesPendientes();
         } else if (src.equals(this.vista.jbEmpCobro)) {
-            Seleccionar_funcionario sf = new Seleccionar_funcionario(this.c_inicio.vista);
+            SeleccionarFuncionario sf = new SeleccionarFuncionario(this.c_inicio.vista);
             sf.setCallback(this);
             sf.mostrarVista();
         } else if (src.equals(this.vista.jbCliente)) {
             this.tipoCliente = TIPO_BUSCADOR;
-            Seleccionar_cliente sc = new Seleccionar_cliente(this.c_inicio.vista);
+            SeleccionarCliente sc = new SeleccionarCliente(this.c_inicio.vista);
             sc.setCallback(this);
             sc.mostrarVista();
         } else if (src.equals(this.vista.jbBorrarCobro)) {

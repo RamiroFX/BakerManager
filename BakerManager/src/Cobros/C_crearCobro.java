@@ -5,8 +5,8 @@
  */
 package Cobros;
 
-import Cliente.Seleccionar_cliente;
-import Empleado.Seleccionar_funcionario;
+import Cliente.SeleccionarCliente;
+import Empleado.SeleccionarFuncionario;
 import Entities.E_cuentaCorrienteDetalle;
 import Entities.E_facturaSinPago;
 import Entities.E_movimientoContable;
@@ -279,13 +279,13 @@ public class C_crearCobro extends MouseAdapter implements ActionListener, KeyLis
         if (!validarDetalleReciboVacio()) {
             return;
         }
-        Seleccionar_cliente sc = new Seleccionar_cliente(inicio.vista);
+        SeleccionarCliente sc = new SeleccionarCliente(inicio.vista);
         sc.setCallback(this);
         sc.mostrarVista();
     }
 
     private void invocarVistaSeleccionFuncionario() {
-        Seleccionar_funcionario sf = new Seleccionar_funcionario(this.vista);
+        SeleccionarFuncionario sf = new SeleccionarFuncionario(this.vista);
         sf.setCallback(this);
         sf.mostrarVista();
     }

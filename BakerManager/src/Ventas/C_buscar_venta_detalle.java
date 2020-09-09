@@ -4,12 +4,12 @@
  */
 package Ventas;
 
-import Cliente.Seleccionar_cliente;
+import Cliente.SeleccionarCliente;
 import DB.DB_Ingreso;
 import DB.DB_manager;
 import Entities.M_funcionario;
 import bakermanager.C_inicio;
-import Empleado.Seleccionar_funcionario;
+import Empleado.SeleccionarFuncionario;
 import Entities.M_cliente;
 import Interface.RecibirClienteCallback;
 import Interface.RecibirEmpleadoCallback;
@@ -220,11 +220,11 @@ public class C_buscar_venta_detalle extends MouseAdapter implements ActionListen
 
             this.vista.jbDetalle.setEnabled(false);
         } else if (e.getSource() == this.vista.jbCliente) {
-            Seleccionar_cliente sp = new Seleccionar_cliente(this.c_inicio.vista);
+            SeleccionarCliente sp = new SeleccionarCliente(this.c_inicio.vista);
             sp.setCallback(this);
             sp.mostrarVista();
         } else if (e.getSource() == this.vista.jbFuncionario) {
-            Seleccionar_funcionario sf = new Seleccionar_funcionario(this.c_inicio.vista);
+            SeleccionarFuncionario sf = new SeleccionarFuncionario(this.c_inicio.vista);
             sf.setCallback(this);
             sf.mostrarVista();
         } else if (e.getSource() == this.vista.jbCerrar) {

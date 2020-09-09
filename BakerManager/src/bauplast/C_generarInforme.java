@@ -6,7 +6,7 @@
 package bauplast;
 
 import DB.DB_Produccion;
-import Empleado.Seleccionar_funcionario;
+import Empleado.SeleccionarFuncionario;
 import Entities.E_produccionCabecera;
 import Entities.E_produccionTipo;
 import Entities.Estado;
@@ -105,7 +105,7 @@ public class C_generarInforme implements ActionListener, KeyListener, RecibirEmp
         } else if (source.equals(vista.jbResponsable)) {
             isRegistrationEmploy = false;
         }
-        Seleccionar_funcionario sf = new Seleccionar_funcionario(vista);
+        SeleccionarFuncionario sf = new SeleccionarFuncionario(vista);
         sf.setCallback(this);
         sf.mostrarVista();
     }

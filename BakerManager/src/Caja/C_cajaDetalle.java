@@ -5,7 +5,7 @@
  */
 package Caja;
 
-import Empleado.Seleccionar_funcionario;
+import Empleado.SeleccionarFuncionario;
 import Entities.E_cuentaCorrienteDetalle;
 import Entities.E_formaPago;
 import Entities.E_reciboPagoDetalle;
@@ -398,7 +398,7 @@ public class C_cajaDetalle implements GestionInterface, RecibirEmpleadoCallback,
         } else if (src.equals(this.vista.jbBuscar)) {
             consultarCajas();
         } else if (src.equals(this.vista.jbEmpleado)) {
-            Seleccionar_funcionario sf = new Seleccionar_funcionario(this.vista);
+            SeleccionarFuncionario sf = new SeleccionarFuncionario(this.vista);
             sf.setCallback(this);
             sf.mostrarVista();
         } else if (src.equals(this.vista.jbBorrar)) {

@@ -12,17 +12,17 @@ import javax.swing.JDialog;
  *
  * @author Ramiro Ferreira
  */
-public class Seleccionar_cliente {
+public class SeleccionarCliente {
 
     V_seleccionar_cliente vista;
     C_seleccionar_cliente controlador;
 
-    public Seleccionar_cliente(V_inicio v_inicio) {
+    public SeleccionarCliente(V_inicio v_inicio) {
         this.vista = new V_seleccionar_cliente(v_inicio);
         this.controlador = new C_seleccionar_cliente(vista);
     }
 
-    public Seleccionar_cliente(JDialog v_inicio) {
+    public SeleccionarCliente(JDialog v_inicio) {
         this.vista = new V_seleccionar_cliente(v_inicio);
         this.controlador = new C_seleccionar_cliente(vista);
     }

@@ -1,6 +1,6 @@
 package Caja;
 
-import Empleado.Seleccionar_funcionario;
+import Empleado.SeleccionarFuncionario;
 import Entities.Estado;
 import Entities.M_funcionario;
 import Interface.GestionInterface;
@@ -284,7 +284,7 @@ public class C_gestionCaja implements GestionInterface, RecibirEmpleadoCallback 
         } else if (src.equals(this.vista.jbBuscar)) {
             consultarCajas();
         } else if (src.equals(this.vista.jbEmpleado)) {
-            Seleccionar_funcionario sf = new Seleccionar_funcionario(this.c_inicio.vista);
+            SeleccionarFuncionario sf = new SeleccionarFuncionario(this.c_inicio.vista);
             sf.setCallback(this);
             sf.mostrarVista();
         } else if (src.equals(this.vista.jbBorrar)) {

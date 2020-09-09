@@ -5,7 +5,7 @@
  */
 package Produccion;
 
-import Empleado.Seleccionar_funcionario;
+import Empleado.SeleccionarFuncionario;
 import Entities.E_produccionTipo;
 import Entities.M_funcionario;
 import Entities.M_producto;
@@ -219,7 +219,7 @@ class C_crearProduccion extends MouseAdapter implements ActionListener, KeyListe
             SeleccionarProducto sp = new SeleccionarProducto(vista, this);
             sp.mostrarVista();
         } else if (source.equals(this.vista.jbFuncionario)) {
-            Seleccionar_funcionario sf = new Seleccionar_funcionario(this.vista);
+            SeleccionarFuncionario sf = new SeleccionarFuncionario(this.vista);
             sf.setCallback(this);
             sf.mostrarVista();
         } else if (source.equals(this.vista.jbEliminarDetalle)) {
@@ -255,7 +255,7 @@ class C_crearProduccion extends MouseAdapter implements ActionListener, KeyListe
                 break;
             }
             case KeyEvent.VK_F3: {
-                Seleccionar_funcionario sf = new Seleccionar_funcionario(this.vista);
+                SeleccionarFuncionario sf = new SeleccionarFuncionario(this.vista);
                 sf.setCallback(this);
                 sf.mostrarVista();
                 break;

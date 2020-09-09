@@ -4,7 +4,7 @@
  */
 package Produccion;
 
-import Empleado.Seleccionar_funcionario;
+import Empleado.SeleccionarFuncionario;
 import Entities.E_produccionCabecera;
 import Entities.E_produccionTipo;
 import Entities.Estado;
@@ -288,7 +288,7 @@ public class C_gestionProduccion implements GestionInterface, RecibirEmpleadoCal
         } else if (source.equals(this.vista.jbCrearProductoTerminado)) {
             invocarCrearProductoTerminadonMenu();
         } else if (source.equals(this.vista.jbEmpleado)) {
-            Seleccionar_funcionario sf = new Seleccionar_funcionario(this.c_inicio.vista);
+            SeleccionarFuncionario sf = new SeleccionarFuncionario(this.c_inicio.vista);
             sf.setCallback(this);
             sf.mostrarVista();
         } else if (source.equals(this.vista.jbBuscar)) {

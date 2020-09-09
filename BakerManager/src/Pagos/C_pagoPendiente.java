@@ -5,7 +5,7 @@
  */
 package Pagos;
 
-import Cliente.Seleccionar_cliente;
+import Cliente.SeleccionarCliente;
 import Egresos.Ver_Egresos;
 import Entities.M_cliente;
 import Entities.M_funcionario;

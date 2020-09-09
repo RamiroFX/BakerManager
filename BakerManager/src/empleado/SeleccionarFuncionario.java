@@ -12,16 +12,16 @@ import javax.swing.JDialog;
  *
  * @author Ramiro Ferreira
  */
-public class Seleccionar_funcionario {
+public class SeleccionarFuncionario {
 
     private V_seleccionar_funcionario vista;
     private C_seleccionar_funcionario controlador;
 
-    public Seleccionar_funcionario(V_inicio v_inicio) {
+    public SeleccionarFuncionario(V_inicio v_inicio) {
         this.vista = new V_seleccionar_funcionario(v_inicio);
         this.controlador = new C_seleccionar_funcionario(vista);
     }
-    public Seleccionar_funcionario(JDialog dialog) {
+    public SeleccionarFuncionario(JDialog dialog) {
         this.vista = new V_seleccionar_funcionario(dialog);
         this.controlador = new C_seleccionar_funcionario(vista);
     }

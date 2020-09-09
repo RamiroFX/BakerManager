@@ -27,7 +27,7 @@ public class ChequesPendienteTableModel extends AbstractTableModel {
     private SimpleDateFormat dateFormater;
     private DecimalFormat decimalFormat;
     private List<E_cuentaCorrienteDetalle> list;
-    private final String[] colNames = {"Cliente", "Monto", "Id venta", "Nro Factura", "Nro Cheque", "Banco", "Fecha cheque", "Fecha diferida", "Días pendientes"};
+    private final String[] colNames = {"Entidad", "Monto", "Id venta", "Nro Factura", "Nro Cheque", "Banco", "Fecha cheque", "Fecha diferida", "Días pendientes"};
 
     public ChequesPendienteTableModel() {
         this.list = new ArrayList<>();

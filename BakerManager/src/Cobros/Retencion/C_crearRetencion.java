@@ -5,7 +5,7 @@
  */
 package Cobros.Retencion;
 
-import Cliente.Seleccionar_cliente;
+import Cliente.SeleccionarCliente;
 import Cobros.C_seleccionarFacturaPendiente;
 import Cobros.SeleccionarFacturaPendiente;
 import Entities.E_facturaDetalle;
@@ -250,7 +250,7 @@ public class C_crearRetencion implements ActionListener, KeyListener, ChangeList
     }
 
     private void invocarSeleccionCliente() {
-        Seleccionar_cliente sc = new Seleccionar_cliente(vista);
+        SeleccionarCliente sc = new SeleccionarCliente(vista);
         sc.setCallback(this);
         sc.mostrarVista();
     }

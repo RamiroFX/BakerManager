@@ -5,8 +5,8 @@
  */
 package NotasCredito;
 
-import Cliente.Seleccionar_cliente;
-import Empleado.Seleccionar_funcionario;
+import Cliente.SeleccionarCliente;
+import Empleado.SeleccionarFuncionario;
 import Entities.E_NotaCreditoCabecera;
 import Entities.E_tipoOperacion;
 import Entities.Estado;
@@ -260,12 +260,12 @@ public class C_gestionNotasCredito implements ActionListener, MouseListener, Key
             consultarNotasCredito();
         }
         if (source.equals(this.vista.jbCliente)) {
-            Seleccionar_cliente sc = new Seleccionar_cliente(this.c_inicio.vista);
+            SeleccionarCliente sc = new SeleccionarCliente(this.c_inicio.vista);
             sc.setCallback(this);
             sc.mostrarVista();
         }
         if (source.equals(this.vista.jbEmpleado)) {
-            Seleccionar_funcionario sf = new Seleccionar_funcionario(this.c_inicio.vista);
+            SeleccionarFuncionario sf = new SeleccionarFuncionario(this.c_inicio.vista);
             sf.setCallback(this);
             sf.mostrarVista();
         }

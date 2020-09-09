@@ -5,7 +5,7 @@
  */
 package bauplast.crearProductoTerminado;
 
-import Empleado.Seleccionar_funcionario;
+import Empleado.SeleccionarFuncionario;
 import Entities.E_produccionCabecera;
 import Entities.E_produccionFilm;
 import Entities.E_produccionTipo;
@@ -272,7 +272,7 @@ class C_crearProductoTerminado extends MouseAdapter implements ActionListener, K
     }
 
     private void invocarSeleccionarFuncionario() {
-        Seleccionar_funcionario sf = new Seleccionar_funcionario(this.vista);
+        SeleccionarFuncionario sf = new SeleccionarFuncionario(this.vista);
         sf.setCallback(this);
         sf.mostrarVista();
     }
@@ -352,7 +352,7 @@ class C_crearProductoTerminado extends MouseAdapter implements ActionListener, K
                 if (!esModoCreacion) {
                     return;
                 }
-                Seleccionar_funcionario sf = new Seleccionar_funcionario(this.vista);
+                SeleccionarFuncionario sf = new SeleccionarFuncionario(this.vista);
                 sf.setCallback(this);
                 sf.mostrarVista();
                 break;

@@ -4,7 +4,7 @@
  */
 package Ventas;
 
-import Cliente.Seleccionar_cliente;
+import Cliente.SeleccionarCliente;
 import Configuracion.Timbrado.SeleccionarTimbrado;
 import DB.DB_Cliente;
 import Entities.E_Timbrado;
@@ -427,7 +427,7 @@ public class C_crearVentaRapida implements GestionInterface, InterfaceFacturaDet
             imprimirTicket();
         }
         if (e.getSource().equals(this.vista.jbCliente)) {
-            Seleccionar_cliente sp = new Seleccionar_cliente(this.gestionVentas.c_inicio.vista);
+            SeleccionarCliente sp = new SeleccionarCliente(this.gestionVentas.c_inicio.vista);
             sp.setCallback(this);
             sp.mostrarVista();
         }
@@ -504,7 +504,7 @@ public class C_crearVentaRapida implements GestionInterface, InterfaceFacturaDet
                 break;
             }
             case KeyEvent.VK_F3: {
-                Seleccionar_cliente sp = new Seleccionar_cliente(this.gestionVentas.c_inicio.vista);
+                SeleccionarCliente sp = new SeleccionarCliente(this.gestionVentas.c_inicio.vista);
                 sp.setCallback(this);
                 sp.mostrarVista();
                 break;

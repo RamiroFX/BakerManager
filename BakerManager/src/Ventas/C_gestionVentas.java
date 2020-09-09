@@ -5,7 +5,7 @@
 package Ventas;
 
 import Facturacion.Facturacion;
-import Cliente.Seleccionar_cliente;
+import Cliente.SeleccionarCliente;
 import DB.DB_Egreso;
 import DB.DB_Ingreso;
 import Entities.M_cliente;
@@ -13,7 +13,7 @@ import Entities.M_funcionario;
 import Entities.M_menu_item;
 import Interface.GestionInterface;
 import bakermanager.C_inicio;
-import Empleado.Seleccionar_funcionario;
+import Empleado.SeleccionarFuncionario;
 import Entities.E_tipoOperacion;
 import Entities.Estado;
 import Facturacion.HistorialFacturacion;
@@ -524,12 +524,12 @@ public class C_gestionVentas implements GestionInterface, RecibirEmpleadoCallbac
             buscarVentaDetalle();
         }
         if (e.getSource().equals(this.vista.jbCliente)) {
-            Seleccionar_cliente sc = new Seleccionar_cliente(this.c_inicio.vista);
+            SeleccionarCliente sc = new SeleccionarCliente(this.c_inicio.vista);
             sc.setCallback(this);
             sc.mostrarVista();
         }
         if (e.getSource().equals(this.vista.jbEmpleado)) {
-            Seleccionar_funcionario sf = new Seleccionar_funcionario(this.c_inicio.vista);
+            SeleccionarFuncionario sf = new SeleccionarFuncionario(this.c_inicio.vista);
             sf.setCallback(this);
             sf.mostrarVista();
         }

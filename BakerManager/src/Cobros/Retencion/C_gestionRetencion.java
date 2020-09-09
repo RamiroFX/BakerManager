@@ -5,8 +5,8 @@
  */
 package Cobros.Retencion;
 
-import Cliente.Seleccionar_cliente;
-import Empleado.Seleccionar_funcionario;
+import Cliente.SeleccionarCliente;
+import Empleado.SeleccionarFuncionario;
 import Entities.E_retencionVenta;
 import Entities.Estado;
 import Entities.M_cliente;
@@ -262,7 +262,7 @@ public class C_gestionRetencion implements ActionListener, MouseListener, KeyLis
             displayQueryResults(false);
         }
         if (source.equals(this.vista.jbCliente)) {
-            Seleccionar_cliente sc = new Seleccionar_cliente(this.c_inicio.vista);
+            SeleccionarCliente sc = new SeleccionarCliente(this.c_inicio.vista);
             sc.setCallback(this);
             sc.mostrarVista();
         }
@@ -271,7 +271,7 @@ public class C_gestionRetencion implements ActionListener, MouseListener, KeyLis
             sc.mostrarVista();
         }
         if (source.equals(this.vista.jbEmpleado)) {
-            Seleccionar_funcionario sf = new Seleccionar_funcionario(this.c_inicio.vista);
+            SeleccionarFuncionario sf = new SeleccionarFuncionario(this.c_inicio.vista);
             sf.setCallback(this);
             sf.mostrarVista();
         }

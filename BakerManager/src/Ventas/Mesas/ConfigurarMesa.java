@@ -4,7 +4,7 @@
  */
 package Ventas.Mesas;
 
-import Cliente.Seleccionar_cliente;
+import Cliente.SeleccionarCliente;
 import DB.DB_Cliente;
 import DB.DB_Ingreso;
 import Entities.M_cliente;
@@ -159,7 +159,7 @@ public class ConfigurarMesa extends JDialog implements ActionListener, KeyListen
 
     private void crearCliente() {
         //Seleccionar_cliente sc = new Seleccionar_cliente(this);
-        Seleccionar_cliente sc = new Seleccionar_cliente(this.crearVentas.gestionVentas.c_inicio.vista);
+        SeleccionarCliente sc = new SeleccionarCliente(this.crearVentas.gestionVentas.c_inicio.vista);
         sc.setCallback(this);
         sc.mostrarVista();
     }

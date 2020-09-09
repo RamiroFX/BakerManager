@@ -5,7 +5,7 @@
  */
 package Cobros;
 
-import Cliente.Seleccionar_cliente;
+import Cliente.SeleccionarCliente;
 import Entities.E_movimientoContable;
 import Entities.M_cliente;
 import Entities.M_funcionario;
@@ -261,7 +261,7 @@ public class C_cobroPendiente extends MouseAdapter implements ActionListener, Ke
         } else if (src.equals(this.vista.jbBuscarPendiente)) {
             consultarCobrosPendiente();
         } else if (src.equals(this.vista.jbCliente)) {
-            Seleccionar_cliente sc = new Seleccionar_cliente(this.vista);
+            SeleccionarCliente sc = new SeleccionarCliente(this.vista);
             sc.setCallback(this);
             sc.mostrarVista();
         } else if (src.equals(this.vista.jbBorrarCobro)) {

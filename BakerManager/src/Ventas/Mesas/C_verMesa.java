@@ -4,7 +4,7 @@
  */
 package Ventas.Mesas;
 
-import Cliente.Seleccionar_cliente;
+import Cliente.SeleccionarCliente;
 import Configuracion.Timbrado.SeleccionarTimbrado;
 import DB.DB_Cliente;
 import Entities.E_Timbrado;
@@ -351,7 +351,7 @@ public class C_verMesa extends MouseAdapter implements ActionListener, KeyListen
             agregarProductoPorCodigo();
         }
         if (e.getSource().equals(this.vista.jbCliente)) {
-            Seleccionar_cliente sp = new Seleccionar_cliente(this.crearVentas.gestionVentas.c_inicio.vista);
+            SeleccionarCliente sp = new SeleccionarCliente(this.crearVentas.gestionVentas.c_inicio.vista);
             sp.setCallback(this);
             sp.mostrarVista();
         }
@@ -406,7 +406,7 @@ public class C_verMesa extends MouseAdapter implements ActionListener, KeyListen
             invocarSeleccionTimbrado();
         }
         if (e.getKeyCode() == KeyEvent.VK_F3) {
-            Seleccionar_cliente sp = new Seleccionar_cliente(this.crearVentas.gestionVentas.c_inicio.vista);
+            SeleccionarCliente sp = new SeleccionarCliente(this.crearVentas.gestionVentas.c_inicio.vista);
             sp.setCallback(this);
             sp.mostrarVista();
         }

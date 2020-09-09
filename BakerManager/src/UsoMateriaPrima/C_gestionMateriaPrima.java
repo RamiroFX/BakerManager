@@ -4,7 +4,7 @@
  */
 package UsoMateriaPrima;
 
-import Empleado.Seleccionar_funcionario;
+import Empleado.SeleccionarFuncionario;
 import Entities.Estado;
 import Entities.M_funcionario;
 import Interface.GestionInterface;
@@ -220,7 +220,7 @@ public class C_gestionMateriaPrima implements GestionInterface, RecibirEmpleadoC
             UtilizarMateriaPrima ump = new UtilizarMateriaPrima(c_inicio);
             ump.mostrarVista();
         } else if (source.equals(this.vista.jbEmpleado)) {
-            Seleccionar_funcionario sf = new Seleccionar_funcionario(this.c_inicio.vista);
+            SeleccionarFuncionario sf = new SeleccionarFuncionario(this.c_inicio.vista);
             sf.setCallback(this);
             sf.mostrarVista();
         } else if (source.equals(this.vista.jbBuscar)) {

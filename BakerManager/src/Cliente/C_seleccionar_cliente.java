@@ -194,7 +194,9 @@ public class C_seleccionar_cliente extends MouseAdapter implements ActionListene
         }
         if (this.vista.jtfBuscar.hasFocus()) {
             if (e.getKeyCode() == KeyEvent.VK_DOWN) {
-                vista.jtCliente.requestFocusInWindow();
+                if (vista.jtCliente.getModel().getRowCount() > 0) {
+                    vista.jtCliente.requestFocusInWindow();
+                }
             }
         }
         if (this.vista.jtCliente.hasFocus()) {
