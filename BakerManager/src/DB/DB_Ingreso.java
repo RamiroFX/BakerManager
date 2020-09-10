@@ -717,6 +717,110 @@ public class DB_Ingreso {
         }
         return (int) sq_cabecera;
     }
+    
+    public static int insertarIngresoConFecha(M_facturaCabecera cabecera, ArrayList<M_facturaDetalle> detalle) {
+        String INSERT_DETALLE = "INSERT INTO FACTURA_DETALLE(ID_FACTURA_CABECERA, ID_PRODUCTO, CANTIDAD, PRECIO, DESCUENTO, OBSERVACION)VALUES (?, ?, ?, ?, ?, ?);";
+        //LA SGBD SE ENCARGA DE INSERTAR EL TIMESTAMP.
+        String INSERT_CABECERA = "INSERT INTO FACTURA_CABECERA(ID_FUNCIONARIO, ID_CLIENTE, ID_COND_VENTA, NRO_FACTURA, ID_TIMBRADO, TIEMPO)VALUES (?, ?, ?, ?, ?, ?);";
+        String INSERT_CTA_CTE = "INSERT INTO cuenta_corriente(id_cliente, id_factura_cabecera, id_cta_cte_concepto, debito)VALUES (?, ?, ?, ?);";
+        long sq_cabecera = -1L;
+        try {
+            DB_manager.getConection().setAutoCommit(false);
+            pst = DB_manager.getConection().prepareStatement(INSERT_CABECERA, PreparedStatement.RETURN_GENERATED_KEYS);
+            pst.setInt(1, cabecera.getIdFuncionario());
+            pst.setInt(2, cabecera.getIdCliente());
+            pst.setInt(3, cabecera.getIdCondVenta());
+            try {
+                if (cabecera.getNroFactura() == null) {
+                    pst.setNull(4, Types.BIGINT);
+                } else {
+                    pst.setInt(4, cabecera.getNroFactura());
+                }
+            } catch (Exception e) {
+                pst.setNull(4, Types.BIGINT);
+            }
+            pst.setInt(5, cabecera.getIdTimbrado());
+            pst.setTimestamp(6, cabecera.getTiempo());
+            pst.executeUpdate();
+            rs = pst.getGeneratedKeys();
+            if (rs != null && rs.next()) {
+                sq_cabecera = rs.getLong(1);
+            }
+            pst.close();
+            rs.close();
+            for (int i = 0; i < detalle.size(); i++) {
+                pst = DB_manager.getConection().prepareStatement(INSERT_DETALLE);
+                pst.setInt(1, (int) sq_cabecera);
+                pst.setInt(2, detalle.get(i).getIdProducto());
+                pst.setDouble(3, detalle.get(i).getCantidad());
+                pst.setInt(4, detalle.get(i).getPrecio());
+                pst.setDouble(5, detalle.get(i).getDescuento());
+                try {
+                    if (detalle.get(i).getObservacion() == null) {
+                        pst.setNull(6, Types.VARCHAR);
+                    } else if (detalle.get(i).getObservacion().trim().isEmpty()) {
+                        pst.setNull(6, Types.VARCHAR);
+                    } else {
+                        pst.setString(6, detalle.get(i).getObservacion());
+                    }
+                } catch (Exception e) {
+                    pst.setNull(6, Types.VARCHAR);
+                }
+                pst.executeUpdate();
+                pst.close();
+            }
+            //se resta del stock lo que se vende
+            for (int i = 0; i < detalle.size(); i++) {
+                String query = "UPDATE PRODUCTO SET "
+                        + "CANT_ACTUAL = "
+                        + "((SELECT CANT_ACTUAL FROM PRODUCTO WHERE ID_PRODUCTO = " + detalle.get(i).getProducto().getId() + ")-" + detalle.get(i).getCantidad() + ") "
+                        + "WHERE ID_PRODUCTO =" + detalle.get(i).getProducto().getId();
+                st = DB_manager.getConection().createStatement();
+                st.executeUpdate(query);
+            }
+            //CONTROLAR SI ES VENTA A CREDITO PARA INSERTAR REGISTRO EN CUENTA CORRIENTE
+            if (cabecera.getIdCondVenta() != E_tipoOperacion.CONTADO) {
+                int total = 0;
+                for (int i = 0; i < detalle.size(); i++) {
+                    M_facturaDetalle get = detalle.get(i);
+                    total = total + get.calcularSubTotal();
+                }
+                pst = DB_manager.getConection().prepareStatement(INSERT_CTA_CTE);
+                pst.setInt(1, cabecera.getIdCliente());
+                pst.setInt(2, (int) sq_cabecera);
+                pst.setDouble(3, E_cuentaCorrienteConcepto.COMPRAS);
+                pst.setInt(4, total);
+                pst.executeUpdate();
+                pst.close();
+            }
+            DB_manager.establecerTransaccion();
+        } catch (SQLException ex) {
+            System.out.println(ex.getNextException());
+            if (DB_manager.getConection() != null) {
+                try {
+                    DB_manager.getConection().rollback();
+                } catch (SQLException ex1) {
+                    Logger lgr = Logger.getLogger(DB_Ingreso.class.getName());
+                    lgr.log(Level.WARNING, ex1.getMessage(), ex1);
+                }
+            }
+            Logger lgr = Logger.getLogger(DB_Ingreso.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        } finally {
+            try {
+                if (pst != null) {
+                    pst.close();
+                }
+                if (rs != null) {
+                    rs.close();
+                }
+            } catch (SQLException ex) {
+                Logger lgr = Logger.getLogger(DB_Ingreso.class.getName());
+                lgr.log(Level.WARNING, ex.getMessage(), ex);
+            }
+        }
+        return (int) sq_cabecera;
+    }
 
     public static M_facturaCabecera obtenerIngresoCabeceraID(Integer idIngresoCabecera) {
         M_facturaCabecera ingreso_cabecera = null;

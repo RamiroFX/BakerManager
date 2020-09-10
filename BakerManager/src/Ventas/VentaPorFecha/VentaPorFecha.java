@@ -16,14 +16,14 @@ import javax.swing.JFrame;
  */
 public class VentaPorFecha {
 
-    V_crearVentaRapida vista;
+    V_crearVentaPorFecha vista;
     M_crearVentaRapida modelo;
-    C_crearVentaRapida controlador;
+    C_crearVentaPorFecha controlador;
 
     public VentaPorFecha(JFrame frame) {
         this.modelo = new M_crearVentaRapida();
         this.vista = new V_crearVentaPorFecha(frame, true);
-        this.controlador = new C_crearVentaRapida(modelo, vista);
+        this.controlador = new C_crearVentaPorFecha(modelo, vista);
     }
 
     public void mostrarVista() {

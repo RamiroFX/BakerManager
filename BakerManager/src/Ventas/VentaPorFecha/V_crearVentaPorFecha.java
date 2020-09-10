@@ -7,6 +7,7 @@ package Ventas.VentaPorFecha;
 
 import Ventas.V_crearVentaRapida;
 import com.toedter.calendar.JDateChooser;
+import java.awt.Dimension;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -51,14 +52,15 @@ public class V_crearVentaPorFecha extends V_crearVentaRapida {
         jpNorth.add(jbNroFactura);
         jpNorth.add(jtfNroFactura);
         jpNorth.add(jcbCondVenta);
-        jpNorth.add(jdcFecha);
         jpNorth.add(jcbTipoVenta, "wrap");
         jpNorth.add(new JLabel("R.U.C.:"));
         jpNorth.add(jtfClieRuc);
         jpNorth.add(new JLabel("Direccion:"));
         jpNorth.add(jtfClieDireccion);
         jpNorth.add(new JLabel("Telefono:"));
-        jpNorth.add(jtfClieTelefono);
+        jpNorth.add(jtfClieTelefono,"wrap");
+        jpNorth.add(new JLabel("Fecha:"));
+        jpNorth.add(jdcFecha, "spanx 2, growx 2");
     }
 
 }

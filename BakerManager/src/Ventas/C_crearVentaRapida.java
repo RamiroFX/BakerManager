@@ -42,8 +42,8 @@ public class C_crearVentaRapida implements GestionInterface, InterfaceFacturaDet
     private static final String PRODUCTO_NO_EXISTE = "El producto no existe";
     private static final String VENTA_VACIA = "Seleccione por lo menos un artículo.";
     private static final String CONFIRMAR = "Confirmar";
-    private static final String ATENCION = "Atención";
-    private static final String IMPRIMIR_VENTA = "¿Desea imprimir la venta?";
+    public static final String ATENCION = "Atención";
+    public static final String IMPRIMIR_VENTA = "¿Desea imprimir la venta?";
     private static final String CONFIRMAR_VENTA = "¿Está seguro que desea confirmar la venta?";
 
     public M_crearVentaRapida modelo;
@@ -61,7 +61,7 @@ public class C_crearVentaRapida implements GestionInterface, InterfaceFacturaDet
     }
 
     public C_crearVentaRapida(M_crearVentaRapida modelo, V_crearVentaRapida vista) {
-        this.modelo = new M_crearVentaRapida(this);
+        this.modelo = modelo;
         this.vista = vista;
         this.isJCBTrigger = true;
         inicializarVista();
@@ -258,7 +258,7 @@ public class C_crearVentaRapida implements GestionInterface, InterfaceFacturaDet
         sumarTotal();
     }
 
-    private void sumarTotal() {
+    protected void sumarTotal() {
         Integer exenta = 0;
         Integer total5 = 0;
         Integer total10 = 0;
@@ -321,7 +321,7 @@ public class C_crearVentaRapida implements GestionInterface, InterfaceFacturaDet
         }
     }
 
-    private void guardarVenta() {
+    protected void guardarVenta() {
         EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
@@ -357,7 +357,7 @@ public class C_crearVentaRapida implements GestionInterface, InterfaceFacturaDet
         cv.mostrarVista();
     }
 
-    private void establecerCondicionVenta() {
+    protected void establecerCondicionVenta() {
         String currentItem = this.vista.jcbCondVenta.getSelectedItem().toString();
         if (currentItem.equals("Contado")) {
             this.modelo.getCabecera().setIdCondVenta(TipoOperacion.CONTADO);
@@ -366,7 +366,7 @@ public class C_crearVentaRapida implements GestionInterface, InterfaceFacturaDet
         }
     }
 
-    private void establecerTipoVenta() {
+    protected void establecerTipoVenta() {
         E_impresionTipo tipoVenta = this.vista.jcbTipoVenta.getItemAt(this.vista.jcbTipoVenta.getSelectedIndex());
         switch (tipoVenta.getDescripcion()) {
             case E_impresionTipo.TICKET_STRING: {
@@ -547,7 +547,7 @@ public class C_crearVentaRapida implements GestionInterface, InterfaceFacturaDet
         sumarTotal();
     }
 
-    private void establecerNroFactura() {
+    protected void establecerNroFactura() {
         this.vista.jtfNroFactura.setText(this.modelo.obtenerUltimoNroFactura() + "");
     }
 
