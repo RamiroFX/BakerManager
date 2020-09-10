@@ -22,7 +22,7 @@ public class V_BarraMenu extends JMenuBar {
     public JMenu jmInicio, jmAyuda, jmHerramientas, jmOpciones;
     public JMenuItem jmiCerrar, jmiAcerca, jmiPersonalizar, jmiConfigImpresion,
             jmiConfigImpresionTicket, jmiConfigImpresionBoleta, jmiEmpresa,
-            jmiProduccion, jmiMateriaPrima, jmiGestionTimbrado;
+            jmiProduccion, jmiMateriaPrima, jmiGestionTimbrado, jmiVentaPorFecha;
     //public JMenuItem  jmiLogIn,jmiLogOut, jmiMenuPrincipal;
     private V_inicio frame; //referencia al frame principal.
     //private boolean loginActivo=true;
@@ -98,11 +98,14 @@ public class V_BarraMenu extends JMenuBar {
             jmiProduccion.setName("Gestión producción");
             jmiMateriaPrima = new JMenuItem("Materia Prima");
             jmiMateriaPrima.setName("Gestión uso materia prima");
+            jmiVentaPorFecha = new JMenuItem("Venta por fecha");
+            jmiVentaPorFecha.setName("venta por fecha");
             jmiEmpresa.setEnabled(false);
             jmiEmpresa.setName("configuracion empresa");
             jmOpciones.add(jmiEmpresa);
             jmOpciones.add(jmiProduccion);
             jmOpciones.add(jmiMateriaPrima);
+            jmOpciones.add(jmiVentaPorFecha);
         }
         return jmOpciones;
     }

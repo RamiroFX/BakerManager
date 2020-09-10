@@ -75,6 +75,26 @@ public class M_crearVentaRapida {
         this.nfLarge = new DecimalFormat("0000000");
     }
 
+    public M_crearVentaRapida() {
+        this.cabecera = new M_facturaCabecera();
+        this.cabecera.setCliente(DB_Cliente.obtenerDatosClienteID(1));//mostrador
+        this.cabecera.setFuncionario(DatosUsuario.getRol_usuario().getFuncionario());
+        this.cabecera.setIdTimbrado(1);//Timbrado por defecto
+        this.cabecera.setIdCondVenta(TipoOperacion.CONTADO);
+        try {
+            this.telefono = DB_Cliente.obtenerTelefonoCliente(this.cabecera.getCliente().getIdCliente()).get(1);
+        } catch (Exception e) {
+            this.telefono = null;
+        }
+        //this.detalle = new M_facturaDetalle();
+        dtm = new FacturaDetalleTableModel();
+        preferenciaFactura = DB_Preferencia.obtenerPreferenciaImpresionFactura();
+        maxProdCant = preferenciaFactura.getMaxProducts();
+        cabeceraMultiple = new ArrayList<>();
+        this.nfSmall = new DecimalFormat("000");
+        this.nfLarge = new DecimalFormat("0000000");
+    }
+
     public NumberFormat getNfLarge() {
         return nfLarge;
     }

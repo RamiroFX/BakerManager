@@ -38,7 +38,7 @@ public class V_crearVentaRapida extends JDialog {
     private static final String COD_PROD = "Código de producto";
 
     //NORTE
-    JPanel jpNorth;
+    public JPanel jpNorth;
     public JTextField jtfCliente, jtfNroFactura, jtfClieDireccion, jtfClieTelefono,
             jtfClieRuc, jtfCodProd;
     public JButton jbCliente, jbNroFactura;
@@ -108,29 +108,22 @@ public class V_crearVentaRapida extends JDialog {
         initSouth();
     }
 
-    private void initNorth() {
+    public void initNorth() {
         jpNorth = new JPanel(new MigLayout());
         jbCliente = new JButton("Agregar cliente [F3]");
         jbNroFactura = new JButton("Nro. Factura [F5]");
         jtfCliente = new JTextField(30);
         jtfCliente.setEditable(false);
-        //jlNroFactura = new JLabel("Nro. Factura");
         jtfNroFactura = new JTextField(30);
         jtfNroFactura.setEditable(false);
-        //jtfNroFactura.setEditable(false);
         jcbCondVenta = new JComboBox();
         jcbTipoVenta = new JComboBox();
-        //jrbContado = new JRadioButton("Contado");
-        //jrbCredito = new JRadioButton("Crédito");
         jtfClieRuc = new JTextField(30);
         jtfClieRuc.setEditable(false);
         jtfClieDireccion = new JTextField(30);
         jtfClieDireccion.setEditable(false);
         jtfClieTelefono = new JTextField(30);
         jtfClieTelefono.setEditable(false);
-        /*javax.swing.ButtonGroup bg1 = new javax.swing.ButtonGroup();
-        bg1.add(jrbContado);
-        bg1.add(jrbCredito);*/
         jpNorth.add(jbCliente);
         jpNorth.add(jtfCliente);
         jpNorth.add(jbNroFactura);

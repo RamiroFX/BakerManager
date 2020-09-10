@@ -60,6 +60,14 @@ public class C_crearVentaRapida implements GestionInterface, InterfaceFacturaDet
         concederPermisos();
     }
 
+    public C_crearVentaRapida(M_crearVentaRapida modelo, V_crearVentaRapida vista) {
+        this.modelo = new M_crearVentaRapida(this);
+        this.vista = vista;
+        this.isJCBTrigger = true;
+        inicializarVista();
+        concederPermisos();
+    }
+
     @Override
     public final void inicializarVista() {
         //this.vista.jtfNroFactura.setText(this.modelo.getNroFactura() + "");
