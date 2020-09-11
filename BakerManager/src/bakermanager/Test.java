@@ -35,6 +35,7 @@ import Impresora.Impresora;
 import Interface.MovimientosCaja;
 import NotasCredito.GestionNotasCredito;
 import Producto.ProductoParametros;
+import Producto.pamela.CrearProducto;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -53,7 +54,7 @@ public class Test {
 
     public static void main(String[] args) throws SQLException {
 
-        testearRetencionVentas();
+        testearCrearProducto();
         //testearDiagramaPedido();
         /*DB_manager.conectarBD("postgres", "postgres");
         M_facturaCabecera faca;
@@ -117,6 +118,14 @@ public class Test {
         i.conectarBD();
 
         GestionRetencion gnc = new GestionRetencion(i.controlador);
+        gnc.mostrarVista();
+        
+    }
+    public static void testearCrearProducto(){
+        Inicio i = new Inicio();
+        i.conectarBD();
+
+        CrearProducto gnc = new CrearProducto(i.controlador.vista);
         gnc.mostrarVista();
         
     }

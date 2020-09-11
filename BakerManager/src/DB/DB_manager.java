@@ -8,6 +8,7 @@ import Entities.E_Divisa;
 import Entities.E_Empresa;
 import Entities.E_banco;
 import Entities.E_formaPago;
+import Entities.E_impuesto;
 import Entities.E_tipoCheque;
 import Entities.E_tipoOperacion;
 import Entities.Estado;
@@ -24,6 +25,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Types;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -492,6 +494,26 @@ public class DB_manager {
         return impuesto;
     }
 
+    public static List<E_impuesto> obtenerImpuestos() {
+        List<E_impuesto> list = null;
+        String q = "SELECT id_impuesto, descripcion "
+                + "FROM impuesto ";
+        try {
+            st = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            rs = st.executeQuery(q);
+            list = new ArrayList();
+            while (rs.next()) {
+                E_impuesto impuesto = new E_impuesto();
+                impuesto.setId(rs.getInt("id_impuesto"));
+                impuesto.setDescripcion(rs.getString("descripcion"));
+                list.add(impuesto);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return list;
+    }
+
     public static ResultSetTableModel consultarImpuesto() {
         ResultSetTableModel impuesto = null;
         String q = "SELECT id_impuesto \"ID\" , descripcion\"Descripcion\" "
@@ -910,7 +932,7 @@ public class DB_manager {
         }
         return enUso;
     }
-    
+
     public static boolean productoSubCategoriaEnUso(int idCategoria) {
         boolean enUso = false;
         String q = "SELECT DISTINCT ID_PRODUCTO_CATEGORIA "

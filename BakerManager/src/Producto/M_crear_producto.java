@@ -17,7 +17,7 @@ import javax.swing.JOptionPane;
  *
  * @author Ramiro
  */
-class M_crear_producto {
+public class M_crear_producto {
 
     public M_producto producto;
     M_proveedor proveedor;
