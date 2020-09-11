@@ -6,6 +6,7 @@ package DB;
 
 import Entities.E_Divisa;
 import Entities.E_Empresa;
+import Entities.E_Marca;
 import Entities.E_banco;
 import Entities.E_formaPago;
 import Entities.E_impuesto;
@@ -652,6 +653,25 @@ public class DB_manager {
             ex.printStackTrace();
         }
         return impuesto;
+    }
+
+    public static List<E_Marca> obtenerMarcas() {
+        List<E_Marca> list = null;
+        String Q = "SELECT id_marca, descripcion FROM marca ";
+        try {
+            st = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            rs = st.executeQuery(Q);
+            list = new ArrayList();
+            while (rs.next()) {
+                E_Marca marca = new E_Marca();
+                marca.setId(rs.getInt("id_marca"));
+                marca.setDescripcion(rs.getString("descripcion"));
+                list.add(marca);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return list;
     }
 
     public static Vector obtenerPais() {

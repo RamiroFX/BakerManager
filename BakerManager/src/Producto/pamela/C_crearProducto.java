@@ -6,6 +6,8 @@
 package Producto.pamela;
 
 import Cliente.SeleccionarCliente;
+import DB.DB_Producto;
+import Entities.E_Marca;
 import Entities.E_clienteproducto;
 import Entities.E_impuesto;
 import Entities.M_cliente;
@@ -56,9 +58,8 @@ public class C_crearProducto implements ActionListener, KeyListener, RecibirProd
         for (int i = 0; i < rubro.size(); i++) {
             this.vista.jcbCategoria.addItem(rubro.get(i));
         }
-        Vector marca = modelo.obtenerMarca();
-        for (int i = 0; i < marca.size(); i++) {
-            this.vista.jcbMarca.addItem(marca.get(i));
+        for (E_Marca marca : modelo.obtenerMarca()) {
+            this.vista.jcbMarca.addItem(marca);
         }
     }
 
@@ -80,7 +81,44 @@ public class C_crearProducto implements ActionListener, KeyListener, RecibirProd
         this.vista.jtfProducto.addKeyListener(this);
     }
 
-    private boolean validarPrecio() {
+    private boolean validarDescripcion() {
+        String descripcion = this.vista.jtfProducto.getText().trim();
+        if (descripcion.isEmpty()) {
+            javax.swing.JOptionPane.showMessageDialog(this.vista, "Ingrese un nombre para el producto.", "Parametros incorrectos",
+                    javax.swing.JOptionPane.OK_OPTION);
+            return false;
+        }
+        if (descripcion.length() > 80) {
+            javax.swing.JOptionPane.showMessageDialog(this.vista, "Verifique el nombre del producto. Máximo 80 caracteres permitidos.", "Parametros incorrectos",
+                    javax.swing.JOptionPane.OK_OPTION);
+            return false;
+        }
+        if (modelo.existeProducto(descripcion)) {
+            javax.swing.JOptionPane.showMessageDialog(null, "El nombre del producto se encuentra en uso. Verifique el nombre del producto", "Parametros incorrectos",
+                    javax.swing.JOptionPane.OK_OPTION);
+            return false;
+        }
+        return true;
+    }
+
+    private boolean validarCodigo() {
+        String codigo = this.vista.jtfCodigo.getText().trim();
+        if (codigo.length() > 30) {
+            javax.swing.JOptionPane.showMessageDialog(this.vista, "Verifique el código del producto. Máximo 30 caracteres permitidos.", "Parametros incorrectos",
+                    javax.swing.JOptionPane.OK_OPTION);
+            return false;
+        }
+        if (codigo.isEmpty()) {
+            codigo = null;
+        } else if (modelo.existeCodigo(codigo)) {
+            javax.swing.JOptionPane.showMessageDialog(null, "El codigo del producto se encuentra en uso. Verifique el codigo del producto", "Parametros incorrectos",
+                    javax.swing.JOptionPane.OK_OPTION);
+            return false;
+        }
+        return true;
+    }
+
+    private boolean validarPrecioVenta() {
         int precio = -1;
         if (this.vista.jtfPrecioVta.getText().trim().isEmpty()) {
             javax.swing.JOptionPane.showMessageDialog(this.vista, "Verifique en uno de los campos el parametro:"
@@ -115,80 +153,112 @@ public class C_crearProducto implements ActionListener, KeyListener, RecibirProd
         return true;
     }
 
-    private void creaProducto() {
+    private boolean validarPrecioCosto() {
+        int precio = -1;
+        if (this.vista.jtfPrecioCosto.getText().trim().isEmpty()) {
+            javax.swing.JOptionPane.showMessageDialog(this.vista, "Verifique en uno de los campos el parametro:"
+                    + "Asegurese de colocar un numero valido\n"
+                    + "en el campo Precio Costo.",
+                    "Parametros incorrectos",
+                    javax.swing.JOptionPane.OK_OPTION);
+            this.vista.jtfPrecioCosto.requestFocusInWindow();
+            return false;
+        }
         try {
-            String descripcion = this.vista.jtfProducto.getText().trim();
-            if (descripcion.isEmpty() || descripcion.length() > 80) {
-                javax.swing.JOptionPane.showMessageDialog(this.vista, "Verifique el nombre del producto. Máximo 50 caracteres permitidos.", "Parametros incorrectos",
-                        javax.swing.JOptionPane.OK_OPTION);
-                return;
-            }
-            String codigo = this.vista.jtfCodigo.getText().trim();
-            if (codigo.length() > 30) {
-                javax.swing.JOptionPane.showMessageDialog(this.vista, "Verifique el código del producto. Máximo 30 caracteres permitidos.", "Parametros incorrectos",
-                        javax.swing.JOptionPane.OK_OPTION);
-                return;
-            }
-            if (codigo.isEmpty()) {
-                codigo = null;
-            }
-            int precioCosto = 0;
-            try {
-                precioCosto = Integer.valueOf(this.vista.jtfPrecioCosto.getText());
-                if (precioCosto < 0 || precioCosto > 999999999) {
-                    JOptionPane.showMessageDialog(vista, "Precio de costo. Máximo 9 dígitos permitido", "Atención", JOptionPane.ERROR_MESSAGE);
-                    this.vista.jtfPrecioCosto.setText("");
-                    return;
-                }
-            } catch (Exception e) {
-                JOptionPane.showMessageDialog(vista, "Ingrese un precio de costo válido. Solo números enteros.", "Atención", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-            int precioMayorista = 0;
-            try {
-                precioMayorista = Integer.valueOf(this.vista.jtfPrecioMayorista.getText());
-                if (precioMayorista < 0 || precioMayorista > 999999999) {
-                    JOptionPane.showMessageDialog(vista, "Precio mayorista. Máximo 9 dígitos permitido", "Atención", JOptionPane.ERROR_MESSAGE);
-                    this.vista.jtfPrecioMayorista.setText("");
-                    return;
-                }
-            } catch (Exception e) {
-                JOptionPane.showMessageDialog(vista, "Ingrese un precio mayorista válido. Solo números enteros.", "Atención", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-            int precioVenta = 0;
-            try {
-                precioVenta = Integer.valueOf(this.vista.jtfPrecioVta.getText());
-                if (precioVenta < 0 || precioVenta > 999999999) {
-                    JOptionPane.showMessageDialog(vista, "Precio de venta. Máximo 9 dígitos permitido", "Atención", JOptionPane.ERROR_MESSAGE);
-                    this.vista.jtfPrecioVta.setText("");
-                    return;
-                }
-            } catch (Exception e) {
-                JOptionPane.showMessageDialog(vista, "Ingrese un precio de venta válido. Solo números enteros.", "Atención", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-            M_producto producto = new M_producto();
-            producto.setCantActual(0.0);
-            producto.setDescripcion(descripcion);
-            producto.setCodBarra(codigo);
-            producto.setPrecioVenta(precioVenta);
-            producto.setPrecioCosto(precioCosto);
-            producto.setPrecioMayorista(precioMayorista);
-            producto.setMarca((String) this.vista.jcbMarca.getSelectedItem());
-            producto.setImpuesto((Integer.valueOf((String) this.vista.jcbImpuesto.getSelectedItem())));
-            producto.setCategoria((String) this.vista.jcbCategoria.getSelectedItem());
-            producto.setEstado("Activo");
+            precio = Integer.valueOf(String.valueOf(this.vista.jtfPrecioCosto.getText().trim()));
+        } catch (Exception e) {
+            javax.swing.JOptionPane.showMessageDialog(this.vista, "Verifique en uno de los campos el parametro:"
+                    + e.getMessage().substring(17) + "\n"
+                    + "Asegurese de colocar un numero valido\n"
+                    + "en el campo Precio Costo.",
+                    "Parametros incorrectos",
+                    javax.swing.JOptionPane.OK_OPTION);
+            this.vista.jtfPrecioCosto.requestFocusInWindow();
+            return false;
+        }
+        if (precio < 1) {
+            javax.swing.JOptionPane.showMessageDialog(this.vista, "Verifique en uno de los campos el parametro:\n"
+                    + "Asegurese de colocar un numero valido\n"
+                    + "en el campo Precio Costo.",
+                    "Parametros incorrectos",
+                    javax.swing.JOptionPane.OK_OPTION);
+            this.vista.jtfPrecioCosto.requestFocusInWindow();
+            return false;
+        }
+        return true;
+    }
+
+    private boolean validarPrecioMayorista() {
+        int precio = -1;
+        if (this.vista.jtfPrecioMayorista.getText().trim().isEmpty()) {
+            javax.swing.JOptionPane.showMessageDialog(this.vista, "Verifique en uno de los campos el parametro:"
+                    + "Asegurese de colocar un numero valido\n"
+                    + "en el campo Precio Mayorista.",
+                    "Parametros incorrectos",
+                    javax.swing.JOptionPane.OK_OPTION);
+            this.vista.jtfPrecioMayorista.requestFocusInWindow();
+            return false;
+        }
+        try {
+            precio = Integer.valueOf(String.valueOf(this.vista.jtfPrecioMayorista.getText().trim()));
+        } catch (Exception e) {
+            javax.swing.JOptionPane.showMessageDialog(this.vista, "Verifique en uno de los campos el parametro:"
+                    + e.getMessage().substring(17) + "\n"
+                    + "Asegurese de colocar un numero valido\n"
+                    + "en el campo Precio Mayorista.",
+                    "Parametros incorrectos",
+                    javax.swing.JOptionPane.OK_OPTION);
+            this.vista.jtfPrecioMayorista.requestFocusInWindow();
+            return false;
+        }
+        if (precio < 1) {
+            javax.swing.JOptionPane.showMessageDialog(this.vista, "Verifique en uno de los campos el parametro:\n"
+                    + "Asegurese de colocar un numero valido\n"
+                    + "en el campo Precio Mayorista.",
+                    "Parametros incorrectos",
+                    javax.swing.JOptionPane.OK_OPTION);
+            this.vista.jtfPrecioMayorista.requestFocusInWindow();
+            return false;
+        }
+        return true;
+    }
+
+    private void creaProducto() {
+        if (!validarDescripcion()) {
+            return;
+        }
+        if (!validarCodigo()) {
+            return;
+        }
+        if (!validarPrecioVenta()) {
+            return;
+        }
+        if (!validarPrecioCosto()) {
+            return;
+        }
+        if (!validarPrecioMayorista()) {
+            return;
+        }
+        String descripcion = vista.jtfProducto.getText().trim();
+        String codigo = vista.jtfCodigo.getText().trim();
+        int precioMayorista = Integer.valueOf(vista.jtfPrecioMayorista.getText().trim());
+        int precioVenta = Integer.valueOf(vista.jtfPrecioVta.getText().trim());
+        int precioCosto = Integer.valueOf(vista.jtfPrecioCosto.getText().trim());
+        M_producto producto = new M_producto();
+        producto.setCantActual(0.0);
+        producto.setDescripcion(descripcion);
+        producto.setCodBarra(codigo);
+        producto.setPrecioVenta(precioVenta);
+        producto.setPrecioCosto(precioCosto);
+        producto.setPrecioMayorista(precioMayorista);
+        producto.setMarca((String) this.vista.jcbMarca.getSelectedItem());
+        producto.setImpuesto((Integer.valueOf((String) this.vista.jcbImpuesto.getSelectedItem())));
+        producto.setCategoria((String) this.vista.jcbCategoria.getSelectedItem());
+        producto.setEstado("Activo");
 //            if (modelo.crearProducto(producto, this.vista.jckBProveedor.isSelected())) {
 //                mostrarMensaje("El Producto se registró con éxito");
 //                cerrar();
 //            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            javax.swing.JOptionPane.showMessageDialog(this.vista, "Uno de los datos ingresados es erróneo.",
-                    "Parametros incorrectos",
-                    javax.swing.JOptionPane.OK_OPTION);
-        }
     }
 
     private void cerrar() {
@@ -267,7 +337,7 @@ public class C_crearProducto implements ActionListener, KeyListener, RecibirProd
     @Override
     public void recibirCliente(M_cliente cliente) {
         int precio = 1;
-        if (validarPrecio()) {
+        if (validarPrecioVenta()) {
             precio = Integer.valueOf(this.vista.jtfPrecioVta.getText().trim());
         }
         SeleccionarPreferenciaProducto spc = new SeleccionarPreferenciaProducto(vista);
