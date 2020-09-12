@@ -244,6 +244,8 @@ public class C_crearProducto implements ActionListener, KeyListener, RecibirProd
         int precioMayorista = Integer.valueOf(vista.jtfPrecioMayorista.getText().trim());
         int precioVenta = Integer.valueOf(vista.jtfPrecioVta.getText().trim());
         int precioCosto = Integer.valueOf(vista.jtfPrecioCosto.getText().trim());
+        E_Marca marca = vista.jcbMarca.getItemAt(vista.jcbMarca.getSelectedIndex());
+        E_impuesto impuesto = vista.jcbImpuesto.getItemAt(vista.jcbImpuesto.getSelectedIndex());
         M_producto producto = new M_producto();
         producto.setCantActual(0.0);
         producto.setDescripcion(descripcion);
@@ -251,8 +253,8 @@ public class C_crearProducto implements ActionListener, KeyListener, RecibirProd
         producto.setPrecioVenta(precioVenta);
         producto.setPrecioCosto(precioCosto);
         producto.setPrecioMayorista(precioMayorista);
-        producto.setMarca((String) this.vista.jcbMarca.getSelectedItem());
-        producto.setImpuesto((Integer.valueOf((String) this.vista.jcbImpuesto.getSelectedItem())));
+        producto.setIdMarca(marca.getId());
+        producto.setIdImpuesto(impuesto.getId());
         producto.setCategoria((String) this.vista.jcbCategoria.getSelectedItem());
         producto.setEstado("Activo");
 //            if (modelo.crearProducto(producto, this.vista.jckBProveedor.isSelected())) {

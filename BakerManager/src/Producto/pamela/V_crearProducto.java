@@ -5,6 +5,7 @@
  */
 package Producto.pamela;
 
+import Entities.E_Marca;
 import Entities.E_impuesto;
 import java.awt.BorderLayout;
 import static java.awt.Dialog.DEFAULT_MODALITY_TYPE;
@@ -33,8 +34,9 @@ public class V_crearProducto extends JDialog {
     public JTextField jtfProducto, jtfCodigo, jtfPrecioCosto,
             jtfPrecioVta, jtfPrecioMayorista;
     public JTextArea jtaIngredientes;
-    public JComboBox jcbMarca, jcbCategoria;
+    public JComboBox jcbCategoria;
     public JComboBox<E_impuesto> jcbImpuesto;
+    public JComboBox<E_Marca> jcbMarca;
     public JButton jbAceptar, jbCancelar, jbCopiar;
     private JPanel jpProducto, jpBotones, jpPrincipal;
 
