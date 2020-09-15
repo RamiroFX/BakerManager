@@ -16,6 +16,8 @@ import DB.DB_Funcionario;
 import DB.DB_Ingreso;
 import DB.DB_Pago;
 import DB.DB_manager;
+import DB.DB_rol;
+import DB.DB_rol_usuario;
 import Entities.Caja;
 import Entities.E_cuentaCorrienteCabecera;
 import Entities.E_facturaCabecera;
@@ -36,6 +38,7 @@ import Interface.MovimientosCaja;
 import NotasCredito.GestionNotasCredito;
 import Producto.ProductoParametros;
 import Producto.pamela.CrearProducto;
+import Producto.pamela.GestionProducto;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -54,7 +57,7 @@ public class Test {
 
     public static void main(String[] args) throws SQLException {
 
-        testearCrearProducto();
+        testearGestionProducto();
         //testearDiagramaPedido();
         /*DB_manager.conectarBD("postgres", "postgres");
         M_facturaCabecera faca;
@@ -126,6 +129,18 @@ public class Test {
         i.conectarBD();
 
         CrearProducto gnc = new CrearProducto(i.controlador.vista);
+        gnc.mostrarVista();
+        
+    }
+    public static void testearGestionProducto(){
+        Inicio i = new Inicio();
+        i.conectarBD();
+        i.controlador.setRol_usuario(DB_rol_usuario.obtenerRolUsuario(1));
+        i.controlador.getRol_usuario().setRolActual(DB_rol.obtenerRol("Administrador"));
+        i.controlador.getRol_usuario().setAccesos(DB_rol.obtenerAccesos(1));
+        DatosUsuario.setRol_usuario(i.controlador.getRol_usuario());
+
+        GestionProducto gnc = new GestionProducto(i.controlador);
         gnc.mostrarVista();
         
     }

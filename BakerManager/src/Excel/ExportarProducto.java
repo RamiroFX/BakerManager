@@ -28,7 +28,7 @@ import org.apache.poi.ss.util.CellUtil;
  */
 public class ExportarProducto {
 
-    private static final String MENSAJE_ERROR = "No hay cajas para exportar";
+    private static final String MENSAJE_ERROR = "No hay productos para exportar";
     private static final String TITULO_ERROR = "Atención";
 
     private HSSFWorkbook workbook;

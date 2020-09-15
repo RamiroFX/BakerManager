@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package Producto;
+package Producto.pamela;
 
 import DB.DB_Producto;
 import DB.DB_manager;
@@ -13,7 +13,7 @@ import Entities.ProductoCategoria;
 import Excel.ExportarProducto;
 import Interface.InterfaceNotificarCambio;
 import MenuPrincipal.DatosUsuario;
-import Proveedor.Seleccionar_proveedor;
+import Producto.ProductoParametros;
 import bakermanager.C_inicio;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
@@ -34,35 +34,19 @@ import javax.swing.JOptionPane;
  *
  * @author Ramiro Ferreira
  */
-public class C_gestion_producto implements ActionListener, KeyListener, MouseListener, InterfaceNotificarCambio {
+public class C_gestionProducto implements ActionListener, KeyListener, MouseListener, InterfaceNotificarCambio {
 
-    private M_producto m_producto;
-    private M_proveedor proveedor;
-    public V_gestion_producto vista;
+    public M_gestionProducto modelo;
+    public V_gestionProducto vista;
     public C_inicio c_inicio;
 
-    public C_gestion_producto(V_gestion_producto vista, C_inicio c_inicio) {
-        this.m_producto = new M_producto();
-        this.proveedor = new M_proveedor();
+    public C_gestionProducto(M_gestionProducto modelo, V_gestionProducto vista, C_inicio c_inicio) {
+        this.modelo = modelo;
         this.vista = vista;
         this.c_inicio = c_inicio;
         this.vista.setLocation(c_inicio.centrarPantalla(this.vista));
         inicializarVista();
         concederPermisos();
-    }
-
-    /**
-     * @return the producto
-     */
-    public M_producto getProducto() {
-        return m_producto;
-    }
-
-    /**
-     * @param producto the producto to set
-     */
-    public void setProducto(M_producto producto) {
-        this.m_producto = producto;
     }
 
     private void inicializarVista() {
@@ -201,22 +185,22 @@ public class C_gestion_producto implements ActionListener, KeyListener, MouseLis
             int columna = this.vista.jtProducto.getSelectedRow();
             int idProducto = Integer.valueOf(String.valueOf(this.vista.jtProducto.getValueAt(row, 0)));
             if ((row > -1) && (columna > -1)) {
-                setProducto(DB_Producto.obtenerDatosProductoID(idProducto));
+                modelo.establecerProducto(idProducto);
                 this.vista.jbModificar.setEnabled(true);
                 this.vista.jbEliminar.setEnabled(true);
-                this.vista.jtfProducto.setText(getProducto().getDescripcion());
-                this.vista.jtfCodigo.setText(String.valueOf(getProducto().getCodBarra()));
-                this.vista.jtfPrecioCosto.setText(String.valueOf(getProducto().getPrecioCosto()));
-                this.vista.jtfPrecioMayorista.setText(String.valueOf(getProducto().getPrecioMayorista()));
-                this.vista.jtfPrecioVta.setText(String.valueOf(getProducto().getPrecioVenta()));
-                this.vista.jtfRubro.setText(getProducto().getCategoria());
-                this.vista.jtfImpuesto.setText(String.valueOf(getProducto().getImpuesto()));
-                this.vista.jtfMarca.setText(getProducto().getMarca());
-                this.vista.jtfSuspendido.setText(getProducto().getEstado());
-                this.vista.jtfCantActual.setText(String.valueOf(getProducto().getCantActual()));
+                this.vista.jtfProducto.setText(modelo.getProducto().getDescripcion());
+                this.vista.jtfCodigo.setText(String.valueOf(modelo.getProducto().getCodBarra()));
+                this.vista.jtfPrecioCosto.setText(String.valueOf(modelo.getProducto().getPrecioCosto()));
+                this.vista.jtfPrecioMayorista.setText(String.valueOf(modelo.getProducto().getPrecioMayorista()));
+                this.vista.jtfPrecioVta.setText(String.valueOf(modelo.getProducto().getPrecioVenta()));
+                this.vista.jtfRubro.setText(modelo.getProducto().getCategoria());
+                this.vista.jtfImpuesto.setText(String.valueOf(modelo.getProducto().getImpuesto()));
+                this.vista.jtfMarca.setText(modelo.getProducto().getMarca());
+                this.vista.jtfSuspendido.setText(modelo.getProducto().getEstado());
+                this.vista.jtfCantActual.setText(String.valueOf(modelo.getProducto().getCantActual()));
                 String observacion = "";
-                if (getProducto().getObservacion() != null) {
-                    observacion = String.valueOf(getProducto().getObservacion());
+                if (modelo.getProducto().getObservacion() != null) {
+                    observacion = String.valueOf(modelo.getProducto().getObservacion());
                 }
                 this.vista.jtfObservacion.setText(observacion);
             }
@@ -263,18 +247,18 @@ public class C_gestion_producto implements ActionListener, KeyListener, MouseLis
         if (this.vista.jtfProveedor.getText().isEmpty()) {
             return "Todos";
         }
-        return this.proveedor.getEntidad();
+        return this.modelo.getProveedor().getEntidad();
     }
 
     public void recibirProveedor(M_proveedor proveedor) {
-        this.proveedor = proveedor;
-        String nombre = this.proveedor.getNombre();
-        String entidad = this.proveedor.getEntidad();
+        this.modelo.setProveedor(proveedor);
+        String nombre = this.modelo.getProveedor().getNombre();
+        String entidad = this.modelo.getProveedor().getEntidad();
         this.vista.jtfProveedor.setText(nombre + " (" + entidad + ")");
     }
 
     private void borrarParametros() {
-        this.proveedor = new M_proveedor();
+        this.modelo.setProveedor(new M_proveedor());
         this.vista.jtfBuscar.setText("");
         this.vista.jtfBuscar.requestFocusInWindow();
         this.vista.jtfProveedor.setText("");
@@ -314,6 +298,17 @@ public class C_gestion_producto implements ActionListener, KeyListener, MouseLis
         }
     }
 
+    private void crearProducto() {
+        CrearProducto crearProd = new CrearProducto(c_inicio.vista);
+        crearProd.mostrarVista();
+    }
+
+    private void gestionarParametros() {
+        ProductoParametros param = new ProductoParametros(c_inicio);
+        param.setCallback(this);
+        param.setVisible(true);
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == this.vista.jtfBuscar) {
@@ -325,26 +320,17 @@ public class C_gestion_producto implements ActionListener, KeyListener, MouseLis
         } else if (e.getSource() == this.vista.jbBorrar) {
             borrarParametros();;
         } else if (e.getSource() == this.vista.jbModificar) {
-            Modificar_producto c_modProd = new Modificar_producto(this, getProducto().getId());
-            c_modProd.mostrarVista();
+//            Modificar_producto c_modProd = new Modificar_producto(this, getProducto().getId());
+//            c_modProd.mostrarVista();
         } else if (e.getSource() == this.vista.jbAgregar) {
-            Crear_producto crearProd = new Crear_producto(this);
-            crearProd.mostrarVista();
+            crearProducto();
         } else if (e.getSource().equals(this.vista.jbParametros)) {
-            ProductoParametros param = new ProductoParametros(c_inicio);
-            param.setCallback(this);
-            param.setVisible(true);
+            gestionarParametros();
         } else if (e.getSource() == this.vista.jbExportar) {
             exportarProductos();
         } else if (e.getSource() == this.vista.jbEliminar) {
             //DBmanagerProducto.eliminarProducto(producto);
             JOptionPane.showMessageDialog(vista, "Funcion no implementada", "Atencion", JOptionPane.INFORMATION_MESSAGE, null);
-        } else if (e.getSource() == this.vista.jbAsigProdProv) {
-            Crear_producto_proveedor cpp = new Crear_producto_proveedor(this);
-            cpp.setVisible(true);
-        } else if (e.getSource() == this.vista.jbProveedor) {
-            Seleccionar_proveedor sp = new Seleccionar_proveedor(this);
-            sp.mostrarVista();
         } else if (e.getSource() == this.vista.jcbCategoria) {
             actualizarJCBsubCategoria();
         }
@@ -356,29 +342,29 @@ public class C_gestion_producto implements ActionListener, KeyListener, MouseLis
         int columna = this.vista.jtProducto.columnAtPoint(e.getPoint());
         Integer idProducto = Integer.valueOf(String.valueOf(this.vista.jtProducto.getValueAt(fila, 0)));
         //setProducto(DBmanagerProducto.mostrarProducto(idProducto));
-        setProducto(DB_Producto.obtenerDatosProductoID(idProducto));
+        modelo.establecerProducto(idProducto);
         if ((fila > -1) && (columna > -1)) {
             this.vista.jbModificar.setEnabled(true);
             this.vista.jbEliminar.setEnabled(true);
-            this.vista.jtfProducto.setText(getProducto().getDescripcion());
-            this.vista.jtfCodigo.setText(getProducto().getCodigo());
-            this.vista.jtfPrecioCosto.setText(String.valueOf(getProducto().getPrecioCosto()));
-            this.vista.jtfPrecioMayorista.setText(String.valueOf(getProducto().getPrecioMayorista()));
-            this.vista.jtfPrecioVta.setText(String.valueOf(getProducto().getPrecioVenta()));
-            this.vista.jtfRubro.setText(getProducto().getCategoria());
-            this.vista.jtfImpuesto.setText(String.valueOf(getProducto().getImpuesto()));
-            this.vista.jtfMarca.setText(getProducto().getMarca());
-            this.vista.jtfSuspendido.setText(getProducto().getEstado());
+            this.vista.jtfProducto.setText(modelo.getProducto().getDescripcion());
+            this.vista.jtfCodigo.setText(modelo.getProducto().getCodigo());
+            this.vista.jtfPrecioCosto.setText(String.valueOf(modelo.getProducto().getPrecioCosto()));
+            this.vista.jtfPrecioMayorista.setText(String.valueOf(modelo.getProducto().getPrecioMayorista()));
+            this.vista.jtfPrecioVta.setText(String.valueOf(modelo.getProducto().getPrecioVenta()));
+            this.vista.jtfRubro.setText(modelo.getProducto().getCategoria());
+            this.vista.jtfImpuesto.setText(String.valueOf(modelo.getProducto().getImpuesto()));
+            this.vista.jtfMarca.setText(modelo.getProducto().getMarca());
+            this.vista.jtfSuspendido.setText(modelo.getProducto().getEstado());
             MathContext c = new MathContext(9, RoundingMode.CEILING);
-            this.vista.jtfCantActual.setText(new BigDecimal(getProducto().getCantActual(), c) + "");
+            this.vista.jtfCantActual.setText(new BigDecimal(modelo.getProducto().getCantActual(), c) + "");
             String observacion = "";
-            if (getProducto().getObservacion() != null) {
-                observacion = String.valueOf(getProducto().getObservacion());
+            if (modelo.getProducto().getObservacion() != null) {
+                observacion = String.valueOf(modelo.getProducto().getObservacion());
             }
             this.vista.jtfObservacion.setText(observacion);
             if (e.getClickCount() == 2) {
-                Modificar_producto c_modProd = new Modificar_producto(this, getProducto().getId());
-                c_modProd.mostrarVista();
+//                Modificar_producto c_modProd = new Modificar_producto(this, getProducto().getId());
+//                c_modProd.mostrarVista();
             }
         } else {
             this.vista.jbModificar.setEnabled(false);
@@ -410,24 +396,21 @@ public class C_gestion_producto implements ActionListener, KeyListener, MouseLis
         switch (e.getKeyCode()) {
             case KeyEvent.VK_F1: {
                 if (vista.jbAgregar.isEnabled()) {
-                    Crear_producto crearProd = new Crear_producto(this);
-                    crearProd.mostrarVista();
+                    crearProducto();
                 }
                 break;
             }
             case KeyEvent.VK_F2: {
                 if (vista.jbParametros.isEnabled()) {
-                    ProductoParametros param = new ProductoParametros(c_inicio);
-                    param.setCallback(this);
-                    param.setVisible(true);
+                    gestionarParametros();
                 }
                 break;
             }
             case KeyEvent.VK_F3: {
-                if (vista.jbAsigProdProv.isEnabled()) {
-                    Crear_producto_proveedor cpp = new Crear_producto_proveedor(this);
-                    cpp.setVisible(true);
-                }
+//                if (vista.jbAsigProdProv.isEnabled()) {
+//                    Crear_producto_proveedor cpp = new Crear_producto_proveedor(this);
+//                    cpp.setVisible(true);
+//                }
                 break;
             }
             case KeyEvent.VK_ESCAPE: {

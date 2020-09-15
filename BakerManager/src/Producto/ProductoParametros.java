@@ -8,6 +8,7 @@ import DB.DB_Producto;
 import DB.DB_Proveedor;
 import DB.DB_manager;
 import Entities.ProductoCategoria;
+import Interface.InterfaceNotificarCambio;
 import ModeloTabla.ProductoCategoriaTableModel;
 import ModeloTabla.ProductoSubCategoriaTableModel;
 import bakermanager.C_inicio;
@@ -43,9 +44,9 @@ public class ProductoParametros extends javax.swing.JDialog implements ActionLis
     JScrollPane jspMarcas, jspCategorias, jspSubCategorias;
     JTable jtMarcas, jtCategorias, jtSubCategorias;
     private JComboBox<ProductoCategoria> jcbCategorias;
-    C_gestion_producto gestion_producto;
     ProductoCategoriaTableModel productoCategoriaTm;
     ProductoSubCategoriaTableModel productoSubCategoriaTm;
+    InterfaceNotificarCambio callback;
 
     public ProductoParametros(C_inicio c_inicio) {
         super(c_inicio.vista, true);
@@ -56,14 +57,8 @@ public class ProductoParametros extends javax.swing.JDialog implements ActionLis
         agregarListener();
     }
 
-    ProductoParametros(C_inicio c_inicio, C_gestion_producto aThis) {
-        super(c_inicio.vista, true);
-        gestion_producto = aThis;
-        construirLayout(c_inicio);
-        initComponents();
-        initializarLogica();
-        inicializarVista();
-        agregarListener();
+    public void setCallback(InterfaceNotificarCambio callback) {
+        this.callback = callback;
     }
 
     private void construirLayout(C_inicio c_inicio) {
@@ -395,7 +390,7 @@ public class ProductoParametros extends javax.swing.JDialog implements ActionLis
         } else if (this.jtpCenter.getSelectedComponent().equals(this.jpSubCategorias)) {
             mostrarDialogoCreacionSubCategoria(CREAR_SUB_CATEGORIA, null);
         }
-        gestion_producto.actualizarVista();
+        callback.notificarCambio();
     }
 
     private void updateButtonHandler() {
@@ -421,7 +416,7 @@ public class ProductoParametros extends javax.swing.JDialog implements ActionLis
             ProductoCategoria prodCat = productoSubCategoriaTm.getList().get(fila);
             mostrarDialogoCreacionSubCategoria(MODIFICAR_SUB_CATEGORIA, prodCat);
         }
-        gestion_producto.actualizarVista();
+        callback.notificarCambio();
     }
 
     private void deleteButtonHandler() {
@@ -432,7 +427,7 @@ public class ProductoParametros extends javax.swing.JDialog implements ActionLis
         } else if (this.jtpCenter.getSelectedComponent().equals(this.jpSubCategorias)) {
             eliminarSubCategoria();
         }
-        gestion_producto.actualizarVista();
+        callback.notificarCambio();
     }
 
     private void cerrar() {
