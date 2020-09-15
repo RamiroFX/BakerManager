@@ -6,30 +6,30 @@
 package Producto.pamela;
 
 import Cliente.SeleccionarCliente;
-import DB.DB_Producto;
 import Entities.E_Marca;
-import Entities.E_clienteproducto;
+import Entities.E_clienteProducto;
 import Entities.E_impuesto;
 import Entities.M_cliente;
 import Entities.M_producto;
+import Entities.ProductoCategoria;
 import Interface.RecibirClienteCallback;
 import Interface.RecibirClienteProductoPreferenciaCallback;
 import Interface.RecibirProductoCallback;
+import Interface.RecibirProductoCategoriaCallback;
+import Producto.Categoria.SeleccionarCategoria;
 import Producto.SeleccionarProducto;
 import com.nitido.utils.toaster.Toaster;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.util.List;
-import java.util.Vector;
-import javax.swing.JOptionPane;
 
 /**
  *
  * @author Ramiro Ferreira
  */
-public class C_crearProducto implements ActionListener, KeyListener, RecibirProductoCallback, RecibirClienteCallback, RecibirClienteProductoPreferenciaCallback {
+public class C_crearProducto implements ActionListener, KeyListener, RecibirProductoCallback, RecibirClienteCallback,
+        RecibirClienteProductoPreferenciaCallback, RecibirProductoCategoriaCallback {
 
     private M_crearProducto modelo;
     public V_crearProducto vista;
@@ -54,16 +54,13 @@ public class C_crearProducto implements ActionListener, KeyListener, RecibirProd
             this.vista.jcbImpuesto.addItem(impuesto);
         }
         this.vista.jcbImpuesto.setSelectedIndex(2);
-        Vector rubro = modelo.obtenerRubro();
-        for (int i = 0; i < rubro.size(); i++) {
-            this.vista.jcbCategoria.addItem(rubro.get(i));
-        }
         for (E_Marca marca : modelo.obtenerMarca()) {
             this.vista.jcbMarca.addItem(marca);
         }
     }
 
     private void agregarListeners() {
+        this.vista.jbCategoria.addActionListener(this);
         this.vista.jbAceptar.addActionListener(this);
         this.vista.jbCancelar.addActionListener(this);
         this.vista.jbCopiar.addActionListener(this);
@@ -71,6 +68,7 @@ public class C_crearProducto implements ActionListener, KeyListener, RecibirProd
         /*
         KEYLISTENER
          */
+        this.vista.jbCategoria.addKeyListener(this);
         this.vista.jbAceptar.addKeyListener(this);
         this.vista.jbCancelar.addKeyListener(this);
         this.vista.jbCopiar.addKeyListener(this);
@@ -223,6 +221,16 @@ public class C_crearProducto implements ActionListener, KeyListener, RecibirProd
         return true;
     }
 
+    private boolean validarProductoCategoria() {
+        if (modelo.getProductoCategoria().getId() < 1) {
+            javax.swing.JOptionPane.showMessageDialog(this.vista, "Seleccione una categoría para el producto",
+                    "Parametros incorrectos",
+                    javax.swing.JOptionPane.OK_OPTION);
+            return false;
+        }
+        return true;
+    }
+
     private void creaProducto() {
         if (!validarDescripcion()) {
             return;
@@ -237,6 +245,9 @@ public class C_crearProducto implements ActionListener, KeyListener, RecibirProd
             return;
         }
         if (!validarPrecioMayorista()) {
+            return;
+        }
+        if (!validarProductoCategoria()) {
             return;
         }
         String descripcion = vista.jtfProducto.getText().trim();
@@ -255,12 +266,9 @@ public class C_crearProducto implements ActionListener, KeyListener, RecibirProd
         producto.setPrecioMayorista(precioMayorista);
         producto.setIdMarca(marca.getId());
         producto.setIdImpuesto(impuesto.getId());
-        producto.setCategoria((String) this.vista.jcbCategoria.getSelectedItem());
-        producto.setEstado("Activo");
-//            if (modelo.crearProducto(producto, this.vista.jckBProveedor.isSelected())) {
-//                mostrarMensaje("El Producto se registró con éxito");
-//                cerrar();
-//            }
+        producto.setProductoCategoria(modelo.getProductoCategoria());
+        modelo.crearProducto(producto);
+        cerrar();
     }
 
     private void cerrar() {
@@ -285,13 +293,19 @@ public class C_crearProducto implements ActionListener, KeyListener, RecibirProd
         sc.mostrarVista();
     }
 
+    private void seleccionarProductoCategoria() {
+        SeleccionarCategoria spc = new SeleccionarCategoria(vista);
+        spc.setCallback(this);
+        spc.mostrarVista();
+    }
+
     private void copiarDatosDeProducto(M_producto producto) {
         this.vista.jtfProducto.setText(producto.getDescripcion());
         this.vista.jtfCodigo.setText(String.valueOf(producto.getCodBarra()));
         this.vista.jtfPrecioCosto.setText(producto.getPrecioCosto() + "");
         this.vista.jtfPrecioMayorista.setText(producto.getPrecioMayorista() + "");
         this.vista.jtfPrecioVta.setText(producto.getPrecioVenta() + "");
-        this.vista.jcbCategoria.setSelectedItem(producto.getCategoria());
+        this.vista.jtfCategoria.setText(producto.getCategoria());
         this.vista.jcbImpuesto.setSelectedItem(producto.getImpuesto() + "");
         this.vista.jcbMarca.setSelectedItem(producto.getMarca());
     }
@@ -306,6 +320,8 @@ public class C_crearProducto implements ActionListener, KeyListener, RecibirProd
             seleccionarProducto();
         } else if (e.getSource() == this.vista.jbAgregarCliente) {
             seleccionarCliente();
+        } else if (e.getSource() == this.vista.jbCategoria) {
+            seleccionarProductoCategoria();
         }
     }
 
@@ -349,7 +365,13 @@ public class C_crearProducto implements ActionListener, KeyListener, RecibirProd
     }
 
     @Override
-    public void recibirClienteProducto(E_clienteproducto cp) {
+    public void recibirClienteProducto(E_clienteProducto cp) {
         this.modelo.getTableModel().agregarDatos(cp);
+    }
+
+    @Override
+    public void recibirProductoCategoria(ProductoCategoria pc) {
+        this.modelo.setProductoCategoria(pc);
+        this.vista.jtfCategoria.setText(pc.getDescripcion());
     }
 }

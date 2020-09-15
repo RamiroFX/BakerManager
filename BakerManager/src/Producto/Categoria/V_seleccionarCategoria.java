@@ -6,11 +6,10 @@
 package Producto.Categoria;
 
 import Entities.ProductoCategoria;
-import ModeloTabla.ProductoCategoriaTableModel;
-import ModeloTabla.ProductoSubCategoriaTableModel;
-import bakermanager.C_inicio;
 import java.awt.BorderLayout;
 import javax.swing.JComboBox;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -24,27 +23,30 @@ import net.miginfocom.swing.MigLayout;
  */
 public class V_seleccionarCategoria extends javax.swing.JDialog {
 
-    private static final int MAX_LENGTH = 50, CREAR_SUB_CATEGORIA = 1, MODIFICAR_SUB_CATEGORIA = 2;
+    public javax.swing.JButton jbCrear, jbModificar, jbEliminar, jbSeleccionar;
+    public JTabbedPane jtpCenter;
+    public JPanel jpSouth, jpSubCategorias;
+    public JScrollPane jspCategorias, jspSubCategorias;
+    public JTable jtCategorias, jtSubCategorias;
+    public JComboBox<ProductoCategoria> jcbCategorias;
 
-    private javax.swing.JButton jbCrear, jbModificar, jbEliminar;
-    private JTabbedPane jtpCenter;
-    private JPanel jpSouth, jpSubCategorias;
-    JScrollPane jspCategorias, jspSubCategorias;
-    JTable jtCategorias, jtSubCategorias;
-    private JComboBox<ProductoCategoria> jcbCategorias;
-    ProductoSubCategoriaTableModel productoSubCategoriaTm;
-    ProductoCategoriaTableModel productoCategoriaTm;
-
-    public V_seleccionarCategoria(C_inicio c_inicio) {
-        super(c_inicio.vista, true);
-        construirLayout(c_inicio);
+    public V_seleccionarCategoria(JFrame frame) {
+        super(frame, true);
+        construirLayout();
+        setLocationRelativeTo(frame);
         initComponents();
     }
 
-    private void construirLayout(C_inicio c_inicio) {
-        setTitle("Parametros");
+    public V_seleccionarCategoria(JDialog dialog) {
+        super(dialog, true);
+        construirLayout();
+        setLocationRelativeTo(dialog);
+        initComponents();
+    }
+
+    private void construirLayout() {
+        setTitle("Categorías de productos");
         setSize(new java.awt.Dimension(500, 300));
-        setLocationRelativeTo(c_inicio.vista);
     }
 
     private void initCategorias() {
@@ -72,9 +74,11 @@ public class V_seleccionarCategoria extends javax.swing.JDialog {
         jbCrear = new javax.swing.JButton("Agregar");
         jbModificar = new javax.swing.JButton("Modificar");
         jbEliminar = new javax.swing.JButton("Eliminar");
+        jbSeleccionar = new javax.swing.JButton("Seleccionar");
         jpSouth.add(jbCrear);
         jpSouth.add(jbModificar);
         jpSouth.add(jbEliminar);
+        jpSouth.add(jbSeleccionar);
         getContentPane().setLayout(new MigLayout());
         getContentPane().add(jtpCenter, "dock center");
         getContentPane().add(jpSouth, "dock south");

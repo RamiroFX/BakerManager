@@ -32,12 +32,11 @@ public class V_crearProducto extends JDialog {
     private JLabel jlProducto, jlCodigo, jlImpuesto, jlRubro, jlPrecioCosto, jlMarca,
             jlPrecioVta, jlPrecioMayorista;
     public JTextField jtfProducto, jtfCodigo, jtfPrecioCosto,
-            jtfPrecioVta, jtfPrecioMayorista;
+            jtfPrecioVta, jtfPrecioMayorista, jtfCategoria;
     public JTextArea jtaIngredientes;
-    public JComboBox jcbCategoria;
     public JComboBox<E_impuesto> jcbImpuesto;
     public JComboBox<E_Marca> jcbMarca;
-    public JButton jbAceptar, jbCancelar, jbCopiar;
+    public JButton jbCategoria, jbAceptar, jbCancelar, jbCopiar;
     private JPanel jpProducto, jpBotones, jpPrincipal;
 
     private JPanel jpCliente;
@@ -110,12 +109,14 @@ public class V_crearProducto extends JDialog {
         jtfPrecioVta = new JTextField("1");
         jtfPrecioMayorista = new JTextField("1");
         jtfPrecioCosto = new JTextField("1");
+        jtfCategoria = new JTextField();
+        jtfCategoria.setEditable(false);
 
         //comboboxes
         jcbImpuesto = new JComboBox();
-        jcbCategoria = new JComboBox();
         jcbMarca = new JComboBox();
 
+        jbCategoria = new JButton("Categoría");
         jtaIngredientes = new JTextArea();
 
         jpProducto.add(jlProducto);
@@ -124,8 +125,8 @@ public class V_crearProducto extends JDialog {
         jpProducto.add(jtfCodigo, "spanx, growx,  pushx, wrap");
         jpProducto.add(jlImpuesto);
         jpProducto.add(jcbImpuesto, "spanx, growx,  pushx,wrap");
-        jpProducto.add(jlRubro);
-        jpProducto.add(jcbCategoria, "spanx, growx,  pushx,wrap");
+        jpProducto.add(jbCategoria);
+        jpProducto.add(jtfCategoria, "spanx, growx,  pushx,wrap");
         jpProducto.add(jlMarca);
         jpProducto.add(jcbMarca, "spanx, growx,  pushx,wrap");
         jpProducto.add(jlPrecioCosto);

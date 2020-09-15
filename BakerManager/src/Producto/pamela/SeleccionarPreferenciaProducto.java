@@ -6,7 +6,7 @@
 package Producto.pamela;
 
 import DB.DB_manager;
-import Entities.E_clienteproducto;
+import Entities.E_clienteProducto;
 import Entities.E_impuesto;
 import Entities.M_cliente;
 import Interface.RecibirClienteProductoPreferenciaCallback;
@@ -85,7 +85,7 @@ public class SeleccionarPreferenciaProducto extends javax.swing.JDialog implemen
             return;
         }
         int precio = Integer.valueOf(jtfPrecio.getText().trim());
-        E_clienteproducto cp = new E_clienteproducto();
+        E_clienteProducto cp = new E_clienteProducto();
         cp.setCliente(cliente);
         cp.setPrecio(precio);
         cp.setImpuesto(jcbImpuesto.getItemAt(jcbImpuesto.getSelectedIndex()));

@@ -4,6 +4,7 @@
  */
 package DB;
 
+import Entities.E_clienteProducto;
 import Entities.M_producto;
 import Entities.E_productoClasificacion;
 import Entities.Estado;
@@ -639,6 +640,95 @@ public class DB_Producto {
             rs = pst.getGeneratedKeys();
             if (rs != null && rs.next()) {
                 id_producto = rs.getLong(1);
+            }
+            DB_manager.establecerTransaccion();
+        } catch (SQLException ex) {
+            System.out.println(ex.getNextException());
+            if (DB_manager.getConection() != null) {
+                try {
+                    DB_manager.getConection().rollback();
+                } catch (SQLException ex1) {
+                    Logger lgr = Logger.getLogger(DB_Producto.class.getName());
+                    lgr.log(Level.WARNING, ex1.getMessage(), ex1);
+                }
+            }
+            Logger lgr = Logger.getLogger(DB_Producto.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        } finally {
+            try {
+                if (pst != null) {
+                    pst.close();
+                }
+            } catch (SQLException ex) {
+                Logger lgr = Logger.getLogger(DB_Producto.class.getName());
+                lgr.log(Level.WARNING, ex.getMessage(), ex);
+            }
+        }
+        return id_producto;
+    }
+
+    /*
+    
+    Almacena la preferencia del producto con cada cliente
+    Pamela
+     */
+    public static long insertarProductoConClientes(M_producto prod, List<E_clienteProducto> clientes) {
+        long id_producto = -1L;
+        String QUERY = "INSERT INTO PRODUCTO("
+                + "DESCRIPCION, "
+                + "CODIGO, "
+                + "ID_MARCA, "
+                + "ID_IMPUESTO, "
+                + "ID_CATEGORIA, "
+                + "PRECIO_COSTO, "
+                + "PRECIO_MINORISTA, "
+                + "PRECIO_MAYORISTA, "
+                + "ID_ESTADO, "
+                + "CANT_ACTUAL)"
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String INSERT_CLIETE_PRODUCTO = "INSERT INTO cliente_producto(id_cliente, id_producto, precio, id_impuesto)VALUES (?, ?, ?, ?);";
+        try {
+            DB_manager.getConection().setAutoCommit(false);
+            pst = DB_manager.getConection().prepareStatement(QUERY, PreparedStatement.RETURN_GENERATED_KEYS);
+            pst.setString(1, prod.getDescripcion());
+            try {
+                if (prod.getCodBarra() == null) {
+                    pst.setNull(2, Types.VARCHAR);
+                } else {
+                    pst.setString(2, prod.getCodBarra());
+                }
+            } catch (Exception e) {
+                pst.setNull(2, Types.VARCHAR);
+            }
+            pst.setInt(3, prod.getIdMarca());
+            pst.setInt(4, prod.getIdImpuesto());
+            pst.setInt(5, prod.getIdCategoria());
+            pst.setInt(6, prod.getPrecioCosto());
+            pst.setInt(7, prod.getPrecioVenta());
+            pst.setInt(8, prod.getPrecioMayorista());
+            pst.setInt(9, prod.getIdEstado());
+            try {
+                if (prod.getCantActual() == null) {
+                    pst.setNull(10, Types.DOUBLE);
+                } else {
+                    pst.setDouble(10, prod.getCantActual());
+                }
+            } catch (Exception e) {
+                pst.setNull(10, Types.DOUBLE);
+            }
+            pst.executeUpdate();
+            rs = pst.getGeneratedKeys();
+            if (rs != null && rs.next()) {
+                id_producto = rs.getLong(1);
+            }
+            for (E_clienteProducto clienteProducto : clientes) {
+                pst = DB_manager.getConection().prepareStatement(INSERT_CLIETE_PRODUCTO);
+                pst.setInt(1, clienteProducto.getCliente().getIdCliente());
+                pst.setInt(2, (int) id_producto);
+                pst.setInt(3, clienteProducto.getPrecio());
+                pst.setInt(4, clienteProducto.getImpuesto().getId());
+                pst.executeUpdate();
+                pst.close();
             }
             DB_manager.establecerTransaccion();
         } catch (SQLException ex) {

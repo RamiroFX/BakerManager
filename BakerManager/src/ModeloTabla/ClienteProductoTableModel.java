@@ -6,7 +6,7 @@
 package ModeloTabla;
 
 import Entities.E_impuesto;
-import Entities.E_clienteproducto;
+import Entities.E_clienteProducto;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +19,7 @@ import javax.swing.table.AbstractTableModel;
 public class ClienteProductoTableModel extends AbstractTableModel {
 
     private DecimalFormat decimalFormat;
-    private List<E_clienteproducto> list;
+    private List<E_clienteProducto> list;
     private final String[] colNames = {"Cliente", "Impuesto", "Precio"};
 
     public ClienteProductoTableModel() {
@@ -27,12 +27,12 @@ public class ClienteProductoTableModel extends AbstractTableModel {
         this.list = new ArrayList<>();
     }
 
-    public void setList(List<E_clienteproducto> list) {
+    public void setList(List<E_clienteProducto> list) {
         this.list = list;
         updateTable();
     }
 
-    public List<E_clienteproducto> getList() {
+    public List<E_clienteProducto> getList() {
         return list;
     }
 
@@ -63,7 +63,7 @@ public class ClienteProductoTableModel extends AbstractTableModel {
 
     @Override
     public Object getValueAt(int rowIndex, int colIndex) {
-        E_clienteproducto nd = this.list.get(rowIndex);
+        E_clienteProducto nd = this.list.get(rowIndex);
         switch (colIndex) {
             case 0: {
                 return nd.getCliente().getEntidad();
@@ -80,8 +80,8 @@ public class ClienteProductoTableModel extends AbstractTableModel {
         }
     }
 
-    public void agregarDatos(E_clienteproducto nc) {
-        this.list.add(nc);
+    public void agregarDatos(E_clienteProducto cp) {
+        this.list.add(cp);
         updateTable();
     }
 

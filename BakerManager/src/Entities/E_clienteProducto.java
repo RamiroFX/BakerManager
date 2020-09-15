@@ -9,7 +9,7 @@ package Entities;
  *
  * @author Ramiro Ferreira
  */
-public class E_clienteproducto {
+public class E_clienteProducto {
 
     private int id;
     private M_cliente cliente;
@@ -17,77 +17,79 @@ public class E_clienteproducto {
     private E_impuesto impuesto;
     private int precio;
 
-    public E_clienteproducto() {
+    public E_clienteProducto() {
+        this.cliente = new M_cliente();
+        this.producto = new M_producto();
+        this.impuesto = new E_impuesto();
     }
 
-    /**
-     * @return the id
-     */
     public int getId() {
         return id;
     }
 
-    /**
-     * @param id the id to set
-     */
     public void setId(int id) {
         this.id = id;
     }
 
-    /**
-     * @return the cliente
-     */
     public M_cliente getCliente() {
         return cliente;
     }
 
-    /**
-     * @param cliente the cliente to set
-     */
     public void setCliente(M_cliente cliente) {
         this.cliente = cliente;
     }
 
-    /**
-     * @return the producto
-     */
     public M_producto getProducto() {
         return producto;
     }
 
-    /**
-     * @param producto the producto to set
-     */
     public void setProducto(M_producto producto) {
         this.producto = producto;
     }
 
-    /**
-     * @return the impuesto
-     */
     public E_impuesto getImpuesto() {
         return impuesto;
     }
 
-    /**
-     * @param impuesto the impuesto to set
-     */
     public void setImpuesto(E_impuesto impuesto) {
         this.impuesto = impuesto;
     }
 
-    /**
-     * @return the precio
-     */
     public int getPrecio() {
         return precio;
     }
 
-    /**
-     * @param precio the precio to set
-     */
     public void setPrecio(int precio) {
         this.precio = precio;
     }
 
+    @Override
+    public String toString() {
+        return "ClienteProducto["
+                + "idCliente:" + cliente.getIdCliente()
+                + ", idProducto:" + producto.getId()
+                + ", idImpuesto:" + impuesto.getId()
+                + ", precio:" + precio
+                + "]";
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        // If the object is compared with itself then return true   
+        if (o == this) {
+            return true;
+        }
+
+        /* Check if o is an instance of Complex or not 
+          "null instanceof [type]" also returns false */
+        if (!(o instanceof E_clienteProducto)) {
+            return false;
+        }
+
+        // typecast o to Complex so that we can compare data members  
+        E_clienteProducto c = (E_clienteProducto) o;
+
+        // Compare the data members and return accordingly  
+        return this.getId() == c.getId();
+    }
 }

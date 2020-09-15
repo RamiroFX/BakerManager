@@ -9,7 +9,9 @@ import DB.DB_Producto;
 import DB.DB_manager;
 import Entities.E_Marca;
 import Entities.E_impuesto;
+import Entities.Estado;
 import Entities.M_producto;
+import Entities.ProductoCategoria;
 import ModeloTabla.ClienteProductoTableModel;
 import java.util.List;
 import java.util.Vector;
@@ -21,9 +23,22 @@ import java.util.Vector;
 public class M_crearProducto {
 
     private ClienteProductoTableModel tableModel;
+    //private M_producto producto;
+    private ProductoCategoria productoCategoria;
 
     public M_crearProducto() {
+        //this.producto = new M_producto();
+        this.productoCategoria = new ProductoCategoria();
+        this.productoCategoria.setId(-1);
         tableModel = new ClienteProductoTableModel();
+    }
+
+    public ProductoCategoria getProductoCategoria() {
+        return productoCategoria;
+    }
+
+    public void setProductoCategoria(ProductoCategoria productoCategoria) {
+        this.productoCategoria = productoCategoria;
     }
 
     public ClienteProductoTableModel getTableModel() {
@@ -62,15 +77,10 @@ public class M_crearProducto {
         return false;
     }
 
-    public void crearProducto(M_producto producto, boolean tieneProveedor) {
-        int idCategoria = DB_manager.obtenerIdProductoCategoria(producto.getCategoria().toLowerCase());
-        int idMarca = DB_manager.obtenerIdMarca(producto.getMarca().toLowerCase());
-        int idImpuesto = DB_manager.obtenerIdImpuesto(producto.getImpuesto());
-        producto.setIdCategoria(idCategoria);
-        producto.setIdEstado(1);//Activo
-        producto.setIdImpuesto(idImpuesto);
-        producto.setIdMarca(idMarca);
-        DB_Producto.insertarProducto(producto);
+    public void crearProducto(M_producto producto) {
+        producto.setIdCategoria(productoCategoria.getId());
+        producto.setIdEstado(Estado.ACTIVO);
+        DB_Producto.insertarProductoConClientes(producto, tableModel.getList());
     }
 
 }

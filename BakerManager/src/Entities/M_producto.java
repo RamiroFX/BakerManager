@@ -17,8 +17,10 @@ public class M_producto {
     private Integer idCategoria;
     private Integer idImpuesto;
     private Double cantActual;
+    private ProductoCategoria productoCategoria;
 
     public M_producto() {
+        this.productoCategoria = new ProductoCategoria();
     }
 
     public M_producto(String descripcion, String marca, String rubro, String estado,
@@ -37,6 +39,14 @@ public class M_producto {
         this.precioMayorista = precioMayorista;
         this.cantActual = cantActual;
         this.observacion = observacion;
+    }
+
+    public ProductoCategoria getProductoCategoria() {
+        return productoCategoria;
+    }
+
+    public void setProductoCategoria(ProductoCategoria productoCategoria) {
+        this.productoCategoria = productoCategoria;
     }
 
     /**
@@ -275,7 +285,7 @@ public class M_producto {
 
     @Override
     public String toString() {
-        return getCodBarra()+"-"+getCodigo()+"-"+getDescripcion();
+        return getCodBarra() + "-" + getCodigo() + "-" + getDescripcion();
     }
 
 }

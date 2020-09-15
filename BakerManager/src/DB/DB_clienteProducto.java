@@ -6,7 +6,7 @@
 package DB;
 
 import Entities.E_Timbrado;
-import Entities.E_clienteproducto;
+import Entities.E_clienteProducto;
 import Entities.Estado;
 import Entities.M_funcionario;
 import java.sql.PreparedStatement;
@@ -134,7 +134,7 @@ public class DB_clienteProducto {
         return list;
     }
 
-    public static int insertarClienteProducto(E_clienteproducto clienteProducto) {
+    public static int insertarClienteProducto(E_clienteProducto clienteProducto) {
         String INSERT_CABECERA = "INSERT INTO CLIENTE_PRODUCTO"
                 + "(id_cliente, "
                 + "id_producto, "
@@ -185,7 +185,7 @@ public class DB_clienteProducto {
         return (int) sq_cabecera;
     }
 
-    public static void insertarClienteProducto(List<E_clienteproducto> clienteProductos) {
+    public static void insertarClienteProducto(List<E_clienteProducto> clienteProductos) {
         String INSERT_CABECERA = "INSERT INTO CLIENTE_PRODUCTO"
                 + "(id_cliente, "
                 + "id_producto, "
@@ -194,7 +194,7 @@ public class DB_clienteProducto {
                 + "VALUES (?, ?, ?, ?);";
         try {
             DB_manager.getConection().setAutoCommit(false);
-            for (E_clienteproducto clienteProducto : clienteProductos) {
+            for (E_clienteProducto clienteProducto : clienteProductos) {
                 pst = DB_manager.getConection().prepareStatement(INSERT_CABECERA, PreparedStatement.RETURN_GENERATED_KEYS);
                 pst.setInt(1, clienteProducto.getCliente().getIdCliente());
                 pst.setInt(2, clienteProducto.getProducto().getId());

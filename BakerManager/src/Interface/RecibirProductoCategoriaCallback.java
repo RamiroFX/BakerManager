@@ -5,13 +5,13 @@
  */
 package Interface;
 
-import Entities.E_clienteProducto;
+import Entities.ProductoCategoria;
 
 /**
  *
  * @author Ramiro Ferreira
  */
-public interface RecibirClienteProductoPreferenciaCallback {
+public interface RecibirProductoCategoriaCallback {
 
-    public void recibirClienteProducto(E_clienteProducto cp);
+    public void recibirProductoCategoria(ProductoCategoria pc);
 }
