@@ -14,6 +14,8 @@ import java.awt.event.MouseEvent;
 import java.awt.EventQueue;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.Calendar;
+import java.util.Date;
 import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
@@ -56,6 +58,12 @@ public class C_seleccionarFilm extends MouseAdapter implements ActionListener, K
     }
 
     private void inicializarVista() {
+        Calendar calendar = Calendar.getInstance();
+        this.vista.jdcFin.setDate(calendar.getTime());
+        int currentYear = calendar.get(Calendar.YEAR);
+        calendar.set(Calendar.YEAR, currentYear - 1);
+        this.vista.jdcInicio.setDate(calendar.getTime());
+        this.vista.jcbPorFecha.setSelected(true);
         this.vista.jbAceptar.setEnabled(false);
         this.vista.jtProducto.setModel(modelo.getTm());
         KeyStroke enter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
@@ -115,14 +123,38 @@ public class C_seleccionarFilm extends MouseAdapter implements ActionListener, K
                     JOptionPane.showMessageDialog(vista, "El texto ingresado supera el máximo permitido de 50 caracteres.", "Atención", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
+                boolean buscarPorFecha = vista.jcbPorFecha.isSelected();
+                if (buscarPorFecha) {
+                    if (!validarFechas()) {
+                        return;
+                    }
+                }
                 String buscarPor = vista.jcbBuscarPor.getSelectedItem().toString();
                 String ordenarPor = vista.jcbOrdenarPor.getSelectedItem().toString();
                 String clasificarPor = vista.jcbClasificarPor.getSelectedItem().toString();
                 String estado = vista.jcbEstado.getSelectedItem().toString();
-                modelo.consultarRollos(desc.toLowerCase(), buscarPor, ordenarPor, clasificarPor, estado);
+                Date fechaInicio = vista.jdcInicio.getDate();
+                Date fechaFin = vista.jdcFin.getDate();
+                modelo.consultarRollos(desc.toLowerCase(), buscarPor, ordenarPor, clasificarPor,
+                        estado, buscarPorFecha, fechaInicio, fechaFin);
                 Utilities.c_packColumn.packColumns(vista.jtProducto, 1);
             }
         });
+    }
+
+    private boolean validarFechas() {
+        Date inicio = vista.jdcInicio.getDate();
+        Date fin = vista.jdcFin.getDate();
+        if (inicio != null && fin != null) {
+            int dateValue = inicio.compareTo(fin);
+            if (dateValue <= 0) {
+                return true;
+            }
+        }
+        vista.jdcFin.setDate(vista.jdcInicio.getDate());
+        vista.jdcFin.updateUI();
+        JOptionPane.showMessageDialog(vista, "La fecha inicio debe ser menor que fecha final", "Atención", JOptionPane.WARNING_MESSAGE);
+        return false;
     }
 
     private void cerrar() {

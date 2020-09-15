@@ -10,6 +10,7 @@ import Ventas.M_crearVentaRapida;
 import java.awt.EventQueue;
 import java.sql.Timestamp;
 import java.util.Calendar;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 /**
@@ -20,9 +21,10 @@ public class C_crearVentaPorFecha extends C_crearVentaRapida {
 
     V_crearVentaPorFecha gui;
 
-    public C_crearVentaPorFecha(M_crearVentaRapida modelo, V_crearVentaPorFecha vista) {
+    public C_crearVentaPorFecha(M_crearVentaRapida modelo, V_crearVentaPorFecha vista, JFrame frame) {
         super(modelo, vista);
         this.gui = vista;
+        this.
         inicializarVista2();
     }
 

@@ -24,12 +24,14 @@ import Impresora.Impresora;
 import Interface.InterfaceNotificarCambio;
 import Interface.RecibirClienteCallback;
 import Interface.RecibirTimbradoVentaCallback;
+import bakermanager.V_inicio;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Vector;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 /**
@@ -48,10 +50,10 @@ public class C_crearVentaRapida implements GestionInterface, InterfaceFacturaDet
 
     public M_crearVentaRapida modelo;
     public V_crearVentaRapida vista;
-    private C_gestionVentas gestionVentas;
+    private V_inicio gestionVentas;
     private boolean isJCBTrigger;
 
-    public C_crearVentaRapida(V_crearVentaRapida vista, C_gestionVentas gestionVentas) {
+    public C_crearVentaRapida(V_crearVentaRapida vista, V_inicio gestionVentas) {
         this.modelo = new M_crearVentaRapida(this);
         this.vista = vista;
         this.gestionVentas = gestionVentas;
@@ -447,7 +449,7 @@ public class C_crearVentaRapida implements GestionInterface, InterfaceFacturaDet
             imprimirTicket();
         }
         if (e.getSource().equals(this.vista.jbCliente)) {
-            SeleccionarCliente sp = new SeleccionarCliente(this.gestionVentas.c_inicio.vista);
+            SeleccionarCliente sp = new SeleccionarCliente(this.gestionVentas);
             sp.setCallback(this);
             sp.mostrarVista();
         }
@@ -524,7 +526,7 @@ public class C_crearVentaRapida implements GestionInterface, InterfaceFacturaDet
                 break;
             }
             case KeyEvent.VK_F3: {
-                SeleccionarCliente sp = new SeleccionarCliente(this.gestionVentas.c_inicio.vista);
+                SeleccionarCliente sp = new SeleccionarCliente(this.gestionVentas);
                 sp.setCallback(this);
                 sp.mostrarVista();
                 break;

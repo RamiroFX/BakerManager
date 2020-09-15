@@ -51,7 +51,7 @@ public class DB_manager {
             Conexiones.cargarDriver(Conexiones.SGBD_POSTGRES);
             String port = Config.getPort();
             String host = Config.getHost();
-            String url = "jdbc:postgresql://" + host + ":" + port + "/pamela";
+            String url = "jdbc:postgresql://" + host + ":" + port + "/bauplast";
             System.out.println("url: " + url);
             con = Conexiones.obtenerConexion(Conexiones.SGBD_POSTGRES, url, usuario, password);
             return true;

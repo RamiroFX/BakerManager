@@ -5,9 +5,7 @@
  */
 package Ventas.VentaPorFecha;
 
-import Ventas.C_crearVentaRapida;
 import Ventas.M_crearVentaRapida;
-import Ventas.V_crearVentaRapida;
 import javax.swing.JFrame;
 
 /**
@@ -16,14 +14,14 @@ import javax.swing.JFrame;
  */
 public class VentaPorFecha {
 
-    V_crearVentaPorFecha vista;
-    M_crearVentaRapida modelo;
-    C_crearVentaPorFecha controlador;
+    private V_crearVentaPorFecha vista;
+    private M_crearVentaRapida modelo;
+    private C_crearVentaPorFecha controlador;
 
     public VentaPorFecha(JFrame frame) {
         this.modelo = new M_crearVentaRapida();
         this.vista = new V_crearVentaPorFecha(frame, true);
-        this.controlador = new C_crearVentaPorFecha(modelo, vista);
+        this.controlador = new C_crearVentaPorFecha(modelo, vista, frame);
     }
 
     public void mostrarVista() {

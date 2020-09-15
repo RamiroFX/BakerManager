@@ -10,6 +10,7 @@ import DB.DB_manager;
 import Entities.Estado;
 import ModeloTabla.RolloProducidoTableModel;
 import java.util.ArrayList;
+import java.util.Date;
 
 /**
  *
@@ -35,7 +36,7 @@ public class M_seleccionarFilm {
         return DB_manager.obtenerEstados();
     }
 
-    public void consultarRollos(String descripcion, String buscarPor, String ordenarPor, String clasificarPor, String estado) {
-        this.tm.setList(DB_Produccion.consultarFilmDisponible(descripcion, buscarPor, ordenarPor, clasificarPor, estado, false, null, null));
+    public void consultarRollos(String descripcion, String buscarPor, String ordenarPor, String clasificarPor, String estado, boolean porFecha, Date fechaInicio, Date fechaFin) {
+        this.tm.setList(DB_Produccion.consultarFilmDisponible(descripcion, buscarPor, ordenarPor, clasificarPor, estado, porFecha, fechaInicio, fechaFin));
     }
 }

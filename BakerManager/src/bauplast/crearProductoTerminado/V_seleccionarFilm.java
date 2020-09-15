@@ -4,9 +4,11 @@
  */
 package bauplast.crearProductoTerminado;
 
+import com.toedter.calendar.JDateChooser;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
@@ -29,6 +31,8 @@ public class V_seleccionarFilm extends JDialog {
     JPanel jpBotones, jpTop, jpBotonesTop, jpJtextFieldTop;
     public JComboBox jcbBuscarPor, jcbOrdenarPor, jcbClasificarPor, jcbEstado;
     public JTextField jtfBuscar;
+    public JCheckBox jcbPorFecha;
+    public JDateChooser jdcInicio, jdcFin;
 
     public V_seleccionarFilm(JDialog main) {
         super(main, "Seleccionar rollo", true);
@@ -44,11 +48,20 @@ public class V_seleccionarFilm extends JDialog {
     private void initTop() {
         jpTop = new JPanel(new MigLayout("", "[fill][fill]", "[fill][]"));
         JPanel jpFiltros = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        JPanel jpFiltroFecha = new JPanel(new FlowLayout(FlowLayout.CENTER));
 
+        jdcInicio = new JDateChooser();
+        jdcFin = new JDateChooser();
+        jcbPorFecha = new JCheckBox("Por fecha");
         jcbEstado = new JComboBox();
         jcbClasificarPor = new JComboBox();
         jcbBuscarPor = new JComboBox();
         jcbOrdenarPor = new JComboBox();
+        jpFiltroFecha.add(jcbPorFecha);
+        jpFiltroFecha.add(new JLabel("Fecha inicio"));
+        jpFiltroFecha.add(jdcInicio);
+        jpFiltroFecha.add(new JLabel("Fecha fin"));
+        jpFiltroFecha.add(jdcFin);
         jpFiltros.add(new JLabel("Buscar por:"));
         jpFiltros.add(jcbBuscarPor);
         jpFiltros.add(new JLabel("Ordenar por:"));
@@ -68,6 +81,7 @@ public class V_seleccionarFilm extends JDialog {
         jpBotonesTop.add(jbBorrar);
         jpTop.add(jpJtextFieldTop, "push x");
         jpTop.add(jpBotonesTop, "wrap");
+        jpTop.add(jpFiltroFecha, "span, grow, wrap");
         jpTop.add(jpFiltros, "span, grow");
         jpTop.setBorder(new EtchedBorder(EtchedBorder.RAISED));
     }
