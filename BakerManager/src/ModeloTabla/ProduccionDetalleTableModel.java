@@ -78,23 +78,23 @@ public class ProduccionDetalleTableModel extends AbstractTableModel {
 
     public void agregarDetalle(E_produccionDetalle produccion) {
         this.produccionList.add(produccion);
-        fireTableDataChanged();
+        updateTable();
     }
 
     public void modificarCantidadDetalle(int index, double cantidad) {
         this.produccionList.get(index).setCantidad(cantidad);
         fireTableCellUpdated(index, 0);
-        fireTableDataChanged();
+        updateTable();
     }
 
     public void quitarDetalle(int index) {
         this.produccionList.remove(index);
-        fireTableDataChanged();
+        updateTable();
     }
 
     public void vaciarLista() {
         this.produccionList.clear();
-        fireTableDataChanged();
+        updateTable();
     }
 
     public void updateTable() {

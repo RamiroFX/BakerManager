@@ -5,14 +5,12 @@
  */
 package bauplast.crearRollo;
 
-import DB.DB_Produccion;
 import DB.DB_Producto;
 import DB.DB_manager;
 import Entities.E_productoClasificacion;
 import Entities.Estado;
 import Entities.M_producto;
 import java.util.ArrayList;
-import java.util.Vector;
 
 /**
  *

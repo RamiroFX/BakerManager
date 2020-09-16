@@ -14,6 +14,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
@@ -35,10 +36,15 @@ class V_crearRollo extends JDialog {
     public JLabel jlNroOrdenTrabajo, jlFechaProduccion;
     public JDateChooser jdcFechaEntrega;
     //CENTRO
+    JSplitPane jSplitTablas;
     JPanel jpCenter;
     public JTable jtProduccionDetalle;
     public JScrollPane jspProduccionDetalle;
     public JButton jbSeleccionarProducto, jbModificarDetalle, jbEliminarDetalle;
+    //MATERIA PRIMA
+    public JTable jtMateriaPrimaUtilizada;
+    public JScrollPane jspMateriaPrimaUtilizada;
+    public JButton jbSeleccionarMP, jbModificarMP, jbEliminarMP;
     //SUR
     public JPanel jpSouth;
     public JButton jbAceptar, jbSalir;
@@ -82,6 +88,7 @@ class V_crearRollo extends JDialog {
     }
 
     private void initCenter() {
+        int width = 30, height = 10;
         jpCenter = new JPanel(new BorderLayout());
         jpCenter.setBorder(new EtchedBorder(EtchedBorder.RAISED));
         jtProduccionDetalle = new JTable();
@@ -96,9 +103,35 @@ class V_crearRollo extends JDialog {
         jpSouthAux.add(jbSeleccionarProducto, "wrap");
         jpSouthAux.add(jbModificarDetalle, "growx, wrap");
         jpSouthAux.add(jbEliminarDetalle, "growx");
+        
+        //ROLLOS UTILIZADOS
+        jtMateriaPrimaUtilizada = new JTable();
+        jtMateriaPrimaUtilizada.getTableHeader().setReorderingAllowed(false);
+        jtMateriaPrimaUtilizada.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        jspMateriaPrimaUtilizada = new JScrollPane(jtMateriaPrimaUtilizada);
+        jbSeleccionarMP = new JButton("Agregar Materia Prima");
+        jbSeleccionarMP.setSize(new Dimension(width, height));
+        jbModificarMP = new JButton("Modificar Materia Prima");
+        jbModificarMP.setSize(new Dimension(width, height));
+        jbEliminarMP = new JButton("Eliminar Materia Prima");
+        jbEliminarMP.setSize(new Dimension(width, height));
+        JPanel jpSouthAuxRollos = new JPanel(new MigLayout());
+        jpSouthAuxRollos.setBorder(new EtchedBorder(EtchedBorder.LOWERED));
+        jpSouthAuxRollos.add(jbSeleccionarMP, "wrap");
+        jpSouthAuxRollos.add(jbModificarMP, "growx, wrap");
+        jpSouthAuxRollos.add(jbEliminarMP, "growx");
 
-        jpCenter.add(jspProduccionDetalle, BorderLayout.CENTER);
-        jpCenter.add(jpSouthAux, BorderLayout.EAST);
+        JPanel jpCenterAux1 = new JPanel(new BorderLayout());
+        jpCenterAux1.add(jspProduccionDetalle, BorderLayout.CENTER);
+        jpCenterAux1.add(jpSouthAux, BorderLayout.EAST);
+
+        JPanel jpCenterAux2 = new JPanel(new BorderLayout());
+        jpCenterAux2.add(jspMateriaPrimaUtilizada, BorderLayout.CENTER);
+        jpCenterAux2.add(jpSouthAuxRollos, BorderLayout.EAST);
+
+        jSplitTablas = new JSplitPane(JSplitPane.VERTICAL_SPLIT, jpCenterAux1, jpCenterAux2);
+        jSplitTablas.setDividerLocation(300);
+        jpCenter.add(jSplitTablas, BorderLayout.CENTER);
     }
 
     private void initSouth() {

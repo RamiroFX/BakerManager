@@ -569,12 +569,14 @@ public class DB_Produccion {
         return list;
     }
 
-    public static int insertarProduccionFilm(E_produccionCabecera produccionCabecera, List<E_produccionFilm> detalle) {
+    public static int insertarProduccionFilm(E_produccionCabecera produccionCabecera, List<E_produccionFilm> detalle,
+            List<E_produccionDetalle> detalleMP) {
         String INSERT_CABECERA = "INSERT INTO produccion_cabecera(nro_orden_trabajo, fecha_produccion, id_funcionario_responsable, id_funcionario_usuario, id_produccion_tipo)VALUES( ?, ?, ?, ?, ?);";
         //LA SGBD SE ENCARGA DE INSERTAR EL TIMESTAMP.
         String INSERT_DETALLE = "INSERT INTO produccion_detalle(id_produccion_cabecera, id_producto, cantidad)VALUES (?, ?, ?);";
         String INSERT_FILM = "INSERT INTO produccion_film(nro_film, id_produccion_cabecera, id_produccion_detalle, peso, fecha_creacion, id_funcionario_responsable, cono, medida, micron, id_producto_categoria, id_estado)VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
         String INSERT_PROD_FILM_PROD = "INSERT INTO produccion_film_producto(id_produccion_film, id_producto)VALUES (?, ?);";
+        String INSERT_FILM_MP_BAJA = "INSERT INTO PRODUCCION_FILM_MP_BAJA(ID_PRODUCCION_CABECERA, ID_PRODUCTO, CANTIDAD)VALUES (?, ?, ?);";
         long sq_cabecera = -1L;
         ArrayList<Integer> prodFilmKeys = new ArrayList<>();
         try {
@@ -631,6 +633,16 @@ public class DB_Produccion {
                 pst.setInt(1, prodFilmKeys.get(prodFilmIndex));
                 prodFilmIndex++;
                 pst.setInt(2, e_produccionFilm.getProducto().getId());
+                pst.executeUpdate();
+                pst.close();
+            }
+            //Insertar utilizacion de materia prima
+            for (E_produccionDetalle mpDetail : detalleMP) {                
+                pst = DB_manager.getConection().prepareStatement(INSERT_FILM_MP_BAJA);
+                pst.setInt(1, (int) sq_cabecera);
+                prodFilmIndex++;
+                pst.setInt(2, mpDetail.getProducto().getId());
+                pst.setDouble(3, mpDetail.getCantidad());
                 pst.executeUpdate();
                 pst.close();
             }

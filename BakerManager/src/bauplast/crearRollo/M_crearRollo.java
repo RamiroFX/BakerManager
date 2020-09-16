@@ -7,9 +7,12 @@ package bauplast.crearRollo;
 
 import DB.DB_Produccion;
 import Entities.E_produccionCabecera;
+import Entities.E_produccionDetalle;
 import Entities.E_produccionFilm;
 import Entities.E_produccionTipo;
+import Entities.M_producto;
 import MenuPrincipal.DatosUsuario;
+import ModeloTabla.ProduccionDetalleTableModel;
 import ModeloTabla.ProduccionRolloTableModel;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -20,13 +23,15 @@ import java.util.ArrayList;
  */
 public class M_crearRollo {
 
-    E_produccionCabecera produccionCabecera;
-    ProduccionRolloTableModel tm;
+    private E_produccionCabecera produccionCabecera;
+    private ProduccionRolloTableModel tm;
+    private ProduccionDetalleTableModel produccionDetalleTM;
 
     public M_crearRollo() {
         this.produccionCabecera = new E_produccionCabecera();
         this.produccionCabecera.setFuncionarioSistema(DatosUsuario.getRol_usuario().getFuncionario());
         this.tm = new ProduccionRolloTableModel();
+        this.produccionDetalleTM = new ProduccionDetalleTableModel();
     }
 
     public E_produccionCabecera getProduccionCabecera() {
@@ -45,6 +50,14 @@ public class M_crearRollo {
         return tm;
     }
 
+    public ProduccionDetalleTableModel getProduccionDetalleTM() {
+        return produccionDetalleTM;
+    }
+
+    public void setProduccionDetalleTM(ProduccionDetalleTableModel produccionDetalleTM) {
+        this.produccionDetalleTM = produccionDetalleTM;
+    }
+
     public void agregarDetalle(E_produccionFilm producto) {
         getTm().agregarDatos(producto);
     }
@@ -55,6 +68,21 @@ public class M_crearRollo {
 
     public void removerDetalle(int index) {
         getTm().quitarDatos(index);
+    }
+
+    public void agregarMPDetalle(double cantidad, M_producto producto) {
+        E_produccionDetalle mp = new E_produccionDetalle();
+        mp.setCantidad(cantidad);
+        mp.setProducto(producto);
+        getProduccionDetalleTM().agregarDetalle(mp);
+    }
+
+    public void modificarMPDetalle(int index, double cantidad) {
+        getProduccionDetalleTM().modificarCantidadDetalle(index, cantidad);
+    }
+
+    public void removerMPDetalle(int index) {
+        getProduccionDetalleTM().quitarDetalle(index);
     }
 
     boolean existeOrdenTrabajo(int ordenTrabajo) {
@@ -70,7 +98,7 @@ public class M_crearRollo {
     }
 
     public void guardarProduccion() {
-        DB_Produccion.insertarProduccionFilm(getProduccionCabecera(), getTm().getList());
+        DB_Produccion.insertarProduccionFilm(getProduccionCabecera(), getTm().getList(), getProduccionDetalleTM().getList());
     }
 
     public void limpiarCampos() {

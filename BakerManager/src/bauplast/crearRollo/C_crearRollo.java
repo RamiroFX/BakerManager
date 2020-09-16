@@ -7,12 +7,16 @@ package bauplast.crearRollo;
 
 import Empleado.SeleccionarFuncionario;
 import Entities.E_produccionCabecera;
+import Entities.E_produccionDetalle;
 import Entities.E_produccionFilm;
 import Entities.E_produccionTipo;
 import Entities.E_productoClasificacion;
 import Entities.M_funcionario;
+import Entities.M_producto;
 import Interface.InterfaceRecibirProduccionFilm;
 import Interface.RecibirEmpleadoCallback;
+import Interface.RecibirProductoCallback;
+import Produccion.SeleccionCantidadProductoSimple;
 import bauplast.SeleccionarProductoPorClasif;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
@@ -30,7 +34,7 @@ import javax.swing.JOptionPane;
  * @author Ramiro Ferreira
  */
 class C_crearRollo extends MouseAdapter implements ActionListener, KeyListener,
-        RecibirEmpleadoCallback, InterfaceRecibirProduccionFilm {
+        RecibirEmpleadoCallback, InterfaceRecibirProduccionFilm, RecibirProductoCallback {
 
     private static final String VALIDAR_RESPONSABLE_MSG = "Seleccione un responsable de producción",
             VALIDAR_ORDEN_TRABAJO_MSG_1 = "Ingrese una orden de trabajo",
@@ -100,6 +104,7 @@ class C_crearRollo extends MouseAdapter implements ActionListener, KeyListener,
 
     private void inicializarVista() {
         this.vista.jtProduccionDetalle.setModel(modelo.getTm());
+        this.vista.jtMateriaPrimaUtilizada.setModel(modelo.getProduccionDetalleTM());
         this.vista.jbModificarDetalle.setEnabled(false);
         this.vista.jbEliminarDetalle.setEnabled(false);
         Calendar calendar = Calendar.getInstance();
@@ -108,11 +113,14 @@ class C_crearRollo extends MouseAdapter implements ActionListener, KeyListener,
 
     private void agregarListeners() {
         this.vista.jtProduccionDetalle.addMouseListener(this);
+        this.vista.jbFuncionario.addActionListener(this);
         this.vista.jbAceptar.addActionListener(this);
         this.vista.jbSeleccionarProducto.addActionListener(this);
-        this.vista.jbFuncionario.addActionListener(this);
         this.vista.jbEliminarDetalle.addActionListener(this);
         this.vista.jbModificarDetalle.addActionListener(this);
+        this.vista.jbSeleccionarMP.addActionListener(this);
+        this.vista.jbModificarMP.addActionListener(this);
+        this.vista.jbEliminarMP.addActionListener(this);
         this.vista.jbSalir.addActionListener(this);
         this.vista.jbSeleccionarProducto.addKeyListener(this);
         this.vista.jbFuncionario.addKeyListener(this);
@@ -233,6 +241,34 @@ class C_crearRollo extends MouseAdapter implements ActionListener, KeyListener,
         sp.mostrarVista();
     }
 
+    private void invocarSeleccionarMP() {
+        SeleccionarProductoPorClasif sp = new SeleccionarProductoPorClasif(vista);
+        E_productoClasificacion pc = new E_productoClasificacion(E_productoClasificacion.MATERIA_PRIMA, "");
+        sp.setProductoClasificacion(pc);
+        sp.setProductoCallback(this);
+        sp.mostrarVista();
+    }
+
+    public void modificarMP() {
+        int fila = this.vista.jtMateriaPrimaUtilizada.getSelectedRow();
+        if (fila > -1) {
+            M_producto producto = modelo.getProduccionDetalleTM().getList().get(fila).getProducto();
+            SeleccionCantidadProductoSimple scp = new SeleccionCantidadProductoSimple(this.vista, fila);
+            scp.setProducto(producto);
+            scp.setTipo(SeleccionCantidadProductoSimple.PROD_TERMINADO_MODIFICAR_PROD);
+            scp.setProductoCallback(this);
+            scp.inicializarVista();
+            scp.setVisible(true);
+        }
+    }
+
+    private void eliminarMP() {
+        int fila = this.vista.jtMateriaPrimaUtilizada.getSelectedRow();
+        if (fila > -1) {
+            modelo.removerMPDetalle(fila);
+        }
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         Object source = e.getSource();
@@ -250,6 +286,12 @@ class C_crearRollo extends MouseAdapter implements ActionListener, KeyListener,
             modificarDetalle();
         } else if (source.equals(this.vista.jbSalir)) {
             cerrar();
+        } else if (source.equals(this.vista.jbSeleccionarMP)) {
+            invocarSeleccionarMP();
+        } else if (source.equals(this.vista.jbModificarMP)) {
+            modificarMP();
+        } else if (source.equals(this.vista.jbEliminarMP)) {
+            eliminarMP();
         }
     }
 
@@ -326,6 +368,16 @@ class C_crearRollo extends MouseAdapter implements ActionListener, KeyListener,
 
     @Override
     public void recibirFilmPosterior(E_produccionFilm detalle) {
+    }
+
+    @Override
+    public void recibirProducto(double cantidad, int precio, double descuento, M_producto producto, String observacion) {
+        modelo.agregarMPDetalle(cantidad, producto);
+    }
+
+    @Override
+    public void modificarProducto(int posicion, double cantidad, int precio, double descuento, M_producto producto, String observacion) {
+        modelo.modificarMPDetalle(posicion, cantidad);
     }
 
 }
