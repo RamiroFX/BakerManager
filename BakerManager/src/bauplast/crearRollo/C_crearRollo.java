@@ -7,7 +7,6 @@ package bauplast.crearRollo;
 
 import Empleado.SeleccionarFuncionario;
 import Entities.E_produccionCabecera;
-import Entities.E_produccionDetalle;
 import Entities.E_produccionFilm;
 import Entities.E_produccionTipo;
 import Entities.E_productoClasificacion;
@@ -372,12 +371,20 @@ class C_crearRollo extends MouseAdapter implements ActionListener, KeyListener,
 
     @Override
     public void recibirProducto(double cantidad, int precio, double descuento, M_producto producto, String observacion) {
-        modelo.agregarMPDetalle(cantidad, producto);
+        if (esModoCreacion) {
+            modelo.agregarMPDetalle(cantidad, producto);
+        } else {
+            modelo.agregarMPDetallePosterior(cantidad, producto);
+        }
     }
 
     @Override
     public void modificarProducto(int posicion, double cantidad, int precio, double descuento, M_producto producto, String observacion) {
-        modelo.modificarMPDetalle(posicion, cantidad);
+        if (esModoCreacion) {
+            modelo.modificarMPDetalle(posicion, cantidad);
+        } else {
+            modelo.modificarMPDetallePosterior(posicion, cantidad);
+        }
     }
 
 }

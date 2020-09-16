@@ -401,6 +401,38 @@ public class DB_Produccion {
         return list;
     }
 
+    public static List<E_produccionDetalle> consultarUtilizacionMP(int idProduccion) {
+        List<E_produccionDetalle> list = new ArrayList<>();
+        String QUERY = "SELECT ID_PRODUCCION_FILM_MP_BAJA, "
+                + "ID_PRODUCTO, "
+                + "CANTIDAD, "
+                + "(SELECT P.DESCRIPCION FROM PRODUCTO P WHERE P.ID_PRODUCTO = PRODUCCION_FILM_MP_BAJA.ID_PRODUCTO )\"PRODUCTO\", "
+                + "(SELECT P.CODIGO FROM PRODUCTO P WHERE P.ID_PRODUCTO = PRODUCCION_FILM_MP_BAJA.ID_PRODUCTO )\"CODIGO\" "
+                + "FROM PRODUCCION_FILM_MP_BAJA "
+                + "WHERE ID_PRODUCCION_CABECERA = ?;";
+
+        try {
+            pst = DB_manager.getConection().prepareStatement(QUERY, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            pst.setInt(1, idProduccion);
+            rs = pst.executeQuery();
+            while (rs.next()) {
+                M_producto producto = new M_producto();
+                producto.setId(rs.getInt("ID_PRODUCTO"));
+                producto.setDescripcion(rs.getString("PRODUCTO"));
+                producto.setCodigo(rs.getString("CODIGO"));
+                E_produccionDetalle pd = new E_produccionDetalle();
+                pd.setId(rs.getInt("ID_PRODUCCION_FILM_MP_BAJA"));
+                pd.setCantidad(rs.getDouble("CANTIDAD"));
+                pd.setProducto(producto);
+                list.add(pd);
+            }
+        } catch (SQLException ex) {
+            Logger lgr = Logger.getLogger(DB_Produccion.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        }
+        return list;
+    }
+
     public static E_produccionCabecera obtenerProduccionCabecera(int idProduccion) {
         E_produccionCabecera pc = null;
         String Query = "SELECT id_produccion_cabecera, "
@@ -914,6 +946,105 @@ public class DB_Produccion {
             }
         }
         return (int) sq_cabecera;
+    }
+
+    public static void insertarUsoMateriaPrimaPosterior(E_produccionCabecera produccionCabecera, E_produccionDetalle detalle) {
+        String INSERT_DETALLE = "INSERT INTO produccion_film_mp_baja(id_produccion_cabecera, id_producto, cantidad)VALUES (?, ?, ?);";
+        try {
+            DB_manager.getConection().setAutoCommit(false);
+            pst = DB_manager.getConection().prepareStatement(INSERT_DETALLE);//, PreparedStatement.RETURN_GENERATED_KEYS);
+            pst.setInt(1, produccionCabecera.getId());
+            pst.setInt(2, detalle.getProducto().getId());
+            pst.setDouble(3, detalle.getCantidad());
+            pst.executeUpdate();
+            pst.close();
+            //se suma al stock lo que se produce para productos terminados
+            int idProducto = detalle.getProducto().getId();
+            double cantidad = detalle.getCantidad();
+            String query = "UPDATE PRODUCTO SET "
+                    + "CANT_ACTUAL = "
+                    + "((SELECT CANT_ACTUAL FROM PRODUCTO WHERE ID_PRODUCTO = " + idProducto + ")-" + cantidad + ") "
+                    + "WHERE ID_PRODUCTO = " + idProducto;
+            st = DB_manager.getConection().createStatement();
+            st.executeUpdate(query);
+            DB_manager.establecerTransaccion();
+        } catch (SQLException ex) {
+            System.out.println(ex.getNextException());
+            if (DB_manager.getConection() != null) {
+                try {
+                    DB_manager.getConection().rollback();
+                } catch (SQLException ex1) {
+                    Logger lgr = Logger.getLogger(DB_Produccion.class.getName());
+                    lgr.log(Level.WARNING, ex1.getMessage(), ex1);
+                }
+            }
+            Logger lgr = Logger.getLogger(DB_Produccion.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        } finally {
+            try {
+                if (pst != null) {
+                    pst.close();
+                }
+                if (rs != null) {
+                    rs.close();
+                }
+            } catch (SQLException ex) {
+                Logger lgr = Logger.getLogger(DB_Produccion.class.getName());
+                lgr.log(Level.WARNING, ex.getMessage(), ex);
+            }
+        }
+    }
+
+    public static void actualizarUsoMateriaPrimaPosterior(E_produccionDetalle usoMP, double cantidad) {
+        String UPDATE_DETALLE = "UPDATE produccion_film_mp_baja SET cantidad = ? WHERE id_produccion_film_mp_baja = ?;";
+        try {
+            DB_manager.getConection().setAutoCommit(false);
+            pst = DB_manager.getConection().prepareStatement(UPDATE_DETALLE);//, PreparedStatement.RETURN_GENERATED_KEYS);
+            pst.setDouble(1, cantidad);
+            pst.setInt(2, usoMP.getId());
+            pst.executeUpdate();
+            pst.close();
+            //se actualiza el stock
+            int idProducto = usoMP.getProducto().getId();
+            String UPDATE_STOCK = "UPDATE PRODUCTO SET "
+                    + "CANT_ACTUAL = "
+                    + "((SELECT CANT_ACTUAL FROM PRODUCTO WHERE ID_PRODUCTO = " + idProducto + ") ";
+            double cantActual = usoMP.getCantidad();
+            double cantNueva = cantidad;
+            double diferencia = cantActual - cantNueva;
+            if (cantActual > cantNueva) {
+                UPDATE_STOCK = UPDATE_STOCK + "-" + diferencia + ") WHERE ID_PRODUCTO = " + idProducto;
+            } else {
+                UPDATE_STOCK = UPDATE_STOCK + "+" + diferencia + ") WHERE ID_PRODUCTO = " + idProducto;
+            }
+            st = DB_manager.getConection()..createStatement();
+            st.executeUpdate(UPDATE_STOCK);
+            DB_manager.establecerTransaccion();
+        } catch (SQLException ex) {
+            System.out.println(ex.getNextException());
+            if (DB_manager.getConection() != null) {
+                try {
+                    DB_manager.getConection().rollback();
+                } catch (SQLException ex1) {
+                    Logger lgr = Logger.getLogger(DB_Produccion.class.getName());
+                    lgr.log(Level.WARNING, ex1.getMessage(), ex1);
+                }
+            }
+            Logger lgr = Logger.getLogger(DB_Produccion.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        } finally {
+            try {
+                if (pst != null) {
+                    pst.close();
+                }
+                if (rs != null) {
+                    rs.close();
+                }
+            } catch (SQLException ex) {
+                Logger lgr = Logger.getLogger(DB_Produccion.class.getName());
+                lgr.log(Level.WARNING, ex.getMessage(), ex);
+            }
+        }
     }
 
     public static ArrayList<E_produccionFilm> consultarFilmDisponible(String descripcion, String buscarPor, String ordenarPor, String clasificarPor, String estado,

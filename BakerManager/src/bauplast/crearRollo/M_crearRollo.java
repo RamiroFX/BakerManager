@@ -77,8 +77,22 @@ public class M_crearRollo {
         getMateriaPrimaTM().agregarDetalle(mp);
     }
 
+    public void agregarMPDetallePosterior(double cantidad, M_producto producto) {
+        E_produccionDetalle produccion = new E_produccionDetalle();
+        produccion.setCantidad(cantidad);
+        produccion.setProducto(producto);
+        DB_Produccion.insertarUsoMateriaPrimaPosterior(getProduccionCabecera(), produccion);
+        consultarProduccion();
+    }
+
     public void modificarMPDetalle(int index, double cantidad) {
         getMateriaPrimaTM().modificarCantidadDetalle(index, cantidad);
+    }
+
+    public void modificarMPDetallePosterior(int index, double cantidad) {
+        E_produccionDetalle pd = getMateriaPrimaTM().getList().get(index);
+        DB_Produccion.actualizarUsoMateriaPrimaPosterior(pd, cantidad);
+        consultarProduccion();
     }
 
     public void removerMPDetalle(int index) {
@@ -113,6 +127,7 @@ public class M_crearRollo {
 
     public void consultarProduccion() {
         getRollosTM().setList(DB_Produccion.consultarProduccionFilm(getProduccionCabecera().getId()));
+        getMateriaPrimaTM().setList(DB_Produccion.consultarUtilizacionMP(getProduccionCabecera().getId()));
     }
 
 }
