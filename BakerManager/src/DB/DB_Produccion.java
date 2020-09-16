@@ -569,7 +569,7 @@ public class DB_Produccion {
         return list;
     }
 
-    public static int insertarProduccionFilm(E_produccionCabecera produccionCabecera, List<E_produccionFilm> detalle,
+    public static int insertarProduccionFilm(E_produccionCabecera produccionCabecera, List<E_produccionFilm> detalleRollo,
             List<E_produccionDetalle> detalleMP) {
         String INSERT_CABECERA = "INSERT INTO produccion_cabecera(nro_orden_trabajo, fecha_produccion, id_funcionario_responsable, id_funcionario_usuario, id_produccion_tipo)VALUES( ?, ?, ?, ?, ?);";
         //LA SGBD SE ENCARGA DE INSERTAR EL TIMESTAMP.
@@ -594,20 +594,20 @@ public class DB_Produccion {
             }
             pst.close();
             rs.close();
-            for (int i = 0; i < detalle.size(); i++) {
+            for (int i = 0; i < detalleRollo.size(); i++) {
                 pst = DB_manager.getConection().prepareStatement(INSERT_DETALLE, PreparedStatement.RETURN_GENERATED_KEYS);
                 pst.setInt(1, (int) sq_cabecera);
-                pst.setInt(2, detalle.get(i).getProducto().getId());
-                pst.setDouble(3, detalle.get(i).getPeso());
+                pst.setInt(2, detalleRollo.get(i).getProducto().getId());
+                pst.setDouble(3, detalleRollo.get(i).getPeso());
                 pst.executeUpdate();
                 rs = pst.getGeneratedKeys();
                 if (rs != null && rs.next()) {
-                    detalle.get(i).setId((int) rs.getLong(1));
+                    detalleRollo.get(i).setId((int) rs.getLong(1));
                 }
                 pst.close();
             }
-            for (int i = 0; i < detalle.size(); i++) {
-                E_produccionFilm prodFilm = detalle.get(i);
+            for (int i = 0; i < detalleRollo.size(); i++) {
+                E_produccionFilm prodFilm = detalleRollo.get(i);
                 pst = DB_manager.getConection().prepareStatement(INSERT_FILM, PreparedStatement.RETURN_GENERATED_KEYS);
                 pst.setInt(1, prodFilm.getNroFilm());
                 pst.setInt(2, (int) sq_cabecera);
@@ -628,7 +628,7 @@ public class DB_Produccion {
                 pst.close();
             }
             int prodFilmIndex = 0;
-            for (E_produccionFilm e_produccionFilm : detalle) {
+            for (E_produccionFilm e_produccionFilm : detalleRollo) {
                 pst = DB_manager.getConection().prepareStatement(INSERT_PROD_FILM_PROD);
                 pst.setInt(1, prodFilmKeys.get(prodFilmIndex));
                 prodFilmIndex++;
@@ -637,22 +637,33 @@ public class DB_Produccion {
                 pst.close();
             }
             //Insertar utilizacion de materia prima
-            for (E_produccionDetalle mpDetail : detalleMP) {                
+            for (E_produccionDetalle mpDetail : detalleMP) {
                 pst = DB_manager.getConection().prepareStatement(INSERT_FILM_MP_BAJA);
                 pst.setInt(1, (int) sq_cabecera);
-                prodFilmIndex++;
                 pst.setInt(2, mpDetail.getProducto().getId());
                 pst.setDouble(3, mpDetail.getCantidad());
                 pst.executeUpdate();
                 pst.close();
             }
             //se suma al stock lo que se produce
-            for (int i = 0; i < detalle.size(); i++) {
-                int idProducto = detalle.get(i).getProducto().getId();
-                double cantidad = detalle.get(i).getPeso();
+            for (int i = 0; i < detalleRollo.size(); i++) {
+                int idProducto = detalleRollo.get(i).getProducto().getId();
+                double cantidad = detalleRollo.get(i).getPeso();
                 String query = "UPDATE PRODUCTO SET "
                         + "CANT_ACTUAL = "
                         + "((SELECT CANT_ACTUAL FROM PRODUCTO WHERE ID_PRODUCTO = " + idProducto + ")+" + cantidad + ") "
+                        + "WHERE ID_PRODUCTO =" + idProducto;
+                st = DB_manager.getConection().createStatement();
+                st.executeUpdate(query);
+            }
+
+            //se resta al stock lo que se utiliza
+            for (E_produccionDetalle mpDetail : detalleMP) {
+                int idProducto = mpDetail.getProducto().getId();
+                double cantidad = mpDetail.getCantidad();
+                String query = "UPDATE PRODUCTO SET "
+                        + "CANT_ACTUAL = "
+                        + "((SELECT CANT_ACTUAL FROM PRODUCTO WHERE ID_PRODUCTO = " + idProducto + ")-" + cantidad + ") "
                         + "WHERE ID_PRODUCTO =" + idProducto;
                 st = DB_manager.getConection().createStatement();
                 st.executeUpdate(query);

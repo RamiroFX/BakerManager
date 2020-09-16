@@ -66,7 +66,7 @@ class C_crearRollo extends MouseAdapter implements ActionListener, KeyListener,
         EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
-                if (modelo.getTm().getList().isEmpty() || !esModoCreacion) {
+                if (modelo.getRollosTM().getList().isEmpty() || !esModoCreacion) {
                     vista.dispose();
                 } else {
                     int opcion = JOptionPane.showConfirmDialog(vista, CONFIRMAR_SALIR_MSG, VALIDAR_TITULO, JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
@@ -94,7 +94,7 @@ class C_crearRollo extends MouseAdapter implements ActionListener, KeyListener,
         this.vista.jdcFechaEntrega.setEnabled(false);
         this.vista.jtfNroOrdenTrabajo.setEditable(false);
         //CARGAR DATOS EN LA VISTA 
-        this.vista.jtProduccionDetalle.setModel(modelo.getTm());
+        this.vista.jtProduccionDetalle.setModel(modelo.getRollosTM());
         this.vista.jdcFechaEntrega.setDate(pc.getFechaProduccion());
         this.vista.jtfFuncionario.setText(pc.getFuncionarioProduccion().getNombre());
         this.vista.jtfNroOrdenTrabajo.setText(pc.getNroOrdenTrabajo() + "");
@@ -103,8 +103,8 @@ class C_crearRollo extends MouseAdapter implements ActionListener, KeyListener,
     }
 
     private void inicializarVista() {
-        this.vista.jtProduccionDetalle.setModel(modelo.getTm());
-        this.vista.jtMateriaPrimaUtilizada.setModel(modelo.getProduccionDetalleTM());
+        this.vista.jtProduccionDetalle.setModel(modelo.getRollosTM());
+        this.vista.jtMateriaPrimaUtilizada.setModel(modelo.getMateriaPrimaTM());
         this.vista.jbModificarDetalle.setEnabled(false);
         this.vista.jbEliminarDetalle.setEnabled(false);
         Calendar calendar = Calendar.getInstance();
@@ -140,7 +140,7 @@ class C_crearRollo extends MouseAdapter implements ActionListener, KeyListener,
     public void modificarDetalle() {
         int fila = this.vista.jtProduccionDetalle.getSelectedRow();
         if (fila > -1) {
-            E_produccionFilm producto = modelo.getTm().getList().get(fila);
+            E_produccionFilm producto = modelo.getRollosTM().getList().get(fila);
             CrearFilm crearFilm = new CrearFilm(this.vista);
             crearFilm.setCallback(this);
             crearFilm.modificarRollo(fila, producto);
@@ -215,7 +215,7 @@ class C_crearRollo extends MouseAdapter implements ActionListener, KeyListener,
     }
 
     private boolean validarCantidadProductos() {
-        if (modelo.getTm().getList().isEmpty()) {
+        if (modelo.getRollosTM().getList().isEmpty()) {
             JOptionPane.showMessageDialog(vista, VALIDAR_CANT_PRODUCTOS_MSG, VALIDAR_TITULO, JOptionPane.WARNING_MESSAGE);
             return false;
         }
@@ -252,7 +252,7 @@ class C_crearRollo extends MouseAdapter implements ActionListener, KeyListener,
     public void modificarMP() {
         int fila = this.vista.jtMateriaPrimaUtilizada.getSelectedRow();
         if (fila > -1) {
-            M_producto producto = modelo.getProduccionDetalleTM().getList().get(fila).getProducto();
+            M_producto producto = modelo.getMateriaPrimaTM().getList().get(fila).getProducto();
             SeleccionCantidadProductoSimple scp = new SeleccionCantidadProductoSimple(this.vista, fila);
             scp.setProducto(producto);
             scp.setTipo(SeleccionCantidadProductoSimple.PROD_TERMINADO_MODIFICAR_PROD);

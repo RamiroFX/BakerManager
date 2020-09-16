@@ -46,11 +46,11 @@ public class M_crearRollo {
         this.tm = tm;
     }
 
-    public ProduccionRolloTableModel getTm() {
+    public ProduccionRolloTableModel getRollosTM() {
         return tm;
     }
 
-    public ProduccionDetalleTableModel getProduccionDetalleTM() {
+    public ProduccionDetalleTableModel getMateriaPrimaTM() {
         return produccionDetalleTM;
     }
 
@@ -59,30 +59,30 @@ public class M_crearRollo {
     }
 
     public void agregarDetalle(E_produccionFilm producto) {
-        getTm().agregarDatos(producto);
+        getRollosTM().agregarDatos(producto);
     }
 
     public void modificarDetalle(int index, E_produccionFilm pf) {
-        getTm().modificarDatos(index, pf);
+        getRollosTM().modificarDatos(index, pf);
     }
 
     public void removerDetalle(int index) {
-        getTm().quitarDatos(index);
+        getRollosTM().quitarDatos(index);
     }
 
     public void agregarMPDetalle(double cantidad, M_producto producto) {
         E_produccionDetalle mp = new E_produccionDetalle();
         mp.setCantidad(cantidad);
         mp.setProducto(producto);
-        getProduccionDetalleTM().agregarDetalle(mp);
+        getMateriaPrimaTM().agregarDetalle(mp);
     }
 
     public void modificarMPDetalle(int index, double cantidad) {
-        getProduccionDetalleTM().modificarCantidadDetalle(index, cantidad);
+        getMateriaPrimaTM().modificarCantidadDetalle(index, cantidad);
     }
 
     public void removerMPDetalle(int index) {
-        getProduccionDetalleTM().quitarDetalle(index);
+        getMateriaPrimaTM().quitarDetalle(index);
     }
 
     boolean existeOrdenTrabajo(int ordenTrabajo) {
@@ -98,12 +98,12 @@ public class M_crearRollo {
     }
 
     public void guardarProduccion() {
-        DB_Produccion.insertarProduccionFilm(getProduccionCabecera(), getTm().getList(), getProduccionDetalleTM().getList());
+        DB_Produccion.insertarProduccionFilm(getProduccionCabecera(), getRollosTM().getList(), getMateriaPrimaTM().getList());
     }
 
     public void limpiarCampos() {
         setProduccionCabecera(new E_produccionCabecera());
-        getTm().vaciarLista();
+        getRollosTM().vaciarLista();
     }
 
     public String getFechaProduccionFormateada() {
@@ -112,7 +112,7 @@ public class M_crearRollo {
     }
 
     public void consultarProduccion() {
-        getTm().setList(DB_Produccion.consultarProduccionFilm(getProduccionCabecera().getId()));
+        getRollosTM().setList(DB_Produccion.consultarProduccionFilm(getProduccionCabecera().getId()));
     }
 
 }
