@@ -99,6 +99,12 @@ public class M_crearRollo {
         getMateriaPrimaTM().quitarDetalle(index);
     }
 
+    public void removerMPDetallePosterior(int index) {
+        E_produccionDetalle pd = getMateriaPrimaTM().getList().get(index);
+        DB_Produccion.eliminarUsoMateriaPrimaDetalle(pd.getId());
+        consultarProduccion();
+    }
+
     boolean existeOrdenTrabajo(int ordenTrabajo) {
         return DB_Produccion.existeOrdenTrabajo(ordenTrabajo);
     }

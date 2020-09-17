@@ -1011,13 +1011,13 @@ public class DB_Produccion {
                     + "((SELECT CANT_ACTUAL FROM PRODUCTO WHERE ID_PRODUCTO = " + idProducto + ") ";
             double cantActual = usoMP.getCantidad();
             double cantNueva = cantidad;
-            double diferencia = cantActual - cantNueva;
-            if (cantActual > cantNueva) {
+            double diferencia = Math.abs(cantActual - cantNueva);
+            if (cantNueva > cantActual) {
                 UPDATE_STOCK = UPDATE_STOCK + "-" + diferencia + ") WHERE ID_PRODUCTO = " + idProducto;
             } else {
                 UPDATE_STOCK = UPDATE_STOCK + "+" + diferencia + ") WHERE ID_PRODUCTO = " + idProducto;
             }
-            st = DB_manager.getConection()..createStatement();
+            st = DB_manager.getConection().createStatement();
             st.executeUpdate(UPDATE_STOCK);
             DB_manager.establecerTransaccion();
         } catch (SQLException ex) {
@@ -1044,6 +1044,29 @@ public class DB_Produccion {
                 Logger lgr = Logger.getLogger(DB_Produccion.class.getName());
                 lgr.log(Level.WARNING, ex.getMessage(), ex);
             }
+        }
+    }
+
+    public static void eliminarUsoMateriaPrimaDetalle(int idUsoMPDetalle) {
+        String DELETE_DETAIL = "DELETE FROM produccion_film_mp_baja WHERE id_produccion_film_mp_baja = " + idUsoMPDetalle;
+        try {
+            DB_manager.habilitarTransaccionManual();
+            st = DB_manager.getConection().createStatement();
+            st.executeUpdate(DELETE_DETAIL);
+            DB_manager.establecerTransaccion();
+        } catch (SQLException ex) {
+            if (DB_manager.getConection() != null) {
+                try {
+                    DB_manager.getConection().rollback();
+                } catch (SQLException ex1) {
+                    Logger lgr = Logger.getLogger(DB_Produccion.class
+                            .getName());
+                    lgr.log(Level.WARNING, ex1.getMessage(), ex1);
+                }
+            }
+            Logger lgr = Logger.getLogger(DB_Produccion.class
+                    .getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
         }
     }
 

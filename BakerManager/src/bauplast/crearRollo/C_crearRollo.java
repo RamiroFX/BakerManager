@@ -264,7 +264,11 @@ class C_crearRollo extends MouseAdapter implements ActionListener, KeyListener,
     private void eliminarMP() {
         int fila = this.vista.jtMateriaPrimaUtilizada.getSelectedRow();
         if (fila > -1) {
-            modelo.removerMPDetalle(fila);
+            if (esModoCreacion) {
+                modelo.removerMPDetalle(fila);
+            }else{
+                modelo.removerMPDetallePosterior(fila);
+            }
         }
     }
 
