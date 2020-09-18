@@ -30,6 +30,8 @@ import net.miginfocom.swing.MigLayout;
  */
 public class V_gestionProduccion extends JInternalFrame {
 
+    public static final String MODULE_NAME = "Gestión producción";
+
     public JButton jbBuscar, jbBorrar, jbCrearRollo, jbCrearProductoTerminado,
             jbDetalle, jbResumen, jbEmpleado, jbAnular, jbBuscarDetalle;
     public JTextField jtfNroOrdenTrabajo, jtfEmpleado;

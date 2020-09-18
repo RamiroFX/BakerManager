@@ -11,11 +11,13 @@ import Entities.E_produccionFilm;
 import Entities.E_produccionTipo;
 import Entities.E_productoClasificacion;
 import Entities.M_funcionario;
+import Entities.M_menu_item;
 import Entities.M_producto;
 import Interface.InterfaceRecibirProduccionFilm;
 import Interface.RecibirEmpleadoCallback;
 import Interface.RecibirProductoCallback;
 import Produccion.SeleccionCantidadProductoSimple;
+import Produccion.V_gestionProduccion;
 import bauplast.SeleccionarProductoPorClasif;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
@@ -116,15 +118,37 @@ class C_crearProductoTerminado extends MouseAdapter implements ActionListener, K
     }
 
     private void agregarListeners() {
+        for (M_menu_item acceso : modelo.getAccesos()) {
+            if (acceso.getMenuDescripcion().equals(V_gestionProduccion.MODULE_NAME)) {
+                if (this.vista.jbSeleccionarProducto.getName().equals(acceso.getItemDescripcion())) {
+                    this.vista.jbSeleccionarProducto.setEnabled(true);
+                    this.vista.jbSeleccionarProducto.addActionListener(this);
+                }
+                if (this.vista.jbModificarProducto.getName().equals(acceso.getItemDescripcion())) {
+                    this.vista.jbModificarProducto.setEnabled(true);
+                    this.vista.jbModificarProducto.addActionListener(this);
+                }
+                if (this.vista.jbEliminarProducto.getName().equals(acceso.getItemDescripcion())) {
+                    this.vista.jbEliminarProducto.setEnabled(true);
+                    this.vista.jbEliminarProducto.addActionListener(this);
+                }
+                if (this.vista.jbSeleccionarRollo.getName().equals(acceso.getItemDescripcion())) {
+                    this.vista.jbSeleccionarRollo.setEnabled(true);
+                    this.vista.jbSeleccionarRollo.addActionListener(this);
+                }
+                if (this.vista.jbModificarRollo.getName().equals(acceso.getItemDescripcion())) {
+                    this.vista.jbModificarRollo.setEnabled(true);
+                    this.vista.jbModificarRollo.addActionListener(this);
+                }
+                if (this.vista.jbEliminarRollo.getName().equals(acceso.getItemDescripcion())) {
+                    this.vista.jbEliminarRollo.setEnabled(true);
+                    this.vista.jbEliminarRollo.addActionListener(this);
+                }
+            }
+        }
         this.vista.jtProduccionDetalle.addMouseListener(this);
         this.vista.jbAceptar.addActionListener(this);
         this.vista.jbFuncionario.addActionListener(this);
-        this.vista.jbSeleccionarProducto.addActionListener(this);
-        this.vista.jbEliminarProducto.addActionListener(this);
-        this.vista.jbModificarProducto.addActionListener(this);
-        this.vista.jbSeleccionarRollo.addActionListener(this);
-        this.vista.jbModificarRollo.addActionListener(this);
-        this.vista.jbEliminarRollo.addActionListener(this);
         this.vista.jbSalir.addActionListener(this);
         this.vista.jbSeleccionarProducto.addKeyListener(this);
         this.vista.jbSeleccionarRollo.addKeyListener(this);
@@ -358,9 +382,9 @@ class C_crearProductoTerminado extends MouseAdapter implements ActionListener, K
                 break;
             }
             case KeyEvent.VK_F4: {
-//                if (!esModoCreacion) {
-//                    return;
-//                }
+                if (!vista.jbSeleccionarProducto.isEnabled()) {
+                    return;
+                }
                 invocarSeleccionarProducto();
                 break;
             }

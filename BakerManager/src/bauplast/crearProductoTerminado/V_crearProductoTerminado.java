@@ -28,6 +28,18 @@ import net.miginfocom.swing.MigLayout;
  */
 class V_crearProductoTerminado extends JDialog {
 
+    public static final String JB_ADD_PRODUCT = "Agregar producto",
+            JB_ADD_PRODUCT_POST = "Agregar producto Posterior",
+            JB_UPDATE_PRODUCT = "Modificar producto",
+            JB_UPDATE_PRODUCT_POST = "Modificar producto Posterior",
+            JB_DELETE_PRODUCT = "Eliminar producto",
+            JB_DELETE_PRODUCT_POST = "Eliminar producto Posterior",
+            JB_ADD_FILM = "Agregar rollo",
+            JB_ADD_FILM_POST = "Agregar rollo Posterior",
+            JB_UPDATE_FILM = "Modificar rollo",
+            JB_UPDATE_FILM_POST = "Modificar rollo Posterior",
+            JB_DELETE_FILM = "Eliminar rollo",
+            JB_DELETE_FILM_POST = "Eliminar rollo Posterior";
     //NORTE
     //norte 1
     JPanel jpNorth1;
@@ -99,10 +111,13 @@ class V_crearProductoTerminado extends JDialog {
         jspProduccionDetalle = new JScrollPane(jtProduccionDetalle);
         jbSeleccionarProducto = new JButton("Agregar producto[F4]");
         jbSeleccionarProducto.setSize(new Dimension(width, height));
+        jbSeleccionarProducto.setName(JB_ADD_PRODUCT);
         jbModificarProducto = new JButton("Modificar detalle");
         jbModificarProducto.setSize(new Dimension(width, height));
+        jbModificarProducto.setName(JB_UPDATE_PRODUCT);
         jbEliminarProducto = new JButton("Eliminar detalle");
         jbEliminarProducto.setSize(new Dimension(width, height));
+        jbEliminarProducto.setName(JB_DELETE_PRODUCT);
         JPanel jpSouthAuxProdTerminados = new JPanel(new MigLayout());
         jpSouthAuxProdTerminados.setBorder(new EtchedBorder(EtchedBorder.LOWERED));
         jpSouthAuxProdTerminados.add(jbSeleccionarProducto, "wrap");
@@ -116,10 +131,13 @@ class V_crearProductoTerminado extends JDialog {
         jspRolloUtilizado = new JScrollPane(jtRolloUtilizado);
         jbSeleccionarRollo = new JButton("Agregar rollo             ");
         jbSeleccionarRollo.setSize(new Dimension(width, height));
+        jbSeleccionarRollo.setName(JB_ADD_FILM);
         jbModificarRollo = new JButton("Modificar rollo           ");
         jbModificarRollo.setSize(new Dimension(width, height));
+        jbModificarRollo.setName(JB_UPDATE_FILM);
         jbEliminarRollo = new JButton("Eliminar rollo             ");
         jbEliminarRollo.setSize(new Dimension(width, height));
+        jbEliminarRollo.setName(JB_DELETE_FILM);
         JPanel jpSouthAuxRollos = new JPanel(new MigLayout());
         jpSouthAuxRollos.setBorder(new EtchedBorder(EtchedBorder.LOWERED));
         jpSouthAuxRollos.add(jbSeleccionarRollo, "wrap");

@@ -17,6 +17,7 @@ import Interface.InterfaceRecibirProduccionFilm;
 import Interface.RecibirEmpleadoCallback;
 import Interface.RecibirProductoCallback;
 import Produccion.SeleccionCantidadProductoSimple;
+import Produccion.V_gestionProduccion;
 import bauplast.SeleccionarProductoPorClasif;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
@@ -129,31 +130,32 @@ class C_crearRollo extends MouseAdapter implements ActionListener, KeyListener,
         this.vista.jbSeleccionarMP.setEnabled(false);
         this.vista.jbModificarMP.setEnabled(false);
         this.vista.jbEliminarMP.setEnabled(false);
-        ArrayList<M_menu_item> accesos = this.modelo.getAccesos();
-        for (int i = 0; i < accesos.size(); i++) {
-            if (this.vista.jbSeleccionarProducto.getName().equals(accesos.get(i).getItemDescripcion())) {
-                this.vista.jbSeleccionarProducto.setEnabled(true);
-                this.vista.jbSeleccionarProducto.addActionListener(this);
-            }
-            if (this.vista.jbModificarDetalle.getName().equals(accesos.get(i).getItemDescripcion())) {
-                this.vista.jbModificarDetalle.setEnabled(true);
-                this.vista.jbModificarDetalle.addActionListener(this);
-            }
-            if (this.vista.jbEliminarDetalle.getName().equals(accesos.get(i).getItemDescripcion())) {
-                this.vista.jbEliminarDetalle.setEnabled(true);
-                this.vista.jbEliminarDetalle.addActionListener(this);
-            }
-            if (this.vista.jbSeleccionarMP.getName().equals(accesos.get(i).getItemDescripcion())) {
-                this.vista.jbSeleccionarMP.setEnabled(true);
-                this.vista.jbSeleccionarMP.addActionListener(this);
-            }
-            if (this.vista.jbModificarMP.getName().equals(accesos.get(i).getItemDescripcion())) {
-                this.vista.jbModificarMP.setEnabled(true);
-                this.vista.jbModificarMP.addActionListener(this);
-            }
-            if (this.vista.jbEliminarMP.getName().equals(accesos.get(i).getItemDescripcion())) {
-                this.vista.jbEliminarMP.setEnabled(true);
-                this.vista.jbEliminarMP.addActionListener(this);
+        for (M_menu_item acceso : modelo.getAccesos()) {
+            if (acceso.getMenuDescripcion().equals(V_gestionProduccion.MODULE_NAME)) {
+                if (this.vista.jbSeleccionarProducto.getName().equals(acceso.getItemDescripcion())) {
+                    this.vista.jbSeleccionarProducto.setEnabled(true);
+                    this.vista.jbSeleccionarProducto.addActionListener(this);
+                }
+                if (this.vista.jbModificarDetalle.getName().equals(acceso.getItemDescripcion())) {
+                    this.vista.jbModificarDetalle.setEnabled(true);
+                    this.vista.jbModificarDetalle.addActionListener(this);
+                }
+                if (this.vista.jbEliminarDetalle.getName().equals(acceso.getItemDescripcion())) {
+                    this.vista.jbEliminarDetalle.setEnabled(true);
+                    this.vista.jbEliminarDetalle.addActionListener(this);
+                }
+                if (this.vista.jbSeleccionarMP.getName().equals(acceso.getItemDescripcion())) {
+                    this.vista.jbSeleccionarMP.setEnabled(true);
+                    this.vista.jbSeleccionarMP.addActionListener(this);
+                }
+                if (this.vista.jbModificarMP.getName().equals(acceso.getItemDescripcion())) {
+                    this.vista.jbModificarMP.setEnabled(true);
+                    this.vista.jbModificarMP.addActionListener(this);
+                }
+                if (this.vista.jbEliminarMP.getName().equals(acceso.getItemDescripcion())) {
+                    this.vista.jbEliminarMP.setEnabled(true);
+                    this.vista.jbEliminarMP.addActionListener(this);
+                }
             }
         }
         this.vista.jtProduccionDetalle.addMouseListener(this);

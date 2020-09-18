@@ -10,6 +10,7 @@ import Entities.E_produccionCabecera;
 import Entities.E_produccionDetalle;
 import Entities.E_produccionFilm;
 import Entities.E_produccionTipo;
+import Entities.M_menu_item;
 import Entities.M_producto;
 import MenuPrincipal.DatosUsuario;
 import ModeloTabla.ProduccionDetalleTableModel;
@@ -26,12 +27,14 @@ public class M_crearProductoTerminado {
     private E_produccionCabecera produccionCabecera;
     private ProduccionDetalleTableModel productosTerminadosTM;
     private ProduccionRolloTableModel rolloUtilizadoTM;
+    private ArrayList<M_menu_item> accesos;
 
     public M_crearProductoTerminado() {
         this.produccionCabecera = new E_produccionCabecera();
         this.produccionCabecera.setFuncionarioSistema(DatosUsuario.getRol_usuario().getFuncionario());
         this.productosTerminadosTM = new ProduccionDetalleTableModel();
         this.rolloUtilizadoTM = new ProduccionRolloTableModel();
+        this.accesos = DatosUsuario.getRol_usuario().getAccesos();
     }
 
     public E_produccionCabecera getProduccionCabecera() {
@@ -123,5 +126,9 @@ public class M_crearProductoTerminado {
 
     public void actualizarRolloUtilizado(E_produccionFilm detalle) {
         DB_Produccion.insertarProduccionRolloPosterior(getProduccionCabecera(), detalle);
+    }
+
+    public ArrayList<M_menu_item> getAccesos() {
+        return accesos;
     }
 }
