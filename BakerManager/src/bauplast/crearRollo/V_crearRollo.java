@@ -28,6 +28,19 @@ import net.miginfocom.swing.MigLayout;
  */
 class V_crearRollo extends JDialog {
 
+    public static final String JB_ADD_FILM = "Agregar bobina",
+            JB_ADD_FILM_POST = "Agregar bobina Posterior",
+            JB_UPDATE_FILM = "Modificar bobina",
+            JB_UPDATE_FILM_POST = "Modificar bobina Posterior",
+            JB_DELETE_FILM = "Eliminar bobina",
+            JB_DELETE_FILM_POST = "Eliminar bobina Posterior",
+            JB_ADD_RAW_MATERIAL = "Agregar Materia Prima",
+            JB_ADD_RAW_MATERIAL_POST = "Agregar Materia Prima Posterior",
+            JB_UPDATE_RAW_MATERIAL = "Modificar Materia Prima",
+            JB_UPDATE_RAW_MATERIAL_POST = "Modificar Materia Prima Posterior",
+            JB_DELETE_RAW_MATERIAL = "Eliminar Materia Prima",
+            JB_DELETE_RAW_MATERIAL_POST = "Eliminar Materia Prima Posterior";
+
     //NORTE
     //norte 1
     JPanel jpNorth1;
@@ -96,24 +109,30 @@ class V_crearRollo extends JDialog {
         jtProduccionDetalle.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         jspProduccionDetalle = new JScrollPane(jtProduccionDetalle);
         jbSeleccionarProducto = new JButton("Agregar producto[F4]");
+        jbSeleccionarProducto.setName(JB_ADD_FILM);
         jbModificarDetalle = new JButton("Modificar detalle");
+        jbModificarDetalle.setName(JB_UPDATE_FILM);
         jbEliminarDetalle = new JButton("Eliminar detalle");
+        jbEliminarDetalle.setName(JB_DELETE_FILM);
         JPanel jpSouthAux = new JPanel(new MigLayout());
         jpSouthAux.setBorder(new EtchedBorder(EtchedBorder.LOWERED));
         jpSouthAux.add(jbSeleccionarProducto, "wrap");
         jpSouthAux.add(jbModificarDetalle, "growx, wrap");
         jpSouthAux.add(jbEliminarDetalle, "growx");
-        
+
         //ROLLOS UTILIZADOS
         jtMateriaPrimaUtilizada = new JTable();
         jtMateriaPrimaUtilizada.getTableHeader().setReorderingAllowed(false);
         jtMateriaPrimaUtilizada.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         jspMateriaPrimaUtilizada = new JScrollPane(jtMateriaPrimaUtilizada);
-        jbSeleccionarMP = new JButton("Agregar Materia Prima");
+        jbSeleccionarMP = new JButton(JB_ADD_RAW_MATERIAL);
+        jbSeleccionarMP.setName(JB_ADD_RAW_MATERIAL);
         jbSeleccionarMP.setSize(new Dimension(width, height));
-        jbModificarMP = new JButton("Modificar Materia Prima");
+        jbModificarMP = new JButton(JB_UPDATE_RAW_MATERIAL);
+        jbModificarMP.setName(JB_UPDATE_RAW_MATERIAL);
         jbModificarMP.setSize(new Dimension(width, height));
-        jbEliminarMP = new JButton("Eliminar Materia Prima");
+        jbEliminarMP = new JButton(JB_DELETE_RAW_MATERIAL);
+        jbEliminarMP.setName(JB_DELETE_RAW_MATERIAL);
         jbEliminarMP.setSize(new Dimension(width, height));
         JPanel jpSouthAuxRollos = new JPanel(new MigLayout());
         jpSouthAuxRollos.setBorder(new EtchedBorder(EtchedBorder.LOWERED));

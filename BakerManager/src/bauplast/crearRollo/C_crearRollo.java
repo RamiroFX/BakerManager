@@ -11,6 +11,7 @@ import Entities.E_produccionFilm;
 import Entities.E_produccionTipo;
 import Entities.E_productoClasificacion;
 import Entities.M_funcionario;
+import Entities.M_menu_item;
 import Entities.M_producto;
 import Interface.InterfaceRecibirProduccionFilm;
 import Interface.RecibirEmpleadoCallback;
@@ -24,6 +25,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import javax.swing.JOptionPane;
@@ -54,10 +56,10 @@ class C_crearRollo extends MouseAdapter implements ActionListener, KeyListener,
         this.vista = vista;
         this.esModoCreacion = true;
         inicializarVista();
-        agregarListeners();
     }
 
     public void mostrarVista() {
+        agregarListeners();
         vista.setVisible(true);
     }
 
@@ -83,15 +85,25 @@ class C_crearRollo extends MouseAdapter implements ActionListener, KeyListener,
         this.vista.setTitle("Ver detalle de producción" + " (Tiempo de registro: " + modelo.getFechaProduccionFormateada() + ") - (Registrado por: " + modelo.getProduccionCabecera().getFuncionarioSistema().getNombre() + ")");
         //ESTABLECER MODO LECTURA DE DATOS
         this.esModoCreacion = false;
+        this.vista.jbSeleccionarProducto.setName(V_crearRollo.JB_ADD_FILM_POST);
+        this.vista.jbModificarDetalle.setName(V_crearRollo.JB_UPDATE_FILM_POST);
+        this.vista.jbEliminarDetalle.setName(V_crearRollo.JB_DELETE_FILM_POST);
+        this.vista.jbSeleccionarMP.setName(V_crearRollo.JB_ADD_RAW_MATERIAL_POST);
+        this.vista.jbModificarMP.setName(V_crearRollo.JB_UPDATE_RAW_MATERIAL_POST);
+        this.vista.jbEliminarMP.setName(V_crearRollo.JB_DELETE_RAW_MATERIAL_POST);
         //INABILITAR LOS CONTROLES
         this.vista.jtProduccionDetalle.removeMouseListener(this);
         this.vista.jbAceptar.setEnabled(false);
-        this.vista.jbSeleccionarProducto.setEnabled(false);
-        this.vista.jbEliminarDetalle.setEnabled(false);
-        this.vista.jbModificarDetalle.setEnabled(false);
         this.vista.jbFuncionario.setEnabled(false);
         this.vista.jdcFechaEntrega.setEnabled(false);
         this.vista.jtfNroOrdenTrabajo.setEditable(false);
+        //BOTONES        
+        this.vista.jbSeleccionarProducto.setEnabled(false);
+        this.vista.jbModificarDetalle.setEnabled(false);
+        this.vista.jbEliminarDetalle.setEnabled(false);
+        this.vista.jbSeleccionarMP.setEnabled(false);
+        this.vista.jbModificarMP.setEnabled(false);
+        this.vista.jbEliminarMP.setEnabled(false);
         //CARGAR DATOS EN LA VISTA 
         this.vista.jtProduccionDetalle.setModel(modelo.getRollosTM());
         this.vista.jdcFechaEntrega.setDate(pc.getFechaProduccion());
@@ -111,15 +123,42 @@ class C_crearRollo extends MouseAdapter implements ActionListener, KeyListener,
     }
 
     private void agregarListeners() {
+        this.vista.jbSeleccionarProducto.setEnabled(false);
+        this.vista.jbModificarDetalle.setEnabled(false);
+        this.vista.jbEliminarDetalle.setEnabled(false);
+        this.vista.jbSeleccionarMP.setEnabled(false);
+        this.vista.jbModificarMP.setEnabled(false);
+        this.vista.jbEliminarMP.setEnabled(false);
+        ArrayList<M_menu_item> accesos = this.modelo.getAccesos();
+        for (int i = 0; i < accesos.size(); i++) {
+            if (this.vista.jbSeleccionarProducto.getName().equals(accesos.get(i).getItemDescripcion())) {
+                this.vista.jbSeleccionarProducto.setEnabled(true);
+                this.vista.jbSeleccionarProducto.addActionListener(this);
+            }
+            if (this.vista.jbModificarDetalle.getName().equals(accesos.get(i).getItemDescripcion())) {
+                this.vista.jbModificarDetalle.setEnabled(true);
+                this.vista.jbModificarDetalle.addActionListener(this);
+            }
+            if (this.vista.jbEliminarDetalle.getName().equals(accesos.get(i).getItemDescripcion())) {
+                this.vista.jbEliminarDetalle.setEnabled(true);
+                this.vista.jbEliminarDetalle.addActionListener(this);
+            }
+            if (this.vista.jbSeleccionarMP.getName().equals(accesos.get(i).getItemDescripcion())) {
+                this.vista.jbSeleccionarMP.setEnabled(true);
+                this.vista.jbSeleccionarMP.addActionListener(this);
+            }
+            if (this.vista.jbModificarMP.getName().equals(accesos.get(i).getItemDescripcion())) {
+                this.vista.jbModificarMP.setEnabled(true);
+                this.vista.jbModificarMP.addActionListener(this);
+            }
+            if (this.vista.jbEliminarMP.getName().equals(accesos.get(i).getItemDescripcion())) {
+                this.vista.jbEliminarMP.setEnabled(true);
+                this.vista.jbEliminarMP.addActionListener(this);
+            }
+        }
         this.vista.jtProduccionDetalle.addMouseListener(this);
         this.vista.jbFuncionario.addActionListener(this);
         this.vista.jbAceptar.addActionListener(this);
-        this.vista.jbSeleccionarProducto.addActionListener(this);
-        this.vista.jbEliminarDetalle.addActionListener(this);
-        this.vista.jbModificarDetalle.addActionListener(this);
-        this.vista.jbSeleccionarMP.addActionListener(this);
-        this.vista.jbModificarMP.addActionListener(this);
-        this.vista.jbEliminarMP.addActionListener(this);
         this.vista.jbSalir.addActionListener(this);
         this.vista.jbSeleccionarProducto.addKeyListener(this);
         this.vista.jbFuncionario.addKeyListener(this);
@@ -266,7 +305,7 @@ class C_crearRollo extends MouseAdapter implements ActionListener, KeyListener,
         if (fila > -1) {
             if (esModoCreacion) {
                 modelo.removerMPDetalle(fila);
-            }else{
+            } else {
                 modelo.removerMPDetallePosterior(fila);
             }
         }

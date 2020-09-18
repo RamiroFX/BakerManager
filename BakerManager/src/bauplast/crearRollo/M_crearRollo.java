@@ -10,6 +10,7 @@ import Entities.E_produccionCabecera;
 import Entities.E_produccionDetalle;
 import Entities.E_produccionFilm;
 import Entities.E_produccionTipo;
+import Entities.M_menu_item;
 import Entities.M_producto;
 import MenuPrincipal.DatosUsuario;
 import ModeloTabla.ProduccionDetalleTableModel;
@@ -26,12 +27,18 @@ public class M_crearRollo {
     private E_produccionCabecera produccionCabecera;
     private ProduccionRolloTableModel tm;
     private ProduccionDetalleTableModel produccionDetalleTM;
+    private ArrayList<M_menu_item> accesos;
 
     public M_crearRollo() {
         this.produccionCabecera = new E_produccionCabecera();
         this.produccionCabecera.setFuncionarioSistema(DatosUsuario.getRol_usuario().getFuncionario());
         this.tm = new ProduccionRolloTableModel();
         this.produccionDetalleTM = new ProduccionDetalleTableModel();
+        this.accesos = DatosUsuario.getRol_usuario().getAccesos();
+    }
+
+    public ArrayList<M_menu_item> getAccesos() {
+        return accesos;
     }
 
     public E_produccionCabecera getProduccionCabecera() {
