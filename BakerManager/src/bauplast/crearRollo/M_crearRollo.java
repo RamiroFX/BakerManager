@@ -69,6 +69,11 @@ public class M_crearRollo {
         getRollosTM().agregarDatos(producto);
     }
 
+    public void agregarDetallePosterior(E_produccionFilm producto) {
+        DB_Produccion.insertarProdTerminadoPosterior(getProduccionCabecera(), producto);
+        consultarProduccion();
+    }
+
     public void modificarDetalle(int index, E_produccionFilm pf) {
         getRollosTM().modificarDatos(index, pf);
     }

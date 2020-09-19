@@ -838,6 +838,87 @@ public class DB_Produccion {
         return (int) sq_cabecera;
     }
 
+    public static void insertarProdTerminadoPosterior(E_produccionCabecera produccionCabecera, E_produccionFilm detalle) {
+        String INSERT_DETALLE = "INSERT INTO produccion_detalle(id_produccion_cabecera, id_producto, cantidad)VALUES (?, ?, ?);";
+        String INSERT_FILM = "INSERT INTO produccion_film(nro_film, id_produccion_cabecera, id_produccion_detalle, peso, fecha_creacion, id_funcionario_responsable, cono, medida, micron, id_producto_categoria, id_estado)VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
+        String INSERT_PROD_FILM_PROD = "INSERT INTO produccion_film_producto(id_produccion_film, id_producto)VALUES (?, ?);";
+        long sqDetalle = -1L, sqFilm = -1L;
+        try {
+            DB_manager.getConection().setAutoCommit(false);
+            pst = DB_manager.getConection().prepareStatement(INSERT_DETALLE, PreparedStatement.RETURN_GENERATED_KEYS);
+            pst.setInt(1, produccionCabecera.getId());
+            pst.setInt(2, detalle.getProducto().getId());
+            pst.setDouble(3, detalle.getPeso());
+            pst.executeUpdate();
+            rs = pst.getGeneratedKeys();
+            if (rs != null && rs.next()) {
+                sqDetalle = rs.getLong(1);
+            }
+            pst.close();
+            rs.close();
+            //(nro_film, id_produccion_cabecera, id_produccion_detalle, peso, fecha_creacion, id_funcionario_responsable, cono, medida, micron, id_producto_categoria, id_estado)
+            //id_funcionario_responsable, cono, medida, micron, id_producto_categoria, id_estado
+            pst = DB_manager.getConection().prepareStatement(INSERT_FILM, PreparedStatement.RETURN_GENERATED_KEYS);
+            pst.setInt(1, detalle.getNroFilm());
+            pst.setInt(2, produccionCabecera.getId());
+            pst.setInt(3, (int) sqDetalle);
+            pst.setDouble(4, detalle.getPeso());
+            pst.setTimestamp(5, new Timestamp(produccionCabecera.getFechaProduccion().getTime()));
+            pst.setInt(6, produccionCabecera.getFuncionarioProduccion().getId_funcionario());
+            pst.setInt(7, detalle.getCono());
+            pst.setInt(8, detalle.getMedida());
+            pst.setInt(9, detalle.getProducto().getProductoCategoria().getId());
+            pst.setInt(10, Estado.ACTIVO);
+            pst.executeUpdate();
+            rs = pst.getGeneratedKeys();
+            if (rs != null && rs.next()) {
+                sqFilm = rs.getLong(1);
+            }
+            pst.close();
+            rs.close();
+            pst = DB_manager.getConection().prepareStatement(INSERT_PROD_FILM_PROD);
+            pst.setInt(1, (int) sqFilm);
+            pst.setInt(2, detalle.getProducto().getId());
+            pst.executeUpdate();
+            pst.close();
+            rs.close();
+            //se suma al stock lo que se produce
+            int idProducto = detalle.getProducto().getId();
+            double cantidad = detalle.getPeso();
+            String query = "UPDATE PRODUCTO SET "
+                    + "CANT_ACTUAL = "
+                    + "((SELECT CANT_ACTUAL FROM PRODUCTO WHERE ID_PRODUCTO = " + idProducto + ")+" + cantidad + ") "
+                    + "WHERE ID_PRODUCTO =" + idProducto;
+            st = DB_manager.getConection().createStatement();
+            st.executeUpdate(query);
+            DB_manager.establecerTransaccion();
+        } catch (SQLException ex) {
+            System.out.println(ex.getNextException());
+            if (DB_manager.getConection() != null) {
+                try {
+                    DB_manager.getConection().rollback();
+                } catch (SQLException ex1) {
+                    Logger lgr = Logger.getLogger(DB_Produccion.class.getName());
+                    lgr.log(Level.WARNING, ex1.getMessage(), ex1);
+                }
+            }
+            Logger lgr = Logger.getLogger(DB_Produccion.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        } finally {
+            try {
+                if (pst != null) {
+                    pst.close();
+                }
+                if (rs != null) {
+                    rs.close();
+                }
+            } catch (SQLException ex) {
+                Logger lgr = Logger.getLogger(DB_Produccion.class.getName());
+                lgr.log(Level.WARNING, ex.getMessage(), ex);
+            }
+        }
+    }
+
     public static int insertarProduccionRolloPosterior(E_produccionCabecera produccionCabecera, E_produccionFilm prodFilm) {
         String INSERT_PRODUCCION_FILM_BAJA = "INSERT INTO produccion_film_baja(id_produccion_film, id_produccion_cabecera, peso_utilizado, fecha_utilizado, id_produccion_tipo_baja)VALUES (?, ?, ?, ?, ?);";
         long sq_cabecera = produccionCabecera.getId();

@@ -57,7 +57,6 @@ class C_crearProductoTerminado extends MouseAdapter implements ActionListener, K
         this.vista = vista;
         this.esModoCreacion = true;
         inicializarVista();
-        agregarListeners();
     }
 
     public void cargarDatos(E_produccionCabecera pc) {
@@ -66,6 +65,12 @@ class C_crearProductoTerminado extends MouseAdapter implements ActionListener, K
         this.vista.setTitle("Ver detalle de producción" + " (Tiempo de registro: " + modelo.getFechaProduccionFormateada() + ") - (Registrado por: " + modelo.getProduccionCabecera().getFuncionarioSistema().getNombre() + ")");
         //ESTABLECER MODO LECTURA DE DATOS
         this.esModoCreacion = false;
+        this.vista.jbSeleccionarProducto.setName(V_crearProductoTerminado.JB_ADD_PRODUCT_POST);
+        this.vista.jbModificarProducto.setName(V_crearProductoTerminado.JB_UPDATE_PRODUCT_POST);
+        this.vista.jbEliminarProducto.setName(V_crearProductoTerminado.JB_DELETE_PRODUCT_POST);
+        this.vista.jbSeleccionarRollo.setName(V_crearProductoTerminado.JB_ADD_FILM_POST);
+        this.vista.jbModificarRollo.setName(V_crearProductoTerminado.JB_UPDATE_FILM_POST);
+        this.vista.jbEliminarRollo.setName(V_crearProductoTerminado.JB_DELETE_FILM_POST);
         //INABILITAR LOS CONTROLES
         this.vista.jtProduccionDetalle.removeMouseListener(this);
         this.vista.jbAceptar.setEnabled(false);
@@ -89,6 +94,7 @@ class C_crearProductoTerminado extends MouseAdapter implements ActionListener, K
     }
 
     public void mostrarVista() {
+        agregarListeners();
         vista.setVisible(true);
     }
 

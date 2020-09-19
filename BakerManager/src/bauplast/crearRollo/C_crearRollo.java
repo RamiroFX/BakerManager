@@ -98,13 +98,6 @@ class C_crearRollo extends MouseAdapter implements ActionListener, KeyListener,
         this.vista.jbFuncionario.setEnabled(false);
         this.vista.jdcFechaEntrega.setEnabled(false);
         this.vista.jtfNroOrdenTrabajo.setEditable(false);
-        //BOTONES        
-        this.vista.jbSeleccionarProducto.setEnabled(false);
-        this.vista.jbModificarDetalle.setEnabled(false);
-        this.vista.jbEliminarDetalle.setEnabled(false);
-        this.vista.jbSeleccionarMP.setEnabled(false);
-        this.vista.jbModificarMP.setEnabled(false);
-        this.vista.jbEliminarMP.setEnabled(false);
         //CARGAR DATOS EN LA VISTA 
         this.vista.jtProduccionDetalle.setModel(modelo.getRollosTM());
         this.vista.jdcFechaEntrega.setDate(pc.getFechaProduccion());
@@ -375,7 +368,7 @@ class C_crearRollo extends MouseAdapter implements ActionListener, KeyListener,
                 break;
             }
             case KeyEvent.VK_F4: {
-                if (!esModoCreacion) {
+                if (!vista.jbSeleccionarProducto.isEnabled()) {
                     return;
                 }
                 invocarSeleccionarRollo();
@@ -400,7 +393,11 @@ class C_crearRollo extends MouseAdapter implements ActionListener, KeyListener,
 
     @Override
     public void recibirFilm(E_produccionFilm detalle) {
-        modelo.agregarDetalle(detalle);
+        if (esModoCreacion) {
+            modelo.agregarDetalle(detalle);
+        } else {
+            modelo.agregarDetallePosterior(detalle);
+        }
         Utilities.c_packColumn.packColumns(vista.jtProduccionDetalle, 1);
     }
 
