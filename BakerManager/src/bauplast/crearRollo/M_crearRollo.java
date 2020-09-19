@@ -25,15 +25,15 @@ import java.util.ArrayList;
 public class M_crearRollo {
 
     private E_produccionCabecera produccionCabecera;
-    private ProduccionRolloTableModel tm;
-    private ProduccionDetalleTableModel produccionDetalleTM;
+    private ProduccionRolloTableModel rollosTM;
+    private ProduccionDetalleTableModel materiaPrimaTM;
     private ArrayList<M_menu_item> accesos;
 
     public M_crearRollo() {
         this.produccionCabecera = new E_produccionCabecera();
         this.produccionCabecera.setFuncionarioSistema(DatosUsuario.getRol_usuario().getFuncionario());
-        this.tm = new ProduccionRolloTableModel();
-        this.produccionDetalleTM = new ProduccionDetalleTableModel();
+        this.rollosTM = new ProduccionRolloTableModel();
+        this.materiaPrimaTM = new ProduccionDetalleTableModel();
         this.accesos = DatosUsuario.getRol_usuario().getAccesos();
     }
 
@@ -49,20 +49,20 @@ public class M_crearRollo {
         this.produccionCabecera = produccionCabecera;
     }
 
-    public void setTm(ProduccionRolloTableModel tm) {
-        this.tm = tm;
+    public void setRollosTM(ProduccionRolloTableModel rollosTM) {
+        this.rollosTM = rollosTM;
     }
 
     public ProduccionRolloTableModel getRollosTM() {
-        return tm;
+        return rollosTM;
     }
 
     public ProduccionDetalleTableModel getMateriaPrimaTM() {
-        return produccionDetalleTM;
+        return materiaPrimaTM;
     }
 
-    public void setProduccionDetalleTM(ProduccionDetalleTableModel produccionDetalleTM) {
-        this.produccionDetalleTM = produccionDetalleTM;
+    public void setMateriaPrimaTM(ProduccionDetalleTableModel materiaPrimaTM) {
+        this.materiaPrimaTM = materiaPrimaTM;
     }
 
     public void agregarDetalle(E_produccionFilm producto) {
@@ -78,8 +78,27 @@ public class M_crearRollo {
         getRollosTM().modificarDatos(index, pf);
     }
 
+    public void modificarDetallePosterior(int index, E_produccionFilm newPF) {
+        E_produccionFilm currentPF = getRollosTM().getList().get(index);
+        DB_Produccion.actualizarProdTerminadoPosterior(currentPF, newPF);
+        consultarProduccion();
+    }
+
     public void removerDetalle(int index) {
         getRollosTM().quitarDatos(index);
+    }
+
+    public void removerDetallePosterior(int index) {
+        E_produccionFilm currentPF = getRollosTM().getList().get(index);
+        DB_Produccion.eliminarProdTerminadoPosterior(currentPF.getId());
+        consultarProduccion();
+    }
+
+    public void validarUtilizacionRollo(int index) {
+        E_produccionFilm currentPF = getRollosTM().getList().get(index);
+        DB_Produccion.obtenerFilm(currentPF.getId());
+        //TODO
+        consultarProduccion();
     }
 
     public void agregarMPDetalle(double cantidad, M_producto producto) {

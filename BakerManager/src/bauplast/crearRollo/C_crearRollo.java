@@ -26,7 +26,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import javax.swing.JOptionPane;
@@ -166,7 +165,15 @@ class C_crearRollo extends MouseAdapter implements ActionListener, KeyListener,
     private void eliminarDetalle() {
         int fila = this.vista.jtProduccionDetalle.getSelectedRow();
         if (fila > -1) {
-            modelo.removerDetalle(fila);
+            if (esModoCreacion) {
+                modelo.removerDetalle(fila);
+            } else {
+                int opcion = JOptionPane.showConfirmDialog(vista, "Confirmar", "Atención", JOptionPane.WARNING_MESSAGE, JOptionPane.YES_NO_OPTION);
+                if (opcion == JOptionPane.YES_OPTION) {
+                    modelo.validarUtilizacionRollo(fila);
+                    modelo.removerDetallePosterior(fila);
+                }
+            }
         }
     }
 
@@ -301,7 +308,10 @@ class C_crearRollo extends MouseAdapter implements ActionListener, KeyListener,
             if (esModoCreacion) {
                 modelo.removerMPDetalle(fila);
             } else {
-                modelo.removerMPDetallePosterior(fila);
+                int opcion = JOptionPane.showConfirmDialog(vista, "Confirmar", "Atención", JOptionPane.WARNING_MESSAGE, JOptionPane.YES_NO_OPTION);
+                if (opcion == JOptionPane.YES_OPTION) {
+                    modelo.removerMPDetallePosterior(fila);
+                }
             }
         }
     }
@@ -403,7 +413,11 @@ class C_crearRollo extends MouseAdapter implements ActionListener, KeyListener,
 
     @Override
     public void modificarFilm(int index, E_produccionFilm detalle) {
-        modelo.modificarDetalle(index, detalle);
+        if (esModoCreacion) {
+            modelo.modificarDetalle(index, detalle);
+        } else {
+            modelo.modificarDetallePosterior(index, detalle);
+        }
         Utilities.c_packColumn.packColumns(vista.jtProduccionDetalle, 1);
     }
 
