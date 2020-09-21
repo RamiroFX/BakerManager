@@ -80,6 +80,7 @@ public class M_crearRollo {
 
     public void modificarDetallePosterior(int index, E_produccionFilm newPF) {
         E_produccionFilm currentPF = getRollosTM().getList().get(index);
+        currentPF.getProducto().setId(obtenerRollo(index).getProducto().getId());
         DB_Produccion.actualizarProdTerminadoPosterior(currentPF, newPF);
         consultarProduccion();
     }
@@ -90,15 +91,19 @@ public class M_crearRollo {
 
     public void removerDetallePosterior(int index) {
         E_produccionFilm currentPF = getRollosTM().getList().get(index);
-        DB_Produccion.eliminarProdTerminadoPosterior(currentPF.getId());
+        DB_Produccion.eliminarProdTerminadoPosterior(currentPF.getId(), currentPF.getOrdenTrabajoDetalle());
         consultarProduccion();
     }
 
-    public void validarUtilizacionRollo(int index) {
+    public boolean rolloEnUso(int index) {
         E_produccionFilm currentPF = getRollosTM().getList().get(index);
-        DB_Produccion.obtenerFilm(currentPF.getId());
-        //TODO
-        consultarProduccion();
+        E_produccionFilm PFdetail = DB_Produccion.obtenerFilm(currentPF.getId());
+        return PFdetail.getPesoUtilizado() > 0;
+    }
+
+    public E_produccionFilm obtenerRollo(int index) {
+        E_produccionFilm currentPF = getRollosTM().getList().get(index);
+        return DB_Produccion.obtenerFilm(currentPF.getId());
     }
 
     public void agregarMPDetalle(double cantidad, M_producto producto) {

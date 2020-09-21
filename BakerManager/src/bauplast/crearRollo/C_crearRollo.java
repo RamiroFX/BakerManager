@@ -168,9 +168,12 @@ class C_crearRollo extends MouseAdapter implements ActionListener, KeyListener,
             if (esModoCreacion) {
                 modelo.removerDetalle(fila);
             } else {
+                if (modelo.rolloEnUso(fila)) {
+                    JOptionPane.showMessageDialog(vista, "El rollo se encuentra en uso por un producto terminado", VALIDAR_TITULO, JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
                 int opcion = JOptionPane.showConfirmDialog(vista, "Confirmar", "Atención", JOptionPane.WARNING_MESSAGE, JOptionPane.YES_NO_OPTION);
                 if (opcion == JOptionPane.YES_OPTION) {
-                    modelo.validarUtilizacionRollo(fila);
                     modelo.removerDetallePosterior(fila);
                 }
             }
@@ -257,6 +260,19 @@ class C_crearRollo extends MouseAdapter implements ActionListener, KeyListener,
     private boolean validarCantidadProductos() {
         if (modelo.getRollosTM().getList().isEmpty()) {
             JOptionPane.showMessageDialog(vista, VALIDAR_CANT_PRODUCTOS_MSG, VALIDAR_TITULO, JOptionPane.WARNING_MESSAGE);
+            return false;
+        }
+        return true;
+    }
+
+    private boolean validarActualizacionPosterior(int index, E_produccionFilm rolloActualizado) {
+        E_produccionFilm rolloActual = modelo.obtenerRollo(index);
+        double peso = rolloActual.getPeso();
+        double pesoDisponible = rolloActual.getPesoActual();
+        double pesoUtilizado = Math.abs(peso - pesoDisponible);
+        double pesoNuevo = rolloActualizado.getPeso();
+        if (pesoNuevo < pesoUtilizado) {
+            JOptionPane.showMessageDialog(vista, "El peso nuevo no puede ser menor al peso utilizado", VALIDAR_TITULO, JOptionPane.WARNING_MESSAGE);
             return false;
         }
         return true;
@@ -416,6 +432,9 @@ class C_crearRollo extends MouseAdapter implements ActionListener, KeyListener,
         if (esModoCreacion) {
             modelo.modificarDetalle(index, detalle);
         } else {
+            if(!validarActualizacionPosterior(index, detalle)){
+                return;
+            }
             modelo.modificarDetallePosterior(index, detalle);
         }
         Utilities.c_packColumn.packColumns(vista.jtProduccionDetalle, 1);

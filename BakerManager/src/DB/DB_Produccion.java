@@ -926,7 +926,7 @@ public class DB_Produccion {
             DB_manager.getConection().setAutoCommit(false);
             pst = DB_manager.getConection().prepareStatement(UPDATE_DETALLE);
             pst.setDouble(1, newFilm.getPeso());
-            pst.setInt(2, currentFilm.getId());
+            pst.setInt(2, currentFilm.getOrdenTrabajoDetalle());
             pst.executeUpdate();
             pst.close();
 
@@ -937,11 +937,11 @@ public class DB_Produccion {
             pst.setInt(4, newFilm.getMedida());
             pst.setInt(5, newFilm.getMicron());
             pst.setInt(6, newFilm.getProductoClasificacion().getId());
-            pst.setInt(7, currentFilm.getId());
+            pst.setInt(7, currentFilm.getOrdenTrabajoDetalle());
             pst.executeUpdate();
             pst.close();
             //se actualiza el stock
-            int idProducto = newFilm.getProducto().getId();
+            int idProducto = currentFilm.getProducto().getId();
             String UPDATE_STOCK = "UPDATE PRODUCTO SET "
                     + "CANT_ACTUAL = "
                     + "((SELECT CANT_ACTUAL FROM PRODUCTO WHERE ID_PRODUCTO = " + idProducto + ") ";
@@ -983,17 +983,22 @@ public class DB_Produccion {
         }
     }
 
-    public static void eliminarProdTerminadoPosterior(int idFilm) {
+    public static void eliminarProdTerminadoPosterior(int idFilm, int idDetalle) {
+        String DELETE_PROD_FILM_PROD = "DELETE FROM produccion_film_producto WHERE id_produccion_film = ?;";
+        String DELETE_DETAIL_FILM = "DELETE FROM produccion_film WHERE id_produccion_film = ?;";
         String DELETE_DETAIL = "DELETE FROM produccion_detalle WHERE id_produccion_detalle = ?;";
-        String DELETE_DETAIL_FILM = "DELETE FROM produccion_film WHERE id_produccion_detalle = ?;";
         try {
             DB_manager.habilitarTransaccionManual();
-            pst = DB_manager.getConection().prepareStatement(DELETE_DETAIL);
+            pst = DB_manager.getConection().prepareStatement(DELETE_PROD_FILM_PROD);
             pst.setInt(1, idFilm);
             pst.executeUpdate();
             pst.close();
             pst = DB_manager.getConection().prepareStatement(DELETE_DETAIL_FILM);
             pst.setInt(1, idFilm);
+            pst.executeUpdate();
+            pst.close();
+            pst = DB_manager.getConection().prepareStatement(DELETE_DETAIL);
+            pst.setInt(1, idDetalle);
             pst.executeUpdate();
             pst.close();
             DB_manager.establecerTransaccion();
