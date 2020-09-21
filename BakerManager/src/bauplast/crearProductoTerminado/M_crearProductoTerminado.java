@@ -92,8 +92,21 @@ public class M_crearProductoTerminado {
         getProductosTerminadosTM().modificarCantidadDetalle(index, peso);
     }
 
+    public void modificarProductoTerminadoPosterior(int index, double peso) {
+        E_produccionDetalle produccion = getProductosTerminadosTM().getList().get(index);
+        DB_Produccion.actualizarProductoTerminadoPosterior(produccion, peso);
+        consultarProduccion();
+    }
+
     public void removerProductoTerminado(int index) {
         getProductosTerminadosTM().quitarDetalle(index);
+    }
+
+    public void removerProductoTerminadoPosterior(int index) {
+        getProductosTerminadosTM().quitarDetalle(index);
+        E_produccionDetalle currentProd = getProductosTerminadosTM().getList().get(index);
+        DB_Produccion.eliminarProductoTerminadoPosterior(currentProd);
+        consultarProduccion();
     }
 
     boolean existeOrdenTrabajoPorProduccion(int ordenTrabajo, E_produccionTipo tipoProduccion) {

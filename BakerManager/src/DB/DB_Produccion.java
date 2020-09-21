@@ -919,7 +919,59 @@ public class DB_Produccion {
         }
     }
 
-    public static void actualizarProdTerminadoPosterior(E_produccionFilm currentFilm, E_produccionFilm newFilm) {
+    public static void actualizarProductoTerminadoPosterior(E_produccionDetalle produccion, double newCant) {
+        String UPDATE_DETALLE = "UPDATE produccion_detalle SET cantidad = ? WHERE id_produccion_detalle = ?;";
+        try {
+            DB_manager.getConection().setAutoCommit(false);
+            pst = DB_manager.getConection().prepareStatement(UPDATE_DETALLE);
+            pst.setDouble(1, newCant);
+            pst.setInt(2, produccion.getId());
+            pst.executeUpdate();
+            pst.close();
+            //se actualiza el stock
+            int idProducto = produccion.getProducto().getId();
+            String UPDATE_STOCK = "UPDATE PRODUCTO SET "
+                    + "CANT_ACTUAL = "
+                    + "((SELECT CANT_ACTUAL FROM PRODUCTO WHERE ID_PRODUCTO = " + idProducto + ") ";
+            double cantActual = produccion.getCantidad();
+            double cantNueva = newCant;
+            double diferencia = Math.abs(cantActual - cantNueva);
+            if (cantNueva > cantActual) {
+                UPDATE_STOCK = UPDATE_STOCK + "-" + diferencia + ") WHERE ID_PRODUCTO = " + idProducto;
+            } else {
+                UPDATE_STOCK = UPDATE_STOCK + "+" + diferencia + ") WHERE ID_PRODUCTO = " + idProducto;
+            }
+            st = DB_manager.getConection().createStatement();
+            st.executeUpdate(UPDATE_STOCK);
+            DB_manager.establecerTransaccion();
+        } catch (SQLException ex) {
+            System.out.println(ex.getNextException());
+            if (DB_manager.getConection() != null) {
+                try {
+                    DB_manager.getConection().rollback();
+                } catch (SQLException ex1) {
+                    Logger lgr = Logger.getLogger(DB_Produccion.class.getName());
+                    lgr.log(Level.WARNING, ex1.getMessage(), ex1);
+                }
+            }
+            Logger lgr = Logger.getLogger(DB_Produccion.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        } finally {
+            try {
+                if (pst != null) {
+                    pst.close();
+                }
+                if (rs != null) {
+                    rs.close();
+                }
+            } catch (SQLException ex) {
+                Logger lgr = Logger.getLogger(DB_Produccion.class.getName());
+                lgr.log(Level.WARNING, ex.getMessage(), ex);
+            }
+        }
+    }
+
+    public static void actualizarRolloPosterior(E_produccionFilm currentFilm, E_produccionFilm newFilm) {
         String UPDATE_DETALLE = "UPDATE produccion_detalle SET cantidad = ? WHERE id_produccion_detalle = ?;";
         String UPDATE_DETALLE_FILM = "UPDATE produccion_film SET nro_film = ?, peso = ?, cono = ?, medida= ?, micron = ?, id_producto_categoria = ?  WHERE id_produccion_detalle = ?;";
         try {
@@ -982,25 +1034,67 @@ public class DB_Produccion {
             }
         }
     }
+    public static void eliminarProductoTerminadoPosterior(E_produccionDetalle currentProd) {
+        String DELETE_DETAIL = "DELETE FROM produccion_detalle WHERE id_produccion_detalle = ?;";
+        try {
+            DB_manager.habilitarTransaccionManual();
+            pst = DB_manager.getConection().prepareStatement(DELETE_DETAIL);
+            pst.setInt(1, currentProd.getId());
+            pst.executeUpdate();
+            pst.close();
+            //se resta al stock lo que se elimina
+            int idProducto = currentProd.getProducto().getId();
+            double cantidad = currentProd.getCantidad();
+            String query = "UPDATE PRODUCTO SET "
+                    + "CANT_ACTUAL = "
+                    + "((SELECT CANT_ACTUAL FROM PRODUCTO WHERE ID_PRODUCTO = " + idProducto + ")-" + cantidad + ") "
+                    + "WHERE ID_PRODUCTO =" + idProducto;
+            st = DB_manager.getConection().createStatement();
+            st.executeUpdate(query);
+            DB_manager.establecerTransaccion();
+        } catch (SQLException ex) {
+            if (DB_manager.getConection() != null) {
+                try {
+                    DB_manager.getConection().rollback();
+                } catch (SQLException ex1) {
+                    Logger lgr = Logger.getLogger(DB_Produccion.class
+                            .getName());
+                    lgr.log(Level.WARNING, ex1.getMessage(), ex1);
+                }
+            }
+            Logger lgr = Logger.getLogger(DB_Produccion.class
+                    .getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        }
+    }
 
-    public static void eliminarProdTerminadoPosterior(int idFilm, int idDetalle) {
+    public static void eliminarRolloPosterior(E_produccionFilm currentPF) {
         String DELETE_PROD_FILM_PROD = "DELETE FROM produccion_film_producto WHERE id_produccion_film = ?;";
         String DELETE_DETAIL_FILM = "DELETE FROM produccion_film WHERE id_produccion_film = ?;";
         String DELETE_DETAIL = "DELETE FROM produccion_detalle WHERE id_produccion_detalle = ?;";
         try {
             DB_manager.habilitarTransaccionManual();
             pst = DB_manager.getConection().prepareStatement(DELETE_PROD_FILM_PROD);
-            pst.setInt(1, idFilm);
+            pst.setInt(1, currentPF.getId());
             pst.executeUpdate();
             pst.close();
             pst = DB_manager.getConection().prepareStatement(DELETE_DETAIL_FILM);
-            pst.setInt(1, idFilm);
+            pst.setInt(1, currentPF.getId());
             pst.executeUpdate();
             pst.close();
             pst = DB_manager.getConection().prepareStatement(DELETE_DETAIL);
-            pst.setInt(1, idDetalle);
+            pst.setInt(1, currentPF.getOrdenTrabajoDetalle());
             pst.executeUpdate();
             pst.close();
+            //se resta al stock lo que se elimina
+            int idProducto = currentPF.getProducto().getId();
+            double cantidad = currentPF.getPeso();
+            String query = "UPDATE PRODUCTO SET "
+                    + "CANT_ACTUAL = "
+                    + "((SELECT CANT_ACTUAL FROM PRODUCTO WHERE ID_PRODUCTO = " + idProducto + ")-" + cantidad + ") "
+                    + "WHERE ID_PRODUCTO =" + idProducto;
+            st = DB_manager.getConection().createStatement();
+            st.executeUpdate(query);
             DB_manager.establecerTransaccion();
         } catch (SQLException ex) {
             if (DB_manager.getConection() != null) {

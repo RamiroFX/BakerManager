@@ -81,7 +81,7 @@ public class M_crearRollo {
     public void modificarDetallePosterior(int index, E_produccionFilm newPF) {
         E_produccionFilm currentPF = getRollosTM().getList().get(index);
         currentPF.getProducto().setId(obtenerRollo(index).getProducto().getId());
-        DB_Produccion.actualizarProdTerminadoPosterior(currentPF, newPF);
+        DB_Produccion.actualizarRolloPosterior(currentPF, newPF);
         consultarProduccion();
     }
 
@@ -91,7 +91,8 @@ public class M_crearRollo {
 
     public void removerDetallePosterior(int index) {
         E_produccionFilm currentPF = getRollosTM().getList().get(index);
-        DB_Produccion.eliminarProdTerminadoPosterior(currentPF.getId(), currentPF.getOrdenTrabajoDetalle());
+        currentPF.getProducto().setId(obtenerRollo(index).getProducto().getId());
+        DB_Produccion.eliminarRolloPosterior(currentPF);
         consultarProduccion();
     }
 

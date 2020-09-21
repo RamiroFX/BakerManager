@@ -168,7 +168,14 @@ class C_crearProductoTerminado extends MouseAdapter implements ActionListener, K
     private void eliminarDetalleProdTerminadoDetalle() {
         int fila = this.vista.jtProduccionDetalle.getSelectedRow();
         if (fila > -1) {
+            if (esModoCreacion) {
             modelo.removerProductoTerminado(fila);
+            } else {
+                int opcion = JOptionPane.showConfirmDialog(vista, "Confirmar acción", "Atención", JOptionPane.WARNING_MESSAGE, JOptionPane.YES_NO_OPTION);
+                if (opcion == JOptionPane.YES_OPTION) {
+                    modelo.removerProductoTerminadoPosterior(fila);
+                }
+            }
         }
     }
 
@@ -441,7 +448,14 @@ class C_crearProductoTerminado extends MouseAdapter implements ActionListener, K
 
     @Override
     public void modificarProducto(int posicion, double cantidad, int precio, double descuento, M_producto producto, String observacion) {
-        modelo.modificarProductoTerminado(posicion, cantidad);
+        if (esModoCreacion) {
+            modelo.modificarProductoTerminado(posicion, cantidad);
+        } else {
+            int opcion = JOptionPane.showConfirmDialog(vista, "Confirmar acción", "Atención", JOptionPane.WARNING_MESSAGE, JOptionPane.YES_NO_OPTION);
+            if (opcion == JOptionPane.YES_OPTION) {
+                modelo.modificarProductoTerminadoPosterior(posicion, cantidad);
+            }
+        }
     }
 
 }
