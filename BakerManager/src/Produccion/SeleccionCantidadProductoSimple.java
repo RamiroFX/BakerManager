@@ -121,7 +121,8 @@ public class SeleccionCantidadProductoSimple extends javax.swing.JDialog impleme
         }
         System.err.println("isProductoTerminado: " + isProductoTerminado);
         System.err.println("tipo: " + tipo);
-        cantidad = Double.valueOf(String.valueOf(jtfCantidad.getText().trim()));
+        String cantAux = jtfCantidad.getText().trim().replace(",", ".");
+        cantidad = Double.valueOf(cantAux);
         if (isProductoTerminado) {
             switch (tipo) {
                 case PROD_TERMINADO_AGREGAR_PROD: {
@@ -194,7 +195,8 @@ public class SeleccionCantidadProductoSimple extends javax.swing.JDialog impleme
 
     private boolean validarPeso() {
         //validar que la cantidad ingresada sea menor o igual a la cantidad disponible
-        Double peso = Double.valueOf(String.valueOf(jtfCantidad.getText().trim()));
+        String cantAux = jtfCantidad.getText().trim().replace(",", ".");
+        Double peso = Double.valueOf(cantAux);
         if (peso > film.getPesoActual()) {
             JOptionPane.showMessageDialog(this, "El peso seleccionado supera el disponible", "Parametros incorrectos", JOptionPane.ERROR_MESSAGE);
             return false;

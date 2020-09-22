@@ -196,6 +196,12 @@ class C_crearProductoTerminado extends MouseAdapter implements ActionListener, K
         int fila = this.vista.jtRolloUtilizado.getSelectedRow();
         if (fila > -1) {
             E_produccionFilm film = modelo.getRolloUtilizadoTm().getList().get(fila);
+            if (!esModoCreacion) {
+                E_produccionFilm filmAux = modelo.obtenerRollo(fila);
+                double pesoDisponible = filmAux.getPesoActual();
+                double pesoActual = film.getPeso();
+                film.setPesoActual(pesoDisponible + pesoActual);
+            }
             SeleccionCantidadProductoSimple scp = new SeleccionCantidadProductoSimple(this.vista, fila);
             scp.setFilm(film);
             scp.setTipo(SeleccionCantidadProductoSimple.PROD_TERMINADO_MODIFICAR_ROLLO);
@@ -425,7 +431,11 @@ class C_crearProductoTerminado extends MouseAdapter implements ActionListener, K
 
     @Override
     public void modificarFilm(int index, E_produccionFilm detalle) {
-        modelo.modificarRolloUtilizado(index, detalle);
+        if (esModoCreacion) {
+            modelo.modificarRolloUtilizado(index, detalle);
+        } else {
+            modelo.modificarRolloUtilizadoPosterior(index, detalle);
+        }
     }
 
     @Override

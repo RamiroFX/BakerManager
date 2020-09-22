@@ -150,4 +150,10 @@ public class M_crearProductoTerminado {
     public ArrayList<M_menu_item> getAccesos() {
         return accesos;
     }
+
+    public E_produccionFilm obtenerRollo(int index) {
+        E_produccionFilm currentPF = getRolloUtilizadoTm().getList().get(index);
+        return DB_Produccion.obtenerFilm(currentPF.getId());
+    }
+
 }

@@ -1038,6 +1038,7 @@ public class DB_Produccion {
     public static void actualizarRolloUtilizadoPosterior(E_produccionFilm currentFilm, E_produccionFilm newFilm) {
         String UPDATE_DETALLE_FILM = "UPDATE produccion_film_baja SET peso_utilizado = ? WHERE id_produccion_film_baja = ?;";
         try {
+            DB_manager.getConection().setAutoCommit(false);
             pst = DB_manager.getConection().prepareStatement(UPDATE_DETALLE_FILM);
             pst.setDouble(1, newFilm.getPeso());
             pst.setInt(2, currentFilm.getId());
