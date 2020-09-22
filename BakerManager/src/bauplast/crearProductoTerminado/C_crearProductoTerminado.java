@@ -200,6 +200,8 @@ class C_crearProductoTerminado extends MouseAdapter implements ActionListener, K
                 E_produccionFilm filmAux = modelo.obtenerRollo(fila);
                 double pesoDisponible = filmAux.getPesoActual();
                 double pesoActual = film.getPeso();
+                film.setPeso(filmAux.getPeso());
+                film.setPesoUtilizado(filmAux.getPesoUtilizado());
                 film.setPesoActual(pesoDisponible + pesoActual);
             }
             SeleccionCantidadProductoSimple scp = new SeleccionCantidadProductoSimple(this.vista, fila);

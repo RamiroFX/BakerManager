@@ -1059,7 +1059,7 @@ public class DB_Produccion {
             }
             //ACTUALIZAR PESO DE ROLLOS UTILIZADOS
             double pesoUtilizado = newFilm.getPeso();
-            double pesoActual = currentFilm.getPeso();
+            double pesoActual = currentFilm.getPesoActual();
             int idProduccionFilm = currentFilm.getOrdenTrabajoDetalle();
             if ((pesoActual - pesoUtilizado) <= 0) {
                 String query = "UPDATE produccion_film SET ID_ESTADO = 2 WHERE id_produccion_film =" + idProduccionFilm;
@@ -1100,6 +1100,40 @@ public class DB_Produccion {
         }
     }
 
+    public static void eliminarRolloUtilizadoPosterior(E_produccionFilm rolloUtilizado) {
+        String DELETE_PROD_FILM_PROD = "DELETE FROM produccion_film_baja WHERE id_produccion_film_baja = ?;";
+        try {
+            DB_manager.habilitarTransaccionManual();
+            pst = DB_manager.getConection().prepareStatement(DELETE_PROD_FILM_PROD);
+            pst.setInt(1, rolloUtilizado.getId());
+            pst.executeUpdate();
+            pst.close();
+            //se resta al stock lo que se elimina
+            int idProducto = currentPF.getProducto().getId();
+            double cantidad = currentPF.getPeso();
+            String query = "UPDATE PRODUCTO SET "
+                    + "CANT_ACTUAL = "
+                    + "((SELECT CANT_ACTUAL FROM PRODUCTO WHERE ID_PRODUCTO = " + idProducto + ")-" + cantidad + ") "
+                    + "WHERE ID_PRODUCTO =" + idProducto;
+            st = DB_manager.getConection().createStatement();
+            st.executeUpdate(query);
+            DB_manager.establecerTransaccion();
+        } catch (SQLException ex) {
+            if (DB_manager.getConection() != null) {
+                try {
+                    DB_manager.getConection().rollback();
+                } catch (SQLException ex1) {
+                    Logger lgr = Logger.getLogger(DB_Produccion.class
+                            .getName());
+                    lgr.log(Level.WARNING, ex1.getMessage(), ex1);
+                }
+            }
+            Logger lgr = Logger.getLogger(DB_Produccion.class
+                    .getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        }
+    }
+    
     public static void eliminarProductoTerminadoPosterior(E_produccionDetalle currentProd) {
         String DELETE_DETAIL = "DELETE FROM produccion_detalle WHERE id_produccion_detalle = ?;";
         try {
@@ -1654,7 +1688,7 @@ public class DB_Produccion {
         return filmList;
     }
 
-    public static List<E_produccionFilm> consultarProduccionFilmBaja(Integer idProduccion) {
+    public static List<E_produccionFilm> consultarProduccionFilmBaja(int idProduccion) {
         List<E_produccionFilm> list = new ArrayList<>();
         String QUERY = "SELECT id_cabecera, id_produccion_cabecera, nro_orden_trabajo, nro_film, fecha, "
                 + "id_producto, producto, id_categoria, categoria, peso, cono, medida, micron, producto_codigo, id_produccion_film "

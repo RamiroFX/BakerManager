@@ -153,7 +153,7 @@ public class M_crearProductoTerminado {
 
     public E_produccionFilm obtenerRollo(int index) {
         E_produccionFilm currentPF = getRolloUtilizadoTm().getList().get(index);
-        return DB_Produccion.obtenerFilm(currentPF.getId());
+        return DB_Produccion.obtenerFilm(currentPF.getOrdenTrabajoDetalle());
     }
 
 }
