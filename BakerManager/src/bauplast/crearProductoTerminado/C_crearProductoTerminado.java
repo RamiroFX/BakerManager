@@ -169,7 +169,7 @@ class C_crearProductoTerminado extends MouseAdapter implements ActionListener, K
         int fila = this.vista.jtProduccionDetalle.getSelectedRow();
         if (fila > -1) {
             if (esModoCreacion) {
-            modelo.removerProductoTerminado(fila);
+                modelo.removerProductoTerminado(fila);
             } else {
                 int opcion = JOptionPane.showConfirmDialog(vista, "Confirmar acción", "Atención", JOptionPane.WARNING_MESSAGE, JOptionPane.YES_NO_OPTION);
                 if (opcion == JOptionPane.YES_OPTION) {
@@ -425,13 +425,12 @@ class C_crearProductoTerminado extends MouseAdapter implements ActionListener, K
 
     @Override
     public void modificarFilm(int index, E_produccionFilm detalle) {
-        modelo.modifacarRolloUtilizado(index, detalle);
+        modelo.modificarRolloUtilizado(index, detalle);
     }
 
     @Override
     public void recibirFilmPosterior(E_produccionFilm detalle) {
-        modelo.actualizarRolloUtilizado(detalle);
-        modelo.consultarProduccion();
+        modelo.agregarRolloUtilizadoPosterior(detalle);
     }
 
     @Override

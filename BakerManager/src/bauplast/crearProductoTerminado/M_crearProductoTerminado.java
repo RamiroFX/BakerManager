@@ -65,8 +65,19 @@ public class M_crearProductoTerminado {
         getRolloUtilizadoTm().agregarDatos(producto);
     }
 
-    public void modifacarRolloUtilizado(int index, E_produccionFilm producto) {
+    public void agregarRolloUtilizadoPosterior(E_produccionFilm detalle) {
+        DB_Produccion.insertarProduccionRolloPosterior(getProduccionCabecera(), detalle);
+        consultarProduccion();
+    }
+
+    public void modificarRolloUtilizado(int index, E_produccionFilm producto) {
         getRolloUtilizadoTm().modificarDatos(index, producto);
+    }
+
+    public void modificarRolloUtilizadoPosterior(int index, E_produccionFilm newPF) {
+        E_produccionFilm currentPF = getRolloUtilizadoTm().getList().get(index);
+        DB_Produccion.actualizarRolloUtilizadoPosterior(currentPF, newPF);
+        consultarProduccion();
     }
 
     public void removerRolloUtilizado(int index) {
@@ -103,7 +114,6 @@ public class M_crearProductoTerminado {
     }
 
     public void removerProductoTerminadoPosterior(int index) {
-        getProductosTerminadosTM().quitarDetalle(index);
         E_produccionDetalle currentProd = getProductosTerminadosTM().getList().get(index);
         DB_Produccion.eliminarProductoTerminadoPosterior(currentProd);
         consultarProduccion();
@@ -135,10 +145,6 @@ public class M_crearProductoTerminado {
     public String getFechaProduccionFormateada() {
         SimpleDateFormat sdfs = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
         return sdfs.format(getProduccionCabecera().getFechaRegistro());
-    }
-
-    public void actualizarRolloUtilizado(E_produccionFilm detalle) {
-        DB_Produccion.insertarProduccionRolloPosterior(getProduccionCabecera(), detalle);
     }
 
     public ArrayList<M_menu_item> getAccesos() {

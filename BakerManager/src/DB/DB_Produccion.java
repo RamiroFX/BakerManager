@@ -1034,6 +1034,71 @@ public class DB_Produccion {
             }
         }
     }
+
+    public static void actualizarRolloUtilizadoPosterior(E_produccionFilm currentFilm, E_produccionFilm newFilm) {
+        String UPDATE_DETALLE_FILM = "UPDATE produccion_film_baja SET peso_utilizado = ? WHERE id_produccion_film_baja = ?;";
+        try {
+            pst = DB_manager.getConection().prepareStatement(UPDATE_DETALLE_FILM);
+            pst.setDouble(1, newFilm.getPeso());
+            pst.setInt(2, currentFilm.getId());
+            pst.executeUpdate();
+            pst.close();
+            //se actualiza el stock
+            int idProducto = currentFilm.getProducto().getId();
+            String UPDATE_STOCK = "UPDATE PRODUCTO SET "
+                    + "CANT_ACTUAL = "
+                    + "((SELECT CANT_ACTUAL FROM PRODUCTO WHERE ID_PRODUCTO = " + idProducto + ") ";
+            double cantActual = currentFilm.getPeso();
+            double cantNueva = newFilm.getPeso();
+            double diferencia = Math.abs(cantActual - cantNueva);
+            if (cantNueva > cantActual) {
+                UPDATE_STOCK = UPDATE_STOCK + "-" + diferencia + ") WHERE ID_PRODUCTO = " + idProducto;
+            } else {
+                UPDATE_STOCK = UPDATE_STOCK + "+" + diferencia + ") WHERE ID_PRODUCTO = " + idProducto;
+            }
+            //ACTUALIZAR PESO DE ROLLOS UTILIZADOS
+            double pesoUtilizado = newFilm.getPeso();
+            double pesoActual = currentFilm.getPeso();
+            int idProduccionFilm = currentFilm.getOrdenTrabajoDetalle();
+            if ((pesoActual - pesoUtilizado) <= 0) {
+                String query = "UPDATE produccion_film SET ID_ESTADO = 2 WHERE id_produccion_film =" + idProduccionFilm;
+                st = DB_manager.getConection().createStatement();
+                st.executeUpdate(query);
+            } else {
+                String query = "UPDATE produccion_film SET ID_ESTADO = 1 WHERE id_produccion_film =" + idProduccionFilm;
+                st = DB_manager.getConection().createStatement();
+                st.executeUpdate(query);
+            }
+            st = DB_manager.getConection().createStatement();
+            st.executeUpdate(UPDATE_STOCK);
+            DB_manager.establecerTransaccion();
+        } catch (SQLException ex) {
+            System.out.println(ex.getNextException());
+            if (DB_manager.getConection() != null) {
+                try {
+                    DB_manager.getConection().rollback();
+                } catch (SQLException ex1) {
+                    Logger lgr = Logger.getLogger(DB_Produccion.class.getName());
+                    lgr.log(Level.WARNING, ex1.getMessage(), ex1);
+                }
+            }
+            Logger lgr = Logger.getLogger(DB_Produccion.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        } finally {
+            try {
+                if (pst != null) {
+                    pst.close();
+                }
+                if (rs != null) {
+                    rs.close();
+                }
+            } catch (SQLException ex) {
+                Logger lgr = Logger.getLogger(DB_Produccion.class.getName());
+                lgr.log(Level.WARNING, ex.getMessage(), ex);
+            }
+        }
+    }
+
     public static void eliminarProductoTerminadoPosterior(E_produccionDetalle currentProd) {
         String DELETE_DETAIL = "DELETE FROM produccion_detalle WHERE id_produccion_detalle = ?;";
         try {
@@ -1590,8 +1655,8 @@ public class DB_Produccion {
 
     public static List<E_produccionFilm> consultarProduccionFilmBaja(Integer idProduccion) {
         List<E_produccionFilm> list = new ArrayList<>();
-        String QUERY = "SELECT id_cabecera, id_produccion_cabecera,nro_orden_trabajo, nro_film, fecha, "
-                + "producto, id_categoria, categoria, peso, cono, medida, micron, producto_codigo "
+        String QUERY = "SELECT id_cabecera, id_produccion_cabecera, nro_orden_trabajo, nro_film, fecha, "
+                + "id_producto, producto, id_categoria, categoria, peso, cono, medida, micron, producto_codigo, id_produccion_film "
                 + "FROM v_produccion_film_baja WHERE id_produccion_cabecera = ?;";
 
         try {
@@ -1600,6 +1665,7 @@ public class DB_Produccion {
             rs = pst.executeQuery();
             while (rs.next()) {
                 M_producto producto = new M_producto();
+                producto.setId(rs.getInt("id_producto"));
                 producto.setCodigo(rs.getString("producto_codigo"));
                 producto.setDescripcion(rs.getString("producto"));
                 E_productoClasificacion pc = new E_productoClasificacion();
@@ -1607,6 +1673,7 @@ public class DB_Produccion {
                 pc.setDescripcion(rs.getString("categoria"));
                 E_produccionFilm pd = new E_produccionFilm();
                 pd.setId(rs.getInt("id_cabecera"));
+                pd.setOrdenTrabajoDetalle(rs.getInt("id_produccion_film"));
                 pd.setOrdenTrabajoCabecera(rs.getInt("nro_orden_trabajo"));
                 pd.setNroFilm(rs.getInt("nro_film"));
                 pd.setFechaCreacion(rs.getDate("fecha"));
