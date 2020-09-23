@@ -16,6 +16,7 @@ import bakermanager.C_inicio;
 import bauplast.BuscarProduccionDetalle;
 import bauplast.crearProductoTerminado.CrearProductoTerminado;
 import bauplast.crearRollo.CrearRollo;
+import bauplast.desperdicio.CrearDesperdicio;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -78,6 +79,7 @@ public class C_gestionProduccion implements GestionInterface, RecibirEmpleadoCal
     @Override
     public final void concederPermisos() {
         //TODO add access
+        this.vista.jbCrearDesperdicio.addActionListener(this);
         this.vista.jbCrearRollo.addActionListener(this);
         this.vista.jbCrearProductoTerminado.addActionListener(this);
         this.vista.jbEmpleado.addActionListener(this);
@@ -281,6 +283,11 @@ public class C_gestionProduccion implements GestionInterface, RecibirEmpleadoCal
         bpc.mostrarVista();
     }
 
+    private void invocarCrearDesperdicio() {
+        CrearDesperdicio bpc = new CrearDesperdicio(this.c_inicio.vista);
+        bpc.mostrarVista();
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         Object source = e.getSource();
@@ -306,6 +313,8 @@ public class C_gestionProduccion implements GestionInterface, RecibirEmpleadoCal
             buscarProduccion();
         } else if (source.equals(this.vista.jtfNroOrdenTrabajo)) {
             ConsultarProduccion(false);
+        } else if (source.equals(this.vista.jbCrearDesperdicio)) {
+            invocarCrearDesperdicio();
         }
     }
 
