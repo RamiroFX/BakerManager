@@ -33,7 +33,8 @@ public class V_gestionProduccion extends JInternalFrame {
     public static final String MODULE_NAME = "Gestión producción";
 
     public JButton jbBuscar, jbBorrar, jbCrearRollo, jbCrearProductoTerminado,
-            jbDetalle, jbResumen, jbEmpleado, jbAnular, jbBuscarDetalle;
+            jbDetalle, jbResumen, jbEmpleado, jbAnular, jbBuscarDetalle,
+            jbCrearDesperdicio;
     public JTextField jtfNroOrdenTrabajo, jtfEmpleado;
     public JComboBox<E_produccionTipo> jcbTipoProduccion;
     public JComboBox<Estado> jcbEstado;
@@ -124,7 +125,7 @@ public class V_gestionProduccion extends JInternalFrame {
 
     private void initBot() {
         jpBot = new JPanel();
-        Insets inset = new Insets(10, 10, 10, 10);
+        Insets inset = new Insets(10, 5, 10, 5);
         jbCrearRollo = new JButton("Crear Rollo [F1]");
         jbCrearRollo.setName("crear produccion");
         jbCrearRollo.setMargin(inset);
@@ -137,6 +138,10 @@ public class V_gestionProduccion extends JInternalFrame {
         jbAnular.setName("anular produccion");
         jbAnular.setMargin(inset);
         jbAnular.setFont(CommonFormat.fuente);
+        jbCrearDesperdicio = new JButton("Desperdicio");
+        jbCrearDesperdicio.setName("anular produccion");
+        jbCrearDesperdicio.setMargin(inset);
+        jbCrearDesperdicio.setFont(CommonFormat.fuente);
         jbDetalle = new JButton("Ver detalle");
         jbDetalle.setName("detalle produccion");
         jbDetalle.setMargin(inset);
@@ -147,6 +152,7 @@ public class V_gestionProduccion extends JInternalFrame {
         jbResumen.setFont(CommonFormat.fuente);
         jpBot.add(jbCrearRollo);
         jpBot.add(jbCrearProductoTerminado);
+        jpBot.add(jbCrearDesperdicio);
         jpBot.add(jbAnular);
         jpBot.add(jbDetalle);
         jpBot.add(jbResumen);

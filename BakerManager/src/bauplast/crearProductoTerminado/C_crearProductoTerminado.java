@@ -216,7 +216,11 @@ class C_crearProductoTerminado extends MouseAdapter implements ActionListener, K
     private void eliminarRollo() {
         int fila = this.vista.jtRolloUtilizado.getSelectedRow();
         if (fila > -1) {
-            modelo.removerRolloUtilizado(fila);
+            if (esModoCreacion) {
+                modelo.removerRolloUtilizado(fila);
+            } else {
+                modelo.removerRolloUtilizadoPosterior(fila);
+            }
         }
     }
 

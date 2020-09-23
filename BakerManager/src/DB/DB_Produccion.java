@@ -1108,9 +1108,12 @@ public class DB_Produccion {
             pst.setInt(1, rolloUtilizado.getId());
             pst.executeUpdate();
             pst.close();
+            String UPDATE_FILM_STATUS = "UPDATE produccion_film SET ID_ESTADO = 1 WHERE id_produccion_film =" + rolloUtilizado.getOrdenTrabajoDetalle();
+            st = DB_manager.getConection().createStatement();
+            st.executeUpdate(UPDATE_FILM_STATUS);
             //se resta al stock lo que se elimina
-            int idProducto = currentPF.getProducto().getId();
-            double cantidad = currentPF.getPeso();
+            int idProducto = rolloUtilizado.getProducto().getId();
+            double cantidad = rolloUtilizado.getPeso();
             String query = "UPDATE PRODUCTO SET "
                     + "CANT_ACTUAL = "
                     + "((SELECT CANT_ACTUAL FROM PRODUCTO WHERE ID_PRODUCTO = " + idProducto + ")-" + cantidad + ") "
@@ -1133,7 +1136,7 @@ public class DB_Produccion {
             lgr.log(Level.SEVERE, ex.getMessage(), ex);
         }
     }
-    
+
     public static void eliminarProductoTerminadoPosterior(E_produccionDetalle currentProd) {
         String DELETE_DETAIL = "DELETE FROM produccion_detalle WHERE id_produccion_detalle = ?;";
         try {

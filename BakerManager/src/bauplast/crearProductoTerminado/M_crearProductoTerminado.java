@@ -84,6 +84,12 @@ public class M_crearProductoTerminado {
         getRolloUtilizadoTm().quitarDatos(index);
     }
 
+    public void removerRolloUtilizadoPosterior(int index) {
+        E_produccionFilm currentPF = getRolloUtilizadoTm().getList().get(index);
+        DB_Produccion.eliminarRolloUtilizadoPosterior(currentPF);
+        consultarProduccion();
+    }
+
     public void agregarProductoTerminado(double cantidad, M_producto producto) {
         E_produccionDetalle produccion = new E_produccionDetalle();
         produccion.setCantidad(cantidad);
