@@ -44,7 +44,6 @@ public class M_crearDesperdicio {
     }
 
     public void setProduccionCabecera(E_produccionCabecera pc) {
-        System.out.println("bauplast.desperdicio.M_crearDesperdicio.setProduccionCabecera()");
         this.pc = pc;
     }
 

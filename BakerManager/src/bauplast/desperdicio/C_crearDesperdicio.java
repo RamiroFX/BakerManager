@@ -35,7 +35,7 @@ import javax.swing.JOptionPane;
  * @author Ramiro Ferreira
  */
 class C_crearDesperdicio extends MouseAdapter implements ActionListener, KeyListener,
-        RecibirEmpleadoCallback{
+        RecibirEmpleadoCallback {
 
     private static final String VALIDAR_RESPONSABLE_MSG = "Seleccione un responsable de producción",
             VALIDAR_ORDEN_TRABAJO_MSG_1 = "Ingrese una orden de trabajo",
@@ -55,6 +55,8 @@ class C_crearDesperdicio extends MouseAdapter implements ActionListener, KeyList
         this.modelo = modelo;
         this.vista = vista;
         this.esModoCreacion = true;
+        inicializarVista();
+        agregarListeners();
     }
 
     public void mostrarVista() {
@@ -62,19 +64,35 @@ class C_crearDesperdicio extends MouseAdapter implements ActionListener, KeyList
         vista.setVisible(true);
     }
 
-    public void inicializarVista(){
+    private void inicializarVista() {
         this.vista.jdcFechaEntrega.setDate(Calendar.getInstance().getTime());
         this.vista.jtfFuncionario.setEditable(false);
         this.vista.jtfNroOrdenTrabajo.setEditable(false);
     }
+
+    private void agregarListeners() {
+        this.vista.jbSeleccionarDesperdicio.addActionListener(this);
+        this.vista.jbModificarDesperdicio.addActionListener(this);
+        this.vista.jbEliminarDesperdicio.addActionListener(this);
+        this.vista.jbSeleccionarRecuperado.addActionListener(this);
+        this.vista.jbModificarRecuperado.addActionListener(this);
+        this.vista.jbEliminarRecuperado.addActionListener(this);
+    }
+
     private void cargarDatos() {
         this.vista.jtfFuncionario.setText(modelo.obtenerFuncionario());
         this.vista.jtfNroOrdenTrabajo.setText(modelo.obtenerOrdenTrabajo());
     }
 
+    private void invocarSeleccionDesperdicio() {
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         Object source = e.getSource();
+        if (source.equals(vista.jbSeleccionarDesperdicio)) {
+            invocarSeleccionDesperdicio();
+        }
     }
 
     @Override

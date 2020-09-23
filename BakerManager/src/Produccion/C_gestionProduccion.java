@@ -287,7 +287,6 @@ public class C_gestionProduccion implements GestionInterface, RecibirEmpleadoCal
         int row = this.vista.jtProduccionCabecera.getSelectedRow();
         if (row > -1) {
             E_produccionCabecera pc = modelo.getProduccionCabeceraTM().getList().get(row);
-            System.out.println("func: "+ pc.getFuncionarioProduccion().getNombre());
             CrearDesperdicio bpc = new CrearDesperdicio(this.c_inicio.vista);
             bpc.setProduccion(pc);
             bpc.mostrarVista();
