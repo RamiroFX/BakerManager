@@ -5,6 +5,7 @@
  */
 package bauplast.desperdicio;
 
+import Entities.E_produccionCabecera;
 import javax.swing.JFrame;
 
 /**
@@ -21,6 +22,10 @@ public class CrearDesperdicio {
         this.modelo = new M_crearDesperdicio();
         this.vista = new V_crearDesperdicio(frame);
         this.controlador = new C_crearDesperdicio(this.modelo, this.vista);
+    }
+
+    public void setProduccion(E_produccionCabecera pc) {
+        this.modelo.setProduccionCabecera(pc);
     }
 
     public void mostrarVista() {

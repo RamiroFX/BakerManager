@@ -45,7 +45,7 @@ class V_crearDesperdicio extends JDialog {
     //norte 1
     JPanel jpNorth1;
     public JTextField jtfFuncionario, jtfNroOrdenTrabajo, jtfObservacion;
-    public JButton jbFuncionario;
+    public JLabel jlFuncionario;
     public JLabel jlNroOrdenTrabajo, jlFechaProduccion;
     public JDateChooser jdcFechaEntrega;
     //CENTRO
@@ -83,7 +83,7 @@ class V_crearDesperdicio extends JDialog {
     private void initNorth() {
         jpNorth1 = new JPanel(new MigLayout());
         jpNorth1.setBorder(new javax.swing.border.TitledBorder(new EtchedBorder(EtchedBorder.RAISED), "Datos de produccion", TitledBorder.CENTER, TitledBorder.ABOVE_TOP));
-        jbFuncionario = new JButton("Responsable[F3]");
+        jlFuncionario = new JLabel("Responsable");
         jtfFuncionario = new JTextField(30);
         jtfFuncionario.setEditable(false);
         jlNroOrdenTrabajo = new JLabel("Nro. Orden de trabajo");
@@ -93,7 +93,7 @@ class V_crearDesperdicio extends JDialog {
 
         jdcFechaEntrega = new JDateChooser();
         jdcFechaEntrega.setPreferredSize(new Dimension(150, 20));
-        jpNorth1.add(jbFuncionario);
+        jpNorth1.add(jlFuncionario);
         jpNorth1.add(jtfFuncionario);
         jpNorth1.add(jlNroOrdenTrabajo);
         jpNorth1.add(jtfNroOrdenTrabajo, "wrap");

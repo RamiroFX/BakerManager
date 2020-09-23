@@ -284,8 +284,16 @@ public class C_gestionProduccion implements GestionInterface, RecibirEmpleadoCal
     }
 
     private void invocarCrearDesperdicio() {
-        CrearDesperdicio bpc = new CrearDesperdicio(this.c_inicio.vista);
-        bpc.mostrarVista();
+        int row = this.vista.jtProduccionCabecera.getSelectedRow();
+        if (row > -1) {
+            E_produccionCabecera pc = modelo.getProduccionCabeceraTM().getList().get(row);
+            System.out.println("func: "+ pc.getFuncionarioProduccion().getNombre());
+            CrearDesperdicio bpc = new CrearDesperdicio(this.c_inicio.vista);
+            bpc.setProduccion(pc);
+            bpc.mostrarVista();
+        } else {
+            JOptionPane.showMessageDialog(vista, "Seleccione una producción", "Atención", JOptionPane.INFORMATION_MESSAGE);
+        }
     }
 
     @Override

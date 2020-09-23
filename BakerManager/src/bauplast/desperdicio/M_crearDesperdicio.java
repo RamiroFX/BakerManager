@@ -7,6 +7,7 @@ package bauplast.desperdicio;
 
 import DB.DB_Producto;
 import DB.DB_manager;
+import Entities.E_produccionCabecera;
 import Entities.E_productoClasificacion;
 import Entities.Estado;
 import Entities.M_producto;
@@ -19,9 +20,11 @@ import java.util.ArrayList;
 public class M_crearDesperdicio {
 
     M_producto producto;
+    E_produccionCabecera pc;
 
     public M_crearDesperdicio() {
         this.producto = new M_producto();
+        this.pc = new E_produccionCabecera();
     }
 
     public void setProducto(M_producto producto) {
@@ -38,6 +41,19 @@ public class M_crearDesperdicio {
 
     public ArrayList<Estado> obtenerEstado() {
         return DB_manager.obtenerEstados();
+    }
+
+    public void setProduccionCabecera(E_produccionCabecera pc) {
+        System.out.println("bauplast.desperdicio.M_crearDesperdicio.setProduccionCabecera()");
+        this.pc = pc;
+    }
+
+    public String obtenerFuncionario() {
+        return this.pc.getFuncionarioProduccion().getNombre();
+    }
+
+    public String obtenerOrdenTrabajo() {
+        return this.pc.getNroOrdenTrabajo() + "";
     }
 
 }
