@@ -35,7 +35,7 @@ import javax.swing.JOptionPane;
  * @author Ramiro Ferreira
  */
 class C_crearDesperdicio extends MouseAdapter implements ActionListener, KeyListener,
-        RecibirEmpleadoCallback{
+        RecibirEmpleadoCallback, InterfaceRecibirProduccionFilm {
 
     private static final String VALIDAR_RESPONSABLE_MSG = "Seleccione un responsable de producción",
             VALIDAR_ORDEN_TRABAJO_MSG_1 = "Ingrese una orden de trabajo",
@@ -55,6 +55,7 @@ class C_crearDesperdicio extends MouseAdapter implements ActionListener, KeyList
         this.modelo = modelo;
         this.vista = vista;
         this.esModoCreacion = true;
+        agregarListeners();
     }
 
     public void mostrarVista() {
@@ -62,19 +63,46 @@ class C_crearDesperdicio extends MouseAdapter implements ActionListener, KeyList
         vista.setVisible(true);
     }
 
-    public void inicializarVista(){
+    public void inicializarVista() {
         this.vista.jdcFechaEntrega.setDate(Calendar.getInstance().getTime());
         this.vista.jtfFuncionario.setEditable(false);
         this.vista.jtfNroOrdenTrabajo.setEditable(false);
     }
+
+    public void agregarListeners() {
+        this.vista.jbSeleccionarDesperdicio.addActionListener(this);
+        this.vista.jbModificarDesperdicio.addActionListener(this);
+        this.vista.jbEliminarDesperdicio.addActionListener(this);
+    }
+
     private void cargarDatos() {
         this.vista.jtfFuncionario.setText(modelo.obtenerFuncionario());
         this.vista.jtfNroOrdenTrabajo.setText(modelo.obtenerOrdenTrabajo());
+        switch (modelo.obtenerTipoProduccion()) {
+            case E_produccionTipo.PRODUCTO_TERMINADO: {
+                vista.jtProduccionDesperdicio.setModel(modelo.getProduccionTerminadosTM());
+                break;
+            }
+            case E_produccionTipo.ROLLO: {
+                vista.jtProduccionDesperdicio.setModel(modelo.getProduccionRollosTM());
+                break;
+            }
+        }
+    }
+
+    private void invocarSeleccionDesperdicio() {
+        SeleccionarProduccion sp = new SeleccionarProduccion(vista);
+        sp.establecerProduccionCabecera(modelo.produccionCabecera.getProduccionCabecera());
+        sp.setCallback(this);
+        sp.mostrarVista();
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         Object source = e.getSource();
+        if (source.equals(vista.jbSeleccionarDesperdicio)) {
+            invocarSeleccionDesperdicio();
+        }
     }
 
     @Override
@@ -95,6 +123,21 @@ class C_crearDesperdicio extends MouseAdapter implements ActionListener, KeyList
 
     @Override
     public void recibirFuncionario(M_funcionario funcionario) {
+    }
+
+    @Override
+    public void recibirFilm(E_produccionFilm detalle) {
+        modelo.getProduccionRollosTM().agregarDatos(detalle);
+    }
+
+    @Override
+    public void modificarFilm(int index, E_produccionFilm detalle) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void recibirFilmPosterior(E_produccionFilm detalle) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
 }

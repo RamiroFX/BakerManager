@@ -8,9 +8,12 @@ package bauplast.desperdicio;
 import DB.DB_Producto;
 import DB.DB_manager;
 import Entities.E_produccionCabecera;
+import Entities.E_produccionCabeceraDesperdicio;
 import Entities.E_productoClasificacion;
 import Entities.Estado;
 import Entities.M_producto;
+import ModeloTabla.ProduccionDetalleTableModel;
+import ModeloTabla.ProduccionRolloTableModel;
 import java.util.ArrayList;
 
 /**
@@ -20,11 +23,43 @@ import java.util.ArrayList;
 public class M_crearDesperdicio {
 
     M_producto producto;
-    E_produccionCabecera pc;
+    E_produccionCabeceraDesperdicio produccionCabecera;
+    ProduccionDetalleTableModel produccionTerminadosTM;
+    ProduccionRolloTableModel produccionRollosTM;
 
     public M_crearDesperdicio() {
         this.producto = new M_producto();
-        this.pc = new E_produccionCabecera();
+        this.produccionCabecera = new E_produccionCabeceraDesperdicio();
+        this.produccionTerminadosTM = new ProduccionDetalleTableModel();
+        this.produccionRollosTM = new ProduccionRolloTableModel();
+    }
+
+    public void setProduccionCabecera(E_produccionCabecera pc) {
+        this.produccionCabecera.setProduccionCabecera(pc);
+    }
+
+    public E_produccionCabeceraDesperdicio getProduccionCabecera() {
+        return produccionCabecera;
+    }
+
+    public void setProduccionCabecera(E_produccionCabeceraDesperdicio produccionCabecera) {
+        this.produccionCabecera = produccionCabecera;
+    }
+
+    public ProduccionRolloTableModel getProduccionRollosTM() {
+        return produccionRollosTM;
+    }
+
+    public void setProduccionRollosTM(ProduccionRolloTableModel produccionRollosTM) {
+        this.produccionRollosTM = produccionRollosTM;
+    }
+
+    public ProduccionDetalleTableModel getProduccionTerminadosTM() {
+        return produccionTerminadosTM;
+    }
+
+    public void setProduccionTerminadosTM(ProduccionDetalleTableModel produccionTerminadosTM) {
+        this.produccionTerminadosTM = produccionTerminadosTM;
     }
 
     public void setProducto(M_producto producto) {
@@ -43,17 +78,16 @@ public class M_crearDesperdicio {
         return DB_manager.obtenerEstados();
     }
 
-    public void setProduccionCabecera(E_produccionCabecera pc) {
-        System.out.println("bauplast.desperdicio.M_crearDesperdicio.setProduccionCabecera()");
-        this.pc = pc;
-    }
-
     public String obtenerFuncionario() {
-        return this.pc.getFuncionarioProduccion().getNombre();
+        return this.produccionCabecera.getProduccionCabecera().getFuncionarioProduccion().getNombre();
     }
 
     public String obtenerOrdenTrabajo() {
-        return this.pc.getNroOrdenTrabajo() + "";
+        return this.produccionCabecera.getProduccionCabecera().getNroOrdenTrabajo() + "";
+    }
+
+    public int obtenerTipoProduccion() {
+        return getProduccionCabecera().getProduccionCabecera().getTipo().getId();
     }
 
 }

@@ -1,0 +1,38 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package bauplast.desperdicio;
+
+import Entities.E_produccionCabecera;
+import Interface.InterfaceRecibirProduccionFilm;
+import javax.swing.JDialog;
+
+/**
+ *
+ * @author Ramiro Ferreira
+ */
+public class SeleccionarProduccion {
+
+    private M_seleccionarProduccion modelo;
+    private V_seleccionarProduccion vista;
+    private C_seleccionarProduccion controlador;
+
+    public SeleccionarProduccion(JDialog dialog) {
+        this.modelo = new M_seleccionarProduccion();
+        this.vista = new V_seleccionarProduccion(dialog);
+        this.controlador = new C_seleccionarProduccion(this.modelo, this.vista);
+    }
+
+    public void establecerProduccionCabecera(E_produccionCabecera produccionCabecera) {
+        this.modelo.setProduccionCabecera(produccionCabecera);
+    }
+
+    public void setCallback(InterfaceRecibirProduccionFilm callback){
+        this.controlador.setCallback(callback);
+    }
+    public void mostrarVista() {
+        this.controlador.mostrarVista();
+    }
+}

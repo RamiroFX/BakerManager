@@ -7,6 +7,7 @@ package bauplast.crearProductoTerminado;
 import Entities.E_produccionFilm;
 import Interface.InterfaceRecibirProduccionFilm;
 import Produccion.SeleccionCantidadProductoSimple;
+import static Produccion.SeleccionCantidadProductoSimple.PROD_TERMINADO_AGREGAR_ROLLO;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
