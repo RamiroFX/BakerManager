@@ -7,6 +7,8 @@ package bauplast.desperdicio;
 
 import Entities.E_produccionCabecera;
 import Interface.InterfaceRecibirProduccionFilm;
+import Interface.InterfaceRecibirProduccionTerminados;
+import Interface.RecibirProductoCallback;
 import javax.swing.JDialog;
 
 /**
@@ -29,9 +31,14 @@ public class SeleccionarProduccion {
         this.modelo.setProduccionCabecera(produccionCabecera);
     }
 
-    public void setCallback(InterfaceRecibirProduccionFilm callback){
-        this.controlador.setCallback(callback);
+    public void setRolloCallback(InterfaceRecibirProduccionFilm callback) {
+        this.controlador.setRolloCallback(callback);
     }
+
+    public void setProductoTerminadoCallback(InterfaceRecibirProduccionTerminados callback) {
+        this.controlador.setProductoTerminadoCallback(callback);
+    }
+
     public void mostrarVista() {
         this.controlador.mostrarVista();
     }

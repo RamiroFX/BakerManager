@@ -7,6 +7,7 @@ package bauplast.desperdicio;
 
 import Empleado.SeleccionarFuncionario;
 import Entities.E_produccionCabecera;
+import Entities.E_produccionDetalle;
 import Entities.E_produccionFilm;
 import Entities.E_produccionTipo;
 import Entities.E_productoClasificacion;
@@ -14,6 +15,7 @@ import Entities.M_funcionario;
 import Entities.M_menu_item;
 import Entities.M_producto;
 import Interface.InterfaceRecibirProduccionFilm;
+import Interface.InterfaceRecibirProduccionTerminados;
 import Interface.RecibirEmpleadoCallback;
 import Interface.RecibirProductoCallback;
 import Produccion.SeleccionCantidadProductoSimple;
@@ -35,7 +37,7 @@ import javax.swing.JOptionPane;
  * @author Ramiro Ferreira
  */
 class C_crearDesperdicio extends MouseAdapter implements ActionListener, KeyListener,
-        RecibirEmpleadoCallback, InterfaceRecibirProduccionFilm {
+        RecibirEmpleadoCallback, InterfaceRecibirProduccionFilm, InterfaceRecibirProduccionTerminados {
 
     private static final String VALIDAR_RESPONSABLE_MSG = "Seleccione un responsable de producción",
             VALIDAR_ORDEN_TRABAJO_MSG_1 = "Ingrese una orden de trabajo",
@@ -93,7 +95,7 @@ class C_crearDesperdicio extends MouseAdapter implements ActionListener, KeyList
     private void invocarSeleccionDesperdicio() {
         SeleccionarProduccion sp = new SeleccionarProduccion(vista);
         sp.establecerProduccionCabecera(modelo.produccionCabecera.getProduccionCabecera());
-        sp.setCallback(this);
+        sp.setRolloCallback(this);
         sp.mostrarVista();
     }
 
@@ -140,4 +142,13 @@ class C_crearDesperdicio extends MouseAdapter implements ActionListener, KeyList
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
+    @Override
+    public void recibirProductoTerminado(E_produccionDetalle detalle) {
+        modelo.produccionTerminadosTM.agregarDetalle(detalle);
+    }
+
+    @Override
+    public void modificarFilm(int index, E_produccionDetalle detalle) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }

@@ -6,9 +6,11 @@
 package bauplast.desperdicio;
 
 import DB.DB_Produccion;
+import Entities.E_produccionDetalle;
 import Entities.E_produccionFilm;
 import Entities.E_produccionTipo;
 import Interface.InterfaceRecibirProduccionFilm;
+import Interface.InterfaceRecibirProduccionTerminados;
 import Interface.RecibirProductoCallback;
 import Produccion.SeleccionCantidadProductoSimple;
 import static Produccion.SeleccionCantidadProductoSimple.PROD_TERMINADO_AGREGAR_ROLLO;
@@ -34,7 +36,7 @@ public class C_seleccionarProduccion extends MouseAdapter implements ActionListe
     private M_seleccionarProduccion modelo;
     private V_seleccionarProduccion vista;
     private InterfaceRecibirProduccionFilm callback;
-    private RecibirProductoCallback productoCallback;
+    private InterfaceRecibirProduccionTerminados productoCallback;
     private boolean isProductoTerminado;//productoTerminado=true;rollo=false
     private boolean esModoCreacion;
 
@@ -46,12 +48,12 @@ public class C_seleccionarProduccion extends MouseAdapter implements ActionListe
         agregarListeners();
     }
 
-    public void setCallback(InterfaceRecibirProduccionFilm callback) {
+    public void setRolloCallback(InterfaceRecibirProduccionFilm callback) {
         this.isProductoTerminado = false;
         this.callback = callback;
     }
 
-    public void setProductoCallback(RecibirProductoCallback productoCallback) {
+    public void setProductoTerminadoCallback(InterfaceRecibirProduccionTerminados productoCallback) {
         this.isProductoTerminado = true;
         this.productoCallback = productoCallback;
     }
@@ -106,7 +108,17 @@ public class C_seleccionarProduccion extends MouseAdapter implements ActionListe
         if (fila > -1) {
             switch (modelo.obtenerTipoProduccion()) {
                 case E_produccionTipo.PRODUCTO_TERMINADO: {
-                    this.vista.jtProducto.setModel(modelo.getProduccionTerminadosTM());
+                    E_produccionDetalle pf = modelo.getProduccionTerminadosTM().getList().get(fila);
+                    SeleccionCantidadProductoSimple scp = new SeleccionCantidadProductoSimple(vista, -1);
+                    if (esModoCreacion) {
+                        scp.setTipo(SeleccionCantidadProductoSimple.PROD_TERMINADO_AGREGAR_PROD);
+                    } else {
+                        scp.setTipo(SeleccionCantidadProductoSimple.PROD_TERMINADO_MODIFICAR_PROD);
+                    }
+                    scp.setProducto(pf.getProducto());
+                    scp.setProductoCallback(productoCallback);
+                    scp.inicializarVista();
+                    scp.setVisible(true);
                     break;
                 }
                 case E_produccionTipo.ROLLO: {
