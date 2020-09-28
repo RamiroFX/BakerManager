@@ -7,15 +7,16 @@ package bauplast.crearProductoTerminado;
 
 import Empleado.SeleccionarFuncionario;
 import Entities.E_produccionCabecera;
+import Entities.E_produccionDetalle;
 import Entities.E_produccionFilm;
 import Entities.E_produccionTipo;
 import Entities.E_productoClasificacion;
 import Entities.M_funcionario;
 import Entities.M_menu_item;
-import Entities.M_producto;
+import Entities.ProductoCategoria;
 import Interface.InterfaceRecibirProduccionFilm;
+import Interface.InterfaceRecibirProduccionTerminados;
 import Interface.RecibirEmpleadoCallback;
-import Interface.RecibirProductoCallback;
 import Produccion.SeleccionCantidadProductoSimple;
 import Produccion.V_gestionProduccion;
 import bauplast.SeleccionarProductoPorClasif;
@@ -35,7 +36,7 @@ import javax.swing.JOptionPane;
  * @author Ramiro Ferreira
  */
 class C_crearProductoTerminado extends MouseAdapter implements ActionListener, KeyListener,
-        RecibirEmpleadoCallback, InterfaceRecibirProduccionFilm, RecibirProductoCallback {
+        RecibirEmpleadoCallback, InterfaceRecibirProduccionFilm, InterfaceRecibirProduccionTerminados {
 
     private static final String VALIDAR_RESPONSABLE_MSG = "Seleccione un responsable de producción",
             VALIDAR_ORDEN_TRABAJO_MSG_1 = "Ingrese una orden de trabajo",
@@ -182,11 +183,12 @@ class C_crearProductoTerminado extends MouseAdapter implements ActionListener, K
     public void modificarDetalleProdTerminado() {
         int fila = this.vista.jtProduccionDetalle.getSelectedRow();
         if (fila > -1) {
-            M_producto producto = modelo.getProductosTerminadosTM().getList().get(fila).getProducto();
-            SeleccionCantidadProductoSimple scp = new SeleccionCantidadProductoSimple(this.vista, fila);
-            scp.setProducto(producto);
-            scp.setTipo(SeleccionCantidadProductoSimple.PROD_TERMINADO_MODIFICAR_PROD);
-            scp.setProductoCallback(this);
+            E_produccionDetalle pf = modelo.getProductosTerminadosTM().getList().get(fila);
+            SeleccionCantidadProductoSimple scp = new SeleccionCantidadProductoSimple(this.vista, false);
+            scp.setUpdateIndex(fila);
+            scp.setProduccionTerminados(pf);
+            scp.setTipo(SeleccionCantidadProductoSimple.PRODUCCION_TERMINADOS);
+            scp.setProduccionTerminadosCallback(this);
             scp.inicializarVista();
             scp.setVisible(true);
         }
@@ -204,9 +206,10 @@ class C_crearProductoTerminado extends MouseAdapter implements ActionListener, K
                 film.setPesoUtilizado(filmAux.getPesoUtilizado());
                 film.setPesoActual(pesoDisponible + pesoActual);
             }
-            SeleccionCantidadProductoSimple scp = new SeleccionCantidadProductoSimple(this.vista, fila);
+            SeleccionCantidadProductoSimple scp = new SeleccionCantidadProductoSimple(this.vista, false);
+            scp.setUpdateIndex(fila);
+            scp.setTipo(SeleccionCantidadProductoSimple.ROLLO);
             scp.setFilm(film);
-            scp.setTipo(SeleccionCantidadProductoSimple.PROD_TERMINADO_MODIFICAR_ROLLO);
             scp.setFilmCallback(this);
             scp.inicializarVista();
             scp.setVisible(true);
@@ -219,7 +222,10 @@ class C_crearProductoTerminado extends MouseAdapter implements ActionListener, K
             if (esModoCreacion) {
                 modelo.removerRolloUtilizado(fila);
             } else {
-                modelo.removerRolloUtilizadoPosterior(fila);
+                int opcion = JOptionPane.showConfirmDialog(vista, "Confirmar acción", "Atención", JOptionPane.WARNING_MESSAGE, JOptionPane.YES_NO_OPTION);
+                if (opcion == JOptionPane.YES_OPTION) {
+                    modelo.removerRolloUtilizadoPosterior(fila);
+                }
             }
         }
     }
@@ -328,9 +334,9 @@ class C_crearProductoTerminado extends MouseAdapter implements ActionListener, K
 
     private void invocarSeleccionarProducto() {
         SeleccionarProductoPorClasif sp = new SeleccionarProductoPorClasif(vista);
-        E_productoClasificacion pc = new E_productoClasificacion(E_productoClasificacion.PROD_TERMINADO, "");
+        ProductoCategoria pc = new ProductoCategoria(E_productoClasificacion.MATERIA_PRIMA, E_productoClasificacion.S_MATERIA_PRIMA);
         sp.setProductoClasificacion(pc);
-        sp.setProductoCallback(this);
+        sp.setProductoTerminadoCallback(this);
         sp.mostrarVista();
     }
 
@@ -432,7 +438,11 @@ class C_crearProductoTerminado extends MouseAdapter implements ActionListener, K
 
     @Override
     public void recibirFilm(E_produccionFilm detalle) {
-        modelo.agregarRolloUtilizado(detalle);
+        if (esModoCreacion) {
+            modelo.agregarRolloUtilizado(detalle);
+        } else {
+            modelo.agregarRolloUtilizadoPosterior(detalle);
+        }
     }
 
     @Override
@@ -445,30 +455,25 @@ class C_crearProductoTerminado extends MouseAdapter implements ActionListener, K
     }
 
     @Override
-    public void recibirFilmPosterior(E_produccionFilm detalle) {
-        modelo.agregarRolloUtilizadoPosterior(detalle);
-    }
-
-    @Override
-    public void recibirProducto(double cantidad, int precio, double descuento, M_producto producto, String observacion) {
+    public void recibirProductoTerminado(E_produccionDetalle detalle) {
         if (esModoCreacion) {
-            modelo.agregarProductoTerminado(cantidad, producto);
+            modelo.agregarProductoTerminado(detalle);
         } else {
             int opcion = JOptionPane.showConfirmDialog(vista, "Al cargar un nuevo producto ya no se podrá revertir la acción. ¿Está seguro que desea continuar?.", "Atención", JOptionPane.WARNING_MESSAGE, JOptionPane.YES_NO_OPTION);
             if (opcion == JOptionPane.YES_OPTION) {
-                modelo.agregarProductoTerminadoPosterior(cantidad, producto);
+                modelo.agregarProductoTerminadoPosterior(detalle);
             }
         }
     }
 
     @Override
-    public void modificarProducto(int posicion, double cantidad, int precio, double descuento, M_producto producto, String observacion) {
+    public void modificarProductoTerminado(int index, E_produccionDetalle detalle) {
         if (esModoCreacion) {
-            modelo.modificarProductoTerminado(posicion, cantidad);
+            modelo.modificarProductoTerminado(index, detalle.getCantidad());
         } else {
             int opcion = JOptionPane.showConfirmDialog(vista, "Confirmar acción", "Atención", JOptionPane.WARNING_MESSAGE, JOptionPane.YES_NO_OPTION);
             if (opcion == JOptionPane.YES_OPTION) {
-                modelo.modificarProductoTerminadoPosterior(posicion, cantidad);
+                modelo.modificarProductoTerminadoPosterior(index, detalle.getCantidad());
             }
         }
     }

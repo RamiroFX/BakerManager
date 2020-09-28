@@ -55,6 +55,7 @@ public class ProductoParametros extends javax.swing.JDialog implements ActionLis
         initComponents();
         inicializarVista();
         agregarListener();
+        actualizarComboBox();
     }
 
     public void setCallback(InterfaceNotificarCambio callback) {
@@ -72,7 +73,6 @@ public class ProductoParametros extends javax.swing.JDialog implements ActionLis
         this.productoSubCategoriaTm = new ProductoSubCategoriaTableModel();
         this.productoCategoriaTm.setList(DB_Producto.obtenerProductoCategoria());
         this.productoSubCategoriaTm.setList(DB_Producto.obtenerProductoSubCategoria());
-        actualizarComboBox();
     }
 
     private void inicializarVista() {

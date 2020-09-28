@@ -9,6 +9,8 @@ import DB.DB_Producto;
 import DB.DB_manager;
 import Entities.E_produccionCabecera;
 import Entities.E_produccionCabeceraDesperdicio;
+import Entities.E_produccionDetalle;
+import Entities.E_produccionFilm;
 import Entities.E_productoClasificacion;
 import Entities.Estado;
 import Entities.M_producto;
@@ -24,13 +26,14 @@ public class M_crearDesperdicio {
 
     M_producto producto;
     E_produccionCabeceraDesperdicio produccionCabecera;
-    ProduccionDetalleTableModel produccionTerminadosTM;
+    ProduccionDetalleTableModel produccionTerminadosTM, produccionRecuperadosTM;
     ProduccionRolloTableModel produccionRollosTM;
 
     public M_crearDesperdicio() {
         this.producto = new M_producto();
         this.produccionCabecera = new E_produccionCabeceraDesperdicio();
         this.produccionTerminadosTM = new ProduccionDetalleTableModel();
+        this.produccionRecuperadosTM = new ProduccionDetalleTableModel();
         this.produccionRollosTM = new ProduccionRolloTableModel();
     }
 
@@ -70,6 +73,14 @@ public class M_crearDesperdicio {
         return producto;
     }
 
+    public void setProduccionRecuperadosTM(ProduccionDetalleTableModel produccionRecuperadosTM) {
+        this.produccionRecuperadosTM = produccionRecuperadosTM;
+    }
+
+    public ProduccionDetalleTableModel getProduccionRecuperadosTM() {
+        return produccionRecuperadosTM;
+    }
+
     public ArrayList<E_productoClasificacion> obtenerTipoMateriaPrima() {
         return DB_Producto.obtenerProductoCategoriaBauplast();
     }
@@ -88,6 +99,45 @@ public class M_crearDesperdicio {
 
     public int obtenerTipoProduccion() {
         return getProduccionCabecera().getProduccionCabecera().getTipo().getId();
+    }
+
+    public void agregarFilm(E_produccionFilm detalle) {
+        getProduccionRollosTM().agregarDatos(detalle);
+    }
+
+    public void modificarFilm(int index, E_produccionFilm detalle) {
+        getProduccionRollosTM().modificarDatos(index, detalle);
+    }
+
+    public void removerFilm(int index) {
+        getProduccionRollosTM().quitarDatos(index);
+    }
+
+    public void agregarTerminados(E_produccionDetalle detalle) {
+        getProduccionTerminadosTM().agregarDetalle(detalle);
+    }
+
+    public void modificarTerminados(int index, E_produccionDetalle detalle) {
+        getProduccionTerminadosTM().modificarCantidadDetalle(index, detalle.getCantidad());
+    }
+
+    public void removerTerminado(int index) {
+        getProduccionTerminadosTM().quitarDetalle(index);
+    }
+
+    public void agregarRecuperados(double cantidad, M_producto producto) {
+        E_produccionDetalle pd = new E_produccionDetalle();
+        pd.setCantidad(cantidad);
+        pd.setProducto(producto);
+        getProduccionRecuperadosTM().agregarDetalle(pd);
+    }
+
+    public void modificarRecuperados(int posicion, double cantidad) {
+        getProduccionRecuperadosTM().modificarCantidadDetalle(posicion, cantidad);
+    }
+
+    public void removerRecuperado(int index) {
+        getProduccionRecuperadosTM().quitarDetalle(index);
     }
 
 }

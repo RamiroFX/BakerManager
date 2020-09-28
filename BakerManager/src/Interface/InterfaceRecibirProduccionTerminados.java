@@ -15,6 +15,6 @@ public interface InterfaceRecibirProduccionTerminados {
 
     public void recibirProductoTerminado(E_produccionDetalle detalle);
 
-    public void modificarFilm(int index, E_produccionDetalle detalle);
+    public void modificarProductoTerminado(int index, E_produccionDetalle detalle);
 
 }

@@ -15,6 +15,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
 
@@ -69,6 +71,11 @@ public class C_crearFilm implements ActionListener, KeyListener {
     }
 
     private void agregarListeners() {
+        vista.addWindowFocusListener(new WindowAdapter() {
+            public void windowGainedFocus(WindowEvent e) {
+                vista.jtfNroFilm.requestFocusInWindow();
+            }
+        });
         this.vista.jbAceptar.addActionListener(this);
         this.vista.jbCancelar.addActionListener(this);
         this.vista.jtfNroFilm.addActionListener(this);

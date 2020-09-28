@@ -1171,7 +1171,7 @@ public class DB_Producto {
         return list;
     }
 
-    public static ArrayList<M_producto> consultarProductoPorClasificacion(String descripcion, Estado estado, String ordenarPor, E_productoClasificacion clasificacion) {
+    public static ArrayList<M_producto> consultarProductoPorClasificacion(String descripcion, Estado estado, String ordenarPor, ProductoCategoria clasificacion) {
         ArrayList productos = null;
         try {
             if (DB_manager.getConection() == null) {

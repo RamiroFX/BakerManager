@@ -90,17 +90,11 @@ public class M_crearProductoTerminado {
         consultarProduccion();
     }
 
-    public void agregarProductoTerminado(double cantidad, M_producto producto) {
-        E_produccionDetalle produccion = new E_produccionDetalle();
-        produccion.setCantidad(cantidad);
-        produccion.setProducto(producto);
+    public void agregarProductoTerminado(E_produccionDetalle produccion) {
         getProductosTerminadosTM().agregarDetalle(produccion);
     }
 
-    public void agregarProductoTerminadoPosterior(double cantidad, M_producto producto) {
-        E_produccionDetalle produccion = new E_produccionDetalle();
-        produccion.setCantidad(cantidad);
-        produccion.setProducto(producto);
+    public void agregarProductoTerminadoPosterior(E_produccionDetalle produccion) {
         DB_Produccion.insertarProduccionProdTerminadoPosterior(getProduccionCabecera(), produccion);
         consultarProduccion();
     }

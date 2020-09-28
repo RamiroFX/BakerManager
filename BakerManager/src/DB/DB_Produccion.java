@@ -856,7 +856,8 @@ public class DB_Produccion {
             }
             pst.close();
             rs.close();
-            //(nro_film, id_produccion_cabecera, id_produccion_detalle, peso, fecha_creacion, id_funcionario_responsable, cono, medida, micron, id_producto_categoria, id_estado)
+            //(nro_film, id_produccion_cabecera, id_produccion_detalle, peso, fecha_creacion, 
+            //id_funcionario_responsable, cono, medida, micron, id_producto_categoria, id_estado)
             //id_funcionario_responsable, cono, medida, micron, id_producto_categoria, id_estado
             pst = DB_manager.getConection().prepareStatement(INSERT_FILM, PreparedStatement.RETURN_GENERATED_KEYS);
             pst.setInt(1, detalle.getNroFilm());
@@ -867,8 +868,9 @@ public class DB_Produccion {
             pst.setInt(6, produccionCabecera.getFuncionarioProduccion().getId_funcionario());
             pst.setInt(7, detalle.getCono());
             pst.setInt(8, detalle.getMedida());
-            pst.setInt(9, detalle.getProducto().getProductoCategoria().getId());
-            pst.setInt(10, Estado.ACTIVO);
+            pst.setInt(9, detalle.getMicron());
+            pst.setInt(10, detalle.getProductoClasificacion().getId());
+            pst.setInt(11, Estado.ACTIVO);
             pst.executeUpdate();
             rs = pst.getGeneratedKeys();
             if (rs != null && rs.next()) {

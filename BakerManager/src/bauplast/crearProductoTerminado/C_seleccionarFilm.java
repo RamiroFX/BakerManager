@@ -7,7 +7,6 @@ package bauplast.crearProductoTerminado;
 import Entities.E_produccionFilm;
 import Interface.InterfaceRecibirProduccionFilm;
 import Produccion.SeleccionCantidadProductoSimple;
-import static Produccion.SeleccionCantidadProductoSimple.PROD_TERMINADO_AGREGAR_ROLLO;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -22,6 +21,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
+import static Produccion.SeleccionCantidadProductoSimple.ROLLO;
 
 /**
  *
@@ -172,17 +172,8 @@ public class C_seleccionarFilm extends MouseAdapter implements ActionListener, K
         int fila = vista.jtProducto.getSelectedRow();
         if (fila > -1) {
             E_produccionFilm pf = modelo.getTm().getList().get(fila);
-            System.out.println("bauplast.C_seleccionarFilm.seleccionarRollo()");
-            System.out.println("pf: " + pf.getProductoClasificacion().getDescripcion());
-            System.out.println("pf.prod.getCategoria: " + pf.getProducto().getCategoria());
-            SeleccionCantidadProductoSimple scp = new SeleccionCantidadProductoSimple(vista, -1);
-            if (esModoCreacion) {
-                System.out.println("PROD_TERMINADO_AGREGAR_ROLLO");
-                scp.setTipo(SeleccionCantidadProductoSimple.PROD_TERMINADO_AGREGAR_ROLLO);
-            } else {
-                System.out.println("PROD_TERMINADO_ACTUALIZAR_ROLLO");
-                scp.setTipo(SeleccionCantidadProductoSimple.PROD_TERMINADO_ACTUALIZAR_ROLLO);
-            }
+            SeleccionCantidadProductoSimple scp = new SeleccionCantidadProductoSimple(vista, true);
+            scp.setTipo(SeleccionCantidadProductoSimple.ROLLO);
             scp.setFilm(pf);
             scp.setFilmCallback(callback);
             scp.inicializarVista();

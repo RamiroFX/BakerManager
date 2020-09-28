@@ -5,9 +5,11 @@
  */
 package Produccion;
 
+import Entities.E_produccionDetalle;
 import Entities.E_produccionFilm;
 import Entities.M_producto;
 import Interface.InterfaceRecibirProduccionFilm;
+import Interface.InterfaceRecibirProduccionTerminados;
 import Interface.RecibirProductoCallback;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -23,33 +25,36 @@ import net.miginfocom.swing.MigLayout;
  */
 public class SeleccionCantidadProductoSimple extends javax.swing.JDialog implements ActionListener, KeyListener {
 
-    public static final int PROD_TERMINADO_AGREGAR_ROLLO = 1,
-            PROD_TERMINADO_MODIFICAR_ROLLO = 2,
-            PROD_TERMINADO_ACTUALIZAR_ROLLO = 3,
-            PROD_TERMINADO_AGREGAR_PROD = 4,
-            PROD_TERMINADO_MODIFICAR_PROD = 5;
+    public static final int ROLLO = 1,
+            PRODUCTO = 2,
+            PRODUCCION_TERMINADOS = 4;
     private javax.swing.JButton jbCancel;
     private javax.swing.JButton jbOK;
     private javax.swing.JLabel jlProducto, jlCantidad;
     private javax.swing.JTextField jtfProducto, jtfCantidad;
-    int row;
+    int index;
     int tipo;
     M_producto producto;
-    E_produccionFilm film;
+    E_produccionFilm rollo;
+    E_produccionDetalle produccionDetalle;
     Double cantidad;
     //String observacion;
     private RecibirProductoCallback productoCallback;
     private InterfaceRecibirProduccionFilm filmCallback;
-    boolean isProductoTerminado;// productoTerminado=true;rollo=false
+    private InterfaceRecibirProduccionTerminados terminadosCallback;
+    boolean esModoCreacion;
 
-    public SeleccionCantidadProductoSimple(JDialog vista, int index) {
+    public SeleccionCantidadProductoSimple(JDialog vista, boolean esModoCreacion) {
         super(vista, true);
         setTitle("Seleccione una cantidad");
         setSize(new java.awt.Dimension(350, 150));
         setLocationRelativeTo(vista);
-        this.row = index;//row > -1 si es para modificar
-        this.isProductoTerminado = false;
+        this.esModoCreacion = esModoCreacion;
         initComponents();
+    }
+
+    public void setUpdateIndex(int index) {
+        this.index = index;
     }
 
     public void setTipo(int tipo) {
@@ -61,24 +66,39 @@ public class SeleccionCantidadProductoSimple extends javax.swing.JDialog impleme
     }
 
     public void setFilm(E_produccionFilm film) {
-        this.film = film;
+        this.rollo = film;
+    }
+
+    public void setProduccionTerminados(E_produccionDetalle produccionDetalle) {
+        this.produccionDetalle = produccionDetalle;
     }
 
     public void setProductoCallback(RecibirProductoCallback callback) {
-        this.isProductoTerminado = true;
         this.productoCallback = callback;
     }
 
     public void setFilmCallback(InterfaceRecibirProduccionFilm filmCallback) {
-        this.isProductoTerminado = false;
         this.filmCallback = filmCallback;
     }
 
+    public void setProduccionTerminadosCallback(InterfaceRecibirProduccionTerminados terminadosCallback) {
+        this.terminadosCallback = terminadosCallback;
+    }
+
     public void inicializarVista() {
-        if (isProductoTerminado) {
-            jtfProducto.setText(producto.getDescripcion());
-        } else {
-            jtfProducto.setText(film.getProducto().getDescripcion());
+        switch (tipo) {
+            case PRODUCTO: {
+                jtfProducto.setText(producto.getDescripcion());
+                break;
+            }
+            case ROLLO: {
+                jtfProducto.setText(rollo.getProducto().getDescripcion());
+                break;
+            }
+            case PRODUCCION_TERMINADOS: {
+                jtfProducto.setText(produccionDetalle.getProducto().getDescripcion());
+                break;
+            }
         }
     }
 
@@ -119,42 +139,38 @@ public class SeleccionCantidadProductoSimple extends javax.swing.JDialog impleme
         if (!checkearCantidad()) {
             return;
         }
-        System.err.println("isProductoTerminado: " + isProductoTerminado);
-        System.err.println("tipo: " + tipo);
         String cantAux = jtfCantidad.getText().trim().replace(",", ".");
         cantidad = Double.valueOf(cantAux);
-        if (isProductoTerminado) {
-            switch (tipo) {
-                case PROD_TERMINADO_AGREGAR_PROD: {
+        switch (tipo) {
+            case PRODUCTO: {
+                if (esModoCreacion) {
                     productoCallback.recibirProducto(cantidad, 0, 0, producto, "");
-                    break;
+                } else {
+                    productoCallback.modificarProducto(index, cantidad, 0, 0.0, producto, "");
                 }
-                case PROD_TERMINADO_MODIFICAR_PROD: {
-                    productoCallback.modificarProducto(row, cantidad, 0, 0, producto, "");
-                    break;
-                }
+                break;
             }
-        } else {
-            if (!validarPeso()) {
-                return;
+            case ROLLO: {
+                if (!validarPeso()) {
+                    return;
+                }
+                if (esModoCreacion) {
+                    rollo.setPeso(cantidad);
+                    filmCallback.recibirFilm(rollo);
+                } else {
+                    rollo.setPeso(cantidad);
+                    filmCallback.modificarFilm(index, rollo);
+                }
+                break;
             }
-            System.err.println("tipo: " + tipo);
-            switch (tipo) {
-                case PROD_TERMINADO_AGREGAR_ROLLO: {
-                    film.setPeso(cantidad);
-                    filmCallback.recibirFilm(film);
-                    break;
+            case PRODUCCION_TERMINADOS: {
+                produccionDetalle.setCantidad(cantidad);
+                if (esModoCreacion) {
+                    terminadosCallback.recibirProductoTerminado(produccionDetalle);
+                } else {
+                    terminadosCallback.modificarProductoTerminado(index, produccionDetalle);
                 }
-                case PROD_TERMINADO_MODIFICAR_ROLLO: {
-                    film.setPeso(cantidad);
-                    filmCallback.modificarFilm(row, film);
-                    break;
-                }
-                case PROD_TERMINADO_ACTUALIZAR_ROLLO: {
-                    film.setPeso(cantidad);
-                    filmCallback.recibirFilmPosterior(film);
-                    break;
-                }
+                break;
             }
         }
         dispose();
@@ -197,7 +213,7 @@ public class SeleccionCantidadProductoSimple extends javax.swing.JDialog impleme
         //validar que la cantidad ingresada sea menor o igual a la cantidad disponible
         String cantAux = jtfCantidad.getText().trim().replace(",", ".");
         Double peso = Double.valueOf(cantAux);
-        if (peso > film.getPesoActual()) {
+        if (peso > rollo.getPesoActual()) {
             JOptionPane.showMessageDialog(this, "El peso seleccionado supera el disponible", "Parametros incorrectos", JOptionPane.ERROR_MESSAGE);
             return false;
         }

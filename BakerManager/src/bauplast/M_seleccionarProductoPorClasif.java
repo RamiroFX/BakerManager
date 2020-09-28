@@ -20,11 +20,11 @@ import java.util.ArrayList;
 public class M_seleccionarProductoPorClasif {
 
     private SeleccionarProductoRolloTableModel tm;
-    private E_productoClasificacion pc;
+    private ProductoCategoria pc;
 
     public M_seleccionarProductoPorClasif() {
         this.tm = new SeleccionarProductoRolloTableModel();
-        this.pc = new E_productoClasificacion();
+        this.pc = new ProductoCategoria();
     }
 
     public SeleccionarProductoRolloTableModel getTm() {
@@ -35,8 +35,12 @@ public class M_seleccionarProductoPorClasif {
         this.tm = tm;
     }
 
-    public void setPc(E_productoClasificacion pc) {
+    public void setPc(ProductoCategoria pc) {
         this.pc = pc;
+    }
+
+    public ProductoCategoria getPc() {
+        return pc;
     }
 
     public ArrayList<Estado> obtenerEstado() {

@@ -4,12 +4,14 @@
  */
 package bauplast;
 
+import Entities.E_produccionDetalle;
 import bauplast.crearRollo.CrearFilm;
 import Entities.Estado;
 import Entities.M_menu_item;
 import Entities.M_producto;
 import Entities.ProductoCategoria;
 import Interface.InterfaceRecibirProduccionFilm;
+import Interface.InterfaceRecibirProduccionTerminados;
 import Interface.RecibirProductoCallback;
 import MenuPrincipal.DatosUsuario;
 import Produccion.SeleccionCantidadProductoSimple;
@@ -21,6 +23,8 @@ import java.awt.event.MouseEvent;
 import java.awt.EventQueue;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
@@ -35,29 +39,35 @@ import javax.swing.SwingUtilities;
 public class C_seleccionarProductoPorClasif extends MouseAdapter implements ActionListener, KeyListener {
 
     private static final String ENTER_KEY = "Entrar";
+    public static final int PRODUCTO = 1, ROLLO = 2, PRODUCTO_TERMINADO = 3;
 
     private M_seleccionarProductoPorClasif modelo;
     private V_seleccionarProductoPorClasif vista;
-    private InterfaceRecibirProduccionFilm callback;
+    private InterfaceRecibirProduccionFilm filmCallback;
+    private InterfaceRecibirProduccionTerminados terminadosCallback;
     private RecibirProductoCallback productoCallback;
-    private boolean isProductoTerminado;//productoTerminado=true;rollo=false
+    private int tipo;
 
     public C_seleccionarProductoPorClasif(M_seleccionarProductoPorClasif modelo, V_seleccionarProductoPorClasif vista) {
         this.vista = vista;
         this.modelo = modelo;
-        this.isProductoTerminado = false;
         inicializarVista();
         agregarListeners();
     }
 
-    public void setCallback(InterfaceRecibirProduccionFilm callback) {
-        this.isProductoTerminado = false;
-        this.callback = callback;
+    public void setProductoCallback(RecibirProductoCallback productoCallback) {
+        this.tipo = PRODUCTO;
+        this.productoCallback = productoCallback;
     }
 
-    public void setProductoCallback(RecibirProductoCallback productoCallback) {
-        this.isProductoTerminado = true;
-        this.productoCallback = productoCallback;
+    public void setRolloCallback(InterfaceRecibirProduccionFilm callback) {
+        this.tipo = ROLLO;
+        this.filmCallback = callback;
+    }
+
+    public void setProductoTerminadoCallback(InterfaceRecibirProduccionTerminados terminadosCallback) {
+        this.tipo = PRODUCTO_TERMINADO;
+        this.terminadosCallback = terminadosCallback;
     }
 
     public void mostrarVista() {
@@ -101,6 +111,16 @@ public class C_seleccionarProductoPorClasif extends MouseAdapter implements Acti
     }
 
     private void agregarListeners() {
+        
+        vista.addWindowFocusListener(new WindowAdapter() {
+            public void windowGainedFocus(WindowEvent e) {
+                System.out.println(".windowGainedFocus()");
+                System.out.println(".modelo.getPc()(): "+modelo.getPc());
+                System.out.println(".modelo.getPc().id(): "+modelo.getPc().getId());
+                System.out.println(".jcbCategoria.getPc()(): "+vista.jcbCategoria.getSelectedItem());
+                vista.jcbCategoria.setSelectedItem(modelo.getPc());
+            }
+        });
         //ACTION LISTENERS
         this.vista.jbCrearProducto.addActionListener(this);
         this.vista.jbAceptar.addActionListener(this);
@@ -159,20 +179,36 @@ public class C_seleccionarProductoPorClasif extends MouseAdapter implements Acti
         int fila = vista.jtProducto.getSelectedRow();
         if (fila > -1) {
             M_producto producto = modelo.getTm().getProductoList().get(fila);
-            if (isProductoTerminado) {
-                SeleccionCantidadProductoSimple scp = new SeleccionCantidadProductoSimple(vista, -1);
-                scp.setProducto(producto);
-                scp.setProductoCallback(productoCallback);
-                scp.setTipo(SeleccionCantidadProductoSimple.PROD_TERMINADO_AGREGAR_PROD);
-                scp.inicializarVista();
-                scp.setVisible(true);
-            } else {
-                vista.jbAceptar.setEnabled(true);
-                CrearFilm crearFilm = new CrearFilm(this.vista);
-                crearFilm.setCallback(callback);
-                crearFilm.rellenarVista(producto);
-                crearFilm.mostrarVista();
-                vista.jtfBuscar.requestFocusInWindow();
+            switch (tipo) {
+                case PRODUCTO: {
+                    SeleccionCantidadProductoSimple scp = new SeleccionCantidadProductoSimple(vista, true);
+                    scp.setProducto(producto);
+                    scp.setProductoCallback(productoCallback);
+                    scp.setTipo(SeleccionCantidadProductoSimple.PRODUCTO);
+                    scp.inicializarVista();
+                    scp.setVisible(true);
+                    break;
+                }
+                case ROLLO: {
+                    vista.jbAceptar.setEnabled(true);
+                    CrearFilm crearFilm = new CrearFilm(this.vista);
+                    crearFilm.setCallback(filmCallback);
+                    crearFilm.rellenarVista(producto);
+                    crearFilm.mostrarVista();
+                    vista.jtfBuscar.requestFocusInWindow();
+                    break;
+                }
+                case PRODUCTO_TERMINADO: {
+                    SeleccionCantidadProductoSimple scp = new SeleccionCantidadProductoSimple(vista, true);
+                    E_produccionDetalle pd = new E_produccionDetalle();
+                    pd.setProducto(producto);
+                    scp.setProduccionTerminados(pd);
+                    scp.setProduccionTerminadosCallback(terminadosCallback);
+                    scp.setTipo(SeleccionCantidadProductoSimple.PRODUCCION_TERMINADOS);
+                    scp.inicializarVista();
+                    scp.setVisible(true);
+                    break;
+                }
             }
         }
     }
@@ -219,25 +255,9 @@ public class C_seleccionarProductoPorClasif extends MouseAdapter implements Acti
         int fila = this.vista.jtProducto.rowAtPoint(e.getPoint());
         int columna = this.vista.jtProducto.columnAtPoint(e.getPoint());
         if ((fila > -1) && (columna > -1)) {
-            int index = this.vista.jtProducto.getSelectedRow();
-            M_producto producto = modelo.getTm().getProductoList().get(index);
             this.vista.jbAceptar.setEnabled(true);
             if (e.getClickCount() == 2) {
-                if (isProductoTerminado) {
-                    SeleccionCantidadProductoSimple scp = new SeleccionCantidadProductoSimple(vista, -1);
-                    scp.setProducto(producto);
-                    scp.setProductoCallback(productoCallback);
-                    scp.setTipo(SeleccionCantidadProductoSimple.PROD_TERMINADO_AGREGAR_PROD);
-                    scp.inicializarVista();
-                    scp.setVisible(true);
-                } else {
-                    vista.jbAceptar.setEnabled(true);
-                    CrearFilm crearFilm = new CrearFilm(this.vista);
-                    crearFilm.setCallback(callback);
-                    crearFilm.rellenarVista(producto);
-                    crearFilm.mostrarVista();
-                    vista.jtfBuscar.requestFocusInWindow();
-                }
+                seleccionarProducto();
             }
         }
     }

@@ -11,7 +11,8 @@ package Entities;
  */
 public class E_productoClasificacion {
 
-    public static final int PROD_TERMINADO = 4, MATERIA_PRIMA = 5;
+    public static final int PROD_TERMINADO = 5, MATERIA_PRIMA = 4;
+    public static final String S_PROD_TERMINADO = "Productos Terminados", S_MATERIA_PRIMA = "Materias Primas";
 
     int id;
     String descripcion;
@@ -76,4 +77,14 @@ public class E_productoClasificacion {
         // Compare the data members and return accordingly  
         return this.getDescripcion().equals(c.getDescripcion());
     }
+
+//    //Idea from effective Java : Item 9
+//    @Override
+//    public int hashCode() {
+//        int result = 17;
+//        result = 31 * result + descripcion.hashCode();
+//        result = 31 * result + id;
+//        return result;
+//    }
+
 }

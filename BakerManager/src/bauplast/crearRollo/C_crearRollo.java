@@ -13,6 +13,7 @@ import Entities.E_productoClasificacion;
 import Entities.M_funcionario;
 import Entities.M_menu_item;
 import Entities.M_producto;
+import Entities.ProductoCategoria;
 import Interface.InterfaceRecibirProduccionFilm;
 import Interface.RecibirEmpleadoCallback;
 import Interface.RecibirProductoCallback;
@@ -291,7 +292,7 @@ class C_crearRollo extends MouseAdapter implements ActionListener, KeyListener,
 
     private void invocarSeleccionarRollo() {
         SeleccionarProductoPorClasif sp = new SeleccionarProductoPorClasif(vista);
-        E_productoClasificacion pc = new E_productoClasificacion(E_productoClasificacion.MATERIA_PRIMA, "");
+        ProductoCategoria pc = new ProductoCategoria(E_productoClasificacion.MATERIA_PRIMA, E_productoClasificacion.S_MATERIA_PRIMA);
         sp.setProductoClasificacion(pc);
         sp.setCallback(this);
         sp.mostrarVista();
@@ -299,7 +300,7 @@ class C_crearRollo extends MouseAdapter implements ActionListener, KeyListener,
 
     private void invocarSeleccionarMP() {
         SeleccionarProductoPorClasif sp = new SeleccionarProductoPorClasif(vista);
-        E_productoClasificacion pc = new E_productoClasificacion(E_productoClasificacion.MATERIA_PRIMA, "");
+        ProductoCategoria pc = new ProductoCategoria(E_productoClasificacion.MATERIA_PRIMA, E_productoClasificacion.S_MATERIA_PRIMA);
         sp.setProductoClasificacion(pc);
         sp.setProductoCallback(this);
         sp.mostrarVista();
@@ -309,9 +310,10 @@ class C_crearRollo extends MouseAdapter implements ActionListener, KeyListener,
         int fila = this.vista.jtMateriaPrimaUtilizada.getSelectedRow();
         if (fila > -1) {
             M_producto producto = modelo.getMateriaPrimaTM().getList().get(fila).getProducto();
-            SeleccionCantidadProductoSimple scp = new SeleccionCantidadProductoSimple(this.vista, fila);
+            SeleccionCantidadProductoSimple scp = new SeleccionCantidadProductoSimple(this.vista, false);
+            scp.setUpdateIndex(fila);
             scp.setProducto(producto);
-            scp.setTipo(SeleccionCantidadProductoSimple.PROD_TERMINADO_MODIFICAR_PROD);
+            scp.setTipo(SeleccionCantidadProductoSimple.PRODUCTO);
             scp.setProductoCallback(this);
             scp.inicializarVista();
             scp.setVisible(true);
@@ -432,7 +434,7 @@ class C_crearRollo extends MouseAdapter implements ActionListener, KeyListener,
         if (esModoCreacion) {
             modelo.modificarDetalle(index, detalle);
         } else {
-            if(!validarActualizacionPosterior(index, detalle)){
+            if (!validarActualizacionPosterior(index, detalle)) {
                 return;
             }
             modelo.modificarDetallePosterior(index, detalle);
@@ -440,9 +442,6 @@ class C_crearRollo extends MouseAdapter implements ActionListener, KeyListener,
         Utilities.c_packColumn.packColumns(vista.jtProduccionDetalle, 1);
     }
 
-    @Override
-    public void recibirFilmPosterior(E_produccionFilm detalle) {
-    }
 
     @Override
     public void recibirProducto(double cantidad, int precio, double descuento, M_producto producto, String observacion) {
