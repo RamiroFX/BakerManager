@@ -9,12 +9,10 @@ import Entities.E_produccionDetalle;
 import Entities.E_produccionFilm;
 import Entities.E_produccionTipo;
 import Entities.E_productoClasificacion;
-import Entities.M_funcionario;
 import Entities.M_producto;
 import Entities.ProductoCategoria;
 import Interface.InterfaceRecibirProduccionFilm;
 import Interface.InterfaceRecibirProduccionTerminados;
-import Interface.RecibirEmpleadoCallback;
 import Interface.RecibirProductoCallback;
 import Produccion.SeleccionCantidadProductoSimple;
 import bauplast.SeleccionarProductoPorClasif;
@@ -25,13 +23,15 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Calendar;
+import java.util.Date;
+import javax.swing.JOptionPane;
 
 /**
  *
  * @author Ramiro Ferreira
  */
 class C_crearDesperdicio extends MouseAdapter implements ActionListener, KeyListener,
-        RecibirEmpleadoCallback, InterfaceRecibirProduccionFilm, InterfaceRecibirProduccionTerminados, RecibirProductoCallback {
+        InterfaceRecibirProduccionFilm, InterfaceRecibirProduccionTerminados, RecibirProductoCallback {
 
     private static final String VALIDAR_RESPONSABLE_MSG = "Seleccione un responsable de producción",
             VALIDAR_ORDEN_TRABAJO_MSG_1 = "Ingrese una orden de trabajo",
@@ -51,6 +51,7 @@ class C_crearDesperdicio extends MouseAdapter implements ActionListener, KeyList
         this.modelo = modelo;
         this.vista = vista;
         this.esModoCreacion = true;
+        inicializarVista();
         agregarListeners();
     }
 
@@ -59,18 +60,26 @@ class C_crearDesperdicio extends MouseAdapter implements ActionListener, KeyList
         vista.setVisible(true);
     }
 
-    public void inicializarVista() {
+    public void cerrar() {
+        vista.dispose();
+        System.runFinalization();
+    }
+
+    private void inicializarVista() {
         this.vista.jdcFechaEntrega.setDate(Calendar.getInstance().getTime());
         this.vista.jtfFuncionario.setEditable(false);
         this.vista.jtfNroOrdenTrabajo.setEditable(false);
     }
 
-    public void agregarListeners() {
+    private void agregarListeners() {
         this.vista.jbSeleccionarDesperdicio.addActionListener(this);
         this.vista.jbModificarDesperdicio.addActionListener(this);
         this.vista.jbEliminarDesperdicio.addActionListener(this);
         this.vista.jbSeleccionarRecuperado.addActionListener(this);
         this.vista.jbModificarRecuperado.addActionListener(this);
+        this.vista.jbEliminarRecuperado.addActionListener(this);
+        this.vista.jbAceptar.addActionListener(this);
+        this.vista.jbSalir.addActionListener(this);
     }
 
     private void cargarDatos() {
@@ -92,7 +101,16 @@ class C_crearDesperdicio extends MouseAdapter implements ActionListener, KeyList
     private void invocarSeleccionDesperdicio() {
         SeleccionarProduccion sp = new SeleccionarProduccion(vista, true);
         sp.establecerProduccionCabecera(modelo.produccionCabecera.getProduccionCabecera());
-        sp.setRolloCallback(this);
+        switch (modelo.obtenerTipoProduccion()) {
+            case E_produccionTipo.PRODUCTO_TERMINADO: {
+                sp.setProductoTerminadoCallback(this);
+                break;
+            }
+            case E_produccionTipo.ROLLO: {
+                sp.setRolloCallback(this);
+                break;
+            }
+        }
         sp.mostrarVista();
     }
 
@@ -134,7 +152,7 @@ class C_crearDesperdicio extends MouseAdapter implements ActionListener, KeyList
                     if (esModoCreacion) {
                         modelo.removerTerminado(index);
                     } else {
-
+                        modelo.removerTerminadoPosterior(index);
                     }
                     break;
                 }
@@ -142,7 +160,7 @@ class C_crearDesperdicio extends MouseAdapter implements ActionListener, KeyList
                     if (esModoCreacion) {
                         modelo.removerFilm(index);
                     } else {
-
+                        modelo.removerFilmPosterior(index);
                     }
                     break;
                 }
@@ -178,9 +196,69 @@ class C_crearDesperdicio extends MouseAdapter implements ActionListener, KeyList
             if (esModoCreacion) {
                 modelo.removerRecuperado(index);
             } else {
-
+                modelo.removerRecuperadoPosterior(index);
             }
         }
+    }
+
+    private boolean validarFecha() {
+        Date entrega = null;
+        try {
+            entrega = vista.jdcFechaEntrega.getDate();
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(vista, VALIDAR_FECHA_PRODUCCION_MSG_1, "Fecha inválida", JOptionPane.WARNING_MESSAGE);
+            return false;
+        }
+        if (entrega.before(modelo.produccionCabecera.getProduccionCabecera().getFechaProduccion())) {
+            JOptionPane.showMessageDialog(vista, "La fecha del desperdicio no puede ser menor a la de producción", "Fecha inválida", JOptionPane.WARNING_MESSAGE);
+            return false;
+        }
+        return true;
+    }
+
+    private boolean validarObservacion() {
+        String obs = vista.jtfObservacion.getText().trim();
+        if (obs.length() > 200) {
+            JOptionPane.showMessageDialog(vista, "Solo se permiten 200 caracteres en observación. Cant. actual: " + obs.length(), VALIDAR_TITULO, JOptionPane.WARNING_MESSAGE);
+            return false;
+        }
+        return true;
+    }
+
+    private boolean validarFilas() {
+        switch (modelo.obtenerTipoProduccion()) {
+            case E_produccionTipo.PRODUCTO_TERMINADO: {
+                if (modelo.getProduccionTerminadosTM().getList().isEmpty()) {
+                    JOptionPane.showMessageDialog(vista, "Ingrese un desperdicio", VALIDAR_TITULO, JOptionPane.WARNING_MESSAGE);
+                    return false;
+                }
+                break;
+            }
+            case E_produccionTipo.ROLLO: {
+                if (modelo.getProduccionRollosTM().getList().isEmpty()) {
+                    JOptionPane.showMessageDialog(vista, "Ingrese un desperdicio", "Atención", JOptionPane.WARNING_MESSAGE);
+                    return false;
+                }
+                break;
+            }
+        }
+        return true;
+    }
+
+    private void guardar() {
+        if (!validarFilas()) {
+            return;
+        }
+        if (!validarFecha()) {
+            return;
+        }
+        if (!validarObservacion()) {
+            return;
+        }
+        String observacion = vista.jtfObservacion.getText().trim();
+        modelo.produccionCabecera.setObservacion(observacion);
+        modelo.guardar();
+        cerrar();
     }
 
     @Override
@@ -201,6 +279,15 @@ class C_crearDesperdicio extends MouseAdapter implements ActionListener, KeyList
         if (source.equals(vista.jbModificarRecuperado)) {
             invocarModificarRecuperados();
         }
+        if (source.equals(vista.jbEliminarRecuperado)) {
+            eliminarRecuperado();
+        }
+        if (source.equals(vista.jbAceptar)) {
+            guardar();
+        }
+        if (source.equals(vista.jbSalir)) {
+            cerrar();
+        }
     }
 
     @Override
@@ -220,24 +307,32 @@ class C_crearDesperdicio extends MouseAdapter implements ActionListener, KeyList
     }
 
     @Override
-    public void recibirFuncionario(M_funcionario funcionario) {
-    }
-
-    @Override
     public void recibirFilm(E_produccionFilm detalle) {
+        double peso = detalle.getPeso();
+        double pesoDisponible = modelo.obtenerRollo(detalle.getId()).getPesoActual();
+        if (peso > pesoDisponible) {
+            JOptionPane.showMessageDialog(vista, "La cantidad seleccionada supera a la disponible \n Cantidad seleccionada: " + peso + " \n Cantidad disponible: " + pesoDisponible, VALIDAR_TITULO, JOptionPane.WARNING_MESSAGE);
+            return;
+        }
         if (esModoCreacion) {
             modelo.agregarFilm(detalle);
         } else {
-
+            modelo.agregarFilmPosterior(detalle);
         }
     }
 
     @Override
     public void modificarFilm(int index, E_produccionFilm detalle) {
+        double peso = detalle.getPeso();
+        double pesoDisponible = modelo.obtenerRollo(detalle.getId()).getPesoActual();
+        if (peso > pesoDisponible) {
+            JOptionPane.showMessageDialog(vista, "La cantidad seleccionada supera a la disponible \n Cantidad seleccionada: " + peso + " \n Cantidad disponible: " + pesoDisponible, VALIDAR_TITULO, JOptionPane.WARNING_MESSAGE);
+            return;
+        }
         if (esModoCreacion) {
             modelo.modificarFilm(index, detalle);
         } else {
-
+            modelo.modificarFilmPosterior(index, detalle);
         }
     }
 
@@ -246,7 +341,7 @@ class C_crearDesperdicio extends MouseAdapter implements ActionListener, KeyList
         if (esModoCreacion) {
             modelo.agregarTerminados(detalle);
         } else {
-
+            modelo.agregarTerminadosPosterior(detalle);
         }
     }
 
@@ -255,16 +350,16 @@ class C_crearDesperdicio extends MouseAdapter implements ActionListener, KeyList
         if (esModoCreacion) {
             modelo.modificarTerminados(index, detalle);
         } else {
-
+            modelo.modificarTerminadosPosterior(index, detalle);
         }
     }
 
     @Override
     public void recibirProducto(double cantidad, int precio, double descuento, M_producto producto, String observacion) {
         if (esModoCreacion) {
-            modelo.agregarRecuperados(cantidad, producto);
+            modelo.agregarRecuperado(cantidad, producto);
         } else {
-
+            modelo.agregarRecuperadoPosterior(cantidad, producto);
         }
         Utilities.c_packColumn.packColumns(vista.jtDesperdicioRecuperado, 1);
     }
@@ -272,9 +367,10 @@ class C_crearDesperdicio extends MouseAdapter implements ActionListener, KeyList
     @Override
     public void modificarProducto(int posicion, double cantidad, int precio, double descuento, M_producto producto, String observacion) {
         if (esModoCreacion) {
-            modelo.modificarRecuperados(posicion, cantidad);
+            modelo.modificarRecuperado(posicion, cantidad);
         } else {
-
+            //TODO validar estado actual
+            modelo.modificarRecuperadoPosterior(posicion, cantidad);
         }
         Utilities.c_packColumn.packColumns(vista.jtDesperdicioRecuperado, 1);
     }

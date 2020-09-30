@@ -8,7 +8,6 @@ package bauplast.desperdicio;
 import Entities.E_produccionCabecera;
 import Interface.InterfaceRecibirProduccionFilm;
 import Interface.InterfaceRecibirProduccionTerminados;
-import Interface.RecibirProductoCallback;
 import javax.swing.JDialog;
 
 /**

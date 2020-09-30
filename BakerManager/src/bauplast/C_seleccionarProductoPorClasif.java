@@ -110,14 +110,9 @@ public class C_seleccionarProductoPorClasif extends MouseAdapter implements Acti
         this.vista.jcbBuscarPor.addItem("Código");
     }
 
-    private void agregarListeners() {
-        
+    private void agregarListeners() {        
         vista.addWindowFocusListener(new WindowAdapter() {
             public void windowGainedFocus(WindowEvent e) {
-                System.out.println(".windowGainedFocus()");
-                System.out.println(".modelo.getPc()(): "+modelo.getPc());
-                System.out.println(".modelo.getPc().id(): "+modelo.getPc().getId());
-                System.out.println(".jcbCategoria.getPc()(): "+vista.jcbCategoria.getSelectedItem());
                 vista.jcbCategoria.setSelectedItem(modelo.getPc());
             }
         });

@@ -5,8 +5,10 @@
  */
 package bauplast.crearRollo;
 
+import DB.DB_Produccion;
 import DB.DB_Producto;
 import DB.DB_manager;
+import Entities.E_produccionFilm;
 import Entities.E_productoClasificacion;
 import Entities.Estado;
 import Entities.M_producto;
@@ -38,6 +40,11 @@ public class M_crearFilm {
 
     public ArrayList<Estado> obtenerEstado() {
         return DB_manager.obtenerEstados();
+    }
+
+    public boolean existeNroFilm(int nroFilm) {
+        ArrayList<E_produccionFilm> filmes = DB_Produccion.consultarFilmDisponible(nroFilm + "", "Nro. Film", "Ascendente", "Nro. Film", "Todos", false, null, null);
+        return !filmes.isEmpty();
     }
 
 }

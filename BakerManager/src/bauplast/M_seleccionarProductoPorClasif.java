@@ -48,12 +48,10 @@ public class M_seleccionarProductoPorClasif {
     }
 
     public ArrayList<ProductoCategoria> obtenerCategorias() {
-        //return DB_manager.obtenerCategorias();
         return new ArrayList<>(DB_Producto.obtenerProductoCategoria());
     }
 
     public void consultarRollos(String descripcion, Estado estado, String buscarPor, ProductoCategoria categoria) {
-        pc.setId(categoria.getId());
-        this.tm.setList(DB_Producto.consultarProductoPorClasificacion(descripcion, estado, buscarPor, pc));
+        this.tm.setList(DB_Producto.consultarProductoPorClasificacion(descripcion, estado, buscarPor, categoria));
     }
 }

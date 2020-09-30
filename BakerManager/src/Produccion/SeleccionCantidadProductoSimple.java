@@ -214,7 +214,7 @@ public class SeleccionCantidadProductoSimple extends javax.swing.JDialog impleme
         String cantAux = jtfCantidad.getText().trim().replace(",", ".");
         Double peso = Double.valueOf(cantAux);
         if (peso > rollo.getPesoActual()) {
-            JOptionPane.showMessageDialog(this, "El peso seleccionado supera el disponible", "Parametros incorrectos", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "La cantidad seleccionada supera a la disponible \n Cantidad seleccionada: " + peso + " \n Cantidad disponible: " + rollo.getPesoActual(), "Parametros incorrectos", JOptionPane.ERROR_MESSAGE);
             return false;
         }
         return true;

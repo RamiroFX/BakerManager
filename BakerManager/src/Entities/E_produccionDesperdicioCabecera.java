@@ -35,4 +35,12 @@ public class E_produccionDesperdicioCabecera {
         this.observacion = observacion;
     }
 
+    public E_produccionCabecera getProduccionCabecera() {
+        return produccionCabecera;
+    }
+
+    public void setProduccionCabecera(E_produccionCabecera produccionCabecera) {
+        this.produccionCabecera = produccionCabecera;
+    }
+
 }

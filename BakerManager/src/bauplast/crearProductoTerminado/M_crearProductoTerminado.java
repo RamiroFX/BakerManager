@@ -11,7 +11,6 @@ import Entities.E_produccionDetalle;
 import Entities.E_produccionFilm;
 import Entities.E_produccionTipo;
 import Entities.M_menu_item;
-import Entities.M_producto;
 import MenuPrincipal.DatosUsuario;
 import ModeloTabla.ProduccionDetalleTableModel;
 import ModeloTabla.ProduccionRolloTableModel;

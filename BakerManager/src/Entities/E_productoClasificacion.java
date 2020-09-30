@@ -11,8 +11,10 @@ package Entities;
  */
 public class E_productoClasificacion {
 
-    public static final int PROD_TERMINADO = 5, MATERIA_PRIMA = 4;
-    public static final String S_PROD_TERMINADO = "Productos Terminados", S_MATERIA_PRIMA = "Materias Primas";
+    public static final int PROD_TERMINADO = 5, MATERIA_PRIMA = 4, PROD_ROLLOS=23;
+    public static final String S_PROD_TERMINADO = "Productos Terminados", 
+            S_MATERIA_PRIMA = "Materias Primas", 
+            S_PROD_ROLLOS = "Productos en Proceso (Rollos)";
 
     int id;
     String descripcion;
@@ -86,5 +88,4 @@ public class E_productoClasificacion {
 //        result = 31 * result + id;
 //        return result;
 //    }
-
 }

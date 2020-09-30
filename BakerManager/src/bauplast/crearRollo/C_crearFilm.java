@@ -141,6 +141,10 @@ public class C_crearFilm implements ActionListener, KeyListener {
                 JOptionPane.showMessageDialog(vista, "El número de Film debe ser positivo", "Atención", JOptionPane.ERROR_MESSAGE);
                 return false;
             }
+            if (modelo.existeNroFilm(nroFilm)) {
+                JOptionPane.showMessageDialog(vista, "El nro de film ya se encuentra en uso.", "Atención", JOptionPane.ERROR_MESSAGE);
+                return false;
+            }
         } catch (Exception e) {
             JOptionPane.showMessageDialog(vista, "Ingrese un número de Film válido. Solo números enteros y positivos.", "Atención", JOptionPane.ERROR_MESSAGE);
             return false;

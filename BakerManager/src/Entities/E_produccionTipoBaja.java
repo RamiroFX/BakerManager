@@ -11,7 +11,7 @@ package Entities;
  */
 public class E_produccionTipoBaja {
 
-    public static final int PRODUCCION = 1, DESPERDICIO = 2;
+    public static final int PRODUCCION = 1, DESPERDICIO = 2, RECUPERADO = 3;
 
     private int id;
     private String descripcion;

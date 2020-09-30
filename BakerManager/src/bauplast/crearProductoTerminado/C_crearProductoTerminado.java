@@ -334,7 +334,7 @@ class C_crearProductoTerminado extends MouseAdapter implements ActionListener, K
 
     private void invocarSeleccionarProducto() {
         SeleccionarProductoPorClasif sp = new SeleccionarProductoPorClasif(vista);
-        ProductoCategoria pc = new ProductoCategoria(E_productoClasificacion.MATERIA_PRIMA, E_productoClasificacion.S_MATERIA_PRIMA);
+        ProductoCategoria pc = new ProductoCategoria(E_productoClasificacion.PROD_TERMINADO, E_productoClasificacion.S_PROD_TERMINADO);
         sp.setProductoClasificacion(pc);
         sp.setProductoTerminadoCallback(this);
         sp.mostrarVista();

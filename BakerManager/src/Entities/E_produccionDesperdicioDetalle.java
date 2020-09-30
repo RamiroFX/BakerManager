@@ -22,6 +22,18 @@ public class E_produccionDesperdicioDetalle {
         this.tipoBaja = new E_produccionTipoBaja();
     }
 
+    public E_produccionDesperdicioDetalle(E_produccionDetalle unTerminado) {
+        this.producto = unTerminado.getProducto();
+        this.tipoBaja = new E_produccionTipoBaja();
+        this.cantidad = unTerminado.getCantidad();
+    }
+
+    public E_produccionDesperdicioDetalle(E_produccionFilm unRollo) {
+        this.producto = unRollo.getProducto();
+        this.tipoBaja = new E_produccionTipoBaja();
+        this.cantidad = unRollo.getPeso();
+    }
+
     /**
      * @return the id
      */

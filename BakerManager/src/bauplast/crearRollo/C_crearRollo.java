@@ -292,7 +292,7 @@ class C_crearRollo extends MouseAdapter implements ActionListener, KeyListener,
 
     private void invocarSeleccionarRollo() {
         SeleccionarProductoPorClasif sp = new SeleccionarProductoPorClasif(vista);
-        ProductoCategoria pc = new ProductoCategoria(E_productoClasificacion.MATERIA_PRIMA, E_productoClasificacion.S_MATERIA_PRIMA);
+        ProductoCategoria pc = new ProductoCategoria(E_productoClasificacion.PROD_ROLLOS, E_productoClasificacion.S_PROD_ROLLOS);
         sp.setProductoClasificacion(pc);
         sp.setCallback(this);
         sp.mostrarVista();
