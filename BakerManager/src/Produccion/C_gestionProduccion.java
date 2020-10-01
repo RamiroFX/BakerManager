@@ -6,6 +6,7 @@ package Produccion;
 
 import Empleado.SeleccionarFuncionario;
 import Entities.E_produccionCabecera;
+import Entities.E_produccionDesperdicioCabecera;
 import Entities.E_produccionTipo;
 import Entities.Estado;
 import Entities.M_funcionario;
@@ -287,9 +288,13 @@ public class C_gestionProduccion implements GestionInterface, RecibirEmpleadoCal
         int row = this.vista.jtProduccionCabecera.getSelectedRow();
         if (row > -1) {
             E_produccionCabecera pc = modelo.getProduccionCabeceraTM().getList().get(row);
-            CrearDesperdicio bpc = new CrearDesperdicio(this.c_inicio.vista);
-            bpc.setProduccion(pc);
-            bpc.mostrarVista();
+            if (modelo.existeProduccionDesperdicio(pc.getId())) {
+                JOptionPane.showMessageDialog(vista, "Ya existe produccion desperdicio", VALIDAR_TITULO, JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                CrearDesperdicio bpc = new CrearDesperdicio(this.c_inicio.vista);
+                bpc.setProduccion(pc);
+                bpc.mostrarVista();
+            }
         } else {
             JOptionPane.showMessageDialog(vista, "Seleccione una producción", "Atención", JOptionPane.INFORMATION_MESSAGE);
         }

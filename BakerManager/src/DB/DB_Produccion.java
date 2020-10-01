@@ -286,6 +286,65 @@ public class DB_Produccion {
         return list;
     }
 
+    public static E_produccionDesperdicioCabecera obtenerProduccionCabeceraDesperdicio(int idProduccion) {
+        E_produccionDesperdicioCabecera pdc = null;
+        String Query = "SELECT pc.id_produccion_cabecera, "
+                + "pc.nro_orden_trabajo, "
+                + "pc.fecha_registro, "
+                + "pc.fecha_produccion, "
+                + "pc.fecha_vencimiento, "
+                + "pc.id_funcionario_responsable, "
+                + "pc.id_funcionario_usuario, "
+                + "pc.id_produccion_tipo, "
+                + "pc.id_estado,"
+                + "pcd.id_produccion_cabecera_desperdicio, "
+                + "pcd.observacion, "
+                + "(SELECT PRTI.DESCRIPCION FROM PRODUCCION_TIPO PRTI WHERE PRTI.ID_PRODUCCION_TIPO = PC.id_produccion_tipo) \"TIPO_PRODUCCION\", "
+                + "(SELECT ESTA.DESCRIPCION FROM ESTADO ESTA WHERE ESTA.ID_ESTADO = PC.ID_ESTADO) \"ESTADO\", "
+                + "(SELECT P.NOMBRE || ' '|| P.APELLIDO FROM FUNCIONARIO F, PERSONA P WHERE P.ID_PERSONA = F.ID_PERSONA AND F.ID_FUNCIONARIO = PC.id_funcionario_responsable )\"RESPONSABLE\", "
+                + "(SELECT P.NOMBRE || ' '|| P.APELLIDO FROM FUNCIONARIO F, PERSONA P WHERE P.ID_PERSONA = F.ID_PERSONA AND F.ID_FUNCIONARIO = PC.id_funcionario_usuario)\"USUARIO\" "
+                + "FROM produccion_cabecera PC, produccion_cabecera_desperdicio pcd "
+                + "WHERE pcd.id_produccion_cabecera = pc.id_produccion_cabecera "
+                + "AND pcd.id_produccion_cabecera = ? ;";
+        try {
+            pst = DB_manager.getConection().prepareStatement(Query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            pst.setInt(1, idProduccion);
+            rs = pst.executeQuery();
+            while (rs.next()) {
+                M_funcionario responsable = new M_funcionario();
+                responsable.setId_funcionario(rs.getInt("id_funcionario_responsable"));
+                responsable.setNombre(rs.getString("RESPONSABLE"));
+                M_funcionario usuario = new M_funcionario();
+                usuario.setId_funcionario(rs.getInt("id_funcionario_usuario"));
+                usuario.setNombre(rs.getString("USUARIO"));
+                Estado estado = new Estado();
+                estado.setId(rs.getInt("id_estado"));
+                estado.setDescripcion(rs.getString("ESTADO"));
+                E_produccionTipo pt = new E_produccionTipo();
+                pt.setId(rs.getInt("id_produccion_tipo"));
+                pt.setDescripcion(rs.getString("TIPO_PRODUCCION"));
+                E_produccionCabecera pc = new E_produccionCabecera();
+                pc.setFuncionarioProduccion(responsable);
+                pc.setFuncionarioSistema(usuario);
+                pc.setTipo(pt);
+                pc.setEstado(estado);
+                pc.setId(rs.getInt("id_produccion_cabecera"));
+                pc.setNroOrdenTrabajo(rs.getInt("nro_orden_trabajo"));
+                pc.setFechaProduccion(rs.getTimestamp("fecha_produccion"));
+                pc.setFechaRegistro(rs.getTimestamp("fecha_registro"));
+                pc.setFechaVencimiento(rs.getTimestamp("fecha_vencimiento"));
+                pdc = new E_produccionDesperdicioCabecera();
+                pdc.setId(rs.getInt("id_produccion_cabecera_desperdicio"));
+                pdc.setObservacion(rs.getString("observacion"));
+                pdc.setProduccionCabecera(pc);
+            }
+        } catch (SQLException ex) {
+            Logger lgr = Logger.getLogger(DB_Produccion.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        }
+        return pdc;
+    }
+
     public static int insertarProduccionRollosDesperdicio(E_produccionDesperdicioCabecera desperdicioCabecera, List<E_produccionFilm> desperdicio, List<E_produccionDesperdicioDetalle> recuperado) {
         String INSERT_CABECERA = "INSERT INTO produccion_cabecera_desperdicio(id_produccion_cabecera, observacion)VALUES(?, ?);";
         //LA SGBD SE ENCARGA DE INSERTAR EL TIMESTAMP.

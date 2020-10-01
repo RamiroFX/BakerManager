@@ -7,6 +7,7 @@ package Produccion;
 import DB.DB_Egreso;
 import DB.DB_Produccion;
 import DB.DB_manager;
+import Entities.E_produccionDesperdicioCabecera;
 import Entities.E_produccionDetalle;
 import Entities.E_produccionTipo;
 import Entities.Estado;
@@ -113,5 +114,10 @@ public class M_gestionProduccion {
     public Estado getProduccionEstado(int idProduccion) {
         Estado estado = getProduccionCabeceraTM().getList().get(idProduccion).getEstado();
         return estado;
+    }
+    
+    public boolean existeProduccionDesperdicio(int idProduccion){
+        E_produccionDesperdicioCabecera pdc = DB_Produccion.obtenerProduccionCabeceraDesperdicio(idProduccion);
+        return pdc != null;
     }
 }

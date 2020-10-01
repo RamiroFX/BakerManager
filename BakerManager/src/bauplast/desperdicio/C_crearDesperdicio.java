@@ -56,7 +56,7 @@ class C_crearDesperdicio extends MouseAdapter implements ActionListener, KeyList
     }
 
     public void mostrarVista() {
-        cargarDatos();
+        inicializarLogica();
         vista.setVisible(true);
     }
 
@@ -82,7 +82,7 @@ class C_crearDesperdicio extends MouseAdapter implements ActionListener, KeyList
         this.vista.jbSalir.addActionListener(this);
     }
 
-    private void cargarDatos() {
+    private void inicializarLogica() {
         this.vista.jtfFuncionario.setText(modelo.obtenerFuncionario());
         this.vista.jtDesperdicioRecuperado.setModel(modelo.getProduccionRecuperadosTM());
         this.vista.jtfNroOrdenTrabajo.setText(modelo.obtenerOrdenTrabajo());
@@ -96,6 +96,10 @@ class C_crearDesperdicio extends MouseAdapter implements ActionListener, KeyList
                 break;
             }
         }
+    }
+
+    public void cargarDatos() {
+        esModoCreacion = false;
     }
 
     private void invocarSeleccionDesperdicio() {

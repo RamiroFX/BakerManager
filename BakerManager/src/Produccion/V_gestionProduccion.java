@@ -34,7 +34,7 @@ public class V_gestionProduccion extends JInternalFrame {
 
     public JButton jbBuscar, jbBorrar, jbCrearRollo, jbCrearProductoTerminado,
             jbDetalle, jbResumen, jbEmpleado, jbAnular, jbBuscarDetalle,
-            jbCrearDesperdicio;
+            jbCrearDesperdicio, jbBuscarDetalleDesperdicio;
     public JTextField jtfNroOrdenTrabajo, jtfEmpleado;
     public JComboBox<E_produccionTipo> jcbTipoProduccion;
     public JComboBox<Estado> jcbEstado;
@@ -95,12 +95,15 @@ public class V_gestionProduccion extends JInternalFrame {
         jbBuscar = new JButton("Buscar");
         jbBuscar.setName("buscar produccion");
         jbBorrar = new JButton("Borrar");
-        jbBuscarDetalle = new JButton("Buscar producción");
+        jbBuscarDetalle = new JButton("Buscar rollos");
         jbBuscarDetalle.setName("buscar produccion");
+        jbBuscarDetalleDesperdicio = new JButton("Buscar desperdicio");
+        jbBuscarDetalleDesperdicio.setName("buscar produccion desperdicio");
         //jbBuscarDetalle = new JButton("Buscar por detalle");
         jpBotonesTop.add(jbBuscar);
         jpBotonesTop.add(jbBorrar, "wrap");
-        jpBotonesTop.add(jbBuscarDetalle, "span, growx");
+        jpBotonesTop.add(jbBuscarDetalle);
+        jpBotonesTop.add(jbBuscarDetalleDesperdicio);
         //jpBotonesTop.add(jbBuscarDetalle, "span, growx");
         jpTop.add(jpFiltros);
         jpTop.add(jpBotonesTop);
