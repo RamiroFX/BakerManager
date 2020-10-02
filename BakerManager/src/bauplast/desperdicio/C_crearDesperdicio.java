@@ -65,6 +65,13 @@ class C_crearDesperdicio extends MouseAdapter implements ActionListener, KeyList
         System.runFinalization();
     }
 
+    public void esablecerModoActualizacion() {
+        this.esModoCreacion = false;
+        this.vista.jtfFuncionario.setEditable(false);
+        this.vista.jtfNroOrdenTrabajo.setEditable(false);
+        this.modelo.consultarProduccion();
+    }
+
     private void inicializarVista() {
         this.vista.jdcFechaEntrega.setDate(Calendar.getInstance().getTime());
         this.vista.jtfFuncionario.setEditable(false);

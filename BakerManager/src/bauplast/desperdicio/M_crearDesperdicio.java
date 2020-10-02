@@ -14,6 +14,7 @@ import Entities.E_produccionDesperdicioDetalle;
 import Entities.E_produccionDetalle;
 import Entities.E_produccionFilm;
 import Entities.E_produccionTipo;
+import Entities.E_produccionTipoBaja;
 import Entities.E_productoClasificacion;
 import Entities.Estado;
 import Entities.M_producto;
@@ -211,6 +212,19 @@ public class M_crearDesperdicio {
             }
             case E_produccionTipo.ROLLO: {
                 DB_Produccion.insertarProduccionRollosDesperdicio(produccionCabecera, getProduccionRollosTM().getList(), recuperados);
+                break;
+            }
+        }
+    }
+
+    public void consultarProduccion() {
+        switch (obtenerTipoProduccion()) {
+            case E_produccionTipo.PRODUCTO_TERMINADO: {
+                this.produccionRollosTM.setList(DB_Produccion.consultarProduccionDesperdicioDetalleRollo(produccionCabecera.getId(), E_produccionTipoBaja.DESPERDICIO));
+                break;
+            }
+            case E_produccionTipo.ROLLO: {
+                //this.produccionRollosTM.setList(DB_Produccion.consultarProduccionDesperdicioDetalleTerminado(produccionCabecera.getId(), E_produccionTipoBaja.DESPERDICIO));
                 break;
             }
         }

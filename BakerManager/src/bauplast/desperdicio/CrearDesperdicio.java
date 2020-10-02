@@ -27,6 +27,10 @@ public class CrearDesperdicio {
     public void setProduccion(E_produccionCabecera pc) {
         this.modelo.setProduccionCabecera(pc);
     }
+    
+    public void establecerModoActualizacion(){
+        this.controlador.esablecerModoActualizacion();
+    }
 
     public void mostrarVista() {
         this.controlador.mostrarVista();

@@ -288,8 +288,11 @@ public class C_gestionProduccion implements GestionInterface, RecibirEmpleadoCal
         int row = this.vista.jtProduccionCabecera.getSelectedRow();
         if (row > -1) {
             E_produccionCabecera pc = modelo.getProduccionCabeceraTM().getList().get(row);
-            if (modelo.existeProduccionDesperdicio(pc.getId())) {
-                JOptionPane.showMessageDialog(vista, "Ya existe produccion desperdicio", VALIDAR_TITULO, JOptionPane.INFORMATION_MESSAGE);
+            if (modelo.existeProduccionDesperdicio(pc.getId())) {                
+                CrearDesperdicio bpc = new CrearDesperdicio(this.c_inicio.vista);
+                bpc.setProduccion(pc);
+                bpc.establecerModoActualizacion();
+                bpc.mostrarVista();
             } else {
                 CrearDesperdicio bpc = new CrearDesperdicio(this.c_inicio.vista);
                 bpc.setProduccion(pc);
