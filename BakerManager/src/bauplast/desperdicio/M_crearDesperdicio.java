@@ -220,13 +220,14 @@ public class M_crearDesperdicio {
     public void consultarProduccion() {
         switch (obtenerTipoProduccion()) {
             case E_produccionTipo.PRODUCTO_TERMINADO: {
-                this.produccionRollosTM.setList(DB_Produccion.consultarProduccionDesperdicioDetalleRollo(produccionCabecera.getId(), E_produccionTipoBaja.DESPERDICIO));
+                this.produccionTerminadosTM.setList(DB_Produccion.consultarProduccionDesperdicioDetalleTerminado(produccionCabecera.getId(), E_produccionTipoBaja.DESPERDICIO));
                 break;
             }
             case E_produccionTipo.ROLLO: {
-                //this.produccionRollosTM.setList(DB_Produccion.consultarProduccionDesperdicioDetalleTerminado(produccionCabecera.getId(), E_produccionTipoBaja.DESPERDICIO));
+                this.produccionRollosTM.setList(DB_Produccion.consultarProduccionDesperdicioDetalleRollo(produccionCabecera.getId(), E_produccionTipoBaja.DESPERDICIO));
                 break;
             }
         }
+        this.produccionRecuperadosTM.setList(DB_Produccion.consultarProduccionDesperdicioDetalleTerminado(produccionCabecera.getId(), E_produccionTipoBaja.RECUPERADO));
     }
 }

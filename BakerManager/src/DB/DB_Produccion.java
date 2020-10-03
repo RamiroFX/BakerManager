@@ -695,10 +695,9 @@ public class DB_Produccion {
                 throw new IllegalStateException("Connection already closed.");
             }
             String finalQuery = "ORDER BY V.producto ";
-            String Query = "SELECT id_cabecera, nro_orden_trabajo, nro_film, fecha, id_producto, codigo,"
-                    + "producto, cono, medida, micron, peso_producido, peso_utilizado, peso_disponible,"
-                    + "id_categoria, categoria,  "
-                    + "FROM v_produccion_detalle V"
+            String Query = "SELECT id_cabecera, nro_orden_trabajo, nro_film, fecha, id_producto, producto_codigo,"
+                    + "producto, cono, medida, micron, peso, id_categoria, categoria  "
+                    + "FROM v_produccion_film_baja V "
                     + "WHERE id_produccion_cabecera = ? "
                     + "AND id_produccion_tipo_baja = ? "
                     + finalQuery;
@@ -721,9 +720,7 @@ public class DB_Produccion {
                 film.setCono(rs.getInt("cono"));
                 film.setMedida(rs.getInt("medida"));
                 film.setMicron(rs.getInt("micron"));
-                film.setPeso(rs.getDouble("peso_producido"));
-                film.setPesoUtilizado(rs.getDouble("peso_utilizado"));
-                film.setPesoActual(rs.getDouble("peso_disponible"));
+                film.setPeso(rs.getDouble("peso"));
                 E_productoClasificacion productoClasificacion = new E_productoClasificacion();
                 productoClasificacion.setId(rs.getInt("id_categoria"));
                 productoClasificacion.setDescripcion(rs.getString("categoria"));
@@ -738,6 +735,38 @@ public class DB_Produccion {
     }
     
     public static List<E_produccionDetalle> consultarProduccionDesperdicioDetalleTerminado(int idProduccion, int idTipoBaja) {
+        List<E_produccionDetalle> list = null;
+        String QUERY = "SELECT id_produccion_desperdicio, "
+                + "ID_PRODUCTO, "
+                + "CANTIDAD, "
+                + "(SELECT P.DESCRIPCION FROM PRODUCTO P WHERE P.ID_PRODUCTO = pd.ID_PRODUCTO )\"PRODUCTO\", "
+                + "(SELECT P.CODIGO FROM PRODUCTO P WHERE P.ID_PRODUCTO = pd.ID_PRODUCTO )\"CODIGO\" "
+                + "FROM produccion_desperdicio pd "
+                + "WHERE ID_PRODUCCION_CABECERA = ?;";
+
+        try {
+            pst = DB_manager.getConection().prepareStatement(QUERY, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            pst.setInt(1, idProduccion);
+            rs = pst.executeQuery();
+            while (rs.next()) {
+                M_producto producto = new M_producto();
+                producto.setId(rs.getInt("ID_PRODUCTO"));
+                producto.setDescripcion(rs.getString("PRODUCTO"));
+                producto.setCodigo(rs.getString("CODIGO"));
+                E_produccionDetalle pd = new E_produccionDetalle();
+                pd.setId(rs.getInt("id_produccion_desperdicio"));
+                pd.setCantidad(rs.getDouble("CANTIDAD"));
+                pd.setProducto(producto);
+                list.add(pd);
+            }
+        } catch (SQLException ex) {
+            Logger lgr = Logger.getLogger(DB_Egreso.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        }
+        return list;
+    }
+
+    public static List<E_produccionDetalle> consultarProduccionDesperdicioDetalleRecuperado(int idProduccion, int idTipoBaja) {
         List<E_produccionDetalle> list = null;
         String QUERY = "SELECT ID_PRODUCCION_DETALLE, "
                 + "ID_PRODUCTO, "
@@ -768,7 +797,7 @@ public class DB_Produccion {
         }
         return list;
     }
-
+    
     public static List<E_produccionDetalle> consultarUtilizacionMP(int idProduccion) {
         List<E_produccionDetalle> list = new ArrayList<>();
         String QUERY = "SELECT ID_PRODUCCION_FILM_MP_BAJA, "
