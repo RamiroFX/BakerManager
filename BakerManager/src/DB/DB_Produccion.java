@@ -393,7 +393,7 @@ public class DB_Produccion {
             for (E_produccionFilm unRollo : desperdicio) {
                 pst = DB_manager.getConection().prepareStatement(INSERT_PRODUCCION_FILM_BAJA);
                 pst.setInt(1, unRollo.getId());
-                pst.setInt(2, (int) sq_cabecera);
+                pst.setInt(2, desperdicioCabecera.getProduccionCabecera().getId());
                 pst.setDouble(3, unRollo.getPeso());
                 pst.setTimestamp(4, new Timestamp(Calendar.getInstance().getTimeInMillis()));
                 pst.setInt(5, E_produccionTipoBaja.DESPERDICIO);
@@ -470,7 +470,6 @@ public class DB_Produccion {
         String INSERT_CABECERA = "INSERT INTO produccion_cabecera_desperdicio(id_produccion_cabecera, observacion)VALUES(?, ?);";
         //LA SGBD SE ENCARGA DE INSERTAR EL TIMESTAMP.
         String INSERT_DETALLE = "INSERT INTO produccion_desperdicio(id_produccion_cabecera_desperdicio, id_producto, id_produccion_tipo_baja, cantidad, observacion)VALUES (?, ?, ?, ?, ?);";
-        String INSERT_PRODUCCION_FILM_BAJA = "INSERT INTO produccion_film_baja(id_produccion_film, id_produccion_cabecera, peso_utilizado, fecha_utilizado, id_produccion_tipo_baja)VALUES (?, ?, ?, ?, ?);";
         long sq_cabecera = -1L;
         try {
             DB_manager.getConection().setAutoCommit(false);
@@ -714,7 +713,7 @@ public class DB_Produccion {
                 film.setFechaCreacion(rs.getDate("fecha"));
                 M_producto prod = new M_producto();
                 prod.setId(rs.getInt("id_producto"));
-                prod.setCodigo(rs.getString("codigo"));
+                prod.setCodigo(rs.getString("producto_codigo"));
                 prod.setDescripcion(rs.getString("producto"));
                 film.setProducto(prod);
                 film.setCono(rs.getInt("cono"));
@@ -733,20 +732,22 @@ public class DB_Produccion {
         }
         return filmList;
     }
-    
+
     public static List<E_produccionDetalle> consultarProduccionDesperdicioDetalleTerminado(int idProduccion, int idTipoBaja) {
-        List<E_produccionDetalle> list = null;
-        String QUERY = "SELECT id_produccion_desperdicio, "
-                + "ID_PRODUCTO, "
-                + "CANTIDAD, "
+        List<E_produccionDetalle> list = new ArrayList<>();
+        String QUERY = "SELECT pd.id_produccion_desperdicio, "
+                + "pd.ID_PRODUCTO, "
+                + "pd.CANTIDAD, "
                 + "(SELECT P.DESCRIPCION FROM PRODUCTO P WHERE P.ID_PRODUCTO = pd.ID_PRODUCTO )\"PRODUCTO\", "
                 + "(SELECT P.CODIGO FROM PRODUCTO P WHERE P.ID_PRODUCTO = pd.ID_PRODUCTO )\"CODIGO\" "
-                + "FROM produccion_desperdicio pd "
-                + "WHERE ID_PRODUCCION_CABECERA = ?;";
-
+                + "FROM produccion_desperdicio pd, produccion_cabecera_desperdicio pcd "
+                + "WHERE pd.id_produccion_cabecera_desperdicio = pcd.id_produccion_cabecera_desperdicio "
+                + "AND pcd.ID_PRODUCCION_CABECERA = ? "
+                + "AND pd.id_produccion_tipo_baja = ? ;";
         try {
             pst = DB_manager.getConection().prepareStatement(QUERY, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             pst.setInt(1, idProduccion);
+            pst.setInt(2, idTipoBaja);
             rs = pst.executeQuery();
             while (rs.next()) {
                 M_producto producto = new M_producto();
@@ -797,7 +798,7 @@ public class DB_Produccion {
         }
         return list;
     }
-    
+
     public static List<E_produccionDetalle> consultarUtilizacionMP(int idProduccion) {
         List<E_produccionDetalle> list = new ArrayList<>();
         String QUERY = "SELECT ID_PRODUCCION_FILM_MP_BAJA, "

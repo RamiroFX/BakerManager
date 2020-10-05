@@ -29,27 +29,27 @@ import java.util.List;
  */
 public class M_crearDesperdicio {
 
-    E_produccionDesperdicioCabecera produccionCabecera;
+    E_produccionDesperdicioCabecera produccionDesperdicioCabecera;
     ProduccionDetalleTableModel produccionTerminadosTM, produccionRecuperadosTM;
     ProduccionRolloTableModel produccionRollosTM;
 
     public M_crearDesperdicio() {
-        this.produccionCabecera = new E_produccionDesperdicioCabecera();
+        this.produccionDesperdicioCabecera = new E_produccionDesperdicioCabecera();
         this.produccionTerminadosTM = new ProduccionDetalleTableModel();
         this.produccionRecuperadosTM = new ProduccionDetalleTableModel();
         this.produccionRollosTM = new ProduccionRolloTableModel();
     }
 
     public void setProduccionCabecera(E_produccionCabecera pc) {
-        this.produccionCabecera.setProduccionCabecera(pc);
+        this.produccionDesperdicioCabecera.setProduccionCabecera(pc);
     }
 
     public E_produccionDesperdicioCabecera getProduccionCabecera() {
-        return produccionCabecera;
+        return produccionDesperdicioCabecera;
     }
 
     public void setProduccionCabecera(E_produccionDesperdicioCabecera produccionCabecera) {
-        this.produccionCabecera = produccionCabecera;
+        this.produccionDesperdicioCabecera = produccionCabecera;
     }
 
     public ProduccionRolloTableModel getProduccionRollosTM() {
@@ -85,11 +85,11 @@ public class M_crearDesperdicio {
     }
 
     public String obtenerFuncionario() {
-        return this.produccionCabecera.getProduccionCabecera().getFuncionarioProduccion().getNombre();
+        return this.produccionDesperdicioCabecera.getProduccionCabecera().getFuncionarioProduccion().getNombre();
     }
 
     public String obtenerOrdenTrabajo() {
-        return this.produccionCabecera.getProduccionCabecera().getNroOrdenTrabajo() + "";
+        return this.produccionDesperdicioCabecera.getProduccionCabecera().getNroOrdenTrabajo() + "";
     }
 
     public int obtenerTipoProduccion() {
@@ -207,11 +207,11 @@ public class M_crearDesperdicio {
                 for (E_produccionDetalle unTerminado : getProduccionTerminadosTM().getList()) {
                     desperdicios.add(new E_produccionDesperdicioDetalle(unTerminado));
                 }
-                DB_Produccion.insertarProduccionTerminadosDesperdicio(produccionCabecera, desperdicios, recuperados);
+                DB_Produccion.insertarProduccionTerminadosDesperdicio(produccionDesperdicioCabecera, desperdicios, recuperados);
                 break;
             }
             case E_produccionTipo.ROLLO: {
-                DB_Produccion.insertarProduccionRollosDesperdicio(produccionCabecera, getProduccionRollosTM().getList(), recuperados);
+                DB_Produccion.insertarProduccionRollosDesperdicio(produccionDesperdicioCabecera, getProduccionRollosTM().getList(), recuperados);
                 break;
             }
         }
@@ -220,14 +220,14 @@ public class M_crearDesperdicio {
     public void consultarProduccion() {
         switch (obtenerTipoProduccion()) {
             case E_produccionTipo.PRODUCTO_TERMINADO: {
-                this.produccionTerminadosTM.setList(DB_Produccion.consultarProduccionDesperdicioDetalleTerminado(produccionCabecera.getId(), E_produccionTipoBaja.DESPERDICIO));
+                this.produccionTerminadosTM.setList(DB_Produccion.consultarProduccionDesperdicioDetalleTerminado(produccionDesperdicioCabecera.getProduccionCabecera().getId(), E_produccionTipoBaja.DESPERDICIO));
                 break;
             }
             case E_produccionTipo.ROLLO: {
-                this.produccionRollosTM.setList(DB_Produccion.consultarProduccionDesperdicioDetalleRollo(produccionCabecera.getId(), E_produccionTipoBaja.DESPERDICIO));
+                this.produccionRollosTM.setList(DB_Produccion.consultarProduccionDesperdicioDetalleRollo(produccionDesperdicioCabecera.getProduccionCabecera().getId(), E_produccionTipoBaja.DESPERDICIO));
                 break;
             }
         }
-        this.produccionRecuperadosTM.setList(DB_Produccion.consultarProduccionDesperdicioDetalleTerminado(produccionCabecera.getId(), E_produccionTipoBaja.RECUPERADO));
+        this.produccionRecuperadosTM.setList(DB_Produccion.consultarProduccionDesperdicioDetalleTerminado(produccionDesperdicioCabecera.getProduccionCabecera().getId(), E_produccionTipoBaja.RECUPERADO));
     }
 }

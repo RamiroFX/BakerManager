@@ -28,6 +28,7 @@ import net.miginfocom.swing.MigLayout;
  */
 class V_crearDesperdicio extends JDialog {
 
+    public static final String UPDATE_TITLE = "Ver/Modificar Desperdicio";
     public static final String JB_ADD_WASTE = "Agregar desperdicio",
             JB_ADD_WASTE_POST = "Agregar desperdicio Posterior",
             JB_UPDATE_WASTE = "Modificar desperdicio",

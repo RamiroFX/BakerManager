@@ -67,9 +67,12 @@ class C_crearDesperdicio extends MouseAdapter implements ActionListener, KeyList
 
     public void esablecerModoActualizacion() {
         this.esModoCreacion = false;
+        this.vista.setTitle(V_crearDesperdicio.UPDATE_TITLE);
         this.vista.jtfFuncionario.setEditable(false);
         this.vista.jtfNroOrdenTrabajo.setEditable(false);
         this.modelo.consultarProduccion();
+        Utilities.c_packColumn.packColumns(vista.jtProduccionDesperdicio, 1);
+        Utilities.c_packColumn.packColumns(vista.jtDesperdicioRecuperado, 1);
     }
 
     private void inicializarVista() {
@@ -111,7 +114,7 @@ class C_crearDesperdicio extends MouseAdapter implements ActionListener, KeyList
 
     private void invocarSeleccionDesperdicio() {
         SeleccionarProduccion sp = new SeleccionarProduccion(vista, true);
-        sp.establecerProduccionCabecera(modelo.produccionCabecera.getProduccionCabecera());
+        sp.establecerProduccionCabecera(modelo.produccionDesperdicioCabecera.getProduccionCabecera());
         switch (modelo.obtenerTipoProduccion()) {
             case E_produccionTipo.PRODUCTO_TERMINADO: {
                 sp.setProductoTerminadoCallback(this);
@@ -220,7 +223,7 @@ class C_crearDesperdicio extends MouseAdapter implements ActionListener, KeyList
             JOptionPane.showMessageDialog(vista, VALIDAR_FECHA_PRODUCCION_MSG_1, "Fecha inválida", JOptionPane.WARNING_MESSAGE);
             return false;
         }
-        if (entrega.before(modelo.produccionCabecera.getProduccionCabecera().getFechaProduccion())) {
+        if (entrega.before(modelo.produccionDesperdicioCabecera.getProduccionCabecera().getFechaProduccion())) {
             JOptionPane.showMessageDialog(vista, "La fecha del desperdicio no puede ser menor a la de producción", "Fecha inválida", JOptionPane.WARNING_MESSAGE);
             return false;
         }
@@ -267,7 +270,7 @@ class C_crearDesperdicio extends MouseAdapter implements ActionListener, KeyList
             return;
         }
         String observacion = vista.jtfObservacion.getText().trim();
-        modelo.produccionCabecera.setObservacion(observacion);
+        modelo.produccionDesperdicioCabecera.setObservacion(observacion);
         modelo.guardar();
         cerrar();
     }
@@ -330,6 +333,7 @@ class C_crearDesperdicio extends MouseAdapter implements ActionListener, KeyList
         } else {
             modelo.agregarFilmPosterior(detalle);
         }
+        Utilities.c_packColumn.packColumns(vista.jtProduccionDesperdicio, 1);
     }
 
     @Override
@@ -345,6 +349,7 @@ class C_crearDesperdicio extends MouseAdapter implements ActionListener, KeyList
         } else {
             modelo.modificarFilmPosterior(index, detalle);
         }
+        Utilities.c_packColumn.packColumns(vista.jtProduccionDesperdicio, 1);
     }
 
     @Override
@@ -354,6 +359,7 @@ class C_crearDesperdicio extends MouseAdapter implements ActionListener, KeyList
         } else {
             modelo.agregarTerminadosPosterior(detalle);
         }
+        Utilities.c_packColumn.packColumns(vista.jtProduccionDesperdicio, 1);
     }
 
     @Override
@@ -363,6 +369,7 @@ class C_crearDesperdicio extends MouseAdapter implements ActionListener, KeyList
         } else {
             modelo.modificarTerminadosPosterior(index, detalle);
         }
+        Utilities.c_packColumn.packColumns(vista.jtProduccionDesperdicio, 1);
     }
 
     @Override
