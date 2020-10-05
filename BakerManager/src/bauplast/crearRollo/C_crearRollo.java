@@ -442,7 +442,6 @@ class C_crearRollo extends MouseAdapter implements ActionListener, KeyListener,
         Utilities.c_packColumn.packColumns(vista.jtProduccionDetalle, 1);
     }
 
-
     @Override
     public void recibirProducto(double cantidad, int precio, double descuento, M_producto producto, String observacion) {
         if (esModoCreacion) {

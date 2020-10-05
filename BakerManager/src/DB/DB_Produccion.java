@@ -466,6 +466,148 @@ public class DB_Produccion {
         return (int) sq_cabecera;
     }
 
+    public static int insertarProduccionRollosDesperdicioPosterior(E_produccionDesperdicioCabecera desperdicioCabecera, List<E_produccionFilm> desperdicio) {
+        //LA SGBD SE ENCARGA DE INSERTAR EL TIMESTAMP.
+        String INSERT_DESPERDICIO_DETALLE = "INSERT INTO produccion_desperdicio(id_produccion_cabecera_desperdicio, id_producto, id_produccion_tipo_baja, cantidad, observacion)VALUES (?, ?, ?, ?, ?);";
+        String INSERT_PRODUCCION_FILM_BAJA = "INSERT INTO produccion_film_baja(id_produccion_film, id_produccion_cabecera, peso_utilizado, fecha_utilizado, id_produccion_tipo_baja)VALUES (?, ?, ?, ?, ?);";
+        long sq_cabecera = -1L;
+        try {
+            DB_manager.getConection().setAutoCommit(false);
+            /*
+            DESPERDICIO
+            id_produccion_cabecera_desperdicio, id_producto, id_produccion_tipo_baja, cantidad, observacion
+             */
+            for (E_produccionFilm unDesperdicio : desperdicio) {
+                pst = DB_manager.getConection().prepareStatement(INSERT_DESPERDICIO_DETALLE);
+                pst.setInt(1, (int) sq_cabecera);
+                pst.setInt(2, unDesperdicio.getProducto().getId());
+                pst.setInt(3, E_produccionTipoBaja.DESPERDICIO);
+                pst.setDouble(4, unDesperdicio.getPeso());
+                pst.setNull(5, Types.VARCHAR);
+                pst.executeUpdate();
+                pst.close();
+            }
+            //se resta al stock lo que se desperdicio
+            for (E_produccionFilm unDesperdicio : desperdicio) {
+                String query = "UPDATE PRODUCTO SET "
+                        + "CANT_ACTUAL = "
+                        + "((SELECT CANT_ACTUAL FROM PRODUCTO WHERE ID_PRODUCTO = " + unDesperdicio.getProducto().getId() + ")-" + unDesperdicio.getPeso() + ") "
+                        + "WHERE ID_PRODUCTO =" + unDesperdicio.getProducto().getId();
+                st = DB_manager.getConection().createStatement();
+                st.executeUpdate(query);
+            }
+            for (E_produccionFilm unRollo : desperdicio) {
+                pst = DB_manager.getConection().prepareStatement(INSERT_PRODUCCION_FILM_BAJA);
+                pst.setInt(1, unRollo.getId());
+                pst.setInt(2, desperdicioCabecera.getProduccionCabecera().getId());
+                pst.setDouble(3, unRollo.getPeso());
+                pst.setTimestamp(4, new Timestamp(Calendar.getInstance().getTimeInMillis()));
+                pst.setInt(5, E_produccionTipoBaja.DESPERDICIO);
+                pst.executeUpdate();
+                pst.close();
+            }
+            //ACTUALIZAR PESO DE ROLLOS UTILIZADOS
+            for (E_produccionFilm unRollo : desperdicio) {
+                double pesoUtilizado = unRollo.getPeso();
+                double pesoActual = unRollo.getPesoActual();
+                if ((pesoActual - pesoUtilizado) <= 0) {
+                    int idProduccionFilm = unRollo.getId();
+                    String query = "UPDATE produccion_film SET ID_ESTADO = 2 WHERE id_produccion_film =" + idProduccionFilm;
+                    st = DB_manager.getConection().createStatement();
+                    st.executeUpdate(query);
+                }
+            }
+            DB_manager.establecerTransaccion();
+        } catch (SQLException ex) {
+            System.out.println(ex.getNextException());
+            if (DB_manager.getConection() != null) {
+                try {
+                    DB_manager.getConection().rollback();
+                } catch (SQLException ex1) {
+                    Logger lgr = Logger.getLogger(DB_Produccion.class.getName());
+                    lgr.log(Level.WARNING, ex1.getMessage(), ex1);
+                }
+            }
+            Logger lgr = Logger.getLogger(DB_Produccion.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        } finally {
+            try {
+                if (pst != null) {
+                    pst.close();
+                }
+                if (rs != null) {
+                    rs.close();
+                }
+            } catch (SQLException ex) {
+                Logger lgr = Logger.getLogger(DB_Produccion.class.getName());
+                lgr.log(Level.WARNING, ex.getMessage(), ex);
+            }
+        }
+        return (int) sq_cabecera;
+    }
+
+    public static void actualizarProduccionRollosDesperdicioPosterior(E_produccionFilm currentFilm, E_produccionFilm newFilm) {
+        /*
+        String INSERT_PRODUCCION_FILM_BAJA = "INSERT INTO produccion_film_baja(id_produccion_film, id_produccion_cabecera, peso_utilizado, fecha_utilizado, id_produccion_tipo_baja)VALUES (?, ?, ?, ?, ?);";
+         */
+        String UPDATE_DETALLE = "UPDATE produccion_desperdicio SET cantidad = ? WHERE id_produccion_desperdicio = ?;";
+        String UPDATE_DETALLE_FILM_BAJA = "UPDATE produccion_film_baja SET peso_utilizado = ?  WHERE id_produccion_film_baja = ?;";
+        try {
+            DB_manager.getConection().setAutoCommit(false);
+            pst = DB_manager.getConection().prepareStatement(UPDATE_DETALLE);
+            pst.setDouble(1, newFilm.getPeso());
+            //pst.setInt(2, currentFilm.getId());
+            pst.executeUpdate();
+            pst.close();
+
+            pst = DB_manager.getConection().prepareStatement(UPDATE_DETALLE_FILM_BAJA);
+            pst.setDouble(1, newFilm.getPeso());
+            //pst.setInt(2, currentFilm.getId());
+            pst.executeUpdate();
+            pst.close();
+            //se actualiza el stock
+            int idProducto = currentFilm.getProducto().getId();
+            String UPDATE_STOCK = "UPDATE PRODUCTO SET "
+                    + "CANT_ACTUAL = "
+                    + "((SELECT CANT_ACTUAL FROM PRODUCTO WHERE ID_PRODUCTO = " + idProducto + ") ";
+            double cantActual = currentFilm.getPeso();
+            double cantNueva = newFilm.getPeso();
+            double diferencia = Math.abs(cantActual - cantNueva);
+            if (cantNueva > cantActual) {
+                UPDATE_STOCK = UPDATE_STOCK + "-" + diferencia + ") WHERE ID_PRODUCTO = " + idProducto;
+            } else {
+                UPDATE_STOCK = UPDATE_STOCK + "+" + diferencia + ") WHERE ID_PRODUCTO = " + idProducto;
+            }
+            st = DB_manager.getConection().createStatement();
+            st.executeUpdate(UPDATE_STOCK);
+            DB_manager.establecerTransaccion();
+        } catch (SQLException ex) {
+            System.out.println(ex.getNextException());
+            if (DB_manager.getConection() != null) {
+                try {
+                    DB_manager.getConection().rollback();
+                } catch (SQLException ex1) {
+                    Logger lgr = Logger.getLogger(DB_Produccion.class.getName());
+                    lgr.log(Level.WARNING, ex1.getMessage(), ex1);
+                }
+            }
+            Logger lgr = Logger.getLogger(DB_Produccion.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        } finally {
+            try {
+                if (pst != null) {
+                    pst.close();
+                }
+                if (rs != null) {
+                    rs.close();
+                }
+            } catch (SQLException ex) {
+                Logger lgr = Logger.getLogger(DB_Produccion.class.getName());
+                lgr.log(Level.WARNING, ex.getMessage(), ex);
+            }
+        }
+    }
+
     public static int insertarProduccionTerminadosDesperdicio(E_produccionDesperdicioCabecera desperdicioCabecera, List<E_produccionDesperdicioDetalle> desperdicio, List<E_produccionDesperdicioDetalle> recuperado) {
         String INSERT_CABECERA = "INSERT INTO produccion_cabecera_desperdicio(id_produccion_cabecera, observacion)VALUES(?, ?);";
         //LA SGBD SE ENCARGA DE INSERTAR EL TIMESTAMP.

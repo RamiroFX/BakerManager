@@ -320,6 +320,9 @@ class C_crearDesperdicio extends MouseAdapter implements ActionListener, KeyList
     public void keyReleased(KeyEvent e) {
     }
 
+    /*
+    Para cargar bobinas(films)
+     */
     @Override
     public void recibirFilm(E_produccionFilm detalle) {
         double peso = detalle.getPeso();
@@ -352,6 +355,9 @@ class C_crearDesperdicio extends MouseAdapter implements ActionListener, KeyList
         Utilities.c_packColumn.packColumns(vista.jtProduccionDesperdicio, 1);
     }
 
+    /*
+    Para cargar productos terminados
+     */
     @Override
     public void recibirProductoTerminado(E_produccionDetalle detalle) {
         if (esModoCreacion) {
@@ -372,6 +378,9 @@ class C_crearDesperdicio extends MouseAdapter implements ActionListener, KeyList
         Utilities.c_packColumn.packColumns(vista.jtProduccionDesperdicio, 1);
     }
 
+    /*
+    Para cargar materia prima
+     */
     @Override
     public void recibirProducto(double cantidad, int precio, double descuento, M_producto producto, String observacion) {
         if (esModoCreacion) {

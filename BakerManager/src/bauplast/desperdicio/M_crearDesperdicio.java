@@ -105,7 +105,8 @@ public class M_crearDesperdicio {
     }
 
     public void agregarFilmPosterior(E_produccionFilm detalle) {
-        //TODO
+        DB_Produccion.insertarProduccionRollosDesperdicioPosterior(produccionDesperdicioCabecera, getProduccionRollosTM().getList());
+        consultarProduccion();
     }
 
     public void modificarFilm(int index, E_produccionFilm detalle) {
@@ -113,7 +114,9 @@ public class M_crearDesperdicio {
     }
 
     public void modificarFilmPosterior(int index, E_produccionFilm detalle) {
-        //TODO
+        E_produccionFilm currentFilm = getProduccionRollosTM().getList().get(index);
+        DB_Produccion.actualizarProduccionRollosDesperdicioPosterior(currentFilm, detalle);
+        consultarProduccion();
     }
 
     public void removerFilm(int index) {
