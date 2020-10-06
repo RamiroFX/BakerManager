@@ -290,7 +290,7 @@ public class C_gestionProduccion implements GestionInterface, RecibirEmpleadoCal
             E_produccionCabecera pc = modelo.getProduccionCabeceraTM().getList().get(row);
             if (modelo.existeProduccionDesperdicio(pc.getId())) {                
                 CrearDesperdicio bpc = new CrearDesperdicio(this.c_inicio.vista);
-                bpc.setProduccion(pc);
+                bpc.setProduccionCabeceraDesperdicio(modelo.obtenerProduccionDesperdicioCabecera(pc.getId()));
                 bpc.establecerModoActualizacion();
                 bpc.mostrarVista();
             } else {

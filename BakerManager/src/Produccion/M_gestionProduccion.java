@@ -120,4 +120,8 @@ public class M_gestionProduccion {
         E_produccionDesperdicioCabecera pdc = DB_Produccion.obtenerProduccionCabeceraDesperdicio(idProduccion);
         return pdc != null;
     }
+    
+    public E_produccionDesperdicioCabecera obtenerProduccionDesperdicioCabecera(int idProduccion){
+         return DB_Produccion.obtenerProduccionCabeceraDesperdicio(idProduccion);
+    }
 }

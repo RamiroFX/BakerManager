@@ -6,6 +6,7 @@
 package bauplast.desperdicio;
 
 import Entities.E_produccionCabecera;
+import Entities.E_produccionDesperdicioCabecera;
 import javax.swing.JFrame;
 
 /**
@@ -25,6 +26,10 @@ public class CrearDesperdicio {
     }
 
     public void setProduccion(E_produccionCabecera pc) {
+        this.modelo.setProduccionCabecera(pc);
+    }
+
+    public void setProduccionCabeceraDesperdicio(E_produccionDesperdicioCabecera pc) {
         this.modelo.setProduccionCabecera(pc);
     }
     

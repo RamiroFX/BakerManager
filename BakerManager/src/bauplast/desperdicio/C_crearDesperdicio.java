@@ -145,6 +145,10 @@ class C_crearDesperdicio extends MouseAdapter implements ActionListener, KeyList
                 }
                 case E_produccionTipo.ROLLO: {
                     E_produccionFilm pf = modelo.getProduccionRollosTM().getList().get(index);
+                    if(!esModoCreacion){
+                        E_produccionFilm pfAux = modelo.obtenerRollo(pf.getId());
+                        pf.setPesoActual(pfAux.getPesoActual());
+                    }
                     SeleccionCantidadProductoSimple scp = new SeleccionCantidadProductoSimple(vista, false);
                     scp.setUpdateIndex(index);
                     scp.setTipo(SeleccionCantidadProductoSimple.ROLLO);
