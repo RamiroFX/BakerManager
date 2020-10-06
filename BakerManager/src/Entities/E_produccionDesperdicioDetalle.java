@@ -16,10 +16,12 @@ public class E_produccionDesperdicioDetalle {
     private E_produccionTipoBaja tipoBaja;
     private double cantidad;
     private String observacion;
+    private E_produccionDetalle produccionDetalle;
 
     public E_produccionDesperdicioDetalle() {
         this.producto = new M_producto();
         this.tipoBaja = new E_produccionTipoBaja();
+        this.produccionDetalle = new E_produccionDetalle();
     }
 
     public E_produccionDesperdicioDetalle(E_produccionDetalle unTerminado) {
@@ -95,6 +97,14 @@ public class E_produccionDesperdicioDetalle {
      */
     public String getObservacion() {
         return observacion;
+    }
+
+    public E_produccionDetalle getProduccionDetalle() {
+        return produccionDetalle;
+    }
+
+    public void setProduccionDetalle(E_produccionDetalle produccionDetalle) {
+        this.produccionDetalle = produccionDetalle;
     }
 
     /**

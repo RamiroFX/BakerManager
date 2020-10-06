@@ -348,7 +348,7 @@ public class DB_Produccion {
     public static int insertarProduccionRollosDesperdicio(E_produccionDesperdicioCabecera desperdicioCabecera, List<E_produccionFilm> desperdicio, List<E_produccionDesperdicioDetalle> recuperado) {
         String INSERT_CABECERA = "INSERT INTO produccion_cabecera_desperdicio(id_produccion_cabecera, observacion)VALUES(?, ?);";
         //LA SGBD SE ENCARGA DE INSERTAR EL TIMESTAMP.
-        String INSERT_DETALLE = "INSERT INTO produccion_desperdicio(id_produccion_cabecera_desperdicio, id_producto, id_produccion_tipo_baja, cantidad, observacion)VALUES (?, ?, ?, ?, ?);";
+        String INSERT_DETALLE = "INSERT INTO produccion_desperdicio(id_produccion_cabecera_desperdicio, id_producto, id_produccion_tipo_baja, cantidad, observacion, id_produccion_detalle)VALUES (?, ?, ?, ?, ?, ?);";
         String INSERT_PRODUCCION_FILM_BAJA = "INSERT INTO produccion_film_baja(id_produccion_film, id_produccion_cabecera, peso_utilizado, fecha_utilizado, id_produccion_tipo_baja)VALUES (?, ?, ?, ?, ?);";
         long sq_cabecera = -1L;
         try {
@@ -378,6 +378,7 @@ public class DB_Produccion {
                 pst.setInt(3, E_produccionTipoBaja.DESPERDICIO);
                 pst.setDouble(4, unDesperdicio.getPeso());
                 pst.setNull(5, Types.VARCHAR);
+                pst.setInt(6, unDesperdicio.getOrdenTrabajoDetalle());
                 pst.executeUpdate();
                 pst.close();
             }
@@ -468,7 +469,7 @@ public class DB_Produccion {
 
     public static void insertarProduccionRollosDesperdicioPosterior(E_produccionDesperdicioCabecera desperdicioCabecera, E_produccionFilm unDesperdicio) {
         //LA SGBD SE ENCARGA DE INSERTAR EL TIMESTAMP.
-        String INSERT_DESPERDICIO_DETALLE = "INSERT INTO produccion_desperdicio(id_produccion_cabecera_desperdicio, id_producto, id_produccion_tipo_baja, cantidad, observacion)VALUES (?, ?, ?, ?, ?);";
+        String INSERT_DESPERDICIO_DETALLE = "INSERT INTO produccion_desperdicio(id_produccion_cabecera_desperdicio, id_producto, id_produccion_tipo_baja, cantidad, observacion, id_produccion_detalle)VALUES (?, ?, ?, ?, ?, ?);";
         String INSERT_PRODUCCION_FILM_BAJA = "INSERT INTO produccion_film_baja(id_produccion_film, id_produccion_cabecera, peso_utilizado, fecha_utilizado, id_produccion_tipo_baja)VALUES (?, ?, ?, ?, ?);";
         try {
             DB_manager.getConection().setAutoCommit(false);
@@ -482,6 +483,7 @@ public class DB_Produccion {
             pst.setInt(3, E_produccionTipoBaja.DESPERDICIO);
             pst.setDouble(4, unDesperdicio.getPeso());
             pst.setNull(5, Types.VARCHAR);
+            pst.setInt(6, unDesperdicio.getOrdenTrabajoDetalle());
             pst.executeUpdate();
             pst.close();
             //se resta al stock lo que se desperdicio
@@ -601,7 +603,7 @@ public class DB_Produccion {
     public static int insertarProduccionTerminadosDesperdicio(E_produccionDesperdicioCabecera desperdicioCabecera, List<E_produccionDesperdicioDetalle> desperdicio, List<E_produccionDesperdicioDetalle> recuperado) {
         String INSERT_CABECERA = "INSERT INTO produccion_cabecera_desperdicio(id_produccion_cabecera, observacion)VALUES(?, ?);";
         //LA SGBD SE ENCARGA DE INSERTAR EL TIMESTAMP.
-        String INSERT_DETALLE = "INSERT INTO produccion_desperdicio(id_produccion_cabecera_desperdicio, id_producto, id_produccion_tipo_baja, cantidad, observacion)VALUES (?, ?, ?, ?, ?);";
+        String INSERT_DETALLE = "INSERT INTO produccion_desperdicio(id_produccion_cabecera_desperdicio, id_producto, id_produccion_tipo_baja, cantidad, observacion, id_produccion_detalle)VALUES (?, ?, ?, ?, ?, ?);";
         long sq_cabecera = -1L;
         try {
             DB_manager.getConection().setAutoCommit(false);
@@ -634,6 +636,7 @@ public class DB_Produccion {
                 } else {
                     pst.setString(5, unDesperdicio.getObservacion());
                 }
+                pst.setInt(6, unDesperdicio.getId());
                 pst.executeUpdate();
                 pst.close();
             }
@@ -2299,6 +2302,32 @@ public class DB_Produccion {
             lgr.log(Level.SEVERE, ex.getMessage(), ex);
         }
         return pd;
+    }
+
+    public static E_produccionDesperdicioDetalle obtenerProduccionDesperdicioDetalle(int idProduccionDetalle) {
+        E_produccionDesperdicioDetalle pdd = new E_produccionDesperdicioDetalle();
+        String QUERY = "SELECT id_produccion_desperdicio, id_produccion_cabecera_desperdicio, id_producto, "
+                + "id_produccion_tipo_baja, cantidad, observacion,  id_produccion_detalle "
+                + "FROM produccion_desperdicio WHERE id_produccion_detalle = ?;";
+
+        try {
+            pst = DB_manager.getConection().prepareStatement(QUERY, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            pst.setInt(1, idProduccionDetalle);
+            rs = pst.executeQuery();
+            while (rs.next()) {
+                M_producto producto = new M_producto();
+                producto.setId(rs.getInt("id_producto"));
+                E_produccionDetalle pd = new E_produccionDetalle();
+                pd.setId(rs.getInt("id_produccion_detalle"));
+                pdd.setProducto(producto);
+                pdd.setCantidad(rs.getDouble("cantidad"));
+                pdd.setProduccionDetalle(pd);
+            }
+        } catch (SQLException ex) {
+            Logger lgr = Logger.getLogger(DB_Produccion.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        }
+        return pdd;
     }
 
     public static List<E_produccionFilm> consultarProduccionFilm(Integer idProduccion) {
