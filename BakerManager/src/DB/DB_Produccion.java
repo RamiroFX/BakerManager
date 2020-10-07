@@ -538,7 +538,7 @@ public class DB_Produccion {
         }
     }
 
-    public static void actualizarProduccionRollosDesperdicioPosterior(E_produccionFilm currentFilm, E_produccionFilm newFilm) {
+    public static void actualizarProduccionRollosDesperdicioPosterior(E_produccionFilm currentFilm, E_produccionFilm newFilm, int idDesperdicioDetalle, int idFilmBaja) {
         /*
         String INSERT_PRODUCCION_FILM_BAJA = "INSERT INTO produccion_film_baja(id_produccion_film, id_produccion_cabecera, peso_utilizado, fecha_utilizado, id_produccion_tipo_baja)VALUES (?, ?, ?, ?, ?);";
          */
@@ -548,13 +548,13 @@ public class DB_Produccion {
             DB_manager.getConection().setAutoCommit(false);
             pst = DB_manager.getConection().prepareStatement(UPDATE_DETALLE);
             pst.setDouble(1, newFilm.getPeso());
-            pst.setInt(2, currentFilm.getId());
+            pst.setInt(2, idDesperdicioDetalle);
             pst.executeUpdate();
             pst.close();
 
             pst = DB_manager.getConection().prepareStatement(UPDATE_DETALLE_FILM_BAJA);
             pst.setDouble(1, newFilm.getPeso());
-            pst.setInt(2, newFilm.getId());
+            pst.setInt(2, idFilmBaja);
             pst.executeUpdate();
             pst.close();
             //se actualiza el stock
@@ -2169,6 +2169,47 @@ public class DB_Produccion {
         return film;
     }
 
+    public static E_produccionFilm obtenerProduccionFilm(int idProduccionFilm) {
+        E_produccionFilm film = null;
+        try {
+            if (DB_manager.getConection() == null) {
+                throw new IllegalStateException("Connection already closed.");
+            }
+            String Query = "SELECT id_produccion_film, nro_film, id_produccion_cabecera, id_produccion_detalle, "
+                    + "id_producto, producto, peso, fecha_creacion, cono, medida, micron, id_producto_categoria, "
+                    + "categoria, id_estado "
+                    + "FROM v_produccion_film "
+                    + "WHERE id_produccion_film = ?;";
+            pst = DB_manager.getConection().prepareStatement(Query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            pst.setInt(1, idProduccionFilm);
+            rs = pst.executeQuery();
+            while (rs.next()) {
+                film = new E_produccionFilm();
+                film.setId(rs.getInt("id_produccion_film"));
+                film.setOrdenTrabajoCabecera(rs.getInt("id_produccion_cabecera"));
+                film.setOrdenTrabajoDetalle(rs.getInt("id_produccion_detalle"));
+                film.setNroFilm(rs.getInt("nro_film"));
+                film.setFechaCreacion(rs.getDate("fecha_creacion"));
+                M_producto prod = new M_producto();
+                prod.setId(rs.getInt("id_producto"));
+                prod.setDescripcion(rs.getString("producto"));
+                film.setProducto(prod);
+                film.setCono(rs.getInt("cono"));
+                film.setMedida(rs.getInt("medida"));
+                film.setMicron(rs.getInt("micron"));
+                film.setPeso(rs.getDouble("peso"));
+                E_productoClasificacion productoClasificacion = new E_productoClasificacion();
+                productoClasificacion.setId(rs.getInt("id_producto_categoria"));
+                productoClasificacion.setDescripcion(rs.getString("categoria"));
+                film.setProductoClasificacion(productoClasificacion);
+            }
+        } catch (SQLException ex) {
+            Logger lgr = Logger.getLogger(DB_Produccion.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        }
+        return film;
+    }
+    
     public static ArrayList<E_produccionFilm> consultarFilmDisponibleAgrupado(RolloProducidoTableModel cabecera, String descripcion) {
         ArrayList<E_produccionFilm> filmList = null;
         try {
@@ -2319,6 +2360,7 @@ public class DB_Produccion {
                 producto.setId(rs.getInt("id_producto"));
                 E_produccionDetalle pd = new E_produccionDetalle();
                 pd.setId(rs.getInt("id_produccion_detalle"));
+                pdd.setId(rs.getInt("id_produccion_desperdicio"));
                 pdd.setProducto(producto);
                 pdd.setCantidad(rs.getDouble("cantidad"));
                 pdd.setProduccionDetalle(pd);

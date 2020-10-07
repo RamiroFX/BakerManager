@@ -115,10 +115,11 @@ public class M_crearDesperdicio {
 
     public void modificarFilmPosterior(int index, E_produccionFilm detalle) {
         E_produccionFilm currentFilm = getProduccionRollosTM().getList().get(index);
-        detalle.setId(obtenerBajaRollo(currentFilm.getId()).getId());
-        currentFilm.setId(obtenerProduccionDesperdicioDetalle(currentFilm.getOrdenTrabajoDetalle()).getId());
-        System.out.println("bauplast.desperdicio.M_crearDesperdicio.modificarFilmPosterior()");
-        //DB_Produccion.actualizarProduccionRollosDesperdicioPosterior(currentFilm, detalle);
+        int idCurrentFilm = currentFilm.getId();
+        E_produccionFilm currentFilmAux = obtenerProduccionRollo(idCurrentFilm);
+        int pdd = obtenerProduccionDesperdicioDetalle(currentFilmAux.getOrdenTrabajoDetalle()).getId();
+        int bajaRollo = obtenerBajaRollo(currentFilmAux.getId()).getId();
+        DB_Produccion.actualizarProduccionRollosDesperdicioPosterior(currentFilm, detalle, pdd, bajaRollo);
         consultarProduccion();
     }
 
@@ -197,10 +198,14 @@ public class M_crearDesperdicio {
     /*
     FIN MATERIA RECUPERADA CRUD
      */
-    
     public E_produccionFilm obtenerRollo(int idFilm) {
         return DB_Produccion.obtenerFilm(idFilm);
     }
+
+    public E_produccionFilm obtenerProduccionRollo(int idFilm) {
+        return DB_Produccion.obtenerProduccionFilm(idFilm);
+    }
+
     public E_produccionFilm obtenerBajaRollo(int idFilm) {
         return DB_Produccion.obtenerProduccionFilmBaja(idFilm);
     }

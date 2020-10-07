@@ -66,7 +66,12 @@ public class SeleccionCantidadProductoSimple extends javax.swing.JDialog impleme
     }
 
     public void setFilm(E_produccionFilm film) {
-        this.rollo = film;
+        // = film;
+        rollo= new E_produccionFilm();
+        this.rollo.setId(film.getId());
+        this.rollo.setProducto(film.getProducto());
+        this.rollo.setPeso(film.getPeso());
+        this.rollo.setPesoActual(film.getPesoActual());
     }
 
     public void setProduccionTerminados(E_produccionDetalle produccionDetalle) {
