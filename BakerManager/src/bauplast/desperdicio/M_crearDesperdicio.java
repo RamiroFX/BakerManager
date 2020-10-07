@@ -128,7 +128,17 @@ public class M_crearDesperdicio {
     }
 
     public void removerFilmPosterior(int index) {
-        //TODO
+        E_produccionFilm currentFilm = getProduccionRollosTM().getList().get(index);
+        E_produccionFilm currentFilmAux = obtenerProduccionRollo(currentFilm.getId());
+        E_produccionDesperdicioDetalle pdd = obtenerProduccionDesperdicioDetalle(currentFilmAux.getId());
+        E_produccionFilm bajaRollo = obtenerBajaRollo(currentFilmAux.getId());
+        int idProduccionDetalle = currentFilmAux.getId();
+        System.out.println("bauplast.desperdicio.M_crearDesperdicio.removerFilmPosterior()");
+        System.out.println("idDesperdicioDetalle: " + pdd.getId());
+        System.out.println("idBajaRollo: " + bajaRollo.getId());
+        System.out.println("idProduccionDetalle: " + idProduccionDetalle);
+        //DB_Produccion.eliminarProduccionRollosDesperdicioPosterior(pdd, bajaRollo, idProduccionDetalle);
+        consultarProduccion();
     }
 
     /*

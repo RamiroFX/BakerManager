@@ -600,6 +600,63 @@ public class DB_Produccion {
         }
     }
 
+    public static void eliminarProduccionRollosDesperdicioPosterior(int idDesperdicioDetalle, E_produccionFilm filmBaja, int idProduccionFilm) {
+        //LA SGBD SE ENCARGA DE INSERTAR EL TIMESTAMP.
+        String DELETE_DESPERDICIO_DETALLE = "DELETE FROM produccion_desperdicio WHERE id_produccion_desperdicio = ?;";
+        String DELETE_PRODUCCION_FILM_BAJA = "DELETE FROM produccion_film_baja WHERE id_produccion_film_baja = ?;";
+        try {
+            DB_manager.getConection().setAutoCommit(false);
+            pst = DB_manager.getConection().prepareStatement(DELETE_DESPERDICIO_DETALLE);
+            pst.setInt(1, idDesperdicioDetalle);
+            pst.executeUpdate();
+            pst.close();
+            pst = DB_manager.getConection().prepareStatement(DELETE_PRODUCCION_FILM_BAJA);
+            pst.setInt(1, filmBaja.getId());
+            pst.executeUpdate();
+            pst.close();
+            //se resta al stock lo que se desperdicio
+            String query = "UPDATE PRODUCTO SET "
+                    + "CANT_ACTUAL = "
+                    + "((SELECT CANT_ACTUAL FROM PRODUCTO WHERE ID_PRODUCTO = " + filmBaja.getProducto().getId() + ")+" + filmBaja.getPeso() + ") "
+                    + "WHERE ID_PRODUCTO =" + filmBaja.getProducto().getId();
+            st = DB_manager.getConection().createStatement();
+            st.executeUpdate(query);
+            //ACTUALIZAR PESO DE ROLLOS UTILIZADOS
+            double pesoUtilizado = filmBaja.getPeso();
+            double pesoActual = filmBaja.getPesoActual();
+            if ((pesoActual + pesoUtilizado) > 0) {
+                String query2 = "UPDATE produccion_film SET ID_ESTADO = 1 WHERE id_produccion_film =" + idProduccionFilm;
+                st = DB_manager.getConection().createStatement();
+                st.executeUpdate(query2);
+            }
+            DB_manager.establecerTransaccion();
+        } catch (SQLException ex) {
+            System.out.println(ex.getNextException());
+            if (DB_manager.getConection() != null) {
+                try {
+                    DB_manager.getConection().rollback();
+                } catch (SQLException ex1) {
+                    Logger lgr = Logger.getLogger(DB_Produccion.class.getName());
+                    lgr.log(Level.WARNING, ex1.getMessage(), ex1);
+                }
+            }
+            Logger lgr = Logger.getLogger(DB_Produccion.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        } finally {
+            try {
+                if (pst != null) {
+                    pst.close();
+                }
+                if (rs != null) {
+                    rs.close();
+                }
+            } catch (SQLException ex) {
+                Logger lgr = Logger.getLogger(DB_Produccion.class.getName());
+                lgr.log(Level.WARNING, ex.getMessage(), ex);
+            }
+        }
+    }
+
     public static int insertarProduccionTerminadosDesperdicio(E_produccionDesperdicioCabecera desperdicioCabecera, List<E_produccionDesperdicioDetalle> desperdicio, List<E_produccionDesperdicioDetalle> recuperado) {
         String INSERT_CABECERA = "INSERT INTO produccion_cabecera_desperdicio(id_produccion_cabecera, observacion)VALUES(?, ?);";
         //LA SGBD SE ENCARGA DE INSERTAR EL TIMESTAMP.
