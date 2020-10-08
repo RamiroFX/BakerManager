@@ -25,6 +25,7 @@ public class E_produccionDesperdicioDetalle {
     }
 
     public E_produccionDesperdicioDetalle(E_produccionDetalle unTerminado) {
+        this.produccionDetalle = unTerminado;
         this.producto = unTerminado.getProducto();
         this.tipoBaja = new E_produccionTipoBaja();
         this.cantidad = unTerminado.getCantidad();

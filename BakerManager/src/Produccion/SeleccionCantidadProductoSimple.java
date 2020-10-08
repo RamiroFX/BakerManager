@@ -75,7 +75,11 @@ public class SeleccionCantidadProductoSimple extends javax.swing.JDialog impleme
     }
 
     public void setProduccionTerminados(E_produccionDetalle produccionDetalle) {
-        this.produccionDetalle = produccionDetalle;
+        //this.produccionDetalle = produccionDetalle;
+        this.produccionDetalle = new E_produccionDetalle();
+        this.produccionDetalle.setId(produccionDetalle.getId());
+        this.produccionDetalle.setProducto(produccionDetalle.getProducto());
+        this.produccionDetalle.setCantidad(produccionDetalle.getCantidad());
     }
 
     public void setProductoCallback(RecibirProductoCallback callback) {

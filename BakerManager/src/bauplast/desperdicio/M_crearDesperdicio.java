@@ -130,14 +130,11 @@ public class M_crearDesperdicio {
     public void removerFilmPosterior(int index) {
         E_produccionFilm currentFilm = getProduccionRollosTM().getList().get(index);
         E_produccionFilm currentFilmAux = obtenerProduccionRollo(currentFilm.getId());
-        E_produccionDesperdicioDetalle pdd = obtenerProduccionDesperdicioDetalle(currentFilmAux.getId());
+        E_produccionDesperdicioDetalle pdd = obtenerProduccionDesperdicioDetalle(currentFilmAux.getOrdenTrabajoDetalle());
         E_produccionFilm bajaRollo = obtenerBajaRollo(currentFilmAux.getId());
-        int idProduccionDetalle = currentFilmAux.getId();
-        System.out.println("bauplast.desperdicio.M_crearDesperdicio.removerFilmPosterior()");
-        System.out.println("idDesperdicioDetalle: " + pdd.getId());
-        System.out.println("idBajaRollo: " + bajaRollo.getId());
-        System.out.println("idProduccionDetalle: " + idProduccionDetalle);
-        //DB_Produccion.eliminarProduccionRollosDesperdicioPosterior(pdd, bajaRollo, idProduccionDetalle);
+        bajaRollo.setPesoActual(obtenerRollo(currentFilmAux.getId()).getPesoActual());
+        int idProduccionDetalle = currentFilmAux.getOrdenTrabajoDetalle();
+        DB_Produccion.eliminarProduccionRollosDesperdicioPosterior(pdd.getId(), bajaRollo, idProduccionDetalle);
         consultarProduccion();
     }
 
@@ -152,7 +149,9 @@ public class M_crearDesperdicio {
     }
 
     public void agregarTerminadosPosterior(E_produccionDetalle detalle) {
-        //TODO
+        E_produccionDesperdicioDetalle unDesperdicio = new E_produccionDesperdicioDetalle(detalle);
+        DB_Produccion.insertarProduccionTerminadosDesperdicioPosterior(produccionDesperdicioCabecera, unDesperdicio);
+        consultarProduccion();
     }
 
     public void modificarTerminados(int index, E_produccionDetalle detalle) {
@@ -160,7 +159,10 @@ public class M_crearDesperdicio {
     }
 
     public void modificarTerminadosPosterior(int index, E_produccionDetalle detalle) {
-        //TODO
+        E_produccionDetalle currentDetalle = getProduccionTerminadosTM().getList().get(index);
+        E_produccionDesperdicioDetalle unDesperdicio = new E_produccionDesperdicioDetalle(currentDetalle);
+        DB_Produccion.actualizarProduccionTerminadosDesperdicioPosterior(unDesperdicio, detalle.getCantidad());
+        consultarProduccion();
     }
 
     public void removerTerminado(int index) {
@@ -212,6 +214,10 @@ public class M_crearDesperdicio {
         return DB_Produccion.obtenerFilm(idFilm);
     }
 
+    public E_produccionDetalle obtenerProduccionDetalle(int idProduccionDetalle) {
+        return DB_Produccion.obtenerProduccionDetalle(idProduccionDetalle);
+    }
+
     public E_produccionFilm obtenerProduccionRollo(int idFilm) {
         return DB_Produccion.obtenerProduccionFilm(idFilm);
     }
@@ -222,6 +228,9 @@ public class M_crearDesperdicio {
 
     public E_produccionDesperdicioDetalle obtenerProduccionDesperdicioDetalle(int idProduccionDetalle) {
         return DB_Produccion.obtenerProduccionDesperdicioDetalle(idProduccionDetalle);
+    }
+    public E_produccionDesperdicioDetalle obtenerProduccionDesperdicioDetallePorId(int idProduccionDesperdicioDetalle) {
+        return DB_Produccion.obtenerProduccionDesperdicioDetallePorId(idProduccionDesperdicioDetalle);
     }
 
     public void guardar() {

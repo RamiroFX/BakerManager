@@ -693,7 +693,7 @@ public class DB_Produccion {
                 } else {
                     pst.setString(5, unDesperdicio.getObservacion());
                 }
-                pst.setInt(6, unDesperdicio.getId());
+                pst.setInt(6, unDesperdicio.getProduccionDetalle().getId());
                 pst.executeUpdate();
                 pst.close();
             }
@@ -759,6 +759,117 @@ public class DB_Produccion {
             }
         }
         return (int) sq_cabecera;
+    }
+
+    public static void insertarProduccionTerminadosDesperdicioPosterior(E_produccionDesperdicioCabecera desperdicioCabecera, E_produccionDesperdicioDetalle unDesperdicio) {
+        String INSERT_DETALLE = "INSERT INTO produccion_desperdicio(id_produccion_cabecera_desperdicio, id_producto, id_produccion_tipo_baja, cantidad, observacion, id_produccion_detalle)VALUES (?, ?, ?, ?, ?, ?);";
+        try {
+            DB_manager.getConection().setAutoCommit(false);
+            pst = DB_manager.getConection().prepareStatement(INSERT_DETALLE);
+            pst.setInt(1, desperdicioCabecera.getId());
+            pst.setInt(2, unDesperdicio.getProducto().getId());
+            pst.setInt(3, E_produccionTipoBaja.DESPERDICIO);
+            pst.setDouble(4, unDesperdicio.getCantidad());
+            if (unDesperdicio.getObservacion() == null || unDesperdicio.getObservacion().trim().isEmpty()) {
+                pst.setNull(5, Types.VARCHAR);
+            } else {
+                pst.setString(5, unDesperdicio.getObservacion());
+            }
+            pst.setInt(6, unDesperdicio.getProduccionDetalle().getId());
+            pst.executeUpdate();
+            pst.close();
+            //se resta al stock lo que se desperdicio
+            String query = "UPDATE PRODUCTO SET "
+                    + "CANT_ACTUAL = "
+                    + "((SELECT CANT_ACTUAL FROM PRODUCTO WHERE ID_PRODUCTO = " + unDesperdicio.getProducto().getId() + ")-" + unDesperdicio.getCantidad() + ") "
+                    + "WHERE ID_PRODUCTO =" + unDesperdicio.getProducto().getId();
+            st = DB_manager.getConection().createStatement();
+            st.executeUpdate(query);
+            DB_manager.establecerTransaccion();
+        } catch (SQLException ex) {
+            System.out.println(ex.getNextException());
+            if (DB_manager.getConection() != null) {
+                try {
+                    DB_manager.getConection().rollback();
+                } catch (SQLException ex1) {
+                    Logger lgr = Logger.getLogger(DB_Produccion.class.getName());
+                    lgr.log(Level.WARNING, ex1.getMessage(), ex1);
+                }
+            }
+            Logger lgr = Logger.getLogger(DB_Produccion.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        } finally {
+            try {
+                if (pst != null) {
+                    pst.close();
+                }
+                if (rs != null) {
+                    rs.close();
+                }
+            } catch (SQLException ex) {
+                Logger lgr = Logger.getLogger(DB_Produccion.class.getName());
+                lgr.log(Level.WARNING, ex.getMessage(), ex);
+            }
+        }
+    }
+
+    public static void actualizarProduccionTerminadosDesperdicioPosterior(E_produccionDesperdicioDetalle unDesperdicio, double newCant) {
+        String UPDATE_DETALLE = "UPDATE produccion_desperdicio SET "
+                + "cantidad=?, observacion=? "
+                + "WHERE id_produccion_desperdicio=?;";
+        try {
+            DB_manager.getConection().setAutoCommit(false);
+            pst = DB_manager.getConection().prepareStatement(UPDATE_DETALLE);
+            pst.setDouble(1, newCant);
+            if (unDesperdicio.getObservacion() == null || unDesperdicio.getObservacion().trim().isEmpty()) {
+                pst.setNull(2, Types.VARCHAR);
+            } else {
+                pst.setString(2, unDesperdicio.getObservacion());
+            }
+            pst.setInt(3, unDesperdicio.getProduccionDetalle().getId());
+            pst.executeUpdate();
+            pst.close();
+            //se actualiza el stock
+            int idProducto = unDesperdicio.getProducto().getId();
+            String UPDATE_STOCK = "UPDATE PRODUCTO SET "
+                    + "CANT_ACTUAL = "
+                    + "((SELECT CANT_ACTUAL FROM PRODUCTO WHERE ID_PRODUCTO = " + idProducto + ") ";
+            double cantActual = unDesperdicio.getCantidad();
+            double cantNueva = newCant;
+            double diferencia = Math.abs(cantActual - cantNueva);
+            if (cantNueva > cantActual) {
+                UPDATE_STOCK = UPDATE_STOCK + "-" + diferencia + ") WHERE ID_PRODUCTO = " + idProducto;
+            } else {
+                UPDATE_STOCK = UPDATE_STOCK + "+" + diferencia + ") WHERE ID_PRODUCTO = " + idProducto;
+            }
+            st = DB_manager.getConection().createStatement();
+            st.executeUpdate(UPDATE_STOCK);
+            DB_manager.establecerTransaccion();
+        } catch (SQLException ex) {
+            System.out.println(ex.getNextException());
+            if (DB_manager.getConection() != null) {
+                try {
+                    DB_manager.getConection().rollback();
+                } catch (SQLException ex1) {
+                    Logger lgr = Logger.getLogger(DB_Produccion.class.getName());
+                    lgr.log(Level.WARNING, ex1.getMessage(), ex1);
+                }
+            }
+            Logger lgr = Logger.getLogger(DB_Produccion.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        } finally {
+            try {
+                if (pst != null) {
+                    pst.close();
+                }
+                if (rs != null) {
+                    rs.close();
+                }
+            } catch (SQLException ex) {
+                Logger lgr = Logger.getLogger(DB_Produccion.class.getName());
+                lgr.log(Level.WARNING, ex.getMessage(), ex);
+            }
+        }
     }
 
     public static List<E_produccionCabecera> consultarRollosUtilizados(Date inicio, Date fin, int nroOT, int idEstado, int idFuncionario, boolean conFecha) {
@@ -877,6 +988,37 @@ public class DB_Produccion {
             lgr.log(Level.SEVERE, ex.getMessage(), ex);
         }
         return list;
+    }
+    
+    public static E_produccionDetalle obtenerProduccionDetalle(int idProduccionDetalle) {
+        E_produccionDetalle pd = null;
+        String QUERY = "SELECT ID_PRODUCCION_DETALLE, "
+                + "ID_PRODUCTO, "
+                + "CANTIDAD, "
+                + "(SELECT P.DESCRIPCION FROM PRODUCTO P WHERE P.ID_PRODUCTO = PRODUCCION_DETALLE.ID_PRODUCTO )\"PRODUCTO\", "
+                + "(SELECT P.CODIGO FROM PRODUCTO P WHERE P.ID_PRODUCTO = PRODUCCION_DETALLE.ID_PRODUCTO )\"CODIGO\" "
+                + "FROM PRODUCCION_DETALLE "
+                + "WHERE ID_PRODUCCION_DETALLE = ?;";
+
+        try {
+            pst = DB_manager.getConection().prepareStatement(QUERY, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            pst.setInt(1, idProduccionDetalle);
+            rs = pst.executeQuery();
+            while (rs.next()) {
+                M_producto producto = new M_producto();
+                producto.setId(rs.getInt("ID_PRODUCTO"));
+                producto.setDescripcion(rs.getString("PRODUCTO"));
+                producto.setCodigo(rs.getString("CODIGO"));
+                pd = new E_produccionDetalle();
+                pd.setId(rs.getInt("ID_PRODUCCION_DETALLE"));
+                pd.setCantidad(rs.getDouble("CANTIDAD"));
+                pd.setProducto(producto);
+            }
+        } catch (SQLException ex) {
+            Logger lgr = Logger.getLogger(DB_Egreso.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        }
+        return pd;
     }
 
     public static List<E_produccionFilm> consultarProduccionDesperdicioDetalleRollo(int idProduccion, int idTipoBaja) {
@@ -2266,7 +2408,7 @@ public class DB_Produccion {
         }
         return film;
     }
-    
+
     public static ArrayList<E_produccionFilm> consultarFilmDisponibleAgrupado(RolloProducidoTableModel cabecera, String descripcion) {
         ArrayList<E_produccionFilm> filmList = null;
         try {
@@ -2411,6 +2553,33 @@ public class DB_Produccion {
         try {
             pst = DB_manager.getConection().prepareStatement(QUERY, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             pst.setInt(1, idProduccionDetalle);
+            rs = pst.executeQuery();
+            while (rs.next()) {
+                M_producto producto = new M_producto();
+                producto.setId(rs.getInt("id_producto"));
+                E_produccionDetalle pd = new E_produccionDetalle();
+                pd.setId(rs.getInt("id_produccion_detalle"));
+                pdd.setId(rs.getInt("id_produccion_desperdicio"));
+                pdd.setProducto(producto);
+                pdd.setCantidad(rs.getDouble("cantidad"));
+                pdd.setProduccionDetalle(pd);
+            }
+        } catch (SQLException ex) {
+            Logger lgr = Logger.getLogger(DB_Produccion.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        }
+        return pdd;
+    }
+    
+    public static E_produccionDesperdicioDetalle obtenerProduccionDesperdicioDetallePorId(int idProduccionDesperdicioDetalle) {
+        E_produccionDesperdicioDetalle pdd = new E_produccionDesperdicioDetalle();
+        String QUERY = "SELECT id_produccion_desperdicio, id_produccion_cabecera_desperdicio, id_producto, "
+                + "id_produccion_tipo_baja, cantidad, observacion,  id_produccion_detalle "
+                + "FROM produccion_desperdicio WHERE id_produccion_desperdicio = ?;";
+
+        try {
+            pst = DB_manager.getConection().prepareStatement(QUERY, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            pst.setInt(1, idProduccionDesperdicioDetalle);
             rs = pst.executeQuery();
             while (rs.next()) {
                 M_producto producto = new M_producto();

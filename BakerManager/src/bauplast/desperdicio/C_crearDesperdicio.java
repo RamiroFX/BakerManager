@@ -145,7 +145,7 @@ class C_crearDesperdicio extends MouseAdapter implements ActionListener, KeyList
                 }
                 case E_produccionTipo.ROLLO: {
                     E_produccionFilm pf = modelo.getProduccionRollosTM().getList().get(index);
-                    if(!esModoCreacion){
+                    if (!esModoCreacion) {
                         E_produccionFilm pfAux = modelo.obtenerRollo(pf.getId());
                         pf.setPesoActual(pfAux.getPesoActual());
                     }
@@ -170,7 +170,10 @@ class C_crearDesperdicio extends MouseAdapter implements ActionListener, KeyList
                     if (esModoCreacion) {
                         modelo.removerTerminado(index);
                     } else {
-                        modelo.removerTerminadoPosterior(index);
+                        int opcion = JOptionPane.showConfirmDialog(vista, "Confirmar", "Atención", JOptionPane.WARNING_MESSAGE, JOptionPane.YES_NO_OPTION);
+                        if (opcion == JOptionPane.YES_OPTION) {
+                            modelo.removerTerminadoPosterior(index);
+                        }
                     }
                     break;
                 }
@@ -178,7 +181,10 @@ class C_crearDesperdicio extends MouseAdapter implements ActionListener, KeyList
                     if (esModoCreacion) {
                         modelo.removerFilm(index);
                     } else {
-                        modelo.removerFilmPosterior(index);
+                        int opcion = JOptionPane.showConfirmDialog(vista, "Confirmar", "Atención", JOptionPane.WARNING_MESSAGE, JOptionPane.YES_NO_OPTION);
+                        if (opcion == JOptionPane.YES_OPTION) {
+                            modelo.removerFilmPosterior(index);
+                        }
                     }
                     break;
                 }
@@ -364,6 +370,12 @@ class C_crearDesperdicio extends MouseAdapter implements ActionListener, KeyList
      */
     @Override
     public void recibirProductoTerminado(E_produccionDetalle detalle) {
+        double cantidad = detalle.getCantidad();
+        double cantDisponible = modelo.obtenerProduccionDetalle(detalle.getId()).getCantidad();
+        if (cantidad > cantDisponible) {
+            JOptionPane.showMessageDialog(vista, "La cantidad seleccionada supera a la disponible \n Cantidad seleccionada: " + cantidad + " \n Cantidad disponible: " + cantDisponible, VALIDAR_TITULO, JOptionPane.WARNING_MESSAGE);
+            return;
+        }
         if (esModoCreacion) {
             modelo.agregarTerminados(detalle);
         } else {
@@ -374,6 +386,13 @@ class C_crearDesperdicio extends MouseAdapter implements ActionListener, KeyList
 
     @Override
     public void modificarProductoTerminado(int index, E_produccionDetalle detalle) {
+        int idProduccionDetalle = modelo.obtenerProduccionDesperdicioDetallePorId(detalle.getId()).getProduccionDetalle().getId();
+        double cantidad = detalle.getCantidad();
+        double cantDisponible = modelo.obtenerProduccionDetalle(idProduccionDetalle).getCantidad();
+        if (cantidad > cantDisponible) {
+            JOptionPane.showMessageDialog(vista, "La cantidad seleccionada supera a la disponible \n Cantidad seleccionada: " + cantidad + " \n Cantidad disponible: " + cantDisponible, VALIDAR_TITULO, JOptionPane.WARNING_MESSAGE);
+            return;
+        }
         if (esModoCreacion) {
             modelo.modificarTerminados(index, detalle);
         } else {
