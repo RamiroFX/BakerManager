@@ -170,7 +170,11 @@ public class M_crearDesperdicio {
     }
 
     public void removerTerminadoPosterior(int index) {
-        //TODO
+        E_produccionDetalle currentDetalle = getProduccionTerminadosTM().getList().get(index);
+        E_produccionDesperdicioDetalle unDesperdicio = new E_produccionDesperdicioDetalle(currentDetalle);
+        unDesperdicio.setId(currentDetalle.getId());
+        DB_Produccion.eliminarProduccionTerminadosDesperdicioPosterior(unDesperdicio);
+        consultarProduccion();
     }
 
     /*
@@ -188,7 +192,11 @@ public class M_crearDesperdicio {
     }
 
     public void agregarRecuperadoPosterior(double cantidad, M_producto producto) {
-        //TODO
+        E_produccionDesperdicioDetalle unRecuperado = new E_produccionDesperdicioDetalle();
+        unRecuperado.setCantidad(cantidad);
+        unRecuperado.setProducto(producto);
+        DB_Produccion.insertarProduccionRecuperadoPosterior(produccionDesperdicioCabecera, unRecuperado);
+        consultarProduccion();
     }
 
     public void modificarRecuperado(int posicion, double cantidad) {
@@ -196,7 +204,10 @@ public class M_crearDesperdicio {
     }
 
     public void modificarRecuperadoPosterior(int posicion, double cantidad) {
-        //TODO
+        E_produccionDetalle currentDetalle = getProduccionRecuperadosTM().getList().get(posicion);
+        E_produccionDesperdicioDetalle unDesperdicio = new E_produccionDesperdicioDetalle(currentDetalle);
+        DB_Produccion.actualizarProduccionRecuperadoPosterior(unDesperdicio, cantidad);
+        consultarProduccion();
     }
 
     public void removerRecuperado(int index) {
@@ -204,7 +215,11 @@ public class M_crearDesperdicio {
     }
 
     public void removerRecuperadoPosterior(int index) {
-        //TODO
+        E_produccionDetalle currentDetalle = getProduccionRecuperadosTM().getList().get(index);
+        E_produccionDesperdicioDetalle unDesperdicio = new E_produccionDesperdicioDetalle(currentDetalle);
+        unDesperdicio.setId(currentDetalle.getId());
+        DB_Produccion.eliminarProduccionRecuperadoPosterior(unDesperdicio);
+        consultarProduccion();
     }
 
     /*
@@ -229,6 +244,7 @@ public class M_crearDesperdicio {
     public E_produccionDesperdicioDetalle obtenerProduccionDesperdicioDetalle(int idProduccionDetalle) {
         return DB_Produccion.obtenerProduccionDesperdicioDetalle(idProduccionDetalle);
     }
+
     public E_produccionDesperdicioDetalle obtenerProduccionDesperdicioDetallePorId(int idProduccionDesperdicioDetalle) {
         return DB_Produccion.obtenerProduccionDesperdicioDetallePorId(idProduccionDesperdicioDetalle);
     }

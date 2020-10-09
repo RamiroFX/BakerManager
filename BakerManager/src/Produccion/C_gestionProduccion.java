@@ -6,7 +6,6 @@ package Produccion;
 
 import Empleado.SeleccionarFuncionario;
 import Entities.E_produccionCabecera;
-import Entities.E_produccionDesperdicioCabecera;
 import Entities.E_produccionTipo;
 import Entities.Estado;
 import Entities.M_funcionario;
@@ -18,6 +17,7 @@ import bauplast.BuscarProduccionDetalle;
 import bauplast.crearProductoTerminado.CrearProductoTerminado;
 import bauplast.crearRollo.CrearRollo;
 import bauplast.desperdicio.CrearDesperdicio;
+import bauplast.desperdicio.buscarDesperdicio.BuscarDesperdicioDetalle;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -86,6 +86,7 @@ public class C_gestionProduccion implements GestionInterface, RecibirEmpleadoCal
         this.vista.jbEmpleado.addActionListener(this);
         this.vista.jbBuscar.addActionListener(this);
         this.vista.jbBuscarDetalle.addActionListener(this);
+        this.vista.jbBuscarDetalleDesperdicio.addActionListener(this);
         this.vista.jbBorrar.addActionListener(this);
         this.vista.jbAnular.addActionListener(this);
         this.vista.jbDetalle.addActionListener(this);
@@ -284,11 +285,16 @@ public class C_gestionProduccion implements GestionInterface, RecibirEmpleadoCal
         bpc.mostrarVista();
     }
 
+    private void buscarDesperdicio() {
+        BuscarDesperdicioDetalle bpc = new BuscarDesperdicioDetalle(this.c_inicio.vista);
+        bpc.mostrarVista();
+    }
+
     private void invocarCrearDesperdicio() {
         int row = this.vista.jtProduccionCabecera.getSelectedRow();
         if (row > -1) {
             E_produccionCabecera pc = modelo.getProduccionCabeceraTM().getList().get(row);
-            if (modelo.existeProduccionDesperdicio(pc.getId())) {                
+            if (modelo.existeProduccionDesperdicio(pc.getId())) {
                 CrearDesperdicio bpc = new CrearDesperdicio(this.c_inicio.vista);
                 bpc.setProduccionCabeceraDesperdicio(modelo.obtenerProduccionDesperdicioCabecera(pc.getId()));
                 bpc.establecerModoActualizacion();
@@ -326,6 +332,8 @@ public class C_gestionProduccion implements GestionInterface, RecibirEmpleadoCal
             resumenProduccion();
         } else if (source.equals(this.vista.jbBuscarDetalle)) {
             buscarProduccion();
+        } else if (source.equals(this.vista.jbBuscarDetalleDesperdicio)) {
+            buscarDesperdicio();
         } else if (source.equals(this.vista.jtfNroOrdenTrabajo)) {
             ConsultarProduccion(false);
         } else if (source.equals(this.vista.jbCrearDesperdicio)) {

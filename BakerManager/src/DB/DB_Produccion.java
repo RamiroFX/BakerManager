@@ -872,6 +872,203 @@ public class DB_Produccion {
         }
     }
 
+    public static void eliminarProduccionTerminadosDesperdicioPosterior(E_produccionDesperdicioDetalle unDesperdicio) {
+        String INSERT_DETALLE = "DELETE FROM produccion_desperdicio WHERE id_produccion_desperdicio=?;";
+        try {
+            DB_manager.getConection().setAutoCommit(false);
+            pst = DB_manager.getConection().prepareStatement(INSERT_DETALLE);
+            pst.setInt(1, unDesperdicio.getId());
+            pst.executeUpdate();
+            pst.close();
+            //se resta al stock lo que se desperdicio
+            String query = "UPDATE PRODUCTO SET "
+                    + "CANT_ACTUAL = "
+                    + "((SELECT CANT_ACTUAL FROM PRODUCTO WHERE ID_PRODUCTO = " + unDesperdicio.getProducto().getId() + ")+" + unDesperdicio.getCantidad() + ") "
+                    + "WHERE ID_PRODUCTO =" + unDesperdicio.getProducto().getId();
+            st = DB_manager.getConection().createStatement();
+            st.executeUpdate(query);
+            DB_manager.establecerTransaccion();
+        } catch (SQLException ex) {
+            System.out.println(ex.getNextException());
+            if (DB_manager.getConection() != null) {
+                try {
+                    DB_manager.getConection().rollback();
+                } catch (SQLException ex1) {
+                    Logger lgr = Logger.getLogger(DB_Produccion.class.getName());
+                    lgr.log(Level.WARNING, ex1.getMessage(), ex1);
+                }
+            }
+            Logger lgr = Logger.getLogger(DB_Produccion.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        } finally {
+            try {
+                if (pst != null) {
+                    pst.close();
+                }
+                if (rs != null) {
+                    rs.close();
+                }
+            } catch (SQLException ex) {
+                Logger lgr = Logger.getLogger(DB_Produccion.class.getName());
+                lgr.log(Level.WARNING, ex.getMessage(), ex);
+            }
+        }
+    }
+
+    public static void insertarProduccionRecuperadoPosterior(E_produccionDesperdicioCabecera desperdicioCabecera, E_produccionDesperdicioDetalle unRecuperado) {
+        String INSERT_DETALLE = "INSERT INTO produccion_desperdicio(id_produccion_cabecera_desperdicio, id_producto, id_produccion_tipo_baja, cantidad, observacion, id_produccion_detalle)VALUES (?, ?, ?, ?, ?, ?);";
+        try {
+            DB_manager.getConection().setAutoCommit(false);
+            pst = DB_manager.getConection().prepareStatement(INSERT_DETALLE);
+            pst.setInt(1, desperdicioCabecera.getId());
+            pst.setInt(2, unRecuperado.getProducto().getId());
+            pst.setInt(3, E_produccionTipoBaja.RECUPERADO);
+            pst.setDouble(4, unRecuperado.getCantidad());
+            if (unRecuperado.getObservacion() == null || unRecuperado.getObservacion().trim().isEmpty()) {
+                pst.setNull(5, Types.VARCHAR);
+            } else {
+                pst.setString(5, unRecuperado.getObservacion());
+            }
+            pst.setNull(6, Types.INTEGER);
+            pst.executeUpdate();
+            pst.close();
+            //se suma al stock lo que se recupera
+            String query = "UPDATE PRODUCTO SET "
+                    + "CANT_ACTUAL = "
+                    + "((SELECT CANT_ACTUAL FROM PRODUCTO WHERE ID_PRODUCTO = " + unRecuperado.getProducto().getId() + ")+" + unRecuperado.getCantidad() + ") "
+                    + "WHERE ID_PRODUCTO =" + unRecuperado.getProducto().getId();
+            st = DB_manager.getConection().createStatement();
+            st.executeUpdate(query);
+            DB_manager.establecerTransaccion();
+        } catch (SQLException ex) {
+            System.out.println(ex.getNextException());
+            if (DB_manager.getConection() != null) {
+                try {
+                    DB_manager.getConection().rollback();
+                } catch (SQLException ex1) {
+                    Logger lgr = Logger.getLogger(DB_Produccion.class.getName());
+                    lgr.log(Level.WARNING, ex1.getMessage(), ex1);
+                }
+            }
+            Logger lgr = Logger.getLogger(DB_Produccion.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        } finally {
+            try {
+                if (pst != null) {
+                    pst.close();
+                }
+                if (rs != null) {
+                    rs.close();
+                }
+            } catch (SQLException ex) {
+                Logger lgr = Logger.getLogger(DB_Produccion.class.getName());
+                lgr.log(Level.WARNING, ex.getMessage(), ex);
+            }
+        }
+    }
+
+    public static void actualizarProduccionRecuperadoPosterior(E_produccionDesperdicioDetalle unDesperdicio, double newCant) {
+        String UPDATE_DETALLE = "UPDATE produccion_desperdicio SET "
+                + "cantidad=?, observacion=? "
+                + "WHERE id_produccion_desperdicio=?;";
+        try {
+            DB_manager.getConection().setAutoCommit(false);
+            pst = DB_manager.getConection().prepareStatement(UPDATE_DETALLE);
+            pst.setDouble(1, newCant);
+            if (unDesperdicio.getObservacion() == null || unDesperdicio.getObservacion().trim().isEmpty()) {
+                pst.setNull(2, Types.VARCHAR);
+            } else {
+                pst.setString(2, unDesperdicio.getObservacion());
+            }
+            pst.setInt(3, unDesperdicio.getProduccionDetalle().getId());
+            pst.executeUpdate();
+            pst.close();
+            //se actualiza el stock
+            int idProducto = unDesperdicio.getProducto().getId();
+            String UPDATE_STOCK = "UPDATE PRODUCTO SET "
+                    + "CANT_ACTUAL = "
+                    + "((SELECT CANT_ACTUAL FROM PRODUCTO WHERE ID_PRODUCTO = " + idProducto + ") ";
+            double cantActual = unDesperdicio.getCantidad();
+            double cantNueva = newCant;
+            double diferencia = Math.abs(cantActual - cantNueva);
+            if (cantNueva > cantActual) {
+                UPDATE_STOCK = UPDATE_STOCK + "+" + diferencia + ") WHERE ID_PRODUCTO = " + idProducto;
+            } else {
+                UPDATE_STOCK = UPDATE_STOCK + "-" + diferencia + ") WHERE ID_PRODUCTO = " + idProducto;
+            }
+            st = DB_manager.getConection().createStatement();
+            st.executeUpdate(UPDATE_STOCK);
+            DB_manager.establecerTransaccion();
+        } catch (SQLException ex) {
+            System.out.println(ex.getNextException());
+            if (DB_manager.getConection() != null) {
+                try {
+                    DB_manager.getConection().rollback();
+                } catch (SQLException ex1) {
+                    Logger lgr = Logger.getLogger(DB_Produccion.class.getName());
+                    lgr.log(Level.WARNING, ex1.getMessage(), ex1);
+                }
+            }
+            Logger lgr = Logger.getLogger(DB_Produccion.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        } finally {
+            try {
+                if (pst != null) {
+                    pst.close();
+                }
+                if (rs != null) {
+                    rs.close();
+                }
+            } catch (SQLException ex) {
+                Logger lgr = Logger.getLogger(DB_Produccion.class.getName());
+                lgr.log(Level.WARNING, ex.getMessage(), ex);
+            }
+        }
+    }
+
+    public static void eliminarProduccionRecuperadoPosterior(E_produccionDesperdicioDetalle unDesperdicio) {
+        String INSERT_DETALLE = "DELETE FROM produccion_desperdicio WHERE id_produccion_desperdicio=?;";
+        try {
+            DB_manager.getConection().setAutoCommit(false);
+            pst = DB_manager.getConection().prepareStatement(INSERT_DETALLE);
+            pst.setInt(1, unDesperdicio.getId());
+            pst.executeUpdate();
+            pst.close();
+            //se resta al stock lo que se desperdicio
+            String query = "UPDATE PRODUCTO SET "
+                    + "CANT_ACTUAL = "
+                    + "((SELECT CANT_ACTUAL FROM PRODUCTO WHERE ID_PRODUCTO = " + unDesperdicio.getProducto().getId() + ")-" + unDesperdicio.getCantidad() + ") "
+                    + "WHERE ID_PRODUCTO =" + unDesperdicio.getProducto().getId();
+            st = DB_manager.getConection().createStatement();
+            st.executeUpdate(query);
+            DB_manager.establecerTransaccion();
+        } catch (SQLException ex) {
+            System.out.println(ex.getNextException());
+            if (DB_manager.getConection() != null) {
+                try {
+                    DB_manager.getConection().rollback();
+                } catch (SQLException ex1) {
+                    Logger lgr = Logger.getLogger(DB_Produccion.class.getName());
+                    lgr.log(Level.WARNING, ex1.getMessage(), ex1);
+                }
+            }
+            Logger lgr = Logger.getLogger(DB_Produccion.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        } finally {
+            try {
+                if (pst != null) {
+                    pst.close();
+                }
+                if (rs != null) {
+                    rs.close();
+                }
+            } catch (SQLException ex) {
+                Logger lgr = Logger.getLogger(DB_Produccion.class.getName());
+                lgr.log(Level.WARNING, ex.getMessage(), ex);
+            }
+        }
+    }
+
     public static List<E_produccionCabecera> consultarRollosUtilizados(Date inicio, Date fin, int nroOT, int idEstado, int idFuncionario, boolean conFecha) {
         int pos = 1;
         List<E_produccionCabecera> list = new ArrayList<>();
@@ -989,7 +1186,7 @@ public class DB_Produccion {
         }
         return list;
     }
-    
+
     public static E_produccionDetalle obtenerProduccionDetalle(int idProduccionDetalle) {
         E_produccionDetalle pd = null;
         String QUERY = "SELECT ID_PRODUCCION_DETALLE, "
@@ -2570,7 +2767,7 @@ public class DB_Produccion {
         }
         return pdd;
     }
-    
+
     public static E_produccionDesperdicioDetalle obtenerProduccionDesperdicioDetallePorId(int idProduccionDesperdicioDetalle) {
         E_produccionDesperdicioDetalle pdd = new E_produccionDesperdicioDetalle();
         String QUERY = "SELECT id_produccion_desperdicio, id_produccion_cabecera_desperdicio, id_producto, "

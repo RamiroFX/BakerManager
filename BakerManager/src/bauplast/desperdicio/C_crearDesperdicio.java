@@ -220,7 +220,10 @@ class C_crearDesperdicio extends MouseAdapter implements ActionListener, KeyList
             if (esModoCreacion) {
                 modelo.removerRecuperado(index);
             } else {
-                modelo.removerRecuperadoPosterior(index);
+                int opcion = JOptionPane.showConfirmDialog(vista, "Confirmar", "Atención", JOptionPane.WARNING_MESSAGE, JOptionPane.YES_NO_OPTION);
+                if (opcion == JOptionPane.YES_OPTION) {
+                    modelo.removerRecuperadoPosterior(index);
+                }
             }
         }
     }
@@ -270,6 +273,9 @@ class C_crearDesperdicio extends MouseAdapter implements ActionListener, KeyList
     }
 
     private void guardar() {
+        if (!esModoCreacion) {
+            return;
+        }
         if (!validarFilas()) {
             return;
         }
