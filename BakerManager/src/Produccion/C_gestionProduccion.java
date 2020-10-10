@@ -14,6 +14,7 @@ import Interface.RecibirEmpleadoCallback;
 import Utilities.ProductionCellRenderer;
 import bakermanager.C_inicio;
 import bauplast.BuscarProduccionDetalle;
+import bauplast.buscarMateriaPrima.BuscarMateriaPrimaDetalle;
 import bauplast.crearProductoTerminado.CrearProductoTerminado;
 import bauplast.crearRollo.CrearRollo;
 import bauplast.desperdicio.CrearDesperdicio;
@@ -87,6 +88,7 @@ public class C_gestionProduccion implements GestionInterface, RecibirEmpleadoCal
         this.vista.jbBuscar.addActionListener(this);
         this.vista.jbBuscarDetalle.addActionListener(this);
         this.vista.jbBuscarDetalleDesperdicio.addActionListener(this);
+        this.vista.jbBuscarMateriaPrimaBaja.addActionListener(this);
         this.vista.jbBorrar.addActionListener(this);
         this.vista.jbAnular.addActionListener(this);
         this.vista.jbDetalle.addActionListener(this);
@@ -290,6 +292,11 @@ public class C_gestionProduccion implements GestionInterface, RecibirEmpleadoCal
         bpc.mostrarVista();
     }
 
+    private void buscarBajaMateriaPrima() {
+        BuscarMateriaPrimaDetalle bbmp = new BuscarMateriaPrimaDetalle(this.c_inicio.vista);
+        bbmp.mostrarVista();
+    }
+
     private void invocarCrearDesperdicio() {
         int row = this.vista.jtProduccionCabecera.getSelectedRow();
         if (row > -1) {
@@ -334,6 +341,8 @@ public class C_gestionProduccion implements GestionInterface, RecibirEmpleadoCal
             buscarProduccion();
         } else if (source.equals(this.vista.jbBuscarDetalleDesperdicio)) {
             buscarDesperdicio();
+        } else if (source.equals(this.vista.jbBuscarMateriaPrimaBaja)) {
+            buscarBajaMateriaPrima();
         } else if (source.equals(this.vista.jtfNroOrdenTrabajo)) {
             ConsultarProduccion(false);
         } else if (source.equals(this.vista.jbCrearDesperdicio)) {

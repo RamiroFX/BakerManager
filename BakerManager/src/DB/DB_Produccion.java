@@ -2918,6 +2918,7 @@ public class DB_Produccion {
                     + DATE_RANGE
                     + TIPO_BAJA
                     + ORDER_BY;
+            System.err.println(Query);
             int pos = 1;
             pst = DB_manager.getConection().prepareStatement(Query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             if (buscarPor.equals("Todos")) {
@@ -3017,6 +3018,167 @@ public class DB_Produccion {
                 E_produccionDesperdicioDetalle pdd = new E_produccionDesperdicioDetalle();
                 pdd.setCantidad(rs.getDouble("cantidad"));
                 pdd.setTipoBaja(tipoBaja);
+                pdd.setProducto(producto);
+                list.add(pdd);
+            }
+        } catch (SQLException ex) {
+            Logger lgr = Logger.getLogger(DB_Produccion.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        }
+        return list;
+    }
+
+    public static List<E_produccionDesperdicioDetalle> consultarMateriaPrimaBajaDetalle(String descripcion, String buscarPor, String ordenarPor, String clasificarPor,
+            boolean porFecha, Date fechaInicio, Date fechaFinal) {
+        List<E_produccionDesperdicioDetalle> desperdicios = null;
+        try {
+            if (DB_manager.getConection() == null) {
+                throw new IllegalStateException("Connection already closed.");
+            }
+
+            String ORDER_BY = "ORDER BY prod.descripcion ";
+            String CRITERIA = "";
+            String DATE_RANGE = "";
+            //BUSCAR 
+            switch (buscarPor) {
+                case "Todos": {
+                    CRITERIA = "AND ((LOWER(CAST(pc.nro_orden_trabajo AS CHARACTER VARYING)) LIKE ?) "
+                            + "OR (LOWER(prod.descripcion) LIKE ?) OR (LOWER(prod.codigo) LIKE ?) )";
+                    break;
+                }
+                case "OT": {
+                    CRITERIA = "AND LOWER(CAST(pc.nro_orden_trabajo AS CHARACTER VARYING)) LIKE ? ";
+                    break;
+                }
+                case "Producto": {
+                    CRITERIA = "AND LOWER(prod.descripcion) LIKE ? ";
+                    break;
+                }
+                case "Código": {
+                    CRITERIA = "AND LOWER(prod.codigo) LIKE ? ";
+                    break;
+                }
+            }
+            if (porFecha) {
+                DATE_RANGE = "AND pc.fecha_produccion between ? AND ? ";
+            }
+            //CLASIFICAR 
+            switch (clasificarPor) {
+                case "OT": {
+                    ORDER_BY = "ORDER BY pc.nro_orden_trabajo ";
+                    break;
+                }
+                case "Fecha": {
+                    ORDER_BY = "ORDER BY pc.fecha_produccion ";
+                    break;
+                }
+                case "Producto": {
+                    ORDER_BY = "ORDER BY prod.descripcion ";
+                    break;
+                }
+                case "Código": {
+                    ORDER_BY = "ORDER BY prod.codigo ";
+                    break;
+                }
+            }
+            //ORDENAR
+            switch (ordenarPor) {
+                case "Ascendente": {
+                    ORDER_BY = ORDER_BY + "ASC ";
+                    break;
+                }
+                case "Descendente": {
+                    ORDER_BY = ORDER_BY + "DESC ";
+                    break;
+                }
+            }
+
+            String Query = "SELECT pfmb.id_produccion_film_mp_baja, pfmb.id_produccion_cabecera, pfmb.id_producto, "
+                    + "prod.descripcion, prod.codigo, pfmb.cantidad, "
+                    + "pc.id_produccion_cabecera, pc.nro_orden_trabajo, pc.fecha_produccion "
+                    + "FROM produccion_film_mp_baja pfmb, producto prod,  produccion_cabecera pc "
+                    + "WHERE pfmb.id_producto = prod.id_producto "
+                    + "AND pfmb.id_produccion_cabecera = pc.id_produccion_cabecera "
+                    + CRITERIA
+                    + DATE_RANGE
+                    + ORDER_BY;
+            int pos = 1;
+            pst = DB_manager.getConection().prepareStatement(Query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            if (buscarPor.equals("Todos")) {
+                pst.setString(pos++, "%" + descripcion + "%");
+                pst.setString(pos++, "%" + descripcion + "%");
+                pst.setString(pos++, "%" + descripcion + "%");
+            } else {
+                pst.setString(pos++, "%" + descripcion + "%");
+            }
+            if (porFecha) {
+                pst.setTimestamp(pos++, new Timestamp(fechaInicio.getTime()));
+                pst.setTimestamp(pos++, new Timestamp(fechaFinal.getTime()));
+            }
+            rs = pst.executeQuery();
+            desperdicios = new ArrayList();
+            while (rs.next()) {
+                E_produccionCabecera pc = new E_produccionCabecera();
+                pc.setId(rs.getInt("id_produccion_cabecera"));
+                pc.setNroOrdenTrabajo(rs.getInt("nro_orden_trabajo"));
+                pc.setFechaProduccion(rs.getDate("fecha_produccion"));
+                E_produccionDesperdicioCabecera desperdicioCabecera = new E_produccionDesperdicioCabecera();
+                desperdicioCabecera.setProduccionCabecera(pc);
+                M_producto producto = new M_producto();
+                producto.setId(rs.getInt("id_producto"));
+                producto.setDescripcion(rs.getString("descripcion"));
+                producto.setCodigo(rs.getString("codigo"));
+                E_produccionDesperdicioDetalle pdd = new E_produccionDesperdicioDetalle();
+                pdd.setId(rs.getInt("id_produccion_film_mp_baja"));
+                pdd.setCantidad(rs.getDouble("cantidad"));
+                pdd.setProducto(producto);
+                pdd.setDesperdicioCabecera(desperdicioCabecera);
+                desperdicios.add(pdd);
+            }
+        } catch (SQLException ex) {
+            Logger lgr = Logger.getLogger(DB_Produccion.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        }
+        return desperdicios;
+    }
+
+    public static List<E_produccionDetalle> consultarMateriaPrimaBajaDetalleAgrupado(List<E_produccionDesperdicioDetalle> cadenaCabeceras) {
+        List<E_produccionDetalle> list = new ArrayList<>();
+        boolean b = true;
+        StringBuilder builder = new StringBuilder();
+        for (E_produccionDesperdicioDetalle unDesperdicio : cadenaCabeceras) {
+            builder.append("?,");
+            b = false;
+        }
+        //para controlar que la lista contenga por lo menos una venta seleccionada
+        if (b) {
+            return list;
+        }
+        String QUERY = "SELECT pfmb.id_producto, prod.descripcion, prod.codigo, sum(pfmb.cantidad) AS cantidad "
+                + "FROM produccion_film_mp_baja pfmb, producto prod, produccion_cabecera pc "
+                + "WHERE pfmb.id_producto = prod.id_producto "
+                + "AND pfmb.id_produccion_cabecera = pc.id_produccion_cabecera "
+                + "AND pfmb.id_produccion_cabecera IN ("
+                + builder.substring(0, builder.length() - 1) + ")";
+        String GROUP_BY = "GROUP BY pfmb.id_producto, prod.descripcion, prod.codigo "
+                + "ORDER BY prod.descripcion DESC ";
+        QUERY = QUERY + GROUP_BY;
+        int index = 1;
+        try {
+            pst = DB_manager.getConection().prepareStatement(QUERY, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            for (E_produccionDesperdicioDetalle unDepserdicio : cadenaCabeceras) {
+                pst.setInt(index, unDepserdicio.getDesperdicioCabecera().getProduccionCabecera().getId());
+                index++;
+            }
+            rs = pst.executeQuery();
+            list = new ArrayList();
+            while (rs.next()) {
+                M_producto producto = new M_producto();
+                producto.setId(rs.getInt("id_producto"));
+                producto.setDescripcion(rs.getString("descripcion"));
+                producto.setCodigo(rs.getString("codigo"));
+                E_produccionDetalle pdd = new E_produccionDetalle();
+                pdd.setCantidad(rs.getDouble("cantidad"));
                 pdd.setProducto(producto);
                 list.add(pdd);
             }
