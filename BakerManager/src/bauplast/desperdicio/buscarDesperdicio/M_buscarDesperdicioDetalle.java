@@ -7,8 +7,9 @@ package bauplast.desperdicio.buscarDesperdicio;
 
 import DB.DB_Produccion;
 import DB.DB_manager;
+import Entities.E_produccionTipoBaja;
 import Entities.Estado;
-import ModeloTabla.RolloProducidoTableModel;
+import ModeloTabla.DesperdicioDetalleTableModel;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -19,18 +20,18 @@ import java.util.Date;
  */
 public class M_buscarDesperdicioDetalle {
 
-    private RolloProducidoTableModel tm;
+    private DesperdicioDetalleTableModel desperdicioTM;
 
     public M_buscarDesperdicioDetalle() {
-        this.tm = new RolloProducidoTableModel();
+        this.desperdicioTM = new DesperdicioDetalleTableModel();
     }
 
-    public RolloProducidoTableModel getTm() {
-        return tm;
+    public DesperdicioDetalleTableModel getTm() {
+        return desperdicioTM;
     }
 
-    public void setTm(RolloProducidoTableModel tm) {
-        this.tm = tm;
+    public void setTm(DesperdicioDetalleTableModel tm) {
+        this.desperdicioTM = tm;
     }
 
     public ArrayList<Estado> obtenerEstado() {
@@ -38,7 +39,7 @@ public class M_buscarDesperdicioDetalle {
     }
 
     public void consultarRollos(String descripcion, String buscarPor, String ordenarPor, String clasificarPor, String estado,
-            boolean porFecha, Date fechaInicio, Date fechaFinal) {
+            boolean porFecha, Date fechaInicio, Date fechaFinal, E_produccionTipoBaja tipoBaja) {
         Calendar calendarInicio = Calendar.getInstance();
         calendarInicio.setTime(fechaInicio);
         calendarInicio.set(Calendar.HOUR_OF_DAY, 0);
@@ -51,6 +52,6 @@ public class M_buscarDesperdicioDetalle {
         calendarFinal.set(Calendar.MINUTE, 59);
         calendarFinal.set(Calendar.SECOND, 59);
         calendarFinal.set(Calendar.MILLISECOND, 999);
-        this.tm.setList(DB_Produccion.consultarFilmDisponible(descripcion, buscarPor, ordenarPor, clasificarPor, estado, porFecha, calendarInicio.getTime(), calendarFinal.getTime()));
+        this.desperdicioTM.setList(DB_Produccion.consultarProduccionDesperdicioDetalle(descripcion, buscarPor, ordenarPor, clasificarPor, porFecha, calendarInicio.getTime(), calendarFinal.getTime(), tipoBaja.getId()));
     }
 }

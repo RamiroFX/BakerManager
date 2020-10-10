@@ -3,13 +3,14 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package bauplast;
+package bauplast.desperdicio;
 
 import DB.DB_Produccion;
-import Entities.E_produccionFilm;
-import Excel.ExportarProduccion;
+import Entities.E_produccionDesperdicioDetalle;
+import Entities.E_produccionTipoBaja;
 import Interface.InterfaceFacturaDetalle;
-import ModeloTabla.RolloProducidoTableModel;
+import ModeloTabla.DesperdicioDetalleAgrupadoTableModel;
+import ModeloTabla.DesperdicioDetalleTableModel;
 import java.awt.BorderLayout;
 import static java.awt.Dialog.DEFAULT_MODALITY_TYPE;
 import java.awt.EventQueue;
@@ -18,7 +19,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.util.ArrayList;
 import java.util.Date;
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -30,65 +30,55 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
-import javax.swing.table.TableColumn;
 import net.miginfocom.swing.MigLayout;
 
 /**
  *
  * @author Ramiro Ferreira
  */
-public class ResumenProduccionDetalle extends JDialog implements ActionListener, KeyListener, InterfaceFacturaDetalle {
+public class ResumenDesperdicioDetalle extends JDialog implements ActionListener, KeyListener, InterfaceFacturaDetalle {
 
-    JScrollPane jspEgreso;
-    JTable jtEgreso;
+    JScrollPane jspDesperdicios;
+    JTable jtDesperdicios;
     JButton jbSalir, jbImportarXLS;
-    JLabel jlTotal, jlTotalUtilizado, jlTotalDisponible;
+    JLabel jlTotalDesperdicio, jlTotalRecuperado;
     JFormattedTextField jftTotalProducido, jftTotalUtilizado, jftTotalDisponible;
     Date inicio, fin;
     JTabbedPane jtpPanel;
-    RolloProducidoTableModel tm, tmAux;
-    String descripcion;
+    DesperdicioDetalleAgrupadoTableModel desperdiciosAgrupadosTM;
 
-    public ResumenProduccionDetalle(JDialog frame, RolloProducidoTableModel tm, String descripcion) {
+    public ResumenDesperdicioDetalle(JDialog frame, DesperdicioDetalleTableModel tm2) {
         super(frame, DEFAULT_MODALITY_TYPE);
-        setTitle("Resumen de producción");
+        setTitle("Resumen de desperdicio");
         setSize(800, 600);
         setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(frame);
-        this.tm = tm;
-        this.descripcion = descripcion;
         inicializarComponentes();
-        inicializarDatos();
+        inicializarDatos(tm2);
         agregarListener();
     }
 
-    private void inicializarDatos() {
-        //Kls. Rollo 40x50 Tr. S/color BD S/I
-        tmAux = new RolloProducidoTableModel();
-        tmAux.setList(DB_Produccion.consultarFilmDisponibleAgrupado(tm, descripcion));
-        jtEgreso.setModel(tmAux);
-        double totalProducido = 0;
+    private void inicializarDatos(DesperdicioDetalleTableModel tm) {
+        desperdiciosAgrupadosTM = new DesperdicioDetalleAgrupadoTableModel();
+        desperdiciosAgrupadosTM.setList(DB_Produccion.consultarProduccionDesperdicioDetalleAgrupado(tm.getList()));
+        jtDesperdicios.setModel(desperdiciosAgrupadosTM);
         double totalUtilizado = 0;
         double totalDisponible = 0;
-        for (int i = 0; i < tm.getList().size(); i++) {
-            E_produccionFilm get = tm.getList().get(i);
-            totalProducido = totalProducido + get.getPeso();
-            totalUtilizado = totalUtilizado + get.getPesoUtilizado();
-            totalDisponible = totalDisponible + get.getPesoActual();
+        for (E_produccionDesperdicioDetalle unDesperdicio : desperdiciosAgrupadosTM.getList()) {
+            switch (unDesperdicio.getTipoBaja().getId()) {
+                case E_produccionTipoBaja.DESPERDICIO: {
+                    totalUtilizado = totalUtilizado + unDesperdicio.getCantidad();
+                    break;
+                }
+                case E_produccionTipoBaja.RECUPERADO: {
+                    totalDisponible = totalDisponible + unDesperdicio.getCantidad();
+                    break;
+                }
+            }
         }
-        jftTotalProducido.setValue(totalProducido);
         jftTotalUtilizado.setValue(totalUtilizado);
         jftTotalDisponible.setValue(totalDisponible);
-
-        TableColumn tcol0 = jtEgreso.getColumnModel().getColumn(0);
-        TableColumn tcol1 = jtEgreso.getColumnModel().getColumn(1);
-        TableColumn tcol2 = jtEgreso.getColumnModel().getColumn(2);
-        jtEgreso.removeColumn(tcol0);
-        jtEgreso.removeColumn(tcol1);
-        jtEgreso.removeColumn(tcol2);//nroFilm
-        //jtEgreso.removeColumn(tcol8);
-        //jtEgreso.removeColumn(tcol9);
-        Utilities.c_packColumn.packColumns(jtEgreso, 1);
+        Utilities.c_packColumn.packColumns(jtDesperdicios, 1);
     }
 
     public void mostrarVista() {
@@ -96,25 +86,20 @@ public class ResumenProduccionDetalle extends JDialog implements ActionListener,
     }
 
     private void inicializarComponentes() {
-        jtEgreso = new JTable();
-        jtEgreso.getTableHeader().setReorderingAllowed(false);
-        jspEgreso = new JScrollPane(jtEgreso);
+        jtDesperdicios = new JTable();
+        jtDesperdicios.getTableHeader().setReorderingAllowed(false);
+        jspDesperdicios = new JScrollPane(jtDesperdicios);
         JPanel jpTotalProducido = new JPanel(new MigLayout());
         jftTotalProducido = new JFormattedTextField();
         jftTotalUtilizado = new JFormattedTextField();
         jftTotalDisponible = new JFormattedTextField();
-        //jftTotalEgreso.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("¤#,##0"))));
-        jlTotal = new JLabel("Total producido");
-        jlTotal.setHorizontalAlignment(SwingConstants.CENTER);
-        jlTotalUtilizado = new JLabel("Total utilizado");
-        jlTotalUtilizado.setHorizontalAlignment(SwingConstants.CENTER);
-        jlTotalDisponible = new JLabel("Total disponible");
-        jlTotalDisponible.setHorizontalAlignment(SwingConstants.CENTER);
-        jpTotalProducido.add(jlTotal);
-        jpTotalProducido.add(jftTotalProducido, "span, grow, pushx, wrap");
-        jpTotalProducido.add(jlTotalUtilizado);
+        jlTotalDesperdicio = new JLabel("Total desperdicio");
+        jlTotalDesperdicio.setHorizontalAlignment(SwingConstants.CENTER);
+        jlTotalRecuperado = new JLabel("Total recuperado");
+        jlTotalRecuperado.setHorizontalAlignment(SwingConstants.CENTER);
+        jpTotalProducido.add(jlTotalDesperdicio);
         jpTotalProducido.add(jftTotalUtilizado, "span, grow, pushx, wrap");
-        jpTotalProducido.add(jlTotalDisponible);
+        jpTotalProducido.add(jlTotalRecuperado);
         jpTotalProducido.add(jftTotalDisponible, "span, grow, pushx");
         jbSalir = new JButton("Salir");
         jbImportarXLS = new JButton("Importar a excel");
@@ -124,9 +109,9 @@ public class ResumenProduccionDetalle extends JDialog implements ActionListener,
 
         JPanel jpCenter = new JPanel(new BorderLayout());
         JPanel jpSouth = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        jpSouth.add(jbImportarXLS);
+        //jpSouth.add(jbImportarXLS);
         jpSouth.add(jbSalir);
-        jpCenter.add(jspEgreso, BorderLayout.CENTER);
+        jpCenter.add(jspDesperdicios, BorderLayout.CENTER);
         jpCenter.add(jpTotalProducido, BorderLayout.SOUTH);
 
         jtpPanel.addTab("Resumen", jpCenter);
@@ -143,8 +128,7 @@ public class ResumenProduccionDetalle extends JDialog implements ActionListener,
         EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
-                ExportarProduccion ep = new ExportarProduccion("Produccion", new ArrayList<E_produccionFilm>(tmAux.getList()));
-                ep.exportacionAgrupadaPorDetalle();
+
             }
         });
     }
@@ -153,8 +137,7 @@ public class ResumenProduccionDetalle extends JDialog implements ActionListener,
         EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
-                ExportarProduccion ep = new ExportarProduccion("Produccion", new ArrayList<E_produccionFilm>(tm.getList()));
-                ep.generarInformeCompleto();
+
             }
         });
     }

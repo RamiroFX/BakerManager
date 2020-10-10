@@ -5,6 +5,8 @@
  */
 package bauplast.desperdicio.buscarDesperdicio;
 
+import Entities.E_produccionTipoBaja;
+import bauplast.desperdicio.ResumenDesperdicioDetalle;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -54,17 +56,19 @@ public class C_buscarDesperdicioDetalle extends MouseAdapter implements ActionLi
         Utilities.c_packColumn.packColumns(this.vista.jtProducto, 1);
 
         this.vista.jcbBuscarPor.addItem("Todos");
-        this.vista.jcbBuscarPor.addItem("Nro. Film");
         this.vista.jcbBuscarPor.addItem("OT");
         this.vista.jcbBuscarPor.addItem("Producto");
         this.vista.jcbBuscarPor.addItem("Código");
         this.vista.jcbClasificarPor.addItem("Fecha");
         this.vista.jcbClasificarPor.addItem("OT");
         this.vista.jcbClasificarPor.addItem("Producto");
-        this.vista.jcbClasificarPor.addItem("Nro. Film");
         this.vista.jcbClasificarPor.addItem("Código");
         this.vista.jcbOrdenarPor.addItem("Descendente");
         this.vista.jcbOrdenarPor.addItem("Ascendente");
+        //PRODUCCION = 1, DESPERDICIO = 2, RECUPERADO = 3;
+        this.vista.jcbTipoBaja.addItem(new E_produccionTipoBaja(-1, "Todos"));
+        this.vista.jcbTipoBaja.addItem(new E_produccionTipoBaja(2, "Desperdicio"));
+        this.vista.jcbTipoBaja.addItem(new E_produccionTipoBaja(3, "Recuperado"));
         handleDateParams();
     }
 
@@ -120,7 +124,8 @@ public class C_buscarDesperdicioDetalle extends MouseAdapter implements ActionLi
                 String buscarPor = vista.jcbBuscarPor.getSelectedItem().toString();
                 String ordenarPor = vista.jcbOrdenarPor.getSelectedItem().toString();
                 String clasificarPor = vista.jcbClasificarPor.getSelectedItem().toString();
-                modelo.consultarRollos(desc.toLowerCase(), buscarPor, ordenarPor, clasificarPor, "", porFecha, fechaInicio, fechaFinal);
+                E_produccionTipoBaja ptb = vista.jcbTipoBaja.getItemAt(vista.jcbTipoBaja.getSelectedIndex());
+                modelo.consultarRollos(desc.toLowerCase(), buscarPor, ordenarPor, clasificarPor, "", porFecha, fechaInicio, fechaFinal, ptb);
                 Utilities.c_packColumn.packColumns(vista.jtProducto, 1);
             }
         });
@@ -152,7 +157,8 @@ public class C_buscarDesperdicioDetalle extends MouseAdapter implements ActionLi
     }
 
     private void invocarResumen() {
-        JOptionPane.showMessageDialog(vista, "Falta implementar", "Atención", JOptionPane.PLAIN_MESSAGE);
+        ResumenDesperdicioDetalle rdd = new ResumenDesperdicioDetalle(vista, modelo.getTm());
+        rdd.mostrarVista();
     }
 
     @Override

@@ -5,6 +5,7 @@
  */
 package bauplast.desperdicio.buscarDesperdicio;
 
+import Entities.E_produccionTipoBaja;
 import com.toedter.calendar.JDateChooser;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
@@ -34,6 +35,7 @@ public class V_buscarDesperdicioDetalle extends JDialog {
     JTable jtProducto;
     JPanel jpBotones, jpTop, jpBotonesTop, jpJtextFieldTop;
     public JComboBox jcbBuscarPor, jcbOrdenarPor, jcbClasificarPor;
+    public JComboBox<E_produccionTipoBaja> jcbTipoBaja;
     public JTextField jtfBuscar;
 
     public V_buscarDesperdicioDetalle(JDialog main) {
@@ -70,6 +72,7 @@ public class V_buscarDesperdicioDetalle extends JDialog {
         jdcFechaInicio = new JDateChooser();
         jdcFechaFinal = new JDateChooser();
         jcbClasificarPor = new JComboBox();
+        jcbTipoBaja = new JComboBox();
         jcbBuscarPor = new JComboBox();
         jcbOrdenarPor = new JComboBox();
         jpFiltros.add(new JLabel("Buscar por:"));
@@ -77,6 +80,8 @@ public class V_buscarDesperdicioDetalle extends JDialog {
         jpFiltros.add(new JLabel("Ordenar por:"));
         jpFiltros.add(jcbClasificarPor);
         jpFiltros.add(jcbOrdenarPor);
+        jpFiltros.add(new JLabel("Tipo baja:"));
+        jpFiltros.add(jcbTipoBaja);
         jpFiltroFecha.add(jcbActivarFecha);
         jpFiltroFecha.add(new JLabel("Fecha inicio"));
         jpFiltroFecha.add(jdcFechaInicio);

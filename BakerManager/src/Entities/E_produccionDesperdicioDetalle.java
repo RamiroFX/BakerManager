@@ -17,6 +17,7 @@ public class E_produccionDesperdicioDetalle {
     private double cantidad;
     private String observacion;
     private E_produccionDetalle produccionDetalle;
+    private E_produccionDesperdicioCabecera desperdicioCabecera;
 
     public E_produccionDesperdicioDetalle() {
         this.producto = new M_producto();
@@ -35,6 +36,14 @@ public class E_produccionDesperdicioDetalle {
         this.producto = unRollo.getProducto();
         this.tipoBaja = new E_produccionTipoBaja();
         this.cantidad = unRollo.getPeso();
+    }
+
+    public E_produccionDesperdicioCabecera getDesperdicioCabecera() {
+        return desperdicioCabecera;
+    }
+
+    public void setDesperdicioCabecera(E_produccionDesperdicioCabecera desperdicioCabecera) {
+        this.desperdicioCabecera = desperdicioCabecera;
     }
 
     /**
