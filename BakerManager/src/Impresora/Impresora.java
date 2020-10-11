@@ -34,6 +34,7 @@ import Entities.M_preferenciasImpresion;
 import Entities.M_producto;
 import Entities.M_rol_usuario;
 import Utilities.MyConstants;
+import java.awt.print.Book;
 import java.awt.print.PageFormat;
 import java.awt.print.Paper;
 import java.awt.print.PrinterException;
@@ -250,6 +251,10 @@ public class Impresora {
         pageFormat.setPaper(paper);
         VentaPrintable vp = new VentaPrintable(PREF_PRINT_FACTURA, facturaCabecera, facturaDetalle, textoAImprimir);
         job.setPrintable(vp, pageFormat);
+        Book book = new Book();//java.awt.print.Book
+        book.append(vp, pageFormat);
+        job.setPageable(book);
+        //job.setPrintable(vp, pageFormat);
         PrintService[] services = PrintServiceLookup.lookupPrintServices(null, null);
         boolean existeImpresora = false;
         if (services.length > 0) {
@@ -426,7 +431,7 @@ public class Impresora {
         if (pedidoCabecera.getCliente().getRuc() != null) {
             if (pedidoCabecera.getCliente().getRucId() != null) {
                 ruc = pedidoCabecera.getCliente().getRuc() + "-" + pedidoCabecera.getCliente().getRucId();
-            }else {
+            } else {
                 ruc = pedidoCabecera.getCliente().getRuc();
             }
         }
@@ -497,7 +502,7 @@ public class Impresora {
         if (facturaCabecera.getCliente().getRuc() != null) {
             if (facturaCabecera.getCliente().getRucId() != null) {
                 ruc = facturaCabecera.getCliente().getRuc() + "-" + facturaCabecera.getCliente().getRucId();
-            }else{
+            } else {
                 ruc = facturaCabecera.getCliente().getRuc();
             }
         }
@@ -577,7 +582,7 @@ public class Impresora {
         if (facturaCabecera.getCliente().getRuc() != null) {
             if (facturaCabecera.getCliente().getRucId() != null) {
                 ruc = facturaCabecera.getCliente().getRuc() + "-" + facturaCabecera.getCliente().getRucId();
-            }else {
+            } else {
                 ruc = facturaCabecera.getCliente().getRuc();
             }
         }
@@ -656,7 +661,7 @@ public class Impresora {
         if (mesaCabecera.getCliente().getRuc() != null) {
             if (mesaCabecera.getCliente().getRucId() != null) {
                 ruc = mesaCabecera.getCliente().getRuc() + "-" + mesaCabecera.getCliente().getRucId();
-            }else{
+            } else {
                 ruc = mesaCabecera.getCliente().getRuc();
             }
         }
@@ -735,7 +740,7 @@ public class Impresora {
         if (mesaCabecera.getCliente().getRuc() != null) {
             if (mesaCabecera.getCliente().getRucId() != null) {
                 ruc = mesaCabecera.getCliente().getRuc() + "-" + mesaCabecera.getCliente().getRucId();
-            }else{
+            } else {
                 ruc = mesaCabecera.getCliente().getRuc();
             }
         }
@@ -879,7 +884,7 @@ public class Impresora {
         if (facturaCabecera.getProveedor().getRuc() != null) {
             if (facturaCabecera.getProveedor().getRuc_id() != null) {
                 ruc = facturaCabecera.getProveedor().getRuc() + "-" + facturaCabecera.getProveedor().getRuc_id();
-            }else{
+            } else {
                 ruc = facturaCabecera.getProveedor().getRuc();
             }
         }

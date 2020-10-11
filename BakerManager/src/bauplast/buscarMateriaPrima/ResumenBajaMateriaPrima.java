@@ -6,12 +6,8 @@
 package bauplast.buscarMateriaPrima;
 
 import DB.DB_Produccion;
-import Entities.E_produccionDesperdicioDetalle;
 import Entities.E_produccionDetalle;
-import Entities.E_produccionTipoBaja;
 import Interface.InterfaceFacturaDetalle;
-import ModeloTabla.DesperdicioDetalleAgrupadoTableModel;
-import ModeloTabla.DesperdicioDetalleTableModel;
 import ModeloTabla.MateriaPrimaBajaTableModel;
 import ModeloTabla.ProduccionDetalleTableModel;
 import java.awt.BorderLayout;
@@ -44,8 +40,8 @@ public class ResumenBajaMateriaPrima extends JDialog implements ActionListener, 
     JScrollPane jspDesperdicios;
     JTable jtDesperdicios;
     JButton jbSalir, jbImportarXLS;
-    JLabel jlTotalDesperdicio, jlTotalRecuperado;
-    JFormattedTextField jftTotalProducido, jftTotalUtilizado, jftTotalDisponible;
+    JLabel jlTotalDesperdicio;
+    JFormattedTextField jftTotalUtilizado;
     Date inicio, fin;
     JTabbedPane jtpPanel;
     ProduccionDetalleTableModel bajaMateriaPrimaAgrupadosTM;
@@ -66,12 +62,10 @@ public class ResumenBajaMateriaPrima extends JDialog implements ActionListener, 
         bajaMateriaPrimaAgrupadosTM.setList(DB_Produccion.consultarMateriaPrimaBajaDetalleAgrupado(tm.getList()));
         jtDesperdicios.setModel(bajaMateriaPrimaAgrupadosTM);
         double totalUtilizado = 0;
-        double totalDisponible = 0;
         for (E_produccionDetalle unaMP : bajaMateriaPrimaAgrupadosTM.getList()) {
             totalUtilizado = totalUtilizado + unaMP.getCantidad();
         }
         jftTotalUtilizado.setValue(totalUtilizado);
-        jftTotalDisponible.setValue(totalDisponible);
         Utilities.c_packColumn.packColumns(jtDesperdicios, 1);
     }
 
@@ -84,17 +78,11 @@ public class ResumenBajaMateriaPrima extends JDialog implements ActionListener, 
         jtDesperdicios.getTableHeader().setReorderingAllowed(false);
         jspDesperdicios = new JScrollPane(jtDesperdicios);
         JPanel jpTotalProducido = new JPanel(new MigLayout());
-        jftTotalProducido = new JFormattedTextField();
         jftTotalUtilizado = new JFormattedTextField();
-        jftTotalDisponible = new JFormattedTextField();
-        jlTotalDesperdicio = new JLabel("Total desperdicio");
+        jlTotalDesperdicio = new JLabel("Total utilizado");
         jlTotalDesperdicio.setHorizontalAlignment(SwingConstants.CENTER);
-        jlTotalRecuperado = new JLabel("Total recuperado");
-        jlTotalRecuperado.setHorizontalAlignment(SwingConstants.CENTER);
         jpTotalProducido.add(jlTotalDesperdicio);
         jpTotalProducido.add(jftTotalUtilizado, "span, grow, pushx, wrap");
-        jpTotalProducido.add(jlTotalRecuperado);
-        jpTotalProducido.add(jftTotalDisponible, "span, grow, pushx");
         jbSalir = new JButton("Salir");
         jbImportarXLS = new JButton("Importar a excel");
         jbImportarXLS.setName("exportar produccion");

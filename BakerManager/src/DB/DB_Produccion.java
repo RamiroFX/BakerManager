@@ -2607,7 +2607,8 @@ public class DB_Produccion {
     }
 
     public static ArrayList<E_produccionFilm> consultarFilmDisponibleAgrupado(RolloProducidoTableModel cabecera, String descripcion) {
-        ArrayList<E_produccionFilm> filmList = null;
+        ArrayList<E_produccionFilm> filmList = new ArrayList<>();
+        boolean b = true;
         try {
             if (DB_manager.getConection() == null) {
                 throw new IllegalStateException("Connection already closed.");
@@ -2615,6 +2616,11 @@ public class DB_Produccion {
             StringBuilder builder = new StringBuilder();
             for (E_produccionFilm seleccionVenta : cabecera.getList()) {
                 builder.append("?,");
+                b = false;
+            }
+            //para controlar que la lista contenga por lo menos una venta seleccionada
+            if (b) {
+                return filmList;
             }
             String Query = "SELECT codigo, producto, id_categoria, categoria, cono, medida, micron, "
                     + "sum(peso)as peso , "
@@ -2633,7 +2639,6 @@ public class DB_Produccion {
                 pst.setInt(index++, ventaCabecera.getId());
             }
             rs = pst.executeQuery();
-            filmList = new ArrayList();
             while (rs.next()) {
                 E_produccionFilm film = new E_produccionFilm();
                 film.setId(0);
@@ -2918,7 +2923,6 @@ public class DB_Produccion {
                     + DATE_RANGE
                     + TIPO_BAJA
                     + ORDER_BY;
-            System.err.println(Query);
             int pos = 1;
             pst = DB_manager.getConection().prepareStatement(Query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             if (buscarPor.equals("Todos")) {
@@ -2994,10 +2998,8 @@ public class DB_Produccion {
                 + "AND pcd.id_produccion_cabecera_desperdicio IN ("
                 + builder.substring(0, builder.length() - 1) + ")";
         String GROUP_BY = "GROUP BY pdd.id_producto, prod.descripcion, prod.codigo, pdd.id_produccion_tipo_baja, tipo_baja "
-                + "ORDER BY prod.descripcion DESC ";
+                + "ORDER BY tipo_baja, prod.descripcion DESC ";
         QUERY = QUERY + GROUP_BY;
-        System.out.println("DB.DB_Produccion.consultarProduccionDesperdicioDetalleAgrupado()");
-        System.out.println(QUERY);
         int index = 1;
         try {
             pst = DB_manager.getConection().prepareStatement(QUERY, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
