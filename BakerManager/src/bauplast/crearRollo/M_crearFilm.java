@@ -13,6 +13,7 @@ import Entities.E_productoClasificacion;
 import Entities.Estado;
 import Entities.M_producto;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 /**
  *
@@ -43,7 +44,23 @@ public class M_crearFilm {
     }
 
     public boolean existeNroFilm(int nroFilm) {
-        ArrayList<E_produccionFilm> filmes = DB_Produccion.consultarFilmDisponible(nroFilm + "", "Nro. Film", "Ascendente", "Nro. Film", "Todos", false, null, null);
+        Calendar calendarInicio = Calendar.getInstance();
+        calendarInicio.set(Calendar.MONTH, 0);
+        calendarInicio.set(Calendar.DAY_OF_MONTH, 1);
+        calendarInicio.set(Calendar.HOUR_OF_DAY, 0);
+        calendarInicio.set(Calendar.MINUTE, 0);
+        calendarInicio.set(Calendar.SECOND, 0);
+        calendarInicio.set(Calendar.MILLISECOND, 0);
+        Calendar calendarFinal = Calendar.getInstance();
+        calendarFinal.set(Calendar.MONTH, Calendar.DECEMBER);
+        int res = calendarFinal.getActualMaximum(Calendar.DATE);
+        calendarFinal.set(Calendar.DAY_OF_MONTH, res);
+        calendarFinal.set(Calendar.HOUR_OF_DAY, 23);
+        calendarFinal.set(Calendar.MINUTE, 59);
+        calendarFinal.set(Calendar.SECOND, 59);
+        calendarFinal.set(Calendar.MILLISECOND, 999);
+
+        ArrayList<E_produccionFilm> filmes = DB_Produccion.consultarFilmDisponible(nroFilm + "", "Nro. Film", "Ascendente", "Nro. Film", "Todos", true, calendarInicio.getTime(), calendarFinal.getTime());
         return !filmes.isEmpty();
     }
 
