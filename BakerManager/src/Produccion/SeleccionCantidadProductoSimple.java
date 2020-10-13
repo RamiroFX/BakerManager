@@ -69,6 +69,11 @@ public class SeleccionCantidadProductoSimple extends javax.swing.JDialog impleme
         // = film;
         rollo= new E_produccionFilm();
         this.rollo.setId(film.getId());
+        this.rollo.setNroFilm(film.getNroFilm());
+        this.rollo.setCono(film.getCono());
+        this.rollo.setMedida(film.getMedida());
+        this.rollo.setMicron(film.getMicron());
+        this.rollo.setProductoClasificacion(film.getProductoClasificacion());
         this.rollo.setProducto(film.getProducto());
         this.rollo.setPeso(film.getPeso());
         this.rollo.setPesoActual(film.getPesoActual());
