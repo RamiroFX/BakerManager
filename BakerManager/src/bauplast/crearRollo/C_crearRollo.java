@@ -279,6 +279,10 @@ class C_crearRollo extends MouseAdapter implements ActionListener, KeyListener,
         return true;
     }
 
+    private boolean existeNroFilmDuplicado(int nroFilm) {
+        return modelo.existeFilm(nroFilm);
+    }
+
     private void limpiarCampos() {
         this.modelo.limpiarCampos();
         this.vista.jtfFuncionario.setText("");
@@ -421,6 +425,10 @@ class C_crearRollo extends MouseAdapter implements ActionListener, KeyListener,
 
     @Override
     public void recibirFilm(E_produccionFilm detalle) {
+        if (existeNroFilmDuplicado(detalle.getNroFilm())) {
+            JOptionPane.showMessageDialog(vista, "El nro. de film ingresado ya se encuentra cargado", VALIDAR_TITULO, JOptionPane.WARNING_MESSAGE);
+            return;
+        }
         if (esModoCreacion) {
             modelo.agregarDetalle(detalle);
         } else {

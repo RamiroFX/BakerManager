@@ -142,6 +142,16 @@ public class M_crearRollo {
         consultarProduccion();
     }
 
+    public boolean existeFilm(int nroFilm) {
+        for (E_produccionFilm unFilm : getRollosTM().getList()) {
+            int nroFilmActual = unFilm.getNroFilm();
+            if (nroFilmActual == nroFilm) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     boolean existeOrdenTrabajo(int ordenTrabajo) {
         return DB_Produccion.existeOrdenTrabajo(ordenTrabajo);
     }

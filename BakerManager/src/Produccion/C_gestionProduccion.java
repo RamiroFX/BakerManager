@@ -82,6 +82,7 @@ public class C_gestionProduccion implements GestionInterface, RecibirEmpleadoCal
     public final void concederPermisos() {
         //TODO add access
         this.vista.jbCrearDesperdicio.addActionListener(this);
+        this.vista.jbCrearDesperdicioRapido.addActionListener(this);
         this.vista.jbCrearRollo.addActionListener(this);
         this.vista.jbCrearProductoTerminado.addActionListener(this);
         this.vista.jbEmpleado.addActionListener(this);
@@ -316,6 +317,11 @@ public class C_gestionProduccion implements GestionInterface, RecibirEmpleadoCal
         }
     }
 
+    private void invocarCrearDesperdicioRapido() {
+        JOptionPane.showMessageDialog(vista, "Implementando", "Atención", JOptionPane.INFORMATION_MESSAGE);
+        //return;
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         Object source = e.getSource();
@@ -347,6 +353,8 @@ public class C_gestionProduccion implements GestionInterface, RecibirEmpleadoCal
             ConsultarProduccion(false);
         } else if (source.equals(this.vista.jbCrearDesperdicio)) {
             invocarCrearDesperdicio();
+        } else if (source.equals(this.vista.jbCrearDesperdicioRapido)) {
+            invocarCrearDesperdicioRapido();
         }
     }
 
