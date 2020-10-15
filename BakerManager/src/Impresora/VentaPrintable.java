@@ -82,7 +82,7 @@ public class VentaPrintable implements Printable {
                     case E_impresionOrientacion.PORTRAIT: {
                         duplicadoDistY = posY + preferencia.getDistanceBetweenCopies();
                         duplicadoDistX = posX;
-                        triplicadoDistY = posY + preferencia.getDistanceBetweenCopies() + preferencia.getDistanceBetweenCopies();
+                        triplicadoDistY = posY + preferencia.getDistanceForTriplicate();
                         triplicadoDistX = posX;
                         break;
                     }
@@ -90,14 +90,14 @@ public class VentaPrintable implements Printable {
                         duplicadoDistY = posY;
                         duplicadoDistX = posX + preferencia.getDistanceBetweenCopies();
                         triplicadoDistY = posY;
-                        triplicadoDistX = posX + preferencia.getDistanceBetweenCopies() + preferencia.getDistanceBetweenCopies();
+                        triplicadoDistX = posX + preferencia.getDistanceForTriplicate();
                         break;
                     }
                     case E_impresionOrientacion.REVERSE_LANDSCAPE: {
                         duplicadoDistY = posY;
                         duplicadoDistX = posX + preferencia.getDistanceBetweenCopies();
                         triplicadoDistY = posY;
-                        triplicadoDistX = posX + preferencia.getDistanceBetweenCopies() + preferencia.getDistanceBetweenCopies();
+                        triplicadoDistX = posX + preferencia.getDistanceForTriplicate();
                         break;
                     }
                 }

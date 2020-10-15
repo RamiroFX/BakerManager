@@ -15,6 +15,7 @@ public class M_preferenciasImpresion {
     private int letterSize;
     private int maxProducts;
     private int distanceBetweenCopies;
+    private int distanceForTriplicate;
     private int idDuplicado;
     private int idTriplicado;
     private int imprimirMoneda;
@@ -216,5 +217,13 @@ public class M_preferenciasImpresion {
 
     public void setOrientacion(E_impresionOrientacion orientacion) {
         this.orientacion = orientacion;
+    }
+
+    public int getDistanceForTriplicate() {
+        return distanceForTriplicate;
+    }
+
+    public void setDistanceForTriplicate(int distanceForTriplicate) {
+        this.distanceForTriplicate = distanceForTriplicate;
     }
 }

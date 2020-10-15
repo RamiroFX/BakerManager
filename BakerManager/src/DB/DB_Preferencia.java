@@ -225,7 +225,8 @@ public class DB_Preferencia {
                 + "margen_y, "
                 + "id_impresion_orientacion, "
                 + "(SELECT descripcion FROM divisa WHERE id_divisa = preferencia_impresion.id_divisa)\"divisa_descripcion\", "
-                + "(SELECT descripcion FROM impresion_orientacion WHERE id_impresion_orientacion = preferencia_impresion.id_impresion_orientacion)\"orientacion_descripcion\" "
+                + "(SELECT descripcion FROM impresion_orientacion WHERE id_impresion_orientacion = preferencia_impresion.id_impresion_orientacion)\"orientacion_descripcion\", "
+                + "distancia_triplicado "
                 + "FROM preferencia_impresion WHERE id_preferencia_impresion =1 ";
         try {
             pst = DB_manager.getConection().prepareStatement(Query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
@@ -254,6 +255,7 @@ public class DB_Preferencia {
                 prefPrint.setLargoPagina(rs.getInt("largo_pagina"));
                 prefPrint.setMargenX(rs.getDouble("margen_x"));
                 prefPrint.setMargenY(rs.getDouble("margen_y"));
+                prefPrint.setDistanceForTriplicate(rs.getInt("distancia_triplicado"));
             }
         } catch (SQLException ex) {
             Logger lgr = Logger.getLogger(DB_Producto.class.getName());
@@ -281,7 +283,8 @@ public class DB_Preferencia {
                 + "margen_y, "
                 + "id_impresion_orientacion, "
                 + "(SELECT descripcion FROM divisa WHERE id_divisa = preferencia_impresion.id_divisa)\"divisa_descripcion\", "
-                + "(SELECT descripcion FROM impresion_orientacion WHERE id_impresion_orientacion = preferencia_impresion.id_impresion_orientacion)\"orientacion_descripcion\" "
+                + "(SELECT descripcion FROM impresion_orientacion WHERE id_impresion_orientacion = preferencia_impresion.id_impresion_orientacion)\"orientacion_descripcion\", "
+                + "distancia_triplicado "
                 + "FROM preferencia_impresion WHERE id_preferencia_impresion =2 ";
         try {
             pst = DB_manager.getConection().prepareStatement(Query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
@@ -310,6 +313,7 @@ public class DB_Preferencia {
                 prefPrint.setLargoPagina(rs.getInt("largo_pagina"));
                 prefPrint.setMargenX(rs.getDouble("margen_x"));
                 prefPrint.setMargenY(rs.getDouble("margen_y"));
+                prefPrint.setDistanceForTriplicate(rs.getInt("distancia_triplicado"));
             }
         } catch (SQLException ex) {
             Logger lgr = Logger.getLogger(DB_Producto.class.getName());
