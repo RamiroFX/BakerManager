@@ -73,6 +73,8 @@ public class SeleccionCantidadProductoSimple extends javax.swing.JDialog impleme
         this.rollo.setCono(film.getCono());
         this.rollo.setMedida(film.getMedida());
         this.rollo.setMicron(film.getMicron());
+        this.rollo.setOrdenTrabajoCabecera(film.getOrdenTrabajoCabecera());
+        this.rollo.setOrdenTrabajoDetalle(film.getOrdenTrabajoDetalle());
         this.rollo.setProductoClasificacion(film.getProductoClasificacion());
         this.rollo.setProducto(film.getProducto());
         this.rollo.setPeso(film.getPeso());

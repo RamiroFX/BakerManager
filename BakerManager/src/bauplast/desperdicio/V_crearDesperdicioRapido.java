@@ -14,7 +14,6 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
@@ -47,18 +46,14 @@ class V_crearDesperdicioRapido extends JDialog {
     JPanel jpNorth1;
     public JTextField jtfFuncionario, jtfObservacion;
     public JButton jbFuncionario;
-    public JLabel jlFechaProduccion;
-    public JDateChooser jdcFechaEntrega;
+    public JLabel jlFechaDesperdicio;
+    public JDateChooser jdcFechaDesperdicio;
     //CENTRO
-    JSplitPane jSplitTablas;
     JPanel jpCenter;
-    public JTable jtProduccionDesperdicio;
-    public JScrollPane jspProduccionDesperdicio;
-    public JButton jbSeleccionarDesperdicio, jbModificarDesperdicio, jbEliminarDesperdicio;
     //MATERIA PRIMA
-    public JTable jtDesperdicioRecuperado;
-    public JScrollPane jspDesperdicioRecuperado;
-    public JButton jbSeleccionarRecuperado, jbModificarRecuperado, jbEliminarRecuperado;
+    public JTable jtDesperdicio;
+    public JScrollPane jspDesperdicio;
+    public JButton jbSeleccionarDesperdicio, jbModificarDesperdicio, jbEliminarDesperdicio;
     //SUR
     public JPanel jpSouth;
     public JButton jbAceptar, jbSalir;
@@ -87,70 +82,49 @@ class V_crearDesperdicioRapido extends JDialog {
         jbFuncionario = new JButton("Responsable");
         jtfFuncionario = new JTextField(30);
         jtfFuncionario.setEditable(false);
-        jlFechaProduccion = new JLabel("Fecha");
+        jlFechaDesperdicio = new JLabel("Fecha");
         jtfObservacion = new JTextField(30);
 
-        jdcFechaEntrega = new JDateChooser();
-        jdcFechaEntrega.setPreferredSize(new Dimension(150, 20));
+        jdcFechaDesperdicio = new JDateChooser();
+        jdcFechaDesperdicio.setPreferredSize(new Dimension(150, 20));
         jpNorth1.add(jbFuncionario);
         jpNorth1.add(jtfFuncionario);
-        jpNorth1.add(jlFechaProduccion);
-        jpNorth1.add(jdcFechaEntrega, "wrap");
+        jpNorth1.add(jlFechaDesperdicio);
+        jpNorth1.add(jdcFechaDesperdicio, "wrap");
         jpNorth1.add(new JLabel("Observación"));
-        jpNorth1.add(jtfObservacion);
+        jpNorth1.add(jtfObservacion,"pushx, growx, spanx");
     }
 
     private void initCenter() {
         int width = 30, height = 10;
         jpCenter = new JPanel(new BorderLayout());
         jpCenter.setBorder(new EtchedBorder(EtchedBorder.RAISED));
-        jtProduccionDesperdicio = new JTable();
-        this.jtProduccionDesperdicio.getTableHeader().setReorderingAllowed(false);
-        jtProduccionDesperdicio.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        jspProduccionDesperdicio = new JScrollPane(jtProduccionDesperdicio);
-        jbSeleccionarDesperdicio = new JButton("Agregar desperdicio[F4]");
-        jbSeleccionarDesperdicio.setName(JB_ADD_WASTE);
-        jbModificarDesperdicio = new JButton("Modificar desperdicio");
-        jbModificarDesperdicio.setName(JB_UPDATE_WASTE);
-        jbEliminarDesperdicio = new JButton("Eliminar desperdicio");
-        jbEliminarDesperdicio.setName(JB_DELETE_WASTE);
-        JPanel jpSouthAux = new JPanel(new MigLayout());
-        jpSouthAux.setBorder(new EtchedBorder(EtchedBorder.LOWERED));
-        jpSouthAux.add(jbSeleccionarDesperdicio, "wrap");
-        jpSouthAux.add(jbModificarDesperdicio, "growx, wrap");
-        jpSouthAux.add(jbEliminarDesperdicio, "growx");
 
         //ROLLOS UTILIZADOS
-        jtDesperdicioRecuperado = new JTable();
-        jtDesperdicioRecuperado.getTableHeader().setReorderingAllowed(false);
-        jtDesperdicioRecuperado.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        jspDesperdicioRecuperado = new JScrollPane(jtDesperdicioRecuperado);
-        jbSeleccionarRecuperado = new JButton("Agregar recuperado");
-        jbSeleccionarRecuperado.setName(JB_ADD_RECOVERED_MATERIAL);
-        jbSeleccionarRecuperado.setSize(new Dimension(width, height));
-        jbModificarRecuperado = new JButton("Modificar recuperado");
-        jbModificarRecuperado.setName(JB_UPDATE_RECOVERED_MATERIAL);
-        jbModificarRecuperado.setSize(new Dimension(width, height));
-        jbEliminarRecuperado = new JButton("Eliminar recuperado");
-        jbEliminarRecuperado.setName(JB_DELETE_RECOVERED_MATERIAL);
-        jbEliminarRecuperado.setSize(new Dimension(width, height));
+        jtDesperdicio = new JTable();
+        jtDesperdicio.getTableHeader().setReorderingAllowed(false);
+        jtDesperdicio.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        jspDesperdicio = new JScrollPane(jtDesperdicio);
+        jbSeleccionarDesperdicio = new JButton("Agregar recuperado");
+        jbSeleccionarDesperdicio.setName(JB_ADD_RECOVERED_MATERIAL);
+        jbSeleccionarDesperdicio.setSize(new Dimension(width, height));
+        jbModificarDesperdicio = new JButton("Modificar recuperado");
+        jbModificarDesperdicio.setName(JB_UPDATE_RECOVERED_MATERIAL);
+        jbModificarDesperdicio.setSize(new Dimension(width, height));
+        jbEliminarDesperdicio = new JButton("Eliminar recuperado");
+        jbEliminarDesperdicio.setName(JB_DELETE_RECOVERED_MATERIAL);
+        jbEliminarDesperdicio.setSize(new Dimension(width, height));
         JPanel jpSouthAuxRollos = new JPanel(new MigLayout());
         jpSouthAuxRollos.setBorder(new EtchedBorder(EtchedBorder.LOWERED));
-        jpSouthAuxRollos.add(jbSeleccionarRecuperado, "wrap");
-        jpSouthAuxRollos.add(jbModificarRecuperado, "growx, wrap");
-        jpSouthAuxRollos.add(jbEliminarRecuperado, "growx");
-
-        JPanel jpCenterAux1 = new JPanel(new BorderLayout());
-        jpCenterAux1.add(jspProduccionDesperdicio, BorderLayout.CENTER);
-        jpCenterAux1.add(jpSouthAux, BorderLayout.EAST);
+        jpSouthAuxRollos.add(jbSeleccionarDesperdicio, "wrap");
+        jpSouthAuxRollos.add(jbModificarDesperdicio, "growx, wrap");
+        jpSouthAuxRollos.add(jbEliminarDesperdicio, "growx");
 
         JPanel jpCenterAux2 = new JPanel(new BorderLayout());
-        jpCenterAux2.add(jspDesperdicioRecuperado, BorderLayout.CENTER);
+        jpCenterAux2.add(jspDesperdicio, BorderLayout.CENTER);
         jpCenterAux2.add(jpSouthAuxRollos, BorderLayout.EAST);
 
-        jSplitTablas = new JSplitPane(JSplitPane.VERTICAL_SPLIT, jpCenterAux1, jpCenterAux2);
-        jSplitTablas.setDividerLocation(300);
-        jpCenter.add(jSplitTablas, BorderLayout.CENTER);
+        jpCenter.add(jpCenterAux2, BorderLayout.CENTER);
     }
 
     private void initSouth() {

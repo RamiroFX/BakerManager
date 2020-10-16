@@ -5,6 +5,8 @@
  */
 package Entities;
 
+import java.util.Date;
+
 /**
  *
  * @author Ramiro Ferreira
@@ -13,6 +15,7 @@ public class E_produccionDesperdicioCabecera {
 
     private int id;
     private E_produccionCabecera produccionCabecera;
+    private Date tiempo;
     private String observacion;
 
     public E_produccionDesperdicioCabecera() {
@@ -41,6 +44,20 @@ public class E_produccionDesperdicioCabecera {
 
     public void setProduccionCabecera(E_produccionCabecera produccionCabecera) {
         this.produccionCabecera = produccionCabecera;
+    }
+
+    /**
+     * @return the tiempo
+     */
+    public Date getTiempo() {
+        return tiempo;
+    }
+
+    /**
+     * @param tiempo the tiempo to set
+     */
+    public void setTiempo(Date tiempo) {
+        this.tiempo = tiempo;
     }
 
 }

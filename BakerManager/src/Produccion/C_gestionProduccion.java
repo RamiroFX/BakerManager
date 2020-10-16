@@ -18,6 +18,7 @@ import bauplast.buscarMateriaPrima.BuscarMateriaPrimaDetalle;
 import bauplast.crearProductoTerminado.CrearProductoTerminado;
 import bauplast.crearRollo.CrearRollo;
 import bauplast.desperdicio.CrearDesperdicio;
+import bauplast.desperdicio.CrearDesperdicioRapido;
 import bauplast.desperdicio.buscarDesperdicio.BuscarDesperdicioDetalle;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
@@ -318,8 +319,8 @@ public class C_gestionProduccion implements GestionInterface, RecibirEmpleadoCal
     }
 
     private void invocarCrearDesperdicioRapido() {
-        JOptionPane.showMessageDialog(vista, "Implementando", "Atención", JOptionPane.INFORMATION_MESSAGE);
-        //return;
+        CrearDesperdicioRapido cdr = new CrearDesperdicioRapido(this.c_inicio.vista);
+        cdr.mostarVista();
     }
 
     @Override

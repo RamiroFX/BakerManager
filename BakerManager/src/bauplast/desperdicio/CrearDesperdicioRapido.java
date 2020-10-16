@@ -15,14 +15,15 @@ public class CrearDesperdicioRapido {
     
     private M_crearDesperdicioRapido modelo;
     private V_crearDesperdicioRapido vista;
+    private C_crearDesperdicioRapido controlador;
 
     public CrearDesperdicioRapido(JFrame frame) {
         this.modelo = new M_crearDesperdicioRapido();
         this.vista = new V_crearDesperdicioRapido(frame);
-        //this.controlador = new C_crearDesperdicioRapido(modelo, vista);
+        this.controlador = new C_crearDesperdicioRapido(modelo, vista);
     }
     
     public void mostarVista(){
-        //this.controlador.mostrarVista();
+        this.controlador.mostrarVista();
     }
 }

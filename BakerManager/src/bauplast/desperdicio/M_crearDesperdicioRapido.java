@@ -5,6 +5,7 @@
  */
 package bauplast.desperdicio;
 
+import DB.DB_Produccion;
 import DB.DB_Producto;
 import DB.DB_manager;
 import Entities.E_produccionCabecera;
@@ -13,6 +14,7 @@ import Entities.E_produccionDetalle;
 import Entities.E_productoClasificacion;
 import Entities.Estado;
 import Entities.M_producto;
+import MenuPrincipal.DatosUsuario;
 import ModeloTabla.ProduccionDetalleTableModel;
 import java.util.ArrayList;
 
@@ -27,6 +29,7 @@ public class M_crearDesperdicioRapido {
 
     public M_crearDesperdicioRapido() {
         this.produccionDesperdicioCabecera = new E_produccionDesperdicioCabecera();
+        this.produccionDesperdicioCabecera.getProduccionCabecera().setFuncionarioSistema(DatosUsuario.getRol_usuario().getFuncionario());
         this.desperdicioTM = new ProduccionDetalleTableModel();
     }
 
@@ -50,54 +53,43 @@ public class M_crearDesperdicioRapido {
         this.desperdicioTM = desperdicioTM;
     }
 
-    public ArrayList<E_productoClasificacion> obtenerTipoMateriaPrima() {
-        return DB_Producto.obtenerProductoCategoriaBauplast();
-    }
-
     public ArrayList<Estado> obtenerEstado() {
         return DB_manager.obtenerEstados();
     }
 
     public String obtenerFuncionario() {
-        return this.produccionDesperdicioCabecera.getProduccionCabecera().getFuncionarioProduccion().getNombre();
+        return this.produccionDesperdicioCabecera.getProduccionCabecera().getFuncionarioSistema().getNombre();
     }
 
-    public String obtenerOrdenTrabajo() {
-        return this.produccionDesperdicioCabecera.getProduccionCabecera().getNroOrdenTrabajo() + "";
-    }
-
-    public int obtenerTipoProduccion() {
-        return getProduccionCabecera().getProduccionCabecera().getTipo().getId();
-    }
-
-    public void agregarRecuperado(double cantidad, M_producto producto) {
+    public void agregarDesperdicio(double cantidad, M_producto producto) {
         E_produccionDetalle pd = new E_produccionDetalle();
         pd.setCantidad(cantidad);
         pd.setProducto(producto);
         getDesperdicioTM().agregarDetalle(pd);
     }
 
-    public void agregarRecuperadoPosterior(double cantidad, M_producto producto) {
+    public void agregarDesperdicioPosterior(double cantidad, M_producto producto) {
         consultarProduccion();
     }
 
-    public void modificarRecuperado(int posicion, double cantidad) {
+    public void modificarDesperdicio(int posicion, double cantidad) {
         getDesperdicioTM().modificarCantidadDetalle(posicion, cantidad);
     }
 
-    public void modificarRecuperadoPosterior(int posicion, double cantidad) {
+    public void modificarDesperdicioPosterior(int posicion, double cantidad) {
         consultarProduccion();
     }
 
-    public void removerRecuperado(int index) {
+    public void removerDesperdicio(int index) {
         getDesperdicioTM().quitarDetalle(index);
     }
 
-    public void removerRecuperadoPosterior(int index) {
+    public void removerDesperdicioPosterior(int index) {
         consultarProduccion();
     }
 
-    public void guardar() {
+    public void guardar() {        
+        DB_Produccion.insertarDesperdicioCabecera(produccionDesperdicioCabecera, getDesperdicioTM().getList());
     }
 
     public void consultarProduccion() {

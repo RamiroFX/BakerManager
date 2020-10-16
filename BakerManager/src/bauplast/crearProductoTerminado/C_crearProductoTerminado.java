@@ -243,9 +243,9 @@ class C_crearProductoTerminado extends MouseAdapter implements ActionListener, K
         if (!validarCantidadProductos()) {
             return;
         }
-        if (!validarCantidadRollos()) {
-            return;
-        }
+//        if (!validarCantidadRollos()) {
+//            return;
+//        }
         Date fechaProduccion = vista.jdcFechaEntrega.getDate();
         int ordenTrabajo = Integer.valueOf(this.vista.jtfNroOrdenTrabajo.getText().trim());
         modelo.getProduccionCabecera().setFechaProduccion(fechaProduccion);
