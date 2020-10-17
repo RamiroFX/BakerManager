@@ -2857,8 +2857,7 @@ public class DB_Produccion {
             //BUSCAR 
             switch (buscarPor) {
                 case "Todos": {
-                    CRITERIA = "AND ((LOWER(CAST(pc.nro_orden_trabajo AS CHARACTER VARYING)) LIKE ?) "
-                            + "OR (LOWER(prod.descripcion) LIKE ?) OR (LOWER(prod.codigo) LIKE ?) )";
+                    CRITERIA = "AND ((LOWER(prod.descripcion) LIKE ?) OR (LOWER(prod.codigo) LIKE ?) )";
                     break;
                 }
                 case "OT": {
@@ -2875,7 +2874,7 @@ public class DB_Produccion {
                 }
             }
             if (porFecha) {
-                DATE_RANGE = "AND pc.fecha_produccion between ? AND ? ";
+                DATE_RANGE = "AND pcd.tiempo between ? AND ? ";
             }
             if (idTipoBaja > -1) {
                 TIPO_BAJA = "AND pdd.id_produccion_tipo_baja = ? ";
@@ -2887,7 +2886,7 @@ public class DB_Produccion {
                     break;
                 }
                 case "Fecha": {
-                    ORDER_BY = "ORDER BY pc.fecha_produccion ";
+                    ORDER_BY = "ORDER BY pcd.tiempo ";
                     break;
                 }
                 case "Producto": {
@@ -2911,16 +2910,15 @@ public class DB_Produccion {
                 }
             }
 
-            String Query = "SELECT pdd.id_produccion_desperdicio, pdd.id_produccion_cabecera_desperdicio, "
-                    + "pdd.id_producto, prod.descripcion, prod.codigo, pdd.id_produccion_tipo_baja, "
-                    + "pdd.cantidad, pdd.observacion, pdd.id_produccion_detalle, pc.id_produccion_cabecera, "
-                    + "pc.nro_orden_trabajo, pc.fecha_produccion, tb.descripcion as tipo_baja "
-                    + "FROM produccion_desperdicio pdd, producto prod, produccion_cabecera_desperdicio pcd, "
-                    + "produccion_cabecera pc, produccion_tipo_baja tb "
+            String Query = "SELECT pcd.id_produccion_cabecera_desperdicio, pdd.id_produccion_desperdicio, "
+                    + "pdd.id_producto, pdd.cantidad, pdd.observacion, pdd.id_produccion_detalle, "
+                    + "pdd.id_produccion_tipo_baja, prod.descripcion, prod.codigo , "
+                    + "(SELECT pc.id_produccion_cabecera FROM produccion_cabecera pc WHERE pc.id_produccion_cabecera = pcd.id_produccion_cabecera) AS id_produccion_cabecera, "
+                    + "(SELECT pc.nro_orden_trabajo FROM produccion_cabecera pc WHERE pc.id_produccion_cabecera = pcd.id_produccion_cabecera) AS nro_orden_trabajo, "
+                    + "pcd.tiempo, tb.descripcion as tipo_baja "
+                    + "FROM produccion_cabecera_desperdicio pcd, produccion_desperdicio pdd, producto prod, produccion_tipo_baja tb "
                     + "WHERE pdd.id_producto = prod.id_producto "
-                    + "AND pcd.id_produccion_cabecera_desperdicio = pdd.id_produccion_cabecera_desperdicio "
-                    + "AND pcd.id_produccion_cabecera = pc.id_produccion_cabecera "
-                    + "AND tb.id_produccion_tipo_baja = pdd.id_produccion_tipo_baja "
+                    + "AND pdd.id_produccion_cabecera_desperdicio = pcd.id_produccion_cabecera_desperdicio AND tb.id_produccion_tipo_baja = pdd.id_produccion_tipo_baja "
                     + CRITERIA
                     + DATE_RANGE
                     + TIPO_BAJA
@@ -2930,7 +2928,7 @@ public class DB_Produccion {
             int pos = 1;
             pst = DB_manager.getConection().prepareStatement(Query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             if (buscarPor.equals("Todos")) {
-                pst.setString(pos++, "%" + descripcion + "%");
+                //pst.setString(pos++, "%" + descripcion + "%");
                 pst.setString(pos++, "%" + descripcion + "%");
                 pst.setString(pos++, "%" + descripcion + "%");
             } else {
@@ -2949,7 +2947,7 @@ public class DB_Produccion {
                 E_produccionCabecera pc = new E_produccionCabecera();
                 pc.setId(rs.getInt("id_produccion_cabecera"));
                 pc.setNroOrdenTrabajo(rs.getInt("nro_orden_trabajo"));
-                pc.setFechaProduccion(rs.getDate("fecha_produccion"));
+                pc.setFechaProduccion(rs.getTimestamp("tiempo"));
                 E_produccionDesperdicioCabecera pdc = new E_produccionDesperdicioCabecera();
                 pdc.setId(rs.getInt("id_produccion_cabecera_desperdicio"));
                 pdc.setProduccionCabecera(pc);
@@ -2994,10 +2992,10 @@ public class DB_Produccion {
         String QUERY = "SELECT pdd.id_producto, prod.descripcion, prod.codigo, pdd.id_produccion_tipo_baja, "
                 + "SUM(pdd.cantidad) as cantidad, tb.descripcion as tipo_baja "
                 + "FROM produccion_desperdicio pdd, producto prod, produccion_cabecera_desperdicio pcd, "
-                + "produccion_cabecera pc, produccion_tipo_baja tb "
+                + "produccion_tipo_baja tb "
                 + "WHERE pdd.id_producto = prod.id_producto "
                 + "AND pcd.id_produccion_cabecera_desperdicio = pdd.id_produccion_cabecera_desperdicio "
-                + "AND pcd.id_produccion_cabecera = pc.id_produccion_cabecera "
+                //+ "AND pcd.id_produccion_cabecera = pc.id_produccion_cabecera "
                 + "AND tb.id_produccion_tipo_baja = pdd.id_produccion_tipo_baja "
                 + "AND pcd.id_produccion_cabecera_desperdicio IN ("
                 + builder.substring(0, builder.length() - 1) + ")";

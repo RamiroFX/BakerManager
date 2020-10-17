@@ -68,9 +68,15 @@ public class DesperdicioDetalleTableModel extends AbstractTableModel {
         E_produccionDesperdicioDetalle pdd = this.list.get(rowIndex);
         switch (colIndex) {
             case 0: {
+                if(pdd.getDesperdicioCabecera().getProduccionCabecera().getFechaProduccion()==null){
+                    return "";
+                }
                 return dateFormater.format(pdd.getDesperdicioCabecera().getProduccionCabecera().getFechaProduccion());
             }
             case 1: {
+                if(pdd.getDesperdicioCabecera().getProduccionCabecera().getNroOrdenTrabajo()<1){
+                    return "";
+                }
                 return decimalFormat.format(pdd.getDesperdicioCabecera().getProduccionCabecera().getNroOrdenTrabajo());
             }
             case 2: {

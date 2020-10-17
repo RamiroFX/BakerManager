@@ -174,6 +174,7 @@ public class C_crearDesperdicioRapido extends MouseAdapter implements ActionList
         String observacion = vista.jtfObservacion.getText().trim();
         modelo.produccionDesperdicioCabecera.setObservacion(observacion);
         modelo.produccionDesperdicioCabecera.setTiempo(vista.jdcFechaDesperdicio.getDate());
+        System.out.println("bauplast.desperdicio.C_crearDesperdicioRapido.guardar()");
         modelo.guardar();
         cerrar();
     }
