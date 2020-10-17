@@ -245,7 +245,7 @@ public class DB_Ingreso {
                 + "AND FC.ID_CLIENTE = C.ID_CLIENTE "
                 + "AND FC.ID_FUNCIONARIO = F.ID_FUNCIONARIO ";
         String groupBy = " GROUP BY FC.ID_FACTURA_CABECERA,FC.NRO_FACTURA, C.ENTIDAD, FC.TIEMPO,F.ID_PERSONA, FC.ID_COND_VENTA ";
-        String orderBy = "ORDER BY FC.ID_FACTURA_CABECERA";
+        String orderBy = "ORDER BY FC.TIEMPO";
         if (conFechas) {
             query = query + "AND FC.TIEMPO BETWEEN ?  AND ? ";
         }

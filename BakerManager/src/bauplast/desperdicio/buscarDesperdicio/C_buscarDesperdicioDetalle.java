@@ -56,7 +56,7 @@ public class C_buscarDesperdicioDetalle extends MouseAdapter implements ActionLi
         Utilities.c_packColumn.packColumns(this.vista.jtProducto, 1);
 
         this.vista.jcbBuscarPor.addItem("Todos");
-        this.vista.jcbBuscarPor.addItem("OT");
+        //this.vista.jcbBuscarPor.addItem("OT");
         this.vista.jcbBuscarPor.addItem("Producto");
         this.vista.jcbBuscarPor.addItem("Código");
         this.vista.jcbClasificarPor.addItem("Fecha");
