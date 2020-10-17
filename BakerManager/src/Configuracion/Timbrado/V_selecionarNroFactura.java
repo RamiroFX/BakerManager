@@ -14,14 +14,14 @@ import net.miginfocom.swing.MigLayout;
  */
 public class V_selecionarNroFactura extends javax.swing.JDialog {
 
-    public javax.swing.JButton jbCancel, jbOK;
+    public javax.swing.JButton jbCancel, jbOK, jbPredeterminado;
     private javax.swing.JLabel jlNroTimbrado, jlNroSucursal, jlNroPuntoVenta, jlRangoFacturas, jlNroFactura;
     public javax.swing.JTextField jtfNroTimbrado, jtfNroSucursal, jtfNroPuntoVenta, jtfRangoFacturas, jtfNroFactura;
 
     public V_selecionarNroFactura(JDialog vista) {
         super(vista, true);
         setTitle("Seleccione un Número de factura");
-        setSize(new java.awt.Dimension(300, 250));
+        setSize(new java.awt.Dimension(300, 280));
         setLocationRelativeTo(vista);
         initComponents();
     }
@@ -29,6 +29,7 @@ public class V_selecionarNroFactura extends javax.swing.JDialog {
     private void initComponents() {
         getContentPane().setLayout(new MigLayout());
         jbOK = new javax.swing.JButton();
+        jbPredeterminado = new javax.swing.JButton("Establecer predeterminado");
         jbCancel = new javax.swing.JButton();
         jlNroTimbrado = new javax.swing.JLabel("Nro. timbrado");
         jlNroSucursal = new javax.swing.JLabel("Nro. sucursal");
@@ -55,7 +56,8 @@ public class V_selecionarNroFactura extends javax.swing.JDialog {
         getContentPane().add(jlNroFactura);
         getContentPane().add(jtfNroFactura, "width :200:,grow,wrap");
         getContentPane().add(jbOK);
-        getContentPane().add(jbCancel);
+        getContentPane().add(jbCancel,"wrap");
+        getContentPane().add(jbPredeterminado);
         jtfNroTimbrado.selectAll();
     }
 

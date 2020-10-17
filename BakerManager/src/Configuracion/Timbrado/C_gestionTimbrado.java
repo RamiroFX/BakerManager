@@ -16,6 +16,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -73,6 +74,29 @@ public class C_gestionTimbrado implements ActionListener, MouseListener, KeyList
         }
     }
 
+    private void establecerPredeterminado() {
+        int fila = this.vista.jtCabecera.getSelectedRow();
+        if (fila > -1) {
+            SimpleDateFormat dateFormater = new SimpleDateFormat("dd/MM/YYYY");
+            E_Timbrado unTimbrado = modelo.getTm().getList().get(fila);
+            String timbradoDescripcion = "";
+            if (unTimbrado.getDescripcion() != null) {
+                timbradoDescripcion = unTimbrado.getDescripcion();
+            }
+            String mensaje = "Desea establecer el siguiente timbrado como predeterminado?\n"
+                    + "Descripción: " + timbradoDescripcion + "\n"
+                    + "Nro. timbrado: " + unTimbrado.getNroTimbrado() + "\n"
+                    + "Nro. de sucursal: " + unTimbrado.getNroSucursal() + "\n"
+                    + "Nro. de punto de venta: " + unTimbrado.getNroPuntoVenta() + "\n"
+                    + "Nro. inicial-final: " + unTimbrado.getNroBoletaInicial() + " - " + unTimbrado.getNroBoletaFinal() + "\n"
+                    + "Fecha de vencimiento: " + dateFormater.format(unTimbrado.getFechaVencimiento()) + "\n";
+            int opcion = JOptionPane.showConfirmDialog(vista, mensaje, "Atención", JOptionPane.INFORMATION_MESSAGE, JOptionPane.YES_NO_OPTION);
+            if (opcion == JOptionPane.YES_OPTION) {
+                modelo.establecerTimbradoPredeterminado(unTimbrado.getId());
+            }
+        }
+    }
+
     public final void concederPermisos() {
         //TODO remove
         this.vista.jtfNroTimbrado.addActionListener(this);
@@ -83,6 +107,7 @@ public class C_gestionTimbrado implements ActionListener, MouseListener, KeyList
         this.vista.jbSalir.addActionListener(this);
         this.vista.jbBuscar.addActionListener(this);
         this.vista.jcbActivarFecha.addActionListener(this);
+        this.vista.jbPredeterminado.addActionListener(this);
 
         this.vista.jtCabecera.addMouseListener(this);
         this.vista.jtCabecera.addKeyListener(this);
@@ -252,6 +277,9 @@ public class C_gestionTimbrado implements ActionListener, MouseListener, KeyList
         }
         if (source.equals(this.vista.jcbActivarFecha)) {
             handleDateParams();
+        }
+        if (source.equals(this.vista.jbPredeterminado)) {
+            establecerPredeterminado();
         }
         if (source.equals(this.vista.jbSalir)) {
             cerrar();

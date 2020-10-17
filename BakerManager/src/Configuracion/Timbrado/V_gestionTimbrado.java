@@ -28,7 +28,8 @@ import net.miginfocom.swing.MigLayout;
  */
 public class V_gestionTimbrado extends JDialog {
 
-    public JButton jbBuscar, jbBorrar, jbSalir, jbNueva, jbDetalle, jbAnular;
+    public JButton jbBuscar, jbBorrar, jbSalir, jbNueva, jbDetalle, jbPredeterminado, 
+            jbAnular;
     public JTextField jtfNroTimbrado;
     public JComboBox<Estado> jcbEstado;
     public JComboBox jcbFecha;
@@ -102,9 +103,12 @@ public class V_gestionTimbrado extends JDialog {
         jbDetalle = new JButton("Detalle");
         jbDetalle.setName("detalle timbrado venta");
         jbSalir = new JButton("Salir");
+        jbPredeterminado = new JButton("Establecer predeterminado");
+        jbPredeterminado.setName("Establecer predeterminado");
         jpBot.add(jbNueva);
         jpBot.add(jbAnular);
         jpBot.add(jbDetalle);
+        jpBot.add(jbPredeterminado);
         jpBot.add(jbSalir);
         jpBot.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED), "Opciones"));
     }

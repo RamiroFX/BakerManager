@@ -12,6 +12,7 @@ package Entities;
 public class E_preferenciaGeneral {
 
     int idPreferenciaGeneral, idImpresionTipo;
+    private int idTimbradoVenta;
 
     public E_preferenciaGeneral() {
     }
@@ -40,6 +41,14 @@ public class E_preferenciaGeneral {
     @Override
     public String toString() {
         return "IdImpresionTipo: " + getIdImpresionTipo();
+    }
+
+    public int getIdTimbradoVenta() {
+        return idTimbradoVenta;
+    }
+
+    public void setIdTimbradoVenta(int idTimbradoVenta) {
+        this.idTimbradoVenta = idTimbradoVenta;
     }
 
 }

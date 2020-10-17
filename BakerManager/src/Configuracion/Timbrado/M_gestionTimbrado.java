@@ -5,6 +5,7 @@
  */
 package Configuracion.Timbrado;
 
+import DB.DB_Preferencia;
 import DB.DB_Timbrado;
 import DB.DB_manager;
 import Entities.E_Timbrado;
@@ -113,5 +114,9 @@ public class M_gestionTimbrado {
      */
     public void setTipoFechas(ArrayList tipoFechas) {
         this.tipoFechas = tipoFechas;
+    }
+
+    public void establecerTimbradoPredeterminado(int idTimbradoVenta) {
+        DB_Preferencia.establecerTimbradoVentaPredeterminado(idTimbradoVenta);
     }
 }

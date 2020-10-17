@@ -348,22 +348,64 @@ public class DB_Preferencia {
 
     public static E_preferenciaGeneral obtenerPreferenciaGeneral() {
         E_preferenciaGeneral prefGeneral = null;
-        String Query = "SELECT id_preferencia_general, "
-                + "id_impresion_tipo "
+        String QUERY = "SELECT id_preferencia_general, "
+                + "id_impresion_tipo, "
+                + "id_timbrado "
                 + "FROM preferencia_general WHERE id_preferencia_general = 1 ";
         try {
-            pst = DB_manager.getConection().prepareStatement(Query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            pst = DB_manager.getConection().prepareStatement(QUERY, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             rs = pst.executeQuery();
             while (rs.next()) {
                 prefGeneral = new E_preferenciaGeneral();
                 prefGeneral.setIdPreferenciaGeneral(rs.getInt(1));
                 prefGeneral.setIdImpresionTipo(rs.getInt(2));
+                prefGeneral.setIdTimbradoVenta(rs.getInt(3));
             }
         } catch (SQLException ex) {
-            Logger lgr = Logger.getLogger(DB_Producto.class.getName());
+            Logger lgr = Logger.getLogger(DB_Preferencia.class.getName());
             lgr.log(Level.SEVERE, ex.getMessage(), ex);
         }
         return prefGeneral;
+    }
+    
+    public static int establecerTimbradoVentaPredeterminado(int idTimbradoVenta){
+        String UPDATE = "UPDATE preferencia_general "
+                + "SET id_timbrado = ? "
+                + "WHERE id_preferencia_general = 1;";
+        int result = -1;
+        try {
+            DB_manager.getConection().setAutoCommit(false);
+            pst = DB_manager.getConection().prepareStatement(UPDATE);
+            pst.setInt(1, idTimbradoVenta);
+            result = pst.executeUpdate();
+            DB_manager.getConection().commit();
+        } catch (SQLException ex) {
+            System.out.println(ex.getNextException());
+            if (DB_manager.getConection() != null) {
+                try {
+                    DB_manager.getConection().rollback();
+                } catch (SQLException ex1) {
+                    Logger lgr = Logger.getLogger(DB_Preferencia.class.getName());
+                    lgr.log(Level.WARNING, ex1.getMessage(), ex1);
+                }
+            }
+            Logger lgr = Logger.getLogger(DB_Preferencia.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        } finally {
+            try {
+                if (pst != null) {
+                    pst.close();
+                }
+                if (rs != null) {
+                    rs.close();
+                }
+            } catch (SQLException ex) {
+                Logger lgr = Logger.getLogger(DB_Preferencia.class.getName());
+                lgr.log(Level.WARNING, ex.getMessage(), ex);
+            }
+        }
+        return result;
+        
     }
 
     public static ArrayList<E_impresionOrientacion> obtenerImpresionOrientacion() {
