@@ -83,7 +83,7 @@ public class ChequesPendientes extends javax.swing.JDialog implements ActionList
     }
 
     private void initComponents() {
-        tm = new ChequesPendienteTableModel();
+        tm = new ChequesPendienteTableModel(concepto);
         initMarcas();
         jpSouth = new JPanel();
         jbCobrar = new javax.swing.JButton("Cobrar");

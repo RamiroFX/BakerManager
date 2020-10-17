@@ -6,6 +6,7 @@
 package DB;
 
 import Entities.E_banco;
+import Entities.E_cuentaCorrienteCabecera;
 import Entities.E_cuentaCorrienteDetalle;
 import Entities.E_egresoSinPago;
 import Entities.E_formaPago;
@@ -400,7 +401,9 @@ public class DB_Pago {
                 + "CCD.CHEQUE_FECHA_DIFERIDA, "//9
                 + "(SELECT B.DESCRIPCION FROM BANCO B WHERE B.ID_BANCO = CCD.ID_BANCO) \"BANCO\", "//10
                 + "CCD.ID_ESTADO_CHEQUE, "//11
-                + "(SELECT EC.NRO_FACTURA FROM EGRESO_CABECERA EC WHERE EC.ID_EGRESO_CABECERA = CCD.ID_EGRESO_CABECERA) \"NRO_FACTURA\" "//12
+                + "(SELECT EC.NRO_FACTURA FROM EGRESO_CABECERA EC WHERE EC.ID_EGRESO_CABECERA = CCD.ID_EGRESO_CABECERA) \"NRO_FACTURA\", "//12
+                + "(SELECT C.ENTIDAD FROM PROVEEDOR C WHERE C.ID_PROVEEDOR = RPC.ID_PROVEEDOR) \"PROVEEDOR\", "//13
+                + "(SELECT C.ID_PROVEEDOR FROM PROVEEDOR C WHERE C.ID_PROVEEDOR = RPC.ID_PROVEEDOR) \"ID_PROVEEDOR\" "//14
                 + "FROM RECIBO_PAGO_DETALLE CCD, RECIBO_PAGO_CABECERA RPC "
                 + "WHERE cheque_fecha_diferida >= now() "
                 + "AND RPC.id_recibo_pago_cabecera = CCD.id_recibo_pago_cabecera "
@@ -411,7 +414,13 @@ public class DB_Pago {
             pst = DB_manager.getConection().prepareStatement(query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             rs = pst.executeQuery();
             while (rs.next()) {
+                M_proveedor proveedor = new M_proveedor();
+                proveedor.setEntidad(rs.getString(13));
+                proveedor.setId(rs.getInt(14));
+                E_reciboPagoCabecera ccc = new E_reciboPagoCabecera();
+                ccc.setProveedor(proveedor);
                 E_cuentaCorrienteDetalle detalle = new E_cuentaCorrienteDetalle();
+                detalle.setReciboPagoCabecera(ccc);
                 E_banco banco = new E_banco();
                 banco.setId(rs.getInt(7));
                 banco.setDescripcion(rs.getString(10));

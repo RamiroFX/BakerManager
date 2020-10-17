@@ -22,6 +22,7 @@ public class E_cuentaCorrienteDetalle {
     private E_formaPago formaPago;
     private E_tipoCheque tipoCheque;
     private E_cuentaCorrienteCabecera cuentaCorrienteCabecera;
+    private E_reciboPagoCabecera reciboPagoCabecera;
     private E_facturaCabecera facturaVenta;
     private E_reciboTipoPago tipoPago;
     private int nroCheque;//opcional
@@ -269,5 +270,19 @@ public class E_cuentaCorrienteDetalle {
      */
     public void setTipoPago(E_reciboTipoPago tipoPago) {
         this.tipoPago = tipoPago;
+    }
+
+    /**
+     * @return the reciboPagoCabecera
+     */
+    public E_reciboPagoCabecera getReciboPagoCabecera() {
+        return reciboPagoCabecera;
+    }
+
+    /**
+     * @param reciboPagoCabecera the reciboPagoCabecera to set
+     */
+    public void setReciboPagoCabecera(E_reciboPagoCabecera reciboPagoCabecera) {
+        this.reciboPagoCabecera = reciboPagoCabecera;
     }
 }

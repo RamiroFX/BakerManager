@@ -24,12 +24,15 @@ import javax.swing.table.AbstractTableModel;
  */
 public class ChequesPendienteTableModel extends AbstractTableModel {
 
+    public static final int CLIENTE =2, PROVEEDOR = 1;
+    private int tipo;
     private SimpleDateFormat dateFormater;
     private DecimalFormat decimalFormat;
     private List<E_cuentaCorrienteDetalle> list;
     private final String[] colNames = {"Entidad", "Monto", "Id venta", "Nro Factura", "Nro Cheque", "Banco", "Fecha cheque", "Fecha diferida", "Días pendientes"};
 
-    public ChequesPendienteTableModel() {
+    public ChequesPendienteTableModel(int tipo) {
+        this.tipo = tipo;
         this.list = new ArrayList<>();
         this.dateFormater = new SimpleDateFormat("dd/MM/YYYY");
         this.decimalFormat = new DecimalFormat("###,###");
@@ -75,7 +78,14 @@ public class ChequesPendienteTableModel extends AbstractTableModel {
         E_cuentaCorrienteDetalle row = this.list.get(rowIndex);
         switch (colIndex) {
             case 0: {
-                return row.getCuentaCorrienteCabecera().getCliente().getEntidad();
+                switch (tipo) {
+                    case CLIENTE: {
+                        return row.getCuentaCorrienteCabecera().getCliente().getEntidad();
+                    }
+                    case PROVEEDOR: {
+                        return row.getReciboPagoCabecera().getProveedor().getEntidad();
+                    }
+                }
             }
             case 1: {
                 return decimalFormat.format(row.getMonto());
