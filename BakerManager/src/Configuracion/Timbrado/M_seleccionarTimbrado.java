@@ -5,6 +5,7 @@
  */
 package Configuracion.Timbrado;
 
+import DB.DB_Preferencia;
 import DB.DB_Timbrado;
 import DB.DB_manager;
 import Entities.E_Timbrado;
@@ -64,4 +65,7 @@ public class M_seleccionarTimbrado {
         return estados;
     }
 
+    public void establecerTimbradoPredeterminado(int idTimbradoVenta) {
+        DB_Preferencia.establecerTimbradoVentaPredeterminado(idTimbradoVenta);
+    }
 }

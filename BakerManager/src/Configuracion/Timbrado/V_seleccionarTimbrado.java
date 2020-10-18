@@ -25,7 +25,7 @@ import net.miginfocom.swing.MigLayout;
  */
 public class V_seleccionarTimbrado extends JDialog {
 
-    JButton jbAceptar, jbSalir, jbBuscar, jbBorrar, jbCrearTimbrado;
+    JButton jbAceptar, jbSalir, jbBuscar, jbBorrar, jbCrearTimbrado, jbEstablecerPredeterminado;
     JScrollPane jspTimbrado;
     JTable jtTimbrado;
     JPanel jpBotones, jpTop, jpBotonesTop;
@@ -75,11 +75,14 @@ public class V_seleccionarTimbrado extends JDialog {
         jspTimbrado = new JScrollPane(jtTimbrado);
         jbCrearTimbrado = new JButton("Crear timbrado");
         jbCrearTimbrado.setName("crear timbrado");
+        jbEstablecerPredeterminado = new JButton("Establecer predeterminado");
+        jbEstablecerPredeterminado.setName("Establecer predeterminado");
         jbAceptar = new JButton("Seleccionar timbrado");
         jbSalir = new JButton("Cerrar");
         jpBotones = new JPanel();
         jpBotones.add(jbCrearTimbrado);
         jpBotones.add(jbAceptar);
+        jpBotones.add(jbEstablecerPredeterminado);
         jpBotones.add(jbSalir);
     }
 }

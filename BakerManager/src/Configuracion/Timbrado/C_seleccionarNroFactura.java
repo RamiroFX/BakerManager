@@ -19,7 +19,7 @@ import javax.swing.event.AncestorListener;
  *
  * @author Ramiro Ferreira
  */
-public class C_seleccionarNroFactura implements ActionListener, KeyListener {
+public class C_seleccionarNroFactura implements ActionListener, KeyListener, RecibirTimbradoVentaCallback {
 
     private static final String VALIDAR_NRO_FACTURA_1 = "Ingrese un número de factura";
     private static final String VALIDAR_NRO_FACTURA_2 = "Asegurese de colocar un numero positivo en el número de factura";
@@ -45,7 +45,7 @@ public class C_seleccionarNroFactura implements ActionListener, KeyListener {
         this.vista.jtfNroSucursal.setEditable(false);
         this.vista.jtfNroPuntoVenta.setEditable(false);
         this.vista.jtfRangoFacturas.setEditable(false);
-        this.vista.jtfNroFactura.setText(modelo.obtenerUltimoNroFactura()+ "");
+        this.vista.jtfNroFactura.setText(modelo.obtenerUltimoNroFactura() + "");
         this.vista.jtfNroFactura.addAncestorListener(new AncestorListener() {
             @Override
             public void ancestorRemoved(AncestorEvent pEvent) {
@@ -85,6 +85,7 @@ public class C_seleccionarNroFactura implements ActionListener, KeyListener {
         this.vista.jtfNroPuntoVenta.addKeyListener(this);
         this.vista.jtfRangoFacturas.addKeyListener(this);
         this.vista.jtfNroFactura.addActionListener(this);
+        this.vista.jbCambiarTimbrado.addActionListener(this);
     }
 
     private boolean validarNroFactura() {
@@ -125,6 +126,11 @@ public class C_seleccionarNroFactura implements ActionListener, KeyListener {
         cerrar();
     }
 
+    private void invocarSeleccionTimbrado() {
+        SeleccionarTimbrado st = new SeleccionarTimbrado(vista, this);
+        st.mostrarVista();
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource().equals(this.vista.jbOK)) {
@@ -133,6 +139,8 @@ public class C_seleccionarNroFactura implements ActionListener, KeyListener {
             cerrar();
         } else if (e.getSource().equals(this.vista.jtfNroFactura)) {
             enviarNroFactura();
+        } else if (e.getSource().equals(this.vista.jbCambiarTimbrado)) {
+            invocarSeleccionTimbrado();
         }
     }
 
@@ -154,6 +162,18 @@ public class C_seleccionarNroFactura implements ActionListener, KeyListener {
 
     @Override
     public void keyReleased(KeyEvent ke) {
+    }
+
+    @Override
+    public void recibirTimbrado(E_Timbrado timbrado) {
+        this.modelo.setTimbrado(timbrado);
+        cargarDatos();
+    }
+
+    @Override
+    public void recibirTimbradoNroFactura(E_Timbrado timbrado, int nroFactura) {
+        this.modelo.setTimbrado(timbrado);
+        cargarDatos();
     }
 
 }

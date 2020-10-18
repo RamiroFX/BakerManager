@@ -17,6 +17,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -107,6 +108,7 @@ public class C_seleccionarTimbrado extends MouseAdapter implements ActionListene
         //ACTION LISTENERS
         this.vista.jbCrearTimbrado.addActionListener(this);
         this.vista.jbAceptar.addActionListener(this);
+        this.vista.jbEstablecerPredeterminado.addActionListener(this);
         this.vista.jbSalir.addActionListener(this);
         this.vista.jbBuscar.addActionListener(this);
         this.vista.jbBorrar.addActionListener(this);
@@ -182,9 +184,31 @@ public class C_seleccionarTimbrado extends MouseAdapter implements ActionListene
         int columna = vista.jtTimbrado.getSelectedColumn();
         if ((fila > -1) && (columna > -1)) {
             E_Timbrado timbrado = modelo.getTm().getList().get(fila);
-            SeleccionarNroFactura snf = new SeleccionarNroFactura(vista, callback, timbrado);
-            snf.mostrarVista();
+            callback.recibirTimbrado(timbrado);
             cerrar();
+        }
+    }
+
+    private void establecerPredeterminado() {
+        int fila = this.vista.jtTimbrado.getSelectedRow();
+        if (fila > -1) {
+            SimpleDateFormat dateFormater = new SimpleDateFormat("dd/MM/YYYY");
+            E_Timbrado unTimbrado = modelo.getTm().getList().get(fila);
+            String timbradoDescripcion = "";
+            if (unTimbrado.getDescripcion() != null) {
+                timbradoDescripcion = unTimbrado.getDescripcion();
+            }
+            String mensaje = "Desea establecer el siguiente timbrado como predeterminado?\n"
+                    + "Descripción: " + timbradoDescripcion + "\n"
+                    + "Nro. timbrado: " + unTimbrado.getNroTimbrado() + "\n"
+                    + "Nro. de sucursal: " + unTimbrado.getNroSucursal() + "\n"
+                    + "Nro. de punto de venta: " + unTimbrado.getNroPuntoVenta() + "\n"
+                    + "Nro. inicial-final: " + unTimbrado.getNroBoletaInicial() + " - " + unTimbrado.getNroBoletaFinal() + "\n"
+                    + "Fecha de vencimiento: " + dateFormater.format(unTimbrado.getFechaVencimiento()) + "\n";
+            int opcion = JOptionPane.showConfirmDialog(vista, mensaje, "Atención", JOptionPane.INFORMATION_MESSAGE, JOptionPane.YES_NO_OPTION);
+            if (opcion == JOptionPane.YES_OPTION) {
+                modelo.establecerTimbradoPredeterminado(unTimbrado.getId());
+            }
         }
     }
 
@@ -203,7 +227,9 @@ public class C_seleccionarTimbrado extends MouseAdapter implements ActionListene
             displayQueryResults();
         } else if (e.getSource() == this.vista.jbBorrar) {
             borrarParametros();
-        } else if (e.getSource() == this.vista.jbSalir) {
+        } else if (e.getSource() == this.vista.jbEstablecerPredeterminado) {
+            establecerPredeterminado();
+        }else if (e.getSource() == this.vista.jbSalir) {
             cerrar();
         }
     }

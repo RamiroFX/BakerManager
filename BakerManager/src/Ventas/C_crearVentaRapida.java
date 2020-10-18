@@ -5,6 +5,7 @@
 package Ventas;
 
 import Cliente.SeleccionarCliente;
+import Configuracion.Timbrado.SeleccionarNroFactura;
 import Configuracion.Timbrado.SeleccionarTimbrado;
 import DB.DB_Cliente;
 import Entities.E_Timbrado;
@@ -31,7 +32,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Vector;
-import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 /**
@@ -430,6 +430,12 @@ public class C_crearVentaRapida implements GestionInterface, InterfaceFacturaDet
         scp.setVisible(true);
     }
 
+    private void invocarSeleccionNroFactura() {
+        E_Timbrado timbradoPred = modelo.obtenerTimbradoPredeterminado();
+        SeleccionarNroFactura st = new SeleccionarNroFactura(this.vista, this, timbradoPred);
+        st.mostrarVista();
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource().equals(this.vista.jbSalir)) {
@@ -463,8 +469,7 @@ public class C_crearVentaRapida implements GestionInterface, InterfaceFacturaDet
             establecerTipoVenta();
         }
         if (e.getSource().equals(this.vista.jbNroFactura)) {
-            SeleccionarTimbrado st = new SeleccionarTimbrado(this.vista, this);
-            st.mostrarVista();
+            invocarSeleccionNroFactura();
         }
         if (e.getSource().equals(this.vista.jbModificarDetalle)) {
             invocarModificarDetalle();
@@ -537,8 +542,7 @@ public class C_crearVentaRapida implements GestionInterface, InterfaceFacturaDet
                 break;
             }
             case KeyEvent.VK_F5: {
-                SeleccionarTimbrado st = new SeleccionarTimbrado(this.vista, this);
-                st.mostrarVista();
+                invocarSeleccionNroFactura();
                 break;
             }
         }

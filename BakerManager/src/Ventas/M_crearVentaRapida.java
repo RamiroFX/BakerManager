@@ -9,6 +9,8 @@ import DB.DB_Egreso;
 import DB.DB_Ingreso;
 import DB.DB_Preferencia;
 import DB.DB_Producto;
+import DB.DB_Timbrado;
+import Entities.E_Timbrado;
 import Entities.E_impresionTipo;
 import Entities.M_facturaCabecera;
 import Entities.M_facturaDetalle;
@@ -226,8 +228,7 @@ public class M_crearVentaRapida {
         getCabecera().setTiempo(new Timestamp(c.getTimeInMillis()));
         //FIN GUARDAR VENTA
     }
-    
-    
+
     public void guardarVentaConFecha() {
         //INICIO GUARDAR VENTA
         if (isVentaMultiple()) {
@@ -408,4 +409,8 @@ public class M_crearVentaRapida {
         this.ventaMultiple = ventaMultiple;
     }
 
+    public E_Timbrado obtenerTimbradoPredeterminado() {
+        int idTimbrado = DB_Preferencia.obtenerPreferenciaGeneral().getIdTimbradoVenta();
+        return DB_Timbrado.obtenerTimbrado(idTimbrado);
+    }
 }
