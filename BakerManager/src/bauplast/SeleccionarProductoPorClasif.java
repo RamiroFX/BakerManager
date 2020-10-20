@@ -5,7 +5,6 @@
  */
 package bauplast;
 
-import Entities.E_productoClasificacion;
 import Entities.ProductoCategoria;
 import Interface.InterfaceRecibirProduccionFilm;
 import Interface.InterfaceRecibirProduccionTerminados;
@@ -47,5 +46,5 @@ public class SeleccionarProductoPorClasif {
     public void setProductoCallback(RecibirProductoCallback callback) {
         this.controlador.setProductoCallback(callback);
     }
-    
+
 }

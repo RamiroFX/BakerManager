@@ -3146,6 +3146,165 @@ public class DB_Produccion {
         return desperdicios;
     }
 
+    public static List<E_produccionDesperdicioDetalle> consultarProductosTerminadosDetalle(String descripcion, String buscarPor, String ordenarPor, String clasificarPor,
+            String categoria, boolean porFecha, Date fechaInicio, Date fechaFinal) {
+        List<E_produccionDesperdicioDetalle> desperdicios = null;
+        try {
+            if (DB_manager.getConection() == null) {
+                throw new IllegalStateException("Connection already closed.");
+            }
+
+            String ORDER_BY = "ORDER BY prod.descripcion ";
+            String CRITERIA = "";
+            String DATE_RANGE = "";
+            //BUSCAR 
+            switch (buscarPor) {
+                case "Todos": {
+                    CRITERIA = "AND ((LOWER(CAST(nro_orden_trabajo AS CHARACTER VARYING)) LIKE ?) "
+                            + "OR (LOWER(producto) LIKE ?) OR (LOWER(codigo) LIKE ?) )";
+                    break;
+                }
+                case "OT": {
+                    CRITERIA = "AND LOWER(CAST(nro_orden_trabajo AS CHARACTER VARYING)) LIKE ? ";
+                    break;
+                }
+                case "Producto": {
+                    CRITERIA = "AND LOWER(producto) LIKE ? ";
+                    break;
+                }
+                case "Código": {
+                    CRITERIA = "AND LOWER(codigo) LIKE ? ";
+                    break;
+                }
+            }
+            if (porFecha) {
+                DATE_RANGE = "AND fecha_produccion between ? AND ? ";
+            }
+            //CLASIFICAR 
+            switch (clasificarPor) {
+                case "OT": {
+                    ORDER_BY = "ORDER BY nro_orden_trabajo ";
+                    break;
+                }
+                case "Fecha": {
+                    ORDER_BY = "ORDER BY fecha_produccion ";
+                    break;
+                }
+                case "Producto": {
+                    ORDER_BY = "ORDER BY producto ";
+                    break;
+                }
+                case "Código": {
+                    ORDER_BY = "ORDER BY codigo ";
+                    break;
+                }
+            }
+            //ORDENAR
+            switch (ordenarPor) {
+                case "Ascendente": {
+                    ORDER_BY = ORDER_BY + "ASC ";
+                    break;
+                }
+                case "Descendente": {
+                    ORDER_BY = ORDER_BY + "DESC ";
+                    break;
+                }
+            }
+
+            String Query = "SELECT id_produccion_detalle, cantidad, nro_orden_trabajo, "
+                    + "id_produccion_cabecera, fecha_produccion, id_producto, codigo, "
+                    + "producto, id_categoria, categoria "
+                    + "FROM v_produccion_terminados  WHERE 1=1 "
+                    + CRITERIA
+                    + DATE_RANGE
+                    + ORDER_BY;
+            int pos = 1;
+            pst = DB_manager.getConection().prepareStatement(Query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            if (buscarPor.equals("Todos")) {
+                pst.setString(pos++, "%" + descripcion + "%");
+                pst.setString(pos++, "%" + descripcion + "%");
+                pst.setString(pos++, "%" + descripcion + "%");
+            } else {
+                pst.setString(pos++, "%" + descripcion + "%");
+            }
+            if (porFecha) {
+                pst.setTimestamp(pos++, new Timestamp(fechaInicio.getTime()));
+                pst.setTimestamp(pos++, new Timestamp(fechaFinal.getTime()));
+            }
+            rs = pst.executeQuery();
+            desperdicios = new ArrayList();
+            while (rs.next()) {
+                E_produccionCabecera pc = new E_produccionCabecera();
+                pc.setId(rs.getInt("id_produccion_cabecera"));
+                pc.setNroOrdenTrabajo(rs.getInt("nro_orden_trabajo"));
+                pc.setFechaProduccion(rs.getDate("fecha_produccion"));
+                E_produccionDesperdicioCabecera desperdicioCabecera = new E_produccionDesperdicioCabecera();
+                desperdicioCabecera.setProduccionCabecera(pc);
+                M_producto producto = new M_producto();
+                producto.setId(rs.getInt("id_producto"));
+                producto.setDescripcion(rs.getString("producto"));
+                producto.setCodigo(rs.getString("codigo"));
+                E_produccionDesperdicioDetalle pdd = new E_produccionDesperdicioDetalle();
+                pdd.setId(rs.getInt("id_produccion_detalle"));
+                pdd.setCantidad(rs.getDouble("cantidad"));
+                pdd.setProducto(producto);
+                pdd.setDesperdicioCabecera(desperdicioCabecera);
+                desperdicios.add(pdd);
+            }
+        } catch (SQLException ex) {
+            Logger lgr = Logger.getLogger(DB_Produccion.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        }
+        return desperdicios;
+    }
+
+    public static List<E_produccionDetalle> consultarProductosTerminadosAgrupado(List<E_produccionDesperdicioDetalle> cadenaCabeceras) {
+        List<E_produccionDetalle> list = new ArrayList<>();
+        try {
+            if (DB_manager.getConection() == null) {
+                throw new IllegalStateException("Connection already closed.");
+            }
+            boolean b = true;
+            StringBuilder builder = new StringBuilder();
+            for (E_produccionDesperdicioDetalle unDesperdicio : cadenaCabeceras) {
+                builder.append("?,");
+                b = false;
+            }
+            //para controlar que la lista contenga por lo menos una venta seleccionada
+            if (b) {
+                return list;
+            }
+            String QUERY = "SELECT SUM(cantidad) as cantidad, id_producto, codigo, producto, id_categoria, categoria "
+                    + "FROM v_produccion_terminados  WHERE 1=1 "
+                    + "AND id_produccion_cabecera IN ("
+                    + builder.substring(0, builder.length() - 1) + ") ";
+            String GROUP_BY = "GROUP BY id_producto, codigo, producto, id_categoria, categoria "
+                    + "ORDER BY producto DESC ";
+            QUERY = QUERY + GROUP_BY;
+            int index = 1;
+            pst = DB_manager.getConection().prepareStatement(QUERY, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            for (E_produccionDesperdicioDetalle unDepserdicio : cadenaCabeceras) {
+                pst.setInt(index, unDepserdicio.getDesperdicioCabecera().getProduccionCabecera().getId());
+                index++;
+            }
+            rs = pst.executeQuery();
+            while (rs.next()) {
+                M_producto producto = new M_producto();
+                producto.setId(rs.getInt("id_producto"));
+                producto.setDescripcion(rs.getString("producto"));
+                producto.setCodigo(rs.getString("codigo"));
+                E_produccionDetalle pdd = new E_produccionDetalle();
+                pdd.setCantidad(rs.getDouble("cantidad"));
+                pdd.setProducto(producto);
+                list.add(pdd);
+            }
+        } catch (SQLException ex) {
+            Logger lgr = Logger.getLogger(DB_Produccion.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        }
+        return list;
+    }
+
     public static List<E_produccionDetalle> consultarMateriaPrimaBajaDetalleAgrupado(List<E_produccionDesperdicioDetalle> cadenaCabeceras) {
         List<E_produccionDetalle> list = new ArrayList<>();
         boolean b = true;

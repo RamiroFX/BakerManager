@@ -34,7 +34,8 @@ public class V_gestionProduccion extends JInternalFrame {
 
     public JButton jbBuscar, jbBorrar, jbCrearRollo, jbCrearProductoTerminado,
             jbDetalle, jbResumen, jbCrearDesperdicioRapido,jbEmpleado, jbAnular, jbBuscarDetalle,
-            jbCrearDesperdicio, jbBuscarDetalleDesperdicio, jbBuscarMateriaPrimaBaja;
+            jbCrearDesperdicio, jbBuscarDetalleDesperdicio, jbBuscarMateriaPrimaBaja, 
+            jbBuscarTerminados;
     public JTextField jtfNroOrdenTrabajo, jtfEmpleado;
     public JComboBox<E_produccionTipo> jcbTipoProduccion;
     public JComboBox<Estado> jcbEstado;
@@ -101,10 +102,13 @@ public class V_gestionProduccion extends JInternalFrame {
         jbBuscarDetalleDesperdicio.setName("buscar produccion desperdicio");
         jbBuscarMateriaPrimaBaja = new JButton("Buscar MP");
         jbBuscarMateriaPrimaBaja.setName("buscar produccion desperdicio");
+        jbBuscarTerminados = new JButton("Buscar terminados");
+        jbBuscarTerminados.setName("buscar produccion terminados");
         //jbBuscarDetalle = new JButton("Buscar por detalle");
-        jpBotonesTop.add(jbBuscar);
-        jpBotonesTop.add(jbBorrar, "wrap");
-        jpBotonesTop.add(jbBuscarDetalle);
+        jpBotonesTop.add(jbBuscar,"split 3");
+        jpBotonesTop.add(jbBorrar);
+        jpBotonesTop.add(jbBuscarTerminados, "wrap");
+        jpBotonesTop.add(jbBuscarDetalle,"split 3");
         jpBotonesTop.add(jbBuscarDetalleDesperdicio);
         jpBotonesTop.add(jbBuscarMateriaPrimaBaja);
         //jpBotonesTop.add(jbBuscarDetalle, "span, growx");

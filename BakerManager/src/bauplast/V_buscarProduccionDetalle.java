@@ -37,7 +37,7 @@ public class V_buscarProduccionDetalle extends JDialog {
     public JTextField jtfBuscar;
 
     public V_buscarProduccionDetalle(JDialog main) {
-        super(main, "Buscar producción por detalle", true);
+        super(main, "Buscar rollos por detalle", true);
         setSize(1200, 400);
         setLocationRelativeTo(main);
         initComp();
@@ -48,7 +48,7 @@ public class V_buscarProduccionDetalle extends JDialog {
     }
 
     public V_buscarProduccionDetalle(JFrame main) {
-        super(main, "Buscar producción por detalle", true);
+        super(main, "Buscar rollos por detalle", true);
         setSize(1200, 400);
         setLocationRelativeTo(main);
         initComp();

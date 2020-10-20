@@ -7,7 +7,6 @@ package bauplast;
 
 import DB.DB_Producto;
 import DB.DB_manager;
-import Entities.E_productoClasificacion;
 import Entities.Estado;
 import Entities.ProductoCategoria;
 import ModeloTabla.SeleccionarProductoRolloTableModel;

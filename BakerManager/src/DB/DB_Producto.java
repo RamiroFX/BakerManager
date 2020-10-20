@@ -236,7 +236,11 @@ public class DB_Producto {
                     break;
                 }
                 case "Negativa": {
-                    existenciaSQL = "AND PROD.CANT_ACTUAL <= 0 ";
+                    existenciaSQL = "AND PROD.CANT_ACTUAL < 0 ";
+                    break;
+                }
+                case "Cero": {
+                    existenciaSQL = "AND PROD.CANT_ACTUAL = 0 ";
                     break;
                 }
                 default: {
@@ -296,7 +300,8 @@ public class DB_Producto {
             }
 
             String Query = "SELECT PROD.ID_PRODUCTO \"ID\", "
-                    + "PROD.DESCRIPCION \"Descripción\" "
+                    + "PROD.DESCRIPCION \"Descripción\", "
+                    + "PROD.CANT_ACTUAL \"Cant. actual\" "
                     + fromQuery
                     + "WHERE "
                     + prov

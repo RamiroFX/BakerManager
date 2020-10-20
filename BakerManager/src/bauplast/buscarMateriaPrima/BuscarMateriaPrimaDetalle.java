@@ -5,7 +5,6 @@
  */
 package bauplast.buscarMateriaPrima;
 
-import bauplast.desperdicio.buscarDesperdicio.*;
 import javax.swing.JFrame;
 
 /**

@@ -98,6 +98,7 @@ public class C_gestion_producto implements ActionListener, KeyListener, MouseLis
         this.vista.jcbExistence.addItem("Todas");
         this.vista.jcbExistence.addItem("Positiva");
         this.vista.jcbExistence.addItem("Negativa");
+        this.vista.jcbExistence.addItem("Cero");
     }
 
     public void mostrarVista() {

@@ -3,7 +3,8 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package bauplast.buscarMateriaPrima;
+package bauplast.crearProductoTerminado;
+
 import com.toedter.calendar.JDateChooser;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
@@ -24,7 +25,7 @@ import net.miginfocom.swing.MigLayout;
  *
  * @author Ramiro Ferreira
  */
-public class V_buscarMateriaPrimaDetalle extends JDialog {
+public class V_buscarProductosTerminados extends JDialog {
 
     JButton jbSalir, jbBuscar, jbBorrar, jbResumen;
     JScrollPane jspProducto;
@@ -32,11 +33,11 @@ public class V_buscarMateriaPrimaDetalle extends JDialog {
     JDateChooser jdcFechaInicio, jdcFechaFinal;
     JTable jtProducto;
     JPanel jpBotones, jpTop, jpBotonesTop, jpJtextFieldTop;
-    public JComboBox jcbBuscarPor, jcbOrdenarPor, jcbClasificarPor;
+    public JComboBox jcbBuscarPor, jcbOrdenarPor, jcbClasificarPor, jcbCategoria;
     public JTextField jtfBuscar;
 
-    public V_buscarMateriaPrimaDetalle(JDialog main) {
-        super(main, "Buscar baja de Materia Prima por detalle", true);
+    public V_buscarProductosTerminados(JDialog main) {
+        super(main, "Buscar productos terminados por detalle", true);
         setSize(1200, 400);
         setLocationRelativeTo(main);
         initComp();
@@ -46,8 +47,8 @@ public class V_buscarMateriaPrimaDetalle extends JDialog {
         getContentPane().add(jpBotones, BorderLayout.SOUTH);
     }
 
-    public V_buscarMateriaPrimaDetalle(JFrame main) {
-        super(main, "Buscar baja de Materia Prima por detalle", true);
+    public V_buscarProductosTerminados(JFrame main) {
+        super(main, "Buscar productos terminados por detalle", true);
         setSize(1200, 400);
         setLocationRelativeTo(main);
         initComp();
@@ -64,6 +65,7 @@ public class V_buscarMateriaPrimaDetalle extends JDialog {
         JPanel jpFiltroFecha = new JPanel(new FlowLayout(FlowLayout.CENTER));
         jpFiltroFecha.setBorder(new EtchedBorder());
 
+        jcbCategoria = new JComboBox();
         jcbActivarFecha = new JCheckBox("Buscar por fecha");
         jcbActivarFecha.setSelected(true);
         jdcFechaInicio = new JDateChooser();
@@ -76,6 +78,8 @@ public class V_buscarMateriaPrimaDetalle extends JDialog {
         jpFiltros.add(new JLabel("Ordenar por:"));
         jpFiltros.add(jcbClasificarPor);
         jpFiltros.add(jcbOrdenarPor);
+        jpFiltros.add(new JLabel("Categoria:"));
+        jpFiltros.add(jcbCategoria);
         jpFiltroFecha.add(jcbActivarFecha);
         jpFiltroFecha.add(new JLabel("Fecha inicio"));
         jpFiltroFecha.add(jdcFechaInicio);
