@@ -13,6 +13,7 @@ import Entities.ProductoCategoria;
 import Excel.ExportarProducto;
 import Interface.InterfaceNotificarCambio;
 import MenuPrincipal.DatosUsuario;
+import ModeloTabla.ProductoSimpleTableModel;
 import Producto.ProductoParametros;
 import bakermanager.C_inicio;
 import java.awt.EventQueue;
@@ -38,12 +39,14 @@ public class C_gestionProducto implements ActionListener, KeyListener, MouseList
 
     public M_gestionProducto modelo;
     public V_gestionProducto vista;
+    private ProductoSimpleTableModel productoTM;
     public C_inicio c_inicio;
 
     public C_gestionProducto(M_gestionProducto modelo, V_gestionProducto vista, C_inicio c_inicio) {
         this.modelo = modelo;
         this.vista = vista;
         this.c_inicio = c_inicio;
+        productoTM = new ProductoSimpleTableModel();
         this.vista.setLocation(c_inicio.centrarPantalla(this.vista));
         inicializarVista();
         concederPermisos();
@@ -82,6 +85,8 @@ public class C_gestionProducto implements ActionListener, KeyListener, MouseList
         this.vista.jcbExistence.addItem("Todas");
         this.vista.jcbExistence.addItem("Positiva");
         this.vista.jcbExistence.addItem("Negativa");
+        this.vista.jcbExistence.addItem("Cero");
+        this.vista.jtProducto.setModel(productoTM);
     }
 
     public void mostrarVista() {
@@ -173,7 +178,7 @@ public class C_gestionProducto implements ActionListener, KeyListener, MouseList
                  * para los resultados del query.
                  */
 
-                vista.jtProducto.setModel(DB_Producto.consultaSimpleProducto(desc.toLowerCase(), proveedor, marca, categoria.getId(), subCategoria.getId(), impuesto, estado, orderBy, existence));
+                productoTM.setList(DB_Producto.consultaSimpleProducto(desc.toLowerCase(), proveedor, marca, categoria.getId(), subCategoria.getId(), impuesto, estado, orderBy, existence));
                 Utilities.c_packColumn.packColumns(vista.jtProducto, 1);
             }
         });

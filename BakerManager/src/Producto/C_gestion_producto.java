@@ -13,6 +13,7 @@ import Entities.ProductoCategoria;
 import Excel.ExportarProducto;
 import Interface.InterfaceNotificarCambio;
 import MenuPrincipal.DatosUsuario;
+import ModeloTabla.ProductoSimpleTableModel;
 import Proveedor.Seleccionar_proveedor;
 import bakermanager.C_inicio;
 import java.awt.EventQueue;
@@ -26,6 +27,7 @@ import java.beans.PropertyVetoException;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Vector;
 import javax.swing.JOptionPane;
@@ -38,12 +40,16 @@ public class C_gestion_producto implements ActionListener, KeyListener, MouseLis
 
     private M_producto m_producto;
     private M_proveedor proveedor;
+    private ProductoSimpleTableModel productoTM;
+    private DecimalFormat decimalFormat;
     public V_gestion_producto vista;
     public C_inicio c_inicio;
 
     public C_gestion_producto(V_gestion_producto vista, C_inicio c_inicio) {
         this.m_producto = new M_producto();
         this.proveedor = new M_proveedor();
+        this.productoTM = new ProductoSimpleTableModel();
+        this.decimalFormat = new DecimalFormat("#,##0.##");
         this.vista = vista;
         this.c_inicio = c_inicio;
         this.vista.setLocation(c_inicio.centrarPantalla(this.vista));
@@ -99,6 +105,7 @@ public class C_gestion_producto implements ActionListener, KeyListener, MouseLis
         this.vista.jcbExistence.addItem("Positiva");
         this.vista.jcbExistence.addItem("Negativa");
         this.vista.jcbExistence.addItem("Cero");
+        this.vista.jtProducto.setModel(productoTM);
     }
 
     public void mostrarVista() {
@@ -190,7 +197,8 @@ public class C_gestion_producto implements ActionListener, KeyListener, MouseLis
                  * para los resultados del query.
                  */
 
-                vista.jtProducto.setModel(DB_Producto.consultaSimpleProducto(desc.toLowerCase(), proveedor, marca, categoria.getId(), subCategoria.getId(), impuesto, estado, orderBy, existence));
+                //vista.jtProducto.setModel(DB_Producto.consultaSimpleProducto(desc.toLowerCase(), proveedor, marca, categoria.getId(), subCategoria.getId(), impuesto, estado, orderBy, existence));
+                productoTM.setList(DB_Producto.consultaSimpleProducto(desc.toLowerCase(), proveedor, marca, categoria.getId(), subCategoria.getId(), impuesto, estado, orderBy, existence));
                 Utilities.c_packColumn.packColumns(vista.jtProducto, 1);
             }
         });
@@ -200,8 +208,9 @@ public class C_gestion_producto implements ActionListener, KeyListener, MouseLis
         if (e.getSource().equals(this.vista.jtProducto)) {
             int row = this.vista.jtProducto.getSelectedRow();
             int columna = this.vista.jtProducto.getSelectedRow();
-            int idProducto = Integer.valueOf(String.valueOf(this.vista.jtProducto.getValueAt(row, 0)));
+            int idProducto = productoTM.getList().get(row).getId();
             if ((row > -1) && (columna > -1)) {
+                MathContext c = new MathContext(9, RoundingMode.CEILING);
                 setProducto(DB_Producto.obtenerDatosProductoID(idProducto));
                 this.vista.jbModificar.setEnabled(true);
                 this.vista.jbEliminar.setEnabled(true);
@@ -214,7 +223,7 @@ public class C_gestion_producto implements ActionListener, KeyListener, MouseLis
                 this.vista.jtfImpuesto.setText(String.valueOf(getProducto().getImpuesto()));
                 this.vista.jtfMarca.setText(getProducto().getMarca());
                 this.vista.jtfSuspendido.setText(getProducto().getEstado());
-                this.vista.jtfCantActual.setText(String.valueOf(getProducto().getCantActual()));
+                this.vista.jtfCantActual.setText(decimalFormat.format(new BigDecimal(getProducto().getCantActual(), c)));
                 String observacion = "";
                 if (getProducto().getObservacion() != null) {
                     observacion = String.valueOf(getProducto().getObservacion());
@@ -355,7 +364,7 @@ public class C_gestion_producto implements ActionListener, KeyListener, MouseLis
     public void mouseClicked(MouseEvent e) {
         int fila = this.vista.jtProducto.rowAtPoint(e.getPoint());
         int columna = this.vista.jtProducto.columnAtPoint(e.getPoint());
-        Integer idProducto = Integer.valueOf(String.valueOf(this.vista.jtProducto.getValueAt(fila, 0)));
+        Integer idProducto = productoTM.getList().get(fila).getId();
         //setProducto(DBmanagerProducto.mostrarProducto(idProducto));
         setProducto(DB_Producto.obtenerDatosProductoID(idProducto));
         if ((fila > -1) && (columna > -1)) {
@@ -371,7 +380,7 @@ public class C_gestion_producto implements ActionListener, KeyListener, MouseLis
             this.vista.jtfMarca.setText(getProducto().getMarca());
             this.vista.jtfSuspendido.setText(getProducto().getEstado());
             MathContext c = new MathContext(9, RoundingMode.CEILING);
-            this.vista.jtfCantActual.setText(new BigDecimal(getProducto().getCantActual(), c) + "");
+            this.vista.jtfCantActual.setText(decimalFormat.format(new BigDecimal(getProducto().getCantActual(), c)));
             String observacion = "";
             if (getProducto().getObservacion() != null) {
                 observacion = String.valueOf(getProducto().getObservacion());

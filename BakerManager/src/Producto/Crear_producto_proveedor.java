@@ -194,7 +194,7 @@ public class Crear_producto_proveedor extends JDialog implements ActionListener,
                  * Se utiliza el objeto factory para obtener un TableModel
                  * para los resultados del query.
                  */
-                jtProducto.setModel(DB_Producto.consultaSimpleProducto(desc, proveedor, marca, -1, -1, impuesto, estado, "Descripción", "Todos"));
+                //jtProducto.setModel(DB_Producto.consultaSimpleProducto(desc, proveedor, marca, -1, -1, impuesto, estado, "Descripción", "Todos"));
                 Utilities.c_packColumn.packColumns(jtProducto, 1);
             }
         });
@@ -337,7 +337,7 @@ public class Crear_producto_proveedor extends JDialog implements ActionListener,
     public void recibirProveedor(M_proveedor proveedor) {
         this.proveedor = proveedor;
         this.jtfProveedor.setText(this.proveedor.getNombre());
-        this.jtProveedor.setModel(DB_Producto.consultaSimpleProducto("", this.proveedor.getEntidad(), "Todos", -1, -1, "Todos", "Todos", "Descripción", "Todos"));
+        //this.jtProveedor.setModel(DB_Producto.consultaSimpleProducto("", this.proveedor.getEntidad(), "Todos", -1, -1, "Todos", "Todos", "Descripción", "Todos"));
         int cantRow = this.jtProveedor.getRowCount();
         boolean b = true;
         for (int i = 0; i < cantRow; i++) {

@@ -219,8 +219,8 @@ public class DB_Producto {
         return rstm;
     }
 
-    public static ResultSetTableModel consultaSimpleProducto(String descripcion, String proveedor, String marca, int idCategoria, int idSubCategoria, String impuesto, String estado, String ordenarPor, String existencia) {
-        ResultSetTableModel rstm = null;
+    public static List<M_producto> consultaSimpleProducto(String descripcion, String proveedor, String marca, int idCategoria, int idSubCategoria, String impuesto, String estado, String ordenarPor, String existencia) {
+        List list = new ArrayList();
         try {
             if (DB_manager.getConection() == null) {
                 throw new IllegalStateException("Connection already closed.");
@@ -299,9 +299,10 @@ public class DB_Producto {
                 estad = "AND PROD.ID_ESTADO = (SELECT ESTA.ID_ESTADO FROM ESTADO ESTA WHERE ESTA.DESCRIPCION LIKE '" + estado + "') ";
             }
 
-            String Query = "SELECT PROD.ID_PRODUCTO \"ID\", "
-                    + "PROD.DESCRIPCION \"Descripción\", "
-                    + "PROD.CANT_ACTUAL \"Cant. actual\" "
+            String Query = "SELECT PROD.ID_PRODUCTO , "
+                    + "PROD.DESCRIPCION , "
+                    + "PROD.CODIGO , "
+                    + "PROD.CANT_ACTUAL "
                     + fromQuery
                     + "WHERE "
                     + prov
@@ -319,12 +320,19 @@ public class DB_Producto {
             pst.setString(2, "%" + descripcion + "%");
             // se ejecuta el query y se obtienen los resultados en un ResultSet
             rs = pst.executeQuery();
-            rstm = new ResultSetTableModel(rs);
+            while (rs.next()) {
+                M_producto producto = new M_producto();
+                producto.setId(rs.getInt("id_producto"));
+                producto.setCodBarra(rs.getString("codigo"));
+                producto.setDescripcion(rs.getString("descripcion"));
+                producto.setCantActual(rs.getDouble("cant_actual"));
+                list.add(producto);
+            }
         } catch (SQLException ex) {
             Logger lgr = Logger.getLogger(DB_Producto.class.getName());
             lgr.log(Level.SEVERE, ex.getMessage(), ex);
         }
-        return rstm;
+        return list;
     }
 
     public static ArrayList<M_producto> consultaSimpleProductos(String descripcion, String proveedor, String marca, String rubro, String impuesto, String estado, String ordenarPor, String existencia) {
