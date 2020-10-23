@@ -90,10 +90,9 @@ public class DB_Ingreso {
     }
 
     public static int obtenerUltimoNroFactura(int idTimbrado) {
-        String Query = "SELECT nro_factura FROM factura_cabecera "
-                + "WHERE nro_factura IS NOT NULL "
-                + "AND id_timbrado = ?  "
-                + "ORDER BY id_factura_cabecera DESC LIMIT 1;";
+        String Query = "SELECT MAX(nro_factura) FROM factura_cabecera "
+                + "WHERE nro_factura IS NOT NULL  "
+                + "AND id_timbrado = ? LIMIT 1;";
         long nroFactura = 0;
         try {
             DB_manager.getConection().setAutoCommit(false);
@@ -135,7 +134,7 @@ public class DB_Ingreso {
     }
 
     public static int obtenerUltimoNroFacturacion() {
-        String Query = "SELECT nro_factura FROM facturacion_cabecera WHERE nro_factura IS NOT NULL  ORDER BY id_facturacion_cabecera DESC LIMIT 1;";
+        String Query = "SELECT max(nro_factura) FROM facturacion_cabecera WHERE nro_factura IS NOT NULL  ORDER BY id_facturacion_cabecera DESC LIMIT 1;";
         long nroFactura = 0;
         try {
             DB_manager.getConection().setAutoCommit(false);
@@ -176,10 +175,9 @@ public class DB_Ingreso {
     }
 
     public static int obtenerUltimoNroFacturacion(int idTimbrado) {
-        String Query = "SELECT nro_factura FROM facturacion_cabecera "
+        String Query = "SELECT MAX(nro_factura) FROM facturacion_cabecera "
                 + "WHERE nro_factura IS NOT NULL  "
-                + "AND id_timbrado = ? "
-                + "ORDER BY id_facturacion_cabecera DESC LIMIT 1;";
+                + "AND id_timbrado = ? LIMIT 1;";
         long nroFactura = 0;
         try {
             DB_manager.getConection().setAutoCommit(false);
