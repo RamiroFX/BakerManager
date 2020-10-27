@@ -411,7 +411,7 @@ class C_crearDesperdicio extends MouseAdapter implements ActionListener, KeyList
     Para cargar materia prima
      */
     @Override
-    public void recibirProducto(double cantidad, int precio, double descuento, M_producto producto, String observacion) {
+    public void recibirProducto(double cantidad, double precio, double descuento, M_producto producto, String observacion) {
         if (esModoCreacion) {
             modelo.agregarRecuperado(cantidad, producto);
         } else {
@@ -421,7 +421,7 @@ class C_crearDesperdicio extends MouseAdapter implements ActionListener, KeyList
     }
 
     @Override
-    public void modificarProducto(int posicion, double cantidad, int precio, double descuento, M_producto producto, String observacion) {
+    public void modificarProducto(int posicion, double cantidad, double precio, double descuento, M_producto producto, String observacion) {
         if (esModoCreacion) {
             modelo.modificarRecuperado(posicion, cantidad);
         } else {

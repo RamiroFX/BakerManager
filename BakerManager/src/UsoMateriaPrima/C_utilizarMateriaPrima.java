@@ -250,12 +250,12 @@ class C_utilizarMateriaPrima extends MouseAdapter implements ActionListener, Key
     }
 
     @Override
-    public void recibirProducto(double cantidad, int precio, double descuento, M_producto producto, String observacion) {
+    public void recibirProducto(double cantidad, double precio, double descuento, M_producto producto, String observacion) {
         modelo.agregarDetalle(cantidad, producto);
     }
 
     @Override
-    public void modificarProducto(int posicion, double cantidad, int precio, double descuento, M_producto producto, String observacion) {
+    public void modificarProducto(int posicion, double cantidad, double precio, double descuento, M_producto producto, String observacion) {
         modelo.modificarDetalle(posicion, cantidad);
     }
 

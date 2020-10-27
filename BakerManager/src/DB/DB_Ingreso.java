@@ -647,7 +647,7 @@ public class DB_Ingreso {
                 pst.setInt(1, (int) sq_cabecera);
                 pst.setInt(2, detalle.get(i).getIdProducto());
                 pst.setDouble(3, detalle.get(i).getCantidad());
-                pst.setInt(4, detalle.get(i).getPrecio());
+                pst.setDouble(4, detalle.get(i).getPrecio());
                 pst.setDouble(5, detalle.get(i).getDescuento());
                 try {
                     if (detalle.get(i).getObservacion() == null) {
@@ -677,7 +677,7 @@ public class DB_Ingreso {
                 int total = 0;
                 for (int i = 0; i < detalle.size(); i++) {
                     M_facturaDetalle get = detalle.get(i);
-                    total = total + get.calcularSubTotal();
+                    total = total + (int)get.calcularSubTotal();
                 }
                 pst = DB_manager.getConection().prepareStatement(INSERT_CTA_CTE);
                 pst.setInt(1, cabecera.getIdCliente());
@@ -751,7 +751,7 @@ public class DB_Ingreso {
                 pst.setInt(1, (int) sq_cabecera);
                 pst.setInt(2, detalle.get(i).getIdProducto());
                 pst.setDouble(3, detalle.get(i).getCantidad());
-                pst.setInt(4, detalle.get(i).getPrecio());
+                pst.setDouble(4, detalle.get(i).getPrecio());
                 pst.setDouble(5, detalle.get(i).getDescuento());
                 try {
                     if (detalle.get(i).getObservacion() == null) {
@@ -781,7 +781,7 @@ public class DB_Ingreso {
                 int total = 0;
                 for (int i = 0; i < detalle.size(); i++) {
                     M_facturaDetalle get = detalle.get(i);
-                    total = total + get.calcularSubTotal();
+                    total = total + (int)get.calcularSubTotal();
                 }
                 pst = DB_manager.getConection().prepareStatement(INSERT_CTA_CTE);
                 pst.setInt(1, cabecera.getIdCliente());
@@ -1115,11 +1115,11 @@ public class DB_Ingreso {
                 producto.setIdImpuesto(rs.getInt("ID_IMPUESTO"));
                 fade.setProducto(producto);
                 fade.setCantidad(rs.getDouble("Cantidad"));
-                fade.setPrecio(rs.getInt("Precio"));
+                fade.setPrecio(rs.getDouble("Precio"));
                 fade.setDescuento(rs.getDouble("Descuento"));
-                fade.setExenta(rs.getInt("Exenta"));
-                fade.setIva5(rs.getInt("IVA 5%"));
-                fade.setIva10(rs.getInt("IVA 10%"));
+                fade.setExenta(rs.getDouble("Exenta"));
+                fade.setIva5(rs.getDouble("IVA 5%"));
+                fade.setIva10(rs.getDouble("IVA 10%"));
                 fade.setObservacion("");
                 list.add(fade);
             }
@@ -1299,7 +1299,7 @@ public class DB_Ingreso {
                 detalle.setDescuento(rs.getDouble("DESCUENTO"));
                 detalle.setIdFacturaDetalle(rs.getInt("ID_MESA_DETALLE"));
                 detalle.setObservacion(rs.getString("OBSERVACION"));
-                detalle.setPrecio(rs.getInt("PRECIO"));
+                detalle.setPrecio(rs.getDouble("PRECIO"));
                 M_producto producto = new M_producto();
                 producto.setId(rs.getInt("ID_PRODUCTO"));
                 producto.setDescripcion(rs.getString("PRODUCTO"));
@@ -1351,7 +1351,7 @@ public class DB_Ingreso {
                 pst.setInt(1, (int) sq_cabecera);
                 pst.setInt(2, detalle.get(i).getProducto().getId());
                 pst.setDouble(3, detalle.get(i).getCantidad());
-                pst.setInt(4, detalle.get(i).getPrecio());
+                pst.setDouble(4, detalle.get(i).getPrecio());
                 pst.setDouble(5, detalle.get(i).getDescuento());
                 try {
                     if (detalle.get(i).getObservacion() == null) {
@@ -1524,7 +1524,7 @@ public class DB_Ingreso {
             DB_manager.habilitarTransaccionManual();
             pst = DB_manager.getConection().prepareStatement(UPDATE_MESA);
             pst.setDouble(1, mesaDetalle.getCantidad());
-            pst.setInt(2, mesaDetalle.getPrecio());
+            pst.setDouble(2, mesaDetalle.getPrecio());
             pst.setDouble(3, mesaDetalle.getDescuento());
             if (mesaDetalle.getObservacion() == null) {
                 pst.setNull(4, Types.NULL);
@@ -1625,7 +1625,7 @@ public class DB_Ingreso {
             pst.setInt(1, idMesa);
             pst.setInt(2, mesaDetalle.getProducto().getId());
             pst.setDouble(3, mesaDetalle.getCantidad());
-            pst.setInt(4, mesaDetalle.getPrecio());
+            pst.setDouble(4, mesaDetalle.getPrecio());
             pst.setDouble(5, mesaDetalle.getDescuento());
             try {
                 if (mesaDetalle.getObservacion() == null) {
@@ -1697,7 +1697,7 @@ public class DB_Ingreso {
                 pst.setInt(1, (int) sq_cabecera);
                 pst.setInt(2, detalle.get(i).getProducto().getId());
                 pst.setDouble(3, detalle.get(i).getCantidad());
-                pst.setInt(4, detalle.get(i).getPrecio());
+                pst.setDouble(4, detalle.get(i).getPrecio());
                 pst.setDouble(5, detalle.get(i).getDescuento());
                 try {
                     if (detalle.get(i).getObservacion() == null) {
@@ -1768,7 +1768,7 @@ public class DB_Ingreso {
                 detalle.setIdFacturaCabecera(rs.getInt("ID_FACTURA_CABECERA"));
                 detalle.setIdFacturaDetalle(rs.getInt("ID_FACTURA_DETALLE"));
                 detalle.setObservacion(rs.getString("OBSERVACION"));
-                detalle.setPrecio(rs.getInt("PRECIO"));
+                detalle.setPrecio(rs.getDouble("PRECIO"));
                 M_producto producto = new M_producto();
                 producto.setId(rs.getInt("ID_PRODUCTO"));
                 producto.setDescripcion(rs.getString("PRODUCTO"));
@@ -1819,7 +1819,7 @@ public class DB_Ingreso {
                 detalle.setDescuento(rs.getDouble("DESCUENTO"));
                 detalle.setIdFacturaDetalle(rs.getInt("ID_FACTURA_DETALLE"));
                 detalle.setObservacion(rs.getString("OBSERVACION"));
-                detalle.setPrecio(rs.getInt("PRECIO"));
+                detalle.setPrecio(rs.getDouble("PRECIO"));
                 M_producto producto = new M_producto();
                 producto.setId(rs.getInt("ID_PRODUCTO"));
                 producto.setDescripcion(rs.getString("PRODUCTO"));
@@ -1872,7 +1872,7 @@ public class DB_Ingreso {
                 detalle.setIdFacturaCabecera(rs.getInt("ID_FACTURA_CABECERA"));
                 detalle.setIdFacturaDetalle(rs.getInt("ID_FACTURA_DETALLE"));
                 detalle.setObservacion(rs.getString("OBSERVACION"));
-                detalle.setPrecio(rs.getInt("PRECIO"));
+                detalle.setPrecio(rs.getDouble("PRECIO"));
                 M_producto producto = new M_producto();
                 producto.setId(rs.getInt("ID_PRODUCTO"));
                 producto.setDescripcion(rs.getString("PRODUCTO"));
@@ -2002,11 +2002,11 @@ public class DB_Ingreso {
                 fadex.setIdFacturaCabecera(rs.getInt("ID_FACTURA_CABECERA"));
                 fadex.setIdFacturaDetalle(rs.getInt("ID_FACTURA_DETALLE"));
                 fadex.setProductoDescripcion(rs.getString("Producto"));
-                fadex.setIva5(rs.getInt("CINCO"));
-                fadex.setIva10(rs.getInt("DIEZ"));
-                fadex.setExenta(rs.getInt("EXENTA"));
-                fadex.setPrecio(rs.getInt("PRECIO"));
-                fadex.setTotal(rs.getInt("TOTAL"));
+                fadex.setIva5(rs.getDouble("CINCO"));
+                fadex.setIva10(rs.getDouble("DIEZ"));
+                fadex.setExenta(rs.getDouble("EXENTA"));
+                fadex.setPrecio(rs.getDouble("PRECIO"));
+                fadex.setTotal(rs.getDouble("TOTAL"));
                 fadex.setClienteEntidad(rs.getString("ENTIDAD"));
                 fadex.setObservacion(rs.getString("OBSERVACION"));
                 fadex.setTiempo(rs.getDate("tiempo"));
@@ -2136,11 +2136,11 @@ public class DB_Ingreso {
                 fadex.setIdFacturaCabecera(rs.getInt("ID_FACTURA_CABECERA"));
                 fadex.setIdFacturaDetalle(rs.getInt("ID_FACTURA_DETALLE"));
                 fadex.setProductoDescripcion(rs.getString("Producto"));
-                fadex.setIva5(rs.getInt("CINCO"));
-                fadex.setIva10(rs.getInt("DIEZ"));
-                fadex.setExenta(rs.getInt("EXENTA"));
-                fadex.setPrecio(rs.getInt("PRECIO"));
-                fadex.setTotal(rs.getInt("TOTAL"));
+                fadex.setIva5(rs.getDouble("CINCO"));
+                fadex.setIva10(rs.getDouble("DIEZ"));
+                fadex.setExenta(rs.getDouble("EXENTA"));
+                fadex.setPrecio(rs.getDouble("PRECIO"));
+                fadex.setTotal(rs.getDouble("TOTAL"));
                 fadex.setNroFacura(rs.getInt("NRO_FACTURA"));
                 fadex.setClienteEntidad(rs.getString("ENTIDAD"));
                 fadex.setCondVenta(rs.getString("COND_VENTA"));
@@ -2182,7 +2182,7 @@ public class DB_Ingreso {
                 detalle.getMesa().setIdMesa(rs.getInt("ID_MESA"));
                 detalle.setIdMesaDetalle(rs.getInt("ID_MESA_DETALLE"));
                 detalle.setObservacion(rs.getString("OBSERVACION"));
-                detalle.setPrecio(rs.getInt("PRECIO"));
+                detalle.setPrecio(rs.getDouble("PRECIO"));
                 M_producto producto = new M_producto();
                 producto.setId(rs.getInt("ID_PRODUCTO"));
                 producto.setDescripcion(rs.getString("PRODUCTO"));
@@ -2638,11 +2638,11 @@ public class DB_Ingreso {
                 producto.setIdImpuesto(rs.getInt("ID_IMPUESTO"));
                 fade.setProducto(producto);
                 fade.setCantidad(rs.getDouble("Cantidad"));
-                fade.setPrecio(rs.getInt("Precio"));
+                fade.setPrecio(rs.getDouble("Precio"));
                 fade.setDescuento(rs.getDouble("Descuento"));
-                fade.setExenta(rs.getInt("Exenta"));
-                fade.setIva5(rs.getInt("IVA 5%"));
-                fade.setIva10(rs.getInt("IVA 10%"));
+                fade.setExenta(rs.getDouble("Exenta"));
+                fade.setIva5(rs.getDouble("IVA 5%"));
+                fade.setIva10(rs.getDouble("IVA 10%"));
                 fade.setObservacion("");
                 list.add(fade);
             }

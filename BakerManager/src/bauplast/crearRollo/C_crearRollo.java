@@ -451,7 +451,7 @@ class C_crearRollo extends MouseAdapter implements ActionListener, KeyListener,
     }
 
     @Override
-    public void recibirProducto(double cantidad, int precio, double descuento, M_producto producto, String observacion) {
+    public void recibirProducto(double cantidad, double precio, double descuento, M_producto producto, String observacion) {
         if (esModoCreacion) {
             modelo.agregarMPDetalle(cantidad, producto);
         } else {
@@ -460,7 +460,7 @@ class C_crearRollo extends MouseAdapter implements ActionListener, KeyListener,
     }
 
     @Override
-    public void modificarProducto(int posicion, double cantidad, int precio, double descuento, M_producto producto, String observacion) {
+    public void modificarProducto(int posicion, double cantidad, double precio, double descuento, M_producto producto, String observacion) {
         if (esModoCreacion) {
             modelo.modificarMPDetalle(posicion, cantidad);
         } else {

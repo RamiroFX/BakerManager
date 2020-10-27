@@ -13,7 +13,7 @@ public class M_egreso_detalle {
     private Integer id_cabecera;
     private Integer id_producto;
     private M_producto producto;
-    private Integer precio;
+    private Double precio;
     private Integer iva_exenta;
     private Integer iva_cinco;
     private Integer iva_diez;
@@ -78,14 +78,14 @@ public class M_egreso_detalle {
     /**
      * @return the precio
      */
-    public Integer getPrecio() {
+    public Double getPrecio() {
         return precio;
     }
 
     /**
      * @param precio the precio to set
      */
-    public void setPrecio(Integer precio) {
+    public void setPrecio(Double precio) {
         this.precio = precio;
     }
 

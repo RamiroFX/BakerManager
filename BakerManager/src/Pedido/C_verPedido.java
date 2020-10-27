@@ -188,24 +188,24 @@ public class C_verPedido extends MouseAdapter implements ActionListener, KeyList
 
     public void recibirDetalle(M_pedidoDetalle detalle) {
         detalle.setIdPedido(modelo.getPedido().getIdPedido());
-        Integer Precio = detalle.getPrecio() - Math.round(Math.round(((detalle.getPrecio() * detalle.getDescuento()) / 100)));
-        Integer total = Math.round(Math.round((detalle.getCantidad() * Precio)));
+        Double Precio = detalle.getPrecio() - Math.round(Math.round(((detalle.getPrecio() * detalle.getDescuento()) / 100)));
+        Double total = (detalle.getCantidad() * Precio);
         switch (detalle.getProducto().getImpuesto()) {
             case (0): {//exenta
                 detalle.setIva_exenta(total);
-                detalle.setIva_cinco(0);
-                detalle.setIva_diez(0);
+                detalle.setIva_cinco(0.0);
+                detalle.setIva_diez(0.0);
                 break;
             }
             case (5): {//iva 5%
-                detalle.setIva_exenta(0);
+                detalle.setIva_exenta(0.0);
                 detalle.setIva_cinco(total);
-                detalle.setIva_diez(0);
+                detalle.setIva_diez(0.0);
                 break;
             }
             case (10): {//iva10%
-                detalle.setIva_exenta(0);
-                detalle.setIva_cinco(0);
+                detalle.setIva_exenta(0.0);
+                detalle.setIva_cinco(0.0);
                 detalle.setIva_diez(total);
                 break;
             }
@@ -243,7 +243,7 @@ public class C_verPedido extends MouseAdapter implements ActionListener, KeyList
         scp.setVisible(true);
     }
 
-    public void modificarDetalle(Double cantidad, Integer precio, Double descuento, String observacion, int idDetalle) {
+    public void modificarDetalle(Double cantidad, Double precio, Double descuento, String observacion, int idDetalle) {
         this.modelo.getDetalle().setCantidad(cantidad);
         this.modelo.getDetalle().setPrecio(precio);
         this.modelo.getDetalle().setDescuento(descuento);

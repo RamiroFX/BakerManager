@@ -214,7 +214,7 @@ public class C_crearVentaRapida implements GestionInterface, InterfaceFacturaDet
         sumarTotal();
     }
 
-    public void modificarDetalle(Double cantidad, Integer precio, Double descuento, String observacion, int row) {
+    public void modificarDetalle(Double cantidad, Double precio, Double descuento, String observacion, int row) {
         /*this.modelo.getTableModel().setValueAt(cantidad, row, 1);
         this.modelo.getTableModel().setValueAt(precio, row, 3);
         this.modelo.getTableModel().setValueAt(descuento, row, 4);
@@ -261,12 +261,12 @@ public class C_crearVentaRapida implements GestionInterface, InterfaceFacturaDet
     }
 
     protected void sumarTotal() {
-        Integer exenta = 0;
-        Integer total5 = 0;
-        Integer total10 = 0;
-        Integer totalIva5 = 0;
-        Integer totalIva10 = 0;
-        Integer total = 0;
+        double exenta = 0;
+        double total5 = 0;
+        double total10 = 0;
+        double totalIva5 = 0;
+        double totalIva10 = 0;
+        double total = 0;
         for (M_facturaDetalle fade : modelo.getTableModel().getFacturaDetalleList()) {
             switch (fade.getProducto().getIdImpuesto()) {
                 case E_impuesto.EXENTA: {

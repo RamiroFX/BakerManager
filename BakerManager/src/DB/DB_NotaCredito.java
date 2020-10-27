@@ -322,8 +322,8 @@ public class DB_NotaCredito {
                 pst.setInt(2, unDetalle.getFacturaDetalle().getIdFacturaDetalle());
                 pst.setInt(3, unDetalle.getProducto().getId());
                 pst.setDouble(4, unDetalle.getCantidad());
-                pst.setInt(5, unDetalle.getSubTotal());
-                pst.setInt(6, unDetalle.getPrecio());
+                pst.setDouble(5, unDetalle.getSubTotal());
+                pst.setDouble(6, unDetalle.getPrecio());
                 pst.setDouble(7, unDetalle.getDescuento());
                 pst.executeUpdate();
                 pst.close();

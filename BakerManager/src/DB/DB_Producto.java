@@ -441,9 +441,9 @@ public class DB_Producto {
                 producto.setMarca(rs.getString("marca"));
                 producto.setEstado(rs.getString("estado"));
                 producto.setImpuesto(rs.getInt("impuesto"));
-                producto.setPrecioCosto(rs.getInt("precio_costo"));
-                producto.setPrecioMayorista(rs.getInt("precio_mayorista"));
-                producto.setPrecioVenta(rs.getInt("precio_minorista"));
+                producto.setPrecioCosto(rs.getDouble("precio_costo"));
+                producto.setPrecioMayorista(rs.getDouble("precio_mayorista"));
+                producto.setPrecioVenta(rs.getDouble("precio_minorista"));
                 producto.setCategoria(rs.getString("categoria"));
                 producto.setIdCategoria(rs.getInt("id_categoria"));
                 producto.setIdEstado(rs.getInt("id_estado"));
@@ -474,9 +474,9 @@ public class DB_Producto {
                 producto.setId(rs.getInt("id_producto"));
                 producto.setImpuesto(rs.getInt("impuesto"));
                 producto.setMarca(rs.getString("marca"));
-                producto.setPrecioCosto(rs.getInt("precio_costo"));
-                producto.setPrecioMayorista(rs.getInt("precio_mayorista"));
-                producto.setPrecioVenta(rs.getInt("precio_minorista"));
+                producto.setPrecioCosto(rs.getDouble("precio_costo"));
+                producto.setPrecioMayorista(rs.getDouble("precio_mayorista"));
+                producto.setPrecioVenta(rs.getDouble("precio_minorista"));
                 producto.setCategoria(rs.getString("categoria"));
                 producto.setIdCategoria(rs.getInt("id_categoria"));
                 producto.setIdEstado(rs.getInt("id_estado"));
@@ -525,9 +525,9 @@ public class DB_Producto {
                 producto.setId(rs.getInt("id_prod"));
                 producto.setImpuesto(rs.getInt("impuesto"));
                 producto.setMarca(rs.getString("marca"));
-                producto.setPrecioCosto(rs.getInt("precio_costo"));
-                producto.setPrecioMayorista(rs.getInt("precio_mayorista"));
-                producto.setPrecioVenta(rs.getInt("precio_minorista"));
+                producto.setPrecioCosto(rs.getDouble("precio_costo"));
+                producto.setPrecioMayorista(rs.getDouble("precio_mayorista"));
+                producto.setPrecioVenta(rs.getDouble("precio_minorista"));
                 producto.setCategoria(rs.getString("categoria"));
                 producto.setIdCategoria(rs.getInt("id_categoria"));
                 producto.setIdEstado(rs.getInt("id_estado"));
@@ -574,9 +574,9 @@ public class DB_Producto {
                 producto.setId(rs.getInt("id_prod"));
                 producto.setImpuesto(rs.getInt("impuesto"));
                 producto.setMarca(rs.getString("marca"));
-                producto.setPrecioCosto(rs.getInt("precio_costo"));
-                producto.setPrecioMayorista(rs.getInt("precio_mayorista"));
-                producto.setPrecioVenta(rs.getInt("precio_minorista"));
+                producto.setPrecioCosto(rs.getDouble("precio_costo"));
+                producto.setPrecioMayorista(rs.getDouble("precio_mayorista"));
+                producto.setPrecioVenta(rs.getDouble("precio_minorista"));
                 producto.setCategoria(rs.getString("categoria"));
                 producto.setIdCategoria(rs.getInt("id_categoria"));
                 producto.setIdEstado(rs.getInt("id_estado"));
@@ -636,9 +636,9 @@ public class DB_Producto {
             pst.setInt(3, prod.getIdMarca());
             pst.setInt(4, prod.getIdImpuesto());
             pst.setInt(5, prod.getIdCategoria());
-            pst.setInt(6, prod.getPrecioCosto());
-            pst.setInt(7, prod.getPrecioVenta());
-            pst.setInt(8, prod.getPrecioMayorista());
+            pst.setDouble(6, prod.getPrecioCosto());
+            pst.setDouble(7, prod.getPrecioVenta());
+            pst.setDouble(8, prod.getPrecioMayorista());
             pst.setInt(9, prod.getIdEstado());
             try {
                 if (prod.getCantActual() == null) {
@@ -716,9 +716,9 @@ public class DB_Producto {
             pst.setInt(3, prod.getIdMarca());
             pst.setInt(4, prod.getIdImpuesto());
             pst.setInt(5, prod.getIdCategoria());
-            pst.setInt(6, prod.getPrecioCosto());
-            pst.setInt(7, prod.getPrecioVenta());
-            pst.setInt(8, prod.getPrecioMayorista());
+            pst.setDouble(6, prod.getPrecioCosto());
+            pst.setDouble(7, prod.getPrecioVenta());
+            pst.setDouble(8, prod.getPrecioMayorista());
             pst.setInt(9, prod.getIdEstado());
             try {
                 if (prod.getCantActual() == null) {
@@ -784,9 +784,9 @@ public class DB_Producto {
             pst.setInt(3, producto.getIdEstado());
             pst.setInt(4, producto.getIdImpuesto());
             pst.setInt(5, producto.getIdCategoria());
-            pst.setInt(6, producto.getPrecioCosto());
-            pst.setInt(7, producto.getPrecioMayorista());
-            pst.setInt(8, producto.getPrecioVenta());
+            pst.setDouble(6, producto.getPrecioCosto());
+            pst.setDouble(7, producto.getPrecioMayorista());
+            pst.setDouble(8, producto.getPrecioVenta());
             pst.setDouble(9, producto.getCantActual());
             pst.setString(10, producto.getObservacion());
             pst.setString(11, producto.getDescripcion());
@@ -949,7 +949,7 @@ public class DB_Producto {
         return false;
     }
 
-    public static int modificarPrecioCostoProducto(Integer id, int precioNuevo) {
+    public static int modificarPrecioCostoProducto(Integer id, double precioNuevo) {
         String UPDATE = "UPDATE  producto SET "
                 + "PRECIO_COSTO = ? WHERE ID_PRODUCTO = ? ;";
         int result = -1;
@@ -957,7 +957,7 @@ public class DB_Producto {
 
             DB_manager.getConection().setAutoCommit(false);
             pst = DB_manager.getConection().prepareStatement(UPDATE);
-            pst.setInt(1, precioNuevo);
+            pst.setDouble(1, precioNuevo);
             pst.setInt(2, id);
             result = pst.executeUpdate();
             DB_manager.getConection().commit();

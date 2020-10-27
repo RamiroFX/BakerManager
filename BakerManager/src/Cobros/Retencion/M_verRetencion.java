@@ -40,8 +40,8 @@ public class M_verRetencion {
         detalleVentas.addAll(0, DB_Ingreso.obtenerVentaDetalles2(retencion.getVenta().getIdFacturaCabecera()));
     }
 
-    public int obtenerMontoConIva() {
-        int total = 0;
+    public double obtenerMontoConIva() {
+        double total = 0;
         for (E_facturaDetalle facturaDetalle : detalleVentas) {
             total = total + facturaDetalle.calcularSubTotal();
         }

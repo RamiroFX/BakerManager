@@ -89,84 +89,84 @@ public class Impresora {
 
     private static ArrayList<M_facturaDetalle> obtenerFacturaDetallePrueba() {
         ArrayList<M_facturaDetalle> faDetalles = new ArrayList<>();
-        M_producto prod1 = new M_producto("XXXXXXXXXX", "XXXXXXX", "XXXX", "Activo", 1, "XXXXXXXX", 2, 1, 1, 1, 1.0, "");
+        M_producto prod1 = new M_producto("XXXXXXXXXX", "XXXXXXX", "XXXX", "Activo", 1, "XXXXXXXX", 2, 1.0, 1.0, 1.0, 1.0, "");
         prod1.setIdImpuesto(1);
-        M_producto prod2 = new M_producto("XXXXXXXXXXXXXXX", "XXXXXXX", "XXXX", "Activo", 1, "XXXXXXXX", 2, 1, 1, 1, 1.0, "");
+        M_producto prod2 = new M_producto("XXXXXXXXXXXXXXX", "XXXXXXX", "XXXX", "Activo", 1, "XXXXXXXX", 2, 1.0, 1.0, 1.0, 1.0, "");
         prod2.setIdImpuesto(2);
-        M_producto prod3 = new M_producto("XXXXXXXXXXXXXXXXXXXX", "XXXXXXX", "XXXX", "Activo", 1, "XXXXXXXX", 2, 1, 1, 1, 1.0, "");
+        M_producto prod3 = new M_producto("XXXXXXXXXXXXXXXXXXXX", "XXXXXXX", "XXXX", "Activo", 1, "XXXXXXXX", 2, 1.0, 1.0, 1.0, 1.0, "");
         prod3.setIdImpuesto(3);
-        M_producto prod4 = new M_producto("XXXXXXXXXXXXXXXXXXXXXXXXX", "XXXXXXX", "XXXX", "Activo", 1, "XXXXXXXX", 2, 1, 1, 1, 1.0, "");
+        M_producto prod4 = new M_producto("XXXXXXXXXXXXXXXXXXXXXXXXX", "XXXXXXX", "XXXX", "Activo", 1, "XXXXXXXX", 2, 1.0, 1.0, 1.0, 1.0, "");
         prod4.setIdImpuesto(3);
-        M_producto prod5 = new M_producto("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX", "XXXXXXX", "XXXX", "Activo", 1, "XXXXXXXX", 2, 1, 1, 1, 1.0, "");
+        M_producto prod5 = new M_producto("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX", "XXXXXXX", "XXXX", "Activo", 1, "XXXXXXXX", 2, 1.0, 1.0, 1.0, 1.0, "");
         prod5.setIdImpuesto(3);
-        M_producto prod6 = new M_producto("XXXXXXXXXX", "XXXXXXX", "XXXX", "Activo", 1, "XXXXXXXX", 2, 1, 1, 1, 1.0, "");
+        M_producto prod6 = new M_producto("XXXXXXXXXX", "XXXXXXX", "XXXX", "Activo", 1, "XXXXXXXX", 2, 1.0, 1.0, 1.0, 1.0, "");
         prod6.setIdImpuesto(3);
-        M_producto prod7 = new M_producto("XXXXXXXXXXXXXXX", "XXXXXXX", "XXXX", "Activo", 1, "XXXXXXXX", 2, 1, 1, 1, 1.0, "");
+        M_producto prod7 = new M_producto("XXXXXXXXXXXXXXX", "XXXXXXX", "XXXX", "Activo", 1, "XXXXXXXX", 2, 1.0, 1.0, 1.0, 1.0, "");
         prod7.setIdImpuesto(2);
-        M_producto prod8 = new M_producto("XXXXXXXXXXXXXXXXXXXX", "XXXXXXX", "XXXX", "Activo", 1, "XXXXXXXX", 2, 1, 1, 1, 1.0, "");
+        M_producto prod8 = new M_producto("XXXXXXXXXXXXXXXXXXXX", "XXXXXXX", "XXXX", "Activo", 1, "XXXXXXXX", 2, 1.0, 1.0, 1.0, 1.0, "");
         prod8.setIdImpuesto(2);
-        M_producto prod9 = new M_producto("XXXXXXXXXXXXXXXXXXXXXXXXX", "XXXXXXX", "XXXX", "Activo", 1, "XXXXXXXX", 2, 1, 1, 1, 1.0, "");
+        M_producto prod9 = new M_producto("XXXXXXXXXXXXXXXXXXXXXXXXX", "XXXXXXX", "XXXX", "Activo", 1, "XXXXXXXX", 2, 1.0, 1.0, 1.0, 1.0, "");
         prod9.setIdImpuesto(2);
-        M_producto prod10 = new M_producto("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX", "XXXXXXX", "XXXX", "Activo", 1, "XXXXXXXX", 2, 1, 1, 1, 1.0, "");
+        M_producto prod10 = new M_producto("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX", "XXXXXXX", "XXXX", "Activo", 1, "XXXXXXXX", 2, 1.0, 1.0, 1.0, 1.0, "");
         prod10.setIdImpuesto(3);
         M_facturaDetalle fd1 = new M_facturaDetalle();
         fd1.setCantidad(1.0);
         fd1.setDescuento(0.0);
-        fd1.setPrecio(100);
+        fd1.setPrecio(100.0);
         fd1.setProducto(prod1);
         faDetalles.add(fd1);
         M_facturaDetalle fd2 = new M_facturaDetalle();
         fd2.setCantidad(10.0);
         fd2.setDescuento(10.0);
-        fd2.setPrecio(150);
+        fd2.setPrecio(150.0);
         fd2.setProducto(prod2);
         faDetalles.add(fd2);
         M_facturaDetalle fd3 = new M_facturaDetalle();
         fd3.setCantidad(15.0);
         fd3.setDescuento(0.0);
-        fd3.setPrecio(500);
+        fd3.setPrecio(500.0);
         fd3.setProducto(prod3);
         faDetalles.add(fd3);
         M_facturaDetalle fd4 = new M_facturaDetalle();
         fd4.setCantidad(750.0);
         fd4.setDescuento(0.0);
-        fd4.setPrecio(100);
+        fd4.setPrecio(100.0);
         fd4.setProducto(prod4);
         faDetalles.add(fd4);
         M_facturaDetalle fd5 = new M_facturaDetalle();
         fd5.setCantidad(1000.0);
         fd5.setDescuento(0.0);
-        fd5.setPrecio(850);
+        fd5.setPrecio(850.0);
         fd5.setProducto(prod5);
         faDetalles.add(fd5);
         M_facturaDetalle fd6 = new M_facturaDetalle();
         fd6.setCantidad(400.0);
         fd6.setDescuento(0.0);
-        fd6.setPrecio(430);
+        fd6.setPrecio(430.0);
         fd6.setProducto(prod6);
         faDetalles.add(fd6);
         M_facturaDetalle fd7 = new M_facturaDetalle();
         fd7.setCantidad(9.0);
         fd7.setDescuento(0.0);
-        fd7.setPrecio(5000);
+        fd7.setPrecio(5000.0);
         fd7.setProducto(prod7);
         faDetalles.add(fd7);
         M_facturaDetalle fd8 = new M_facturaDetalle();
         fd8.setCantidad(19.0);
         fd8.setDescuento(0.0);
-        fd8.setPrecio(20000);
+        fd8.setPrecio(20000.0);
         fd8.setProducto(prod8);
         faDetalles.add(fd8);
         M_facturaDetalle fd9 = new M_facturaDetalle();
         fd9.setCantidad(1.0);
         fd9.setDescuento(0.0);
-        fd9.setPrecio(47000);
+        fd9.setPrecio(47000.0);
         fd9.setProducto(prod9);
         faDetalles.add(fd9);
         M_facturaDetalle fd10 = new M_facturaDetalle();
         fd10.setCantidad(3.0);
         fd10.setDescuento(0.0);
-        fd10.setPrecio(250000);
+        fd10.setPrecio(250000.0);
         fd10.setProducto(prod10);
         faDetalles.add(fd10);
         return faDetalles;
@@ -374,7 +374,7 @@ public class Impresora {
         int iva5 = 0;
         int iva10 = 0;
         for (M_facturaDetalle fd : facturaDetalle) {
-            Integer precio = fd.getPrecio() - Math.round(Math.round(((fd.getPrecio() * fd.getDescuento()) / 100)));
+            double precio = fd.getPrecio() - Math.round(Math.round(((fd.getPrecio() * fd.getDescuento()) / 100)));
             int subtotal = Math.round(Math.round(fd.getCantidad() * precio));
             total = total + subtotal;
             if (fd.getProducto().getIdImpuesto() == 2) {
@@ -447,7 +447,7 @@ public class Impresora {
         int iva5 = 0;
         int iva10 = 0;
         for (M_pedidoDetalle fd : pedidoDetalle) {
-            Integer precio = fd.getPrecio() - Math.round(Math.round(((fd.getPrecio() * fd.getDescuento()) / 100)));
+            double precio = fd.getPrecio() - Math.round(Math.round(((fd.getPrecio() * fd.getDescuento()) / 100)));
             int subtotal = Math.round(Math.round(fd.getCantidad() * precio));
             total = total + subtotal;
             if (fd.getProducto().getIdImpuesto() == 2) {
@@ -519,7 +519,7 @@ public class Impresora {
         int iva5 = 0;
         int iva10 = 0;
         for (M_facturaDetalle fd : facturaDetalle) {
-            Integer precio = fd.getPrecio() - Math.round(Math.round(((fd.getPrecio() * fd.getDescuento()) / 100)));
+            double precio = fd.getPrecio() - Math.round(Math.round(((fd.getPrecio() * fd.getDescuento()) / 100)));
             int subtotal = Math.round(Math.round(fd.getCantidad() * precio));
             if (fd.getProducto().getIdImpuesto() == 2) {
                 iva5 = iva5 + subtotal;
@@ -598,7 +598,7 @@ public class Impresora {
         int iva5 = 0;
         int iva10 = 0;
         for (M_facturaDetalle fd : facturaDetalle) {
-            Integer precio = fd.getPrecio() - Math.round(Math.round(((fd.getPrecio() * fd.getDescuento()) / 100)));
+            double precio = fd.getPrecio() - Math.round(Math.round(((fd.getPrecio() * fd.getDescuento()) / 100)));
             int subtotal = Math.round(Math.round(fd.getCantidad() * precio));
             if (fd.getProducto().getIdImpuesto() == 2) {
                 iva5 = iva5 + subtotal;
@@ -677,7 +677,7 @@ public class Impresora {
         int iva5 = 0;
         int iva10 = 0;
         for (M_mesa_detalle md : detalles) {
-            Integer precio = md.getPrecio() - Math.round(Math.round(((md.getPrecio() * md.getDescuento()) / 100)));
+            double precio = md.getPrecio() - Math.round(Math.round(((md.getPrecio() * md.getDescuento()) / 100)));
             int subtotal = Math.round(Math.round(md.getCantidad() * precio));
             if (md.getProducto().getIdImpuesto() == 2) {
                 iva5 = iva5 + subtotal;
@@ -756,7 +756,7 @@ public class Impresora {
         int iva5 = 0;
         int iva10 = 0;
         for (M_mesa_detalle md : detalles) {
-            Integer precio = md.getPrecio() - Math.round(Math.round(((md.getPrecio() * md.getDescuento()) / 100)));
+            double precio = md.getPrecio() - Math.round(Math.round(((md.getPrecio() * md.getDescuento()) / 100)));
             int subtotal = Math.round(Math.round(md.getCantidad() * precio));
             if (md.getProducto().getIdImpuesto() == 2) {
                 iva5 = iva5 + subtotal;
@@ -900,7 +900,7 @@ public class Impresora {
         int iva5 = 0;
         int iva10 = 0;
         for (M_egreso_detalle fd : egresoDetalle) {
-            Integer precio = fd.getPrecio() - Math.round(Math.round(((fd.getPrecio() * fd.getDescuento()) / 100)));
+            double precio = fd.getPrecio() - Math.round(Math.round(((fd.getPrecio() * fd.getDescuento()) / 100)));
             int subtotal = Math.round(Math.round(fd.getCantidad() * precio));
             if (fd.getProducto().getIdImpuesto() == 2) {
                 iva5 = iva5 + subtotal;

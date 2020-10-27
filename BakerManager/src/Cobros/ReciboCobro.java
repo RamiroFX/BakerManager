@@ -586,12 +586,12 @@ public class ReciboCobro extends javax.swing.JDialog implements ActionListener, 
      */
     private int totalFactura(int idFacturaCabecera) {
         int total = 0;
-        ArrayList<M_facturaDetalle> fade = DB_Ingreso.obtenerVentaDetalles(idFacturaCabecera);
-        for (M_facturaDetalle detalle : fade) {
-            Integer Precio = detalle.getPrecio() - Math.round(Math.round(((detalle.getPrecio() * detalle.getDescuento()) / 100)));
-            Integer subTotal = Math.round(Math.round((detalle.getCantidad() * Precio)));
-            total = total + subTotal;
-        }
+//        ArrayList<M_facturaDetalle> fade = DB_Ingreso.obtenerVentaDetalles(idFacturaCabecera);
+//        for (M_facturaDetalle detalle : fade) {
+//            Integer Precio = detalle.getPrecio() - Math.round(Math.round(((detalle.getPrecio() * detalle.getDescuento()) / 100)));
+//            Integer subTotal = Math.round(Math.round((detalle.getCantidad() * Precio)));
+//            total = total + subTotal;
+//        }
         return total;
     }
 

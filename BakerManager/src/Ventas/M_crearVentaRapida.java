@@ -379,7 +379,7 @@ public class M_crearVentaRapida {
         getTableModel().agregarDetalle(detalle);
     }
 
-    public void modificarDetalle(int index, double cantidad, double descuento, int precio, String obs) {
+    public void modificarDetalle(int index, double cantidad, double descuento, double precio, String obs) {
         this.dtm.modificarDetalle(index, cantidad, descuento, precio, obs);
     }
 

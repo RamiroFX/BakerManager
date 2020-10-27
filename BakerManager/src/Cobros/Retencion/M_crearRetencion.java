@@ -59,8 +59,8 @@ public class M_crearRetencion {
         facturaDetalles.addAll(0, DB_Ingreso.obtenerVentaDetalles2(facturaCabecera.getIdFacturaCabecera()));
     }
 
-    public int obtenerMontoConIva() {
-        int total = 0;
+    public double obtenerMontoConIva() {
+        double total = 0;
         for (E_facturaDetalle facturaDetalle : facturaDetalles) {
             total = total + facturaDetalle.calcularSubTotal();
         }

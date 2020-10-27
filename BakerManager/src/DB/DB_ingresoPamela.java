@@ -64,7 +64,7 @@ public class DB_ingresoPamela {
                 pst.setInt(1, (int) sq_cabecera);
                 pst.setInt(2, detalle.get(i).getIdProducto());
                 pst.setDouble(3, detalle.get(i).getCantidad());
-                pst.setInt(4, detalle.get(i).getPrecio());
+                pst.setDouble(4, detalle.get(i).getPrecio());
                 pst.setDouble(5, detalle.get(i).getDescuento());
                 try {
                     if (detalle.get(i).getObservacion() == null) {
@@ -163,7 +163,7 @@ public class DB_ingresoPamela {
                 producto.setIdImpuesto(rs.getInt("ID_IMPUESTO"));
                 fade.setProducto(producto);
                 fade.setCantidad(rs.getDouble("Cantidad"));
-                fade.setPrecio(rs.getInt("Precio"));
+                fade.setPrecio(rs.getDouble("Precio"));
                 fade.setDescuento(rs.getDouble("Descuento"));
                 fade.setObservacion("");
                 list.add(fade);
@@ -201,7 +201,7 @@ public class DB_ingresoPamela {
                 producto.setIdImpuesto(rs.getInt("ID_IMPUESTO"));
                 fade.setProducto(producto);
                 fade.setCantidad(rs.getDouble("Cantidad"));
-                fade.setPrecio(rs.getInt("Precio"));
+                fade.setPrecio(rs.getDouble("Precio"));
                 fade.setDescuento(rs.getDouble("Descuento"));
                 fade.setObservacion(rs.getString("OBSERVACION"));
                 list.add(fade);

@@ -252,9 +252,9 @@ public class C_crearProducto implements ActionListener, KeyListener, RecibirProd
         }
         String descripcion = vista.jtfProducto.getText().trim();
         String codigo = vista.jtfCodigo.getText().trim();
-        int precioMayorista = Integer.valueOf(vista.jtfPrecioMayorista.getText().trim());
-        int precioVenta = Integer.valueOf(vista.jtfPrecioVta.getText().trim());
-        int precioCosto = Integer.valueOf(vista.jtfPrecioCosto.getText().trim());
+        double precioMayorista = Double.valueOf(vista.jtfPrecioMayorista.getText().trim());
+        double precioVenta = Double.valueOf(vista.jtfPrecioVta.getText().trim());
+        double precioCosto = Double.valueOf(vista.jtfPrecioCosto.getText().trim());
         E_Marca marca = vista.jcbMarca.getItemAt(vista.jcbMarca.getSelectedIndex());
         E_impuesto impuesto = vista.jcbImpuesto.getItemAt(vista.jcbImpuesto.getSelectedIndex());
         M_producto producto = new M_producto();
@@ -344,12 +344,12 @@ public class C_crearProducto implements ActionListener, KeyListener, RecibirProd
     }
 
     @Override
-    public void recibirProducto(double cantidad, int precio, double descuento, M_producto producto, String observacion) {
+    public void recibirProducto(double cantidad, double precio, double descuento, M_producto producto, String observacion) {
         copiarDatosDeProducto(producto);
     }
 
     @Override
-    public void modificarProducto(int posicion, double cantidad, int precio, double descuento, M_producto producto, String observacion) {
+    public void modificarProducto(int posicion, double cantidad, double precio, double descuento, M_producto producto, String observacion) {
     }
 
     @Override

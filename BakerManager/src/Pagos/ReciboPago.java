@@ -516,7 +516,7 @@ public class ReciboPago extends javax.swing.JDialog implements ActionListener, K
         int total = 0;
         ArrayList<M_facturaDetalle> fade = DB_Ingreso.obtenerVentaDetalles(idFacturaCabecera);
         for (M_facturaDetalle detalle : fade) {
-            Integer Precio = detalle.getPrecio() - Math.round(Math.round(((detalle.getPrecio() * detalle.getDescuento()) / 100)));
+            double Precio = detalle.getPrecio() - Math.round(Math.round(((detalle.getPrecio() * detalle.getDescuento()) / 100)));
             Integer subTotal = Math.round(Math.round((detalle.getCantidad() * Precio)));
             total = total + subTotal;
         }

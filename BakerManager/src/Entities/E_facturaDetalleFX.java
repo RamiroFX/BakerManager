@@ -12,8 +12,8 @@ import java.util.Date;
  */
 public class E_facturaDetalleFX {
 
-    private Integer idFacturaDetalle, nroFacura, idFacturaCabecera, idProducto, precio, total, exenta, iva5, iva10;
-    private Double cantidad, descuento;
+    private Integer idFacturaDetalle, nroFacura, idFacturaCabecera, idProducto;
+    private Double cantidad, descuento, precio, total, exenta, iva5, iva10;
     private String productoDescripcion, observacion, clienteEntidad, condVenta;
     private M_producto producto;
     private Date tiempo;
@@ -58,43 +58,43 @@ public class E_facturaDetalleFX {
         this.producto = producto;
     }
 
-    public Integer getPrecio() {
+    public Double getPrecio() {
         return precio;
     }
 
-    public void setPrecio(Integer precio) {
+    public void setPrecio(Double precio) {
         this.precio = precio;
     }
 
-    public Integer getTotal() {
+    public Double getTotal() {
         return total;
     }
 
-    public void setTotal(Integer total) {
+    public void setTotal(Double total) {
         this.total = total;
     }
 
-    public Integer getExenta() {
+    public Double getExenta() {
         return exenta;
     }
 
-    public void setExenta(Integer exenta) {
+    public void setExenta(Double exenta) {
         this.exenta = exenta;
     }
 
-    public Integer getIva5() {
+    public Double getIva5() {
         return iva5;
     }
 
-    public void setIva5(Integer iva5) {
+    public void setIva5(Double iva5) {
         this.iva5 = iva5;
     }
 
-    public Integer getIva10() {
+    public Double getIva10() {
         return iva10;
     }
 
-    public void setIva10(Integer iva10) {
+    public void setIva10(Double iva10) {
         this.iva10 = iva10;
     }
 

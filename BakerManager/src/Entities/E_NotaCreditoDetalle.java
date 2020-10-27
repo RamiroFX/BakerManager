@@ -13,7 +13,7 @@ public class E_NotaCreditoDetalle {
 
     private int id;
     private double cantidad, descuento;
-    private int precio;
+    private double precio;
     //private E_NotaCreditoCabecera notaCreditoCabecera;
     private E_facturaDetalle facturaDetalle;
     private M_producto producto;
@@ -41,11 +41,11 @@ public class E_NotaCreditoDetalle {
         this.cantidad = cantidad;
     }
 
-    public int getPrecio() {
+    public double getPrecio() {
         return precio;
     }
 
-    public void setPrecio(int precio) {
+    public void setPrecio(double precio) {
         this.precio = precio;
     }
 
@@ -87,9 +87,8 @@ public class E_NotaCreditoDetalle {
         this.descuento = descuento;
     }
 
-    public int getSubTotal() {
-        Integer Precio = getPrecio() - Math.round(Math.round(((getPrecio() * getDescuento()) / 100)));
-        return Math.round(Math.round((getCantidad() * Precio)));
+    public double getSubTotal() {
+        return getCantidad() * getPrecio() - ((getPrecio() * getDescuento()) / 100);
     }
 
     /**

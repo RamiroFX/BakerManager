@@ -60,7 +60,7 @@ public class SeleccionarCantidadProduducto extends javax.swing.JDialog implement
     private javax.swing.JTextField jtfTotal;
     Double cantidad;
     Double descuento;
-    Integer precio;
+    Double precio;
     String observacion;
     RecibirProductoCallback callback;
 
@@ -314,7 +314,7 @@ public class SeleccionarCantidadProduducto extends javax.swing.JDialog implement
                 return;
             }
             try {
-                precio = Integer.valueOf(String.valueOf(jtfPrecio.getText().trim()));
+                precio = Double.valueOf(String.valueOf(jtfPrecio.getText().trim()));
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(this, "Inserte un valor válido para Precio.", "Atención", JOptionPane.ERROR_MESSAGE);
                 return;
@@ -603,8 +603,8 @@ public class SeleccionarCantidadProduducto extends javax.swing.JDialog implement
         ArrayList<M_menu_item> accesos = DatosUsuario.getRol_usuario().getAccesos();
         for (M_menu_item acceso : accesos) {
             if (Parametros.MenuItem.MODIFICAR_PRODUCTO.getDescripcion().equals(acceso.getItemDescripcion())) {
-                int precioActual = producto.getPrecioCosto();
-                int precioNuevo = precio;
+                double precioActual = producto.getPrecioCosto();
+                double precioNuevo = precio;
                 if (precioActual != precioNuevo) {
                     int option = JOptionPane.showConfirmDialog(this, "El precio de costo es diferente \n ¿Desea modificar el precio?", "Atención", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
                     if (option == JOptionPane.YES_OPTION) {

@@ -15,7 +15,7 @@ public class M_egreso_detalleFX {
     private Integer id_detalle;
     private Integer id_cabecera;
     private String producto;
-    private Integer precio;
+    private Double precio;
     private Integer iva_exenta;
     private Integer iva_cinco;
     private Integer iva_diez;
@@ -82,14 +82,14 @@ public class M_egreso_detalleFX {
     /**
      * @return the precio
      */
-    public Integer getPrecio() {
+    public Double getPrecio() {
         return precio;
     }
 
     /**
      * @param precio the precio to set
      */
-    public void setPrecio(Integer precio) {
+    public void setPrecio(Double precio) {
         this.precio = precio;
     }
 

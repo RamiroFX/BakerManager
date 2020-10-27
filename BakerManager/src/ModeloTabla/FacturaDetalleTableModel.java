@@ -185,8 +185,8 @@ public class FacturaDetalleTableModel extends AbstractTableModel {
         try {
             Double cantidad = (Double.valueOf(aValue.toString()));
             Double descuento = facturaDetalleList.get(row).getDescuento();
-            Integer precio = facturaDetalleList.get(row).getPrecio();
-            Integer precioConDescuento = precio - Math.round(Math.round(((precio * descuento) / 100)));
+            double precio = facturaDetalleList.get(row).getPrecio();
+            double precioConDescuento = precio - Math.round(Math.round(((precio * descuento) / 100)));
             Integer total = Math.round(Math.round((cantidad * precioConDescuento)));
             facturaDetalleList.get(row).setCantidad(cantidad);
             modificarImpuestos(row, total);
@@ -197,10 +197,10 @@ public class FacturaDetalleTableModel extends AbstractTableModel {
 
     private void modificarPrecioFila(Object aValue, int row) {
         try {
-            Integer precio = (Integer.valueOf(aValue.toString()));
+            double precio = (Integer.valueOf(aValue.toString()));
             Double cantidad = facturaDetalleList.get(row).getCantidad();
             Double descuento = facturaDetalleList.get(row).getDescuento();
-            Integer precioConDescuento = precio - Math.round(Math.round(((precio * descuento) / 100)));
+            double precioConDescuento = precio - Math.round(Math.round(((precio * descuento) / 100)));
             Integer total = Math.round(Math.round((cantidad * precioConDescuento)));
             facturaDetalleList.get(row).setPrecio(precio);
             modificarImpuestos(row, total);
@@ -213,8 +213,8 @@ public class FacturaDetalleTableModel extends AbstractTableModel {
         try {
             Double descuento = (Double.valueOf(aValue.toString()));
             Double cantidad = facturaDetalleList.get(row).getCantidad();
-            Integer precio = facturaDetalleList.get(row).getPrecio();
-            Integer precioConDescuento = precio - Math.round(Math.round(((precio * descuento) / 100)));
+            double precio = facturaDetalleList.get(row).getPrecio();
+            double precioConDescuento = precio - Math.round(Math.round(((precio * descuento) / 100)));
             Integer total = Math.round(Math.round((cantidad * precioConDescuento)));
             facturaDetalleList.get(row).setDescuento(descuento);
             modificarImpuestos(row, total);
@@ -223,27 +223,27 @@ public class FacturaDetalleTableModel extends AbstractTableModel {
         }
     }
 
-    private void modificarImpuestos(int row, int total) {
+    private void modificarImpuestos(int row, double total) {
         switch (facturaDetalleList.get(row).getProducto().getImpuesto()) {
             case Impuesto.EXENTA:
                 facturaDetalleList.get(row).setExenta(total);
-                facturaDetalleList.get(row).setIva5(0);
-                facturaDetalleList.get(row).setIva10(0);
+                facturaDetalleList.get(row).setIva5(0.0);
+                facturaDetalleList.get(row).setIva10(0.0);
                 break;
             case Impuesto.IVA5:
-                facturaDetalleList.get(row).setExenta(0);
+                facturaDetalleList.get(row).setExenta(0.0);
                 facturaDetalleList.get(row).setIva5(total);
-                facturaDetalleList.get(row).setIva10(0);
+                facturaDetalleList.get(row).setIva10(0.0);
                 break;
             case Impuesto.IVA10:
-                facturaDetalleList.get(row).setExenta(0);
-                facturaDetalleList.get(row).setIva5(0);
+                facturaDetalleList.get(row).setExenta(0.0);
+                facturaDetalleList.get(row).setIva5(0.0);
                 facturaDetalleList.get(row).setIva10(total);
                 break;
         }
     }
 
-    public void modificarDetalle(int index, double cantidad, double descuento, int precio, String obs) {
+    public void modificarDetalle(int index, double cantidad, double descuento, double precio, String obs) {
         this.facturaDetalleList.get(index).setCantidad(cantidad);
         this.facturaDetalleList.get(index).setDescuento(descuento);
         this.facturaDetalleList.get(index).setPrecio(precio);

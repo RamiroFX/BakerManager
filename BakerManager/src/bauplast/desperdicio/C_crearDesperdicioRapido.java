@@ -216,7 +216,7 @@ public class C_crearDesperdicioRapido extends MouseAdapter implements ActionList
     }
 
     @Override
-    public void recibirProducto(double cantidad, int precio, double descuento, M_producto producto, String observacion) {
+    public void recibirProducto(double cantidad, double precio, double descuento, M_producto producto, String observacion) {
         if (esModoCreacion) {
             modelo.agregarDesperdicio(cantidad, producto);
         } else {
@@ -226,7 +226,7 @@ public class C_crearDesperdicioRapido extends MouseAdapter implements ActionList
     }
 
     @Override
-    public void modificarProducto(int posicion, double cantidad, int precio, double descuento, M_producto producto, String observacion) {
+    public void modificarProducto(int posicion, double cantidad, double precio, double descuento, M_producto producto, String observacion) {
         if (esModoCreacion) {
             modelo.modificarDesperdicio(posicion, cantidad);
         } else {

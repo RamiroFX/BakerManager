@@ -123,8 +123,8 @@ public class ExportarVentas {
         //INICIO CAMPO DE TOTAL INGRESOS
         Row rowTotalIngreso = sheet.createRow(filaActual);
         filaActual++;
-        Integer total = 0;
-        Integer totalImpuesto = 0;
+        double total = 0;
+        double totalImpuesto = 0;
         rowTotalIngreso.createCell(0).setCellValue(new HSSFRichTextString("Total ingresos"));
         rowTotalIngreso.getCell(0).setCellStyle(style2);
 
@@ -219,13 +219,13 @@ public class ExportarVentas {
                 colIndex++;
                 rowDetalle.createCell(colIndex).setCellValue(facturaDetalle.getPrecio());
                 colIndex++;
-                int subTotal = facturaDetalle.calcularSubTotal();
+                double subTotal = facturaDetalle.calcularSubTotal();
                 rowDetalle.createCell(colIndex).setCellValue(subTotal);
                 colIndex++;
                 total = total + subTotal;
-                int exenta = 0;
-                int iva5 = 0;
-                int iva10 = 0;
+                double exenta = 0;
+                double iva5 = 0;
+                double iva10 = 0;
                 switch (facturaDetalle.getProducto().getIdImpuesto()) {
                     case E_impuesto.EXENTA: {
                         exenta = exenta + facturaDetalle.calcularSubTotal();
@@ -353,15 +353,15 @@ public class ExportarVentas {
         rowCabecera.getCell(col).setCellStyle(style1);
         col++;
         //FIN CUERPO
-        Integer total = 0;
-        Integer totalImpuesto = 0;
-        Integer totalImpuestoIVA5 = 0;
-        Integer totalImpuestoIVA10 = 0;
+        double total = 0;
+        double totalImpuesto = 0;
+        double totalImpuestoIVA5 = 0;
+        double totalImpuestoIVA10 = 0;
         //TOTAL INGRESOS
 
         for (M_facturaCabecera facturaCabecera : facturaCabeceraFX) {
-            int impuestoIVA5 = 0;
-            int impuestoIVA10 = 0;
+            double impuestoIVA5 = 0;
+            double impuestoIVA10 = 0;
             Row row = sheet.createRow(filaActual);
             col = 0;
             row.createCell(col).setCellValue(facturaCabecera.getTiempo());
@@ -377,11 +377,11 @@ public class ExportarVentas {
             row.getCell(col).setCellStyle(styleNumber);
             col++;
             ArrayList<M_facturaDetalle> detalles = DB_Ingreso.obtenerVentaDetalles(facturaCabecera.getIdFacturaCabecera());
-            int subTotalImpuesto = 0;
+            double subTotalImpuesto = 0;
             for (M_facturaDetalle facturaDetalle : detalles) {
-                int exenta = 0;
-                int iva5 = 0;
-                int iva10 = 0;
+                double exenta = 0;
+                double iva5 = 0;
+                double iva10 = 0;
                 switch (facturaDetalle.getProducto().getIdImpuesto()) {
                     case E_impuesto.EXENTA: {
                         //exenta = exenta + facturaDetalle.calcularSubTotal();
@@ -399,7 +399,7 @@ public class ExportarVentas {
                 impuestoIVA5 = impuestoIVA5 + iva5;
                 impuestoIVA10 = impuestoIVA10 + iva10;
                 subTotalImpuesto = subTotalImpuesto + exenta + iva5 + iva10;
-                int subTotal = facturaDetalle.calcularSubTotal();
+                double subTotal = facturaDetalle.calcularSubTotal();
                 total = total + subTotal;
             }
             totalImpuesto = totalImpuesto + subTotalImpuesto;

@@ -191,7 +191,7 @@ public class C_verMesa extends MouseAdapter implements ActionListener, KeyListen
         }
     }
 
-    public void modificarDetalle(M_producto producto, Double cantidad, Integer precio, Double descuento, String observacion, int idMesaDetalle) {
+    public void modificarDetalle(M_producto producto, Double cantidad, Double precio, Double descuento, String observacion, int idMesaDetalle) {
         M_mesa_detalle unDetalle = new M_mesa_detalle();
         unDetalle.setIdMesaDetalle(idMesaDetalle);
         unDetalle.setProducto(producto);
@@ -209,9 +209,9 @@ public class C_verMesa extends MouseAdapter implements ActionListener, KeyListen
     }
 
     private void sumarTotal() {
-        int exenta = 0;
-        int total5 = 0;
-        int total10 = 0;
+        double exenta = 0;
+        double total5 = 0;
+        double total10 = 0;
         for (M_facturaDetalle unDetalle : modelo.getTM().getFacturaDetalleList()) {
             switch (unDetalle.getProducto().getIdImpuesto()) {
                 case E_impuesto.EXENTA: {
@@ -228,9 +228,9 @@ public class C_verMesa extends MouseAdapter implements ActionListener, KeyListen
                 }
             }
         }
-        int total = exenta + total5 + total10;
-        int totalIva5 = total5 / 21;
-        int totalIva10 = total10 / 11;
+        double total = exenta + total5 + total10;
+        double totalIva5 = total5 / 21;
+        double totalIva10 = total10 / 11;
         this.vista.jftExenta.setValue(exenta);
         this.vista.jftIva5.setValue(total5);
         this.vista.jftImpIva5.setValue(totalIva5);

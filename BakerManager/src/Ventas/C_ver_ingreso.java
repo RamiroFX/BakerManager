@@ -72,12 +72,12 @@ public class C_ver_ingreso implements ActionListener, KeyListener {
     }
 
     private void sumarTotal() {
-        Integer exenta = 0;
-        Integer total5 = 0;
-        Integer total10 = 0;
-        Integer totalIva5 = 0;
-        Integer totalIva10 = 0;
-        Integer total = 0;
+        double exenta = 0;
+        double total5 = 0;
+        double total10 = 0;
+        double totalIva5 = 0;
+        double totalIva10 = 0;
+        double total = 0;
         for (M_facturaDetalle m_facturaDetalle : modelo.getFadeTM().getFacturaDetalleList()) {
             switch (m_facturaDetalle.getProducto().getIdImpuesto()) {
                 case E_impuesto.EXENTA: {

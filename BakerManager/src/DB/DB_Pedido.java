@@ -370,7 +370,7 @@ public class DB_Pedido {
                 pst.setInt(1, (int) idPedido);
                 pst.setInt(2, pedidoDetalle.get(i).getProducto().getId());
                 pst.setDouble(3, pedidoDetalle.get(i).getCantidad());
-                pst.setInt(4, pedidoDetalle.get(i).getPrecio());
+                pst.setDouble(4, pedidoDetalle.get(i).getPrecio());
                 pst.setDouble(5, pedidoDetalle.get(i).getDescuento());
                 try {
                     if (pedidoDetalle.get(i).getObservacion() == null) {
@@ -487,7 +487,7 @@ public class DB_Pedido {
             DB_manager.habilitarTransaccionManual();
             pst = DB_manager.getConection().prepareStatement(UPDATE_PEDIDO_DETALLE);
             pst.setDouble(1, pedidoDetalle.getCantidad());
-            pst.setInt(2, pedidoDetalle.getPrecio());
+            pst.setDouble(2, pedidoDetalle.getPrecio());
             pst.setDouble(3, pedidoDetalle.getDescuento());
             pst.setString(4, pedidoDetalle.getObservacion());
             pst.executeUpdate();
@@ -569,7 +569,7 @@ public class DB_Pedido {
             pst.setInt(1, detalle.getIdPedido());
             pst.setInt(2, detalle.getProducto().getId());
             pst.setDouble(3, detalle.getCantidad());
-            pst.setInt(4, detalle.getPrecio());
+            pst.setDouble(4, detalle.getPrecio());
             pst.setDouble(5, detalle.getDescuento());
             try {
                 if (detalle.getObservacion() == null) {
@@ -670,7 +670,7 @@ public class DB_Pedido {
                 pst.setInt(1, (int) sq_cabecera);
                 pst.setInt(2, detalle.get(i).getProducto().getId());
                 pst.setDouble(3, detalle.get(i).getCantidad());
-                pst.setInt(4, detalle.get(i).getPrecio());
+                pst.setDouble(4, detalle.get(i).getPrecio());
                 pst.setDouble(5, detalle.get(i).getDescuento());
                 try {
                     if (detalle.get(i).getObservacion() == null) {
@@ -748,7 +748,7 @@ public class DB_Pedido {
                 detalle.setIdPedido(rs.getInt("ID_PEDIDO_CABECERA"));
                 detalle.setIdPedioDetalle(rs.getInt("ID_PEDIDO_DETALLE"));
                 detalle.setObservacion(rs.getString("OBSERVACION"));
-                detalle.setPrecio(rs.getInt("PRECIO"));
+                detalle.setPrecio(rs.getDouble("PRECIO"));
                 M_producto producto = new M_producto();
                 producto.setId(rs.getInt("ID_PRODUCTO"));
                 producto.setDescripcion(rs.getString("PRODUCTO"));

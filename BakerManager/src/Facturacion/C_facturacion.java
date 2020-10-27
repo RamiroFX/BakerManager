@@ -176,7 +176,7 @@ public class C_facturacion implements ActionListener, KeyListener, InterfaceSele
         SeleccionVentaCabeceraTableModel vctm = (SeleccionVentaCabeceraTableModel) vista.jtVentasCabecera.getModel();
         FacturaDetalleTableModel tm = new FacturaDetalleTableModel(this);
         ArrayList<M_facturaDetalle> list = new ArrayList<>();
-        int total = 0;
+        double total = 0;
         for (M_facturaDetalle ventaDetalle : modelo.obtenerVentasDetalle(vctm.getList())) {
             list.add(ventaDetalle);
             total = total + ventaDetalle.calcularTotal();

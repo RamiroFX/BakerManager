@@ -498,7 +498,7 @@ public class BoletaPrintable implements Printable {
                  */
                 if (object.getCampo().equals(MyConstants.BOLETA_DET_PRECIO_PROD)) {
                     for (M_facturaDetalle fd : facturaDetalle) {
-                        Integer precio = fd.getPrecio() - Math.round(Math.round(((fd.getPrecio() * fd.getDescuento()) / 100)));
+                        double precio = fd.getPrecio() - Math.round(Math.round(((fd.getPrecio() * fd.getDescuento()) / 100)));
                         //int precio = fd.getPrecio();
                         g.drawString(decimalFormat.format(precio) + "", posX, posY);
                         if (preferencia.getIdDuplicado() == 1) {
@@ -536,7 +536,7 @@ public class BoletaPrintable implements Printable {
                 if (object.getCampo().equals(MyConstants.BOLETA_DET_EXENTA_PROD)) {
                     for (M_facturaDetalle fd : facturaDetalle) {
                         if (fd.getProducto().getIdImpuesto() == 1) {
-                            Integer precio = fd.getPrecio() - Math.round(Math.round(((fd.getPrecio() * fd.getDescuento()) / 100)));
+                            double precio = fd.getPrecio() - Math.round(Math.round(((fd.getPrecio() * fd.getDescuento()) / 100)));
                             int subtotal = Math.round(Math.round(fd.getCantidad() * precio));
                             g.drawString(decimalFormat.format(subtotal) + "", posX, posY);
                             if (preferencia.getIdDuplicado() == 1) {
@@ -558,7 +558,7 @@ public class BoletaPrintable implements Printable {
                 if (object.getCampo().equals(MyConstants.BOLETA_DET_IVA5_PROD)) {
                     for (M_facturaDetalle fd : facturaDetalle) {
                         if (fd.getProducto().getIdImpuesto() == 2) {
-                            Integer precio = fd.getPrecio() - Math.round(Math.round(((fd.getPrecio() * fd.getDescuento()) / 100)));
+                            double precio = fd.getPrecio() - Math.round(Math.round(((fd.getPrecio() * fd.getDescuento()) / 100)));
                             int subtotal = Math.round(Math.round(fd.getCantidad() * precio));
                             g.drawString(decimalFormat.format(subtotal) + "", posX, posY);
                             if (preferencia.getIdDuplicado() == 1) {
@@ -580,7 +580,7 @@ public class BoletaPrintable implements Printable {
                 if (object.getCampo().equals(MyConstants.BOLETA_DET_IVA10_PROD)) {
                     for (M_facturaDetalle fd : facturaDetalle) {
                         if (fd.getProducto().getIdImpuesto() == 3) {
-                            Integer precio = fd.getPrecio() - Math.round(Math.round(((fd.getPrecio() * fd.getDescuento()) / 100)));
+                            double precio = fd.getPrecio() - Math.round(Math.round(((fd.getPrecio() * fd.getDescuento()) / 100)));
                             int subtotal = Math.round(Math.round(fd.getCantidad() * precio));
                             g.drawString(decimalFormat.format(subtotal) + "", posX, posY);
                             if (preferencia.getIdDuplicado() == 1) {

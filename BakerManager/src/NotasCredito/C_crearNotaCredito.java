@@ -321,11 +321,11 @@ public class C_crearNotaCredito extends MouseAdapter implements ActionListener, 
     }
 
     @Override
-    public void recibirProducto(double cantidad, int precio, double descuento, M_producto producto, String observacion) {
+    public void recibirProducto(double cantidad, double precio, double descuento, M_producto producto, String observacion) {
     }
 
     @Override
-    public void modificarProducto(int posicion, double cantidad, int precio, double descuento, M_producto producto, String observacion) {
+    public void modificarProducto(int posicion, double cantidad, double precio, double descuento, M_producto producto, String observacion) {
         E_NotaCreditoDetalle nd = new E_NotaCreditoDetalle();
         nd.setCantidad(cantidad);
         nd.setDescuento(descuento);

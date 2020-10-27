@@ -573,7 +573,7 @@ public class DB_Egreso {
                 egreso_detalle.setIva_cinco(rs.getInt("CINCO"));
                 egreso_detalle.setIva_diez(rs.getInt("DIEZ"));
                 egreso_detalle.setIva_exenta(rs.getInt("EXENTA"));
-                egreso_detalle.setPrecio(rs.getInt("PRECIO"));
+                egreso_detalle.setPrecio(rs.getDouble("PRECIO"));
                 egreso_detalle.setTotal(rs.getInt("TOTAL"));
                 egreso_detalle.setProveedor(rs.getString("ENTIDAD"));
                 egreso_detalle.setObservacion(rs.getString("OBSERVACION"));
@@ -623,7 +623,7 @@ public class DB_Egreso {
                 detalle.setId_cabecera(rs.getInt("ID_EGRESO_CABECERA"));
                 detalle.setId_detalle(rs.getInt("ID_EGRESO_DETALLE"));
                 detalle.setObservacion(rs.getString("OBSERVACION"));
-                detalle.setPrecio(rs.getInt("PRECIO"));
+                detalle.setPrecio(rs.getDouble("PRECIO"));
                 M_producto producto = new M_producto();
                 producto.setId(rs.getInt("ID_PRODUCTO"));
                 producto.setDescripcion(rs.getString("PRODUCTO"));
@@ -890,7 +890,7 @@ public class DB_Egreso {
                 pst.setInt(1, (int) sq_egreso_cabecera);
                 pst.setInt(2, egreso_detalle[i].getId_producto());
                 pst.setDouble(3, egreso_detalle[i].getCantidad());
-                pst.setInt(4, egreso_detalle[i].getPrecio());
+                pst.setDouble(4, egreso_detalle[i].getPrecio());
                 pst.setDouble(5, egreso_detalle[i].getDescuento());
                 pst.setString(6, egreso_detalle[i].getObservacion());
                 pst.executeUpdate();
@@ -982,7 +982,7 @@ public class DB_Egreso {
                 producto.setIdImpuesto(rs.getInt("ID_IMPUESTO"));
                 fade.setProducto(producto);
                 fade.setCantidad(rs.getDouble("Cantidad"));
-                fade.setPrecio(rs.getInt("Precio"));
+                fade.setPrecio(rs.getDouble("Precio"));
                 fade.setDescuento(rs.getDouble("Descuento"));
                 fade.setObservacion("");
                 list.add(fade);

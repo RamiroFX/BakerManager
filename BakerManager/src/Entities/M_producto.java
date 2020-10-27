@@ -11,12 +11,12 @@ package Entities;
 public class M_producto {
 
     private String descripcion, marca, categoria, estado, codigo, observacion;
-    private Integer id, impuesto, precioCosto, precioMinorista, precioMayorista;
+    private Integer id, impuesto;
     private Integer idMarca;
     private Integer idEstado;
     private Integer idCategoria;
     private Integer idImpuesto;
-    private Double cantActual;
+    private Double cantActual, precioCosto, precioMinorista, precioMayorista;
     private ProductoCategoria productoCategoria;
 
     public M_producto() {
@@ -24,8 +24,8 @@ public class M_producto {
     }
 
     public M_producto(String descripcion, String marca, String rubro, String estado,
-            Integer id, String codigo, Integer impuesto, int precioCosto,
-            Integer precioMinorista, Integer precioMayorista, Double cantActual,
+            Integer id, String codigo, Integer impuesto, Double precioCosto,
+            Double precioMinorista, Double precioMayorista, Double cantActual,
             String observacion) {
         this.descripcion = descripcion;
         this.marca = marca;
@@ -150,42 +150,42 @@ public class M_producto {
     /**
      * @return the precioCosto
      */
-    public Integer getPrecioCosto() {
+    public Double getPrecioCosto() {
         return precioCosto;
     }
 
     /**
      * @param precioCosto the precioCosto to set
      */
-    public void setPrecioCosto(Integer precioCosto) {
+    public void setPrecioCosto(Double precioCosto) {
         this.precioCosto = precioCosto;
     }
 
     /**
      * @return the precioVenta
      */
-    public Integer getPrecioVenta() {
+    public Double getPrecioVenta() {
         return getPrecioMinorista();
     }
 
     /**
      * @param precioVenta the precioVenta to set
      */
-    public void setPrecioVenta(Integer precioVenta) {
+    public void setPrecioVenta(Double precioVenta) {
         this.setPrecioMinorista(precioVenta);
     }
 
     /**
      * @return the precioMayorista
      */
-    public Integer getPrecioMayorista() {
+    public Double getPrecioMayorista() {
         return precioMayorista;
     }
 
     /**
      * @param precioMayorista the precioMayorista to set
      */
-    public void setPrecioMayorista(Integer precioMayorista) {
+    public void setPrecioMayorista(Double precioMayorista) {
         this.precioMayorista = precioMayorista;
     }
 
@@ -275,11 +275,11 @@ public class M_producto {
         this.observacion = observacion;
     }
 
-    public Integer getPrecioMinorista() {
+    public Double getPrecioMinorista() {
         return precioMinorista;
     }
 
-    public void setPrecioMinorista(Integer precioMinorista) {
+    public void setPrecioMinorista(Double precioMinorista) {
         this.precioMinorista = precioMinorista;
     }
 

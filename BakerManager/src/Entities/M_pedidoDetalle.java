@@ -10,8 +10,8 @@ package Entities;
  */
 public class M_pedidoDetalle {
 
-    private Integer idPedioDetalle, idPedido, precio, iva_exenta, iva_cinco, iva_diez, total;
-    private Double cantidad, descuento;
+    private Integer idPedioDetalle, idPedido;
+    private Double cantidad, descuento, precio, iva_exenta, iva_cinco, iva_diez, total;
     private String observacion;
     private M_producto producto;
 
@@ -35,43 +35,43 @@ public class M_pedidoDetalle {
         this.idPedido = idPedido;
     }
 
-    public Integer getPrecio() {
+    public Double getPrecio() {
         return precio;
     }
 
-    public void setPrecio(Integer precio) {
+    public void setPrecio(Double precio) {
         this.precio = precio;
     }
 
-    public Integer getIva_exenta() {
+    public Double getIva_exenta() {
         return iva_exenta;
     }
 
-    public void setIva_exenta(Integer iva_exenta) {
+    public void setIva_exenta(Double iva_exenta) {
         this.iva_exenta = iva_exenta;
     }
 
-    public Integer getIva_cinco() {
+    public Double getIva_cinco() {
         return iva_cinco;
     }
 
-    public void setIva_cinco(Integer iva_cinco) {
+    public void setIva_cinco(Double iva_cinco) {
         this.iva_cinco = iva_cinco;
     }
 
-    public Integer getIva_diez() {
+    public Double getIva_diez() {
         return iva_diez;
     }
 
-    public void setIva_diez(Integer iva_diez) {
+    public void setIva_diez(Double iva_diez) {
         this.iva_diez = iva_diez;
     }
 
-    public Integer getTotal() {
+    public Double getTotal() {
         return total;
     }
 
-    public void setTotal(Integer total) {
+    public void setTotal(Double total) {
         this.total = total;
     }
 

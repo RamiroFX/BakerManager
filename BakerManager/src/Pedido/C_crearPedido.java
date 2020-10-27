@@ -144,10 +144,10 @@ public class C_crearPedido extends MouseAdapter implements ActionListener, KeyLi
     }
 
     public void recibirDetalle(M_pedidoDetalle detalle) {
-        Integer impExenta = null;
-        Integer imp5 = null;
-        Integer imp10 = null;
-        Integer Precio = detalle.getPrecio() - Math.round(Math.round(((detalle.getPrecio() * detalle.getDescuento()) / 100)));
+        double impExenta = 0.0;
+        double imp5 = 0.0;
+        double imp10 = 0.0;
+        double Precio = detalle.getPrecio() - Math.round(Math.round(((detalle.getPrecio() * detalle.getDescuento()) / 100)));
         Integer total = Math.round(Math.round((detalle.getCantidad() * Precio)));
         if (detalle.getProducto().getImpuesto().equals(0)) {
             impExenta = total;
@@ -187,7 +187,7 @@ public class C_crearPedido extends MouseAdapter implements ActionListener, KeyLi
         sumarTotal();
     }
 
-    public void modificarDetalle(Double cantidad, Integer precio, Double descuento, String observacion, int row) {
+    public void modificarDetalle(Double cantidad, Double precio, Double descuento, String observacion, int row) {
         this.modelo.getDtm().setValueAt(cantidad, row, 2);//producto
         this.modelo.getDtm().setValueAt(precio, row, 3);//precio
         this.modelo.getDtm().setValueAt(descuento, row, 4);//descuento
@@ -199,22 +199,22 @@ public class C_crearPedido extends MouseAdapter implements ActionListener, KeyLi
             }
         }
         this.modelo.getDtm().setValueAt(producto, row, 1);
-        Integer impExenta = null;
-        Integer imp5 = null;
-        Integer imp10 = null;
-        Integer Precio = precio - Math.round(Math.round(((precio * descuento) / 100)));
-        Integer total = Math.round(Math.round((cantidad * Precio)));
+        Double impExenta = null;
+        Double imp5 = null;
+        Double imp10 = null;
+        Double Precio = precio - Math.round(Math.round(((precio * descuento) / 100)));
+        Double total = (cantidad * Precio);
         if (prod.getImpuesto().equals(0)) {
             impExenta = total;
-            imp5 = 0;
-            imp10 = 0;
+            imp5 = 0.0;
+            imp10 = 0.0;
         } else if (prod.getImpuesto().equals(5)) {
-            impExenta = 0;
+            impExenta = 0.0;
             imp5 = total;
-            imp10 = 0;
+            imp10 = 0.0;
         } else {
-            impExenta = 0;
-            imp5 = 0;
+            impExenta = 0.0;
+            imp5 = 0.0;
             imp10 = total;
         }
         this.modelo.getDtm().setValueAt(impExenta, row, 5);

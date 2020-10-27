@@ -11,15 +11,15 @@ package Entities;
  */
 public class E_facturaDetalle {
 
-    private Integer idFacturaDetalle, precio;
-    private Double cantidad, descuento;
+    private Integer idFacturaDetalle;
+    private Double cantidad, descuento, precio;
     private String observacion;
     private M_producto producto;
 
     public E_facturaDetalle() {
     }
 
-    public E_facturaDetalle(Integer idFacturaDetalle, Integer precio, Double cantidad, Double descuento, String observacion, M_producto producto) {
+    public E_facturaDetalle(Integer idFacturaDetalle, Double precio, Double cantidad, Double descuento, String observacion, M_producto producto) {
         this.idFacturaDetalle = idFacturaDetalle;
         this.precio = precio;
         this.cantidad = cantidad;
@@ -36,11 +36,11 @@ public class E_facturaDetalle {
         this.idFacturaDetalle = idFacturaDetalle;
     }
 
-    public Integer getPrecio() {
+    public Double getPrecio() {
         return precio;
     }
 
-    public void setPrecio(Integer precio) {
+    public void setPrecio(Double precio) {
         this.precio = precio;
     }
 
@@ -76,9 +76,8 @@ public class E_facturaDetalle {
         this.producto = producto;
     }
 
-    public Integer calcularSubTotal() {
-        Integer Precio = getPrecio() - Math.round(Math.round(((getPrecio() * getDescuento()) / 100)));
-        return Math.round(Math.round((getCantidad() * Precio)));
+    public double calcularSubTotal() {
+        return getCantidad() * (getPrecio() - ((getPrecio() * getDescuento()) / 100));
     }
 
     @Override

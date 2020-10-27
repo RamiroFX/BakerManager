@@ -111,10 +111,10 @@ public class C_modificar_producto implements ActionListener {
         }
         String descripcion = this.vista.jtfProducto.getText().trim();
         String codigo = this.vista.jtfCodigo.getText().trim();
-        int precioCosto = Integer.valueOf(this.vista.jtfPrecioCosto.getText());
-        int precioMayorista = Integer.valueOf(this.vista.jtfPrecioMayorista.getText());
-        int precioVenta = Integer.valueOf(this.vista.jtfPrecioVta.getText());
-        Double cantActual = Double.valueOf(this.vista.jtfCantActual.getText());
+        double precioCosto = Double.valueOf(this.vista.jtfPrecioCosto.getText());
+        double precioMayorista = Double.valueOf(this.vista.jtfPrecioMayorista.getText());
+        double precioVenta = Double.valueOf(this.vista.jtfPrecioVta.getText());
+        double cantActual = Double.valueOf(this.vista.jtfCantActual.getText());
         M_producto producto = new M_producto();
         producto.setDescripcion(descripcion);
         producto.setCantActual(cantActual);

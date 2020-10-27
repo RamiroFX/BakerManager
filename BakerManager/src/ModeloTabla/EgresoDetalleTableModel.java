@@ -83,21 +83,21 @@ public class EgresoDetalleTableModel extends AbstractTableModel {
             }
             case 5: {
                 if (fd.getProducto().getIdImpuesto() == E_impuesto.EXENTA) {
-                    Integer Precio = fd.getPrecio() - Math.round(Math.round(((fd.getPrecio() * fd.getDescuento()) / 100)));
+                    double Precio = fd.getPrecio() - Math.round(Math.round(((fd.getPrecio() * fd.getDescuento()) / 100)));
                     return Math.round(Math.round((fd.getCantidad() * Precio)));
                 }
                 return 0;
             }
             case 6: {
                 if (fd.getProducto().getIdImpuesto() == E_impuesto.IVA5) {
-                    Integer Precio = fd.getPrecio() - Math.round(Math.round(((fd.getPrecio() * fd.getDescuento()) / 100)));
+                    double Precio = fd.getPrecio() - Math.round(Math.round(((fd.getPrecio() * fd.getDescuento()) / 100)));
                     return Math.round(Math.round((fd.getCantidad() * Precio)));
                 }
                 return 0;
             }
             case 7: {
                 if (fd.getProducto().getIdImpuesto() == E_impuesto.IVA10) {
-                    Integer Precio = fd.getPrecio() - Math.round(Math.round(((fd.getPrecio() * fd.getDescuento()) / 100)));
+                    double Precio = fd.getPrecio() - Math.round(Math.round(((fd.getPrecio() * fd.getDescuento()) / 100)));
                     return Math.round(Math.round((fd.getCantidad() * Precio)));
                 }
                 return 0;

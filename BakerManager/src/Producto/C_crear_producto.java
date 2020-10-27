@@ -105,7 +105,7 @@ public class C_crear_producto implements ActionListener, KeyListener, RecibirPro
             if (codigo.isEmpty()) {
                 codigo = null;
             }
-            int precioCosto = 0;
+            double precioCosto = 0;
             try {
                 precioCosto = Integer.valueOf(this.vista.jtfPrecioCosto.getText());
                 if (precioCosto < 0 || precioCosto > 999999999) {
@@ -117,7 +117,7 @@ public class C_crear_producto implements ActionListener, KeyListener, RecibirPro
                 JOptionPane.showMessageDialog(vista, "Ingrese un precio de costo válido. Solo números enteros.", "Atención", JOptionPane.ERROR_MESSAGE);
                 return;
             }
-            int precioMayorista = 0;
+            double precioMayorista = 0;
             try {
                 precioMayorista = Integer.valueOf(this.vista.jtfPrecioMayorista.getText());
                 if (precioMayorista < 0 || precioMayorista > 999999999) {
@@ -129,7 +129,7 @@ public class C_crear_producto implements ActionListener, KeyListener, RecibirPro
                 JOptionPane.showMessageDialog(vista, "Ingrese un precio mayorista válido. Solo números enteros.", "Atención", JOptionPane.ERROR_MESSAGE);
                 return;
             }
-            int precioVenta = 0;
+            double precioVenta = 0.0;
             try {
                 precioVenta = Integer.valueOf(this.vista.jtfPrecioVta.getText());
                 if (precioVenta < 0 || precioVenta > 999999999) {
@@ -243,11 +243,11 @@ public class C_crear_producto implements ActionListener, KeyListener, RecibirPro
     }
 
     @Override
-    public void recibirProducto(double cantidad, int precio, double descuento, M_producto producto, String observacion) {
+    public void recibirProducto(double cantidad, double precio, double descuento, M_producto producto, String observacion) {
         copiarDatosDeProducto(producto);
     }
 
     @Override
-    public void modificarProducto(int posicion, double cantidad, int precio, double descuento, M_producto producto, String observacion) {
+    public void modificarProducto(int posicion, double cantidad, double precio, double descuento, M_producto producto, String observacion) {
     }
 }
