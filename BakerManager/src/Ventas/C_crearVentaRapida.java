@@ -215,44 +215,6 @@ public class C_crearVentaRapida implements GestionInterface, InterfaceFacturaDet
     }
 
     public void modificarDetalle(Double cantidad, Double precio, Double descuento, String observacion, int row) {
-        /*this.modelo.getTableModel().setValueAt(cantidad, row, 1);
-        this.modelo.getTableModel().setValueAt(precio, row, 3);
-        this.modelo.getTableModel().setValueAt(descuento, row, 4);
-        M_producto prod = this.modelo.getTableModel().getFacturaDetalleList().get(row).getProducto();
-        String producto = prod.getDescripcion();
-        if (null != observacion) {
-            if (!observacion.isEmpty()) {
-                producto = producto + "- (" + observacion + ")";
-            }
-        }
-        this.modelo.getTableModel().setValueAt(producto, row, 2);
-        Integer impExenta = null;
-        Integer imp5 = null;
-        Integer imp10 = null;
-        Integer Precio = precio - Math.round(Math.round(((precio * descuento) / 100)));
-        Integer total = Math.round(Math.round((cantidad * Precio)));
-        if (prod.getImpuesto().equals(0)) {
-            impExenta = total;
-            imp5 = 0;
-            imp10 = 0;
-        } else if (prod.getImpuesto().equals(5)) {
-            impExenta = 0;
-            imp5 = total;
-            imp10 = 0;
-        } else if (prod.getImpuesto().equals(10)) {
-            impExenta = 0;
-            imp5 = 0;
-            imp10 = total;
-        }
-        this.modelo.getTableModel().setValueAt(impExenta, row, 5);
-        this.modelo.getTableModel().setValueAt(imp5, row, 6);
-        this.modelo.getTableModel().setValueAt(imp10, row, 7);
-        M_facturaDetalle detalle = this.modelo.getTableModel().getFacturaDetalleList().get(row);
-        detalle.setCantidad(cantidad);
-        detalle.setPrecio(precio);
-        detalle.setDescuento(descuento);
-        detalle.setObservacion(observacion);
-        //this.vista.jtFacturaDetalle.updateUI();*/
         modelo.modificarDetalle(row, cantidad, descuento, precio, observacion);
         this.vista.jbEliminarDetalle.setEnabled(false);
         this.vista.jbModificarDetalle.setEnabled(false);

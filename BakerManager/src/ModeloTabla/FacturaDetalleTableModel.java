@@ -62,20 +62,21 @@ public class FacturaDetalleTableModel extends AbstractTableModel {
 
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
-        switch (columnIndex) {
-            case 1: {
-                return true;
-            }
-            case 3: {
-                return true;
-            }
-            case 4: {
-                return true;
-            }
-            default: {
-                return false;
-            }
-        }
+//        switch (columnIndex) {
+//            case 1: {
+//                return true;
+//            }
+//            case 3: {
+//                return true;
+//            }
+//            case 4: {
+//                return true;
+//            }
+//            default: {
+//                return false;
+//            }
+//        }
+        return false;
     }
 
     @Override
