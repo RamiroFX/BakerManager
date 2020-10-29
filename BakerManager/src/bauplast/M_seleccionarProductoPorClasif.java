@@ -9,7 +9,7 @@ import DB.DB_Producto;
 import DB.DB_manager;
 import Entities.Estado;
 import Entities.ProductoCategoria;
-import ModeloTabla.SeleccionarProductoRolloTableModel;
+import ModeloTabla.SeleccionarProductoTableModel;
 import java.util.ArrayList;
 
 /**
@@ -18,19 +18,19 @@ import java.util.ArrayList;
  */
 public class M_seleccionarProductoPorClasif {
 
-    private SeleccionarProductoRolloTableModel tm;
+    private SeleccionarProductoTableModel tm;
     private ProductoCategoria pc;
 
-    public M_seleccionarProductoPorClasif() {
-        this.tm = new SeleccionarProductoRolloTableModel();
+    public M_seleccionarProductoPorClasif(int tipoSeleccionProducto) {
+        this.tm = new SeleccionarProductoTableModel(tipoSeleccionProducto);
         this.pc = new ProductoCategoria();
     }
 
-    public SeleccionarProductoRolloTableModel getTm() {
+    public SeleccionarProductoTableModel getTm() {
         return tm;
     }
 
-    public void setTm(SeleccionarProductoRolloTableModel tm) {
+    public void setTm(SeleccionarProductoTableModel tm) {
         this.tm = tm;
     }
 

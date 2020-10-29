@@ -28,7 +28,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.math.BigInteger;
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -102,22 +102,22 @@ public class ResumenIngreso extends JDialog implements ActionListener, KeyListen
         tm.setFacturaCabeceraList(DB_Ingreso.obtenerVentasPorFacturacion(facturacionCabecera.getId()));
         jtIngreso.setModel(tm);
         Utilities.c_packColumn.packColumns(jtIngreso, 1);
-        BigInteger total = new BigInteger("0");
-        BigInteger totalContado = new BigInteger("0");
-        BigInteger totalCredito = new BigInteger("0");
+        BigDecimal total = new BigDecimal("0.0");
+        BigDecimal totalContado = new BigDecimal("0");
+        BigDecimal totalCredito = new BigDecimal("0");
         for (M_facturaCabecera faca : tm.getFacturaCabeceraList()) {
-            total = total.add(new BigInteger(faca.getTotal().toString()));
+            total = total.add(new BigDecimal(faca.getTotal()+""));
             switch (faca.getCondVenta().getId()) {
                 case E_tipoOperacion.CONTADO: {//contado
-                    totalContado = totalContado.add(new BigInteger(faca.getTotal().toString()));
+                    totalContado = totalContado.add(new BigDecimal(faca.getTotal()+""));
                     break;
                 }
                 case E_tipoOperacion.CREDITO_30: {//credito
-                    totalCredito = totalCredito.add(new BigInteger(faca.getTotal().toString()));
+                    totalCredito = totalCredito.add(new BigDecimal(faca.getTotal()+""));
                     break;
                 }
                 default: {//credito
-                    totalCredito = totalCredito.add(new BigInteger(faca.getTotal().toString()));
+                    totalCredito = totalCredito.add(new BigDecimal(faca.getTotal()+""));
                     break;
                 }
             }
@@ -143,11 +143,12 @@ public class ResumenIngreso extends JDialog implements ActionListener, KeyListen
         jspDetalle = new JScrollPane(jtDetalle);
         JPanel jpTotalEgreso = new JPanel(new GridLayout(3, 2));
         jftTotalEgreso = new JFormattedTextField();
-        jftTotalEgreso.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("¤#,##0"))));
+        jftTotalEgreso.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#,##0.##"))));
         jftTotalEgCont = new JFormattedTextField();
-        jftTotalEgCont.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("¤#,##0"))));
+        jftTotalEgCont.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#,##0.##"))));
+        //jftTotalEgCont.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("¤#,##0"))));
         jftTotalEgCred = new JFormattedTextField();
-        jftTotalEgCred.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("¤#,##0"))));
+        jftTotalEgCred.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#,##0.##"))));
         jlContado = new JLabel("Ingresos al contado");
         jlContado.setHorizontalAlignment(SwingConstants.CENTER);
         jlCredito = new JLabel("Ingresos a crédito");
@@ -186,22 +187,22 @@ public class ResumenIngreso extends JDialog implements ActionListener, KeyListen
     private void inicializarVista(FacturaCabeceraTableModel tm, Date inicio, Date fin) {
         jtIngreso.setModel(tm);
         Utilities.c_packColumn.packColumns(jtIngreso, 1);
-        BigInteger total = new BigInteger("0");
-        BigInteger totalContado = new BigInteger("0");
-        BigInteger totalCredito = new BigInteger("0");
+        BigDecimal total = new BigDecimal("0");
+        BigDecimal totalContado = new BigDecimal("0");
+        BigDecimal totalCredito = new BigDecimal("0");
         for (M_facturaCabecera faca : tm.getFacturaCabeceraList()) {
-            total = total.add(new BigInteger(faca.getTotal().toString()));
+            total = total.add(new BigDecimal(faca.getTotal()+""));
             switch (faca.getCondVenta().getId()) {
                 case E_tipoOperacion.CONTADO: {//contado
-                    totalContado = totalContado.add(new BigInteger(faca.getTotal().toString()));
+                    totalContado = totalContado.add(new BigDecimal(faca.getTotal()+""));
                     break;
                 }
                 case E_tipoOperacion.CREDITO_30: {//credito
-                    totalCredito = totalCredito.add(new BigInteger(faca.getTotal().toString()));
+                    totalCredito = totalCredito.add(new BigDecimal(faca.getTotal()+""));
                     break;
                 }
                 default: {//credito
-                    totalCredito = totalCredito.add(new BigInteger(faca.getTotal().toString()));
+                    totalCredito = totalCredito.add(new BigDecimal(faca.getTotal()+""));
                     break;
                 }
             }

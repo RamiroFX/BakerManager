@@ -17,6 +17,7 @@ import Entities.ProductoCategoria;
 import Interface.InterfaceRecibirProduccionFilm;
 import Interface.RecibirEmpleadoCallback;
 import Interface.RecibirProductoCallback;
+import ModeloTabla.SeleccionarProductoTableModel;
 import Produccion.SeleccionCantidadProductoSimple;
 import Produccion.V_gestionProduccion;
 import bauplast.SeleccionarProductoPorClasif;
@@ -295,7 +296,7 @@ class C_crearRollo extends MouseAdapter implements ActionListener, KeyListener,
     }
 
     private void invocarSeleccionarRollo() {
-        SeleccionarProductoPorClasif sp = new SeleccionarProductoPorClasif(vista);
+        SeleccionarProductoPorClasif sp = new SeleccionarProductoPorClasif(vista, SeleccionarProductoTableModel.SIMPLE);
         ProductoCategoria pc = new ProductoCategoria(E_productoClasificacion.PROD_ROLLOS, E_productoClasificacion.S_PROD_ROLLOS);
         sp.setProductoClasificacion(pc);
         sp.setCallback(this);
@@ -303,7 +304,7 @@ class C_crearRollo extends MouseAdapter implements ActionListener, KeyListener,
     }
 
     private void invocarSeleccionarMP() {
-        SeleccionarProductoPorClasif sp = new SeleccionarProductoPorClasif(vista);
+        SeleccionarProductoPorClasif sp = new SeleccionarProductoPorClasif(vista, SeleccionarProductoTableModel.SIMPLE);
         ProductoCategoria pc = new ProductoCategoria(E_productoClasificacion.MATERIA_PRIMA, E_productoClasificacion.S_MATERIA_PRIMA);
         sp.setProductoClasificacion(pc);
         sp.setProductoCallback(this);

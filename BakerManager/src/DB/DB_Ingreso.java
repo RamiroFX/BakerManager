@@ -316,7 +316,7 @@ public class DB_Ingreso {
                 fc.setNroFactura(rs.getInt(2));
                 fc.setCliente(cliente);
                 fc.setFuncionario(f);
-                fc.setTotalFromDouble(rs.getDouble(8));
+                fc.setTotal(rs.getDouble(8));
                 fc.setEstado(estado);
                 fc.setTimbrado(timbrado);
                 list.add(fc);
@@ -1138,13 +1138,13 @@ public class DB_Ingreso {
                 + "FD.PRECIO \"Precio\", "
                 + "FD.DESCUENTO \"Descuento\","
                 + "CASE "
-                + "	WHEN P.ID_IMPUESTO = 1 THEN ROUND(FD.CANTIDAD*(FD.PRECIO-(FD.PRECIO*FD.DESCUENTO)/100))ELSE '0' "
+                + "	WHEN P.ID_IMPUESTO = 1 THEN FD.CANTIDAD*(FD.PRECIO-(FD.PRECIO*FD.DESCUENTO)/100)ELSE '0' "
                 + "END AS \"Exenta\", "
                 + "CASE "
-                + "	WHEN P.ID_IMPUESTO = 2 THEN ROUND(FD.CANTIDAD*(FD.PRECIO-(FD.PRECIO*FD.DESCUENTO)/100))ELSE '0' "
+                + "	WHEN P.ID_IMPUESTO = 2 THEN FD.CANTIDAD*(FD.PRECIO-(FD.PRECIO*FD.DESCUENTO)/100)ELSE '0' "
                 + "END AS \"IVA 5%\", "
                 + "CASE "
-                + "	WHEN P.ID_IMPUESTO = 3 THEN ROUND(FD.CANTIDAD*(FD.PRECIO-(FD.PRECIO*FD.DESCUENTO)/100))ELSE '0' "
+                + "	WHEN P.ID_IMPUESTO = 3 THEN FD.CANTIDAD*(FD.PRECIO-(FD.PRECIO*FD.DESCUENTO)/100)ELSE '0' "
                 + "END AS \"IVA 10%\", "
                 + "FD.OBSERVACION \"Obs.\" "
                 + "FROM FACTURA_DETALLE FD, PRODUCTO P "

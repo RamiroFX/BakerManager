@@ -4,7 +4,6 @@
  */
 package Ventas;
 
-import Entities.E_facturacionCabecera;
 import Interface.InterfaceNotificarCambio;
 import java.awt.Color;
 import java.awt.EventQueue;
@@ -15,11 +14,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.text.DecimalFormat;
 import javax.swing.JDialog;
-import javax.swing.JOptionPane;
 import net.miginfocom.swing.MigLayout;
 
 /**
@@ -74,9 +70,10 @@ public class ConfirmarVenta extends javax.swing.JDialog implements ActionListene
     }
 
     public void inicializarVista(String totalPagar) {
-        int totalPagarVal = Integer.valueOf(totalPagar);
+        DecimalFormat decimalFormat = new DecimalFormat("###0.##");
+        double totalPagarVal = Double.valueOf(totalPagar);
         jtfTotalPagar.setValue(totalPagarVal);
-        jtfMonto.setText(totalPagarVal + "");
+        jtfMonto.setText(decimalFormat.format(totalPagarVal));
         calcularVuelto();
     }
 
@@ -85,7 +82,7 @@ public class ConfirmarVenta extends javax.swing.JDialog implements ActionListene
     }
 
     private void initComponents() {
-        javax.swing.text.DefaultFormatterFactory dff = new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(java.text.NumberFormat.getCurrencyInstance()));
+        javax.swing.text.DefaultFormatterFactory dff = new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#,##0.##")));
         getContentPane().setLayout(new MigLayout());
         jbOK = new javax.swing.JButton("OK");
         jbCancel = new javax.swing.JButton("Cancel");
@@ -128,14 +125,17 @@ public class ConfirmarVenta extends javax.swing.JDialog implements ActionListene
     }
 
     private boolean controlarMonto() {
-        Integer monto = null;
+        Double monto = null;
         if (this.jtfMonto.getText().trim().isEmpty()) {
             return true;
         }
         try {
-            String cantidad = this.jtfMonto.getText().trim();
-            monto = Integer.valueOf(cantidad);
+            String cantidad = this.jtfMonto.getText().trim().replace(",", ".");
+            System.out.println("Ventas.ConfirmarVenta.controlarMonto()");
+            System.out.println(cantidad);
+            monto = Double.valueOf(cantidad);
         } catch (Exception e) {
+            System.err.println(e);
             javax.swing.JOptionPane.showMessageDialog(this, "Verifique en uno de los campos el parametro:"
                     + "Asegurese de colocar un numero valido\n"
                     + "en el campo Monto a pagar.",
@@ -144,7 +144,7 @@ public class ConfirmarVenta extends javax.swing.JDialog implements ActionListene
             this.jtfMonto.setText("");
             return false;
         }
-        int totalPagar = (int) this.jtfTotalPagar.getValue();
+        double totalPagar = (double) this.jtfTotalPagar.getValue();
         if (monto < totalPagar) {
             javax.swing.JOptionPane.showMessageDialog(this, "Verifique en uno de los campos el parametro:"
                     + "El monto a pagar no puede ser menor al total.",
@@ -163,12 +163,11 @@ public class ConfirmarVenta extends javax.swing.JDialog implements ActionListene
         EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
-                int monto;
+                double monto;
                 try {
-
-                    int cantidad = Integer.valueOf(jtfMonto.getText());
+                    double cantidad = Double.valueOf(jtfMonto.getText().trim().replace(",", "."));
                     System.out.println(".run().cantidad: " + cantidad);
-                    monto = Integer.valueOf(cantidad);
+                    monto = Double.valueOf(cantidad);
                 } catch (Exception e) {
                     javax.swing.JOptionPane.showMessageDialog(null, "Verifique en uno de los campos el parametro:"
                             + "Asegurese de colocar un numero valido\n"
@@ -177,8 +176,8 @@ public class ConfirmarVenta extends javax.swing.JDialog implements ActionListene
                             javax.swing.JOptionPane.OK_OPTION);
                     return;
                 }
-                int totalPagar = (int) jtfTotalPagar.getValue();
-                Integer vuelto = monto - totalPagar;
+                double totalPagar = (double) jtfTotalPagar.getValue();
+                Double vuelto = monto - totalPagar;
                 if (vuelto < 0) {
                     jtfVuelto.setForeground(Color.RED);
                 } else {

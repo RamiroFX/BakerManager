@@ -21,8 +21,8 @@ public class SeleccionarProductoPorClasif {
     V_seleccionarProductoPorClasif vista;
     C_seleccionarProductoPorClasif controlador;
 
-    public SeleccionarProductoPorClasif(JDialog dialog) {
-        this.modelo = new M_seleccionarProductoPorClasif();
+    public SeleccionarProductoPorClasif(JDialog dialog, int tipo) {
+        this.modelo = new M_seleccionarProductoPorClasif(tipo);
         this.vista = new V_seleccionarProductoPorClasif(dialog);
         this.controlador = new C_seleccionarProductoPorClasif(modelo, vista);
     }

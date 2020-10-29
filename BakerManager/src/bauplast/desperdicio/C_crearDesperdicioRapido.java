@@ -9,6 +9,7 @@ import Entities.E_productoClasificacion;
 import Entities.M_producto;
 import Entities.ProductoCategoria;
 import Interface.RecibirProductoCallback;
+import ModeloTabla.SeleccionarProductoTableModel;
 import Produccion.SeleccionCantidadProductoSimple;
 import bauplast.SeleccionarProductoPorClasif;
 import java.awt.event.ActionEvent;
@@ -92,7 +93,7 @@ public class C_crearDesperdicioRapido extends MouseAdapter implements ActionList
 
     private void invocarSeleccionDesperdicio() {
         ProductoCategoria pc = new ProductoCategoria(E_productoClasificacion.PROD_TERMINADO, E_productoClasificacion.S_MATERIA_PRIMA);
-        SeleccionarProductoPorClasif sp = new SeleccionarProductoPorClasif(vista);
+        SeleccionarProductoPorClasif sp = new SeleccionarProductoPorClasif(vista, SeleccionarProductoTableModel.DETALLE);
         sp.setProductoCallback(this);
         sp.setProductoClasificacion(pc);
         sp.mostrarVista();

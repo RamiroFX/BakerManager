@@ -14,7 +14,8 @@ public class M_facturaCabecera {
 
     private Integer idFacturaCabecera, idCliente, idFuncionario, idCondVenta, idNotaRemision;
     private int idTimbrado;
-    private Integer nroFactura, total;
+    private Integer nroFactura;
+    private double total;
     private Timestamp tiempo;
     private M_cliente cliente;
     private M_funcionario funcionario;
@@ -112,11 +113,11 @@ public class M_facturaCabecera {
         this.nroFactura = nroFactura;
     }
 
-    public Integer getTotal() {
+    public double getTotal() {
         return this.total;
     }
 
-    public void setTotal(int total) {
+    public void setTotal(double total) {
         this.total = total;
     }
 

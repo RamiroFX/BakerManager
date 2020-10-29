@@ -14,6 +14,7 @@ import Entities.ProductoCategoria;
 import Interface.InterfaceRecibirProduccionFilm;
 import Interface.InterfaceRecibirProduccionTerminados;
 import Interface.RecibirProductoCallback;
+import ModeloTabla.SeleccionarProductoTableModel;
 import Produccion.SeleccionCantidadProductoSimple;
 import bauplast.SeleccionarProductoPorClasif;
 import java.awt.event.ActionEvent;
@@ -194,7 +195,7 @@ class C_crearDesperdicio extends MouseAdapter implements ActionListener, KeyList
 
     private void invocarSeleccionRecuperados() {
         ProductoCategoria pc = new ProductoCategoria(E_productoClasificacion.MATERIA_PRIMA, E_productoClasificacion.S_MATERIA_PRIMA);
-        SeleccionarProductoPorClasif sp = new SeleccionarProductoPorClasif(vista);
+        SeleccionarProductoPorClasif sp = new SeleccionarProductoPorClasif(vista, SeleccionarProductoTableModel.SIMPLE);
         sp.setProductoCallback(this);
         sp.setProductoClasificacion(pc);
         sp.mostrarVista();

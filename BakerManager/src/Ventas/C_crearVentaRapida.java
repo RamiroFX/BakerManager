@@ -93,7 +93,7 @@ public class C_crearVentaRapida implements GestionInterface, InterfaceFacturaDet
         this.vista.jbModificarDetalle.setEnabled(false);
         this.vista.jbEliminarDetalle.setEnabled(false);
         java.awt.Font fuente = new java.awt.Font("Times New Roman", 0, 18);
-        javax.swing.text.DefaultFormatterFactory dff = new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(java.text.NumberFormat.getCurrencyInstance()));
+        javax.swing.text.DefaultFormatterFactory dff = new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#,##0.##")));
         this.vista.jftExenta.setFormatterFactory(dff);
         this.vista.jftExenta.setFont(fuente); // NOI18N
         this.vista.jftIva5.setFormatterFactory(dff);

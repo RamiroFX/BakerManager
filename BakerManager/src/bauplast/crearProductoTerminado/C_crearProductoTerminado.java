@@ -17,6 +17,7 @@ import Entities.ProductoCategoria;
 import Interface.InterfaceRecibirProduccionFilm;
 import Interface.InterfaceRecibirProduccionTerminados;
 import Interface.RecibirEmpleadoCallback;
+import ModeloTabla.SeleccionarProductoTableModel;
 import Produccion.SeleccionCantidadProductoSimple;
 import Produccion.V_gestionProduccion;
 import bauplast.SeleccionarProductoPorClasif;
@@ -333,7 +334,7 @@ class C_crearProductoTerminado extends MouseAdapter implements ActionListener, K
     }
 
     private void invocarSeleccionarProducto() {
-        SeleccionarProductoPorClasif sp = new SeleccionarProductoPorClasif(vista);
+        SeleccionarProductoPorClasif sp = new SeleccionarProductoPorClasif(vista, SeleccionarProductoTableModel.SIMPLE);
         ProductoCategoria pc = new ProductoCategoria(E_productoClasificacion.PROD_TERMINADO, E_productoClasificacion.S_PROD_TERMINADO);
         sp.setProductoClasificacion(pc);
         sp.setProductoTerminadoCallback(this);

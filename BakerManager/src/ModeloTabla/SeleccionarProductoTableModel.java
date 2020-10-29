@@ -14,12 +14,29 @@ import javax.swing.table.AbstractTableModel;
  *
  * @author Ramiro Ferreira
  */
-public class SeleccionarProductoRolloTableModel extends AbstractTableModel {
+public class SeleccionarProductoTableModel extends AbstractTableModel {
 
+    public static final int COMPLETO = 1, SIMPLE = 2, DETALLE = 3;
     List<M_producto> list;
-    private String[] colNames = {"Id", "Código", "Descripción"};
+    private String[] colNames;
+    int tipo;
 
-    public SeleccionarProductoRolloTableModel() {
+    public SeleccionarProductoTableModel(int tipo) {
+        this.tipo = tipo;
+        switch (tipo) {
+            case SIMPLE: {
+                this.colNames = new String[]{"Id", "Código", "Descripción"};
+                break;
+            }
+            case DETALLE: {
+                this.colNames = new String[]{"Id", "Código", "Descripción", "Cant. actual"};
+                break;
+            }
+            case COMPLETO: {
+                this.colNames = new String[]{"Id", "Código", "Descripción"};
+                break;
+            }
+        }
         list = new ArrayList<>();
     }
 
@@ -60,6 +77,9 @@ public class SeleccionarProductoRolloTableModel extends AbstractTableModel {
             }
             case 2: {
                 return producto.getDescripcion();
+            }
+            case 3: {
+                return producto.getCantActual();
             }
             default: {
                 return null;
