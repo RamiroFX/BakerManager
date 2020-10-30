@@ -31,7 +31,7 @@ public class M_crearProductoTerminado {
     public M_crearProductoTerminado() {
         this.produccionCabecera = new E_produccionCabecera();
         this.produccionCabecera.setFuncionarioSistema(DatosUsuario.getRol_usuario().getFuncionario());
-        this.productosTerminadosTM = new ProduccionDetalleTableModel();
+        this.productosTerminadosTM = new ProduccionDetalleTableModel(ProduccionDetalleTableModel.SIMPLE);
         this.rolloUtilizadoTM = new ProduccionRolloTableModel();
         this.accesos = DatosUsuario.getRol_usuario().getAccesos();
     }

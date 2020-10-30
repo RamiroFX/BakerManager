@@ -34,7 +34,7 @@ public class M_gestionProduccion {
         this.funcionario = new M_funcionario();
         this.funcionario.setId_funcionario(-1);
         this.produccionCabeceraTM = new ProduccionCabeceraTableModel();
-        this.produccionDetalleTM = new ProduccionDetalleTableModel();
+        this.produccionDetalleTM = new ProduccionDetalleTableModel(ProduccionDetalleTableModel.SIMPLE);
     }
 
     public void setFuncionario(M_funcionario funcionario) {

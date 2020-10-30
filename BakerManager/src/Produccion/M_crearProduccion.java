@@ -26,7 +26,7 @@ public class M_crearProduccion {
     public M_crearProduccion() {
         this.produccionCabecera = new E_produccionCabecera();
         this.produccionCabecera.setFuncionarioSistema(DatosUsuario.getRol_usuario().getFuncionario());
-        this.tm = new ProduccionDetalleTableModel();
+        this.tm = new ProduccionDetalleTableModel(ProduccionDetalleTableModel.SIMPLE);
     }
 
     public E_produccionCabecera getProduccionCabecera() {

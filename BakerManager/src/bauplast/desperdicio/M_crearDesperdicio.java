@@ -35,8 +35,8 @@ public class M_crearDesperdicio {
 
     public M_crearDesperdicio() {
         this.produccionDesperdicioCabecera = new E_produccionDesperdicioCabecera();
-        this.produccionTerminadosTM = new ProduccionDetalleTableModel();
-        this.produccionRecuperadosTM = new ProduccionDetalleTableModel();
+        this.produccionTerminadosTM = new ProduccionDetalleTableModel(ProduccionDetalleTableModel.SIMPLE);
+        this.produccionRecuperadosTM = new ProduccionDetalleTableModel(ProduccionDetalleTableModel.SIMPLE);
         this.produccionRollosTM = new ProduccionRolloTableModel();
     }
 

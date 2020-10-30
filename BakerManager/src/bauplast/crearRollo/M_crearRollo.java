@@ -33,7 +33,7 @@ public class M_crearRollo {
         this.produccionCabecera = new E_produccionCabecera();
         this.produccionCabecera.setFuncionarioSistema(DatosUsuario.getRol_usuario().getFuncionario());
         this.rollosTM = new ProduccionRolloTableModel();
-        this.materiaPrimaTM = new ProduccionDetalleTableModel();
+        this.materiaPrimaTM = new ProduccionDetalleTableModel(ProduccionDetalleTableModel.SIMPLE);
         this.accesos = DatosUsuario.getRol_usuario().getAccesos();
     }
 

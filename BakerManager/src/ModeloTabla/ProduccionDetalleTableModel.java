@@ -6,6 +6,7 @@
 package ModeloTabla;
 
 import Entities.E_produccionDetalle;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.table.AbstractTableModel;
@@ -16,11 +17,26 @@ import javax.swing.table.AbstractTableModel;
  */
 public class ProduccionDetalleTableModel extends AbstractTableModel {
 
+    public static final int SIMPLE = 1, DETALLE = 2;
     private List<E_produccionDetalle> produccionList;
-    private final String[] colNames = {"Cantidad", "Código", "Descripcion"};
+    private String[] colNames;
+    private DecimalFormat decimalFormat;
+    private int tipo;
 
-    public ProduccionDetalleTableModel() {
+    public ProduccionDetalleTableModel(int tipo) {
+        this.tipo = tipo;
+        this.decimalFormat = new DecimalFormat("#,##0.##");
         this.produccionList = new ArrayList<>();
+        switch (tipo) {
+            case SIMPLE: {
+                this.colNames = new String[]{"Código", "Descripcion", "Cantidad"};
+                break;
+            }
+            case DETALLE: {
+                this.colNames = new String[]{"Id", "Código", "Descripción", "Cant. actual"};
+                break;
+            }
+        }
     }
 
     public List<E_produccionDetalle> getList() {
@@ -69,6 +85,9 @@ public class ProduccionDetalleTableModel extends AbstractTableModel {
             }
             case 2: {
                 return produccion.getProducto().getDescripcion();
+            }
+            case 3: {
+                return decimalFormat.format(produccion.getProducto().getCantActual());
             }
             default: {
                 return null;

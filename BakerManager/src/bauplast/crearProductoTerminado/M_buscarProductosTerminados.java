@@ -8,7 +8,7 @@ package bauplast.crearProductoTerminado;
 import DB.DB_Produccion;
 import DB.DB_manager;
 import Entities.Estado;
-import ModeloTabla.MateriaPrimaBajaTableModel;
+import ModeloTabla.ProduccionTerminadosTableModel;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -19,17 +19,17 @@ import java.util.Date;
  */
 public class M_buscarProductosTerminados {
 
-    private MateriaPrimaBajaTableModel tm;
+    private ProduccionTerminadosTableModel tm;
 
     public M_buscarProductosTerminados() {
-        this.tm = new MateriaPrimaBajaTableModel();
+        this.tm = new ProduccionTerminadosTableModel();
     }
 
-    public MateriaPrimaBajaTableModel getTm() {
+    public ProduccionTerminadosTableModel getTm() {
         return tm;
     }
 
-    public void setTm(MateriaPrimaBajaTableModel tm) {
+    public void setTm(ProduccionTerminadosTableModel tm) {
         this.tm = tm;
     }
 

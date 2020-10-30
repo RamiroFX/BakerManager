@@ -5,8 +5,9 @@
  */
 package ModeloTabla;
 
-import Entities.M_producto;
+import Entities.E_produccionDesperdicioDetalle;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.table.AbstractTableModel;
@@ -15,32 +16,17 @@ import javax.swing.table.AbstractTableModel;
  *
  * @author Ramiro Ferreira
  */
-public class SeleccionarProductoTableModel extends AbstractTableModel {
+public class ProduccionTerminadosTableModel extends AbstractTableModel {
 
-    public static final int COMPLETO = 1, SIMPLE = 2, DETALLE = 3;
-    List<M_producto> list;
-    private String[] colNames;
     private DecimalFormat decimalFormat;
-    int tipo;
+    private SimpleDateFormat dateFormater;
+    List<E_produccionDesperdicioDetalle> list;
+    private final String[] colNames = {"Fecha", "O.T.", "Código", "Producto", "Cant. producida", "Cant. actual"};
 
-    public SeleccionarProductoTableModel(int tipo) {
+    public ProduccionTerminadosTableModel() {
         this.decimalFormat = new DecimalFormat("#,##0.##");
-        this.tipo = tipo;
-        switch (tipo) {
-            case SIMPLE: {
-                this.colNames = new String[]{"Id", "Código", "Descripción"};
-                break;
-            }
-            case DETALLE: {
-                this.colNames = new String[]{"Id", "Código", "Descripción", "Cant. actual"};
-                break;
-            }
-            case COMPLETO: {
-                this.colNames = new String[]{"Id", "Código", "Descripción"};
-                break;
-            }
-        }
-        list = new ArrayList<>();
+        this.dateFormater = new SimpleDateFormat("dd/MM/YYYY hh:mm:ss");
+        this.list = new ArrayList<>();
     }
 
     @Override
@@ -70,19 +56,25 @@ public class SeleccionarProductoTableModel extends AbstractTableModel {
 
     @Override
     public Object getValueAt(int rowIndex, int colIndex) {
-        M_producto producto = this.list.get(rowIndex);
+        E_produccionDesperdicioDetalle pdd = this.list.get(rowIndex);
         switch (colIndex) {
             case 0: {
-                return producto.getId();
+                return dateFormater.format(pdd.getDesperdicioCabecera().getProduccionCabecera().getFechaProduccion());
             }
             case 1: {
-                return producto.getCodigo();
+                return decimalFormat.format(pdd.getDesperdicioCabecera().getProduccionCabecera().getNroOrdenTrabajo());
             }
             case 2: {
-                return producto.getDescripcion();
+                return pdd.getProducto().getCodigo();
             }
             case 3: {
-                return decimalFormat.format(producto.getCantActual());
+                return pdd.getProducto().getDescripcion();
+            }
+            case 4: {
+                return decimalFormat.format(pdd.getCantidad());
+            }
+            case 5: {
+                return decimalFormat.format(pdd.getProducto().getCantActual());
             }
             default: {
                 return null;
@@ -90,23 +82,28 @@ public class SeleccionarProductoTableModel extends AbstractTableModel {
         }
     }
 
-    public void setList(List<M_producto> productoList) {
+    public void setList(List<E_produccionDesperdicioDetalle> productoList) {
         this.list = productoList;
         updateTable();
     }
 
-    public List<M_producto> getProductoList() {
+    public List<E_produccionDesperdicioDetalle> getList() {
         return list;
+    }
+
+    public void agregarDatos(E_produccionDesperdicioDetalle film) {
+        this.list.add(film);
+        updateTable();
     }
 
     public void quitarDatos(int index) {
         this.list.remove(index);
-        fireTableDataChanged();
+        updateTable();
     }
 
     public void vaciarLista() {
         this.list.clear();
-        fireTableDataChanged();
+        updateTable();
     }
 
     public void updateTable() {

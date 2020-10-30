@@ -30,7 +30,7 @@ public class M_crearDesperdicioRapido {
     public M_crearDesperdicioRapido() {
         this.produccionDesperdicioCabecera = new E_produccionDesperdicioCabecera();
         this.produccionDesperdicioCabecera.getProduccionCabecera().setFuncionarioSistema(DatosUsuario.getRol_usuario().getFuncionario());
-        this.desperdicioTM = new ProduccionDetalleTableModel();
+        this.desperdicioTM = new ProduccionDetalleTableModel(ProduccionDetalleTableModel.SIMPLE);
     }
 
     public void setProduccionCabecera(E_produccionCabecera pc) {

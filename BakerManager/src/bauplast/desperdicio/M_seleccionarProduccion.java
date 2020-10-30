@@ -23,7 +23,7 @@ public class M_seleccionarProduccion {
 
     public M_seleccionarProduccion() {
         this.produccionCabecera = new E_produccionCabecera();
-        this.produccionTerminadosTM = new ProduccionDetalleTableModel();
+        this.produccionTerminadosTM = new ProduccionDetalleTableModel(ProduccionDetalleTableModel.SIMPLE);
         this.produccionRollosTM = new ProduccionRolloTableModel();
     }
 

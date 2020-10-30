@@ -3213,7 +3213,7 @@ public class DB_Produccion {
 
             String Query = "SELECT id_produccion_detalle, cantidad, nro_orden_trabajo, "
                     + "id_produccion_cabecera, fecha_produccion, id_producto, codigo, "
-                    + "producto, id_categoria, categoria "
+                    + "producto, id_categoria, categoria, cant_actual "
                     + "FROM v_produccion_terminados  WHERE 1=1 "
                     + CRITERIA
                     + DATE_RANGE
@@ -3237,13 +3237,14 @@ public class DB_Produccion {
                 E_produccionCabecera pc = new E_produccionCabecera();
                 pc.setId(rs.getInt("id_produccion_cabecera"));
                 pc.setNroOrdenTrabajo(rs.getInt("nro_orden_trabajo"));
-                pc.setFechaProduccion(rs.getDate("fecha_produccion"));
+                pc.setFechaProduccion(rs.getTimestamp("fecha_produccion"));
                 E_produccionDesperdicioCabecera desperdicioCabecera = new E_produccionDesperdicioCabecera();
                 desperdicioCabecera.setProduccionCabecera(pc);
                 M_producto producto = new M_producto();
                 producto.setId(rs.getInt("id_producto"));
                 producto.setDescripcion(rs.getString("producto"));
                 producto.setCodigo(rs.getString("codigo"));
+                producto.setCantActual(rs.getDouble("cant_actual"));
                 E_produccionDesperdicioDetalle pdd = new E_produccionDesperdicioDetalle();
                 pdd.setId(rs.getInt("id_produccion_detalle"));
                 pdd.setCantidad(rs.getDouble("cantidad"));

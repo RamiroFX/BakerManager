@@ -58,7 +58,7 @@ public class ResumenBajaMateriaPrima extends JDialog implements ActionListener, 
     }
 
     private void inicializarDatos(MateriaPrimaBajaTableModel tm) {
-        bajaMateriaPrimaAgrupadosTM = new ProduccionDetalleTableModel();
+        bajaMateriaPrimaAgrupadosTM = new ProduccionDetalleTableModel(ProduccionDetalleTableModel.SIMPLE);
         bajaMateriaPrimaAgrupadosTM.setList(DB_Produccion.consultarMateriaPrimaBajaDetalleAgrupado(tm.getList()));
         jtDesperdicios.setModel(bajaMateriaPrimaAgrupadosTM);
         double totalUtilizado = 0;

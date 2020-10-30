@@ -8,8 +8,8 @@ package bauplast.crearProductoTerminado;
 import DB.DB_Produccion;
 import Entities.E_produccionDetalle;
 import Interface.InterfaceFacturaDetalle;
-import ModeloTabla.MateriaPrimaBajaTableModel;
 import ModeloTabla.ProduccionDetalleTableModel;
+import ModeloTabla.ProduccionTerminadosTableModel;
 import java.awt.BorderLayout;
 import static java.awt.Dialog.DEFAULT_MODALITY_TYPE;
 import java.awt.EventQueue;
@@ -46,7 +46,7 @@ public class ResumenProductosTerminados extends JDialog implements ActionListene
     JTabbedPane jtpPanel;
     ProduccionDetalleTableModel productosTerminadosAgrupadosTM;
 
-    public ResumenProductosTerminados(JDialog frame, MateriaPrimaBajaTableModel tm2) {
+    public ResumenProductosTerminados(JDialog frame, ProduccionTerminadosTableModel tm2) {
         super(frame, DEFAULT_MODALITY_TYPE);
         setTitle("Resumen de productos terminados");
         setSize(800, 600);
@@ -57,8 +57,8 @@ public class ResumenProductosTerminados extends JDialog implements ActionListene
         agregarListener();
     }
 
-    private void inicializarDatos(MateriaPrimaBajaTableModel tm) {
-        productosTerminadosAgrupadosTM = new ProduccionDetalleTableModel();
+    private void inicializarDatos(ProduccionTerminadosTableModel tm) {
+        productosTerminadosAgrupadosTM = new ProduccionDetalleTableModel(ProduccionDetalleTableModel.DETALLE);
         productosTerminadosAgrupadosTM.setList(DB_Produccion.consultarProductosTerminadosAgrupado(tm.getList()));
         jtDesperdicios.setModel(productosTerminadosAgrupadosTM);
         double totalUtilizado = 0;

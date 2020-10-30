@@ -70,16 +70,10 @@ public class ConfirmarVenta extends javax.swing.JDialog implements ActionListene
     }
 
     public void inicializarVista(String totalPagar) {
-<<<<<<< HEAD
         DecimalFormat decimalFormat = new DecimalFormat("###0.##");
         double totalPagarVal = Double.valueOf(totalPagar);
         jtfTotalPagar.setValue(totalPagarVal);
         jtfMonto.setText(decimalFormat.format(totalPagarVal));
-=======
-        double totalPagarVal = Double.valueOf(totalPagar);
-        jtfTotalPagar.setValue(totalPagarVal);
-        jtfMonto.setText(Math.round(totalPagarVal) + "");
->>>>>>> c192f4ebee0e1fd87a7d367e9fadfa13b958ab14
         calcularVuelto();
     }
 
@@ -150,12 +144,7 @@ public class ConfirmarVenta extends javax.swing.JDialog implements ActionListene
             this.jtfMonto.setText("");
             return false;
         }
-<<<<<<< HEAD
         double totalPagar = (double) this.jtfTotalPagar.getValue();
-=======
-        double tp = (double) jtfTotalPagar.getValue();
-        int totalPagar = (int) Math.round(tp);
->>>>>>> c192f4ebee0e1fd87a7d367e9fadfa13b958ab14
         if (monto < totalPagar) {
             javax.swing.JOptionPane.showMessageDialog(this, "Verifique en uno de los campos el parametro:"
                     + "El monto a pagar no puede ser menor al total.",
@@ -187,14 +176,8 @@ public class ConfirmarVenta extends javax.swing.JDialog implements ActionListene
                             javax.swing.JOptionPane.OK_OPTION);
                     return;
                 }
-<<<<<<< HEAD
                 double totalPagar = (double) jtfTotalPagar.getValue();
                 Double vuelto = monto - totalPagar;
-=======
-                double tp = (double) jtfTotalPagar.getValue();
-                int totalPagar = (int) Math.round(tp);
-                Integer vuelto = monto - totalPagar;
->>>>>>> c192f4ebee0e1fd87a7d367e9fadfa13b958ab14
                 if (vuelto < 0) {
                     jtfVuelto.setForeground(Color.RED);
                 } else {

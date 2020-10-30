@@ -16,7 +16,6 @@ import java.awt.BorderLayout;
 import static java.awt.Dialog.DEFAULT_MODALITY_TYPE;
 import java.awt.EventQueue;
 import java.awt.FlowLayout;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -79,7 +78,7 @@ public class ResumenProduccion extends JDialog implements ActionListener, KeyLis
 
     private void inicializarDatos(ProduccionCabeceraTableModel tm) {
         jtEgreso.setModel(tm);
-        ProduccionDetalleTableModel tmDetalle = new ProduccionDetalleTableModel();
+        ProduccionDetalleTableModel tmDetalle = new ProduccionDetalleTableModel(ProduccionDetalleTableModel.SIMPLE);
         tmDetalle.setList(DB_Produccion.consultarProduccionDetalleAgrupado(tm.getList()));
         double totalProducido = 0;
         for (E_produccionDetalle e_produccionDetalle : tmDetalle.getList()) {
