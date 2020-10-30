@@ -148,11 +148,11 @@ public class C_crear_egreso extends MouseAdapter implements ActionListener, KeyL
                     //Precio = Precio - Math.round(Math.round(((Precio * descuento) / 100)));
                     Double Precio = Double.valueOf(String.valueOf(dtm.getValueAt(i, 3)));
                     Double Descuento = Double.valueOf(String.valueOf(dtm.getValueAt(i, 4)));
-                    Integer ivaExenta = Integer.valueOf(String.valueOf(dtm.getValueAt(i, 5)));
-                    Integer iva5 = Integer.valueOf(String.valueOf(dtm.getValueAt(i, 6)));
-                    Integer iva10 = Integer.valueOf(String.valueOf(dtm.getValueAt(i, 7)));
+                    Double ivaExenta = Double.valueOf(String.valueOf(dtm.getValueAt(i, 5)));
+                    Double iva5 = Double.valueOf(String.valueOf(dtm.getValueAt(i, 6)));
+                    Double iva10 = Double.valueOf(String.valueOf(dtm.getValueAt(i, 7)));
                     //Precio = Precio - Math.round(Math.round(((Precio * Descuento) / 100)));
-                    Integer total = Math.round(Math.round(Cantidad * Precio));
+                    Double total = (Cantidad * Precio);
                     this.modelo.egreso_detalle[i] = new M_egreso_detalle();
                     this.modelo.egreso_detalle[i].setId_cabecera(this.modelo.egreso_cabecera.getId_cabecera());
                     this.modelo.egreso_detalle[i].setId_detalle(null);//en db_egreso
@@ -220,15 +220,15 @@ public class C_crear_egreso extends MouseAdapter implements ActionListener, KeyL
     }
 
     private void sumarTotal() {
-        Integer exenta = 0;
-        Integer iva5 = 0;
-        Integer iva10 = 0;
-        Integer total = 0;
+        double exenta = 0;
+        double iva5 = 0;
+        double iva10 = 0;
+        double total = 0;
         int cantFilas = this.dtm.getRowCount();
         for (int i = 0; i < cantFilas; i++) {
-            exenta = exenta + Integer.valueOf(String.valueOf(dtm.getValueAt(i, 5)));
-            iva5 = iva5 + Integer.valueOf(String.valueOf(dtm.getValueAt(i, 6)));
-            iva10 = iva10 + Integer.valueOf(String.valueOf(dtm.getValueAt(i, 7)));
+            exenta = exenta + Double.valueOf(String.valueOf(dtm.getValueAt(i, 5)));
+            iva5 = iva5 + Double.valueOf(String.valueOf(dtm.getValueAt(i, 6)));
+            iva10 = iva10 + Double.valueOf(String.valueOf(dtm.getValueAt(i, 7)));
         }
         total = exenta + iva5 + iva10;
         this.vista.jftExenta.setValue(exenta);

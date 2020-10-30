@@ -14,10 +14,10 @@ public class M_egreso_detalle {
     private Integer id_producto;
     private M_producto producto;
     private Double precio;
-    private Integer iva_exenta;
-    private Integer iva_cinco;
-    private Integer iva_diez;
-    private Integer total;
+    private Double iva_exenta;
+    private Double iva_cinco;
+    private Double iva_diez;
+    private Double total;
     private Double cantidad;
     private Double descuento;
     String observacion;
@@ -92,56 +92,56 @@ public class M_egreso_detalle {
     /**
      * @return the iva_exenta
      */
-    public Integer getIva_exenta() {
+    public Double getIva_exenta() {
         return iva_exenta;
     }
 
     /**
      * @param iva_exenta the iva_exenta to set
      */
-    public void setIva_exenta(Integer iva_exenta) {
+    public void setIva_exenta(Double iva_exenta) {
         this.iva_exenta = iva_exenta;
     }
 
     /**
      * @return the iva_cinco
      */
-    public Integer getIva_cinco() {
+    public Double getIva_cinco() {
         return iva_cinco;
     }
 
     /**
      * @param iva_cinco the iva_cinco to set
      */
-    public void setIva_cinco(Integer iva_cinco) {
+    public void setIva_cinco(Double iva_cinco) {
         this.iva_cinco = iva_cinco;
     }
 
     /**
      * @return the iva_diez
      */
-    public Integer getIva_diez() {
+    public Double getIva_diez() {
         return iva_diez;
     }
 
     /**
      * @param iva_diez the iva_diez to set
      */
-    public void setIva_diez(Integer iva_diez) {
+    public void setIva_diez(Double iva_diez) {
         this.iva_diez = iva_diez;
     }
 
     /**
      * @return the total
      */
-    public Integer getTotal() {
+    public Double getTotal() {
         return total;
     }
 
     /**
      * @param total the total to set
      */
-    public void setTotal(Integer total) {
+    public void setTotal(Double total) {
         this.total = total;
     }
 

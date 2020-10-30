@@ -121,10 +121,6 @@ public class M_facturaCabecera {
         this.total = total;
     }
 
-    public void setTotalFromDouble(Double total) {
-        this.total = Math.round(Math.round(total));
-    }
-
     @Override
     public String toString() {
         return getClass().getName() + "{"

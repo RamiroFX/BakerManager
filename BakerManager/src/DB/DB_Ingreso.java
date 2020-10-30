@@ -426,7 +426,7 @@ public class DB_Ingreso {
                 fc.setNroFactura(rs.getInt(2));
                 fc.setCliente(cliente);
                 fc.setFuncionario(f);
-                fc.setTotalFromDouble(rs.getDouble(8));
+                fc.setTotal(rs.getDouble(8));
                 list.add(fc);
             }
         } catch (SQLException ex) {

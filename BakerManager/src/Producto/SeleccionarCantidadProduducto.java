@@ -507,10 +507,10 @@ public class SeleccionarCantidadProduducto extends javax.swing.JDialog implement
             public void run() {
                 Double descuento = null;
                 Double cantidad = null;
-                Integer total = null;
-                Integer precio = null;
+                Double total = null;
+                Double precio = null;
                 try {
-                    total = Integer.valueOf(jtfTotal.getText());
+                    total = Double.valueOf(jtfTotal.getText());
                 } catch (Exception e) {
                     javax.swing.JOptionPane.showMessageDialog(null, "Verifique en uno de los campos el parametro:"
                             + e.getMessage().substring(12) + "\n"
@@ -547,7 +547,7 @@ public class SeleccionarCantidadProduducto extends javax.swing.JDialog implement
                     return;
                 }
                 try {
-                    precio = Integer.valueOf(String.valueOf(jtfPrecio.getText()));
+                    precio = Double.valueOf(String.valueOf(jtfPrecio.getText()));
                 } catch (Exception e) {
                     javax.swing.JOptionPane.showMessageDialog(null, "Verifique en uno de los campos el parametro:"
                             + e.getMessage().substring(12) + "\n"
