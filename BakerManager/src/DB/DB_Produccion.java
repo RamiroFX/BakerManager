@@ -2923,8 +2923,6 @@ public class DB_Produccion {
                     + DATE_RANGE
                     + TIPO_BAJA
                     + ORDER_BY;
-            System.out.println("DB.DB_Produccion.consultarProduccionDesperdicioDetalle()");
-            System.out.println(Query);
             int pos = 1;
             pst = DB_manager.getConection().prepareStatement(Query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             if (buscarPor.equals("Todos")) {
@@ -3275,11 +3273,11 @@ public class DB_Produccion {
             if (b) {
                 return list;
             }
-            String QUERY = "SELECT SUM(cantidad) as cantidad, id_producto, codigo, producto, id_categoria, categoria "
+            String QUERY = "SELECT SUM(cantidad) as cantidad, id_producto, codigo, producto, id_categoria, categoria, cant_actual "
                     + "FROM v_produccion_terminados  WHERE 1=1 "
                     + "AND id_produccion_cabecera IN ("
                     + builder.substring(0, builder.length() - 1) + ") ";
-            String GROUP_BY = "GROUP BY id_producto, codigo, producto, id_categoria, categoria "
+            String GROUP_BY = "GROUP BY id_producto, codigo, producto, id_categoria, categoria, cant_actual "
                     + "ORDER BY producto DESC ";
             QUERY = QUERY + GROUP_BY;
             int index = 1;
@@ -3294,6 +3292,7 @@ public class DB_Produccion {
                 producto.setId(rs.getInt("id_producto"));
                 producto.setDescripcion(rs.getString("producto"));
                 producto.setCodigo(rs.getString("codigo"));
+                producto.setCantActual(rs.getDouble("cant_actual"));
                 E_produccionDetalle pdd = new E_produccionDetalle();
                 pdd.setCantidad(rs.getDouble("cantidad"));
                 pdd.setProducto(producto);

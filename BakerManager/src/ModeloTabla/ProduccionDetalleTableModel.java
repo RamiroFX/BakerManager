@@ -29,11 +29,11 @@ public class ProduccionDetalleTableModel extends AbstractTableModel {
         this.produccionList = new ArrayList<>();
         switch (tipo) {
             case SIMPLE: {
-                this.colNames = new String[]{"Código", "Descripcion", "Cantidad"};
+                this.colNames = new String[]{"Código", "Descripcion", "Cant. producida"};
                 break;
             }
             case DETALLE: {
-                this.colNames = new String[]{"Id", "Código", "Descripción", "Cant. actual"};
+                this.colNames = new String[]{"Código", "Descripción", "Cant. producida", "Cant. actual"};
                 break;
             }
         }
@@ -78,13 +78,13 @@ public class ProduccionDetalleTableModel extends AbstractTableModel {
         E_produccionDetalle produccion = this.produccionList.get(rowIndex);
         switch (colIndex) {
             case 0: {
-                return produccion.getCantidad();
-            }
-            case 1: {
                 return produccion.getProducto().getCodigo();
             }
-            case 2: {
+            case 1: {
                 return produccion.getProducto().getDescripcion();
+            }
+            case 2: {
+                return decimalFormat.format(produccion.getCantidad());
             }
             case 3: {
                 return decimalFormat.format(produccion.getProducto().getCantActual());
