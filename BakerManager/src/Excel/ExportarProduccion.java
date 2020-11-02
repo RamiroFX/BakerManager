@@ -489,8 +489,11 @@ public class ExportarProduccion {
             filaProdDetalle.createCell(3).setCellValue(get.getMedida());
             filaProdDetalle.createCell(4).setCellValue(get.getMicron());
             filaProdDetalle.createCell(5).setCellValue(get.getPeso());
+            filaProdDetalle.getCell(5).setCellStyle(styleNumber1);
             filaProdDetalle.createCell(6).setCellValue(get.getPesoUtilizado());
+            filaProdDetalle.getCell(6).setCellStyle(styleNumber1);
             filaProdDetalle.createCell(7).setCellValue(get.getPesoActual());
+            filaProdDetalle.getCell(7).setCellStyle(styleNumber1);
             totalProducido = totalProducido + get.getPeso();
             totalUtilizado = totalUtilizado + get.getPesoUtilizado();
             totalDisponible = totalDisponible + get.getPesoActual();

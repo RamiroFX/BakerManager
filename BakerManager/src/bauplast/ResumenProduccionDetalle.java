@@ -143,7 +143,7 @@ public class ResumenProduccionDetalle extends JDialog implements ActionListener,
         EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
-                ExportarProduccion ep = new ExportarProduccion("Produccion", new ArrayList<E_produccionFilm>(tmAux.getList()));
+                ExportarProduccion ep = new ExportarProduccion("Produccion", new ArrayList<E_produccionFilm>(tm.getList()));
                 ep.exportacionAgrupadaPorDetalle();
             }
         });
