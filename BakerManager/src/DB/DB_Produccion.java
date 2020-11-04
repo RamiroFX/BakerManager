@@ -2608,7 +2608,7 @@ public class DB_Produccion {
         return film;
     }
 
-    public static ArrayList<E_produccionFilm> consultarFilmDisponibleAgrupado(RolloProducidoTableModel cabecera, String descripcion) {
+    public static ArrayList<E_produccionFilm> consultarFilmDisponibleAgrupado(RolloProducidoTableModel cabecera, String descripcion, boolean esDetallado) {
         ArrayList<E_produccionFilm> filmList = new ArrayList<>();
         boolean b = true;
         try {
@@ -2624,17 +2624,33 @@ public class DB_Produccion {
             if (b) {
                 return filmList;
             }
-            String Query = "SELECT codigo, producto, id_categoria, categoria, cono, medida, micron, "
-                    + "sum(peso)as peso , "
+            String Query = "";
+            if(esDetallado){
+                Query = "SELECT codigo, producto, id_categoria, categoria, cono, medida, micron, "
+                    + "sum(peso_producido)as peso , "
                     + "sum(peso_utilizado)as peso_utilizado , "
-                    + "sum(peso_actual)as peso_actual "
-                    + "FROM v_film_actual "
+                    + "sum(peso_disponible)as peso_actual "
+                    + "FROM v_produccion_detalle "
                     + "WHERE "
-                    + "v_film_actual.id_cabecera IN ("
+                    + "v_produccion_detalle.id_cabecera IN ("
                     + builder.substring(0, builder.length() - 1) + ") "
                     + "GROUP BY codigo, producto, id_categoria, categoria, cono, medida, micron "
                     + "ORDER BY producto ;";
-
+            }else{
+                Query = "SELECT codigo, producto, 0 as id_categoria, 0 as categoria, 0 as cono, 0 as medida, 0 as micron, "
+                    + "sum(peso_producido)as peso , "
+                    + "sum(peso_utilizado)as peso_utilizado , "
+                    + "sum(peso_disponible)as peso_actual "
+                    + "FROM v_produccion_detalle "
+                    + "WHERE "
+                    + "v_produccion_detalle.id_cabecera IN ("
+                    + builder.substring(0, builder.length() - 1) + ") "
+                    + "GROUP BY codigo, producto, id_categoria, categoria, cono, medida, micron "
+                    + "ORDER BY producto ;";       
+            }
+            
+            System.out.println("DB.DB_Produccion.consultarFilmDisponibleAgrupado()");
+            System.err.println(Query);
             pst = DB_manager.getConection().prepareStatement(Query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             int index = 1;
             for (E_produccionFilm ventaCabecera : cabecera.getList()) {

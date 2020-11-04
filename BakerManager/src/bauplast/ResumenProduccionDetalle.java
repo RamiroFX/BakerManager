@@ -65,7 +65,7 @@ public class ResumenProduccionDetalle extends JDialog implements ActionListener,
     private void inicializarDatos() {
         //Kls. Rollo 40x50 Tr. S/color BD S/I
         tmAux = new RolloProducidoTableModel();
-        tmAux.setList(DB_Produccion.consultarFilmDisponibleAgrupado(tm, descripcion));
+        tmAux.setList(DB_Produccion.consultarFilmDisponibleAgrupado(tm, descripcion, false));
         jtEgreso.setModel(tmAux);
         double totalProducido = 0;
         double totalUtilizado = 0;
@@ -143,7 +143,7 @@ public class ResumenProduccionDetalle extends JDialog implements ActionListener,
         EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
-                ExportarProduccion ep = new ExportarProduccion("Produccion", new ArrayList<E_produccionFilm>(tm.getList()));
+                ExportarProduccion ep = new ExportarProduccion("Produccion", new ArrayList<E_produccionFilm>(tmAux.getList()));
                 ep.exportacionAgrupadaPorDetalle();
             }
         });
