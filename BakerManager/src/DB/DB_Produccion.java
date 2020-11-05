@@ -2625,30 +2625,30 @@ public class DB_Produccion {
                 return filmList;
             }
             String Query = "";
-            if(esDetallado){
+            if (esDetallado) {
                 Query = "SELECT codigo, producto, id_categoria, categoria, cono, medida, micron, "
-                    + "sum(peso_producido)as peso , "
-                    + "sum(peso_utilizado)as peso_utilizado , "
-                    + "sum(peso_disponible)as peso_actual "
-                    + "FROM v_produccion_detalle "
-                    + "WHERE "
-                    + "v_produccion_detalle.id_cabecera IN ("
-                    + builder.substring(0, builder.length() - 1) + ") "
-                    + "GROUP BY codigo, producto, id_categoria, categoria, cono, medida, micron "
-                    + "ORDER BY producto ;";
-            }else{
-                Query = "SELECT codigo, producto, 0 as id_categoria, 0 as categoria, 0 as cono, 0 as medida, 0 as micron, "
-                    + "sum(peso_producido)as peso , "
-                    + "sum(peso_utilizado)as peso_utilizado , "
-                    + "sum(peso_disponible)as peso_actual "
-                    + "FROM v_produccion_detalle "
-                    + "WHERE "
-                    + "v_produccion_detalle.id_cabecera IN ("
-                    + builder.substring(0, builder.length() - 1) + ") "
-                    + "GROUP BY codigo, producto, id_categoria, categoria, cono, medida, micron "
-                    + "ORDER BY producto ;";       
+                        + "sum(peso_producido)as peso , "
+                        + "sum(peso_utilizado)as peso_utilizado , "
+                        + "sum(peso_disponible)as peso_actual "
+                        + "FROM v_produccion_detalle "
+                        + "WHERE "
+                        + "v_produccion_detalle.id_cabecera IN ("
+                        + builder.substring(0, builder.length() - 1) + ") "
+                        + "GROUP BY codigo, producto, id_categoria, categoria, cono, medida, micron "
+                        + "ORDER BY producto ;";
+            } else {
+                Query = "SELECT codigo, producto, id_categoria, categoria, medida, micron, "
+                        + "sum(peso_producido)as peso , "
+                        + "sum(peso_utilizado)as peso_utilizado , "
+                        + "sum(peso_disponible)as peso_actual "
+                        + "FROM v_produccion_detalle "
+                        + "WHERE "
+                        + "v_produccion_detalle.id_cabecera IN ("
+                        + builder.substring(0, builder.length() - 1) + ") "
+                        + "GROUP BY codigo, producto, id_categoria, categoria, medida, micron "
+                        + "ORDER BY producto ;";
             }
-            
+
             System.out.println("DB.DB_Produccion.consultarFilmDisponibleAgrupado()");
             System.err.println(Query);
             pst = DB_manager.getConection().prepareStatement(Query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
@@ -2667,7 +2667,11 @@ public class DB_Produccion {
                 prod.setCodigo(rs.getString("codigo"));
                 prod.setDescripcion(rs.getString("producto"));
                 film.setProducto(prod);
-                film.setCono(rs.getInt("cono"));
+                if (esDetallado) {
+                    film.setCono(rs.getInt("cono"));
+                } else {
+                    film.setCono(0);
+                }
                 film.setMedida(rs.getInt("medida"));
                 film.setMicron(rs.getInt("micron"));
                 film.setPeso(rs.getDouble("peso"));
