@@ -7,6 +7,7 @@ package Pagos;
 
 import Cobros.BancosParametros;
 import Cobros.ChequesPendientes;
+import Cobros.EstadoCuentaCliente;
 import Empleado.SeleccionarFuncionario;
 import Entities.E_cuentaCorrienteConcepto;
 import Entities.Estado;
@@ -110,6 +111,7 @@ public class C_gestionPago implements GestionInterface, RecibirEmpleadoCallback,
                 this.vista.jbCheques.addActionListener(this);
             }
         }
+        this.vista.jbMasOpciones.addActionListener(this);
         //TODO conceder permisos
         //this.vista.jbCobro.addActionListener(this);
         //this.vista.jbDetalleCobro.addActionListener(this);
@@ -314,6 +316,42 @@ public class C_gestionPago implements GestionInterface, RecibirEmpleadoCallback,
         return false;
     }
 
+    private void invocarMasOpciones() {
+        Object[] options = {"Estado de cuenta", "Bancos"};
+        int n = JOptionPane.showOptionDialog(this.vista,
+                "Eliga su opción",
+                "Atención",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                null, //do not use a custom Icon
+                options, //the titles of buttons
+                options[0]); //default button title
+        switch (n) {
+            case 0: {
+                EventQueue.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        JOptionPane.showMessageDialog(vista, "Implementando", "Estado de cuenta", JOptionPane.PLAIN_MESSAGE);
+                    }
+                });
+                break;
+            }
+            case 1: {
+                EventQueue.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        invocarVistaBancos();
+                    }
+                });
+                break;
+            }
+            default: {
+
+                break;
+            }
+        }
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         Object src = e.getSource();
@@ -323,8 +361,8 @@ public class C_gestionPago implements GestionInterface, RecibirEmpleadoCallback,
             consultarPagos();
         } else if (src.equals(this.vista.jbAnular)) {
             anularPago();
-        } else if (src.equals(this.vista.jbBanco)) {
-            invocarVistaBancos();
+        } else if (src.equals(this.vista.jbMasOpciones)) {
+            invocarMasOpciones();
         } else if (src.equals(this.vista.jbCheques)) {
             invocarVistaChequesPendientes();
         } else if (src.equals(this.vista.jbEmpCobro)) {
@@ -351,7 +389,7 @@ public class C_gestionPago implements GestionInterface, RecibirEmpleadoCallback,
         int fila = this.vista.jtPagoCabecera.rowAtPoint(e.getPoint());
         int columna = this.vista.jtPagoCabecera.columnAtPoint(e.getPoint());
         if ((fila > -1) && (columna > -1)) {
-            Integer idCabecera = Integer.valueOf(String.valueOf(this.vista.jtPagoCabecera.getValueAt(fila, 0)));
+            int idCabecera = modelo.getTm().getList().get(fila).getId();
             /*this.vista.jbCobro.setEnabled(true);
             this.vista.jbDetalleCobro.setEnabled(true);
             this.vista.jbAnular.setEnabled(true);*/

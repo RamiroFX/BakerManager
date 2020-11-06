@@ -36,7 +36,7 @@ public class V_gestionPago extends JInternalFrame {
     //PAGO
     public JButton jbBuscarPago, jbBorrarPago, jbDetallePago, jbAnular,
             jbProveedor, jbEmpCobro, jbPago, jbPagoPendientes, jbResumen, jbBanco,
-            jbCheques;
+            jbCheques, jbMasOpciones;
     public JTextField jtfNroRecibo, jtfCliente, jtfEmpCobro;
     public JComboBox jcbEmpleado, jcbEstadoPedido;
     public JComboBox<Estado> jcbEstado;
@@ -133,7 +133,10 @@ public class V_gestionPago extends JInternalFrame {
         jbCheques.setName("cheques pendientes pago");
         jbCheques.setFont(CommonFormat.fuente);
         jbCheques.setMargin(insets);
-
+        jbMasOpciones = new JButton("Más opciones");
+        jbMasOpciones.setName("mas opciones");
+        jbMasOpciones.setFont(CommonFormat.fuente);
+        jbMasOpciones.setMargin(insets);
         jbDetallePago = new JButton("Ver detalle");
         jbDetallePago.setName("detalle pago");
         jbDetallePago.setFont(CommonFormat.fuente);
@@ -151,8 +154,8 @@ public class V_gestionPago extends JInternalFrame {
         jpPagosBot.add(jbDetallePago);
         jpPagosBot.add(jbAnular);
         jpPagosBot.add(jbResumen);
-        jpPagosBot.add(jbBanco);
         jpPagosBot.add(jbCheques);
+        jpPagosBot.add(jbMasOpciones);
         jpPagos = new JPanel(new BorderLayout());
         jpPagos.add(jpPagoTop, BorderLayout.NORTH);
         jpPagos.add(jspPagoMid, BorderLayout.CENTER);
