@@ -437,7 +437,7 @@ public class DB_Pago {
                 list.add(detalle);
             }
         } catch (SQLException ex) {
-            Logger lgr = Logger.getLogger(DB_Cobro.class.getName());
+            Logger lgr = Logger.getLogger(DB_Pago.class.getName());
             lgr.log(Level.SEVERE, ex.getMessage(), ex);
         } finally {
             try {
@@ -448,7 +448,75 @@ public class DB_Pago {
                     st.close();
                 }
             } catch (SQLException ex) {
-                Logger lgr = Logger.getLogger(DB_Cobro.class.getName());
+                Logger lgr = Logger.getLogger(DB_Pago.class.getName());
+                lgr.log(Level.WARNING, ex.getMessage(), ex);
+            }
+        }
+        return list;
+    }
+
+    public static List<E_cuentaCorrienteDetalle> consultarChequesEmitidos(String nroCheque, Date fechaInicio, Date FechaFin) {
+        List<E_cuentaCorrienteDetalle> list = new ArrayList();
+        String query = "SELECT "
+                + "CCD.id_recibo_pago_detalle, "//1
+                + "CCD.id_recibo_pago_cabecera, "//2
+                + "CCD.id_egreso_cabecera, "//3
+                + "CCD.NRO_RECIBO, "//4
+                + "CCD.MONTO, "//5
+                + "CCD.NRO_CHEQUE, "//6
+                + "CCD.ID_BANCO, "//7
+                + "CCD.CHEQUE_FECHA, "//8
+                + "CCD.CHEQUE_FECHA_DIFERIDA, "//9
+                + "(SELECT B.DESCRIPCION FROM BANCO B WHERE B.ID_BANCO = CCD.ID_BANCO) \"BANCO\", "//10
+                + "CCD.ID_ESTADO_CHEQUE, "//11
+                + "(SELECT EC.NRO_FACTURA FROM EGRESO_CABECERA EC WHERE EC.ID_EGRESO_CABECERA = CCD.ID_EGRESO_CABECERA) \"NRO_FACTURA\", "//12
+                + "(SELECT C.ENTIDAD FROM PROVEEDOR C WHERE C.ID_PROVEEDOR = RPC.ID_PROVEEDOR) \"PROVEEDOR\", "//13
+                + "(SELECT C.ID_PROVEEDOR FROM PROVEEDOR C WHERE C.ID_PROVEEDOR = RPC.ID_PROVEEDOR) \"ID_PROVEEDOR\" "//14
+                + "FROM RECIBO_PAGO_DETALLE CCD, RECIBO_PAGO_CABECERA RPC "
+                + "WHERE cheque_fecha_diferida >= now() "
+                + "AND RPC.id_recibo_pago_cabecera = CCD.id_recibo_pago_cabecera "
+                + "AND id_estado_cheque = 2"
+                + "AND RPC.id_estado = 1 "
+                + "ORDER BY cheque_fecha_diferida;";
+        try {
+            pst = DB_manager.getConection().prepareStatement(query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            rs = pst.executeQuery();
+            while (rs.next()) {
+                M_proveedor proveedor = new M_proveedor();
+                proveedor.setEntidad(rs.getString(13));
+                proveedor.setId(rs.getInt(14));
+                E_reciboPagoCabecera ccc = new E_reciboPagoCabecera();
+                ccc.setProveedor(proveedor);
+                E_cuentaCorrienteDetalle detalle = new E_cuentaCorrienteDetalle();
+                detalle.setReciboPagoCabecera(ccc);
+                E_banco banco = new E_banco();
+                banco.setId(rs.getInt(7));
+                banco.setDescripcion(rs.getString(10));
+                detalle.setId(rs.getInt(1));
+                detalle.setIdCuentaCorrienteCabecera(rs.getInt(2));
+                detalle.setIdFacturaCabecera(rs.getInt(3));
+                detalle.setNroFactura(rs.getInt(12));
+                detalle.setNroRecibo(rs.getInt(4));
+                detalle.setMonto(rs.getInt(5));
+                detalle.setNroCheque(rs.getInt(6));
+                detalle.setFechaCheque(rs.getTimestamp(8));
+                detalle.setFechaDiferidaCheque(rs.getTimestamp(9));
+                detalle.setBanco(banco);
+                list.add(detalle);
+            }
+        } catch (SQLException ex) {
+            Logger lgr = Logger.getLogger(DB_Pago.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (st != null) {
+                    st.close();
+                }
+            } catch (SQLException ex) {
+                Logger lgr = Logger.getLogger(DB_Pago.class.getName());
                 lgr.log(Level.WARNING, ex.getMessage(), ex);
             }
         }
@@ -696,7 +764,7 @@ public class DB_Pago {
                 + "FROM RECIBO_PAGO_CABECERA RPC ,FUNCIONARIO F, PERSONA P "
                 + "WHERE RPC.ID_FUNCIONARIO_REGISTRO = F.ID_FUNCIONARIO "
                 + "AND F.ID_PERSONA = P.ID_PERSONA "
-                + "AND RPC.ID_ESTADO = 1 " 
+                + "AND RPC.ID_ESTADO = 1 "
                 + "AND RPC.id_recibo_pago_cabecera IN(select id_movimiento from caja_movimiento where id_movimiento_contable_tipo = 4 AND id_caja = ?)";
         Query = Query + " ORDER BY \"ID\"";
         try {

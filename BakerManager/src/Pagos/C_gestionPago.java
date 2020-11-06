@@ -7,7 +7,6 @@ package Pagos;
 
 import Cobros.BancosParametros;
 import Cobros.ChequesPendientes;
-import Cobros.EstadoCuentaCliente;
 import Empleado.SeleccionarFuncionario;
 import Entities.E_cuentaCorrienteConcepto;
 import Entities.Estado;
@@ -19,6 +18,7 @@ import Interface.InterfaceNotificarCambio;
 import Interface.RecibirEmpleadoCallback;
 import Interface.RecibirProveedorCallback;
 import MenuPrincipal.DatosUsuario;
+import Pagos.BuscarCheques.BuscarChequesPagos;
 import Proveedor.Seleccionar_proveedor;
 import bakermanager.C_inicio;
 import java.awt.EventQueue;
@@ -316,8 +316,13 @@ public class C_gestionPago implements GestionInterface, RecibirEmpleadoCallback,
         return false;
     }
 
+    private void invocarChequesEmitidos() {
+        BuscarChequesPagos bcp = new BuscarChequesPagos(c_inicio.vista);
+        bcp.mostrarVista();
+    }
+
     private void invocarMasOpciones() {
-        Object[] options = {"Estado de cuenta", "Bancos"};
+        Object[] options = {"Estado de cuenta", "Bancos", "Cheques emitidos"};
         int n = JOptionPane.showOptionDialog(this.vista,
                 "Eliga su opción",
                 "Atención",
@@ -341,6 +346,15 @@ public class C_gestionPago implements GestionInterface, RecibirEmpleadoCallback,
                     @Override
                     public void run() {
                         invocarVistaBancos();
+                    }
+                });
+                break;
+            }
+            case 2: {
+                EventQueue.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        invocarChequesEmitidos();
                     }
                 });
                 break;

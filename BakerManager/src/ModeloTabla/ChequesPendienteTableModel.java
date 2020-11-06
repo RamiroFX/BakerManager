@@ -27,7 +27,7 @@ public class ChequesPendienteTableModel extends AbstractTableModel {
     public static final int CLIENTE =2, PROVEEDOR = 1;
     private int tipo;
     private SimpleDateFormat dateFormater;
-    private DecimalFormat decimalFormat;
+    private DecimalFormat decimalFormat, integerFormat;
     private List<E_cuentaCorrienteDetalle> list;
     private final String[] colNames = {"Entidad", "Monto", "Id venta", "Nro Factura", "Nro Cheque", "Banco", "Fecha cheque", "Fecha diferida", "Días pendientes"};
 
@@ -35,7 +35,8 @@ public class ChequesPendienteTableModel extends AbstractTableModel {
         this.tipo = tipo;
         this.list = new ArrayList<>();
         this.dateFormater = new SimpleDateFormat("dd/MM/YYYY");
-        this.decimalFormat = new DecimalFormat("###,###");
+        this.decimalFormat = new DecimalFormat("#,##0.##");
+        this.integerFormat = new DecimalFormat("###,###");
     }
 
     public void setList(List<E_cuentaCorrienteDetalle> facturaCabeceraList) {
@@ -91,14 +92,14 @@ public class ChequesPendienteTableModel extends AbstractTableModel {
                 return decimalFormat.format(row.getMonto());
             }
             case 2: {
-                return decimalFormat.format(row.getIdFacturaCabecera());
+                return integerFormat.format(row.getIdFacturaCabecera());
             }
             case 3: {
-                return decimalFormat.format(row.getNroFactura());
+                return integerFormat.format(row.getNroFactura());
             }
             case 4: {
                 if (row.getNroCheque() > 0) {
-                    return decimalFormat.format(row.getNroCheque());
+                    return integerFormat.format(row.getNroCheque());
                 } else {
                     return "";
                 }

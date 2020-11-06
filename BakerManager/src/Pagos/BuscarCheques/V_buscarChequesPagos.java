@@ -7,6 +7,7 @@ package Pagos.BuscarCheques;
 
 import com.toedter.calendar.JDateChooser;
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -28,14 +29,14 @@ import net.miginfocom.swing.MigLayout;
 public class V_buscarChequesPagos extends JDialog {
 
     public static final String TITLE = "Buscar cheques emitidos";
-    JButton jbSalir, jbBuscar, jbBorrar, jbResumen;
+    public JButton jbSalir, jbBuscar, jbBorrar, jbResumen, jbProveedor;
     JScrollPane jspProducto;
     public JCheckBox jcbActivarFecha;
     JDateChooser jdcFechaInicio, jdcFechaFinal;
     JTable jtCheque;
     JPanel jpBotones, jpTop, jpBotonesTop, jpJtextFieldTop;
-    public JComboBox jcbBuscarPor, jcbOrdenarPor, jcbClasificarPor;
-    public JTextField jtfBuscar;
+    public JComboBox jcbOrdenarPor, jcbClasificarPor;
+    public JTextField jtfBuscar, jtfProveedor;
 
     public V_buscarChequesPagos(JDialog main) {
         super(main, TITLE, true);
@@ -65,16 +66,19 @@ public class V_buscarChequesPagos extends JDialog {
         jpFiltros.setBorder(new EtchedBorder());
         JPanel jpFiltroFecha = new JPanel(new FlowLayout(FlowLayout.CENTER));
         jpFiltroFecha.setBorder(new EtchedBorder());
-
+        Dimension dim = new Dimension(150, 30);
         jcbActivarFecha = new JCheckBox("Buscar por fecha");
         jcbActivarFecha.setSelected(true);
         jdcFechaInicio = new JDateChooser();
+        jdcFechaInicio.setPreferredSize(dim);
         jdcFechaFinal = new JDateChooser();
+        jdcFechaFinal.setPreferredSize(dim);
         jcbClasificarPor = new JComboBox();
-        jcbBuscarPor = new JComboBox();
         jcbOrdenarPor = new JComboBox();
-        jpFiltros.add(new JLabel("Buscar por:"));
-        jpFiltros.add(jcbBuscarPor);
+        jbProveedor = new JButton("Proveedor");
+        jtfProveedor = new JTextField(30);
+        jpFiltros.add(jbProveedor);
+        jpFiltros.add(jtfProveedor);
         jpFiltros.add(new JLabel("Ordenar por:"));
         jpFiltros.add(jcbClasificarPor);
         jpFiltros.add(jcbOrdenarPor);

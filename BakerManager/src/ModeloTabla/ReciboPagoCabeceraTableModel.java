@@ -6,6 +6,7 @@
 package ModeloTabla;
 
 import Entities.E_reciboPagoCabecera;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.table.AbstractTableModel;
@@ -17,10 +18,13 @@ import javax.swing.table.AbstractTableModel;
 public class ReciboPagoCabeceraTableModel extends AbstractTableModel {
 
     private List<E_reciboPagoCabecera> list;
+    DecimalFormat decimalFormat, integerFormat;
     private final String[] colNames = {"Id", "Nro Recibo", "Proveedor", "Fecha pago", "Monto"};
 
     public ReciboPagoCabeceraTableModel() {
         this.list = new ArrayList<>();
+        this.decimalFormat = new DecimalFormat("#,##0.##");
+        this.integerFormat = new DecimalFormat("###,###");
     }
 
     public void setList(List<E_reciboPagoCabecera> facturaCabeceraList) {
@@ -62,10 +66,10 @@ public class ReciboPagoCabeceraTableModel extends AbstractTableModel {
         E_reciboPagoCabecera row = this.list.get(rowIndex);
         switch (colIndex) {
             case 0: {
-                return row.getId();
+                return integerFormat.format(row.getId());
             }
             case 1: {
-                return row.getNroRecibo();
+                return integerFormat.format(row.getNroRecibo());
             }
             case 2: {
                 return row.getProveedor().getEntidad();
@@ -74,7 +78,7 @@ public class ReciboPagoCabeceraTableModel extends AbstractTableModel {
                 return row.getFechaPago();
             }
             case 4: {
-                return row.getMonto();
+                return decimalFormat.format(row.getMonto());
             }
             default: {
                 return null;

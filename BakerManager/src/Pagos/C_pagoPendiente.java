@@ -5,19 +5,15 @@
  */
 package Pagos;
 
-import Cliente.SeleccionarCliente;
 import Egresos.Ver_Egresos;
-import Entities.M_cliente;
 import Entities.M_funcionario;
 import Entities.M_menu_item;
 import Entities.M_proveedor;
 import Interface.InterfaceNotificarCambio;
-import Interface.RecibirClienteCallback;
 import Interface.RecibirEmpleadoCallback;
 import Interface.RecibirProveedorCallback;
 import MenuPrincipal.DatosUsuario;
 import Proveedor.Seleccionar_proveedor;
-import Ventas.VerIngreso;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

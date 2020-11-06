@@ -8,6 +8,7 @@ package ModeloTabla;
 import Entities.E_formaPago;
 import Entities.E_reciboPagoDetalle;
 import Entities.E_tipoCheque;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,10 +23,13 @@ public class ReciboPagoDetalleTableModel extends AbstractTableModel {
 
     SimpleDateFormat dateFormater = new SimpleDateFormat("dd/MM/YYYY");
     private List<E_reciboPagoDetalle> list;
+    private DecimalFormat integerFormat, decimalFormat;
     private final String[] colNames = {"Monto a pagar", "Id compra", "Nro Factura", "Nro Cheque", "Banco", "Fecha cheque", "Fecha diferida"};
 
     public ReciboPagoDetalleTableModel() {
         this.list = new ArrayList<>();
+        this.decimalFormat = new DecimalFormat("#,##0.##");
+        this.integerFormat = new DecimalFormat("###,###");
     }
 
     public void setList(List<E_reciboPagoDetalle> list) {
@@ -67,17 +71,17 @@ public class ReciboPagoDetalleTableModel extends AbstractTableModel {
         E_reciboPagoDetalle row = this.list.get(rowIndex);
         switch (colIndex) {
             case 0: {
-                return (int) row.getMonto();
+                return decimalFormat.format(row.getMonto());
             }
             case 1: {
-                return row.getIdFacturaCabecera();
+                return integerFormat.format(row.getIdFacturaCabecera());
             }
             case 2: {
-                return row.getNroFactura();
+                return integerFormat.format(row.getNroFactura());
             }
             case 3: {
                 if (row.getNroCheque() > 0) {
-                    return row.getNroCheque();
+                    return integerFormat.format(row.getNroCheque());
                 } else {
                     return "";
                 }
