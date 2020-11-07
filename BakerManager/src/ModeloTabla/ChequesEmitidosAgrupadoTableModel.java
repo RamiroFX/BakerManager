@@ -8,7 +8,6 @@ package ModeloTabla;
 import Entities.E_cuentaCorrienteDetalle;
 import Entities.E_formaPago;
 import Entities.E_tipoCheque;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JOptionPane;
@@ -18,15 +17,13 @@ import javax.swing.table.AbstractTableModel;
  *
  * @author Ramiro Ferreira
  */
-public class CtaCteDetalleAgrupadoTableModel extends AbstractTableModel {
+public class ChequesEmitidosAgrupadoTableModel extends AbstractTableModel {
 
     private List<E_cuentaCorrienteDetalle> list;
-    private DecimalFormat decimalFormat;
-    private final String[] colNames = {"Monto a pagar", "Banco"};
+    private final String[] colNames = {"Monto", "Banco"};
 
-    public CtaCteDetalleAgrupadoTableModel() {
+    public ChequesEmitidosAgrupadoTableModel() {
         this.list = new ArrayList<>();
-        this.decimalFormat = new DecimalFormat("#,##0.##");
     }
 
     public void setList(List<E_cuentaCorrienteDetalle> facturaCabeceraList) {
@@ -68,7 +65,7 @@ public class CtaCteDetalleAgrupadoTableModel extends AbstractTableModel {
         E_cuentaCorrienteDetalle row = this.list.get(rowIndex);
         switch (colIndex) {
             case 0: {
-                return decimalFormat.format(row.getMonto());
+                return (int) row.getMonto();
             }
             case 1: {
                 if (row.getBanco() != null) {

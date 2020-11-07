@@ -10,6 +10,7 @@ import Entities.E_cuentaCorrienteCabecera;
 import Entities.E_cuentaCorrienteDetalle;
 import Entities.E_egresoSinPago;
 import Entities.E_formaPago;
+import Entities.E_produccionDesperdicioDetalle;
 import Entities.E_reciboPagoCabecera;
 import Entities.E_reciboPagoDetalle;
 import Entities.Estado;
@@ -455,9 +456,52 @@ public class DB_Pago {
         return list;
     }
 
-    public static List<E_cuentaCorrienteDetalle> consultarChequesEmitidos(String nroCheque, Date fechaInicio, Date FechaFin) {
+    public static List<E_cuentaCorrienteDetalle> consultarChequesEmitidos(int idProveedor, String nroCheque, boolean conFecha,
+            Date fechaInicio, Date FechaFin, String acomodarPor, String ordernarPor) {
         List<E_cuentaCorrienteDetalle> list = new ArrayList();
-        String query = "SELECT "
+        String QUERY_CHEQUE = "";
+        String QUERY_DATE = "";
+        String QUERY_SORT_BY = "";
+        String QUERY_ORDER_BY = "";
+        String QUERY_PROVIDER = "";
+        if (idProveedor > -1) {
+            QUERY_PROVIDER = "AND RPC.ID_PROVEEDOR = ? ";
+        }
+        if (!nroCheque.isEmpty()) {
+            QUERY_CHEQUE = "AND LOWER(CAST(CCD.NRO_CHEQUE AS CHARACTER VARYING)) LIKE ? ";
+        }
+        if (conFecha) {
+            QUERY_DATE = "AND CCD.CHEQUE_FECHA BETWEEN ? AND ? ";
+        }
+        switch (acomodarPor) {
+            case "Fecha": {
+                QUERY_SORT_BY = "ORDER BY CCD.CHEQUE_FECHA ";
+                break;
+            }
+            case "Proveedor": {
+                QUERY_SORT_BY = "ORDER BY PROVEEDOR ";
+                break;
+            }
+            case "Nro. cheque": {
+                QUERY_SORT_BY = "ORDER BY CCD.NRO_CHEQUE ";
+                break;
+            }
+            case "Banco": {
+                QUERY_SORT_BY = "ORDER BY BANCO ";
+                break;
+            }
+        }
+        switch (ordernarPor) {
+            case "Descendente": {
+                QUERY_ORDER_BY = "DESC ";
+                break;
+            }
+            case "Ascendente": {
+                QUERY_ORDER_BY = "ASC ";
+                break;
+            }
+        }
+        String QUERY = "SELECT "
                 + "CCD.id_recibo_pago_detalle, "//1
                 + "CCD.id_recibo_pago_cabecera, "//2
                 + "CCD.id_egreso_cabecera, "//3
@@ -467,19 +511,28 @@ public class DB_Pago {
                 + "CCD.ID_BANCO, "//7
                 + "CCD.CHEQUE_FECHA, "//8
                 + "CCD.CHEQUE_FECHA_DIFERIDA, "//9
-                + "(SELECT B.DESCRIPCION FROM BANCO B WHERE B.ID_BANCO = CCD.ID_BANCO) \"BANCO\", "//10
+                + "(SELECT B.DESCRIPCION FROM BANCO B WHERE B.ID_BANCO = CCD.ID_BANCO) as BANCO , "//10
                 + "CCD.ID_ESTADO_CHEQUE, "//11
                 + "(SELECT EC.NRO_FACTURA FROM EGRESO_CABECERA EC WHERE EC.ID_EGRESO_CABECERA = CCD.ID_EGRESO_CABECERA) \"NRO_FACTURA\", "//12
-                + "(SELECT C.ENTIDAD FROM PROVEEDOR C WHERE C.ID_PROVEEDOR = RPC.ID_PROVEEDOR) \"PROVEEDOR\", "//13
+                + "(SELECT C.ENTIDAD FROM PROVEEDOR C WHERE C.ID_PROVEEDOR = RPC.ID_PROVEEDOR) as PROVEEDOR , "//13
                 + "(SELECT C.ID_PROVEEDOR FROM PROVEEDOR C WHERE C.ID_PROVEEDOR = RPC.ID_PROVEEDOR) \"ID_PROVEEDOR\" "//14
                 + "FROM RECIBO_PAGO_DETALLE CCD, RECIBO_PAGO_CABECERA RPC "
-                + "WHERE cheque_fecha_diferida >= now() "
-                + "AND RPC.id_recibo_pago_cabecera = CCD.id_recibo_pago_cabecera "
-                + "AND id_estado_cheque = 2"
-                + "AND RPC.id_estado = 1 "
-                + "ORDER BY cheque_fecha_diferida;";
+                + "WHERE RPC.id_recibo_pago_cabecera = CCD.id_recibo_pago_cabecera "
+                + "AND CCD.NRO_CHEQUE > 0 ";
+        QUERY = QUERY + QUERY_PROVIDER + QUERY_CHEQUE + QUERY_DATE + QUERY_SORT_BY + QUERY_ORDER_BY;
+        int pos = 1;
         try {
-            pst = DB_manager.getConection().prepareStatement(query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            pst = DB_manager.getConection().prepareStatement(QUERY, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            if (idProveedor > -1) {
+                pst.setInt(pos++, idProveedor);
+            }
+            if (!nroCheque.isEmpty()) {
+                pst.setString(pos++, "%" + nroCheque + "%");
+            }
+            if (conFecha) {
+                pst.setTimestamp(pos++, new Timestamp(fechaInicio.getTime()));
+                pst.setTimestamp(pos++, new Timestamp(FechaFin.getTime()));
+            }
             rs = pst.executeQuery();
             while (rs.next()) {
                 M_proveedor proveedor = new M_proveedor();
@@ -501,6 +554,71 @@ public class DB_Pago {
                 detalle.setNroCheque(rs.getInt(6));
                 detalle.setFechaCheque(rs.getTimestamp(8));
                 detalle.setFechaDiferidaCheque(rs.getTimestamp(9));
+                detalle.setBanco(banco);
+                list.add(detalle);
+            }
+        } catch (SQLException ex) {
+            Logger lgr = Logger.getLogger(DB_Pago.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (st != null) {
+                    st.close();
+                }
+            } catch (SQLException ex) {
+                Logger lgr = Logger.getLogger(DB_Pago.class.getName());
+                lgr.log(Level.WARNING, ex.getMessage(), ex);
+            }
+        }
+        return list;
+    }
+
+    public static List<E_cuentaCorrienteDetalle> consultarChequesEmitidosAgrupados(List<E_cuentaCorrienteDetalle> cadenaCabeceras) {
+        List<E_cuentaCorrienteDetalle> list = new ArrayList();
+        boolean b = true;
+        StringBuilder builder = new StringBuilder();
+        for (E_cuentaCorrienteDetalle cadenaCabecera : cadenaCabeceras) {
+            builder.append("?,");
+            b = false;
+        }
+        //para controlar que la lista contenga por lo menos una venta seleccionada
+        if (b) {
+            return list;
+        }
+        String QUERY = "SELECT "
+                + "SUM(CCD.MONTO), "//1
+                + "CCD.ID_BANCO, "//2
+                + "(SELECT B.DESCRIPCION FROM BANCO B WHERE B.ID_BANCO = CCD.ID_BANCO) as BANCO  "//3
+                + "FROM RECIBO_PAGO_DETALLE CCD, RECIBO_PAGO_CABECERA RPC "
+                + "WHERE RPC.id_recibo_pago_cabecera = CCD.id_recibo_pago_cabecera "
+                + "AND CCD.ID_BANCO > 0 "
+                + "AND RPC.id_recibo_pago_cabecera IN ("
+                + builder.substring(0, builder.length() - 1) + ") ";
+        String GROUP_BY = "GROUP BY ID_BANCO, BANCO "
+                + "ORDER BY BANCO DESC ";
+        QUERY = QUERY + GROUP_BY;
+        int index = 1;
+        try {
+            pst = DB_manager.getConection().prepareStatement(QUERY, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+
+            for (E_cuentaCorrienteDetalle unCheque : cadenaCabeceras) {
+                pst.setInt(index, unCheque.getIdCuentaCorrienteCabecera());
+                index++;
+            }
+            rs = pst.executeQuery();
+            while (rs.next()) {
+                M_proveedor proveedor = new M_proveedor();
+                E_reciboPagoCabecera ccc = new E_reciboPagoCabecera();
+                ccc.setProveedor(proveedor);
+                E_cuentaCorrienteDetalle detalle = new E_cuentaCorrienteDetalle();
+                detalle.setReciboPagoCabecera(ccc);
+                E_banco banco = new E_banco();
+                banco.setId(rs.getInt(2));
+                banco.setDescripcion(rs.getString(3));
+                detalle.setMonto(rs.getInt(1));
                 detalle.setBanco(banco);
                 list.add(detalle);
             }

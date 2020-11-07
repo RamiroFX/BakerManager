@@ -116,8 +116,8 @@ public class C_buscarChequesPagos extends MouseAdapter implements ActionListener
                 Date fechaInicio = vista.jdcFechaInicio.getDate();
                 Date fechaFinal = vista.jdcFechaFinal.getDate();
                 String ordenarPor = vista.jcbOrdenarPor.getSelectedItem().toString();
-                String clasificarPor = vista.jcbClasificarPor.getSelectedItem().toString();
-                modelo.consultarCheques(desc.toLowerCase(), "", ordenarPor, clasificarPor, "", porFecha, fechaInicio, fechaFinal);
+                String acomodarPor = vista.jcbClasificarPor.getSelectedItem().toString();
+                modelo.consultarCheques(desc.toLowerCase(), porFecha, fechaInicio, fechaFinal, acomodarPor, ordenarPor);
                 Utilities.c_packColumn.packColumns(vista.jtCheque, 1);
             }
         });
@@ -149,7 +149,8 @@ public class C_buscarChequesPagos extends MouseAdapter implements ActionListener
     }
 
     private void invocarResumen() {
-
+        ResumenChequesPagos rcp = new ResumenChequesPagos(vista, modelo.getTm());
+        rcp.mostrarVista();
     }
 
     private void seleccionarProveedor() {
@@ -220,6 +221,7 @@ public class C_buscarChequesPagos extends MouseAdapter implements ActionListener
 
     @Override
     public void recibirProveedor(M_proveedor proveedor) {
+        this.modelo.setProveedor(proveedor);
         this.vista.jtfProveedor.setText(proveedor.getEntidad() + " (" + proveedor.getRucCompleto() + ")");
     }
 }
