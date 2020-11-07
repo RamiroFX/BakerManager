@@ -149,7 +149,9 @@ public class C_buscarChequesPagos extends MouseAdapter implements ActionListener
     }
 
     private void invocarResumen() {
-        ResumenChequesPagos rcp = new ResumenChequesPagos(vista, modelo.getTm());
+        Date fechaInicio = vista.jdcFechaInicio.getDate();
+        Date fechaFinal = vista.jdcFechaFinal.getDate();
+        ResumenChequesPagos rcp = new ResumenChequesPagos(vista, modelo.getTm(), fechaInicio, fechaFinal);
         rcp.mostrarVista();
     }
 

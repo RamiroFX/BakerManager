@@ -6,14 +6,11 @@
 package Pagos.BuscarCheques;
 
 import DB.DB_Pago;
-import DB.DB_Produccion;
 import Entities.E_cuentaCorrienteDetalle;
-import Entities.E_produccionDetalle;
+import Excel.ExportarReciboPago;
 import Interface.InterfaceFacturaDetalle;
 import ModeloTabla.ChequesPendienteTableModel;
 import ModeloTabla.CtaCteDetalleAgrupadoTableModel;
-import ModeloTabla.MateriaPrimaBajaTableModel;
-import ModeloTabla.ProduccionDetalleTableModel;
 import java.awt.BorderLayout;
 import static java.awt.Dialog.DEFAULT_MODALITY_TYPE;
 import java.awt.EventQueue;
@@ -23,6 +20,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.Date;
+import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFormattedTextField;
@@ -48,25 +46,30 @@ public class ResumenChequesPagos extends JDialog implements ActionListener, KeyL
     JFormattedTextField jftTotal;
     Date inicio, fin;
     JTabbedPane jtpPanel;
-    CtaCteDetalleAgrupadoTableModel chequesEmitidosTM;
+    private CtaCteDetalleAgrupadoTableModel chequesEmitidosAgrupadoTM;
+    private List<E_cuentaCorrienteDetalle> chequesEmitidosDetalle;
+    private Date fechaInicio, fechaFinal;
 
-    public ResumenChequesPagos(JDialog frame, ChequesPendienteTableModel tm) {
+    public ResumenChequesPagos(JDialog frame, ChequesPendienteTableModel tm, Date fechaInicio, Date fechaFinal) {
         super(frame, DEFAULT_MODALITY_TYPE);
         setTitle("Resumen de cheques emitidos");
         setSize(800, 600);
         setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(frame);
+        this.chequesEmitidosDetalle = tm.getList();
+        this.fechaInicio = fechaInicio;
+        this.fechaFinal = fechaFinal;
         inicializarComponentes();
-        inicializarDatos(tm);
+        inicializarDatos();
         agregarListener();
     }
 
-    private void inicializarDatos(ChequesPendienteTableModel tm) {
-        chequesEmitidosTM = new CtaCteDetalleAgrupadoTableModel();
-        chequesEmitidosTM.setList(DB_Pago.consultarChequesEmitidosAgrupados(tm.getList()));
-        jtChequesEmitidos.setModel(chequesEmitidosTM);
+    private void inicializarDatos() {
+        chequesEmitidosAgrupadoTM = new CtaCteDetalleAgrupadoTableModel();
+        chequesEmitidosAgrupadoTM.setList(DB_Pago.consultarChequesEmitidosAgrupados(chequesEmitidosDetalle));
+        jtChequesEmitidos.setModel(chequesEmitidosAgrupadoTM);
         double totalUtilizado = 0;
-        for (E_cuentaCorrienteDetalle unCheque : chequesEmitidosTM.getList()) {
+        for (E_cuentaCorrienteDetalle unCheque : chequesEmitidosAgrupadoTM.getList()) {
             totalUtilizado = totalUtilizado + unCheque.getMonto();
         }
         jftTotal.setValue(totalUtilizado);
@@ -95,7 +98,7 @@ public class ResumenChequesPagos extends JDialog implements ActionListener, KeyL
 
         JPanel jpCenter = new JPanel(new BorderLayout());
         JPanel jpSouth = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        //jpSouth.add(jbImportarXLS);
+        jpSouth.add(jbImportarXLS);
         jpSouth.add(jbSalir);
         jpCenter.add(jspChequesEmitidos, BorderLayout.CENTER);
         jpCenter.add(jpTotalProducido, BorderLayout.SOUTH);
@@ -114,7 +117,8 @@ public class ResumenChequesPagos extends JDialog implements ActionListener, KeyL
         EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
-
+                ExportarReciboPago erp = new ExportarReciboPago("Cheques emitidos");
+                erp.exportarChequesEmitidosAgrupado(chequesEmitidosAgrupadoTM.getList(), fechaInicio, fechaFinal);
             }
         });
     }
@@ -123,7 +127,8 @@ public class ResumenChequesPagos extends JDialog implements ActionListener, KeyL
         EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
-
+                ExportarReciboPago erp = new ExportarReciboPago("Cheques emitidos");
+                erp.exportarChequesEmitidosDetallado(chequesEmitidosDetalle);
             }
         });
     }
