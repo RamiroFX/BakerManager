@@ -343,8 +343,7 @@ public class C_crearVentaRapida implements GestionInterface, InterfaceFacturaDet
             case E_impresionTipo.FACTURA_STRING: {
                 if (isJCBTrigger) {
                     this.modelo.setTipoVenta(tipoVenta);
-                    SeleccionarTimbrado st = new SeleccionarTimbrado(this.vista, this);
-                    st.mostrarVista();
+                    invocarSeleccionNroFactura();
                 }
                 break;
             }

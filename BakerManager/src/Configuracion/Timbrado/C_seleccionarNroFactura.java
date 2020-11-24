@@ -86,6 +86,9 @@ public class C_seleccionarNroFactura implements ActionListener, KeyListener, Rec
         this.vista.jtfRangoFacturas.addKeyListener(this);
         this.vista.jtfNroFactura.addActionListener(this);
         this.vista.jbCambiarTimbrado.addActionListener(this);
+        this.vista.jbOK.addKeyListener(this);
+        this.vista.jbCancel.addKeyListener(this);
+        this.vista.jbCambiarTimbrado.addKeyListener(this);
     }
 
     private boolean validarNroFactura() {
@@ -153,6 +156,9 @@ public class C_seleccionarNroFactura implements ActionListener, KeyListener, Rec
             if (ke.getKeyChar() == KeyEvent.VK_ESCAPE) {
                 cerrar();
             }
+        }
+        if (ke.getKeyChar() == KeyEvent.VK_ESCAPE) {
+            cerrar();
         }
     }
 
