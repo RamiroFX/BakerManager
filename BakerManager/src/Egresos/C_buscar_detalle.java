@@ -156,7 +156,7 @@ public class C_buscar_detalle extends MouseAdapter implements ActionListener, Ke
                 producto = producto.replace("!", "!!")
                         .replace("%", "!%")
                         .replace("_", "!_")
-                        .replace("[", "![");
+                        .replace("[", "![").toLowerCase();
                 String proveedor = proveedor();
                 String marca = vista.jcbMarca.getSelectedItem().toString();
                 String impuesto = vista.jcbImpuesto.getSelectedItem().toString();

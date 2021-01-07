@@ -330,9 +330,9 @@ public class DB_Egreso {
 
         String busqueda;
         if (busqDescripcion) {
-            busqueda = "AND LOWER(PROD.DESCRIPCION) LIKE LOWER (?) ESCAPE '!' ";
+            busqueda = "AND LOWER(PROD.DESCRIPCION) LIKE (?) ";
         } else {
-            busqueda = "AND LOWER(EGDE.OBSERVACION) LIKE LOWER (?) ESCAPE '!' ";
+            busqueda = "AND LOWER(EGDE.OBSERVACION) LIKE (?)";
         }
 
         String Query = "SELECT EGDE.ID_EGRESO_DETALLE\"ID det.\", "
@@ -352,7 +352,7 @@ public class DB_Egreso {
                 + empleado;
         try {
             pst = DB_manager.getConection().prepareStatement(Query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-            pst.setString(1, producto + "%");
+            pst.setString(1, "%" + producto + "%");
             rs = pst.executeQuery();
             rstm = new ResultSetTableModel(rs);
         } catch (SQLException ex) {
@@ -1114,6 +1114,7 @@ public class DB_Egreso {
         }
         return list;
     }
+
     public static List<M_egreso_cabecera> obtenerMovimientoComprasCabeceras(int idCaja) {
         List<M_egreso_cabecera> list = new ArrayList<>();
         String Query = "SELECT EC.ID_EGRESO_CABECERA \"ID\", "
