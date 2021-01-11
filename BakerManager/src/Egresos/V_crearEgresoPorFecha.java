@@ -4,15 +4,17 @@
  */
 package Egresos;
 
+import Entities.E_impresionTipo;
+import com.toedter.calendar.JDateChooser;
 import java.awt.BorderLayout;
 import java.awt.Insets;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
@@ -24,14 +26,15 @@ import net.miginfocom.swing.MigLayout;
  *
  * @author Ramiro Ferreira
  */
-public class V_crear_egreso extends JDialog {
+public class V_crearEgresoPorFecha extends JDialog {
     
-//NORTE
+    //NORTE
     JPanel jpNorth;
     public JTextField jtfProveedor, jtfNroFactura, jtfProvDireccion, jtfProvTelefono, jtfProvRuc;
     public JButton jbAgregarProv;
     public JLabel jlNroFactura;
-    public JRadioButton jrbContado, jrbCredito;
+    public JComboBox<E_impresionTipo> jcbTipoVenta;
+    public JDateChooser jdcFecha;
     //CENTRO
     JPanel jpCenter;
     public JTable jtProductos;
@@ -43,7 +46,7 @@ public class V_crear_egreso extends JDialog {
     JPanel jpSouth;
     public JButton jbAceptar, jbSalir;
 
-    public V_crear_egreso(JFrame frame) {
+    public V_crearEgresoPorFecha(JFrame frame) {
         super(frame, "Crear egreso", JDialog.ModalityType.APPLICATION_MODAL);
         setSize(900, 700);
         setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
@@ -68,29 +71,27 @@ public class V_crear_egreso extends JDialog {
         jtfProveedor.setEditable(false);
         jlNroFactura = new JLabel("Nro. Factura");
         jtfNroFactura = new JTextField(30);
-        jrbContado = new JRadioButton("Contado");
-        jrbCredito = new JRadioButton("Crédito");
+        jcbTipoVenta = new JComboBox();
         jtfProvRuc = new JTextField(30);
         jtfProvRuc.setEditable(false);
         jtfProvDireccion = new JTextField(30);
         jtfProvDireccion.setEditable(false);
         jtfProvTelefono = new JTextField(30);
         jtfProvTelefono.setEditable(false);
-        javax.swing.ButtonGroup bg1 = new javax.swing.ButtonGroup();
-        bg1.add(jrbContado);
-        bg1.add(jrbCredito);
         jpNorth.add(jbAgregarProv);
         jpNorth.add(jtfProveedor);
         jpNorth.add(jlNroFactura);
         jpNorth.add(jtfNroFactura);
-        jpNorth.add(jrbContado);
-        jpNorth.add(jrbCredito, "wrap");
+        jpNorth.add(new JLabel("Tipo oper.:"));
+        jpNorth.add(jcbTipoVenta, "wrap");
         jpNorth.add(new JLabel("R.U.C.:"));
         jpNorth.add(jtfProvRuc);
         jpNorth.add(new JLabel("Direccion:"));
         jpNorth.add(jtfProvDireccion);
         jpNorth.add(new JLabel("Telefono:"));
-        jpNorth.add(jtfProvTelefono);
+        jpNorth.add(jtfProvTelefono, "wrap");
+        jpNorth.add(new JLabel("Fecha:"));
+        jpNorth.add(jdcFecha, "spanx 2, growx 2");
     }
 
     private void initCenter() {

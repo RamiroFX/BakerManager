@@ -7,8 +7,6 @@ package Ventas.VentaPorFecha;
 
 import Ventas.V_crearVentaRapida;
 import com.toedter.calendar.JDateChooser;
-import java.awt.Dimension;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
