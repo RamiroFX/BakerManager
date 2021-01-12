@@ -4,7 +4,7 @@
  */
 package Egresos;
 
-import Entities.E_impresionTipo;
+import Entities.E_tipoOperacion;
 import com.toedter.calendar.JDateChooser;
 import java.awt.BorderLayout;
 import java.awt.Insets;
@@ -33,7 +33,7 @@ public class V_crearEgresoPorFecha extends JDialog {
     public JTextField jtfProveedor, jtfNroFactura, jtfProvDireccion, jtfProvTelefono, jtfProvRuc;
     public JButton jbAgregarProv;
     public JLabel jlNroFactura;
-    public JComboBox<E_impresionTipo> jcbTipoVenta;
+    public JComboBox<E_tipoOperacion> jcbTipoVenta;
     public JDateChooser jdcFecha;
     //CENTRO
     JPanel jpCenter;

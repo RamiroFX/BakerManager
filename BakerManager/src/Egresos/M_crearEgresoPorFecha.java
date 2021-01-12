@@ -6,13 +6,14 @@
 package Egresos;
 
 import DB.DB_Egreso;
+import DB.DB_manager;
+import Entities.E_tipoOperacion;
 import Entities.M_egreso_cabecera;
 import Entities.M_egreso_detalle;
 import Entities.M_funcionario;
 import Entities.M_proveedor;
 import MenuPrincipal.DatosUsuario;
 import ModeloTabla.EgresoDetalleTableModel;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 
 /**
@@ -37,6 +38,10 @@ public class M_crearEgresoPorFecha {
         return egresoDetalleTableModel;
     }
 
+    public ArrayList<E_tipoOperacion> obtenerTipoOperaciones() {
+        return DB_manager.obtenerTipoOperaciones();
+    }
+
     public M_egreso_cabecera getEgresoCabecera() {
         return egresoCabecera;
     }
@@ -46,6 +51,6 @@ public class M_crearEgresoPorFecha {
     }
 
     public void insertarEgreso() {
-        //DB_Egreso.insertarEgresoTEMPORAL(getEgresoCabecera(), getTM().getList());
+        DB_Egreso.insertarEgreso(getEgresoCabecera(), (ArrayList<M_egreso_detalle>) getTM().getList());
     }
 }

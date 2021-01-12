@@ -924,6 +924,74 @@ public class DB_Egreso {
         }
     }
 
+    public static void insertarEgreso(M_egreso_cabecera egreso_cabecera, ArrayList<M_egreso_detalle> detalles) {
+        String insertDetalle = "INSERT INTO egreso_detalle(id_egreso_cabecera, id_producto, cantidad, precio, descuento, observacion)VALUES (?, ?, ?, ?, ?, ?)";
+        String INSERT_CABECERA = "INSERT INTO egreso_cabecera(nro_factura, id_proveedor, id_funcionario, tiempo, ID_COND_COMPRA)VALUES (?, ?, ?, ?, ?)";
+        long sq_egreso_cabecera = -1L;
+        try {
+            DB_manager.getConection().setAutoCommit(false);
+            pst = DB_manager.getConection().prepareStatement(INSERT_CABECERA, PreparedStatement.RETURN_GENERATED_KEYS);
+            //pst.setInt(1, egreso_cabecera.getId_cabecera());
+            try {
+                if (egreso_cabecera.getNro_factura() == null) {
+                    pst.setNull(1, Types.NUMERIC);
+                } else {
+                    pst.setInt(1, egreso_cabecera.getNro_factura());
+                }
+            } catch (Exception e) {
+                pst.setNull(1, Types.NUMERIC);
+            }
+            pst.setInt(2, egreso_cabecera.getId_proveedor());
+            pst.setInt(3, egreso_cabecera.getId_empleado());
+            pst.setTimestamp(4, egreso_cabecera.getTiempo());
+            pst.setInt(5, egreso_cabecera.getId_condVenta());
+            pst.executeUpdate();
+            rs = pst.getGeneratedKeys();
+            if (rs != null && rs.next()) {
+                sq_egreso_cabecera = rs.getLong(1);
+            }
+            pst.close();
+            rs.close();
+            for (M_egreso_detalle unDetalle : detalles) {
+                pst = DB_manager.getConection().prepareStatement(insertDetalle);
+                pst.setInt(1, (int) sq_egreso_cabecera);
+                pst.setInt(2, unDetalle.getId_producto());
+                pst.setDouble(3, unDetalle.getCantidad());
+                pst.setDouble(4, unDetalle.getPrecio());
+                pst.setDouble(5, unDetalle.getDescuento());
+                pst.setString(6, unDetalle.getObservacion());
+                pst.executeUpdate();
+                pst.close();
+
+            }
+            DB_manager.establecerTransaccion();
+        } catch (SQLException ex) {
+            System.out.println(ex.getNextException());
+            if (DB_manager.getConection() != null) {
+                try {
+                    DB_manager.getConection().rollback();
+                } catch (SQLException ex1) {
+                    Logger lgr = Logger.getLogger(DB_Egreso.class.getName());
+                    lgr.log(Level.WARNING, ex1.getMessage(), ex1);
+                }
+            }
+            Logger lgr = Logger.getLogger(DB_Egreso.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        } finally {
+            try {
+                if (pst != null) {
+                    pst.close();
+                }
+                if (rs != null) {
+                    rs.close();
+                }
+            } catch (SQLException ex) {
+                Logger lgr = Logger.getLogger(DB_Egreso.class.getName());
+                lgr.log(Level.WARNING, ex.getMessage(), ex);
+            }
+        }
+    }
+
     public static boolean existeProveedorNroFactura(int idProveedor, Integer nroFactura) {
         String QUERY = "SELECT ID_EGRESO_CABECERA FROM EGRESO_CABECERA WHERE ID_PROVEEDOR = ? AND NRO_FACTURA = ?";
         try {

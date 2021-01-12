@@ -74,6 +74,12 @@ public class Seleccionar_proveedor {
         controlador = new C_seleccionar_proveedor(vista);
     }
 
+    public Seleccionar_proveedor(JDialog main, RecibirProveedorCallback callback) {
+        vista = new V_seleccionar_proveedor(main);
+        controlador = new C_seleccionar_proveedor(vista);
+        controlador.setCallback(callback);
+    }
+
     public void setCallback(RecibirProveedorCallback callback) {
         this.controlador.setCallback(callback);
     }

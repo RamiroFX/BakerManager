@@ -125,6 +125,14 @@ public class EgresoDetalleTableModel extends AbstractTableModel {
         fireTableDataChanged();
     }
 
+    public void modificarDetalle(int index, double cantidad, double descuento, double precio, String obs) {
+        this.list.get(index).setCantidad(cantidad);
+        this.list.get(index).setDescuento(descuento);
+        this.list.get(index).setPrecio(precio);
+        this.list.get(index).setObservacion(obs);
+        fireTableDataChanged();
+    }
+
     public void vaciarLista() {
         this.list.clear();
         fireTableDataChanged();
