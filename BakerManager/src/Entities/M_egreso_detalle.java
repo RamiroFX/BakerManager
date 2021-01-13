@@ -9,6 +9,7 @@ package Entities;
  * @author Usuario
  */
 public class M_egreso_detalle {
+
     private Integer id_detalle;
     private Integer id_cabecera;
     private Integer id_producto;
@@ -177,8 +178,12 @@ public class M_egreso_detalle {
         return producto;
     }
 
+    public double calcularSubTotal() {
+        return getCantidad() * (getPrecio() - ((getPrecio() * getDescuento()) / 100));
+    }
+
     public void setProducto(M_producto producto) {
         this.producto = producto;
     }
-    
+
 }

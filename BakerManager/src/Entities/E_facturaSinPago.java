@@ -5,6 +5,7 @@
  */
 package Entities;
 
+import java.util.Calendar;
 import java.util.Date;
 
 /**
@@ -145,5 +146,24 @@ public class E_facturaSinPago extends E_facturaCabecera {
      */
     public void setFecha(Date fecha) {
         this.setTiempo(fecha);
+    }
+
+    public boolean estaVencida() {
+        System.out.println("Entities.E_facturaSinPago.estaVencida()");
+        switch (getTipoOperacion().getId()) {
+            case E_tipoOperacion.CREDITO_30: {
+                Calendar c = Calendar.getInstance();
+                c.setTime(getTiempo());
+                c.add(Calendar.DAY_OF_MONTH, 30);
+                Date currentDate = new Date();
+                System.out.println("c:"+c.getTimeInMillis());
+                System.out.println("currentDate:"+currentDate.getTime());
+                if (c.getTime().compareTo(currentDate) > 0) {
+                    return true;
+                }
+                break;
+            }
+        }
+        return false;
     }
 }

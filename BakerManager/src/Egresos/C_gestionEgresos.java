@@ -116,6 +116,7 @@ public class C_gestionEgresos extends MouseAdapter implements ActionListener, Ke
                 this.vista.jbBuscarDetalle.addActionListener(this);
             }
         }
+        this.vista.jbMasOpciones.addActionListener(this);
         this.vista.jtEgresoCabecera.addMouseListener(this);
         //this.vista.jbGraficos.addActionListener(this);
         this.vista.jtEgresoCabecera.addKeyListener(this);
@@ -358,6 +359,41 @@ public class C_gestionEgresos extends MouseAdapter implements ActionListener, Ke
         this.vista.jbAnular.setEnabled(false);
     }
 
+    private void mostrarOpciones() {
+        Object[] options = {"Crear egreso con fecha"};
+        int n = JOptionPane.showOptionDialog(this.vista,
+                "Eliga su opción",
+                "Atención",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                null, //do not use a custom Icon
+                options, //the titles of buttons
+                options[0]); //default button title
+        switch (n) {
+            case 0: {
+                EventQueue.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+//                        ArrayList<M_menu_item> accesos = modelo.getAccesos();
+//                        for (int i = 0; i < accesos.size(); i++) {
+//                            if (vista.jbHistorialFacturacion.getName().equals(accesos.get(i).getItemDescripcion())) {
+//                                historialFacturacion();
+//                                return;
+//                            }
+//                        }
+                        crearEgresoConFecha();
+                    }
+                });
+                break;
+            }
+        }
+    }
+
+    private void crearEgresoConFecha() {
+        CrearEgresoPorFecha crearEgreso = new CrearEgresoPorFecha(c_inicio.vista);
+        crearEgreso.mostrarVista();
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == this.vista.jbBuscar) {
@@ -387,6 +423,8 @@ public class C_gestionEgresos extends MouseAdapter implements ActionListener, Ke
             verDetalle();
         } else if (e.getSource() == this.vista.jbAnular) {
             anularCompra();
+        } else if (e.getSource().equals(this.vista.jbMasOpciones)) {
+            mostrarOpciones();
         }
     }
 

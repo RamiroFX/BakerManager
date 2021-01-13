@@ -26,7 +26,9 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Calendar;
 import javax.swing.JOptionPane;
 
 /**
@@ -82,6 +84,7 @@ public class C_crearEgresoPorFecha extends MouseAdapter implements ActionListene
     }
 
     private void JCBTipoOperacionHandler() {
+        System.out.println("Egresos.C_crearEgresoPorFecha.JCBTipoOperacionHandler()");
         E_tipoOperacion tipoOperacion = vista.jcbTipoVenta.getItemAt(vista.jcbTipoVenta.getSelectedIndex());
         switch (tipoOperacion.getId()) {
             //CONTADO
@@ -95,6 +98,18 @@ public class C_crearEgresoPorFecha extends MouseAdapter implements ActionListene
                 break;
             }
         }
+    }
+
+    private boolean validarFecha() {
+        Calendar cal = Calendar.getInstance();
+        try {
+            cal.setTime(vista.jdcFecha.getDate());
+            this.modelo.getEgresoCabecera().setTiempo(new Timestamp(cal.getTimeInMillis()));
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(vista, "Seleccione una fecha válida", "Atención", JOptionPane.WARNING_MESSAGE);
+            return false;
+        }
+        return true;
     }
 
     private void insertarEgreso() {
@@ -125,11 +140,14 @@ public class C_crearEgresoPorFecha extends MouseAdapter implements ActionListene
                 JOptionPane.showMessageDialog(vista, "Seleccione un producto", "Atención", JOptionPane.WARNING_MESSAGE);
                 return;
             }
+            if (!validarFecha()) {
+                return;
+            }
+            JCBTipoOperacionHandler();
             int option = JOptionPane.showConfirmDialog(vista, "¿Desea confirmar la compra?", "Atención", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
             if (option == JOptionPane.YES_OPTION) {
                 this.modelo.getEgresoCabecera().setId_empleado(this.modelo.empleado.getId_funcionario());
                 this.modelo.getEgresoCabecera().setId_proveedor(this.modelo.proveedor.getId());
-                this.modelo.getEgresoCabecera().setTiempo(new java.sql.Timestamp(System.currentTimeMillis()));
                 modelo.insertarEgreso();
                 actualizarStock();
                 mostrarMensaje("La compra se registró con éxito.");
@@ -186,15 +204,15 @@ public class C_crearEgresoPorFecha extends MouseAdapter implements ActionListene
         for (M_egreso_detalle unDetalle : modelo.getTM().getList()) {
             switch (unDetalle.getProducto().getIdImpuesto()) {
                 case E_impuesto.EXENTA: {
-                    exenta = exenta + unDetalle.getTotal();
+                    exenta = exenta + unDetalle.calcularSubTotal();
                     break;
                 }
                 case E_impuesto.IVA5: {
-                    iva5 = iva5 + unDetalle.getTotal();
+                    iva5 = iva5 + unDetalle.calcularSubTotal();
                     break;
                 }
                 case E_impuesto.IVA10: {
-                    iva10 = iva10 + unDetalle.getTotal();
+                    iva10 = iva10 + unDetalle.calcularSubTotal();
                     break;
                 }
             }
@@ -253,9 +271,9 @@ public class C_crearEgresoPorFecha extends MouseAdapter implements ActionListene
 
     private void invocarModificarDetalle() {
         int row = this.vista.jtProductos.getSelectedRow();
-        M_producto prod = new M_producto();
-        prod.setId(Integer.valueOf(String.valueOf(this.vista.jtProductos.getValueAt(row, 0))));
-        prod.setPrecioCosto(Double.valueOf(String.valueOf(this.vista.jtProductos.getValueAt(row, 3))));
+        M_egreso_detalle unDetalle = modelo.getTM().getList().get(row);
+        M_producto prod = unDetalle.getProducto();
+        prod.setPrecioCosto(unDetalle.getPrecio());
         SeleccionarCantidadProduducto scp = new SeleccionarCantidadProduducto(vista, prod, this, row);
         scp.setVisible(true);
     }
@@ -315,6 +333,7 @@ public class C_crearEgresoPorFecha extends MouseAdapter implements ActionListene
     @Override
     public void recibirProducto(double cantidad, double precio, double descuento, M_producto producto, String observacion) {
         M_egreso_detalle fd = new M_egreso_detalle();
+        fd.setId_producto(producto.getId());
         fd.setCantidad(cantidad);
         fd.setPrecio(precio);
         fd.setProducto(producto);

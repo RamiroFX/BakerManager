@@ -78,11 +78,12 @@ public class V_crearEgresoPorFecha extends JDialog {
         jtfProvDireccion.setEditable(false);
         jtfProvTelefono = new JTextField(30);
         jtfProvTelefono.setEditable(false);
+        jdcFecha = new JDateChooser();
         jpNorth.add(jbAgregarProv);
         jpNorth.add(jtfProveedor);
         jpNorth.add(jlNroFactura);
         jpNorth.add(jtfNroFactura);
-        jpNorth.add(new JLabel("Tipo oper.:"));
+        jpNorth.add(new JLabel("Tipo operación:"));
         jpNorth.add(jcbTipoVenta, "wrap");
         jpNorth.add(new JLabel("R.U.C.:"));
         jpNorth.add(jtfProvRuc);

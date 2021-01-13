@@ -32,7 +32,7 @@ import net.miginfocom.swing.MigLayout;
 public class V_gestion_egresos extends JInternalFrame {
 
     public JButton jbBuscar, jbBuscarDetalle, jbBorrar, jbAgregar, jbDetalle,
-            jbResumen, jbProveedor, jbFuncionario, jbAnular, jbGraficos;
+            jbResumen, jbProveedor, jbFuncionario, jbAnular, jbGraficos, jbMasOpciones;
     public JTextField jtfNroFactura, jtfProveedor, jtfFuncionario;
     public JComboBox<Estado> jcbEstado;
     public JComboBox jcbCondCompra;
@@ -145,10 +145,14 @@ public class V_gestion_egresos extends JInternalFrame {
         jbGraficos = new JButton("Ver gráficos");
         jbGraficos.setMargin(insets);
         jbGraficos.setFont(CommonFormat.fuente);
+        jbMasOpciones = new JButton("Más opciones");
+        jbMasOpciones.setFont(CommonFormat.fuente);
+        jbMasOpciones.setMargin(insets);
         jpBot.add(jbAgregar);
         jpBot.add(jbDetalle);
         jpBot.add(jbAnular);
         jpBot.add(jbResumen);
+        jpBot.add(jbMasOpciones);
         jpBot.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED), "Opciones"));
     }
 }

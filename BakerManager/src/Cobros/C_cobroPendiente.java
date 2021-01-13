@@ -14,6 +14,7 @@ import Interface.InterfaceNotificarCambio;
 import Interface.RecibirClienteCallback;
 import Interface.RecibirEmpleadoCallback;
 import MenuPrincipal.DatosUsuario;
+import Utilities.CellRenderers.FacturaPendienteCR;
 import Ventas.VerIngreso;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
@@ -36,6 +37,7 @@ public class C_cobroPendiente extends MouseAdapter implements ActionListener, Ke
 
     V_cobroPendiente vista;
     M_cobroPendiente modelo;
+    FacturaPendienteCR scr;
 
     public C_cobroPendiente(M_cobroPendiente modelo, V_cobroPendiente vista) {
         this.vista = vista;
@@ -57,6 +59,8 @@ public class C_cobroPendiente extends MouseAdapter implements ActionListener, Ke
             this.vista.jcbTipoOperacion.addItem(estados.get(i));
         }*/
         this.vista.jtCobroCabecera.setModel(this.modelo.getTm());
+        this.scr = new FacturaPendienteCR(this.modelo.getTm().getList());
+        this.vista.jtCobroCabecera.setDefaultRenderer(Object.class, scr);
         this.vista.jtCobroDetalle.setModel(this.modelo.getTmDetalle());
     }
 
@@ -145,6 +149,7 @@ public class C_cobroPendiente extends MouseAdapter implements ActionListener, Ke
                 //M_funcionario funcionario = modelo.getFacturaCabecera().getFuncionario();
 
                 modelo.getTm().setList(modelo.obtenerCobroPendiente(cliente, fechaInicio, fechaFinal, nroFactura, true));
+                scr.setList(modelo.getTm().getList());
                 Utilities.c_packColumn.packColumns(vista.jtCobroCabecera, 1);
                 modelo.limpiarDetalle();
             }
