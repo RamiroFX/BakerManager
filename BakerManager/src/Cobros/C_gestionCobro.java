@@ -380,7 +380,7 @@ public class C_gestionCobro implements GestionInterface, RecibirEmpleadoCallback
     }
 
     private void mostrarOpciones() {
-        Object[] options = {"Estado de cuenta", "Retención de I.V.A.", "Pago anticipado", "Bancos", "Test"};
+        Object[] options = {"Estado de cuenta", "Retención de I.V.A.", "Pago anticipado", "Relacionar anticipo", "Bancos","Test"};
         int n = JOptionPane.showOptionDialog(this.vista,
                 "Eliga su opción",
                 "Atención",
@@ -421,12 +421,21 @@ public class C_gestionCobro implements GestionInterface, RecibirEmpleadoCallback
                 EventQueue.invokeLater(new Runnable() {
                     @Override
                     public void run() {
-                        invocarVistaBancos();
+                        invocarRelacionarAnticipo();
                     }
                 });
                 break;
             }
             case 4: {
+                EventQueue.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        invocarVistaBancos();
+                    }
+                });
+                break;
+            }
+            case 5: {
                 EventQueue.invokeLater(new Runnable() {
                     @Override
                     public void run() {
@@ -453,6 +462,11 @@ public class C_gestionCobro implements GestionInterface, RecibirEmpleadoCallback
     private void invocarRetencionIVA() {
         GestionRetencion sc = new GestionRetencion(this.c_inicio);
         sc.mostrarVista();
+    }
+
+    private void invocarRelacionarAnticipo() {
+        RelacionarAnticipo ra = new RelacionarAnticipo(this.c_inicio);
+        ra.mostrarVista();
     }
 
     private void prepararReporteEstadoCuentas() {

@@ -7,7 +7,6 @@ package Cobros;
 
 import DB.DB_Cobro;
 import DB.DB_manager;
-import DB.ResultSetTableModel;
 import Entities.E_cuentaCorrienteCabecera;
 import Entities.E_tipoOperacion;
 import Entities.Estado;
