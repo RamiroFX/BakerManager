@@ -32,7 +32,7 @@ public class FacturaPendienteCR extends DefaultTableCellRenderer {
     }
 
     @Override
-    public Component getTableCellRendererComponent(JTable table, Object value, boolean selected, boolean focused, int row, int column) {        
+    public Component getTableCellRendererComponent(JTable table, Object value, boolean selected, boolean focused, int row, int column) {
         setBackground(Color.white);//color de fondo
         table.setForeground(Color.black);//color de texto
         JLabel l = (JLabel) super.getTableCellRendererComponent(table, value, selected, focused, row, column);

@@ -137,19 +137,27 @@ public class ResumenCobroPendiente extends JDialog implements ActionListener, Ke
 
     private void importarExcelCompleto() {
         ArrayList<E_movimientoContable> pagosPendientes = new ArrayList<>(cabeceraTableModel.getList());
-        /*ExportarFacturaPendiente efp = new ExportarFacturaPendiente("Resumen cobro pendiente", pagosPendientes);
-        efp.exportacionResumida();*/
+        ArrayList<E_facturaSinPago> facturasSinPagos = new ArrayList();
+        pagosPendientes.forEach((pagosPendiente) -> {
+            facturasSinPagos.add(pagosPendiente.getVenta());
+        });
+        ExportarFacturaPendiente efp = new ExportarFacturaPendiente("Resumen cobro pendiente", facturasSinPagos);
+        efp.exportacionResumida();
     }
 
-    private void importarExcelResumido() {
+    private void importarExcelDetallado() {
         ArrayList<E_movimientoContable> pagosPendientes = new ArrayList<>(cabeceraTableModel.getList());
-        /*ExportarFacturaPendiente efp = new ExportarFacturaPendiente("Resumen cobro pendiente", pagosPendientes);
-        efp.exportacionIndividual();*/
+        ArrayList<E_facturaSinPago> facturasSinPagos = new ArrayList();
+        pagosPendientes.forEach((pagosPendiente) -> {
+            facturasSinPagos.add(pagosPendiente.getVenta());
+        });
+        ExportarFacturaPendiente efp = new ExportarFacturaPendiente("Resumen cobro pendiente", facturasSinPagos);
+        efp.exportacionIndividual();
     }
 
     private void exportHandler() {
         Object[] options = {"Completo",
-            "Resumido"};
+            "Detallado"};
         int n = JOptionPane.showOptionDialog(this,
                 "Eliga tipo de reporte",
                 "Atención",
@@ -170,11 +178,11 @@ public class ResumenCobroPendiente extends JDialog implements ActionListener, Ke
                 break;
             }
             case 1: {
-                //Minimalista
+                //Detallado
                 EventQueue.invokeLater(new Runnable() {
                     @Override
                     public void run() {
-                        importarExcelResumido();
+                        importarExcelDetallado();
                     }
                 });
                 break;

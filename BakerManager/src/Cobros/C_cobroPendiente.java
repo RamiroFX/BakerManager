@@ -166,6 +166,7 @@ public class C_cobroPendiente extends MouseAdapter implements ActionListener, Ke
                 M_cliente cliente = modelo.getFacturaCabecera().getCliente();
 
                 modelo.getTm().setList(modelo.obtenerCobroPendiente(cliente, fechaInicio, fechaFinal, nroFactura, false));
+                scr.setList(modelo.getTm().getList());
                 Utilities.c_packColumn.packColumns(vista.jtCobroCabecera, 1);
                 modelo.limpiarDetalle();
             }

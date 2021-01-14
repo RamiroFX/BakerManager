@@ -14,6 +14,7 @@ import Entities.E_facturaSinPago;
 import Entities.E_formaPago;
 import Entities.E_movimientoContable;
 import Entities.E_retencionVenta;
+import Entities.E_tipoOperacion;
 import Entities.Estado;
 import Entities.M_cliente;
 import Entities.M_funcionario;
@@ -178,6 +179,9 @@ public class DB_Cobro {
                 timbrado.setNroSucursal(rs.getInt("nro_sucursal"));
                 timbrado.setNroPuntoVenta(rs.getInt("nro_punto_venta"));
                 E_facturaSinPago fsp = new E_facturaSinPago();
+                //SE PUSO MANUALMENTE PORQUE SE TRAE DE TABLA DE SOLO VENTAS A CREDITO.
+                //Se tendria que modifcar en caso de que el credito sea a 60 días
+                fsp.setTipoOperacion(new E_tipoOperacion(E_tipoOperacion.CREDITO_30, 30, "credito"));
                 fsp.setIdCabecera(rs.getInt("id_factura_cabecera"));
                 fsp.setIdCliente(rs.getInt("id_cliente"));
                 fsp.setTimbrado(timbrado);

@@ -23,10 +23,12 @@ import org.apache.poi.hssf.usermodel.HSSFFont;
 import org.apache.poi.hssf.usermodel.HSSFRichTextString;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.hssf.util.HSSFRegionUtil;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.DataFormat;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.util.CellRangeAddress;
 
 /**
  *
@@ -105,6 +107,7 @@ public class ExportarFacturaPendiente {
         for (int q = 0; q < cabeceraList.size(); q++) {
             E_facturaSinPago cabecera = cabeceraList.get(q);
 
+            int primeraFilaInterna = filaActual;
             //INICIO FACTURA PENDIENTE CABECERA
             Row rowHeaderDate = sheet.createRow(filaActual);
             filaActual++;
@@ -158,9 +161,9 @@ public class ExportarFacturaPendiente {
             filaActual++;
             rowDetailHeader.createCell(0).setCellValue(new HSSFRichTextString("Cod."));
             rowDetailHeader.getCell(0).setCellStyle(style1);
-            rowDetailHeader.createCell(1).setCellValue(new HSSFRichTextString("Cantidad"));
+            rowDetailHeader.createCell(1).setCellValue(new HSSFRichTextString("Producto"));
             rowDetailHeader.getCell(1).setCellStyle(style1);
-            rowDetailHeader.createCell(2).setCellValue(new HSSFRichTextString("Producto"));
+            rowDetailHeader.createCell(2).setCellValue(new HSSFRichTextString("Cantidad"));
             rowDetailHeader.getCell(2).setCellStyle(style1);
             rowDetailHeader.createCell(3).setCellValue(new HSSFRichTextString("Precio"));
             rowDetailHeader.getCell(3).setCellStyle(style1);
@@ -185,12 +188,12 @@ public class ExportarFacturaPendiente {
                 M_facturaDetalle unDetalle = prodDetalleList.get(i);
                 rowDetail.createCell(0).setCellValue(unDetalle.getProducto().getCodigo());
                 //rowDetail.getCell(0).setCellStyle(style4);
-                rowDetail.createCell(1).setCellValue(unDetalle.getCantidad());
-                rowDetail.createCell(2).setCellValue(unDetalle.getProducto().getDescripcion());
+                rowDetail.createCell(1).setCellValue(unDetalle.getProducto().getDescripcion());
+                rowDetail.createCell(2).setCellValue(unDetalle.getCantidad());
                 rowDetail.createCell(3).setCellValue(unDetalle.getPrecio());
                 rowDetail.createCell(4).setCellValue(unDetalle.getDescuento());
                 switch (unDetalle.getProducto().getIdImpuesto()) {
-                    case 0: {
+                    case 1: {
                         rowDetail.createCell(5).setCellValue(unDetalle.calcularTotal());
                         rowDetail.getCell(5).setCellStyle(style4);
                         rowDetail.createCell(6).setCellValue(0);
@@ -199,7 +202,7 @@ public class ExportarFacturaPendiente {
                         rowDetail.getCell(7).setCellStyle(style4);
                         break;
                     }
-                    case 1: {
+                    case 2: {
                         rowDetail.createCell(5).setCellValue(0);
                         rowDetail.getCell(5).setCellStyle(style4);
                         rowDetail.createCell(6).setCellValue(unDetalle.calcularTotal());
@@ -208,7 +211,7 @@ public class ExportarFacturaPendiente {
                         rowDetail.getCell(7).setCellStyle(style4);
                         break;
                     }
-                    case 2: {
+                    case 3: {
                         rowDetail.createCell(5).setCellValue(0);
                         rowDetail.getCell(5).setCellStyle(style4);
                         rowDetail.createCell(6).setCellValue(0);
@@ -220,6 +223,11 @@ public class ExportarFacturaPendiente {
                 }
                 rowDetail.createCell(8).setCellValue(unDetalle.getObservacion());
             }
+            CellRangeAddress cuerpoCRA = new CellRangeAddress(primeraFilaInterna, filaActual - 1, 0, 8);
+            HSSFRegionUtil.setBorderTop(CellStyle.BORDER_THIN, cuerpoCRA, sheet, workbook);
+            HSSFRegionUtil.setBorderLeft(CellStyle.BORDER_THIN, cuerpoCRA, sheet, workbook);
+            HSSFRegionUtil.setBorderRight(CellStyle.BORDER_THIN, cuerpoCRA, sheet, workbook);
+            HSSFRegionUtil.setBorderBottom(CellStyle.BORDER_THIN, cuerpoCRA, sheet, workbook);
             filaActual++;
         }
 
