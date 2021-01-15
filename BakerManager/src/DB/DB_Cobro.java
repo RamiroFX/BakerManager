@@ -1190,4 +1190,80 @@ public class DB_Cobro {
             lgr.log(Level.SEVERE, ex.getMessage(), ex);
         }
     }
+
+    public static List<E_cuentaCorrienteCabecera> consultarAdelantosSinAsignar(int idCliente) {
+        List<E_cuentaCorrienteCabecera> list = new ArrayList();
+        String query = "SELECT "
+                + "CCC.ID_CTA_CTE_CABECERA, "//1
+                + "CCC.ID_CLIENTE, "//2
+                + "CCC.ID_FUNCIONARIO_COBRADOR, "//3
+                + "CCC.ID_FUNCIONARIO_REGISTRO, "//4
+                + "CCC.NRO_RECIBO, "//5
+                + "CCC.ID_ESTADO, "//6
+                + "CCC.FECHA_COBRO, "//7
+                + "CCC.FECHA_REGISTRO, "//8
+                + "(SELECT ESTA.DESCRIPCION FROM ESTADO ESTA WHERE ESTA.ID_ESTADO = CCC.ID_ESTADO) \"ESTADO\", "//9
+                + "(SELECT P.NOMBRE || ' '|| P.APELLIDO FROM FUNCIONARIO F, PERSONA P WHERE P.ID_PERSONA = F.ID_PERSONA AND F.ID_FUNCIONARIO = CCC.id_funcionario_cobrador )\"COBRADOR\", "//10
+                + "(SELECT P.NOMBRE || ' '|| P.APELLIDO FROM FUNCIONARIO F, PERSONA P WHERE P.ID_PERSONA = F.ID_PERSONA AND F.ID_FUNCIONARIO = CCC.id_funcionario_registro)\"USUARIO\", "//11
+                + "(SUM (CCD.MONTO))\"TOTAL\", "//12
+                + "C.ENTIDAD "//13
+                + "FROM CUENTA_CORRIENTE_CABECERA CCC, CUENTA_CORRIENTE_DETALLE CCD, CLIENTE C "
+                + "WHERE CCC.ID_CTA_CTE_CABECERA = CCD.ID_CTA_CTE_CABECERA "
+                + "AND CCC.ID_CLIENTE = C.ID_CLIENTE "
+                + "AND (CCD.ID_FACTURA_CABECERA IS NULL  OR CCD.ID_TIPO_PAGO = 3) "
+                + "AND CCC.ID_CLIENTE = ? ";
+        String groupBy = " GROUP BY CCC.ID_CTA_CTE_CABECERA, CCC.ID_CLIENTE, "
+                + "CCC.ID_FUNCIONARIO_COBRADOR, CCC.ID_FUNCIONARIO_REGISTRO, CCC.NRO_RECIBO, "
+                + "CCC.ID_ESTADO, CCC.FECHA_COBRO, CCC.FECHA_REGISTRO, C.ENTIDAD ";
+        String orderBy = "ORDER BY CCC.FECHA_COBRO";
+
+        query = query + groupBy + orderBy;
+        int pos = 1;
+        try {
+            pst = DB_manager.getConection().prepareStatement(query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            pst.setInt(pos, idCliente);
+            rs = pst.executeQuery();
+            while (rs.next()) {
+                M_cliente cliente = new M_cliente();
+                cliente.setEntidad(rs.getString(13));
+                cliente.setIdCliente(rs.getInt(2));
+                M_funcionario cobrador = new M_funcionario();
+                cobrador.setId_funcionario(rs.getInt(3));
+                cobrador.setNombre(rs.getString(10));
+                M_funcionario usuario = new M_funcionario();
+                usuario.setId_funcionario(rs.getInt(4));
+                usuario.setNombre(rs.getString(11));
+                Estado estado = new Estado();
+                estado.setId(rs.getInt(6));
+                estado.setDescripcion(rs.getString(9));
+                E_cuentaCorrienteCabecera ccc = new E_cuentaCorrienteCabecera();
+                ccc.setId(rs.getInt(1));
+                ccc.setFechaPago(rs.getTimestamp(7));
+                ccc.setFechaOperacion(rs.getTimestamp(8));
+                ccc.setNroRecibo(rs.getInt(5));
+                ccc.setCliente(cliente);
+                ccc.setFuncionario(usuario);
+                ccc.setEstado(estado);
+                ccc.setCobrador(cobrador);
+                ccc.setDebito(rs.getInt(12));
+                list.add(ccc);
+            }
+        } catch (SQLException ex) {
+            Logger lgr = Logger.getLogger(DB_Cobro.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (pst != null) {
+                    pst.close();
+                }
+            } catch (SQLException ex) {
+                Logger lgr = Logger.getLogger(DB_Cobro.class.getName());
+                lgr.log(Level.WARNING, ex.getMessage(), ex);
+            }
+        }
+        return list;
+    }
 }

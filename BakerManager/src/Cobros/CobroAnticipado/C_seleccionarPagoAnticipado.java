@@ -5,10 +5,7 @@
  */
 package Cobros.CobroAnticipado;
 
-import Cobros.M_seleccionarFacturaPendiente;
-import Cobros.ReciboCobro;
-import Cobros.V_seleccionarFacturaPendiente;
-import Entities.E_movimientoContable;
+import Interface.RecibirCtaCteCabeceraCallback;
 import Interface.RecibirCtaCteDetalleCallback;
 import Interface.RecibirFacturaSinPagoCallback;
 import java.awt.EventQueue;
@@ -32,15 +29,15 @@ public class C_seleccionarPagoAnticipado extends MouseAdapter implements ActionL
 
     public static final int TIPO_COBRO = 1, TIPO_DIRECTO = 2;
     private static final String ENTER_KEY = "Entrar";
-    
+
     public M_seleccionarPagoAnticipado modelo;
     public V_seleccionarPagoAnticipado vista;
-    RecibirCtaCteDetalleCallback callback;
-    RecibirFacturaSinPagoCallback facturaSinPagoCB;
+    RecibirCtaCteCabeceraCallback callback;
 
-    public C_seleccionarPagoAnticipado(M_seleccionarPagoAnticipado modelo, V_seleccionarPagoAnticipado vista) {
+    public C_seleccionarPagoAnticipado(M_seleccionarPagoAnticipado modelo, V_seleccionarPagoAnticipado vista, RecibirCtaCteCabeceraCallback callback) {
         this.modelo = modelo;
         this.vista = vista;
+        this.callback = callback;
         inicializarVista();
         agregarListeners();
         displayQueryResults();
@@ -59,18 +56,10 @@ public class C_seleccionarPagoAnticipado extends MouseAdapter implements ActionL
         this.vista.jtPagosAnticipados.getActionMap().put(ENTER_KEY, new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                seleccionarFacturaPendiente();
+                seleccionarAnticipo();
             }
         });
         Utilities.c_packColumn.packColumns(this.vista.jtPagosAnticipados, 1);
-    }
-
-    public void setCallback(RecibirCtaCteDetalleCallback callback) {
-        this.callback = callback;
-    }
-
-    public void setFacturaSinPagoCallback(RecibirFacturaSinPagoCallback facturaSinPagoCB) {
-        this.facturaSinPagoCB = facturaSinPagoCB;
     }
 
     private void agregarListeners() {
@@ -121,34 +110,19 @@ public class C_seleccionarPagoAnticipado extends MouseAdapter implements ActionL
         //this.vista.jcbCondVenta.setSelectedIndex(0);
     }
 
-    private void seleccionarFacturaPendiente() {
+    private void seleccionarAnticipo() {
         int fila = vista.jtPagosAnticipados.getSelectedRow();
         int columna = vista.jtPagosAnticipados.getSelectedColumn();
         if ((fila > -1) && (columna > -1)) {
-//            E_movimientoContable cabecera = modelo.getTM().getList().get(fila);
-//            switch (modelo.getTipo()) {
-//                case TIPO_COBRO: {
-//                    vista.jbAceptar.setEnabled(true);
-//                    ReciboCobro rp = new ReciboCobro(this.vista);
-//                    rp.nuevoPago(cabecera);
-//                    rp.setInterface(callback);
-//                    rp.mostrarVista();
-//                    vista.jtfBuscar.requestFocusInWindow();
-//                    break;
-//                }
-//                case TIPO_DIRECTO: {
-//                    facturaSinPagoCB.recibirFacturaCabeceraPendientePago(cabecera.getVenta());
-//                    cerrar();
-//                    break;
-//                }
-//            }
+            callback.recibirCtaCteCabecera(modelo.getTM().getList().get(fila));
+            cerrar();
         }
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == this.vista.jbAceptar) {
-            seleccionarFacturaPendiente();
+            seleccionarAnticipo();
             this.vista.jtfBuscar.requestFocusInWindow();
             SwingUtilities.invokeLater(new Runnable() {
                 @Override
@@ -175,7 +149,7 @@ public class C_seleccionarPagoAnticipado extends MouseAdapter implements ActionL
         if ((fila > -1) && (columna > -1)) {
             this.vista.jbAceptar.setEnabled(true);
             if (e.getClickCount() == 2) {
-                seleccionarFacturaPendiente();
+                seleccionarAnticipo();
                 this.vista.jtfBuscar.requestFocusInWindow();
             }
         }

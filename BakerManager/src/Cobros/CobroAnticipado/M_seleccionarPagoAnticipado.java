@@ -20,21 +20,27 @@ import java.util.List;
  * @author Ramiro Ferreira
  */
 public class M_seleccionarPagoAnticipado {
-    
+
     private CtaCteCabeceraTableModel tmCabecera;
     private E_cuentaCorrienteCabecera cabecera;
 
-    public M_seleccionarPagoAnticipado() {
+    public M_seleccionarPagoAnticipado(int idCliente) {
         this.tmCabecera = new CtaCteCabeceraTableModel();
+        this.cabecera = new E_cuentaCorrienteCabecera();
+        this.cabecera.getCliente().setIdCliente(idCliente);
     }
 
     public CtaCteCabeceraTableModel getTM() {
         return tmCabecera;
     }
-    
+
+    public E_cuentaCorrienteCabecera getCabecera() {
+        return cabecera;
+    }
+
     public void consultarAdelantos() {
         int idCliente = this.cabecera.getCliente().getIdCliente();
-        //getTM().setList(DB_Cobro.consultarPagosPendiente(null, null, idCliente, -1, false));
+        getTM().setList(DB_Cobro.consultarAdelantosSinAsignar(idCliente));
     }
-    
+
 }

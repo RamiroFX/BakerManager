@@ -8,6 +8,7 @@ package Cobros.CobroAnticipado;
 import java.awt.BorderLayout;
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -29,6 +30,17 @@ public class V_seleccionarPagoAnticipado extends JDialog {
     public JTextField jtfBuscar;
 
     public V_seleccionarPagoAnticipado(JDialog main) {
+        super(main, "Seleccionar pago anticipado", true);
+        setSize(1200, 400);
+        setLocationRelativeTo(main);
+        initComp();
+        getContentPane().setLayout(new BorderLayout());
+        getContentPane().add(jpTop, BorderLayout.NORTH);
+        getContentPane().add(jspPagosAnticipados, BorderLayout.CENTER);
+        getContentPane().add(jpBotones, BorderLayout.SOUTH);
+    }
+
+    public V_seleccionarPagoAnticipado(JFrame main) {
         super(main, "Seleccionar pago anticipado", true);
         setSize(1200, 400);
         setLocationRelativeTo(main);

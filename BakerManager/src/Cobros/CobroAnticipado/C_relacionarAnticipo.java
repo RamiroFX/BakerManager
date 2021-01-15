@@ -6,8 +6,13 @@
 package Cobros.CobroAnticipado;
 
 import Cliente.SeleccionarCliente;
+import Cobros.C_seleccionarFacturaPendiente;
+import Cobros.SeleccionarFacturaPendiente;
+import Entities.E_cuentaCorrienteCabecera;
+import Entities.E_cuentaCorrienteDetalle;
 import Entities.M_cliente;
 import Interface.RecibirClienteCallback;
+import Interface.RecibirCtaCteCabeceraCallback;
 import Interface.RecibirCtaCteDetalleCallback;
 import Interface.RecibirEmpleadoCallback;
 import bakermanager.C_inicio;
@@ -25,8 +30,19 @@ import javax.swing.JOptionPane;
  * @author Ramiro Ferreira
  */
 public class C_relacionarAnticipo extends MouseAdapter implements ActionListener, KeyListener,
-        RecibirClienteCallback {
-    
+        RecibirClienteCallback, RecibirCtaCteCabeceraCallback, RecibirCtaCteDetalleCallback {
+
+    private static final String VALIDAR_RESPONSABLE_MSG = "Seleccione un cobrador",
+            VALIDAR_CLIENTE_MSG = "Seleccione un cliente",
+            VALIDAR_NRO_RECIBO_MSG_1 = "Ingrese un Número de recibo",
+            VALIDAR_NRO_RECIBO_MSG_2 = "Ingrese solo números enteros en Número de recibo",
+            VALIDAR_NRO_RECIBO_MSG_3 = "Ingrese solo números enteros y positivos en Número de recibo",
+            VALIDAR_NRO_RECIBO_MSG_4 = "El Número de recibo ingresado ya se encuentra en uso.",
+            VALIDAR_FECHA_RECIBO_MSG_1 = "La fecha seleccionada no es valida.",
+            VALIDAR_MONTO_A_PAGAR = "El saldo a pagar no puede ser mayor al total",
+            VALIDAR_DETALLE_RECIBO = "Existen detalles de cobros pendiente. Vacíe la lista para seleccionar otro cliente",
+            CONFIRMAR_SALIR_MSG = "¿Cancelar cobro?",
+            VALIDAR_TITULO = "Atención";
     M_relacionarAnticipo modelo;
     V_relacionarAnticipo vista;
     private C_inicio inicio;
@@ -38,8 +54,8 @@ public class C_relacionarAnticipo extends MouseAdapter implements ActionListener
         inicializarVista();
         agregarListeners();
     }
-    
-    public void mostrarVista(){
+
+    public void mostrarVista() {
         this.vista.setVisible(true);
     }
 
@@ -60,7 +76,7 @@ public class C_relacionarAnticipo extends MouseAdapter implements ActionListener
     }
 
     private void inicializarVista() {
-//        this.vista.jtReciboDetalle.setModel(modelo.getCtaCteDetalleTm());
+        this.vista.jtReciboDetalle.setModel(modelo.getTm());
         this.vista.jbModificarDetalle.setEnabled(false);
         this.vista.jbEliminarDetalle.setEnabled(false);
     }
@@ -73,6 +89,7 @@ public class C_relacionarAnticipo extends MouseAdapter implements ActionListener
         this.vista.jbAgregarFactura.addActionListener(this);
         this.vista.jbEliminarDetalle.addActionListener(this);
         this.vista.jbModificarDetalle.addActionListener(this);
+        this.vista.jbSeleccionarPago.addActionListener(this);
         this.vista.jbAceptar.addActionListener(this);
         this.vista.jbSalir.addActionListener(this);
         //MOUSE LISTENERS
@@ -88,7 +105,7 @@ public class C_relacionarAnticipo extends MouseAdapter implements ActionListener
         this.vista.jbAceptar.addKeyListener(this);
         this.vista.jbSalir.addKeyListener(this);
     }
-    
+
     private boolean validarDetalleReciboVacio() {
 //        if (!this.modelo.getCtaCteDetalleTm().getList().isEmpty()) {
 //            JOptionPane.showMessageDialog(vista, VALIDAR_DETALLE_RECIBO, VALIDAR_TITULO, JOptionPane.WARNING_MESSAGE);
@@ -96,6 +113,16 @@ public class C_relacionarAnticipo extends MouseAdapter implements ActionListener
 //        }
         return true;
     }
+
+    private boolean validarCliente() {
+        int idCliente = modelo.getCliente().getIdCliente();
+        if (idCliente < 1) {
+            JOptionPane.showMessageDialog(vista, VALIDAR_CLIENTE_MSG, VALIDAR_TITULO, JOptionPane.WARNING_MESSAGE);
+            return false;
+        }
+        return true;
+    }
+
     private void invocarVistaSeleccionCliente() {
         if (!validarDetalleReciboVacio()) {
             return;
@@ -104,14 +131,38 @@ public class C_relacionarAnticipo extends MouseAdapter implements ActionListener
         sc.setCallback(this);
         sc.mostrarVista();
     }
-    
+
+    private void invocarVistaSeleccionPagoAdelantado() {
+        if (!validarDetalleReciboVacio()) {
+            return;
+        }
+        if (!validarCliente()) {
+            return;
+        }
+        int idCliente = modelo.getCliente().getIdCliente();
+        SeleccionarPagoAnticipado sc = new SeleccionarPagoAnticipado(inicio.vista, idCliente, this);
+        sc.mostrarVista();
+    }
+
+    private void invocarVistaSeleccionFacturaPendiente() {
+        if (!validarCliente()) {
+            return;
+        }
+        int idCliente = modelo.getCliente().getIdCliente();
+        SeleccionarFacturaPendiente sc = new SeleccionarFacturaPendiente(this.vista, idCliente, C_seleccionarFacturaPendiente.TIPO_COBRO);
+        sc.setCallback(this);
+        sc.mostrarVista();
+    }
+
     @Override
-    public void actionPerformed(ActionEvent e) {        
+    public void actionPerformed(ActionEvent e) {
         Object source = e.getSource();
         if (source.equals(this.vista.jbAceptar)) {
             //guardar();
+        } else if (source.equals(this.vista.jbSeleccionarPago)) {
+            invocarVistaSeleccionPagoAdelantado();
         } else if (source.equals(this.vista.jbAgregarFactura)) {
-            //invocarVistaSeleccionFacturaPendiente();
+            invocarVistaSeleccionFacturaPendiente();
         } else if (source.equals(this.vista.jbCliente)) {
             invocarVistaSeleccionCliente();
         } else if (source.equals(this.vista.jbEliminarDetalle)) {
@@ -125,22 +176,42 @@ public class C_relacionarAnticipo extends MouseAdapter implements ActionListener
 
     @Override
     public void keyTyped(KeyEvent e) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
     public void keyPressed(KeyEvent e) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
     public void keyReleased(KeyEvent e) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
     public void recibirCliente(M_cliente cliente) {
-        //modelo.getCabecera().setCliente(cliente);
+        modelo.setCliente(cliente);
         this.vista.jtfCliente.setText(cliente.getEntidad() + "(" + cliente.getRuc() + "-" + cliente.getRucId() + ")");
+    }
+
+    @Override
+    public void recibirCtaCteCabecera(E_cuentaCorrienteCabecera cabecera) {
+        this.modelo.setCabecera(cabecera);
+        this.vista.jtfNroRecibo.setText(cabecera.getNroRecibo() + "");
+        this.vista.jtfPagoAnticipado.setText(cabecera.getFechaPago() + "");
+        this.vista.jftTotalPagado.setValue(cabecera.getDebito());
+    }
+
+    @Override
+    public void modificarCtaCteCabecera(int index, E_cuentaCorrienteCabecera cabecera) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void recibirCtaCteDetalle(E_cuentaCorrienteDetalle detalle, int montoTotalPendiente) {
+        this.modelo.getTm().agregarDatos(detalle);
+    }
+
+    @Override
+    public void modificarCtaCteDetalle(int index, E_cuentaCorrienteDetalle detalle, int montoTotalPendiente) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

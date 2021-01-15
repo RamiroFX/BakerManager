@@ -5,25 +5,33 @@
  */
 package Cobros.CobroAnticipado;
 
+import Interface.RecibirCtaCteCabeceraCallback;
 import javax.swing.JDialog;
+import javax.swing.JFrame;
 
 /**
  *
  * @author Ramiro Ferreira
  */
 public class SeleccionarPagoAnticipado {
-    
+
     private M_seleccionarPagoAnticipado modelo;
     private V_seleccionarPagoAnticipado vista;
     private C_seleccionarPagoAnticipado controlador;
 
-    public SeleccionarPagoAnticipado(JDialog dialog) {
-        this.modelo = new M_seleccionarPagoAnticipado();
+    public SeleccionarPagoAnticipado(JDialog dialog, int idCliente, RecibirCtaCteCabeceraCallback callback) {
+        this.modelo = new M_seleccionarPagoAnticipado(idCliente);
         this.vista = new V_seleccionarPagoAnticipado(dialog);
-        this.controlador = new C_seleccionarPagoAnticipado(modelo, vista);
+        this.controlador = new C_seleccionarPagoAnticipado(modelo, vista, callback);
     }
-    
-    public void mostrarVista(){
+
+    public SeleccionarPagoAnticipado(JFrame frame, int idCliente, RecibirCtaCteCabeceraCallback callback) {
+        this.modelo = new M_seleccionarPagoAnticipado(idCliente);
+        this.vista = new V_seleccionarPagoAnticipado(frame);
+        this.controlador = new C_seleccionarPagoAnticipado(modelo, vista, callback);
+    }
+
+    public void mostrarVista() {
         this.controlador.mostrarVista();
     }
 }
