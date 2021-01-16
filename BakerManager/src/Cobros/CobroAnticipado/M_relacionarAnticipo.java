@@ -5,8 +5,12 @@
  */
 package Cobros.CobroAnticipado;
 
+import DB.DB_Cobro;
 import Entities.E_clienteProducto;
 import Entities.E_cuentaCorrienteCabecera;
+import Entities.E_cuentaCorrienteDetalle;
+import Entities.E_facturaSinPago;
+import Entities.E_formaPago;
 import Entities.M_cliente;
 import ModeloTabla.CtaCteDetalleTableModel;
 
@@ -46,4 +50,22 @@ public class M_relacionarAnticipo {
         this.cliente = cliente;
     }
 
+
+    public void agregarDatos(E_cuentaCorrienteDetalle data) {
+        for (int i = 0; i < getTm().getList().size(); i++) {
+            E_cuentaCorrienteDetalle get = getTm().getList().get(i);
+            if (get.getIdFacturaCabecera() == data.getIdFacturaCabecera()) {
+                if (get.getFormaPago().getId() == data.getFormaPago().getId()
+                        && data.getFormaPago().getId() == E_formaPago.EFECTIVO
+                        && get.getFormaPago().getId() == E_formaPago.EFECTIVO) {
+                    getTm().modificarMontoPagar((int) (get.getMonto() + data.getMonto()), i);
+                    return;
+                }
+            }
+        }
+        getTm().agregarDatos(data);
+    }
+    public E_facturaSinPago obtenerDetalleVenta(int idFacturaCabecera) {
+        return DB_Cobro.obtenerFacturaSinPagoPorId(idFacturaCabecera);
+    }
 }

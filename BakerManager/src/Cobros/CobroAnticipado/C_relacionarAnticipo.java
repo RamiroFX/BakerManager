@@ -154,14 +154,34 @@ public class C_relacionarAnticipo extends MouseAdapter implements ActionListener
         sc.mostrarVista();
     }
 
-    private void sumarDetalle() {
+    private double obtenerSumaDetalle() {
         double total = 0;
         for (E_cuentaCorrienteDetalle unDetalle : modelo.getTm().getList()) {
             total = total + unDetalle.getMonto();
         }
+        return total;
+    }
+
+    private void sumarDetalle() {
+        double total = obtenerSumaDetalle();
         double totalPagado = modelo.getCabecera().getDebito();
         this.vista.jftTotal.setValue(total);
         this.vista.jftTotalPorAsignar.setValue(totalPagado - total);
+    }
+
+    private boolean validarDetalle(double monto) {
+        double saldoPendiente = modelo.getCabecera().getDebito();
+        double subTotal = monto + obtenerSumaDetalle();
+        if (subTotal > saldoPendiente) {
+            JOptionPane.showMessageDialog(vista, "La suma de los detalles no puede superar al total del adelanto.", VALIDAR_TITULO, JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+        return true;
+    }
+    
+    private void validarSubDetalle(int idVenta){
+        double montoActual = modelo.obtenerDetalleVenta(idVenta).getSaldo();
+        
     }
 
     @Override
@@ -217,12 +237,18 @@ public class C_relacionarAnticipo extends MouseAdapter implements ActionListener
 
     @Override
     public void recibirCtaCteDetalle(E_cuentaCorrienteDetalle detalle, int montoTotalPendiente) {
+        if(!validarDetalle(detalle.getMonto())){
+            return;
+        }
         this.modelo.getTm().agregarDatos(detalle);
         sumarDetalle();
     }
 
     @Override
     public void modificarCtaCteDetalle(int index, E_cuentaCorrienteDetalle detalle, int montoTotalPendiente) {
+        if(!validarDetalle(detalle.getMonto())){
+            return;
+        }
         sumarDetalle();
     }
 }
