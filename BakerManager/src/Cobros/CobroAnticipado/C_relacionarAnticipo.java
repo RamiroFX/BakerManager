@@ -60,19 +60,19 @@ public class C_relacionarAnticipo extends MouseAdapter implements ActionListener
     }
 
     private void cerrar() {
-//        EventQueue.invokeLater(new Runnable() {
-//            @Override
-//            public void run() {
-//                if (modelo.getCtaCteDetalleTm().getList().isEmpty()) {
-//                    vista.dispose();
-//                } else {
-//                    int opcion = JOptionPane.showConfirmDialog(vista, CONFIRMAR_SALIR_MSG, VALIDAR_TITULO, JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
-//                    if (opcion == JOptionPane.YES_OPTION) {
-//                        vista.dispose();
-//                    }
-//                }
-//            }
-//        });
+        EventQueue.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                if (modelo.getTm().getList().isEmpty()) {
+                    vista.dispose();
+                } else {
+                    int opcion = JOptionPane.showConfirmDialog(vista, CONFIRMAR_SALIR_MSG, VALIDAR_TITULO, JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+                    if (opcion == JOptionPane.YES_OPTION) {
+                        vista.dispose();
+                    }
+                }
+            }
+        });
     }
 
     private void inicializarVista() {
@@ -154,6 +154,16 @@ public class C_relacionarAnticipo extends MouseAdapter implements ActionListener
         sc.mostrarVista();
     }
 
+    private void sumarDetalle() {
+        double total = 0;
+        for (E_cuentaCorrienteDetalle unDetalle : modelo.getTm().getList()) {
+            total = total + unDetalle.getMonto();
+        }
+        double totalPagado = modelo.getCabecera().getDebito();
+        this.vista.jftTotal.setValue(total);
+        this.vista.jftTotalPorAsignar.setValue(totalPagado - total);
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         Object source = e.getSource();
@@ -208,10 +218,11 @@ public class C_relacionarAnticipo extends MouseAdapter implements ActionListener
     @Override
     public void recibirCtaCteDetalle(E_cuentaCorrienteDetalle detalle, int montoTotalPendiente) {
         this.modelo.getTm().agregarDatos(detalle);
+        sumarDetalle();
     }
 
     @Override
     public void modificarCtaCteDetalle(int index, E_cuentaCorrienteDetalle detalle, int montoTotalPendiente) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        sumarDetalle();
     }
 }
