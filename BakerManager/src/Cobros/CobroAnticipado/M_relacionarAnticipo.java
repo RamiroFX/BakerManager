@@ -50,7 +50,6 @@ public class M_relacionarAnticipo {
         this.cliente = cliente;
     }
 
-
     public void agregarDatos(E_cuentaCorrienteDetalle data) {
         for (int i = 0; i < getTm().getList().size(); i++) {
             E_cuentaCorrienteDetalle get = getTm().getList().get(i);
@@ -65,7 +64,17 @@ public class M_relacionarAnticipo {
         }
         getTm().agregarDatos(data);
     }
+
     public E_facturaSinPago obtenerDetalleVenta(int idFacturaCabecera) {
         return DB_Cobro.obtenerFacturaSinPagoPorId(idFacturaCabecera);
+    }
+
+    public double obtenerSumaDetalle(int idFacturaCabecera) {
+        for (E_cuentaCorrienteDetalle unDetalle : getTm().getList()) {
+            if (unDetalle.getIdFacturaCabecera() == idFacturaCabecera) {
+                return unDetalle.getMonto();
+            }
+        }
+        return -1;
     }
 }

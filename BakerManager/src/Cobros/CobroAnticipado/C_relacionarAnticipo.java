@@ -169,7 +169,7 @@ public class C_relacionarAnticipo extends MouseAdapter implements ActionListener
         this.vista.jftTotalPorAsignar.setValue(totalPagado - total);
     }
 
-    private boolean validarDetalle(double monto) {
+    private boolean validarSubTotalDetalle(double monto) {
         double saldoPendiente = modelo.getCabecera().getDebito();
         double subTotal = monto + obtenerSumaDetalle();
         if (subTotal > saldoPendiente) {
@@ -178,10 +178,15 @@ public class C_relacionarAnticipo extends MouseAdapter implements ActionListener
         }
         return true;
     }
-    
-    private void validarSubDetalle(int idVenta){
-        double montoActual = modelo.obtenerDetalleVenta(idVenta).getSaldo();
-        
+
+    private boolean validarSubDetalle(int idVenta) {
+        double montoPendiente = modelo.obtenerDetalleVenta(idVenta).getSaldo();
+        double montoIngresado = modelo.obtenerSumaDetalle(idVenta);
+        if (montoIngresado > montoPendiente) {
+            JOptionPane.showMessageDialog(vista, "El total ingresado supera al monto pendiente.", VALIDAR_TITULO, JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+        return true;
     }
 
     @Override
@@ -237,7 +242,10 @@ public class C_relacionarAnticipo extends MouseAdapter implements ActionListener
 
     @Override
     public void recibirCtaCteDetalle(E_cuentaCorrienteDetalle detalle, int montoTotalPendiente) {
-        if(!validarDetalle(detalle.getMonto())){
+        if (!validarSubTotalDetalle(detalle.getMonto())) {
+            return;
+        }
+        if (!validarSubDetalle(detalle.getIdFacturaCabecera())) {
             return;
         }
         this.modelo.getTm().agregarDatos(detalle);
@@ -246,7 +254,7 @@ public class C_relacionarAnticipo extends MouseAdapter implements ActionListener
 
     @Override
     public void modificarCtaCteDetalle(int index, E_cuentaCorrienteDetalle detalle, int montoTotalPendiente) {
-        if(!validarDetalle(detalle.getMonto())){
+        if (!validarSubTotalDetalle(detalle.getMonto())) {
             return;
         }
         sumarDetalle();
