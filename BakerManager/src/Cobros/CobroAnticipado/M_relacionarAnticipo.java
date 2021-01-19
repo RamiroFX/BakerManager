@@ -12,6 +12,7 @@ import Entities.E_cuentaCorrienteDetalle;
 import Entities.E_facturaSinPago;
 import Entities.E_formaPago;
 import Entities.M_cliente;
+import MenuPrincipal.DatosUsuario;
 import ModeloTabla.CtaCteDetalleTableModel;
 
 /**
@@ -76,5 +77,10 @@ public class M_relacionarAnticipo {
             }
         }
         return -1;
+    }
+
+    public void guardar() {
+        this.getCabecera().setFuncionario(DatosUsuario.getRol_usuario().getFuncionario());
+        DB_Cobro.guardarAnticipoRelacion(getCabecera(), getTm().getList());
     }
 }

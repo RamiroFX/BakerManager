@@ -189,11 +189,16 @@ public class C_relacionarAnticipo extends MouseAdapter implements ActionListener
         return true;
     }
 
+    private void guardar(){
+        modelo.guardar();
+        cerrar();
+    }
+    
     @Override
     public void actionPerformed(ActionEvent e) {
         Object source = e.getSource();
         if (source.equals(this.vista.jbAceptar)) {
-            //guardar();
+            guardar();
         } else if (source.equals(this.vista.jbSeleccionarPago)) {
             invocarVistaSeleccionPagoAdelantado();
         } else if (source.equals(this.vista.jbAgregarFactura)) {
@@ -248,7 +253,7 @@ public class C_relacionarAnticipo extends MouseAdapter implements ActionListener
         if (!validarSubDetalle(detalle.getIdFacturaCabecera())) {
             return;
         }
-        this.modelo.getTm().agregarDatos(detalle);
+        this.modelo.agregarDatos(detalle);
         sumarDetalle();
     }
 

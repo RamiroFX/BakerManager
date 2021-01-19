@@ -1266,4 +1266,46 @@ public class DB_Cobro {
         }
         return list;
     }
+
+    public static void guardarAnticipoRelacion(E_cuentaCorrienteCabecera cabecera, List<E_cuentaCorrienteDetalle> list) {
+        String INSERT = "INSERT INTO adelanto_venta(id_cta_cte_cabecera, id_factura_cabecera, monto, id_funcionario)VALUES (?, ?, ?, ?);";
+        try {
+            DB_manager.getConection().setAutoCommit(false);
+            for (E_cuentaCorrienteDetalle unDetalle : list) {
+                pst = DB_manager.getConection().prepareStatement(INSERT, PreparedStatement.RETURN_GENERATED_KEYS);
+                pst.setInt(1, cabecera.getId());
+                pst.setInt(2, unDetalle.getIdFacturaCabecera());
+                pst.setDouble(3, unDetalle.getMonto());
+                pst.setInt(4, cabecera.getFuncionario().getId_funcionario());
+                pst.executeUpdate();
+                pst.close();
+                rs.close();
+            }
+            DB_manager.establecerTransaccion();
+        } catch (SQLException ex) {
+            System.out.println(ex.getNextException());
+            if (DB_manager.getConection() != null) {
+                try {
+                    DB_manager.getConection().rollback();
+                } catch (SQLException ex1) {
+                    Logger lgr = Logger.getLogger(DB_Cobro.class.getName());
+                    lgr.log(Level.WARNING, ex1.getMessage(), ex1);
+                }
+            }
+            Logger lgr = Logger.getLogger(DB_Cobro.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        } finally {
+            try {
+                if (pst != null) {
+                    pst.close();
+                }
+                if (rs != null) {
+                    rs.close();
+                }
+            } catch (SQLException ex) {
+                Logger lgr = Logger.getLogger(DB_Cobro.class.getName());
+                lgr.log(Level.WARNING, ex.getMessage(), ex);
+            }
+        }
+    }
 }
