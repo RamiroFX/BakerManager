@@ -32,9 +32,9 @@ public class C_seleccionarPagoAnticipado extends MouseAdapter implements ActionL
 
     public M_seleccionarPagoAnticipado modelo;
     public V_seleccionarPagoAnticipado vista;
-    RecibirCtaCteCabeceraCallback callback;
+    RecibirCtaCteDetalleCallback callback;
 
-    public C_seleccionarPagoAnticipado(M_seleccionarPagoAnticipado modelo, V_seleccionarPagoAnticipado vista, RecibirCtaCteCabeceraCallback callback) {
+    public C_seleccionarPagoAnticipado(M_seleccionarPagoAnticipado modelo, V_seleccionarPagoAnticipado vista, RecibirCtaCteDetalleCallback callback) {
         this.modelo = modelo;
         this.vista = vista;
         this.callback = callback;
@@ -114,7 +114,7 @@ public class C_seleccionarPagoAnticipado extends MouseAdapter implements ActionL
         int fila = vista.jtPagosAnticipados.getSelectedRow();
         int columna = vista.jtPagosAnticipados.getSelectedColumn();
         if ((fila > -1) && (columna > -1)) {
-            callback.recibirCtaCteCabecera(modelo.getTM().getList().get(fila));
+            callback.recibirCtaCteDetalle(modelo.getTM().getList().get(fila), 0);
             cerrar();
         }
     }

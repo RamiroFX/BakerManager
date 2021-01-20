@@ -335,7 +335,7 @@ public class DB_Producto {
         return list;
     }
 
-    public static ArrayList<M_producto> consultaSimpleProductos(String descripcion, String proveedor, String marca, String rubro, String impuesto, String estado, String ordenarPor, String existencia) {
+    public static ArrayList<M_producto> consultaSimpleProductos(String descripcion, String proveedor, String marca, int idCategoria, int idSubCategoria, String impuesto, String estado, String ordenarPor, String existencia) {
         ArrayList productos = null;
         try {
             if (DB_manager.getConection() == null) {
@@ -390,11 +390,20 @@ public class DB_Producto {
                 marc = "AND PROD.ID_MARCA = (SELECT MARC.ID_MARCA FROM MARCA MARC WHERE MARC.DESCRIPCION LIKE '" + marca + "' )";
             }
 
-            String rubr;
-            if ("Todos".equals(rubro)) {
-                rubr = "";
+            String rubr = "";
+            if (idCategoria > 0) {
+                if (idSubCategoria > 0) {
+                    rubr = "AND PROD.ID_CATEGORIA = " + idSubCategoria + "";
+                } else {
+                    rubr = "AND (PROD.ID_CATEGORIA IN (SELECT PRCA.ID_PRODUCTO_CATEGORIA FROM PRODUCTO_CATEGORIA PRCA WHERE PRCA.ID_PADRE = " + idCategoria + ") "
+                            + "OR PROD.ID_CATEGORIA IN (" + idCategoria + ")) ";
+                }
             } else {
-                rubr = "AND PROD.ID_CATEGORIA = (SELECT PRCA.ID_PRODUCTO_CATEGORIA FROM PRODUCTO_CATEGORIA PRCA WHERE PRCA.DESCRIPCION LIKE '" + rubro + "' )";
+                if (idSubCategoria > 0) {
+                    rubr = "AND PROD.ID_CATEGORIA = " + idSubCategoria + "";
+                } else {
+                    rubr = "";
+                }
             }
             String estad;
             if ("Todos".equals(estado)) {
@@ -428,7 +437,8 @@ public class DB_Producto {
                     + estad
                     + existenciaSQL
                     + finalQuery;
-
+            System.out.println("DB.DB_Producto.consultaSimpleProductos()");
+            System.out.println(Query);
             pst = DB_manager.getConection().prepareStatement(Query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             pst.setString(1, descripcion + "%");
             rs = pst.executeQuery();

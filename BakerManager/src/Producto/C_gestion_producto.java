@@ -297,12 +297,14 @@ public class C_gestion_producto implements ActionListener, KeyListener, MouseLis
                 String desc = vista.jtfBuscar.getText();
                 String marca = vista.jcbMarca.getSelectedItem().toString();
                 String rubro = vista.jcbCategoria.getSelectedItem().toString();
+                ProductoCategoria categoria = vista.jcbCategoria.getItemAt(vista.jcbCategoria.getSelectedIndex());
+                ProductoCategoria subCategoria = vista.jcbSubCategoria.getItemAt(vista.jcbSubCategoria.getSelectedIndex());
                 String impuesto = vista.jcbImpuesto.getSelectedItem().toString();
                 String estado = vista.jcbEstado.getSelectedItem().toString();
                 String orderBy = vista.jcbOrderBy.getSelectedItem().toString();
                 String existence = vista.jcbExistence.getSelectedItem().toString();
                 String proveedor = proveedor();
-                ArrayList<M_producto> productos = DB_Producto.consultaSimpleProductos(desc.toLowerCase(), proveedor, marca, rubro, impuesto, estado, orderBy, existence);
+                ArrayList<M_producto> productos = DB_Producto.consultaSimpleProductos(desc.toLowerCase(), proveedor, marca, categoria.getId(), subCategoria.getId(), impuesto, estado, orderBy, existence);
                 ExportarProducto ep = new ExportarProducto(productos);
                 ep.exportar();
             }

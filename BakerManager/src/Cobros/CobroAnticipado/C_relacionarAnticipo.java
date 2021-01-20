@@ -46,11 +46,13 @@ public class C_relacionarAnticipo extends MouseAdapter implements ActionListener
     M_relacionarAnticipo modelo;
     V_relacionarAnticipo vista;
     private C_inicio inicio;
+    private boolean esCabecera;
 
     public C_relacionarAnticipo(M_relacionarAnticipo modelo, V_relacionarAnticipo vista, C_inicio inicio) {
         this.modelo = modelo;
         this.vista = vista;
         this.inicio = inicio;
+        this.esCabecera = true;
         inicializarVista();
         agregarListeners();
     }
@@ -139,6 +141,7 @@ public class C_relacionarAnticipo extends MouseAdapter implements ActionListener
         if (!validarCliente()) {
             return;
         }
+        esCabecera = true;
         int idCliente = modelo.getCliente().getIdCliente();
         SeleccionarPagoAnticipado sc = new SeleccionarPagoAnticipado(inicio.vista, idCliente, this);
         sc.mostrarVista();
@@ -189,11 +192,11 @@ public class C_relacionarAnticipo extends MouseAdapter implements ActionListener
         return true;
     }
 
-    private void guardar(){
+    private void guardar() {
         modelo.guardar();
         cerrar();
     }
-    
+
     @Override
     public void actionPerformed(ActionEvent e) {
         Object source = e.getSource();
@@ -234,10 +237,6 @@ public class C_relacionarAnticipo extends MouseAdapter implements ActionListener
 
     @Override
     public void recibirCtaCteCabecera(E_cuentaCorrienteCabecera cabecera) {
-        this.modelo.setCabecera(cabecera);
-        this.vista.jtfNroRecibo.setText(cabecera.getNroRecibo() + "");
-        this.vista.jtfPagoAnticipado.setText(cabecera.getFechaPago() + "");
-        this.vista.jftTotalPagado.setValue(cabecera.getDebito());
     }
 
     @Override
@@ -247,12 +246,22 @@ public class C_relacionarAnticipo extends MouseAdapter implements ActionListener
 
     @Override
     public void recibirCtaCteDetalle(E_cuentaCorrienteDetalle detalle, int montoTotalPendiente) {
+        if (esCabecera) {
+            this.modelo.setCabecera(detalle.getCuentaCorrienteCabecera());
+            this.modelo.getCabecera().setId(detalle.getId());
+            this.vista.jtfNroRecibo.setText(detalle.getCuentaCorrienteCabecera().getNroRecibo() + "");
+            this.vista.jtfPagoAnticipado.setText(detalle.getCuentaCorrienteCabecera().getFechaPago() + "");
+            this.vista.jftTotalPagado.setValue(detalle.getMonto());
+            esCabecera = false;
+            return;
+        }
         if (!validarSubTotalDetalle(detalle.getMonto())) {
             return;
         }
         if (!validarSubDetalle(detalle.getIdFacturaCabecera())) {
             return;
         }
+        //detalle.setId(modelo.obtenerDetalleVenta(detalle.getIdFacturaCabecera()).);
         this.modelo.agregarDatos(detalle);
         sumarDetalle();
     }

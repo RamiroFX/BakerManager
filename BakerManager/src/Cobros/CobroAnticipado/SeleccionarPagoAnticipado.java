@@ -6,6 +6,7 @@
 package Cobros.CobroAnticipado;
 
 import Interface.RecibirCtaCteCabeceraCallback;
+import Interface.RecibirCtaCteDetalleCallback;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 
@@ -19,13 +20,13 @@ public class SeleccionarPagoAnticipado {
     private V_seleccionarPagoAnticipado vista;
     private C_seleccionarPagoAnticipado controlador;
 
-    public SeleccionarPagoAnticipado(JDialog dialog, int idCliente, RecibirCtaCteCabeceraCallback callback) {
+    public SeleccionarPagoAnticipado(JDialog dialog, int idCliente, RecibirCtaCteDetalleCallback callback) {
         this.modelo = new M_seleccionarPagoAnticipado(idCliente);
         this.vista = new V_seleccionarPagoAnticipado(dialog);
         this.controlador = new C_seleccionarPagoAnticipado(modelo, vista, callback);
     }
 
-    public SeleccionarPagoAnticipado(JFrame frame, int idCliente, RecibirCtaCteCabeceraCallback callback) {
+    public SeleccionarPagoAnticipado(JFrame frame, int idCliente, RecibirCtaCteDetalleCallback callback) {
         this.modelo = new M_seleccionarPagoAnticipado(idCliente);
         this.vista = new V_seleccionarPagoAnticipado(frame);
         this.controlador = new C_seleccionarPagoAnticipado(modelo, vista, callback);

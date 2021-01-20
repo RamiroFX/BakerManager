@@ -11,6 +11,7 @@ import Entities.Estado;
 import Entities.M_cliente;
 import Entities.M_funcionario;
 import ModeloTabla.CtaCteCabeceraTableModel;
+import ModeloTabla.CtaCteDetalleTableModel;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -21,16 +22,16 @@ import java.util.List;
  */
 public class M_seleccionarPagoAnticipado {
 
-    private CtaCteCabeceraTableModel tmCabecera;
+    private CtaCteDetalleTableModel tmCabecera;
     private E_cuentaCorrienteCabecera cabecera;
 
     public M_seleccionarPagoAnticipado(int idCliente) {
-        this.tmCabecera = new CtaCteCabeceraTableModel();
+        this.tmCabecera = new CtaCteDetalleTableModel();
         this.cabecera = new E_cuentaCorrienteCabecera();
         this.cabecera.getCliente().setIdCliente(idCliente);
     }
 
-    public CtaCteCabeceraTableModel getTM() {
+    public CtaCteDetalleTableModel getTM() {
         return tmCabecera;
     }
 
@@ -40,7 +41,7 @@ public class M_seleccionarPagoAnticipado {
 
     public void consultarAdelantos() {
         int idCliente = this.cabecera.getCliente().getIdCliente();
-        getTM().setList(DB_Cobro.consultarAdelantosSinAsignar(idCliente));
+        getTM().setList(DB_Cobro.consultarAdelantosSinAsignar2(idCliente));
     }
 
 }
