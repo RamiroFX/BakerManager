@@ -186,42 +186,6 @@ public class ExportarEstadoCuentaCliente {
                     rowDetalle.getCell(4).setCellStyle(style4);
                     break;
                 }
-                /*case E_movimientoContable.TIPO_COMPRA: {
-                    debe = debe + (int) unDetalle.getCompra().getTotal();
-                    saldo = debe - haber;
-                    rowDetalle.createCell(0).setCellValue(unDetalle.getCompra().getTiempo());
-                    rowDetalle.getCell(0).setCellStyle(dateCellStyle);
-                    rowDetalle.createCell(1).setCellValue(unDetalle.getTipoDescripcion());
-                    rowDetalle.createCell(2).setCellValue(unDetalle.getCompra().getNro_factura());
-                    rowDetalle.getCell(2).setCellStyle(style4);
-                    rowDetalle.createCell(3).setCellValue(unDetalle.getCompra().getTotal());
-                    rowDetalle.getCell(3).setCellStyle(style4);
-                    rowDetalle.createCell(4).setCellValue(debe);
-                    rowDetalle.getCell(4).setCellStyle(style4);
-                    rowDetalle.createCell(5).setCellValue(0);
-                    rowDetalle.getCell(5).setCellStyle(style4);
-                    rowDetalle.createCell(6).setCellValue(saldo);
-                    rowDetalle.getCell(6).setCellStyle(style4);
-                    break;
-                }*/
- /*case E_movimientoContable.TIPO_PAGO: {
-                    haber = haber + (int) unDetalle.getPago().getMonto();
-                    saldo = debe - haber;
-                    rowDetalle.createCell(0).setCellValue(unDetalle.getPago().getFechaPago());
-                    rowDetalle.getCell(0).setCellStyle(dateCellStyle);
-                    rowDetalle.createCell(1).setCellValue(unDetalle.getTipoDescripcion());
-                    rowDetalle.createCell(2).setCellValue(unDetalle.getPago().getNroRecibo());
-                    rowDetalle.getCell(2).setCellStyle(style4);
-                    rowDetalle.createCell(3).setCellValue(unDetalle.getPago().getMonto());
-                    rowDetalle.getCell(3).setCellStyle(style4);
-                    rowDetalle.createCell(4).setCellValue(0);
-                    rowDetalle.getCell(4).setCellStyle(style4);
-                    rowDetalle.createCell(5).setCellValue(haber);
-                    rowDetalle.getCell(5).setCellStyle(style4);
-                    rowDetalle.createCell(6).setCellValue(saldo);
-                    rowDetalle.getCell(6).setCellStyle(style4);
-                    break;
-                }*/
                 case E_movimientoContable.TIPO_VENTA: {
                     debe = debe + (int) unDetalle.getVenta().getMonto();
                     saldo = debe - haber;

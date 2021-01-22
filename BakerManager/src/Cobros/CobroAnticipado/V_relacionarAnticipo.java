@@ -5,15 +5,12 @@
  */
 package Cobros.CobroAnticipado;
 
-import com.toedter.calendar.JDateChooser;
 import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Insets;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import javax.swing.JButton;
-import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
@@ -39,7 +36,7 @@ public class V_relacionarAnticipo extends JDialog {
 
     //NORTE
     JPanel jpNorth;
-    public JTextField jtfCliente, jtfPagoAnticipado, jtfNroRecibo, jtfClieRuc, 
+    public JTextField jtfCliente, jtfPagoAnticipado, jtfNroRecibo, jtfClieRuc,
             jtfNroFactura;
     public JButton jbCliente, jbSeleccionarPago;
     public JLabel jlNroRecibo;
@@ -105,9 +102,9 @@ public class V_relacionarAnticipo extends JDialog {
         jtfNroRecibo.setEditable(false);
         jlTotalPagado = new JLabel("Total pagado");
         jlTotalPorAsignar = new JLabel("Por asignar");
-        jftTotalPagado= new JFormattedTextField();
+        jftTotalPagado = new JFormattedTextField();
         jftTotalPagado.setEditable(false);
-        jftTotalPorAsignar= new JFormattedTextField();
+        jftTotalPorAsignar = new JFormattedTextField();
         jftTotalPorAsignar.setEditable(false);
         jpNorth.add(jbCliente, "growx");
         jpNorth.add(jtfCliente, "wrap");
@@ -116,9 +113,9 @@ public class V_relacionarAnticipo extends JDialog {
         jpNorth.add(jlNroRecibo);
         jpNorth.add(jtfNroRecibo, "wrap");
         jpNorth.add(jlTotalPagado);
-        jpNorth.add(jftTotalPagado,"growx");
+        jpNorth.add(jftTotalPagado, "growx");
         jpNorth.add(jlTotalPorAsignar);
-        jpNorth.add(jftTotalPorAsignar,"growx");
+        jpNorth.add(jftTotalPorAsignar, "growx");
 //        jpNorth.add(new JComponent() {});
     }
 

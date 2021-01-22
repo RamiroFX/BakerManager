@@ -380,7 +380,7 @@ public class C_gestionCobro implements GestionInterface, RecibirEmpleadoCallback
     }
 
     private void mostrarOpciones() {
-        Object[] options = {"Estado de cuenta", "Retención de I.V.A.", "Pago anticipado", "Relacionar anticipo", "Bancos","Test"};
+        Object[] options = {"Estado de cuenta", "Retención de I.V.A.", "Pago anticipado", "Relacionar anticipo", "Bancos", "Test"};
         int n = JOptionPane.showOptionDialog(this.vista,
                 "Eliga su opción",
                 "Atención",

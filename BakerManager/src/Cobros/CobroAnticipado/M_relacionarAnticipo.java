@@ -6,7 +6,6 @@
 package Cobros.CobroAnticipado;
 
 import DB.DB_Cobro;
-import Entities.E_clienteProducto;
 import Entities.E_cuentaCorrienteCabecera;
 import Entities.E_cuentaCorrienteDetalle;
 import Entities.E_facturaSinPago;

@@ -7,14 +7,7 @@ package Cobros.CobroAnticipado;
 
 import DB.DB_Cobro;
 import Entities.E_cuentaCorrienteCabecera;
-import Entities.Estado;
-import Entities.M_cliente;
-import Entities.M_funcionario;
-import ModeloTabla.CtaCteCabeceraTableModel;
-import ModeloTabla.CtaCteDetalleTableModel;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+import ModeloTabla.AdelantoCobroPendienteTableModel;
 
 /**
  *
@@ -22,16 +15,16 @@ import java.util.List;
  */
 public class M_seleccionarPagoAnticipado {
 
-    private CtaCteDetalleTableModel tmCabecera;
+    private AdelantoCobroPendienteTableModel tmCabecera;
     private E_cuentaCorrienteCabecera cabecera;
 
     public M_seleccionarPagoAnticipado(int idCliente) {
-        this.tmCabecera = new CtaCteDetalleTableModel();
+        this.tmCabecera = new AdelantoCobroPendienteTableModel();
         this.cabecera = new E_cuentaCorrienteCabecera();
         this.cabecera.getCliente().setIdCliente(idCliente);
     }
 
-    public CtaCteDetalleTableModel getTM() {
+    public AdelantoCobroPendienteTableModel getTM() {
         return tmCabecera;
     }
 
