@@ -8,19 +8,25 @@ package Cobros.CobroAnticipado;
 import Cliente.SeleccionarCliente;
 import Cobros.C_seleccionarFacturaPendiente;
 import Cobros.SeleccionarFacturaPendiente;
+import Cobros.SeleccionarMontoFacturaPendiente;
 import Entities.E_cuentaCorrienteCabecera;
 import Entities.E_cuentaCorrienteDetalle;
+import Entities.E_facturaDetalle;
+import Entities.E_facturaSinPago;
 import Entities.M_cliente;
 import Interface.RecibirClienteCallback;
 import Interface.RecibirCtaCteCabeceraCallback;
 import Interface.RecibirCtaCteDetalleCallback;
+import Interface.RecibirFacturaSinPagoCallback;
 import bakermanager.C_inicio;
+import com.nitido.utils.toaster.Toaster;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
+import java.util.List;
 import javax.swing.JOptionPane;
 
 /**
@@ -28,10 +34,12 @@ import javax.swing.JOptionPane;
  * @author Ramiro Ferreira
  */
 public class C_relacionarAnticipo extends MouseAdapter implements ActionListener, KeyListener,
-        RecibirClienteCallback, RecibirCtaCteCabeceraCallback, RecibirCtaCteDetalleCallback {
+        RecibirClienteCallback, RecibirCtaCteCabeceraCallback, RecibirCtaCteDetalleCallback,
+        RecibirFacturaSinPagoCallback {
 
     private static final String VALIDAR_RESPONSABLE_MSG = "Seleccione un cobrador",
             VALIDAR_CLIENTE_MSG = "Seleccione un cliente",
+            VALIDAR_ADELANTO_MSG = "Seleccione un adelanto",
             VALIDAR_NRO_RECIBO_MSG_1 = "Ingrese un Número de recibo",
             VALIDAR_NRO_RECIBO_MSG_2 = "Ingrese solo números enteros en Número de recibo",
             VALIDAR_NRO_RECIBO_MSG_3 = "Ingrese solo números enteros y positivos en Número de recibo",
@@ -95,6 +103,7 @@ public class C_relacionarAnticipo extends MouseAdapter implements ActionListener
         //MOUSE LISTENERS
         this.vista.jtReciboDetalle.addMouseListener(this);
         //KEY LISTENERS
+        this.vista.jbSeleccionarPago.addKeyListener(this);
         this.vista.jbCliente.addKeyListener(this);
         this.vista.jtfCliente.addKeyListener(this);
         this.vista.jtfNroRecibo.addKeyListener(this);
@@ -118,6 +127,15 @@ public class C_relacionarAnticipo extends MouseAdapter implements ActionListener
         int idCliente = modelo.getCliente().getIdCliente();
         if (idCliente < 1) {
             JOptionPane.showMessageDialog(vista, VALIDAR_CLIENTE_MSG, VALIDAR_TITULO, JOptionPane.WARNING_MESSAGE);
+            return false;
+        }
+        return true;
+    }
+
+    private boolean validarAdelanto() {
+        int idAdelanto = modelo.getCabecera().getId();
+        if (idAdelanto < 1) {
+            JOptionPane.showMessageDialog(vista, VALIDAR_ADELANTO_MSG, VALIDAR_TITULO, JOptionPane.WARNING_MESSAGE);
             return false;
         }
         return true;
@@ -149,9 +167,12 @@ public class C_relacionarAnticipo extends MouseAdapter implements ActionListener
         if (!validarCliente()) {
             return;
         }
+        if (!validarAdelanto()) {
+            return;
+        }
         int idCliente = modelo.getCliente().getIdCliente();
-        SeleccionarFacturaPendiente sc = new SeleccionarFacturaPendiente(this.vista, idCliente, C_seleccionarFacturaPendiente.TIPO_COBRO);
-        sc.setCallback(this);
+        SeleccionarFacturaPendiente sc = new SeleccionarFacturaPendiente(this.vista, idCliente, C_seleccionarFacturaPendiente.TIPO_DIRECTO);
+        sc.setFacturaSinPagoCallback(this);
         sc.mostrarVista();
     }
 
@@ -193,7 +214,13 @@ public class C_relacionarAnticipo extends MouseAdapter implements ActionListener
     private void guardar() {
         modelo.guardar();
         modelo.getTm().getList().clear();
+        mostrarMensaje();
         cerrar();
+    }
+
+    private void mostrarMensaje() {
+        Toaster t = new Toaster();
+        t.showToaster("Relacionamiento realizado");
     }
 
     @Override
@@ -222,6 +249,36 @@ public class C_relacionarAnticipo extends MouseAdapter implements ActionListener
 
     @Override
     public void keyPressed(KeyEvent e) {
+        switch (e.getKeyCode()) {
+            case KeyEvent.VK_ESCAPE: {
+                cerrar();
+                break;
+            }
+            case KeyEvent.VK_F1: {
+                if (vista.jbAceptar.isEnabled()) {
+                    guardar();
+                }
+                break;
+            }
+            case KeyEvent.VK_F3: {
+                if (vista.jbCliente.isEnabled()) {
+                    invocarVistaSeleccionCliente();
+                }
+                break;
+            }
+            case KeyEvent.VK_F4: {
+                if (vista.jbAgregarFactura.isEnabled()) {
+                    invocarVistaSeleccionFacturaPendiente();
+                }
+                break;
+            }
+            case KeyEvent.VK_F5: {
+                if (vista.jbSeleccionarPago.isEnabled()) {
+                    invocarVistaSeleccionPagoAdelantado();
+                }
+                break;
+            }
+        }
     }
 
     @Override
@@ -266,5 +323,24 @@ public class C_relacionarAnticipo extends MouseAdapter implements ActionListener
             return;
         }
         sumarDetalle();
+    }
+
+    @Override
+    public void recibirVentaPendientePago(E_facturaSinPago facturaCabecera, List<E_facturaDetalle> facturaDetalle) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void recibirFacturaCabeceraPendientePago(E_facturaSinPago facturaCabecera) {
+        SeleccionarMontoFacturaPendiente asd = new SeleccionarMontoFacturaPendiente(vista);
+        asd.inicializarVista(facturaCabecera);
+        asd.setCallback(this);
+        asd.mostrarVista();
+    }
+
+    @Override
+    public void recibirFacturaDetallePendientePago(List<E_facturaDetalle> facturaDetalle) {
+        System.err.println("facturaDetalle: " + facturaDetalle);
+
     }
 }

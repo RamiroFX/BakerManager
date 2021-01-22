@@ -6,12 +6,11 @@
 package bauplast.desperdicio;
 
 import DB.DB_Produccion;
-import DB.DB_Producto;
 import DB.DB_manager;
 import Entities.E_produccionCabecera;
 import Entities.E_produccionDesperdicioCabecera;
 import Entities.E_produccionDetalle;
-import Entities.E_productoClasificacion;
+import Entities.E_produccionTipoBaja;
 import Entities.Estado;
 import Entities.M_producto;
 import MenuPrincipal.DatosUsuario;
@@ -57,6 +56,10 @@ public class M_crearDesperdicioRapido {
         return DB_manager.obtenerEstados();
     }
 
+    public ArrayList<E_produccionTipoBaja> obtenerTipoBajas() {
+        return DB_Produccion.obtenerProduccionTipoBaja();
+    }
+
     public String obtenerFuncionario() {
         return this.produccionDesperdicioCabecera.getProduccionCabecera().getFuncionarioSistema().getNombre();
     }
@@ -88,7 +91,7 @@ public class M_crearDesperdicioRapido {
         consultarProduccion();
     }
 
-    public void guardar() {        
+    public void guardar() {
         DB_Produccion.insertarDesperdicioCabecera(produccionDesperdicioCabecera, getDesperdicioTM().getList());
     }
 

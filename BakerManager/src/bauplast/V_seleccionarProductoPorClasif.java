@@ -8,6 +8,8 @@ import Entities.Estado;
 import Entities.ProductoCategoria;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
+import java.awt.Point;
+import java.awt.Toolkit;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
@@ -37,12 +39,25 @@ public class V_seleccionarProductoPorClasif extends JDialog {
     public V_seleccionarProductoPorClasif(JDialog main) {
         super(main, "Seleccionar producto", true);
         setSize(1200, 400);
-        setLocationRelativeTo(main);
+        setLocation(establecerPosicion());
         initComp();
         getContentPane().setLayout(new BorderLayout());
         getContentPane().add(jpTop, BorderLayout.NORTH);
         getContentPane().add(jspProducto, BorderLayout.CENTER);
         getContentPane().add(jpBotones, BorderLayout.SOUTH);
+    }
+
+    private Point establecerPosicion() {
+        int screenWidth = Toolkit.getDefaultToolkit().getScreenSize().width;
+        int screenHeight = Toolkit.getDefaultToolkit().getScreenSize().height;
+
+        int width = this.getWidth();
+        //int height = this.getHeight();
+
+        int x = ((screenWidth - width) / 2);
+        int y = (int) Math.round((screenHeight * 0.8) / 2);
+
+        return new Point(x, y);
     }
 
     private void initTop() {

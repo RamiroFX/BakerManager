@@ -128,6 +128,39 @@ public class DB_Produccion {
         return list;
     }
 
+    public static ArrayList<E_produccionTipoBaja> obtenerProduccionTipoBaja() {
+        ArrayList<E_produccionTipoBaja> list = null;
+        String q = "SELECT *  "
+                + "FROM PRODUCCION_TIPO_BAJA;";
+        try {
+            st = DB_manager.getConection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            rs = st.executeQuery(q);
+            list = new ArrayList();
+            while (rs.next()) {
+                E_produccionTipoBaja tiop = new E_produccionTipoBaja();
+                tiop.setId(rs.getInt("id_produccion_tipo_baja"));
+                tiop.setDescripcion(rs.getString("descripcion"));
+                list.add(tiop);
+            }
+        } catch (SQLException ex) {
+            Logger lgr = Logger.getLogger(DB_Produccion.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (st != null) {
+                    st.close();
+                }
+            } catch (SQLException ex) {
+                Logger lgr = Logger.getLogger(DB_Produccion.class.getName());
+                lgr.log(Level.WARNING, ex.getMessage(), ex);
+            }
+        }
+        return list;
+    }
+
     public static int insertarProduccion(E_produccionCabecera produccionCabecera, List<E_produccionDetalle> detalle) {
 
         String INSERT_CABECERA = "INSERT INTO produccion_cabecera(nro_orden_trabajo, fecha_produccion, id_funcionario_responsable, id_funcionario_usuario, id_produccion_tipo)VALUES( ?, ?, ?, ?, ?);";

@@ -25,6 +25,8 @@ public class M_relacionarAnticipo {
     CtaCteDetalleTableModel tm;
 
     public M_relacionarAnticipo() {
+        this.cabecera = new E_cuentaCorrienteCabecera();
+        this.cabecera.setId(-1);
         this.cliente = new M_cliente();
         this.cliente.setIdCliente(-1);
         this.tm = new CtaCteDetalleTableModel();

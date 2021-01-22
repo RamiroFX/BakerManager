@@ -11,7 +11,7 @@ package Entities;
  */
 public class E_produccionTipoBaja {
 
-    public static final int PRODUCCION = 1, DESPERDICIO = 2, RECUPERADO = 3;
+    public static final int PRODUCCION = 1, DESPERDICIO = 2, RECUPERADO = 3, VENTA = 4;
 
     private int id;
     private String descripcion;
@@ -66,7 +66,7 @@ public class E_produccionTipoBaja {
         }
 
         // typecast o to Complex so that we can compare data members  
-        E_produccionTipo c = (E_produccionTipo) o;
+        E_produccionTipoBaja c = (E_produccionTipoBaja) o;
 
         // Compare the data members and return accordingly  
         return this.getDescripcion().equals(c.getDescripcion());

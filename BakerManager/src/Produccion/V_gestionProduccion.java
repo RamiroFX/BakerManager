@@ -152,7 +152,7 @@ public class V_gestionProduccion extends JInternalFrame {
         jbCrearDesperdicio.setName("crear desperdicio produccion");
         jbCrearDesperdicio.setMargin(inset);
         jbCrearDesperdicio.setFont(CommonFormat.fuente);
-        jbCrearDesperdicioRapido = new JButton("Desperdicio rápido");
+        jbCrearDesperdicioRapido = new JButton("Baja de producción");
         jbCrearDesperdicioRapido.setName("crear desperdicio rapido produccion");
         jbCrearDesperdicioRapido.setMargin(inset);
         jbCrearDesperdicioRapido.setFont(CommonFormat.fuente);

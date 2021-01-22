@@ -5,10 +5,12 @@
  */
 package bauplast.desperdicio;
 
+import Entities.E_produccionTipoBaja;
 import com.toedter.calendar.JDateChooser;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -27,7 +29,7 @@ import net.miginfocom.swing.MigLayout;
  */
 class V_crearDesperdicioRapido extends JDialog {
 
-    public static final String UPDATE_TITLE = "Ver/Modificar Desperdicio";
+    public static final String UPDATE_TITLE = "Ver/Modificar Baja de producción";
     public static final String JB_ADD_WASTE = "Agregar desperdicio",
             JB_ADD_WASTE_POST = "Agregar desperdicio Posterior",
             JB_UPDATE_WASTE = "Modificar desperdicio",
@@ -48,6 +50,7 @@ class V_crearDesperdicioRapido extends JDialog {
     public JButton jbFuncionario;
     public JLabel jlFechaDesperdicio;
     public JDateChooser jdcFechaDesperdicio;
+    public JComboBox<E_produccionTipoBaja> jcbTipoBaja;
     //CENTRO
     JPanel jpCenter;
     //MATERIA PRIMA
@@ -59,7 +62,7 @@ class V_crearDesperdicioRapido extends JDialog {
     public JButton jbAceptar, jbSalir;
 
     public V_crearDesperdicioRapido(JFrame frame) {
-        super(frame, "Crear desperdicio", JDialog.ModalityType.APPLICATION_MODAL);
+        super(frame, "Baja de producción", JDialog.ModalityType.APPLICATION_MODAL);
         setSize(900, 700);
         setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
         initComponents();
@@ -84,6 +87,7 @@ class V_crearDesperdicioRapido extends JDialog {
         jtfFuncionario.setEditable(false);
         jlFechaDesperdicio = new JLabel("Fecha");
         jtfObservacion = new JTextField(30);
+        jcbTipoBaja = new JComboBox<>();
 
         jdcFechaDesperdicio = new JDateChooser();
         jdcFechaDesperdicio.setPreferredSize(new Dimension(150, 20));
@@ -91,8 +95,10 @@ class V_crearDesperdicioRapido extends JDialog {
         jpNorth1.add(jtfFuncionario);
         jpNorth1.add(jlFechaDesperdicio);
         jpNorth1.add(jdcFechaDesperdicio, "wrap");
+        jpNorth1.add(new JLabel("Tipo de baja"));
+        jpNorth1.add(jcbTipoBaja, "wrap");
         jpNorth1.add(new JLabel("Observación"));
-        jpNorth1.add(jtfObservacion,"pushx, growx, spanx");
+        jpNorth1.add(jtfObservacion, "pushx, growx, spanx");
     }
 
     private void initCenter() {
@@ -105,13 +111,13 @@ class V_crearDesperdicioRapido extends JDialog {
         jtDesperdicio.getTableHeader().setReorderingAllowed(false);
         jtDesperdicio.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         jspDesperdicio = new JScrollPane(jtDesperdicio);
-        jbSeleccionarDesperdicio = new JButton("Agregar recuperado");
+        jbSeleccionarDesperdicio = new JButton("Agregar");
         jbSeleccionarDesperdicio.setName(JB_ADD_RECOVERED_MATERIAL);
         jbSeleccionarDesperdicio.setSize(new Dimension(width, height));
-        jbModificarDesperdicio = new JButton("Modificar recuperado");
+        jbModificarDesperdicio = new JButton("Modificar");
         jbModificarDesperdicio.setName(JB_UPDATE_RECOVERED_MATERIAL);
         jbModificarDesperdicio.setSize(new Dimension(width, height));
-        jbEliminarDesperdicio = new JButton("Eliminar recuperado");
+        jbEliminarDesperdicio = new JButton("Eliminar");
         jbEliminarDesperdicio.setName(JB_DELETE_RECOVERED_MATERIAL);
         jbEliminarDesperdicio.setSize(new Dimension(width, height));
         JPanel jpSouthAuxRollos = new JPanel(new MigLayout());

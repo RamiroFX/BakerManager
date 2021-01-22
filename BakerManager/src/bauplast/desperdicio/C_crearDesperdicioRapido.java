@@ -72,6 +72,9 @@ public class C_crearDesperdicioRapido extends MouseAdapter implements ActionList
     private void inicializarVista() {
         this.vista.jdcFechaDesperdicio.setDate(Calendar.getInstance().getTime());
         this.vista.jtfFuncionario.setEditable(false);
+        modelo.obtenerTipoBajas().forEach((unaBaja) -> {
+            this.vista.jcbTipoBaja.addItem(unaBaja);
+        });
     }
 
     private void agregarListeners() {
