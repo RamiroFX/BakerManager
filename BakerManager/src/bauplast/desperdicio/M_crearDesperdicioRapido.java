@@ -57,7 +57,10 @@ public class M_crearDesperdicioRapido {
     }
 
     public ArrayList<E_produccionTipoBaja> obtenerTipoBajas() {
-        return DB_Produccion.obtenerProduccionTipoBaja();
+        ArrayList<E_produccionTipoBaja> tipoBajas = new ArrayList<>();
+        tipoBajas.add(new E_produccionTipoBaja(E_produccionTipoBaja.VENTA, "Ventas"));
+        //return DB_Produccion.obtenerProduccionTipoBaja();
+        return tipoBajas;
     }
 
     public String obtenerFuncionario() {

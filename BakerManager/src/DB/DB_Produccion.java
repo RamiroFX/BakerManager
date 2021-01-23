@@ -3479,4 +3479,70 @@ public class DB_Produccion {
         }
         return (int) sq_cabecera;
     }
+    
+    public static int insertarProduccionBajaPorVenta(E_produccionDesperdicioCabecera desperdicioCabecera, List<E_produccionDetalle> desperdicio) {
+        String INSERT_CABECERA = "INSERT INTO produccion_cabecera_desperdicio(id_produccion_cabecera, observacion, tiempo)VALUES(?, ?, ?);";
+        //LA SGBD SE ENCARGA DE INSERTAR EL TIMESTAMP.
+        String INSERT_DETALLE = "INSERT INTO produccion_desperdicio(id_produccion_cabecera_desperdicio, id_producto, id_produccion_tipo_baja, cantidad, observacion, id_produccion_detalle)VALUES (?, ?, ?, ?, ?, ?);";
+        long sq_cabecera = -1L;
+        try {
+            DB_manager.getConection().setAutoCommit(false);
+            pst = DB_manager.getConection().prepareStatement(INSERT_CABECERA, PreparedStatement.RETURN_GENERATED_KEYS);
+            pst.setNull(1, Types.INTEGER);
+            if (desperdicioCabecera.getObservacion() == null || desperdicioCabecera.getObservacion().trim().isEmpty()) {
+                pst.setNull(2, Types.VARCHAR);
+            } else {
+                pst.setString(2, desperdicioCabecera.getObservacion());
+            }
+            pst.setTimestamp(3, new Timestamp(desperdicioCabecera.getTiempo().getTime()));
+            pst.executeUpdate();
+            rs = pst.getGeneratedKeys();
+            if (rs != null && rs.next()) {
+                sq_cabecera = rs.getLong(1);
+            }
+            pst.close();
+            rs.close();
+            /*
+            DESPERDICIO
+            id_produccion_cabecera_desperdicio, id_producto, id_produccion_tipo_baja, cantidad, observacion
+             */
+            for (E_produccionDetalle unDesperdicio : desperdicio) {
+                pst = DB_manager.getConection().prepareStatement(INSERT_DETALLE);
+                pst.setInt(1, (int) sq_cabecera);
+                pst.setInt(2, unDesperdicio.getProducto().getId());
+                pst.setInt(3, E_produccionTipoBaja.VENTA);
+                pst.setDouble(4, unDesperdicio.getCantidad());
+                pst.setNull(5, Types.VARCHAR);
+                pst.setNull(6, Types.INTEGER);
+                pst.executeUpdate();
+                pst.close();
+            }
+            DB_manager.establecerTransaccion();
+        } catch (SQLException ex) {
+            System.out.println(ex.getNextException());
+            if (DB_manager.getConection() != null) {
+                try {
+                    DB_manager.getConection().rollback();
+                } catch (SQLException ex1) {
+                    Logger lgr = Logger.getLogger(DB_Produccion.class.getName());
+                    lgr.log(Level.WARNING, ex1.getMessage(), ex1);
+                }
+            }
+            Logger lgr = Logger.getLogger(DB_Produccion.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        } finally {
+            try {
+                if (pst != null) {
+                    pst.close();
+                }
+                if (rs != null) {
+                    rs.close();
+                }
+            } catch (SQLException ex) {
+                Logger lgr = Logger.getLogger(DB_Produccion.class.getName());
+                lgr.log(Level.WARNING, ex.getMessage(), ex);
+            }
+        }
+        return (int) sq_cabecera;
+    }
 }

@@ -5,6 +5,7 @@
  */
 package bauplast;
 
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 
 /**
@@ -20,6 +21,12 @@ public class BuscarProduccionDetalle {
     public BuscarProduccionDetalle(JFrame frame) {
         this.modelo = new M_buscarProduccionDetalle();
         this.vista = new V_buscarProduccionDetalle(frame);
+        this.controlador = new C_buscarProduccionDetalle(modelo, vista);
+    }
+
+    public BuscarProduccionDetalle(JDialog dialog) {
+        this.modelo = new M_buscarProduccionDetalle();
+        this.vista = new V_buscarProduccionDetalle(dialog);
         this.controlador = new C_buscarProduccionDetalle(modelo, vista);
     }
 

@@ -286,7 +286,7 @@ public class C_gestionProduccion implements GestionInterface, RecibirEmpleadoCal
         cp.mostrarVista();
     }
 
-    private void buscarProduccion() {
+    private void buscarProduccionRollos() {
         BuscarProduccionDetalle bpc = new BuscarProduccionDetalle(this.c_inicio.vista);
         bpc.mostrarVista();
     }
@@ -351,7 +351,7 @@ public class C_gestionProduccion implements GestionInterface, RecibirEmpleadoCal
         } else if (source.equals(this.vista.jbResumen)) {
             resumenProduccion();
         } else if (source.equals(this.vista.jbBuscarDetalle)) {
-            buscarProduccion();
+            buscarProduccionRollos();
         } else if (source.equals(this.vista.jbBuscarDetalleDesperdicio)) {
             buscarDesperdicio();
         } else if (source.equals(this.vista.jbBuscarMateriaPrimaBaja)) {

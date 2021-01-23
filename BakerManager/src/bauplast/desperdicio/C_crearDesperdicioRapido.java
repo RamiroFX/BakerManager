@@ -11,6 +11,7 @@ import Entities.ProductoCategoria;
 import Interface.RecibirProductoCallback;
 import ModeloTabla.SeleccionarProductoTableModel;
 import Produccion.SeleccionCantidadProductoSimple;
+import bauplast.BuscarProduccionDetalle;
 import bauplast.SeleccionarProductoPorClasif;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -83,6 +84,7 @@ public class C_crearDesperdicioRapido extends MouseAdapter implements ActionList
         this.vista.jbEliminarDesperdicio.addActionListener(this);
         this.vista.jbAceptar.addActionListener(this);
         this.vista.jbSalir.addActionListener(this);
+        this.vista.jcbTipoBaja.addActionListener(this);
     }
 
     private void inicializarLogica() {
@@ -94,7 +96,7 @@ public class C_crearDesperdicioRapido extends MouseAdapter implements ActionList
         esModoCreacion = false;
     }
 
-    private void invocarSeleccionDesperdicio() {
+    private void invocarSeleccionProduccion() {
         ProductoCategoria pc = new ProductoCategoria(E_productoClasificacion.PROD_TERMINADO, E_productoClasificacion.S_MATERIA_PRIMA);
         SeleccionarProductoPorClasif sp = new SeleccionarProductoPorClasif(vista, SeleccionarProductoTableModel.DETALLE);
         sp.setProductoCallback(this);
@@ -102,7 +104,12 @@ public class C_crearDesperdicioRapido extends MouseAdapter implements ActionList
         sp.mostrarVista();
     }
 
-    private void invocarModificarRecuperados() {
+    private void buscarProduccion() {
+        BuscarProduccionDetalle bpc = new BuscarProduccionDetalle(this.vista);
+        bpc.mostrarVista();
+    }
+
+    private void invocarModificarroduccion() {
         int index = vista.jtDesperdicio.getSelectedRow();
         if (index > -1) {
             M_producto producto = modelo.getDesperdicioTM().getList().get(index).getProducto();
@@ -116,7 +123,7 @@ public class C_crearDesperdicioRapido extends MouseAdapter implements ActionList
         }
     }
 
-    private void eliminarRecuperado() {
+    private void eliminarProduccion() {
         int index = vista.jtDesperdicio.getSelectedRow();
         if (index > -1) {
             if (esModoCreacion) {
@@ -162,6 +169,14 @@ public class C_crearDesperdicioRapido extends MouseAdapter implements ActionList
         return true;
     }
 
+    private boolean validarCambioTipoBaja() {
+        if (!modelo.getDesperdicioTM().getList().isEmpty()) {
+            JOptionPane.showMessageDialog(vista, "Vacíe la selección antes de cambiar el tipo de baja", "Atención", JOptionPane.WARNING_MESSAGE);
+            return false;
+        }
+        return true;
+    }
+
     private void guardar() {
         if (!esModoCreacion) {
             return;
@@ -187,16 +202,19 @@ public class C_crearDesperdicioRapido extends MouseAdapter implements ActionList
     public void actionPerformed(ActionEvent e) {
         Object source = e.getSource();
         if (source.equals(vista.jbSeleccionarDesperdicio)) {
-            invocarSeleccionDesperdicio();
+            buscarProduccion();
         }
         if (source.equals(vista.jbModificarDesperdicio)) {
-            invocarModificarRecuperados();
+            invocarModificarroduccion();
         }
         if (source.equals(vista.jbEliminarDesperdicio)) {
-            eliminarRecuperado();
+            eliminarProduccion();
         }
         if (source.equals(vista.jbAceptar)) {
             guardar();
+        }
+        if (source.equals(vista.jcbTipoBaja)) {
+            validarCambioTipoBaja();
         }
         if (source.equals(vista.jbSalir)) {
             cerrar();
