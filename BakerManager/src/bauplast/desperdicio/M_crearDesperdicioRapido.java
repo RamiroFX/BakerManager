@@ -9,12 +9,11 @@ import DB.DB_Produccion;
 import DB.DB_manager;
 import Entities.E_produccionCabecera;
 import Entities.E_produccionDesperdicioCabecera;
-import Entities.E_produccionDetalle;
+import Entities.E_produccionFilm;
 import Entities.E_produccionTipoBaja;
 import Entities.Estado;
-import Entities.M_producto;
 import MenuPrincipal.DatosUsuario;
-import ModeloTabla.ProduccionDetalleTableModel;
+import ModeloTabla.ProduccionRolloTableModel;
 import java.util.ArrayList;
 
 /**
@@ -24,12 +23,12 @@ import java.util.ArrayList;
 public class M_crearDesperdicioRapido {
 
     E_produccionDesperdicioCabecera produccionDesperdicioCabecera;
-    ProduccionDetalleTableModel desperdicioTM;
+    ProduccionRolloTableModel desperdicioTM;
 
     public M_crearDesperdicioRapido() {
         this.produccionDesperdicioCabecera = new E_produccionDesperdicioCabecera();
         this.produccionDesperdicioCabecera.getProduccionCabecera().setFuncionarioSistema(DatosUsuario.getRol_usuario().getFuncionario());
-        this.desperdicioTM = new ProduccionDetalleTableModel(ProduccionDetalleTableModel.SIMPLE);
+        this.desperdicioTM = new ProduccionRolloTableModel();
     }
 
     public void setProduccionCabecera(E_produccionCabecera pc) {
@@ -44,11 +43,11 @@ public class M_crearDesperdicioRapido {
         this.produccionDesperdicioCabecera = produccionCabecera;
     }
 
-    public ProduccionDetalleTableModel getDesperdicioTM() {
+    public ProduccionRolloTableModel getDesperdicioTM() {
         return desperdicioTM;
     }
 
-    public void setDesperdicioTM(ProduccionDetalleTableModel desperdicioTM) {
+    public void setDesperdicioTM(ProduccionRolloTableModel desperdicioTM) {
         this.desperdicioTM = desperdicioTM;
     }
 
@@ -67,37 +66,26 @@ public class M_crearDesperdicioRapido {
         return this.produccionDesperdicioCabecera.getProduccionCabecera().getFuncionarioSistema().getNombre();
     }
 
-    public void agregarDesperdicio(double cantidad, M_producto producto) {
-        E_produccionDetalle pd = new E_produccionDetalle();
-        pd.setCantidad(cantidad);
-        pd.setProducto(producto);
-        getDesperdicioTM().agregarDetalle(pd);
+    public void removerBaja(int index) {
+        getDesperdicioTM().quitarDatos(index);
     }
 
-    public void agregarDesperdicioPosterior(double cantidad, M_producto producto) {
-        consultarProduccion();
-    }
-
-    public void modificarDesperdicio(int posicion, double cantidad) {
-        getDesperdicioTM().modificarCantidadDetalle(posicion, cantidad);
-    }
-
-    public void modificarDesperdicioPosterior(int posicion, double cantidad) {
-        consultarProduccion();
-    }
-
-    public void removerDesperdicio(int index) {
-        getDesperdicioTM().quitarDetalle(index);
-    }
-
-    public void removerDesperdicioPosterior(int index) {
+    public void removerBajaPosterior(int index) {
         consultarProduccion();
     }
 
     public void guardar() {
-        DB_Produccion.insertarDesperdicioCabecera(produccionDesperdicioCabecera, getDesperdicioTM().getList());
+        DB_Produccion.insertarBajaFilmPorVenta(getDesperdicioTM().getList());
     }
 
     public void consultarProduccion() {
+    }
+
+    public void agregarBajaFilm(E_produccionFilm detalle) {
+        getDesperdicioTM().agregarDatos(detalle);
+    }
+
+    void modificarBajaFilm(int index, E_produccionFilm detalle) {
+        getDesperdicioTM().modificarDatos(index, detalle);
     }
 }

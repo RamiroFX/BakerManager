@@ -54,7 +54,7 @@ class V_crearDesperdicioRapido extends JDialog {
     //CENTRO
     JPanel jpCenter;
     //MATERIA PRIMA
-    public JTable jtDesperdicio;
+    public JTable jtBajaFilm;
     public JScrollPane jspDesperdicio;
     public JButton jbSeleccionarDesperdicio, jbModificarDesperdicio, jbEliminarDesperdicio;
     //SUR
@@ -107,10 +107,10 @@ class V_crearDesperdicioRapido extends JDialog {
         jpCenter.setBorder(new EtchedBorder(EtchedBorder.RAISED));
 
         //ROLLOS UTILIZADOS
-        jtDesperdicio = new JTable();
-        jtDesperdicio.getTableHeader().setReorderingAllowed(false);
-        jtDesperdicio.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        jspDesperdicio = new JScrollPane(jtDesperdicio);
+        jtBajaFilm = new JTable();
+        jtBajaFilm.getTableHeader().setReorderingAllowed(false);
+        jtBajaFilm.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        jspDesperdicio = new JScrollPane(jtBajaFilm);
         jbSeleccionarDesperdicio = new JButton("Agregar");
         jbSeleccionarDesperdicio.setName(JB_ADD_RECOVERED_MATERIAL);
         jbSeleccionarDesperdicio.setSize(new Dimension(width, height));

@@ -5,14 +5,17 @@
  */
 package bauplast.desperdicio;
 
+import Entities.E_produccionDetalle;
+import Entities.E_produccionFilm;
 import Entities.E_productoClasificacion;
 import Entities.M_producto;
 import Entities.ProductoCategoria;
+import Interface.InterfaceRecibirProduccionFilm;
 import Interface.RecibirProductoCallback;
 import ModeloTabla.SeleccionarProductoTableModel;
 import Produccion.SeleccionCantidadProductoSimple;
-import bauplast.BuscarProduccionDetalle;
 import bauplast.SeleccionarProductoPorClasif;
+import bauplast.crearProductoTerminado.SeleccionarFilm;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -28,7 +31,7 @@ import javax.swing.JOptionPane;
  * @author Ramiro Ferreira
  */
 public class C_crearDesperdicioRapido extends MouseAdapter implements ActionListener, KeyListener,
-        RecibirProductoCallback {
+        InterfaceRecibirProduccionFilm {
 
     private static final String VALIDAR_RESPONSABLE_MSG = "Seleccione un responsable de producción",
             VALIDAR_ORDEN_TRABAJO_MSG_1 = "Ingrese una orden de trabajo",
@@ -67,7 +70,7 @@ public class C_crearDesperdicioRapido extends MouseAdapter implements ActionList
         this.vista.setTitle(V_crearDesperdicio.UPDATE_TITLE);
         this.vista.jtfFuncionario.setEditable(false);
         this.modelo.consultarProduccion();
-        Utilities.c_packColumn.packColumns(vista.jtDesperdicio, 1);
+        Utilities.c_packColumn.packColumns(vista.jtBajaFilm, 1);
     }
 
     private void inicializarVista() {
@@ -89,7 +92,7 @@ public class C_crearDesperdicioRapido extends MouseAdapter implements ActionList
 
     private void inicializarLogica() {
         this.vista.jtfFuncionario.setText(modelo.obtenerFuncionario());
-        this.vista.jtDesperdicio.setModel(modelo.getDesperdicioTM());
+        this.vista.jtBajaFilm.setModel(modelo.getDesperdicioTM());
     }
 
     public void cargarDatos() {
@@ -97,41 +100,57 @@ public class C_crearDesperdicioRapido extends MouseAdapter implements ActionList
     }
 
     private void invocarSeleccionProduccion() {
-        ProductoCategoria pc = new ProductoCategoria(E_productoClasificacion.PROD_TERMINADO, E_productoClasificacion.S_MATERIA_PRIMA);
-        SeleccionarProductoPorClasif sp = new SeleccionarProductoPorClasif(vista, SeleccionarProductoTableModel.DETALLE);
-        sp.setProductoCallback(this);
-        sp.setProductoClasificacion(pc);
-        sp.mostrarVista();
+//        ProductoCategoria pc = new ProductoCategoria(E_productoClasificacion.PROD_TERMINADO, E_productoClasificacion.S_MATERIA_PRIMA);
+//        SeleccionarProductoPorClasif sp = new SeleccionarProductoPorClasif(vista, SeleccionarProductoTableModel.DETALLE);
+//        sp.setProductoCallback(this);
+//        sp.setProductoClasificacion(pc);
+//        sp.mostrarVista();
     }
 
     private void buscarProduccion() {
-        BuscarProduccionDetalle bpc = new BuscarProduccionDetalle(this.vista);
-        bpc.mostrarVista();
+        SeleccionarFilm sf = new SeleccionarFilm(vista);
+        if (!esModoCreacion) {
+            int opcion = JOptionPane.showConfirmDialog(vista, "Al cargar un nuevo rollo ya no se podrá revertir la acción. ¿Está seguro que desea continuar?.", "Atención", JOptionPane.WARNING_MESSAGE, JOptionPane.YES_NO_OPTION);
+            if (opcion != JOptionPane.YES_OPTION) {
+                return;
+            }
+            sf.desactivarModoCreacion();
+        }
+        sf.setCallback(this);
+        sf.mostrarVista();
     }
 
-    private void invocarModificarroduccion() {
-        int index = vista.jtDesperdicio.getSelectedRow();
-        if (index > -1) {
-            M_producto producto = modelo.getDesperdicioTM().getList().get(index).getProducto();
-            SeleccionCantidadProductoSimple scp = new SeleccionCantidadProductoSimple(vista, false);
-            scp.setUpdateIndex(index);
-            scp.setTipo(SeleccionCantidadProductoSimple.PRODUCTO);
-            scp.setProducto(producto);
-            scp.setProductoCallback(this);
+    private void invocarModificarBaja() {
+        int fila = this.vista.jtBajaFilm.getSelectedRow();
+        if (fila > -1) {
+            E_produccionFilm film = modelo.getDesperdicioTM().getList().get(fila);
+            if (!esModoCreacion) {
+//                E_produccionFilm filmAux = modelo.obtenerRollo(fila);
+//                double pesoDisponible = filmAux.getPesoActual();
+//                double pesoActual = film.getPeso();
+//                film.setPeso(filmAux.getPeso());
+//                film.setPesoUtilizado(filmAux.getPesoUtilizado());
+//                film.setPesoActual(pesoDisponible + pesoActual);
+            }
+            SeleccionCantidadProductoSimple scp = new SeleccionCantidadProductoSimple(this.vista, false);
+            scp.setUpdateIndex(fila);
+            scp.setTipo(SeleccionCantidadProductoSimple.ROLLO);
+            scp.setFilm(film);
+            scp.setFilmCallback(this);
             scp.inicializarVista();
             scp.setVisible(true);
         }
     }
 
-    private void eliminarProduccion() {
-        int index = vista.jtDesperdicio.getSelectedRow();
+    private void eliminarBaja() {
+        int index = vista.jtBajaFilm.getSelectedRow();
         if (index > -1) {
             if (esModoCreacion) {
-                modelo.removerDesperdicio(index);
+                modelo.removerBaja(index);
             } else {
                 int opcion = JOptionPane.showConfirmDialog(vista, "Confirmar", "Atención", JOptionPane.WARNING_MESSAGE, JOptionPane.YES_NO_OPTION);
                 if (opcion == JOptionPane.YES_OPTION) {
-                    modelo.removerDesperdicioPosterior(index);
+                    modelo.removerBajaPosterior(index);
                 }
             }
         }
@@ -205,10 +224,10 @@ public class C_crearDesperdicioRapido extends MouseAdapter implements ActionList
             buscarProduccion();
         }
         if (source.equals(vista.jbModificarDesperdicio)) {
-            invocarModificarroduccion();
+            invocarModificarBaja();
         }
         if (source.equals(vista.jbEliminarDesperdicio)) {
-            eliminarProduccion();
+            eliminarBaja();
         }
         if (source.equals(vista.jbAceptar)) {
             guardar();
@@ -238,23 +257,14 @@ public class C_crearDesperdicioRapido extends MouseAdapter implements ActionList
     }
 
     @Override
-    public void recibirProducto(double cantidad, double precio, double descuento, M_producto producto, String observacion) {
-        if (esModoCreacion) {
-            modelo.agregarDesperdicio(cantidad, producto);
-        } else {
-            modelo.agregarDesperdicioPosterior(cantidad, producto);
-        }
-        Utilities.c_packColumn.packColumns(vista.jtDesperdicio, 1);
+    public void recibirFilm(E_produccionFilm detalle) {
+        modelo.agregarBajaFilm(detalle);
+        Utilities.c_packColumn.packColumns(vista.jtBajaFilm, 1);
     }
 
     @Override
-    public void modificarProducto(int posicion, double cantidad, double precio, double descuento, M_producto producto, String observacion) {
-        if (esModoCreacion) {
-            modelo.modificarDesperdicio(posicion, cantidad);
-        } else {
-            //TODO validar estado actual
-            modelo.modificarDesperdicioPosterior(posicion, cantidad);
-        }
-        Utilities.c_packColumn.packColumns(vista.jtDesperdicio, 1);
+    public void modificarFilm(int index, E_produccionFilm detalle) {
+        modelo.modificarBajaFilm(index, detalle);
+        Utilities.c_packColumn.packColumns(vista.jtBajaFilm, 1);
     }
 }
