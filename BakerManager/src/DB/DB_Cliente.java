@@ -21,6 +21,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Types;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -35,6 +36,7 @@ public class DB_Cliente {
     private static PreparedStatement pst = null;
     private static ResultSet rs = null;
 
+    //TODO reemplazar por consultarClienteFX
     public static ResultSetTableModel consultarCliente(String busqueda, boolean isExclusivo, boolean entidad, boolean ruc) {
         ResultSetTableModel rstm = null;
         String SELECT = "SELECT CLIE.ID_CLIENTE \"ID\", CLIE.ENTIDAD  \"Entidad\", CLIE.NOMBRE \"Nombre Cliente\", CLIE.RUC || '-' || CLIE.RUC_IDENTIFICADOR \"R.U.C.\" ";
@@ -107,6 +109,74 @@ public class DB_Cliente {
          }*/
 
         return rstm;
+    }
+
+    public static List<M_cliente> consultarClienteFX(String busqueda, boolean isExclusivo, boolean entidad, boolean ruc) {
+        List<M_cliente> list = new ArrayList<>();
+        String SELECT = "SELECT CLIE.ID_CLIENTE \"ID\", CLIE.ENTIDAD  \"ENTIDAD\", CLIE.NOMBRE \"NOMBRE\", CLIE.RUC \"RUC\", CLIE.RUC_IDENTIFICADOR \"RUC_ID\" ";
+        String FROM = "FROM CLIENTE CLIE ";
+        String WHERE = "WHERE ";
+        String ORDER_BY = " ORDER BY CLIE.ENTIDAD ";
+        if (isExclusivo) {
+            busqueda = busqueda + "%";
+        } else {
+            busqueda = "%" + busqueda + "%";
+        }
+        if (entidad && ruc) {
+            WHERE = WHERE + "LOWER(CLIE.NOMBRE) LIKE ? OR LOWER(CLIE.ENTIDAD) LIKE ? OR LOWER(CLIE.RUC) LIKE ? ";
+        } else if (entidad) {
+            WHERE = WHERE + "LOWER(CLIE.NOMBRE) LIKE ? OR LOWER(CLIE.ENTIDAD) LIKE ? ";
+        } else if (ruc) {
+            WHERE = WHERE + "LOWER(CLIE.RUC) LIKE ? ";
+        } else if (!entidad && !ruc) {
+            WHERE = WHERE + "LOWER(CLIE.NOMBRE) LIKE ? OR LOWER(CLIE.ENTIDAD) LIKE ? OR LOWER(CLIE.RUC) LIKE ? ";
+        }
+        String QUERY = SELECT + FROM + WHERE + ORDER_BY;
+        try {
+            DB_manager.habilitarTransaccionManual();
+            pst = DB_manager.getConection().prepareStatement(QUERY, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            if (entidad && ruc) {
+                pst.setString(1, busqueda);
+                pst.setString(2, busqueda);
+                pst.setString(3, busqueda);
+            } else if (entidad) {
+                pst.setString(1, busqueda);
+                pst.setString(2, busqueda);
+            } else if (ruc) {
+                pst.setString(1, busqueda);
+            } else if (!entidad && !ruc) {
+                pst.setString(1, busqueda);
+                pst.setString(2, busqueda);
+                pst.setString(3, busqueda);
+            }
+            
+            rs = pst.executeQuery();
+            while (rs.next()) {
+                M_cliente cliente = new M_cliente();
+                cliente.setIdCliente(rs.getInt("ID"));
+                cliente.setEntidad(rs.getString("ENTIDAD"));
+                cliente.setNombre(rs.getString("NOMBRE"));
+                cliente.setRuc(rs.getString("RUC"));
+                cliente.setRucId(rs.getString("RUC_ID"));
+                list.add(cliente);
+            }
+        } catch (SQLException ex) {
+            Logger lgr = Logger.getLogger(DB_Cliente.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (pst != null) {
+                    pst.close();
+                }
+            } catch (SQLException ex) {
+                Logger lgr = Logger.getLogger(DB_Cliente.class.getName());
+                lgr.log(Level.WARNING, ex.getMessage(), ex);
+            }
+        }
+        return list;
     }
 
     public static M_cliente obtenerDatosClienteID(int idCliente) {

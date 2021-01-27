@@ -19,11 +19,12 @@ import javax.swing.JMenuItem;
  */
 public class V_BarraMenu extends JMenuBar {
 
-    public JMenu jmInicio, jmAyuda, jmHerramientas, jmOpciones, jmReportes,jmiCobro;
+    public JMenu jmInicio, jmAyuda, jmHerramientas, jmOpciones, jmReportes, jmiCobro;
     public JMenuItem jmiCerrar, jmiAcerca, jmiPersonalizar, jmiConfigImpresion,
             jmiConfigImpresionTicket, jmiConfigImpresionBoleta, jmiEmpresa,
             jmiProduccion, jmiMateriaPrima, jmiGestionTimbrado, jmiVentaPorFecha,
-            jmiCobroPendiente, jmiCobroPendienteVencidos;
+            jmiCobroPendiente, jmiCobroPendienteVencidos, jmiCobroPendientePorCliente,
+            jmiCobroPendientePorClienteVencidos;
     //public JMenuItem  jmiLogIn,jmiLogOut, jmiMenuPrincipal;
     private V_inicio frame; //referencia al frame principal.
     //private boolean loginActivo=true;
@@ -148,9 +149,14 @@ public class V_BarraMenu extends JMenuBar {
         jmiCobro = new JMenu("Cobros");
         jmiCobroPendiente = new JMenuItem("Cobros pendientes");
         jmiCobroPendienteVencidos = new JMenuItem("Cobros pendientes vencidos(30Días)");
+        jmiCobroPendientePorCliente = new JMenuItem("Cobros pendientes por Cliente");
+        jmiCobroPendientePorClienteVencidos = new JMenuItem("Cobros pendientes por Cliente vencidos(30Días)");
         jmReportes.add(jmiCobro);
         jmiCobro.add(jmiCobroPendiente);
         jmiCobro.add(jmiCobroPendienteVencidos);
+        jmiCobro.addSeparator();
+        jmiCobro.add(jmiCobroPendientePorCliente);
+        jmiCobro.add(jmiCobroPendientePorClienteVencidos);
     }
 
 }

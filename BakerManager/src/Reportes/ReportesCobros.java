@@ -5,16 +5,10 @@
  */
 package Reportes;
 
-import DB.DB_Preferencia;
 import DB.DB_manager;
 import Entities.E_Empresa;
 import java.awt.Dimension;
 import java.io.File;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.text.ParseException;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 import javax.swing.JDialog;
@@ -32,7 +26,7 @@ import net.sf.jasperreports.swing.JRViewer;
  */
 public class ReportesCobros {
 
-    public static void cobrosPendientes() {
+    public static void cobrosPendientes(JFrame frame) {
         File file = new File(System.getProperty("user.dir") + "\\src\\Assets\\Reportes\\cobros_pendientes.jasper");
         E_Empresa empresa = DB_manager.obtenerDatosEmpresa();
         try {
@@ -42,7 +36,29 @@ public class ReportesCobros {
             map.put("empresa_descripcion", empresa.getDescripcion());
             JasperPrint jp = JasperFillManager.fillReport(reporte, map, DB_manager.getConection());
             JRViewer jv = new JRViewer(jp);
-            JDialog jf = new JDialog();
+            JDialog jd = new JDialog(frame);
+            jd.getContentPane().add(jv);
+            jd.validate();
+            jd.setVisible(true);
+            jd.setSize(new Dimension(800, 600));
+            jd.setLocation(300, 100);
+            jd.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+        } catch (JRException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    public static void cobrosPendientesVencidos(JFrame frame) {
+        File file = new File(System.getProperty("user.dir") + "\\src\\Assets\\Reportes\\cobros_pendientes_vencidos.jasper");
+        E_Empresa empresa = DB_manager.obtenerDatosEmpresa();
+        try {
+            JasperReport reporte = (JasperReport) JRLoader.loadObject(file);
+            Map<String, Object> map = new HashMap<String, Object>();
+            map.put("empresa_nombre", empresa.getEntidad());
+            map.put("empresa_descripcion", empresa.getDescripcion());
+            JasperPrint jp = JasperFillManager.fillReport(reporte, map, DB_manager.getConection());
+            JRViewer jv = new JRViewer(jp);
+            JDialog jf = new JDialog(frame);
             jf.getContentPane().add(jv);
             jf.validate();
             jf.setVisible(true);
@@ -53,26 +69,14 @@ public class ReportesCobros {
             ex.printStackTrace();
         }
     }
-    
-    public static void cobrosPendientesVencidos() {
-        File file = new File(System.getProperty("user.dir") + "\\src\\Assets\\Reportes\\cobros_pendientes_vencidos.jasper");
-        E_Empresa empresa = DB_manager.obtenerDatosEmpresa();
-        try {
-            JasperReport reporte = (JasperReport) JRLoader.loadObject(file);
-            Map<String, Object> map = new HashMap<String, Object>();
-            map.put("empresa_nombre", empresa.getEntidad());
-            map.put("empresa_descripcion", empresa.getDescripcion());
-            JasperPrint jp = JasperFillManager.fillReport(reporte, map, DB_manager.getConection());
-            JRViewer jv = new JRViewer(jp);
-            JDialog jf = new JDialog();
-            jf.getContentPane().add(jv);
-            jf.validate();
-            jf.setVisible(true);
-            jf.setSize(new Dimension(800, 600));
-            jf.setLocation(300, 100);
-            jf.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-        } catch (JRException ex) {
-            ex.printStackTrace();
-        }
+
+    public static void cobrosPendientesPorCliente(JFrame frame) {
+        FiltroCliente fc = new FiltroCliente(frame, 1, FiltroCliente.PENDIENTE);
+        fc.setVisible(true);
+    }
+
+    public static void cobrosPendientesPorClienteVencidos(JFrame frame) {
+        FiltroCliente fc = new FiltroCliente(frame, 1, FiltroCliente.VENCIDAS);
+        fc.setVisible(true);
     }
 }

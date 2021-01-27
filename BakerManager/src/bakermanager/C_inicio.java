@@ -65,7 +65,10 @@ public class C_inicio implements ActionListener {
         vista.getJMenuBar().jmiVentaPorFecha.addActionListener(this);
         vista.getJMenuBar().jmiCobroPendiente.addActionListener(this);
         vista.getJMenuBar().jmiCobroPendienteVencidos.addActionListener(this);
+        vista.getJMenuBar().jmiCobroPendientePorCliente.addActionListener(this);
+        vista.getJMenuBar().jmiCobroPendientePorClienteVencidos.addActionListener(this);
         vista.addWindowListener(wa);
+        
     }
 
     public void agregarVentana(JInternalFrame mdi) {
@@ -168,16 +171,20 @@ public class C_inicio implements ActionListener {
         } else if (fuente == vista.getJMenuBar().jmiProduccion) {
             GestionProduccion gp = new GestionProduccion(this);
             gp.mostrarVista();
-        }else if (fuente == vista.getJMenuBar().jmiMateriaPrima) {
+        } else if (fuente == vista.getJMenuBar().jmiMateriaPrima) {
             GestionMateriaPrima gp = new GestionMateriaPrima(this);
             gp.mostrarVista();
-        }else if (fuente == vista.getJMenuBar().jmiVentaPorFecha) {
+        } else if (fuente == vista.getJMenuBar().jmiVentaPorFecha) {
             VentaPorFecha gp = new VentaPorFecha(this.vista);
-            gp.mostrarVista();        
-        }else if (fuente == vista.getJMenuBar().jmiCobroPendiente) {
-            Reportes.ReportesCobros.cobrosPendientes();
-        }else if (fuente == vista.getJMenuBar().jmiCobroPendienteVencidos) {
-            Reportes.ReportesCobros.cobrosPendientesVencidos();
+            gp.mostrarVista();
+        } else if (fuente == vista.getJMenuBar().jmiCobroPendiente) {
+            Reportes.ReportesCobros.cobrosPendientes(vista);
+        } else if (fuente == vista.getJMenuBar().jmiCobroPendienteVencidos) {
+            Reportes.ReportesCobros.cobrosPendientesVencidos(vista);
+        } else if (fuente == vista.getJMenuBar().jmiCobroPendientePorCliente) {
+            Reportes.ReportesCobros.cobrosPendientesPorCliente(vista);
+        } else if (fuente == vista.getJMenuBar().jmiCobroPendientePorClienteVencidos) {
+            Reportes.ReportesCobros.cobrosPendientesPorClienteVencidos(vista);
         }
     }
 

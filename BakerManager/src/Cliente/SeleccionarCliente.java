@@ -30,6 +30,11 @@ public class SeleccionarCliente {
     public void setCallback(RecibirClienteCallback rccb) {
         this.controlador.setCallback(rccb);
     }
+    
+    //PARA SELECCIONAR VARIOS CLIENTES SIN QUE SE CIERRE DESPUES DE CADA SELECCION
+    public void establecerSiempreVisible(){
+        this.controlador.establecerSiempreVisible();
+    }
 
     public void mostrarVista() {
         this.controlador.mostrarVista();

@@ -8,6 +8,7 @@ import DB.DB_Cliente;
 import Entities.M_cliente;
 import Interface.InterfaceNotificarCambio;
 import Interface.RecibirClienteCallback;
+import ModeloTabla.ClienteTableModel;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -30,9 +31,12 @@ public class C_seleccionar_cliente extends MouseAdapter implements ActionListene
     M_cliente cliente;
     V_seleccionar_cliente vista;
     RecibirClienteCallback callback;
+    ClienteTableModel tm;
+    boolean cerrar;
 
     public C_seleccionar_cliente(V_seleccionar_cliente vista) {
         this.vista = vista;
+        this.cerrar = true;
         inicializarVista();
         agregarListeners();
     }
@@ -47,9 +51,11 @@ public class C_seleccionar_cliente extends MouseAdapter implements ActionListene
     }
 
     private void inicializarVista() {
+        this.tm = new ClienteTableModel();
         this.vista.jrbInclusivo.setSelected(true);
         this.vista.jbAceptar.setEnabled(false);
-        this.vista.jtCliente.setModel(DB_Cliente.consultarCliente("", true, true, true));
+        this.vista.jtCliente.setModel(tm);
+        displayQueryResults();
         KeyStroke enter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
         this.vista.jtCliente.getInputMap(JTable.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(enter, ENTER_KEY);
         this.vista.jtCliente.getActionMap().put(ENTER_KEY, new AbstractAction() {
@@ -89,9 +95,15 @@ public class C_seleccionar_cliente extends MouseAdapter implements ActionListene
         System.runFinalization();
     }
 
+    public void establecerSiempreVisible() {
+        this.cerrar = false;
+    }
+
     private void seleccionarCliente(M_cliente cliente) {
         this.callback.recibirCliente(cliente);
-        cerrar();
+        if (cerrar) {
+            cerrar();
+        }
     }
 
     private void displayQueryResults() {
@@ -102,7 +114,8 @@ public class C_seleccionar_cliente extends MouseAdapter implements ActionListene
                 boolean entidad = vista.jckbEntidadNombre.isSelected();
                 boolean ruc = vista.jckbRUC.isSelected();
                 boolean exclusivo = vista.jrbExclusivo.isSelected();
-                vista.jtCliente.setModel(DB_Cliente.consultarCliente(cliente.toLowerCase(), exclusivo, entidad, ruc));
+                tm.setList(DB_Cliente.consultarClienteFX(cliente.toLowerCase(), exclusivo, entidad, ruc));
+                Utilities.c_packColumn.packColumns(vista.jtCliente, 1);
             }
         });
     }
@@ -114,9 +127,10 @@ public class C_seleccionar_cliente extends MouseAdapter implements ActionListene
                 int fila = vista.jtCliente.getSelectedRow();
                 int columna = vista.jtCliente.getSelectedColumn();
                 if ((fila > -1) && (columna > -1)) {
-                    idCliente = Integer.valueOf(String.valueOf(vista.jtCliente.getValueAt(fila, 0)));
+                    idCliente = tm.getList().get(fila).getIdCliente();
                     cliente = DB_Cliente.obtenerDatosClienteID(idCliente);
                     seleccionarCliente(cliente);
+                    vista.jtfBuscar.requestFocusInWindow();
                 }
             }
         });
@@ -167,7 +181,7 @@ public class C_seleccionar_cliente extends MouseAdapter implements ActionListene
     public void mouseClicked(MouseEvent e) {
         int fila = this.vista.jtCliente.rowAtPoint(e.getPoint());
         int columna = this.vista.jtCliente.columnAtPoint(e.getPoint());
-        idCliente = Integer.valueOf(String.valueOf(this.vista.jtCliente.getValueAt(fila, 0)));
+        idCliente = tm.getList().get(fila).getIdCliente();
         cliente = DB_Cliente.obtenerDatosClienteID(idCliente);
         if ((fila > -1) && (columna > -1)) {
             this.vista.jbAceptar.setEnabled(true);
