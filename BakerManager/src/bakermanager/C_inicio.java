@@ -63,6 +63,8 @@ public class C_inicio implements ActionListener {
         vista.getJMenuBar().jmiProduccion.addActionListener(this);
         vista.getJMenuBar().jmiMateriaPrima.addActionListener(this);
         vista.getJMenuBar().jmiVentaPorFecha.addActionListener(this);
+        vista.getJMenuBar().jmiCobroPendiente.addActionListener(this);
+        vista.getJMenuBar().jmiCobroPendienteVencidos.addActionListener(this);
         vista.addWindowListener(wa);
     }
 
@@ -171,7 +173,11 @@ public class C_inicio implements ActionListener {
             gp.mostrarVista();
         }else if (fuente == vista.getJMenuBar().jmiVentaPorFecha) {
             VentaPorFecha gp = new VentaPorFecha(this.vista);
-            gp.mostrarVista();
+            gp.mostrarVista();        
+        }else if (fuente == vista.getJMenuBar().jmiCobroPendiente) {
+            Reportes.ReportesCobros.cobrosPendientes();
+        }else if (fuente == vista.getJMenuBar().jmiCobroPendienteVencidos) {
+            Reportes.ReportesCobros.cobrosPendientesVencidos();
         }
     }
 

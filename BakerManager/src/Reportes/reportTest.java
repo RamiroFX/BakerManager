@@ -49,9 +49,9 @@ public class reportTest {
 
     public static void anotherTest() throws ClassNotFoundException, SQLException, JRException, ParseException {
         Class.forName("org.postgresql.Driver");
-        String url = "jdbc:postgresql://localhost:5432/bakermanager";
-        Connection conexion = DriverManager.getConnection(url, "postgres", "postgresql");
-        File file = new File(System.getProperty("user.dir") + "\\src\\Assets\\Reportes\\ResumenComprasSimpleCategoria.jasper");
+        String url = "jdbc:postgresql://localhost:5432/bauplast";
+        Connection conexion = DriverManager.getConnection(url, "postgres", "postgres");
+        File file = new File(System.getProperty("user.dir") + "\\src\\Assets\\Reportes\\cobros_pendientes.jasper");
         //File file = new File(System.getProperty("user.dir") + "\\src\\Assets\\Reportes\\ResumenVentasSimpleCategoria.jasper");
         JasperReport reporte = (JasperReport) JRLoader.loadObject(file);
 
@@ -74,9 +74,11 @@ public class reportTest {
         calendarEnd.set(Calendar.MILLISECOND, 250);
         try {
             Map<String, Object> map = new HashMap<String, Object>();
-            map.put("sDate", new Timestamp(calendarStart.getTime().getTime()));
+            /*map.put("sDate", new Timestamp(calendarStart.getTime().getTime()));
             map.put("eDate", new Timestamp(calendarEnd.getTime().getTime()));
-            map.put("categorias", Arrays.asList(1));
+            map.put("categorias", Arrays.asList(1));*/
+            map.put("empresa", "Bauplast");
+            map.put("descripcion_empresa", "Fabrica de plásticos");
             JasperPrint jp = JasperFillManager.fillReport(reporte, map, conexion);
             JRViewer jv = new JRViewer(jp);
             JFrame jf = new JFrame();
