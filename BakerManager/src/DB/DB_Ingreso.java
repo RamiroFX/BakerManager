@@ -224,7 +224,7 @@ public class DB_Ingreso {
                 + "FC.ID_FACTURA_CABECERA,"//1
                 + "FC.NRO_FACTURA,"//2
                 + "C.ENTIDAD,"//3
-                + "(SELECT NOMBRE FROM PERSONA WHERE PERSONA.ID_PERSONA = F.ID_PERSONA)\"NOMBRE_FUNCIONARIO\","//4
+                + "(SELECT NOMBRE FROM PERSONA, FUNCIONARIO F WHERE PERSONA.ID_PERSONA = F.ID_PERSONA AND F.ID_FUNCIONARIO = FC.ID_FUNCIONARIO)\"NOMBRE_FUNCIONARIO\","//4
                 + "FC.TIEMPO,"//5
                 + "FC.ID_COND_VENTA, " //6
                 + "(SELECT DESCRIPCION FROM TIPO_OPERACION WHERE TIPO_OPERACION.ID_TIPO_OPERACION = FC.ID_COND_VENTA)\"TIPO_OPERACION\" ,"//7
@@ -234,15 +234,17 @@ public class DB_Ingreso {
                 + "(SELECT ID_TIMBRADO FROM TIMBRADO WHERE TIMBRADO.ID_TIMBRADO = FC.ID_TIMBRADO)\"ID_TIMBRADO\",  "//11
                 + "(SELECT NRO_TIMBRADO FROM TIMBRADO WHERE TIMBRADO.ID_TIMBRADO = FC.ID_TIMBRADO)\"NRO_TIMBRADO\",  "//12
                 + "(SELECT NRO_SUCURSAL FROM TIMBRADO WHERE TIMBRADO.ID_TIMBRADO = FC.ID_TIMBRADO)\"NRO_SUCURSAL\",  "//13
-                + "(SELECT NRO_PUNTO_VENTA FROM TIMBRADO WHERE TIMBRADO.ID_TIMBRADO = FC.ID_TIMBRADO)\"NRO_PUNTO_VENTA\"  "//14
+                + "(SELECT NRO_PUNTO_VENTA FROM TIMBRADO WHERE TIMBRADO.ID_TIMBRADO = FC.ID_TIMBRADO)\"NRO_PUNTO_VENTA\",  "//14
+                + "FC.TIEMPO_REGISTRO, "//15                
+                + "(SELECT NOMBRE FROM PERSONA, FUNCIONARIO F WHERE PERSONA.ID_PERSONA = F.ID_PERSONA AND F.ID_FUNCIONARIO = FC.ID_VENDEDOR)\"NOMBRE_VENDEDOR\" "//16
                 + "FROM FACTURA_CABECERA FC, "
                 + "     FACTURA_DETALLE FADE,"
-                + "     CLIENTE C,"
-                + "     FUNCIONARIO F "
+                + "     CLIENTE C "
+                //+ "     FUNCIONARIO F "
                 + "WHERE FC.ID_FACTURA_CABECERA = FADE.ID_FACTURA_CABECERA   "
-                + "AND FC.ID_CLIENTE = C.ID_CLIENTE "
-                + "AND FC.ID_FUNCIONARIO = F.ID_FUNCIONARIO ";
-        String groupBy = " GROUP BY FC.ID_FACTURA_CABECERA,FC.NRO_FACTURA, C.ENTIDAD, FC.TIEMPO,F.ID_PERSONA, FC.ID_COND_VENTA ";
+                + "AND FC.ID_CLIENTE = C.ID_CLIENTE ";
+                //+ "AND FC.ID_FUNCIONARIO = F.ID_FUNCIONARIO ";
+        String groupBy = " GROUP BY FC.ID_FACTURA_CABECERA,FC.NRO_FACTURA, C.ENTIDAD, FC.TIEMPO, FC.ID_COND_VENTA ";
         String orderBy = "ORDER BY FC.TIEMPO";
         if (conFechas) {
             query = query + "AND FC.TIEMPO BETWEEN ?  AND ? ";
@@ -304,8 +306,10 @@ public class DB_Ingreso {
                 estado.setDescripcion(rs.getString(10));
                 M_cliente cliente = new M_cliente();
                 cliente.setEntidad(rs.getString(3));
-                M_funcionario f = new M_funcionario();
-                f.setAlias(rs.getString(4));
+                M_funcionario funcionario = new M_funcionario();
+                funcionario.setAlias(rs.getString(4));
+                M_funcionario vendedor = new M_funcionario();
+                vendedor.setAlias(rs.getString(16));
                 E_tipoOperacion tiop = new E_tipoOperacion();
                 tiop.setId(rs.getInt(6));
                 tiop.setDescripcion(rs.getString(7));
@@ -315,7 +319,8 @@ public class DB_Ingreso {
                 fc.setCondVenta(tiop);
                 fc.setNroFactura(rs.getInt(2));
                 fc.setCliente(cliente);
-                fc.setFuncionario(f);
+                fc.setFuncionario(funcionario);
+                fc.setVendedor(vendedor);
                 fc.setTotal(rs.getDouble(8));
                 fc.setEstado(estado);
                 fc.setTimbrado(timbrado);
@@ -719,7 +724,7 @@ public class DB_Ingreso {
     public static int insertarIngresoConFecha(M_facturaCabecera cabecera, ArrayList<M_facturaDetalle> detalle) {
         String INSERT_DETALLE = "INSERT INTO FACTURA_DETALLE(ID_FACTURA_CABECERA, ID_PRODUCTO, CANTIDAD, PRECIO, DESCUENTO, OBSERVACION)VALUES (?, ?, ?, ?, ?, ?);";
         //LA SGBD SE ENCARGA DE INSERTAR EL TIMESTAMP.
-        String INSERT_CABECERA = "INSERT INTO FACTURA_CABECERA(ID_FUNCIONARIO, ID_CLIENTE, ID_COND_VENTA, NRO_FACTURA, ID_TIMBRADO, TIEMPO)VALUES (?, ?, ?, ?, ?, ?);";
+        String INSERT_CABECERA = "INSERT INTO FACTURA_CABECERA(ID_FUNCIONARIO, ID_CLIENTE, ID_COND_VENTA, NRO_FACTURA, ID_TIMBRADO, TIEMPO, ID_VENDEDOR)VALUES (?, ?, ?, ?, ?, ?, ?);";
         String INSERT_CTA_CTE = "INSERT INTO cuenta_corriente(id_cliente, id_factura_cabecera, id_cta_cte_concepto, debito)VALUES (?, ?, ?, ?);";
         long sq_cabecera = -1L;
         try {
@@ -739,6 +744,7 @@ public class DB_Ingreso {
             }
             pst.setInt(5, cabecera.getIdTimbrado());
             pst.setTimestamp(6, cabecera.getTiempo());
+            pst.setInt(7, cabecera.getVendedor().getId_funcionario());
             pst.executeUpdate();
             rs = pst.getGeneratedKeys();
             if (rs != null && rs.next()) {
@@ -824,10 +830,12 @@ public class DB_Ingreso {
         M_facturaCabecera ingreso_cabecera = null;
         String query = "SELECT ID_FACTURA_CABECERA, "
                 + "ID_FUNCIONARIO, "
+                + "ID_VENDEDOR, "
                 + "ID_CLIENTE, "
                 + "TIEMPO, "
                 + "ID_COND_VENTA, "
                 + "NRO_FACTURA, "
+                + "TIEMPO_REGISTRO, "
                 + "ID_TIMBRADO "
                 + "FROM FACTURA_CABECERA "
                 + "WHERE ID_FACTURA_CABECERA = " + idIngresoCabecera;
@@ -843,6 +851,9 @@ public class DB_Ingreso {
                 ingreso_cabecera.setNroFactura(rs.getInt("NRO_FACTURA"));
                 ingreso_cabecera.setTiempo(rs.getTimestamp("TIEMPO"));
                 ingreso_cabecera.setIdTimbrado(rs.getInt("ID_TIMBRADO"));
+                ingreso_cabecera.getVendedor().setId_funcionario(rs.getInt("ID_VENDEDOR"));
+                ingreso_cabecera.setIdTimbrado(rs.getInt("ID_TIMBRADO"));
+                ingreso_cabecera.setTiempoRegistro(rs.getTimestamp("TIEMPO_REGISTRO"));
             }
         } catch (SQLException ex) {
             Logger lgr = Logger.getLogger(DB_Ingreso.class.getName());

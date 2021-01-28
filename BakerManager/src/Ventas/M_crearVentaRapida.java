@@ -14,6 +14,7 @@ import Entities.E_Timbrado;
 import Entities.E_impresionTipo;
 import Entities.M_facturaCabecera;
 import Entities.M_facturaDetalle;
+import Entities.M_funcionario;
 import Entities.M_preferenciasImpresion;
 import Entities.M_producto;
 import Entities.M_telefono;
@@ -81,6 +82,7 @@ public class M_crearVentaRapida {
         this.cabecera = new M_facturaCabecera();
         this.cabecera.setCliente(DB_Cliente.obtenerDatosClienteID(1));//mostrador
         this.cabecera.setFuncionario(DatosUsuario.getRol_usuario().getFuncionario());
+        this.cabecera.setVendedor(DatosUsuario.getRol_usuario().getFuncionario());
         this.cabecera.setIdTimbrado(1);//Timbrado por defecto
         this.cabecera.setIdCondVenta(TipoOperacion.CONTADO);
         try {
@@ -339,7 +341,7 @@ public class M_crearVentaRapida {
         cabeceraMultiple.clear();
     }
 
-    boolean existeProductoPorCodigo(String codigoProducto) {
+    public boolean existeProductoPorCodigo(String codigoProducto) {
         return DB_Producto.existeCodigo(codigoProducto);
     }
 
@@ -412,5 +414,9 @@ public class M_crearVentaRapida {
     public E_Timbrado obtenerTimbradoPredeterminado() {
         int idTimbrado = DB_Preferencia.obtenerPreferenciaGeneral().getIdTimbradoVenta();
         return DB_Timbrado.obtenerTimbrado(idTimbrado);
+    }
+
+    public void establecerVendedor(M_funcionario funcionario) {
+        this.cabecera.setVendedor(funcionario);
     }
 }

@@ -21,7 +21,7 @@ public class VentaPorFecha {
     public VentaPorFecha(JFrame frame) {
         this.modelo = new M_crearVentaRapida();
         this.vista = new V_crearVentaPorFecha(frame, true);
-        this.controlador = new C_crearVentaPorFecha(modelo, vista, frame);
+        this.controlador = new C_crearVentaPorFecha(modelo, vista);
     }
 
     public void mostrarVista() {

@@ -107,12 +107,14 @@ public class C_ver_ingreso implements ActionListener, KeyListener {
     }
 
     private void inicializarVista() {
-        this.vista.setTitle(V_crearVentaRapida.TITLE_READ);
         if (modelo.getIdIngresoCabecera() < 1) {
             modelo.establecerVentaPorNroFactura();
         } else {
             modelo.establecerVentaPorID();
         }
+        String tiempoRegistro = " (Tiempo de registro: " + modelo.getFaca().getTiempoRegistro() + ")";
+        String registradoPor = "(Registrado por: " + modelo.getFaca().getFuncionario().getAlias() + ")";
+        this.vista.setTitle(V_crearVentaRapida.TITLE_READ + tiempoRegistro + " - " + registradoPor);
         modelo.establecerModeloTabla();
         this.vista.jtFacturaDetalle.setModel(modelo.getFadeTM());
         Vector condCompra = obtenerTipoOperacion();

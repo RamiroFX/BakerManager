@@ -16,19 +16,28 @@ public class M_facturaCabecera {
     private int idTimbrado;
     private Integer nroFactura;
     private double total;
-    private Timestamp tiempo;
+    private Timestamp tiempo, tiempoRegistro;
     private M_cliente cliente;
-    private M_funcionario funcionario;
+    private M_funcionario funcionario, vendedor;
     private E_tipoOperacion condVenta;
     private E_Timbrado timbrado;
     private Estado estado;
 
     public M_facturaCabecera() {
         this.funcionario = new M_funcionario();
+        this.vendedor = new M_funcionario();
         this.cliente = new M_cliente();
         this.condVenta = new E_tipoOperacion();
         this.estado = new Estado();
         this.timbrado = new E_Timbrado();
+    }
+
+    public void setVendedor(M_funcionario vendedor) {
+        this.vendedor = vendedor;
+    }
+
+    public M_funcionario getVendedor() {
+        return vendedor;
     }
 
     public M_funcionario getFuncionario() {
@@ -103,6 +112,14 @@ public class M_facturaCabecera {
 
     public void setTiempo(Timestamp tiempo) {
         this.tiempo = tiempo;
+    }
+
+    public Timestamp getTiempoRegistro() {
+        return tiempoRegistro;
+    }
+
+    public void setTiempoRegistro(Timestamp tiempoRegistro) {
+        this.tiempoRegistro = tiempoRegistro;
     }
 
     public Integer getNroFactura() {
