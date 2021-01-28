@@ -22,6 +22,8 @@ import net.miginfocom.swing.MigLayout;
 public class V_crearVentaPorFecha extends V_crearVentaRapida {
 
     JDateChooser jdcFecha;
+    JButton jbVendedor;
+    JTextField jtfVendedor;
 
     public V_crearVentaPorFecha(JFrame frame, boolean esModoCreacion_) {
         super(frame, esModoCreacion_);
@@ -31,7 +33,7 @@ public class V_crearVentaPorFecha extends V_crearVentaRapida {
     public void initNorth() {
         jdcFecha = new JDateChooser();
         jpNorth = new JPanel(new MigLayout());
-        jbCliente = new JButton("Agregar cliente [F3]");
+        jbCliente = new JButton("Selecionar cliente [F3]");
         jbNroFactura = new JButton("Nro. Factura [F5]");
         jtfCliente = new JTextField(30);
         jtfCliente.setEditable(false);
@@ -45,6 +47,9 @@ public class V_crearVentaPorFecha extends V_crearVentaRapida {
         jtfClieDireccion.setEditable(false);
         jtfClieTelefono = new JTextField(30);
         jtfClieTelefono.setEditable(false);
+        jbVendedor = new JButton("Selecionar vendedor [F6]");
+        jtfVendedor = new JTextField(30);
+        jtfVendedor.setEditable(false);
         jpNorth.add(jbCliente);
         jpNorth.add(jtfCliente);
         jpNorth.add(jbNroFactura);
@@ -58,7 +63,9 @@ public class V_crearVentaPorFecha extends V_crearVentaRapida {
         jpNorth.add(new JLabel("Telefono:"));
         jpNorth.add(jtfClieTelefono,"wrap");
         jpNorth.add(new JLabel("Fecha:"));
-        jpNorth.add(jdcFecha, "spanx 2, growx 2");
+        jpNorth.add(jdcFecha, "spanx 2, growx 2, wrap");
+        jpNorth.add(jbVendedor);
+        jpNorth.add(jtfVendedor);
     }
 
 }

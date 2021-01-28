@@ -110,7 +110,7 @@ public class V_crearVentaRapida extends JDialog {
 
     public void initNorth() {
         jpNorth = new JPanel(new MigLayout());
-        jbCliente = new JButton("Agregar cliente [F3]");
+        jbCliente = new JButton("Selecionar cliente [F3]");
         jbNroFactura = new JButton("Nro. Factura [F5]");
         jtfCliente = new JTextField(30);
         jtfCliente.setEditable(false);

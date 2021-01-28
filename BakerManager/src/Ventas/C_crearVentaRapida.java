@@ -6,7 +6,6 @@ package Ventas;
 
 import Cliente.SeleccionarCliente;
 import Configuracion.Timbrado.SeleccionarNroFactura;
-import Configuracion.Timbrado.SeleccionarTimbrado;
 import DB.DB_Cliente;
 import Entities.E_Timbrado;
 import Entities.E_impresionTipo;
