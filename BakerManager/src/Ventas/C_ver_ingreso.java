@@ -14,12 +14,15 @@ import Entities.M_facturaDetalle;
 import Entities.M_telefono;
 import MenuPrincipal.DatosUsuario;
 import Impresora.Impresora;
+import Ventas.VentaPorFecha.V_crearVentaPorFecha;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Vector;
 import javax.swing.JOptionPane;
 
@@ -29,10 +32,10 @@ import javax.swing.JOptionPane;
  */
 public class C_ver_ingreso implements ActionListener, KeyListener {
 
-    public V_crearVentaRapida vista;
+    public V_crearVentaPorFecha vista;
     public M_verIngreso modelo;
 
-    public C_ver_ingreso(M_verIngreso modelo, V_crearVentaRapida vista, int idEgresoCabecera) {
+    public C_ver_ingreso(M_verIngreso modelo, V_crearVentaPorFecha vista, int idEgresoCabecera) {
         this.modelo = modelo;
         this.modelo.setIdEgresoCabecera(idEgresoCabecera);
         this.vista = vista;
@@ -40,7 +43,7 @@ public class C_ver_ingreso implements ActionListener, KeyListener {
         agregarListeners();
     }
 
-    public C_ver_ingreso(M_verIngreso modelo, V_crearVentaRapida vista, int nroFactura, int idTimbrado) {
+    public C_ver_ingreso(M_verIngreso modelo, V_crearVentaPorFecha vista, int nroFactura, int idTimbrado) {
         this.modelo = modelo;
         this.modelo.setNroFactura(nroFactura);
         this.modelo.setIdTimbrado(idTimbrado);
@@ -112,7 +115,8 @@ public class C_ver_ingreso implements ActionListener, KeyListener {
         } else {
             modelo.establecerVentaPorID();
         }
-        String tiempoRegistro = " (Tiempo de registro: " + modelo.getFaca().getTiempoRegistro() + ")";
+        SimpleDateFormat dateFormater = new SimpleDateFormat("dd/MM/YYYY HH:mm:ss");
+        String tiempoRegistro = " (Tiempo de registro: " + dateFormater.format(modelo.getFaca().getTiempoRegistro()) + ")";
         String registradoPor = "(Registrado por: " + modelo.getFaca().getFuncionario().getAlias() + ")";
         this.vista.setTitle(V_crearVentaRapida.TITLE_READ + tiempoRegistro + " - " + registradoPor);
         modelo.establecerModeloTabla();
@@ -152,7 +156,11 @@ public class C_ver_ingreso implements ActionListener, KeyListener {
         String ruc = modelo.getCliente().getRuc() + "-" + modelo.getCliente().getRucId();
         String direccion = modelo.getCliente().getDireccion();
         ArrayList<M_telefono> telefono = DB_Cliente.obtenerTelefonoCliente(modelo.getCliente().getIdCliente());
-        this.vista.jtfCliente.setText(nombre + " (" + entidad + ")");
+        String cliente = entidad;
+        if (nombre != null) {
+            cliente = cliente + " (" + nombre + ")";
+        }
+        this.vista.jtfCliente.setText(cliente);
         this.vista.jtfClieRuc.setText(ruc);
         this.vista.jtfClieDireccion.setText(direccion);
         if (!telefono.isEmpty()) {
@@ -164,6 +172,10 @@ public class C_ver_ingreso implements ActionListener, KeyListener {
             E_impresionTipo tipoFactura = new E_impresionTipo(2, E_impresionTipo.FACTURA_STRING);
             this.vista.jcbTipoVenta.removeItem(tipoFactura);
         }
+        String vendedor = modelo.getFaca().getVendedor().getNombre();
+        Date fechaVenta = modelo.getFaca().getTiempo();
+        this.vista.jtfVendedor.setText(vendedor);
+        this.vista.jdcFecha.setDate(fechaVenta);
         this.vista.jtfCodProd.setEnabled(false);
         this.vista.jbAgregarProducto.setEnabled(false);
         this.vista.jbModificarDetalle.setEnabled(false);
@@ -172,6 +184,7 @@ public class C_ver_ingreso implements ActionListener, KeyListener {
         this.vista.jbCliente.setEnabled(false);
         this.vista.jbAceptar.setEnabled(false);
         this.vista.jbNroFactura.setEnabled(false);
+        this.vista.jbVendedor.setEnabled(false);
         sumarTotal();
     }
 

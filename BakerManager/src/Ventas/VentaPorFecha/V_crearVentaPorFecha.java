@@ -38,6 +38,8 @@ public class V_crearVentaPorFecha extends JDialog {
 
     private static final String INGRESAR_COD_PROD = "Ingresar código de producto";
     private static final String COD_PROD = "Código de producto";
+    private static final String SELECCIONAR_VENDEDOR = "Selecionar vendedor";
+    private static final String SELECCIONAR_FECHA_VENTA = "Selecionar fecha venta";
 
     //NORTE
     public JPanel jpNorth;
@@ -59,9 +61,9 @@ public class V_crearVentaPorFecha extends JDialog {
     JPanel jpSouth;
     public JButton jbAceptar, jbImprimir, jbSalir;
     public boolean esModoCreacion;
-    JDateChooser jdcFecha;
-    JButton jbVendedor;
-    JTextField jtfVendedor;
+    public JDateChooser jdcFecha;
+    public JButton jbVendedor;
+    public JTextField jtfVendedor;
 
     public V_crearVentaPorFecha(JFrame frame, boolean esModoCreacion_) {
         super(frame, TITLE_CREATE, JDialog.ModalityType.APPLICATION_MODAL);
@@ -115,6 +117,8 @@ public class V_crearVentaPorFecha extends JDialog {
 
     public void initNorth() {
         jdcFecha = new JDateChooser();
+        jdcFecha.setName(SELECCIONAR_FECHA_VENTA);
+        jdcFecha.setEnabled(false);
         jpNorth = new JPanel(new MigLayout());
         jbCliente = new JButton("Selecionar cliente [F3]");
         jbNroFactura = new JButton("Nro. Factura [F5]");
@@ -131,6 +135,8 @@ public class V_crearVentaPorFecha extends JDialog {
         jtfClieTelefono = new JTextField(30);
         jtfClieTelefono.setEditable(false);
         jbVendedor = new JButton("Selecionar vendedor [F6]");
+        jbVendedor.setName(SELECCIONAR_VENDEDOR);
+        jbVendedor.setEnabled(false);
         jtfVendedor = new JTextField(30);
         jtfVendedor.setEditable(false);
         jpNorth.add(jbCliente);

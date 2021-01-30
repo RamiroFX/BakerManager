@@ -44,7 +44,7 @@ public class V_crear_egreso extends JDialog {
     public JButton jbAceptar, jbSalir;
 
     public V_crear_egreso(JFrame frame) {
-        super(frame, "Crear egreso", JDialog.ModalityType.APPLICATION_MODAL);
+        super(frame, "Crear compra", JDialog.ModalityType.APPLICATION_MODAL);
         setSize(900, 700);
         setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
         initComponents();

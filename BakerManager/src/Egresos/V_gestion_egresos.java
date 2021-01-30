@@ -43,7 +43,7 @@ public class V_gestion_egresos extends JInternalFrame {
     public JDateChooser jddInicio, jddFinal;
 
     public V_gestion_egresos() {
-        super("Egresos", true, true, true, true);
+        super("Compras", true, true, true, true);
         setSize(950, 600);
         setName("jifGestionEgresos");
         initTop();
@@ -126,7 +126,7 @@ public class V_gestion_egresos extends JInternalFrame {
     private void initBot() {
         jpBot = new JPanel();
         Insets insets = new Insets(10, 10, 10, 10);
-        jbAgregar = new JButton("Crear egreso [F1]");
+        jbAgregar = new JButton("Crear compra [F1]");
         jbAgregar.setName("crear compra");
         jbAgregar.setMargin(insets);
         jbAgregar.setFont(CommonFormat.fuente);
@@ -152,7 +152,7 @@ public class V_gestion_egresos extends JInternalFrame {
         jpBot.add(jbDetalle);
         jpBot.add(jbAnular);
         jpBot.add(jbResumen);
-        jpBot.add(jbMasOpciones);
+        //jpBot.add(jbMasOpciones);
         jpBot.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED), "Opciones"));
     }
 }

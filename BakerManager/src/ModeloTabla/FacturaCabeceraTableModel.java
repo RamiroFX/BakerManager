@@ -24,12 +24,12 @@ public class FacturaCabeceraTableModel extends AbstractTableModel {
     private SimpleDateFormat dateFormater;
     private NumberFormat nfSmall, nfLarge;
     private List<M_facturaCabecera> facturaCabeceraList;
-    private final String[] colNames = {"Id.", "Nro Factura", "Cliente", "Funcionario", "Tiempo", "Total", "Cond. venta"};
+    private final String[] colNames = {"Id.", "Nro Factura", "Cliente", "Vendedor", "Tiempo", "Total", "Cond. venta"};
     private int formato;
 
     public FacturaCabeceraTableModel(int formato) {
         this.formato = formato;
-        this.dateFormater = new SimpleDateFormat("dd/MM/YYYY hh:mm:ss");
+        this.dateFormater = new SimpleDateFormat("dd/MM/YYYY HH:mm:ss");
         this.decimalFormat = new DecimalFormat("#,##0.##");
         this.nfSmall = new DecimalFormat("000");
         this.nfLarge = new DecimalFormat("0000000");
@@ -103,7 +103,7 @@ public class FacturaCabeceraTableModel extends AbstractTableModel {
                 return fc.getCliente().getEntidad();
             }
             case 3: {
-                return fc.getFuncionario().getAlias();
+                return fc.getVendedor().getAlias();
             }
             case 4: {
                 return dateFormater.format(fc.getTiempo());

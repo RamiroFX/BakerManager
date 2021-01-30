@@ -45,7 +45,7 @@ public class Resumen_egreso extends JDialog implements ActionListener {
 
     public Resumen_egreso(C_inicio c_inicio, TableModel tm, String proveedor_entidad, Integer nro_factura, String idEmpleado, Date inicio, Date fin, String tipo_operacion) {
         super(c_inicio.vista, DEFAULT_MODALITY_TYPE);
-        setTitle("Resumen de egresos");
+        setTitle("Resumen de compras");
         setSize(800, 600);
         setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(c_inicio.vista);
@@ -75,7 +75,7 @@ public class Resumen_egreso extends JDialog implements ActionListener {
         jlContado.setHorizontalAlignment(SwingConstants.CENTER);
         jlCredito = new JLabel("Egresos a crédito");
         jlCredito.setHorizontalAlignment(SwingConstants.CENTER);
-        jlTotal = new JLabel("Total egresos");
+        jlTotal = new JLabel("Total compras");
         jlTotal.setHorizontalAlignment(SwingConstants.CENTER);
         jpTotalEgreso.add(jlContado);
         jpTotalEgreso.add(jftTotalEgCont);

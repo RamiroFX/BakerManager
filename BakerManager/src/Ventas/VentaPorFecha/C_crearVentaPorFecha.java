@@ -15,6 +15,7 @@ import Entities.E_impuesto;
 import Entities.M_cliente;
 import Entities.M_facturaDetalle;
 import Entities.M_funcionario;
+import Entities.M_menu_item;
 import Entities.M_producto;
 import Entities.M_telefono;
 import Impresora.Impresora;
@@ -109,9 +110,9 @@ public class C_crearVentaPorFecha implements GestionInterface, InterfaceFacturaD
             this.vista.jtfClieTelefono.setText("");
         }
         this.vista.jtfClieRuc.setText(modelo.obtenerRucCliente());
-        Vector condCompra = modelo.obtenerTipoOperacion();
-        for (int i = 0; i < condCompra.size(); i++) {
-            this.vista.jcbCondVenta.addItem(condCompra.get(i));
+        Vector condVenta = modelo.obtenerTipoOperacion();
+        for (int i = 0; i < condVenta.size(); i++) {
+            this.vista.jcbCondVenta.addItem(condVenta.get(i));
         }
         ArrayList<E_impresionTipo> tipoVenta = modelo.obtenerTipoVenta();
         for (int i = 0; i < tipoVenta.size(); i++) {
@@ -168,6 +169,15 @@ public class C_crearVentaPorFecha implements GestionInterface, InterfaceFacturaD
         this.vista.jcbTipoVenta.addKeyListener(this);
         this.vista.jbNroFactura.addKeyListener(this);
         this.vista.jbVendedor.addKeyListener(this);
+        //AGREGAR ACCESOS
+        for (M_menu_item acceso : DatosUsuario.getRol_usuario().getAccesos()) {
+            if (acceso.getItemDescripcion().equals(vista.jdcFecha.getName())) {
+                this.vista.jdcFecha.setEnabled(true);
+            }
+            if (acceso.getItemDescripcion().equals(vista.jbVendedor.getName())) {
+                this.vista.jbVendedor.setEnabled(true);
+            }
+        }
     }
 
     @Override
@@ -527,7 +537,9 @@ public class C_crearVentaPorFecha implements GestionInterface, InterfaceFacturaD
                 break;
             }
             case KeyEvent.VK_F6: {
-                invocarSeleccionVendedor();
+                if (vista.jbVendedor.isEnabled()) {
+                    invocarSeleccionVendedor();
+                }
                 break;
             }
         }

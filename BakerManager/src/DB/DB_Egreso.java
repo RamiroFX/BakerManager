@@ -4,6 +4,7 @@
  */
 package DB;
 
+import Entities.E_tipoOperacion;
 import Entities.M_egreso_cabecera;
 import Entities.M_egreso_detalle;
 import Entities.M_egreso_detalleFX;
@@ -404,7 +405,7 @@ public class DB_Egreso {
                 + "EGCA.TIEMPO, "
                 + "EGCA.NRO_FACTURA, "
                 + "(SELECT TIOP.DESCRIPCION FROM TIPO_OPERACION TIOP WHERE TIOP.ID_TIPO_OPERACION = EGCA.ID_COND_COMPRA)\"EGCA.ID_COND_COMPRA\", "
-                + "EGCA.ID_COND_COMPRA, "
+                + "EGCA.ID_COND_COMPRA, "//16
                 + "FUNC.ID_FUNCIONARIO, "
                 + "FUNC.ID_PERSONA, "
                 + "FUNC.ALIAS, "
@@ -447,6 +448,9 @@ public class DB_Egreso {
                 funcionario.setObservacion(rs.getString(25));
                 funcionario.setNombre(rs.getString(26));
                 funcionario.setApellido(rs.getString(27));
+                E_tipoOperacion tiop = new E_tipoOperacion();
+                tiop.setId(rs.getInt(16));
+                tiop.setDescripcion(rs.getString(15));
                 egreso_cabecera = new M_egreso_cabecera();
                 egreso_cabecera.setProveedor(proveedor);
                 egreso_cabecera.setFuncionario(funcionario);
@@ -457,6 +461,7 @@ public class DB_Egreso {
                 egreso_cabecera.setNro_factura(rs.getInt(14));
                 egreso_cabecera.setCondVenta(rs.getString(15));
                 egreso_cabecera.setId_condVenta(rs.getInt(16));
+                egreso_cabecera.setCondCompra(tiop);
             }
         } catch (SQLException ex) {
             Logger lgr = Logger.getLogger(DB_Egreso.class.getName());

@@ -79,7 +79,7 @@ public class C_gestionVentas implements GestionInterface, RecibirEmpleadoCallbac
         this.vista.jbDetalle.setEnabled(false);
         this.vista.jbResumen.setEnabled(false);
         this.vista.jbCliente.setEnabled(false);
-        this.vista.jbEmpleado.setEnabled(false);
+        this.vista.jbVendedor.setEnabled(false);
         this.vista.jcbCondVenta.setEnabled(false);
         this.vista.jbAnular.setEnabled(false);
         this.vista.jbFacturar.setEnabled(false);
@@ -103,8 +103,8 @@ public class C_gestionVentas implements GestionInterface, RecibirEmpleadoCallbac
                 this.vista.jtfNroFactura.addActionListener(this);
                 this.vista.jbCliente.setEnabled(true);
                 this.vista.jbCliente.addActionListener(this);
-                this.vista.jbEmpleado.setEnabled(true);
-                this.vista.jbEmpleado.addActionListener(this);
+                this.vista.jbVendedor.setEnabled(true);
+                this.vista.jbVendedor.addActionListener(this);
                 this.vista.jcbCondVenta.setEnabled(true);
                 this.vista.jbBorrar.addActionListener(this);
                 this.vista.jbBuscarDetalle.setEnabled(true);
@@ -142,7 +142,7 @@ public class C_gestionVentas implements GestionInterface, RecibirEmpleadoCallbac
         this.vista.jbDetalle.addKeyListener(this);
         this.vista.jbBuscar.addKeyListener(this);
         this.vista.jbCliente.addKeyListener(this);
-        this.vista.jbEmpleado.addKeyListener(this);
+        this.vista.jbVendedor.addKeyListener(this);
         this.vista.jcbCondVenta.addKeyListener(this);
         this.vista.jbBorrar.addKeyListener(this);
         this.vista.jbBuscarDetalle.addKeyListener(this);
@@ -528,7 +528,7 @@ public class C_gestionVentas implements GestionInterface, RecibirEmpleadoCallbac
             sc.setCallback(this);
             sc.mostrarVista();
         }
-        if (e.getSource().equals(this.vista.jbEmpleado)) {
+        if (e.getSource().equals(this.vista.jbVendedor)) {
             SeleccionarFuncionario sf = new SeleccionarFuncionario(this.c_inicio.vista);
             sf.setCallback(this);
             sf.mostrarVista();

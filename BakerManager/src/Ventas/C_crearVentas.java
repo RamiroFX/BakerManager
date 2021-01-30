@@ -5,6 +5,7 @@
 package Ventas;
 
 import Ventas.Mesas.ConfigurarMesa;
+import Ventas.VentaPorFecha.VentaPorFecha;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -129,13 +130,8 @@ public class C_crearVentas extends MouseAdapter implements ActionListener, KeyLi
     }
 
     private void crearVentaRapida() {
-        CrearVentaRapida crv = new CrearVentaRapida(gestionVentas);
+        VentaPorFecha crv = new VentaPorFecha(gestionVentas.c_inicio.vista);
         crv.mostrarVista();
-        /*SwingUtilities.invokeLater(new Runnable() {//if we remove this block it wont work also (no matter when we call requestFocusInWindow)
-            @Override
-            public void run() {
-            }
-        });*/
     }
 
     public void actualizarTablaMesa() {

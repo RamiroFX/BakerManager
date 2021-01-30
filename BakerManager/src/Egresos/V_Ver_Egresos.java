@@ -57,7 +57,7 @@ class V_Ver_Egresos extends JDialog {
     public V_Ver_Egresos(javax.swing.JDialog parent) {
         super(parent, true);
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("Egresos");
+        setTitle("Compras");
         setModalityType(java.awt.Dialog.ModalityType.APPLICATION_MODAL);
         setSize(new java.awt.Dimension(800, 600));
         initComponents();

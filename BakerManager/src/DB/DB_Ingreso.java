@@ -218,7 +218,7 @@ public class DB_Ingreso {
         return (int) nroFactura;
     }
 
-    public static List<M_facturaCabecera> obtenerIngreso2(Date fechaInicio, Date fechaFinal, int idCliente, int idFuncionario, int idCondVenta, int nroFactura, int idEstado, boolean conFechas) {
+    public static List<M_facturaCabecera> obtenerIngreso2(Date fechaInicio, Date fechaFinal, int idCliente, int idVendedor, int idCondVenta, int nroFactura, int idEstado, boolean conFechas) {
         List<M_facturaCabecera> list = new ArrayList();
         String query = "SELECT "
                 + "FC.ID_FACTURA_CABECERA,"//1
@@ -252,8 +252,8 @@ public class DB_Ingreso {
         if (idCliente > 0) {
             query = query + " AND FC.ID_CLIENTE = ? ";
         }
-        if (idFuncionario > 0) {
-            query = query + " AND FC.ID_FUNCIONARIO = ? ";
+        if (idVendedor > 0) {
+            query = query + " AND FC.ID_VENDEDOR = ? ";
         }
         if (idCondVenta > 0) {
             query = query + " AND FC.ID_COND_VENTA = ? ";
@@ -278,8 +278,8 @@ public class DB_Ingreso {
                 pst.setInt(pos, idCliente);
                 pos++;
             }
-            if (idFuncionario > 0) {
-                pst.setInt(pos, idFuncionario);
+            if (idVendedor > 0) {
+                pst.setInt(pos, idVendedor);
                 pos++;
             }
             if (idCondVenta > 0) {

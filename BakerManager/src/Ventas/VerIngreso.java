@@ -4,6 +4,7 @@
  */
 package Ventas;
 
+import Ventas.VentaPorFecha.V_crearVentaPorFecha;
 import bakermanager.C_inicio;
 import javax.swing.JDialog;
 
@@ -14,18 +15,18 @@ import javax.swing.JDialog;
 public class VerIngreso {
 
     private M_verIngreso modelo;
-    public V_crearVentaRapida vista;
+    public V_crearVentaPorFecha vista;
     public C_ver_ingreso controlador;
 
     public VerIngreso(C_inicio c_inicio, Integer idIngresoCabecera, boolean esModoCreacion) {
         this.modelo = new M_verIngreso();
-        this.vista = new V_crearVentaRapida(c_inicio.vista, esModoCreacion);
+        this.vista = new V_crearVentaPorFecha(c_inicio.vista, esModoCreacion);
         this.controlador = new C_ver_ingreso(this.modelo, this.vista, idIngresoCabecera);
     }
 
     public VerIngreso(JDialog dialog, Integer idIngresoCabecera, boolean esModoCreacion) {
         this.modelo = new M_verIngreso();
-        this.vista = new V_crearVentaRapida(dialog, esModoCreacion);
+        this.vista = new V_crearVentaPorFecha(dialog, esModoCreacion);
         this.controlador = new C_ver_ingreso(this.modelo, this.vista, idIngresoCabecera);
     }
 

@@ -31,7 +31,7 @@ import net.miginfocom.swing.MigLayout;
 public class V_gestionVentas extends JInternalFrame {
 
     public JButton jbBuscar, jbBuscarDetalle, jbBorrar, jbAgregar, jbDetalle,
-            jbResumen, jbCliente, jbEmpleado, jbAnular, jbFacturar,
+            jbResumen, jbCliente, jbVendedor, jbAnular, jbFacturar,
             jbHistorialFacturacion, jbNotasCredito, jbMasOpciones;
     public JTextField jtfNroFactura, jtfCliente, jtfEmpleado;
     public JComboBox<E_tipoOperacion> jcbCondVenta;
@@ -64,7 +64,7 @@ public class V_gestionVentas extends JInternalFrame {
         jtfCliente = new JTextField();
         jtfCliente.setPreferredSize(new Dimension(250, 10));
         jtfCliente.setEditable(false);
-        jbEmpleado = new JButton("Funcionario");
+        jbVendedor = new JButton("Vendedor");
         jtfEmpleado = new JTextField();
         jtfEmpleado.setPreferredSize(new Dimension(250, 10));
         jtfEmpleado.setEditable(false);
@@ -81,7 +81,7 @@ public class V_gestionVentas extends JInternalFrame {
         jpFiltros.add(jddInicio, "growx");
         jpFiltros.add(new JLabel("Cond. compra:"));
         jpFiltros.add(jcbCondVenta, "wrap");
-        jpFiltros.add(jbEmpleado);
+        jpFiltros.add(jbVendedor);
         jpFiltros.add(jtfEmpleado, "growx");
         jpFiltros.add(new JLabel("Fecha final:"));
         jpFiltros.add(jddFinal, "growx");

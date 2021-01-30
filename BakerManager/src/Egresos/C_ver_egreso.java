@@ -6,12 +6,19 @@ package Egresos;
 
 import DB.DB_Egreso;
 import DB.DB_Funcionario;
+import DB.DB_Ingreso;
 import DB.DB_Proveedor;
+import DB.DB_manager;
+import Entities.E_tipoOperacion;
 import Impresora.Impresora;
+import Ventas.V_crearVentaRapida;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.Vector;
 import javax.swing.JOptionPane;
 
 /**
@@ -20,18 +27,18 @@ import javax.swing.JOptionPane;
  */
 class C_ver_egreso implements ActionListener {
 
-    public V_Ver_Egresos vista;
+    public V_crearEgresoPorFecha vista;
     M_Egresos modelo;
     int idEgresoCabecera;
 
-    public C_ver_egreso(V_Ver_Egresos vista, M_Egresos modelo) {
+    public C_ver_egreso(V_crearEgresoPorFecha vista, M_Egresos modelo) {
         this.vista = vista;
         this.modelo = modelo;
         initComp();
         agregarListeners();
     }
 
-    public C_ver_egreso(int idEgresoCabecera, V_Ver_Egresos vista, M_Egresos modelo) {
+    public C_ver_egreso(int idEgresoCabecera, V_crearEgresoPorFecha vista, M_Egresos modelo) {
         this.idEgresoCabecera = idEgresoCabecera;
         this.vista = vista;
         this.modelo = modelo;
@@ -54,14 +61,14 @@ class C_ver_egreso implements ActionListener {
     }
 
     private void sumarTotal() {
-        int cantFilas = this.vista.jtEgresoDetalle.getRowCount();
+        int cantFilas = this.vista.jtProductos.getRowCount();
         Integer totalExenta = 0, total5 = 0, total10 = 0, total = 0;
         for (int i = 0; i < cantFilas; i++) {
-            Integer ivaExenta = Integer.valueOf(String.valueOf(this.vista.jtEgresoDetalle.getValueAt(i, 5)));
+            Integer ivaExenta = Integer.valueOf(String.valueOf(this.vista.jtProductos.getValueAt(i, 5)));
             totalExenta = totalExenta + ivaExenta;
-            Integer iva5 = Integer.valueOf(String.valueOf(this.vista.jtEgresoDetalle.getValueAt(i, 6)));
+            Integer iva5 = Integer.valueOf(String.valueOf(this.vista.jtProductos.getValueAt(i, 6)));
             total5 = total5 + iva5;
-            Integer iva10 = Integer.valueOf(String.valueOf(this.vista.jtEgresoDetalle.getValueAt(i, 7)));
+            Integer iva10 = Integer.valueOf(String.valueOf(this.vista.jtProductos.getValueAt(i, 7)));
             total10 = total10 + iva10;
         }
         total = totalExenta + total5 + total10;
@@ -76,23 +83,28 @@ class C_ver_egreso implements ActionListener {
         this.modelo.egresoDetalles = DB_Egreso.obtenerEgresoDetalles(idEgresoCabecera);
         this.modelo.proveedor = DB_Proveedor.obtenerDatosProveedorID(this.modelo.egreso_cabecera.getId_proveedor());
         this.modelo.empleado = DB_Funcionario.obtenerDatosFuncionarioID(modelo.egreso_cabecera.getId_empleado());
-        this.vista.jtfProveedor.setText(this.modelo.proveedor.getNombre());
+        SimpleDateFormat dateFormater = new SimpleDateFormat("dd/MM/YYYY HH:mm:ss");
+        String tiempoRegistro = " (Tiempo de registro: " + dateFormater.format(modelo.egreso_cabecera.getTiempo()) + ")";
+        String registradoPor = "(Registrado por: " + modelo.empleado.getNombre() + ")";
+        this.vista.setTitle(V_crearEgresoPorFecha.TITLE_READ + tiempoRegistro + " - " + registradoPor);
         this.vista.jtfNroFactura.setText(this.modelo.egreso_cabecera.getNro_factura().toString());
-        this.vista.jtfFuncionario.setText(this.modelo.empleado.getNombre());
+        this.vista.jdcFecha.setDate(modelo.egreso_cabecera.getTiempo());
+        this.vista.jtfProveedor.setText(this.modelo.proveedor.getEntidad());
         this.vista.jtfProvDireccion.setText(this.modelo.proveedor.getDireccion());
-        this.vista.jtfProvRuc.setText(this.modelo.proveedor.getRuc() + "-" + this.modelo.proveedor.getRuc_id());
-        this.vista.jtEgresoDetalle.setModel(DB_Egreso.obtenerEgresoDetalle(idEgresoCabecera));
-        switch (this.modelo.egreso_cabecera.getId_condVenta()) {
-            case (Parametros.TipoOperacion.CONTADO): {
-                this.vista.jrbContado.setSelected(true);
-                break;
-            }
-            case (Parametros.TipoOperacion.CREDITO): {
-                this.vista.jrbCredito.setSelected(true);
-                break;
-            }
+        this.vista.jtfProvRuc.setText(this.modelo.proveedor.getRucCompleto());
+        this.vista.jtProductos.setModel(DB_Egreso.obtenerEgresoDetalle(idEgresoCabecera));        
+        ArrayList<E_tipoOperacion> condVenta = DB_manager.obtenerTipoOperaciones();
+        for (int i = 0; i < condVenta.size(); i++) {
+            this.vista.jcbTipoCompra.addItem(condVenta.get(i));
         }
-        Utilities.c_packColumn.packColumns(this.vista.jtEgresoDetalle, 1);
+        this.vista.jcbTipoCompra.setSelectedItem(modelo.egreso_cabecera.getCondCompra());
+        this.vista.jbAceptar.setVisible(false);
+        this.vista.jbAgregarProv.setEnabled(false);
+        this.vista.jcbTipoCompra.setEnabled(false);
+        this.vista.jbAgregarProducto.setEnabled(false);
+        this.vista.jbModificarDetalle.setEnabled(false);
+        this.vista.jbEliminarDetalle.setEnabled(false);
+        Utilities.c_packColumn.packColumns(this.vista.jtProductos, 1);
         sumarTotal();
     }
 

@@ -413,8 +413,7 @@ public class C_gestionEgresos extends MouseAdapter implements ActionListener, Ke
         } else if (e.getSource() == this.vista.jbBorrar) {
             borrarParametros();
         } else if (e.getSource() == this.vista.jbAgregar) {
-            CrearEgresos crearEgreso = new CrearEgresos(c_inicio);
-            crearEgreso.mostrarVista();
+            crearEgresoConFecha();
         } else if (e.getSource().equals(this.vista.jbResumen)) {
             crearResumen();
         } else if (e.getSource().equals(this.vista.jbGraficos)) {
@@ -423,9 +422,9 @@ public class C_gestionEgresos extends MouseAdapter implements ActionListener, Ke
             verDetalle();
         } else if (e.getSource() == this.vista.jbAnular) {
             anularCompra();
-        } else if (e.getSource().equals(this.vista.jbMasOpciones)) {
+        } /*else if (e.getSource().equals(this.vista.jbMasOpciones)) {
             mostrarOpciones();
-        }
+        }*/
     }
 
     @Override
@@ -461,8 +460,7 @@ public class C_gestionEgresos extends MouseAdapter implements ActionListener, Ke
             case KeyEvent.VK_F1: {
                 for (M_menu_item acceso : accesos) {
                     if (this.vista.jbAgregar.getName().equals(acceso.getItemDescripcion())) {
-                        CrearEgresos crearEgreso = new CrearEgresos(c_inicio);
-                        crearEgreso.mostrarVista();
+                        crearEgresoConFecha();
                         break;
                     }
                 }

@@ -27,13 +27,16 @@ import net.miginfocom.swing.MigLayout;
  * @author Ramiro Ferreira
  */
 public class V_crearEgresoPorFecha extends JDialog {
-    
+
+    public static final String TITLE_READ = "Ver compra";
+    public static final String TITLE_CREATE = "Crear compra";
+    public static final String SELECCIONAR_FECHA_COMPRA = "Selecionar fecha compra";
     //NORTE
     JPanel jpNorth;
     public JTextField jtfProveedor, jtfNroFactura, jtfProvDireccion, jtfProvTelefono, jtfProvRuc;
     public JButton jbAgregarProv;
     public JLabel jlNroFactura;
-    public JComboBox<E_tipoOperacion> jcbTipoVenta;
+    public JComboBox<E_tipoOperacion> jcbTipoCompra;
     public JDateChooser jdcFecha;
     //CENTRO
     JPanel jpCenter;
@@ -44,14 +47,26 @@ public class V_crearEgresoPorFecha extends JDialog {
     public JFormattedTextField jftIva5, jftIva10, jftExenta, jftTotal;
     //SUR
     JPanel jpSouth;
-    public JButton jbAceptar, jbSalir;
+    public JButton jbAceptar, jbSalir, jbImprimir;
 
     public V_crearEgresoPorFecha(JFrame frame) {
-        super(frame, "Crear egreso", JDialog.ModalityType.APPLICATION_MODAL);
+        super(frame, TITLE_CREATE, JDialog.ModalityType.APPLICATION_MODAL);
         setSize(900, 700);
         setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
         initComponents();
         setLocationRelativeTo(frame);
+        getContentPane().setLayout(new BorderLayout());
+        getContentPane().add(jpNorth, BorderLayout.NORTH);
+        getContentPane().add(jpCenter, BorderLayout.CENTER);
+        getContentPane().add(jpSouth, BorderLayout.SOUTH);
+    }
+
+    public V_crearEgresoPorFecha(JDialog dialog) {
+        super(dialog, TITLE_CREATE, JDialog.ModalityType.APPLICATION_MODAL);
+        setSize(900, 700);
+        setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+        initComponents();
+        setLocationRelativeTo(dialog);
         getContentPane().setLayout(new BorderLayout());
         getContentPane().add(jpNorth, BorderLayout.NORTH);
         getContentPane().add(jpCenter, BorderLayout.CENTER);
@@ -71,7 +86,7 @@ public class V_crearEgresoPorFecha extends JDialog {
         jtfProveedor.setEditable(false);
         jlNroFactura = new JLabel("Nro. Factura");
         jtfNroFactura = new JTextField(30);
-        jcbTipoVenta = new JComboBox();
+        jcbTipoCompra = new JComboBox();
         jtfProvRuc = new JTextField(30);
         jtfProvRuc.setEditable(false);
         jtfProvDireccion = new JTextField(30);
@@ -79,12 +94,14 @@ public class V_crearEgresoPorFecha extends JDialog {
         jtfProvTelefono = new JTextField(30);
         jtfProvTelefono.setEditable(false);
         jdcFecha = new JDateChooser();
+        jdcFecha.setName(SELECCIONAR_FECHA_COMPRA);
+        jdcFecha.setEnabled(false);
         jpNorth.add(jbAgregarProv);
         jpNorth.add(jtfProveedor);
         jpNorth.add(jlNroFactura);
         jpNorth.add(jtfNroFactura);
         jpNorth.add(new JLabel("Tipo operación:"));
-        jpNorth.add(jcbTipoVenta, "wrap");
+        jpNorth.add(jcbTipoCompra, "wrap");
         jpNorth.add(new JLabel("R.U.C.:"));
         jpNorth.add(jtfProvRuc);
         jpNorth.add(new JLabel("Direccion:"));
@@ -144,7 +161,11 @@ public class V_crearEgresoPorFecha extends JDialog {
         jbAceptar.setMargin(insets);
         jbSalir = new JButton("Salir [ESC]");
         jbSalir.setMargin(insets);
+        jbImprimir = new JButton("Salir [ESC]");
+        jbImprimir.setMargin(insets);
+        jbImprimir.setVisible(false);
         jpSouth.add(jbAceptar);
+        jpSouth.add(jbImprimir);
         jpSouth.add(jbSalir);
     }
 }

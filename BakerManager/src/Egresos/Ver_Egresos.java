@@ -14,18 +14,18 @@ import javax.swing.JDialog;
 public class Ver_Egresos {
 
     M_Egresos modelo;
-    V_Ver_Egresos vista;
+    V_crearEgresoPorFecha vista;
     C_ver_egreso controlador;
 
     public Ver_Egresos(C_inicio c_inicio, int IdEgresoCabecera) {
         modelo = new M_Egresos();
-        vista = new V_Ver_Egresos(c_inicio.vista);
+        vista = new V_crearEgresoPorFecha(c_inicio.vista);
         controlador = new C_ver_egreso(IdEgresoCabecera, vista, modelo);
     }
 
     public Ver_Egresos(JDialog jdialog, int IdEgresoCabecera) {
         modelo = new M_Egresos();
-        vista = new V_Ver_Egresos(jdialog);
+        vista = new V_crearEgresoPorFecha(jdialog);
         controlador = new C_ver_egreso(IdEgresoCabecera, vista, modelo);
     }
 

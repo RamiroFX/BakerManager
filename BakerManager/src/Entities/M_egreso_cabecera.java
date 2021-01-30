@@ -22,6 +22,7 @@ public class M_egreso_cabecera {
     private Timestamp tiempo;
     private M_proveedor proveedor;
     private M_funcionario funcionario;
+    private E_tipoOperacion condCompra;
 
     public M_egreso_cabecera() {
         this.proveedor = new M_proveedor();
@@ -148,6 +149,14 @@ public class M_egreso_cabecera {
 
     public void setTotal(Integer total) {
         this.total = total;
+    }
+
+    public E_tipoOperacion getCondCompra() {
+        return condCompra;
+    }
+
+    public void setCondCompra(E_tipoOperacion condCompra) {
+        this.condCompra = condCompra;
     }
 
 }

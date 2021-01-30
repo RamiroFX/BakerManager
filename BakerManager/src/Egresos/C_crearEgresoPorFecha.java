@@ -10,11 +10,13 @@ import DB.DB_Proveedor;
 import Entities.E_impuesto;
 import Entities.E_tipoOperacion;
 import Entities.M_egreso_detalle;
+import Entities.M_menu_item;
 import Entities.M_producto;
 import Entities.M_proveedor;
 import Entities.M_telefono;
 import Interface.RecibirProductoCallback;
 import Interface.RecibirProveedorCallback;
+import MenuPrincipal.DatosUsuario;
 import Producto.SeleccionarCantidadProduducto;
 import Producto.SeleccionarProducto;
 import Proveedor.Seleccionar_proveedor;
@@ -60,7 +62,7 @@ public class C_crearEgresoPorFecha extends MouseAdapter implements ActionListene
         this.vista.jbModificarDetalle.addActionListener(this);
         this.vista.jbEliminarDetalle.addActionListener(this);
         this.vista.jbSalir.addActionListener(this);
-        this.vista.jcbTipoVenta.addActionListener(this);
+        this.vista.jcbTipoCompra.addActionListener(this);
         /*
         KEYLISTENERS
          */
@@ -72,11 +74,17 @@ public class C_crearEgresoPorFecha extends MouseAdapter implements ActionListene
         this.vista.jbEliminarDetalle.addKeyListener(this);
         this.vista.jbSalir.addKeyListener(this);
         this.vista.jtfNroFactura.addKeyListener(this);
+        //AGREGAR ACCESOS
+        for (M_menu_item acceso : DatosUsuario.getRol_usuario().getAccesos()) {
+            if (acceso.getItemDescripcion().equals(vista.jdcFecha.getName())) {
+                this.vista.jdcFecha.setEnabled(true);
+            }
+        }
     }
 
     private void initComp() {
         for (E_tipoOperacion item : modelo.obtenerTipoOperaciones()) {
-            this.vista.jcbTipoVenta.addItem(item);
+            this.vista.jcbTipoCompra.addItem(item);
         }
         this.vista.jtProductos.setModel(modelo.getTM());
         this.vista.jbModificarDetalle.setEnabled(false);
@@ -85,7 +93,7 @@ public class C_crearEgresoPorFecha extends MouseAdapter implements ActionListene
 
     private void JCBTipoOperacionHandler() {
         System.out.println("Egresos.C_crearEgresoPorFecha.JCBTipoOperacionHandler()");
-        E_tipoOperacion tipoOperacion = vista.jcbTipoVenta.getItemAt(vista.jcbTipoVenta.getSelectedIndex());
+        E_tipoOperacion tipoOperacion = vista.jcbTipoCompra.getItemAt(vista.jcbTipoCompra.getSelectedIndex());
         switch (tipoOperacion.getId()) {
             //CONTADO
             case E_tipoOperacion.CONTADO: {
@@ -291,7 +299,7 @@ public class C_crearEgresoPorFecha extends MouseAdapter implements ActionListene
             invocarModificarDetalle();
         } else if (e.getSource().equals(this.vista.jbEliminarDetalle)) {
             eliminarCompra(this.vista.jtProductos.getSelectedRow());
-        } else if (e.getSource().equals(this.vista.jcbTipoVenta)) {
+        } else if (e.getSource().equals(this.vista.jcbTipoCompra)) {
             JCBTipoOperacionHandler();
         } else if (e.getSource().equals(this.vista.jbSalir)) {
             cerrar();
