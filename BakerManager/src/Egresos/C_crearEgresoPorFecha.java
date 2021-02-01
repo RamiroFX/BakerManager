@@ -7,6 +7,8 @@ package Egresos;
 
 import DB.DB_Producto;
 import DB.DB_Proveedor;
+import Egresos.SeleccionarTimbrado.SeleccionarNroFacturaCompra;
+import Entities.E_Timbrado;
 import Entities.E_impuesto;
 import Entities.E_tipoOperacion;
 import Entities.M_egreso_detalle;
@@ -16,6 +18,7 @@ import Entities.M_proveedor;
 import Entities.M_telefono;
 import Interface.RecibirProductoCallback;
 import Interface.RecibirProveedorCallback;
+import Interface.RecibirTimbradoVentaCallback;
 import MenuPrincipal.DatosUsuario;
 import Producto.SeleccionarCantidadProduducto;
 import Producto.SeleccionarProducto;
@@ -37,8 +40,8 @@ import javax.swing.JOptionPane;
  *
  * @author Ramiro Ferreira
  */
-public class C_crearEgresoPorFecha extends MouseAdapter implements ActionListener, KeyListener, RecibirProductoCallback,
-        RecibirProveedorCallback {
+public class C_crearEgresoPorFecha extends MouseAdapter implements ActionListener, KeyListener,
+        RecibirProductoCallback, RecibirProveedorCallback, RecibirTimbradoVentaCallback {
 
     private V_crearEgresoPorFecha vista;
     private M_crearEgresoPorFecha modelo;
@@ -63,6 +66,7 @@ public class C_crearEgresoPorFecha extends MouseAdapter implements ActionListene
         this.vista.jbEliminarDetalle.addActionListener(this);
         this.vista.jbSalir.addActionListener(this);
         this.vista.jcbTipoCompra.addActionListener(this);
+        this.vista.jbNroFactura.addActionListener(this);
         /*
         KEYLISTENERS
          */
@@ -74,6 +78,7 @@ public class C_crearEgresoPorFecha extends MouseAdapter implements ActionListene
         this.vista.jbEliminarDetalle.addKeyListener(this);
         this.vista.jbSalir.addKeyListener(this);
         this.vista.jtfNroFactura.addKeyListener(this);
+        this.vista.jbNroFactura.addKeyListener(this);
         //AGREGAR ACCESOS
         for (M_menu_item acceso : DatosUsuario.getRol_usuario().getAccesos()) {
             if (acceso.getItemDescripcion().equals(vista.jdcFecha.getName())) {
@@ -83,6 +88,8 @@ public class C_crearEgresoPorFecha extends MouseAdapter implements ActionListene
     }
 
     private void initComp() {
+        this.vista.jdcFecha.setDate(Calendar.getInstance().getTime());
+        this.vista.jtfNroFactura.setEnabled(false);
         for (E_tipoOperacion item : modelo.obtenerTipoOperaciones()) {
             this.vista.jcbTipoCompra.addItem(item);
         }
@@ -92,7 +99,6 @@ public class C_crearEgresoPorFecha extends MouseAdapter implements ActionListene
     }
 
     private void JCBTipoOperacionHandler() {
-        System.out.println("Egresos.C_crearEgresoPorFecha.JCBTipoOperacionHandler()");
         E_tipoOperacion tipoOperacion = vista.jcbTipoCompra.getItemAt(vista.jcbTipoCompra.getSelectedIndex());
         switch (tipoOperacion.getId()) {
             //CONTADO
@@ -123,24 +129,13 @@ public class C_crearEgresoPorFecha extends MouseAdapter implements ActionListene
     private void insertarEgreso() {
         try {
 
-            if (this.modelo.proveedor.getId() == null) {
+            if (this.modelo.getEgresoCabecera().getProveedor().getId() == null) {
                 JOptionPane.showMessageDialog(vista, "Seleccione un proveedor", "Atención", JOptionPane.WARNING_MESSAGE);
                 return;
             }
-            int nro_factura = -1;
-            try {
-                if (!vista.jtfNroFactura.getText().isEmpty()) {
-                    nro_factura = Integer.valueOf(String.valueOf(vista.jtfNroFactura.getText()));
-                    this.modelo.getEgresoCabecera().setNro_factura(nro_factura);
-                } else {
-                    this.modelo.getEgresoCabecera().setNro_factura(null);
-                }
-            } catch (Exception e) {
-                JOptionPane.showMessageDialog(vista, "El numero de factura debe ser solo numérico", "Atención", JOptionPane.WARNING_MESSAGE);
-                return;
-            }
-            if (this.modelo.existeProveedorNroFactura(this.modelo.proveedor.getId(), nro_factura)) {
-                JOptionPane.showMessageDialog(vista, "La compra con el proveedor y el número de factura seleccionado ya existe", "Error", JOptionPane.ERROR_MESSAGE);
+            if (modelo.validarNroFacturaEnUso()) {
+                javax.swing.JOptionPane.showMessageDialog(this.vista, "El número de factura ingresado se encuentra en uso", "Atención",
+                        javax.swing.JOptionPane.OK_OPTION);
                 return;
             }
             int cantFilas = this.modelo.getTM().getRowCount();
@@ -153,14 +148,13 @@ public class C_crearEgresoPorFecha extends MouseAdapter implements ActionListene
             }
             JCBTipoOperacionHandler();
             int option = JOptionPane.showConfirmDialog(vista, "¿Desea confirmar la compra?", "Atención", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
-            if (option == JOptionPane.YES_OPTION) {
-                this.modelo.getEgresoCabecera().setId_empleado(this.modelo.empleado.getId_funcionario());
-                this.modelo.getEgresoCabecera().setId_proveedor(this.modelo.proveedor.getId());
-                modelo.insertarEgreso();
-                actualizarStock();
-                mostrarMensaje("La compra se registró con éxito.");
-                this.vista.dispose();
+            if (option != JOptionPane.YES_OPTION) {
+                return;
             }
+            modelo.insertarEgreso();
+            actualizarStock();
+            mostrarMensaje("La compra se registró con éxito.");
+            this.vista.dispose();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -184,8 +178,8 @@ public class C_crearEgresoPorFecha extends MouseAdapter implements ActionListene
 
     @Override
     public void recibirProveedor(M_proveedor proveedor) {
-        this.modelo.proveedor = proveedor;
-        this.vista.jtfProveedor.setText(this.modelo.proveedor.getEntidad() + " ( " + this.modelo.proveedor.getNombre() + ")");
+        this.modelo.getEgresoCabecera().setProveedor(proveedor);
+        this.vista.jtfProveedor.setText(this.modelo.getEgresoCabecera().getProveedor().getEntidad() + " ( " + this.modelo.getEgresoCabecera().getProveedor().getNombre() + ")");
         String ruc = "";
         if (proveedor.getRuc() != null) {
             ruc = proveedor.getRuc();
@@ -286,6 +280,16 @@ public class C_crearEgresoPorFecha extends MouseAdapter implements ActionListene
         scp.setVisible(true);
     }
 
+    private void invocarSeleccionarNroFactura() {
+        int idProveedor = modelo.getEgresoCabecera().getProveedor().getId();
+        if (idProveedor < 1) {
+            JOptionPane.showMessageDialog(vista, "Seleccione un proveedor primero", "Atención", JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+        SeleccionarNroFacturaCompra snfc = new SeleccionarNroFacturaCompra(vista, idProveedor, this);
+        snfc.mostrarVista();
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource().equals(this.vista.jbAgregarProv)) {
@@ -301,6 +305,8 @@ public class C_crearEgresoPorFecha extends MouseAdapter implements ActionListene
             eliminarCompra(this.vista.jtProductos.getSelectedRow());
         } else if (e.getSource().equals(this.vista.jcbTipoCompra)) {
             JCBTipoOperacionHandler();
+        } else if (e.getSource().equals(this.vista.jbNroFactura)) {
+            invocarSeleccionarNroFactura();
         } else if (e.getSource().equals(this.vista.jbSalir)) {
             cerrar();
         }
@@ -325,6 +331,10 @@ public class C_crearEgresoPorFecha extends MouseAdapter implements ActionListene
             case KeyEvent.VK_F4: {
                 SeleccionarProducto sp = new SeleccionarProducto(vista, this);
                 sp.mostrarVista();
+                break;
+            }
+            case KeyEvent.VK_F5: {
+                invocarSeleccionarNroFactura();
                 break;
             }
             case KeyEvent.VK_ESCAPE: {
@@ -356,6 +366,22 @@ public class C_crearEgresoPorFecha extends MouseAdapter implements ActionListene
         System.out.println("Egresos.C_crearEgresoPorFecha.modificarProducto()");
         this.modelo.getTM().modificarDetalle(posicion, cantidad, descuento, precio, observacion);
         sumarTotal();
+    }
+
+    @Override
+    public void recibirTimbrado(E_Timbrado timbrado) {
+    }
+
+    @Override
+    public void recibirTimbradoNroFactura(E_Timbrado timbrado, int nroFactura) {
+        this.modelo.establecerNroFactura(timbrado, nroFactura);
+        String nroTimbrado = modelo.getNfLarge().format(timbrado.getNroTimbrado());
+        String nroSucursal = modelo.getNfSmall().format(timbrado.getNroSucursal());
+        String nroPuntoVenta = modelo.getNfSmall().format(timbrado.getNroPuntoVenta());
+        String nroFacturaAux = modelo.getNfLarge().format(nroFactura);
+        String nroFacturaCompleto = nroTimbrado + "-" + nroSucursal + "-" + nroPuntoVenta + "-" + nroFacturaAux;
+        this.vista.jtfNroFactura.setText(nroFacturaCompleto);
+        this.vista.jtfNroFactura.setEnabled(true);
     }
 
 }

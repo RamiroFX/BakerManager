@@ -123,10 +123,10 @@ public class C_crear_egreso extends MouseAdapter implements ActionListener, KeyL
                 JOptionPane.showMessageDialog(vista, "El numero de factura debe ser solo numérico", "Atención", JOptionPane.WARNING_MESSAGE);
                 return;
             }
-            if (this.modelo.existeProveedorNroFactura(this.modelo.proveedor.getId(), nro_factura)) {
-                JOptionPane.showMessageDialog(vista, "La compra con el proveedor y el número de factura seleccionado ya existe", "Error", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
+//            if (this.modelo.existeProveedorNroFactura(this.modelo.proveedor.getId(), nro_factura)) {
+//                JOptionPane.showMessageDialog(vista, "La compra con el proveedor y el número de factura seleccionado ya existe", "Error", JOptionPane.ERROR_MESSAGE);
+//                return;
+//            }
             int cantFilas = this.dtm.getRowCount();
             if (cantFilas <= 0) {
                 JOptionPane.showMessageDialog(vista, "Seleccione un producto", "Atención", JOptionPane.WARNING_MESSAGE);

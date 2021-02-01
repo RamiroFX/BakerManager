@@ -930,26 +930,36 @@ public class DB_Egreso {
     }
 
     public static void insertarEgreso(M_egreso_cabecera egreso_cabecera, ArrayList<M_egreso_detalle> detalles) {
+        String INSERT_CABECERA = "INSERT INTO egreso_cabecera(nro_factura, id_proveedor, id_funcionario, tiempo, ID_COND_COMPRA, nro_timbrado, nro_sucursal, nro_punto_venta)VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         String insertDetalle = "INSERT INTO egreso_detalle(id_egreso_cabecera, id_producto, cantidad, precio, descuento, observacion)VALUES (?, ?, ?, ?, ?, ?)";
-        String INSERT_CABECERA = "INSERT INTO egreso_cabecera(nro_factura, id_proveedor, id_funcionario, tiempo, ID_COND_COMPRA)VALUES (?, ?, ?, ?, ?)";
         long sq_egreso_cabecera = -1L;
         try {
             DB_manager.getConection().setAutoCommit(false);
             pst = DB_manager.getConection().prepareStatement(INSERT_CABECERA, PreparedStatement.RETURN_GENERATED_KEYS);
-            //pst.setInt(1, egreso_cabecera.getId_cabecera());
-            try {
-                if (egreso_cabecera.getNro_factura() == null) {
-                    pst.setNull(1, Types.NUMERIC);
-                } else {
-                    pst.setInt(1, egreso_cabecera.getNro_factura());
-                }
-            } catch (Exception e) {
+            if (egreso_cabecera.getNro_factura() < 1) {
                 pst.setNull(1, Types.NUMERIC);
+            } else {
+                pst.setInt(1, egreso_cabecera.getNro_factura());
             }
-            pst.setInt(2, egreso_cabecera.getId_proveedor());
-            pst.setInt(3, egreso_cabecera.getId_empleado());
+            pst.setInt(2, egreso_cabecera.getProveedor().getId());
+            pst.setInt(3, egreso_cabecera.getFuncionario().getId_funcionario());
             pst.setTimestamp(4, egreso_cabecera.getTiempo());
             pst.setInt(5, egreso_cabecera.getId_condVenta());
+            if (egreso_cabecera.getTimbrado().getNroTimbrado() < 1) {
+                pst.setNull(6, Types.NUMERIC);
+            } else {
+                pst.setInt(6, egreso_cabecera.getTimbrado().getNroTimbrado());
+            }
+            if (egreso_cabecera.getTimbrado().getNroSucursal() < 1) {
+                pst.setNull(7, Types.NUMERIC);
+            } else {
+                pst.setInt(7, egreso_cabecera.getTimbrado().getNroSucursal());
+            }
+            if (egreso_cabecera.getTimbrado().getNroPuntoVenta() < 1) {
+                pst.setNull(8, Types.NUMERIC);
+            } else {
+                pst.setInt(8, egreso_cabecera.getTimbrado().getNroPuntoVenta());
+            }
             pst.executeUpdate();
             rs = pst.getGeneratedKeys();
             if (rs != null && rs.next()) {
@@ -997,15 +1007,35 @@ public class DB_Egreso {
         }
     }
 
-    public static boolean existeProveedorNroFactura(int idProveedor, Integer nroFactura) {
-        String QUERY = "SELECT ID_EGRESO_CABECERA FROM EGRESO_CABECERA WHERE ID_PROVEEDOR = ? AND NRO_FACTURA = ?";
+    public static boolean existeProveedorNroFactura(int idProveedor, int nroTimbrado, int nroSucursal, int nroPuntoVenta, int nroFactura) {
+        String QUERY = "SELECT ID_EGRESO_CABECERA FROM EGRESO_CABECERA "
+                + "WHERE ID_PROVEEDOR = ? "
+                + "AND NRO_FACTURA = ? "
+                + "AND NRO_TIMBRADO = ? "
+                + "AND NRO_SUCURSAL = ? "
+                + "AND NRO_PUNTO_VENTA = ? ";
         try {
             pst = DB_manager.getConection().prepareStatement(QUERY);
             pst.setInt(1, idProveedor);
-            if (nroFactura == null) {
+            if (nroFactura < 1) {
                 pst.setNull(2, Types.INTEGER);
             } else {
                 pst.setInt(2, nroFactura);
+            }
+            if (nroTimbrado < 1) {
+                pst.setNull(3, Types.INTEGER);
+            } else {
+                pst.setInt(3, nroTimbrado);
+            }
+            if (nroSucursal < 1) {
+                pst.setNull(4, Types.INTEGER);
+            } else {
+                pst.setInt(4, nroSucursal);
+            }
+            if (nroPuntoVenta < 1) {
+                pst.setNull(5, Types.INTEGER);
+            } else {
+                pst.setInt(5, nroPuntoVenta);
             }
             rs = pst.executeQuery();
             return rs.isBeforeFirst();

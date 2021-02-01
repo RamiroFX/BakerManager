@@ -33,8 +33,8 @@ public class M_Egresos {
         this.egresoDetalles = new ArrayList<>();
         this.tiempo = null;
     }
-
-    public boolean existeProveedorNroFactura(int idProveedor, Integer nroFactura) {
-        return DB_Egreso.existeProveedorNroFactura(idProveedor, nroFactura);
-    }
+//
+//    public boolean existeProveedorNroFactura(int idProveedor, Integer nroFactura) {
+//        return DB_Egreso.existeProveedorNroFactura(idProveedor, nroFactura);
+//    }
 }

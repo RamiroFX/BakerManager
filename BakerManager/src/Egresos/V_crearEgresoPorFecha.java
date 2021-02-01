@@ -34,8 +34,7 @@ public class V_crearEgresoPorFecha extends JDialog {
     //NORTE
     JPanel jpNorth;
     public JTextField jtfProveedor, jtfNroFactura, jtfProvDireccion, jtfProvTelefono, jtfProvRuc;
-    public JButton jbAgregarProv;
-    public JLabel jlNroFactura;
+    public JButton jbAgregarProv, jbNroFactura;
     public JComboBox<E_tipoOperacion> jcbTipoCompra;
     public JDateChooser jdcFecha;
     //CENTRO
@@ -84,7 +83,7 @@ public class V_crearEgresoPorFecha extends JDialog {
         jbAgregarProv = new JButton("Proveedor [F3]");
         jtfProveedor = new JTextField(30);
         jtfProveedor.setEditable(false);
-        jlNroFactura = new JLabel("Nro. Factura");
+        jbNroFactura = new JButton("Nro. Factura [F5]");
         jtfNroFactura = new JTextField(30);
         jcbTipoCompra = new JComboBox();
         jtfProvRuc = new JTextField(30);
@@ -98,7 +97,7 @@ public class V_crearEgresoPorFecha extends JDialog {
         jdcFecha.setEnabled(false);
         jpNorth.add(jbAgregarProv);
         jpNorth.add(jtfProveedor);
-        jpNorth.add(jlNroFactura);
+        jpNorth.add(jbNroFactura);
         jpNorth.add(jtfNroFactura);
         jpNorth.add(new JLabel("Tipo operación:"));
         jpNorth.add(jcbTipoCompra, "wrap");
