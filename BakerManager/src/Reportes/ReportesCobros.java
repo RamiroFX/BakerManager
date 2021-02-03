@@ -27,7 +27,7 @@ import net.sf.jasperreports.swing.JRViewer;
 public class ReportesCobros {
 
     public static void cobrosPendientes(JFrame frame) {
-        File file = new File(System.getProperty("user.dir") + "\\src\\Assets\\Reportes\\cobros_pendientes.jasper");
+        File file = new File(System.getProperty("user.dir") + "\\Assets\\Reportes\\cobros_pendientes.jasper");
         E_Empresa empresa = DB_manager.obtenerDatosEmpresa();
         try {
             JasperReport reporte = (JasperReport) JRLoader.loadObject(file);
@@ -49,7 +49,7 @@ public class ReportesCobros {
     }
 
     public static void cobrosPendientesVencidos(JFrame frame) {
-        File file = new File(System.getProperty("user.dir") + "\\src\\Assets\\Reportes\\cobros_pendientes_vencidos.jasper");
+        File file = new File(System.getProperty("user.dir") + "\\Assets\\Reportes\\cobros_pendientes_vencidos.jasper");
         E_Empresa empresa = DB_manager.obtenerDatosEmpresa();
         try {
             JasperReport reporte = (JasperReport) JRLoader.loadObject(file);

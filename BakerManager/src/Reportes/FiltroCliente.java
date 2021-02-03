@@ -150,7 +150,7 @@ public class FiltroCliente extends JDialog implements ActionListener, KeyListene
                     case 1: {
                         System.out.println("inclusivo pendiente");
                         try {
-                            file = new File(System.getProperty("user.dir") + "\\src\\Assets\\Reportes\\cobros_pendientes_por_cliente_inclusivo.jasper");
+                            file = new File(System.getProperty("user.dir") + "\\Assets\\Reportes\\cobros_pendientes_por_cliente_inclusivo.jasper");
                             reporte = (JasperReport) JRLoader.loadObject(file);
                         } catch (JRException ex) {
                             ex.printStackTrace();
@@ -162,7 +162,7 @@ public class FiltroCliente extends JDialog implements ActionListener, KeyListene
                     case 2: {
                         System.out.println("inclusivo vencida");
                         try {
-                            file = new File(System.getProperty("user.dir") + "\\src\\Assets\\Reportes\\cobros_pendientes_por_cliente_vencidas_inclusivo.jasper");
+                            file = new File(System.getProperty("user.dir") + "\\Assets\\Reportes\\cobros_pendientes_por_cliente_vencidas_inclusivo.jasper");
                             reporte = (JasperReport) JRLoader.loadObject(file);
                         } catch (JRException ex) {
                             ex.printStackTrace();
@@ -180,7 +180,7 @@ public class FiltroCliente extends JDialog implements ActionListener, KeyListene
                         System.out.println("exclusivo pendiente");
                         try {
                             //file = new File(System.getProperty("user.dir") + "\\Assets\\Reportes\\cobros_pendientes_por_cliente_vencidos.jasper");
-                            file = new File(System.getProperty("user.dir") + "\\src\\Assets\\Reportes\\cobros_pendientes_por_cliente_exclusivo.jasper");
+                            file = new File(System.getProperty("user.dir") + "\\Assets\\Reportes\\cobros_pendientes_por_cliente_exclusivo.jasper");
                             reporte = (JasperReport) JRLoader.loadObject(file);
                         } catch (JRException ex) {
                             JOptionPane.showMessageDialog(this, "No se encontró la ubicación del reporte", "Atención", JOptionPane.WARNING_MESSAGE);
@@ -192,7 +192,7 @@ public class FiltroCliente extends JDialog implements ActionListener, KeyListene
                         System.out.println("exclusivo vencida");
                         try {
                             //file = new File(System.getProperty("user.dir") + "\\Assets\\Reportes\\cobros_pendientes_por_cliente_vencidos.jasper");
-                            file = new File(System.getProperty("user.dir") + "\\src\\Assets\\Reportes\\cobros_pendientes_por_cliente_vencidas_exclusivo.jasper");
+                            file = new File(System.getProperty("user.dir") + "\\Assets\\Reportes\\cobros_pendientes_por_cliente_vencidas_exclusivo.jasper");
                             reporte = (JasperReport) JRLoader.loadObject(file);
                         } catch (JRException ex) {
                             JOptionPane.showMessageDialog(this, "No se encontró la ubicación del reporte", "Atención", JOptionPane.WARNING_MESSAGE);
