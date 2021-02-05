@@ -264,7 +264,7 @@ class C_crearDesperdicio extends MouseAdapter implements ActionListener, KeyList
             }
             case E_produccionTipo.ROLLO: {
                 if (modelo.getProduccionRollosTM().getList().isEmpty()) {
-                    JOptionPane.showMessageDialog(vista, "Ingrese un desperdicio", "Atención", JOptionPane.WARNING_MESSAGE);
+                    JOptionPane.showMessageDialog(vista, "Ingrese un desperdicio", VALIDAR_TITULO, JOptionPane.WARNING_MESSAGE);
                     return false;
                 }
                 break;
@@ -277,9 +277,9 @@ class C_crearDesperdicio extends MouseAdapter implements ActionListener, KeyList
         if (!esModoCreacion) {
             return;
         }
-        if (!validarFilas()) {
-            return;
-        }
+//        if (!validarFilas()) {
+//            return;
+//        }
         if (!validarFecha()) {
             return;
         }
