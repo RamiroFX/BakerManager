@@ -16,6 +16,7 @@ import Entities.M_mesa_detalle;
 import Entities.M_producto;
 import Entities.M_telefono;
 import Interface.RecibirClienteCallback;
+import Interface.RecibirProductoCallback;
 import Interface.RecibirTimbradoVentaCallback;
 import Parametros.TipoOperacion;
 import Producto.SeleccionarCantidadProduducto;
@@ -37,7 +38,7 @@ import javax.swing.JOptionPane;
  *
  * @author Ramiro Ferreira
  */
-public class C_verMesa extends MouseAdapter implements ActionListener, KeyListener, RecibirClienteCallback, RecibirTimbradoVentaCallback {
+public class C_verMesa extends MouseAdapter implements ActionListener, KeyListener, RecibirClienteCallback, RecibirTimbradoVentaCallback, RecibirProductoCallback {
 
     private static final String TITULO_ERROR = "Error";
     private static final String PRODUCTO_NO_EXISTE = "El producto no existe";
@@ -282,25 +283,28 @@ public class C_verMesa extends MouseAdapter implements ActionListener, KeyListen
     }
 
     private void agregarProductoPorCodigo() {
-        final C_verMesa aThis = this;
         EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
-                //OBTENER CODIGO DESDE LA PISTOLA DE COD DE BARRAS
-                String codigoProducto = vista.jtfCodProd.getText().trim();
-                //VERIFICAR SI EXISTE EL PRODUCTO EN LA BD
-                boolean existeProd = modelo.existeProductoPorCodigo(codigoProducto);
-                if (existeProd) {
-                    //SELECCIONAR CANTIDAD DE PRODUCTO
-                    M_producto unProducto = modelo.obtenerProductoPorCodigo(codigoProducto);
-                    SeleccionarCantidadProduducto scp = new SeleccionarCantidadProduducto(aThis, unProducto);
-                    scp.setVisible(true);
-                    vista.jtfCodProd.setText("");
-                } else {
-                    JOptionPane.showMessageDialog(vista, PRODUCTO_NO_EXISTE, TITULO_ERROR, JOptionPane.ERROR_MESSAGE);
-                }
+                agregarProductoPorCodigoAux();
             }
         });
+    }
+
+    private void agregarProductoPorCodigoAux() {
+        //OBTENER CODIGO DESDE LA PISTOLA DE COD DE BARRAS
+        String codigoProducto = vista.jtfCodProd.getText().trim();
+        //VERIFICAR SI EXISTE EL PRODUCTO EN LA BD
+        boolean existeProd = modelo.existeProductoPorCodigo(codigoProducto);
+        if (existeProd) {
+            //SELECCIONAR CANTIDAD DE PRODUCTO
+            M_producto unProducto = modelo.obtenerProductoPorCodigo(codigoProducto);
+            SeleccionarCantidadProduducto scp = new SeleccionarCantidadProduducto(vista, unProducto, this, SeleccionarCantidadProduducto.PRECIO_VENTA_MINORISTA);
+            scp.setVisible(true);
+            vista.jtfCodProd.setText("");
+        } else {
+            JOptionPane.showMessageDialog(vista, PRODUCTO_NO_EXISTE, TITULO_ERROR, JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     private void imprimirTicket() {
@@ -324,9 +328,9 @@ public class C_verMesa extends MouseAdapter implements ActionListener, KeyListen
         if (row < 0) {
             return;
         }
-        int idProducto = modelo.getTM().getFacturaDetalleList().get(row).getProducto().getId();
+        M_producto idProducto = modelo.getTM().getFacturaDetalleList().get(row).getProducto();
         int idMesaDetalle = modelo.getTM().getFacturaDetalleList().get(row).getIdFacturaDetalle();
-        SeleccionarCantidadProduducto scp = new SeleccionarCantidadProduducto(this, idProducto, idMesaDetalle);
+        SeleccionarCantidadProduducto scp = new SeleccionarCantidadProduducto(vista, idProducto, this, idMesaDetalle);
         scp.setVisible(true);
     }
 
@@ -437,5 +441,15 @@ public class C_verMesa extends MouseAdapter implements ActionListener, KeyListen
         this.vista.jtfNroFactura.setText(nroFacturaCompleto);
         this.vista.jtfNroFactura.setEnabled(true);
         isJCBTrigger = true;
+    }
+
+    @Override
+    public void recibirProducto(double cantidad, double precio, double descuento, M_producto producto, String observacion) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void modificarProducto(int posicion, double cantidad, double precio, double descuento, M_producto producto, String observacion) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

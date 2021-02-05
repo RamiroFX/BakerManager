@@ -66,6 +66,14 @@ public class C_seleccionarProducto extends MouseAdapter implements ActionListene
         agregarListeners();
     }
 
+    public C_seleccionarProducto(V_seleccionarProducto vista, RecibirProductoCallback callback, int tipo) {
+        this.tipo = tipo;
+        this.callback = callback;
+        this.vista = vista;
+        inicializarVista();
+        agregarListeners();
+    }
+    
     public C_seleccionarProducto(V_seleccionarProducto vista, C_crear_egreso c_egresos) {
         this.tipo = CREAR_EGRESO;
         this.c_egresos = c_egresos;
@@ -249,8 +257,7 @@ public class C_seleccionarProducto extends MouseAdapter implements ActionListene
                 idProducto = Integer.valueOf(String.valueOf(vista.jtProducto.getValueAt(fila, 0)));
                 producto = DB_Producto.obtenerDatosProductoID(idProducto);
                 vista.jbAceptar.setEnabled(true);
-                SeleccionarCantidadProduducto scp = new SeleccionarCantidadProduducto(this, producto);
-                scp.setCallback(callback);
+                SeleccionarCantidadProduducto scp = new SeleccionarCantidadProduducto(this.vista, producto, callback, 1);
                 scp.setVisible(true);
                 vista.jtfBuscar.requestFocusInWindow();
             }

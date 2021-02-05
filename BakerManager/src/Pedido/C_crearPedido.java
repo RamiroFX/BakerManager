@@ -15,6 +15,7 @@ import Producto.SeleccionarCantidadProduducto;
 import Producto.SeleccionarProducto;
 import Impresora.Impresora;
 import Interface.RecibirClienteCallback;
+import Interface.RecibirProductoCallback;
 import com.nitido.utils.toaster.Toaster;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
@@ -34,7 +35,8 @@ import javax.swing.JOptionPane;
  *
  * @author Ramiro Ferreira
  */
-public class C_crearPedido extends MouseAdapter implements ActionListener, KeyListener, RecibirClienteCallback {
+public class C_crearPedido extends MouseAdapter implements ActionListener, KeyListener, 
+        RecibirClienteCallback, RecibirProductoCallback {
 
     public M_crearPedido modelo;
     public V_crearPedido vista;
@@ -187,49 +189,6 @@ public class C_crearPedido extends MouseAdapter implements ActionListener, KeyLi
         sumarTotal();
     }
 
-    public void modificarDetalle(Double cantidad, Double precio, Double descuento, String observacion, int row) {
-        this.modelo.getDtm().setValueAt(cantidad, row, 2);//producto
-        this.modelo.getDtm().setValueAt(precio, row, 3);//precio
-        this.modelo.getDtm().setValueAt(descuento, row, 4);//descuento
-        M_producto prod = this.modelo.getDetalles().get(row).getProducto();
-        String producto = prod.getDescripcion();
-        if (null != observacion) {
-            if (!observacion.isEmpty()) {
-                producto = producto + "- (" + observacion + ")";
-            }
-        }
-        this.modelo.getDtm().setValueAt(producto, row, 1);
-        Double impExenta = null;
-        Double imp5 = null;
-        Double imp10 = null;
-        Double Precio = precio - Math.round(Math.round(((precio * descuento) / 100)));
-        Double total = (cantidad * Precio);
-        if (prod.getImpuesto().equals(0)) {
-            impExenta = total;
-            imp5 = 0.0;
-            imp10 = 0.0;
-        } else if (prod.getImpuesto().equals(5)) {
-            impExenta = 0.0;
-            imp5 = total;
-            imp10 = 0.0;
-        } else {
-            impExenta = 0.0;
-            imp5 = 0.0;
-            imp10 = total;
-        }
-        this.modelo.getDtm().setValueAt(impExenta, row, 5);
-        this.modelo.getDtm().setValueAt(imp5, row, 6);
-        this.modelo.getDtm().setValueAt(imp10, row, 7);
-        M_pedidoDetalle detalle = this.modelo.getDetalles().get(row);
-        detalle.setCantidad(cantidad);
-        detalle.setPrecio(precio);
-        detalle.setDescuento(descuento);
-        detalle.setObservacion(observacion);
-        this.vista.jtPedidoDetalle.updateUI();
-        this.vista.jbEliminarDetalle.setEnabled(false);
-        this.vista.jbModificarDetalle.setEnabled(false);
-        sumarTotal();
-    }
 
     private void sumarTotal() {
         Integer exenta = 0;
@@ -375,6 +334,15 @@ public class C_crearPedido extends MouseAdapter implements ActionListener, KeyLi
         });
     }
 
+    private void modificarDetalle() {
+        int row = vista.jtPedidoDetalle.getSelectedRow();
+        if (row > -1) {
+            M_producto producto = modelo.getDetalles().get(row).getProducto();
+            SeleccionarCantidadProduducto scp = new SeleccionarCantidadProduducto(vista, producto, this, row);
+            scp.setVisible(true);
+        }
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         Object source = e.getSource();
@@ -398,8 +366,7 @@ public class C_crearPedido extends MouseAdapter implements ActionListener, KeyLi
         } else if (source.equals(this.vista.jbEliminarDetalle)) {
             eliminarDetalle();
         } else if (source.equals(this.vista.jbModificarDetalle)) {
-            SeleccionarCantidadProduducto scp = new SeleccionarCantidadProduducto(this, this.vista.jtPedidoDetalle.getSelectedRow());
-            scp.setVisible(true);
+            modificarDetalle();
         } else if (source.equals(this.vista.jbImprimir)) {
             imprimir();
         } else if (source.equals(this.vista.jbSalir)) {
@@ -450,5 +417,55 @@ public class C_crearPedido extends MouseAdapter implements ActionListener, KeyLi
 
     @Override
     public void keyReleased(KeyEvent e) {
+    }
+
+    @Override
+    public void recibirProducto(double cantidad, double precio, double descuento, M_producto producto, String observacion) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void modificarProducto(int row, double cantidad, double precio, double descuento, M_producto producto, String observacion) {
+        this.modelo.getDtm().setValueAt(cantidad, row, 2);//producto
+        this.modelo.getDtm().setValueAt(precio, row, 3);//precio
+        this.modelo.getDtm().setValueAt(descuento, row, 4);//descuento
+        M_producto prod = this.modelo.getDetalles().get(row).getProducto();
+        String productoString = prod.getDescripcion();
+        if (null != observacion) {
+            if (!observacion.isEmpty()) {
+                productoString = productoString + "- (" + observacion + ")";
+            }
+        }
+        this.modelo.getDtm().setValueAt(productoString, row, 1);
+        Double impExenta = null;
+        Double imp5 = null;
+        Double imp10 = null;
+        Double Precio = precio - Math.round(Math.round(((precio * descuento) / 100)));
+        Double total = (cantidad * Precio);
+        if (prod.getImpuesto().equals(0)) {
+            impExenta = total;
+            imp5 = 0.0;
+            imp10 = 0.0;
+        } else if (prod.getImpuesto().equals(5)) {
+            impExenta = 0.0;
+            imp5 = total;
+            imp10 = 0.0;
+        } else {
+            impExenta = 0.0;
+            imp5 = 0.0;
+            imp10 = total;
+        }
+        this.modelo.getDtm().setValueAt(impExenta, row, 5);
+        this.modelo.getDtm().setValueAt(imp5, row, 6);
+        this.modelo.getDtm().setValueAt(imp10, row, 7);
+        M_pedidoDetalle detalle = this.modelo.getDetalles().get(row);
+        detalle.setCantidad(cantidad);
+        detalle.setPrecio(precio);
+        detalle.setDescuento(descuento);
+        detalle.setObservacion(observacion);
+        this.vista.jtPedidoDetalle.updateUI();
+        this.vista.jbEliminarDetalle.setEnabled(false);
+        this.vista.jbModificarDetalle.setEnabled(false);
+        sumarTotal();        
     }
 }

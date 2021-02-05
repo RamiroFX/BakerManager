@@ -11,6 +11,7 @@ import Entities.M_egreso_detalle;
 import Entities.M_producto;
 import Entities.M_proveedor;
 import Entities.M_telefono;
+import Interface.RecibirProductoCallback;
 import MenuPrincipal.C_MenuPrincipal;
 import Producto.SeleccionarCantidadProduducto;
 import Producto.SeleccionarProducto;
@@ -33,7 +34,8 @@ import javax.swing.table.DefaultTableModel;
  *
  * @author Ramiro Ferreira
  */
-public class C_crear_egreso extends MouseAdapter implements ActionListener, KeyListener {
+public class C_crear_egreso extends MouseAdapter implements ActionListener, KeyListener,
+        RecibirProductoCallback {
 
     public V_crear_egreso vista;
     M_Egresos modelo;
@@ -237,70 +239,6 @@ public class C_crear_egreso extends MouseAdapter implements ActionListener, KeyL
         this.vista.jftTotal.setValue(total);
     }
 
-    public void recibirProducto(Double cantidad, Double precio, Double descuento, String observacion, M_producto producto) {
-        Double impExenta = null;
-        Double imp5 = null;
-        Double imp10 = null;
-        Double Precio = precio;
-        Precio = Precio - Math.round(Math.round(((Precio * descuento) / 100)));
-        Double total =cantidad * Precio;
-
-        if (producto.getImpuesto().equals(0)) {
-            impExenta = total;
-            imp5 = 0.0;
-            imp10 = 0.0;
-        } else if (producto.getImpuesto().equals(5)) {
-            impExenta = 0.0;
-            imp5 = total;
-            imp10 = 0.0;
-        } else {
-            impExenta = 0.0;
-            imp5 = 0.0;
-            imp10 = total;
-        }
-        if (null != observacion) {
-            if (!observacion.isEmpty()) {
-                String aux = producto.getDescripcion();
-                producto.setDescripcion(aux + "-(" + observacion + ")");
-            }
-        }
-        Object[] rowData = {producto.getId(), cantidad, producto.getDescripcion(), precio, descuento, impExenta, imp5, imp10};
-        this.dtm.addRow(rowData);
-        this.vista.jtProductos.updateUI();
-        sumarTotal();
-    }
-
-    public void modificarCelda(Double cantidad, Double precio, Double descuento, String observacion, int row) {
-        Double Cantidad = cantidad;
-        Double Precio = precio;
-        Double Descuento = descuento;
-        Precio = Precio - Math.round(Math.round(((Precio * Descuento) / 100)));
-        Integer total = Math.round(Math.round((Cantidad * Precio)));
-
-        Integer impExenta = null;
-        Integer imp5 = null;
-        impExenta = Integer.valueOf(String.valueOf(dtm.getValueAt(row, 5)));
-        imp5 = Integer.valueOf(String.valueOf(dtm.getValueAt(row, 6)));
-        if (impExenta > 0) {
-            this.dtm.setValueAt(total, row, 5);
-        } else if (imp5 > 0) {
-            this.dtm.setValueAt(total, row, 6);
-        } else {
-            this.dtm.setValueAt(total, row, 7);
-        }
-        this.dtm.setValueAt(cantidad, row, 1);
-        String producto = this.dtm.getValueAt(row, 2).toString();
-        if (null != observacion) {
-            if (!observacion.isEmpty()) {
-                producto = producto + "-(" + observacion + ")";
-            }
-        }
-        this.dtm.setValueAt(producto, row, 2);
-        this.dtm.setValueAt(precio, row, 3);
-        this.dtm.setValueAt(descuento, row, 4);
-        sumarTotal();
-    }
-
     private void eliminarCompra(int row) {
         this.vista.jbModificarDetalle.setEnabled(false);
         this.vista.jbEliminarDetalle.setEnabled(false);
@@ -336,6 +274,18 @@ public class C_crear_egreso extends MouseAdapter implements ActionListener, KeyL
         this.vista.jbEliminarDetalle.setEnabled(true);
     }
 
+    private void modificarDetalle() {
+        int row = this.vista.jtProductos.getSelectedRow();
+        if (row < 0) {
+            return;
+        }
+        M_producto prod = new M_producto();
+        prod.setId(Integer.valueOf(String.valueOf(this.vista.jtProductos.getValueAt(row, 0))));
+        prod.setPrecioCosto(Double.valueOf(String.valueOf(this.vista.jtProductos.getValueAt(row, 3))));
+        SeleccionarCantidadProduducto scp = new SeleccionarCantidadProduducto(this.vista, prod, this, row);
+        scp.setVisible(true);
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource().equals(this.vista.jbAgregarProv)) {
@@ -348,12 +298,7 @@ public class C_crear_egreso extends MouseAdapter implements ActionListener, KeyL
             insertarEgreso();
             System.runFinalization();
         } else if (e.getSource().equals(this.vista.jbModificarDetalle)) {
-            int row = this.vista.jtProductos.getSelectedRow();
-            M_producto prod = new M_producto();
-            prod.setId(Integer.valueOf(String.valueOf(this.vista.jtProductos.getValueAt(row, 0))));
-            prod.setPrecioCosto(Double.valueOf(String.valueOf(this.vista.jtProductos.getValueAt(row, 3))));
-            SeleccionarCantidadProduducto scp = new SeleccionarCantidadProduducto(this, row, prod);
-            scp.setVisible(true);
+            modificarDetalle();
         } else if (e.getSource().equals(this.vista.jbEliminarDetalle)) {
             eliminarCompra(this.vista.jtProductos.getSelectedRow());
         } else if (e.getSource().equals(this.vista.jbSalir)) {
@@ -392,5 +337,71 @@ public class C_crear_egreso extends MouseAdapter implements ActionListener, KeyL
 
     @Override
     public void keyReleased(KeyEvent e) {
+    }
+
+    @Override
+    public void recibirProducto(double cantidad, double precio, double descuento, M_producto producto, String observacion) {
+        Double impExenta = null;
+        Double imp5 = null;
+        Double imp10 = null;
+        Double Precio = precio;
+        Precio = Precio - Math.round(Math.round(((Precio * descuento) / 100)));
+        Double total = cantidad * Precio;
+
+        if (producto.getImpuesto().equals(0)) {
+            impExenta = total;
+            imp5 = 0.0;
+            imp10 = 0.0;
+        } else if (producto.getImpuesto().equals(5)) {
+            impExenta = 0.0;
+            imp5 = total;
+            imp10 = 0.0;
+        } else {
+            impExenta = 0.0;
+            imp5 = 0.0;
+            imp10 = total;
+        }
+        if (null != observacion) {
+            if (!observacion.isEmpty()) {
+                String aux = producto.getDescripcion();
+                producto.setDescripcion(aux + "-(" + observacion + ")");
+            }
+        }
+        Object[] rowData = {producto.getId(), cantidad, producto.getDescripcion(), precio, descuento, impExenta, imp5, imp10};
+        this.dtm.addRow(rowData);
+        this.vista.jtProductos.updateUI();
+        sumarTotal();
+    }
+
+    @Override
+    public void modificarProducto(int row, double cantidad, double precio, double descuento, M_producto producto, String observacion) {
+        Double Cantidad = cantidad;
+        Double Precio = precio;
+        Double Descuento = descuento;
+        Precio = Precio - Math.round(Math.round(((Precio * Descuento) / 100)));
+        Integer total = Math.round(Math.round((Cantidad * Precio)));
+
+        Integer impExenta = null;
+        Integer imp5 = null;
+        impExenta = Integer.valueOf(String.valueOf(dtm.getValueAt(row, 5)));
+        imp5 = Integer.valueOf(String.valueOf(dtm.getValueAt(row, 6)));
+        if (impExenta > 0) {
+            this.dtm.setValueAt(total, row, 5);
+        } else if (imp5 > 0) {
+            this.dtm.setValueAt(total, row, 6);
+        } else {
+            this.dtm.setValueAt(total, row, 7);
+        }
+        this.dtm.setValueAt(cantidad, row, 1);
+        String productoString = this.dtm.getValueAt(row, 2).toString();
+        if (null != observacion) {
+            if (!observacion.isEmpty()) {
+                productoString = productoString + "-(" + observacion + ")";
+            }
+        }
+        this.dtm.setValueAt(productoString, row, 2);
+        this.dtm.setValueAt(precio, row, 3);
+        this.dtm.setValueAt(descuento, row, 4);
+        sumarTotal();
     }
 }

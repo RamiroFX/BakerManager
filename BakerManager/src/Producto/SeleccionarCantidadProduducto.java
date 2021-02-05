@@ -4,18 +4,9 @@
  */
 package Producto;
 
-import DB.DB_Producto;
-import Egresos.C_crear_egreso;
 import Entities.M_facturaDetalle;
-import Entities.M_menu_item;
-import Entities.M_pedidoDetalle;
 import Entities.M_producto;
 import Interface.RecibirProductoCallback;
-import MenuPrincipal.DatosUsuario;
-import Pedido.C_crearPedido;
-import Pedido.C_verPedido;
-import Ventas.C_crearVentaRapida;
-import Ventas.Mesas.C_verMesa;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -23,7 +14,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
-import java.util.ArrayList;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import net.miginfocom.swing.MigLayout;
@@ -34,6 +24,9 @@ import net.miginfocom.swing.MigLayout;
  */
 public class SeleccionarCantidadProduducto extends javax.swing.JDialog implements ActionListener, KeyListener {
 
+    public static final int PRECIO_COSTO = 1;
+    public static final int PRECIO_VENTA_MINORISTA = 2;
+    public static final int PRECIO_VENTA_MAYORISTA = 3;
     public static final int MODIFICAR_INGRESO = 7;
     public static final int MODIFICAR_EGRESO = 8;
     public static final int MODIFICAR_MESA_DETALLE = 9;
@@ -46,12 +39,6 @@ public class SeleccionarCantidadProduducto extends javax.swing.JDialog implement
             jlPrecioCosto, jlPrecioMayorista;
     private javax.swing.JTextField jtfCantidad, jtfDescuento, jtfObservacion, jtfPrecio,
             jtfPrecioCosto, jtfPrecioMayotista;
-    C_seleccionarProducto selecProd;
-    C_crear_egreso crear_egreso;
-    C_crearVentaRapida crear_ingreso;
-    C_verMesa verMesa;
-    C_crearPedido crearPedido;
-    C_verPedido verPedido;
     int row;
     int tipo;
     M_producto producto;
@@ -64,147 +51,44 @@ public class SeleccionarCantidadProduducto extends javax.swing.JDialog implement
     String observacion;
     RecibirProductoCallback callback;
 
-    public SeleccionarCantidadProduducto(C_seleccionarProducto selecProd, M_producto producto) {
-        super(selecProd.vista, true);
+    public SeleccionarCantidadProduducto(JDialog dialog, M_producto producto, RecibirProductoCallback callback, int tipo) {
+        super(dialog, true);
         setTitle("Seleccione una cantidad");
         setSize(new java.awt.Dimension(300, 250));
-        setLocationRelativeTo(selecProd.vista);
+        setLocationRelativeTo(dialog);
         this.row = -1;
-        this.selecProd = selecProd;
-        this.producto = selecProd.producto;
-        tipo = selecProd.tipo;//CREAR EGRESO
+        this.producto = producto;
+        this.callback = callback;
+        this.tipo = tipo;
         initComponents();
         inicializarVista(producto);
     }
 
-    public SeleccionarCantidadProduducto(JDialog vista, M_producto producto, RecibirProductoCallback callback, int index) {
-        super(vista, true);
+    public SeleccionarCantidadProduducto(JDialog dialog, M_producto producto, RecibirProductoCallback callback, int tipo, int index) {
+        super(dialog, true);
         setTitle("Seleccione una cantidad");
         setSize(new java.awt.Dimension(300, 250));
-        setLocationRelativeTo(vista);
+        setLocationRelativeTo(dialog);
         this.producto = producto;
         this.callback = callback;
+        this.tipo = tipo;
         this.row = index;
-        tipo = 999;//CREAR EGRESO
         initComponents();
         inicializarVista(producto);
-    }
-
-    public void setCallback(RecibirProductoCallback callback) {
-        this.callback = callback;
-    }
-
-    public SeleccionarCantidadProduducto(C_crear_egreso crear_egreso, int row, M_producto producto) {
-        super(crear_egreso.vista, true);
-        setTitle("Seleccione una cantidad");
-        setSize(new java.awt.Dimension(300, 250));
-        setLocationRelativeTo(crear_egreso.vista);
-        this.producto = producto;
-        tipo = MODIFICAR_EGRESO;
-        this.crear_egreso = crear_egreso;
-        this.row = row;
-        initComponents();
-    }
-
-    public SeleccionarCantidadProduducto(C_crearVentaRapida crearVentaRapida, M_producto producto) {
-        super(crearVentaRapida.vista, true);
-        setTitle("Seleccione una cantidad");
-        setSize(new java.awt.Dimension(300, 250));
-        setLocationRelativeTo(crearVentaRapida.vista);
-        this.producto = producto;
-        tipo = C_seleccionarProducto.CREAR_INGRESO_POR_CODIGO;
-        this.crear_ingreso = crearVentaRapida;
-        initComponents();
-    }
-
-    public SeleccionarCantidadProduducto(C_crearVentaRapida crear_ingreso, int row) {
-        super(crear_ingreso.vista, true);
-        setTitle("Seleccione una cantidad");
-        setSize(new java.awt.Dimension(300, 250));
-        setLocationRelativeTo(crear_ingreso.vista);
-        tipo = MODIFICAR_INGRESO;
-        this.crear_ingreso = crear_ingreso;
-        this.row = row;
-        this.producto = crear_ingreso.modelo.getTableModel().getFacturaDetalleList().get(row).getProducto();
-        initComponents();
-    }
-
-    public SeleccionarCantidadProduducto(C_crearPedido crearPedido, int row) {
-        super(crearPedido.vista, true);
-        setTitle("Seleccione una cantidad");
-        setSize(new java.awt.Dimension(300, 250));
-        setLocationRelativeTo(crearPedido.vista);
-        tipo = MODIFICAR_PEDIDO_DETALLE;
-        this.crearPedido = crearPedido;
-        this.row = row;
-        this.producto = crearPedido.modelo.getDetalles().get(row).getProducto();
-        initComponents();
-    }
-
-    public SeleccionarCantidadProduducto(C_verMesa verMesa, int idProducto, int idMesaDetalle) {
-        super(verMesa.vista, true);
-        setTitle("Seleccione una cantidad");
-        setSize(new java.awt.Dimension(300, 250));
-        setLocationRelativeTo(verMesa.vista);
-        tipo = MODIFICAR_MESA_DETALLE;
-        this.row = idMesaDetalle;//para almacenar el id de la mesa detalle
-        this.verMesa = verMesa;
-        this.producto = DB_Producto.obtenerDatosProductoID(idProducto);
-        initComponents();
-    }
-
-    public SeleccionarCantidadProduducto(C_verPedido verPedido, int idProducto, int idPedidoDetalle) {
-        super(verPedido.vista, true);
-        System.out.println("119-SeleccionarCantidadProduducto");
-        setTitle("Seleccione una cantidad");
-        setSize(new java.awt.Dimension(300, 250));
-        setLocationRelativeTo(verPedido.vista);
-        tipo = VER_PEDIDO_DETALLE;
-        this.row = idPedidoDetalle;//para almacenar el id de la mesa detalle
-        this.verPedido = verPedido;
-        this.producto = DB_Producto.obtenerDatosProductoID(idProducto);
-        initComponents();
-    }
-
-    public SeleccionarCantidadProduducto(C_verMesa aThis, M_producto unProducto) {
-        super(aThis.vista, true);
-        setTitle("Seleccione una cantidad");
-        setSize(new java.awt.Dimension(300, 250));
-        setLocationRelativeTo(aThis.vista);
-        tipo = AGREGAR_MESA_DETALLE;
-        this.verMesa = aThis;
-        this.producto = unProducto;
-        initComponents();
-        inicializarVista(unProducto);
     }
 
     private void inicializarVista(M_producto producto) {
         switch (tipo) {
-            case (C_seleccionarProducto.CREAR_PEDIDO): {
-                if (this.selecProd.crearPedido.modelo.getPedido() != null) {
-                    if (this.selecProd.crearPedido.modelo.getPedido().getCliente() != null) {
-                        if (this.selecProd.crearPedido.modelo.getPedido().getCliente().getCategoria() != null) {
-                            switch (this.selecProd.crearPedido.modelo.getPedido().getCliente().getCategoria()) {
-                                case "Mayorista":
-                                    jtfPrecio.setText(producto.getPrecioMayorista().toString());
-                                    break;
-                                case "Minorista":
-                                    jtfPrecio.setText(producto.getPrecioVenta().toString());
-                                    break;
-                            }
-                        } else {
-                            jtfPrecio.setText(producto.getPrecioVenta().toString());
-                        }
-                    }
-                }
+            case PRECIO_COSTO: {
+                jtfPrecio.setText(producto.getPrecioCosto() + "");
                 break;
             }
-            case (C_seleccionarProducto.CREAR_EGRESO): {
-                jtfPrecio.setText(producto.getPrecioCosto().toString());
+            case PRECIO_VENTA_MAYORISTA: {
+                jtfPrecio.setText(producto.getPrecioMayorista() + "");
                 break;
             }
-            case (AGREGAR_MESA_DETALLE): {
-                jtfPrecio.setText(producto.getPrecioVenta().toString());
+            case PRECIO_VENTA_MINORISTA: {
+                jtfPrecio.setText(producto.getPrecioMinorista() + "");
                 break;
             }
             default: {
@@ -341,106 +225,6 @@ public class SeleccionarCantidadProduducto extends javax.swing.JDialog implement
                 dispose();
                 return;
             }
-            switch (tipo) {
-                case (C_seleccionarProducto.CREAR_INGRESO_RAPIDO): {
-                    M_facturaDetalle detalle = new M_facturaDetalle();
-                    detalle.setCantidad(cantidad);
-                    detalle.setDescuento(descuento);
-                    detalle.setPrecio(precio);
-                    detalle.setObservacion(observacion);
-                    detalle.setProducto(this.producto);
-                    detalle.setIdProducto(this.producto.getId());
-                    selecProd.crearVenta.recibirDetalle(detalle);
-                    break;
-                }
-                case (C_seleccionarProducto.CREAR_INGRESO_POR_CODIGO): {
-                    M_facturaDetalle detalle = new M_facturaDetalle();
-                    detalle.setCantidad(cantidad);
-                    detalle.setDescuento(descuento);
-                    detalle.setPrecio(precio);
-                    detalle.setObservacion(observacion);
-                    detalle.setProducto(producto);
-                    detalle.setIdProducto(producto.getId());
-                    crear_ingreso.recibirDetalle(detalle);
-                    break;
-                }
-                case (C_seleccionarProducto.CREAR_EGRESO): {
-                    EnviarProductoConVerificacionPermisoModificacionPrecio();
-                    break;
-                }
-                case (SeleccionarCantidadProduducto.MODIFICAR_EGRESO): {
-                    EnviarProductoConVerificacionPermisoModificacionPrecio();
-                    break;
-                }
-                case (SeleccionarCantidadProduducto.MODIFICAR_INGRESO): {
-                    crear_ingreso.modificarDetalle(cantidad, precio, descuento, observacion, row);
-                    break;
-                }
-                case (C_seleccionarProducto.VER_MESA): {
-                    EventQueue.invokeLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            M_facturaDetalle detalle = new M_facturaDetalle();
-                            detalle.setCantidad(cantidad);
-                            detalle.setDescuento(descuento);
-                            detalle.setPrecio(precio);
-                            detalle.setObservacion(observacion);
-                            detalle.setProducto(producto);
-                            detalle.setIdProducto(producto.getId());
-                            selecProd.verMesa.recibirDetalle(detalle);
-                        }
-                    });
-                    break;
-                }
-                case (MODIFICAR_MESA_DETALLE): {
-                    verMesa.modificarDetalle(producto, cantidad, precio, descuento, observacion, row);
-                    break;
-                }
-                case (AGREGAR_MESA_DETALLE): {
-                    M_facturaDetalle detalle = new M_facturaDetalle();
-                    detalle.setCantidad(cantidad);
-                    detalle.setDescuento(descuento);
-                    detalle.setPrecio(precio);
-                    detalle.setObservacion(observacion);
-                    detalle.setProducto(producto);
-                    detalle.setIdProducto(producto.getId());
-                    verMesa.recibirDetalle(detalle);
-                    break;
-                }
-                case (C_seleccionarProducto.CREAR_PEDIDO): {
-                    M_pedidoDetalle detalle = new M_pedidoDetalle();
-                    detalle.setCantidad(cantidad);
-                    detalle.setDescuento(descuento);
-                    detalle.setPrecio(precio);
-                    detalle.setObservacion(observacion);
-                    detalle.setProducto(producto);
-                    selecProd.crearPedido.recibirDetalle(detalle);
-                    break;
-                }
-                case (MODIFICAR_PEDIDO_DETALLE): {
-                    crearPedido.modificarDetalle(cantidad, precio, descuento, observacion, row);
-                    break;
-                }
-                case (C_seleccionarProducto.AGREGAR_PEDIDO_DETALLE): {
-                    M_pedidoDetalle detalle = new M_pedidoDetalle();
-                    detalle.setCantidad(cantidad);
-                    detalle.setDescuento(descuento);
-                    detalle.setPrecio(precio);
-                    detalle.setObservacion(observacion);
-                    detalle.setProducto(producto);
-                    selecProd.verPedido.recibirDetalle(detalle);
-                    break;
-                }
-                case (VER_PEDIDO_DETALLE): {
-                    verPedido.modificarDetalle(cantidad, precio, descuento, observacion, row);
-                    break;
-                }
-                default: {
-                    dispose();
-                    break;
-                }
-            }
-
         }
         dispose();
     }
@@ -600,7 +384,7 @@ public class SeleccionarCantidadProduducto extends javax.swing.JDialog implement
     }
 
     private void EnviarProductoConVerificacionPermisoModificacionPrecio() {
-        ArrayList<M_menu_item> accesos = DatosUsuario.getRol_usuario().getAccesos();
+        /*ArrayList<M_menu_item> accesos = DatosUsuario.getRol_usuario().getAccesos();
         for (M_menu_item acceso : accesos) {
             if (Parametros.MenuItem.MODIFICAR_PRODUCTO.getDescripcion().equals(acceso.getItemDescripcion())) {
                 double precioActual = producto.getPrecioCosto();
@@ -622,7 +406,7 @@ public class SeleccionarCantidadProduducto extends javax.swing.JDialog implement
                 this.crear_egreso.modificarCelda(cantidad, precio, descuento, observacion, row);
                 break;
             }
-        }
+        }*/
     }
 
     public void cargarDatos(M_facturaDetalle fd) {
@@ -632,5 +416,9 @@ public class SeleccionarCantidadProduducto extends javax.swing.JDialog implement
         if (fd.getObservacion() != null) {
             jtfObservacion.setText(fd.getObservacion());
         }
+    }
+
+    public void setTipo(int tipo) {
+        this.tipo = tipo;
     }
 }

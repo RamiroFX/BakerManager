@@ -367,11 +367,11 @@ public class C_crearVentaRapida implements GestionInterface, InterfaceFacturaDet
                 boolean existeProd = modelo.existeProductoPorCodigo(codigoProducto);
                 if (existeProd) {
                     //SELECCIONAR CANTIDAD DE PRODUCTO
-                    M_producto unProducto = modelo.obtenerProductoPorCodigo(codigoProducto);
-                    SeleccionarCantidadProduducto scp = new SeleccionarCantidadProduducto(aThis, unProducto);
-                    scp.mostrarPrecioAdicional();
-                    scp.setVisible(true);
-                    vista.jtfCodProd.setText("");
+//                    M_producto unProducto = modelo.obtenerProductoPorCodigo(codigoProducto);
+//                    SeleccionarCantidadProduducto scp = new SeleccionarCantidadProduducto(aThis, unProducto);
+//                    scp.mostrarPrecioAdicional();
+//                    scp.setVisible(true);
+//                    vista.jtfCodProd.setText("");
                 } else {
                     JOptionPane.showMessageDialog(vista, PRODUCTO_NO_EXISTE, TITULO_ERROR, JOptionPane.ERROR_MESSAGE);
                 }
@@ -380,14 +380,14 @@ public class C_crearVentaRapida implements GestionInterface, InterfaceFacturaDet
     }
 
     private void invocarModificarDetalle() {
-        int row = this.vista.jtFacturaDetalle.getSelectedRow();
-        if (row < 0) {
-            return;
-        }
-        M_facturaDetalle fd = modelo.getTableModel().getFacturaDetalleList().get(row);
-        SeleccionarCantidadProduducto scp = new SeleccionarCantidadProduducto(this, row);
-        scp.cargarDatos(fd);
-        scp.setVisible(true);
+//        int row = this.vista.jtFacturaDetalle.getSelectedRow();
+//        if (row < 0) {
+//            return;
+//        }
+//        M_facturaDetalle fd = modelo.getTableModel().getFacturaDetalleList().get(row);
+//        SeleccionarCantidadProduducto scp = new SeleccionarCantidadProduducto(this, row);
+//        scp.cargarDatos(fd);
+//        scp.setVisible(true);
     }
 
     private void invocarSeleccionNroFactura() {

@@ -11,6 +11,7 @@ import Entities.M_cliente;
 import Entities.M_facturaCabecera;
 import Entities.M_facturaDetalle;
 import Entities.M_pedidoDetalle;
+import Entities.M_producto;
 import MenuPrincipal.DatosUsuario;
 import Parametros.PedidoEstado;
 import Parametros.TipoOperacion;
@@ -18,6 +19,7 @@ import Producto.SeleccionarCantidadProduducto;
 import Producto.SeleccionarProducto;
 import Impresora.Impresora;
 import Interface.RecibirClienteCallback;
+import Interface.RecibirProductoCallback;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -37,7 +39,8 @@ import javax.swing.JOptionPane;
  *
  * @author Ramiro Ferreira
  */
-public class C_verPedido extends MouseAdapter implements ActionListener, KeyListener, RecibirClienteCallback {
+public class C_verPedido extends MouseAdapter implements ActionListener, KeyListener, 
+        RecibirClienteCallback, RecibirProductoCallback {
 
     public V_crearPedido vista;
     public M_verPedido modelo;
@@ -239,7 +242,8 @@ public class C_verPedido extends MouseAdapter implements ActionListener, KeyList
         int row = this.vista.jtPedidoDetalle.getSelectedRow();
         int idPedidoDetalle = Integer.valueOf(String.valueOf(this.vista.jtPedidoDetalle.getValueAt(row, 0)));
         int idProducto = Integer.valueOf(String.valueOf(this.vista.jtPedidoDetalle.getValueAt(row, 1)));
-        SeleccionarCantidadProduducto scp = new SeleccionarCantidadProduducto(this, idProducto, idPedidoDetalle);
+        M_producto producto = modelo.getDetalles().get(row).getProducto();
+        SeleccionarCantidadProduducto scp = new SeleccionarCantidadProduducto(vista, producto,this, SeleccionarCantidadProduducto.PRECIO_VENTA_MINORISTA);
         scp.setVisible(true);
     }
 
@@ -448,5 +452,15 @@ public class C_verPedido extends MouseAdapter implements ActionListener, KeyList
 
     @Override
     public void keyReleased(KeyEvent e) {
+    }
+
+    @Override
+    public void recibirProducto(double cantidad, double precio, double descuento, M_producto producto, String observacion) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void modificarProducto(int posicion, double cantidad, double precio, double descuento, M_producto producto, String observacion) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

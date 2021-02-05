@@ -424,6 +424,11 @@ public class C_crearVentaPorFecha implements GestionInterface, InterfaceFacturaD
         sf.mostrarVista();
     }
 
+    private void invocarSeleccionProducto() {
+        SeleccionarProducto sp = new SeleccionarProducto(this.vista, this, SeleccionarCantidadProduducto.PRECIO_VENTA_MINORISTA);
+        sp.mostrarVista();
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource().equals(this.vista.jbSalir)) {
@@ -436,8 +441,7 @@ public class C_crearVentaPorFecha implements GestionInterface, InterfaceFacturaD
             agregarProductoPorCodigo();
         }
         if (e.getSource().equals(this.vista.jbAgregarProducto)) {
-            SeleccionarProducto sp = new SeleccionarProducto(this.vista, this);
-            sp.mostrarVista();
+            invocarSeleccionProducto();
         }
         if (e.getSource().equals(this.vista.jbImprimir)) {
             imprimirTicket();

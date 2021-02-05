@@ -51,6 +51,11 @@ public class SeleccionarProducto {
         controlador = new C_seleccionarProducto(vista, callback);
     }
 
+    public SeleccionarProducto(JDialog main, RecibirProductoCallback callback, int tipo) {
+        vista = new V_seleccionarProducto(main);
+        controlador = new C_seleccionarProducto(vista, callback, tipo);
+    }
+
     public void mostrarVista() {
         controlador.mostrarVista();
     }

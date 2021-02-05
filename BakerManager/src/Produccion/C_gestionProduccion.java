@@ -68,8 +68,8 @@ public class C_gestionProduccion implements GestionInterface, RecibirEmpleadoCal
             this.vista.jcbEstado.addItem(get);
         }
         Calendar calTest = Calendar.getInstance();
-        calTest.set(Calendar.YEAR, 2020);
-        calTest.set(Calendar.MONTH, 0);
+        //calTest.set(Calendar.YEAR, (calTest.get(Calendar.YEAR) - 1));
+        //calTest.set(Calendar.MONTH, (calTest.get(Calendar.MONTH) - 1));
         calTest.set(Calendar.DAY_OF_MONTH, 1);
         Date date = Calendar.getInstance().getTime();
         this.vista.jddFinal.setDate(date);
@@ -300,6 +300,7 @@ public class C_gestionProduccion implements GestionInterface, RecibirEmpleadoCal
         BuscarMateriaPrimaDetalle bbmp = new BuscarMateriaPrimaDetalle(this.c_inicio.vista);
         bbmp.mostrarVista();
     }
+
     private void buscarProductosTerminados() {
         BuscarProductosTerminados bpt = new BuscarProductosTerminados(this.c_inicio.vista);
         bpt.mostrarVista();
@@ -362,8 +363,8 @@ public class C_gestionProduccion implements GestionInterface, RecibirEmpleadoCal
             invocarCrearDesperdicio();
         } else if (source.equals(this.vista.jbCrearDesperdicioRapido)) {
             invocarCrearDesperdicioRapido();
-        }else if(source.equals(this.vista.jbBuscarTerminados)){
-            buscarProductosTerminados();            
+        } else if (source.equals(this.vista.jbBuscarTerminados)) {
+            buscarProductosTerminados();
         }
     }
 
