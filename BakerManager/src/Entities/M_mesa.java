@@ -4,7 +4,7 @@
  */
 package Entities;
 
-import java.util.Date;
+import java.sql.Timestamp;
 
 /**
  *
@@ -12,31 +12,42 @@ import java.util.Date;
  */
 public class M_mesa extends E_facturaCabecera {
 
-    private Integer idMesa, numeroMesa;
-    private Date tiempo;
+    private int idMesa, numeroMesa;
 
-    public Integer getIdMesa() {
+    public int getIdMesa() {
         return idMesa;
     }
 
-    public void setIdMesa(Integer idMesa) {
+    public void setIdMesa(int idMesa) {
         this.idMesa = idMesa;
     }
 
-    public Integer getIdCondVenta() {
+    public int getIdCondVenta() {
         return getTipoOperacion().getId();
     }
 
-    public void setIdCondVenta(Integer idCondVenta) {
+    public void setIdCondVenta(int idCondVenta) {
         this.getTipoOperacion().setId(idCondVenta);
     }
 
-    public Integer getNumeroMesa() {
+    public int getNumeroMesa() {
         return numeroMesa;
     }
 
-    public void setNumeroMesa(Integer numeroMesa) {
+    public void setNumeroMesa(int numeroMesa) {
         this.numeroMesa = numeroMesa;
+    }
+    
+    public M_facturaCabecera toMFacturaCabecera(){
+        M_facturaCabecera faca = new M_facturaCabecera();
+        faca.setCliente(getCliente());
+        faca.setCondVenta(getTipoOperacion());
+        faca.setEstado(getEstado());
+        faca.setFuncionario(getFuncionario());
+        faca.setNroFactura(getNroFactura());
+        faca.setTiempo(new Timestamp(getTiempo().getTime()));
+        faca.setTimbrado(getTimbrado());
+        return faca;
     }
 
 }

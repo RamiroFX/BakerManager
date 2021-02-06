@@ -114,10 +114,12 @@ public class C_crearNotaCredito extends MouseAdapter implements ActionListener, 
     }
 
     public void modificarDetalle() {
+        System.out.println("NotasCredito.C_crearNotaCredito.modificarDetalle()");
         int fila = this.vista.jtNotaCreditoDetalle.getSelectedRow();
         if (fila > -1) {
             E_NotaCreditoDetalle notaCreditoDetalle = modelo.getNotaCreditoDetalleTm().getList().get(fila);
-            SeleccionarCantidadProduducto scp = new SeleccionarCantidadProduducto(vista, notaCreditoDetalle.getProducto(), this, fila);
+            SeleccionarCantidadProduducto scp = new SeleccionarCantidadProduducto(vista, notaCreditoDetalle.getProducto(), this, SeleccionarCantidadProduducto.PRECIO_VENTA_MINORISTA, fila);
+            scp.loadData(notaCreditoDetalle.getCantidad(), notaCreditoDetalle.getDescuento(), notaCreditoDetalle.getPrecio(), notaCreditoDetalle.getObservacion());
             scp.setVisible(true);
         }
     }
@@ -322,10 +324,12 @@ public class C_crearNotaCredito extends MouseAdapter implements ActionListener, 
 
     @Override
     public void recibirProducto(double cantidad, double precio, double descuento, M_producto producto, String observacion) {
+        System.out.println("NotasCredito.C_crearNotaCredito.recibirProducto()");
     }
 
     @Override
     public void modificarProducto(int posicion, double cantidad, double precio, double descuento, M_producto producto, String observacion) {
+        System.out.println("NotasCredito.C_crearNotaCredito.modificarProducto()");
         E_NotaCreditoDetalle nd = new E_NotaCreditoDetalle();
         nd.setCantidad(cantidad);
         nd.setDescuento(descuento);

@@ -101,7 +101,7 @@ class C_utilizarMateriaPrima extends MouseAdapter implements ActionListener, Key
         int fila = this.vista.jtMateriaPrimaDetalle.getSelectedRow();
         if (fila > -1) {
             M_producto producto = modelo.getTm().getList().get(fila).getProducto();
-            SeleccionarCantidadProduducto scp = new SeleccionarCantidadProduducto(this.vista, producto, this, fila);
+            SeleccionarCantidadProduducto scp = new SeleccionarCantidadProduducto(this.vista, producto, this, SeleccionarCantidadProduducto.PRECIO_COSTO, fila);
             scp.setVisible(true);
         }
     }

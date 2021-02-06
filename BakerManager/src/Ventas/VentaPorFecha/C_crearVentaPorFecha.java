@@ -254,14 +254,6 @@ public class C_crearVentaPorFecha implements GestionInterface, InterfaceFacturaD
         sumarTotal();
     }
 
-    public void modificarDetalle(Double cantidad, Double precio, Double descuento, String observacion, int row) {
-        modelo.modificarDetalle(row, cantidad, descuento, precio, observacion);
-        this.vista.jbEliminarDetalle.setEnabled(false);
-        this.vista.jbModificarDetalle.setEnabled(false);
-        Utilities.c_packColumn.packColumns(this.vista.jtFacturaDetalle, 1);
-        sumarTotal();
-    }
-
     protected void sumarTotal() {
         double exenta = 0;
         double total5 = 0;
@@ -392,7 +384,20 @@ public class C_crearVentaPorFecha implements GestionInterface, InterfaceFacturaD
         if (existeProd) {
             //SELECCIONAR CANTIDAD DE PRODUCTO
             M_producto unProducto = modelo.obtenerProductoPorCodigo(codigoProducto);
-            SeleccionarCantidadProduducto scp = new SeleccionarCantidadProduducto(this.vista, unProducto, this, -1);
+            int tipoPrecio = -1;
+            System.out.println("Ventas.VentaPorFecha.C_crearVentaPorFecha.obtenerCodigoProducto()");
+            System.out.println("Cliente categoria: " + modelo.getCabecera().getCliente().getIdCategoria());
+            switch (modelo.getCabecera().getCliente().getIdCategoria()) {
+                case 1: {
+                    tipoPrecio = SeleccionarCantidadProduducto.PRECIO_VENTA_MINORISTA;
+                    break;
+                }
+                case 2: {
+                    tipoPrecio = SeleccionarCantidadProduducto.PRECIO_VENTA_MAYORISTA;
+                    break;
+                }
+            }
+            SeleccionarCantidadProduducto scp = new SeleccionarCantidadProduducto(this.vista, unProducto, this, tipoPrecio, -1);
             scp.mostrarPrecioAdicional();
             scp.setVisible(true);
             vista.jtfCodProd.setText("");
@@ -403,11 +408,12 @@ public class C_crearVentaPorFecha implements GestionInterface, InterfaceFacturaD
 
     private void invocarModificarDetalle() {
         int row = this.vista.jtFacturaDetalle.getSelectedRow();
+        System.out.println("Ventas.VentaPorFecha.C_crearVentaPorFecha.invocarModificarDetalle().row: " + row);
         if (row < 0) {
             return;
         }
         M_facturaDetalle fd = modelo.getTableModel().getFacturaDetalleList().get(row);
-        SeleccionarCantidadProduducto scp = new SeleccionarCantidadProduducto(this.vista, fd.getProducto(), this, row);
+        SeleccionarCantidadProduducto scp = new SeleccionarCantidadProduducto(this.vista, fd.getProducto(), this, SeleccionarCantidadProduducto.PRECIO_VENTA_MINORISTA, row);
         scp.cargarDatos(fd);
         scp.setVisible(true);
     }
@@ -425,7 +431,18 @@ public class C_crearVentaPorFecha implements GestionInterface, InterfaceFacturaD
     }
 
     private void invocarSeleccionProducto() {
-        SeleccionarProducto sp = new SeleccionarProducto(this.vista, this, SeleccionarCantidadProduducto.PRECIO_VENTA_MINORISTA);
+        int tipoPrecio = -1;
+        switch (modelo.getCabecera().getCliente().getIdCategoria()) {
+            case 1: {
+                tipoPrecio = SeleccionarCantidadProduducto.PRECIO_VENTA_MINORISTA;
+                break;
+            }
+            case 2: {
+                tipoPrecio = SeleccionarCantidadProduducto.PRECIO_VENTA_MAYORISTA;
+                break;
+            }
+        }
+        SeleccionarProducto sp = new SeleccionarProducto(this.vista, this, tipoPrecio);
         sp.mostrarVista();
     }
 
@@ -532,8 +549,7 @@ public class C_crearVentaPorFecha implements GestionInterface, InterfaceFacturaD
                 break;
             }
             case KeyEvent.VK_F4: {
-                SeleccionarProducto sp = new SeleccionarProducto(this.vista, this);
-                sp.mostrarVista();
+                invocarSeleccionProducto();
                 break;
             }
             case KeyEvent.VK_F5: {
@@ -599,7 +615,11 @@ public class C_crearVentaPorFecha implements GestionInterface, InterfaceFacturaD
 
     @Override
     public void modificarProducto(int posicion, double cantidad, double precio, double descuento, M_producto producto, String observacion) {
-        modificarDetalle(cantidad, precio, descuento, observacion, posicion);
+        modelo.modificarDetalle(posicion, cantidad, descuento, precio, observacion);
+        this.vista.jbEliminarDetalle.setEnabled(false);
+        this.vista.jbModificarDetalle.setEnabled(false);
+        Utilities.c_packColumn.packColumns(this.vista.jtFacturaDetalle, 1);
+        sumarTotal();
     }
 
     @Override

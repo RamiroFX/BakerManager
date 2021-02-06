@@ -119,7 +119,7 @@ class C_crearProduccion extends MouseAdapter implements ActionListener, KeyListe
         int fila = this.vista.jtProduccionDetalle.getSelectedRow();
         if (fila > -1) {
             M_producto producto = modelo.getTm().getList().get(fila).getProducto();
-            SeleccionarCantidadProduducto scp = new SeleccionarCantidadProduducto(this.vista, producto, this, fila);
+            SeleccionarCantidadProduducto scp = new SeleccionarCantidadProduducto(this.vista, producto, this, SeleccionarCantidadProduducto.PRECIO_VENTA_MINORISTA, fila);
             scp.setVisible(true);
         }
     }

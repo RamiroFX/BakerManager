@@ -276,7 +276,8 @@ public class C_crearEgresoPorFecha extends MouseAdapter implements ActionListene
         M_egreso_detalle unDetalle = modelo.getTM().getList().get(row);
         M_producto prod = unDetalle.getProducto();
         prod.setPrecioCosto(unDetalle.getPrecio());
-        SeleccionarCantidadProduducto scp = new SeleccionarCantidadProduducto(vista, prod, this, row);
+        SeleccionarCantidadProduducto scp = new SeleccionarCantidadProduducto(vista, prod, this, SeleccionarCantidadProduducto.PRECIO_COSTO, row);
+        scp.cargarDatosCompra(unDetalle);
         scp.setVisible(true);
     }
 
@@ -363,7 +364,6 @@ public class C_crearEgresoPorFecha extends MouseAdapter implements ActionListene
 
     @Override
     public void modificarProducto(int posicion, double cantidad, double precio, double descuento, M_producto producto, String observacion) {
-        System.out.println("Egresos.C_crearEgresoPorFecha.modificarProducto()");
         this.modelo.getTM().modificarDetalle(posicion, cantidad, descuento, precio, observacion);
         sumarTotal();
     }

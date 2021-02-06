@@ -257,7 +257,7 @@ public class C_seleccionarProducto extends MouseAdapter implements ActionListene
                 idProducto = Integer.valueOf(String.valueOf(vista.jtProducto.getValueAt(fila, 0)));
                 producto = DB_Producto.obtenerDatosProductoID(idProducto);
                 vista.jbAceptar.setEnabled(true);
-                SeleccionarCantidadProduducto scp = new SeleccionarCantidadProduducto(this.vista, producto, callback, 1);
+                SeleccionarCantidadProduducto scp = new SeleccionarCantidadProduducto(this.vista, producto, callback, tipo);
                 scp.setVisible(true);
                 vista.jtfBuscar.requestFocusInWindow();
             }

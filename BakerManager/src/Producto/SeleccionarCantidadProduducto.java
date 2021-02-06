@@ -4,6 +4,7 @@
  */
 package Producto;
 
+import Entities.M_egreso_detalle;
 import Entities.M_facturaDetalle;
 import Entities.M_producto;
 import Interface.RecibirProductoCallback;
@@ -417,7 +418,25 @@ public class SeleccionarCantidadProduducto extends javax.swing.JDialog implement
             jtfObservacion.setText(fd.getObservacion());
         }
     }
+    
+    public void loadData(double cantidad, double descuento, double precio, String observacion) {
+        jtfCantidad.setText(cantidad + "");
+        jtfDescuento.setText(descuento + "");
+        jtfPrecio.setText(precio + "");
+        if (observacion != null) {
+            jtfObservacion.setText(observacion);
+        }
+    }
 
+
+    public void cargarDatosCompra(M_egreso_detalle ed) {
+        jtfCantidad.setText(ed.getCantidad() + "");
+        jtfDescuento.setText(ed.getDescuento() + "");
+        jtfPrecio.setText(ed.getPrecio() + "");
+        if (ed.getObservacion() != null) {
+            jtfObservacion.setText(ed.getObservacion());
+        }
+    }
     public void setTipo(int tipo) {
         this.tipo = tipo;
     }

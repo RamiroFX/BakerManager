@@ -11,19 +11,22 @@ import DB.DB_Producto;
 import Entities.E_Timbrado;
 import Entities.E_impresionTipo;
 import Entities.M_cliente;
+import Entities.M_facturaCabecera;
 import Entities.M_facturaDetalle;
 import Entities.M_funcionario;
 import Entities.M_mesa;
 import Entities.M_mesa_detalle;
+import Entities.M_preferenciasImpresion;
 import Entities.M_producto;
 import Parametros.TipoOperacion;
 import Impresora.Impresora;
 import ModeloTabla.FacturaDetalleTableModel;
+import java.sql.Timestamp;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Vector;
-import javax.swing.JOptionPane;
 
 /**
  *
@@ -35,14 +38,27 @@ public class M_verMesa {
     private FacturaDetalleTableModel fdm;
     private NumberFormat nfSmall, nfLarge;
     private E_impresionTipo tipoVenta;
-
+    private int maxProdCant;
+    private M_preferenciasImpresion preferenciaFactura;
+    private ArrayList<Integer> cabeceraMultiple;
+    /*
+    ventaMultiple:
+        en caso de que la cantidad de filas de productos supere el maximo 
+        permitido, se genera multiples facturaCabeceras
+     */
+    private boolean ventaMultiple = false;
+    
     public M_verMesa(M_cliente c, M_funcionario f, int nroMesa) {
         this.mesa = new M_mesa();
         this.mesa.setNumeroMesa(nroMesa);
         this.mesa.setFuncionario(f);
         this.mesa.setCliente(c);
         this.mesa.setIdCondVenta(TipoOperacion.CONTADO);
+        this.mesa.getTimbrado().setId(1);
         fdm = new FacturaDetalleTableModel();
+        preferenciaFactura = DB_Preferencia.obtenerPreferenciaImpresionFactura();
+        maxProdCant = preferenciaFactura.getMaxProducts();
+        cabeceraMultiple = new ArrayList<>();
         establecerCabeceraVenta();
         inicializarVariables();
     }
@@ -118,12 +134,56 @@ public class M_verMesa {
     }
 
     public void guardarVenta() {
-        int nroTicket = DB_Ingreso.transferirMesaAVenta(getMesa(), obtenerListaDetalleMesa());
-        getMesa().setIdMesa(nroTicket);
-        int opcion = JOptionPane.showConfirmDialog(null, "¿Desea imprimir el ticket?", "Atención", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
-        if (opcion == JOptionPane.YES_OPTION) {
-            Impresora.imprimirTicketVentaMesa(getMesa(), obtenerListaDetalleMesa());
+//        int nroTicket = DB_Ingreso.transferirMesaAVenta(getMesa(), obtenerListaDetalleMesa());
+//        getMesa().setIdMesa(nroTicket);
+//        int opcion = JOptionPane.showConfirmDialog(null, "¿Desea imprimir el ticket?", "Atención", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+//        if (opcion == JOptionPane.YES_OPTION) {
+//            Impresora.imprimirTicketVentaMesa(getMesa(), obtenerListaDetalleMesa());
+//        }
+
+        //INICIO GUARDAR VENTA
+        if (isVentaMultiple()) {
+            //TIPO DE IMPRESION
+            E_impresionTipo tipoImpresion = new E_impresionTipo();
+            tipoImpresion.setId(getTipoVenta().getId());
+            tipoImpresion.setDescripcion(getTipoVenta().getDescripcion());
+            int totalRows = getTM().getFacturaDetalleList().size();
+            float maxProdsAux = getMaxProdCant();
+            int cantVentas = (int) Math.ceil(totalRows / maxProdsAux);
+            ArrayList<M_facturaDetalle> totalList = (ArrayList<M_facturaDetalle>) getTM().getFacturaDetalleList();
+            ArrayList<M_facturaDetalle> currentList;
+            int index1 = 0;
+            int index2 = getMaxProdCant();
+            for (int i = 0; i < cantVentas; i++) {
+                currentList = new ArrayList<>(totalList.subList(index1, index2));
+                if (tipoImpresion.getId() == E_impresionTipo.FACTURA) {
+                    getMesa().setNroFactura(obtenerUltimoNroFactura());//para la siguiente venta
+                } else {
+                    this.getMesa().setNroFactura(null);
+                }
+                int nroTicket = DB_Ingreso.insertarIngreso(getMesa().toMFacturaCabecera(), currentList);
+                getMesa().setIdFacturaCabecera(nroTicket);
+                M_facturaCabecera faca = new M_facturaCabecera();
+                faca.setIdFacturaCabecera(nroTicket);
+                cabeceraMultiple.add(nroTicket);
+                currentList.clear();
+                index1 = index2;
+                if ((index2 + getMaxProdCant()) > totalRows) {
+                    index2 = index2 + (totalRows % getMaxProdCant());
+                } else {
+                    index2 = index2 + getMaxProdCant();
+                }
+            }
+        } else {
+            if (!"factura".equals(tipoVenta.getDescripcion())) {
+                this.getMesa().setNroFactura(null);
+            }
+            int nroTicket = DB_Ingreso.insertarIngreso(getMesa().toMFacturaCabecera(), (ArrayList<M_facturaDetalle>) getTM().getFacturaDetalleList());
+            getMesa().setIdFacturaCabecera(nroTicket);
         }
+        Calendar c = Calendar.getInstance();
+        getMesa().setTiempo(new Timestamp(c.getTimeInMillis()));
+        //FIN GUARDAR VENTA
     }
 
     boolean existeProductoPorCodigo(String codigoProducto) {
@@ -191,5 +251,32 @@ public class M_verMesa {
      */
     public void setNfLarge(NumberFormat nfLarge) {
         this.nfLarge = nfLarge;
+    }
+
+    /**
+     * @return the ventaMultiple
+     */
+    public boolean isVentaMultiple() {
+        return ventaMultiple;
+    }
+
+    /**
+     * @param ventaMultiple the ventaMultiple to set
+     */
+    public void setVentaMultiple(boolean ventaMultiple) {
+        this.ventaMultiple = ventaMultiple;
+    }
+    public int getMaxProdCant() {
+        return maxProdCant;
+    }
+    public int obtenerUltimoNroFactura() {
+        int idTimbrado = getMesa().getTimbrado().getId();
+        int ultimoNroFactura = DB_Ingreso.obtenerUltimoNroFactura(idTimbrado) + 1;
+        int ultimoNroFacturacion = DB_Ingreso.obtenerUltimoNroFacturacion(idTimbrado) + 1;
+        if (ultimoNroFactura >= ultimoNroFacturacion) {
+            return ultimoNroFactura;
+        } else {
+            return ultimoNroFacturacion;
+        }
     }
 }

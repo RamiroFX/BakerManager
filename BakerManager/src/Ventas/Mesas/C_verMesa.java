@@ -330,7 +330,7 @@ public class C_verMesa extends MouseAdapter implements ActionListener, KeyListen
         }
         M_producto idProducto = modelo.getTM().getFacturaDetalleList().get(row).getProducto();
         int idMesaDetalle = modelo.getTM().getFacturaDetalleList().get(row).getIdFacturaDetalle();
-        SeleccionarCantidadProduducto scp = new SeleccionarCantidadProduducto(vista, idProducto, this, idMesaDetalle);
+        SeleccionarCantidadProduducto scp = new SeleccionarCantidadProduducto(vista, idProducto, this, SeleccionarCantidadProduducto.PRECIO_VENTA_MINORISTA, idMesaDetalle);
         scp.setVisible(true);
     }
 
