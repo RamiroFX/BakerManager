@@ -54,6 +54,11 @@ import javax.print.PrintException;
 import javax.print.PrintService;
 import javax.print.PrintServiceLookup;
 import javax.print.SimpleDoc;
+import javax.print.attribute.HashPrintRequestAttributeSet;
+import javax.print.attribute.PrintRequestAttributeSet;
+import javax.print.attribute.standard.JobName;
+import javax.print.attribute.standard.MediaSizeName;
+import javax.print.attribute.standard.OrientationRequested;
 import javax.swing.JOptionPane;
 
 /**
@@ -963,23 +968,34 @@ public class Impresora {
         int width = PREF_PRINT_FACTURA.getAnchoPagina();
         int height = PREF_PRINT_FACTURA.getLargoPagina();
         final List<M_campoImpresion> textoAImprimir = DB_manager.obtenerCampoImpresion(2, MyConstants.ACTIVO);
+
+        PrintRequestAttributeSet aset = new HashPrintRequestAttributeSet();
+        String nombreDoc = facturaCabecera.getCliente().getEntidad() + " " + facturaCabecera.getTiempo();
+        //aset.add(MediaSizeName.ISO_A4);
+        //aset.add(new PrinterResolution(300, 300, PrinterResolution.DPI));
+        //aset.add(new MediaPrintableArea(2, 2, 210 - 4, 297 - 4, MediaPrintableArea.MM));
+        aset.add(new JobName(nombreDoc, null));
+        DocFlavor doc_flavor = DocFlavor.INPUT_STREAM.TEXT_PLAIN_UTF_8;
         PrinterJob job = PrinterJob.getPrinterJob();
         PageFormat pageFormat = new PageFormat();
         Paper paper = new Paper();
         switch (PREF_PRINT_FACTURA.getOrientacion().getId()) {
             case E_impresionOrientacion.PORTRAIT: {
+                aset.add(OrientationRequested.PORTRAIT);
                 paper.setSize(width, height);
                 paper.setImageableArea(PREF_PRINT_FACTURA.getMargenX(), PREF_PRINT_FACTURA.getMargenY(), width, height);
                 pageFormat.setOrientation(PageFormat.PORTRAIT);
                 break;
             }
             case E_impresionOrientacion.LANDSCAPE: {
+                aset.add(OrientationRequested.LANDSCAPE);
                 paper.setSize(height, width);
                 paper.setImageableArea(PREF_PRINT_FACTURA.getMargenX(), PREF_PRINT_FACTURA.getMargenY(), height, width);
                 pageFormat.setOrientation(PageFormat.LANDSCAPE);
                 break;
             }
             case E_impresionOrientacion.REVERSE_LANDSCAPE: {
+                aset.add(OrientationRequested.LANDSCAPE);
                 paper.setSize(height, width);
                 paper.setImageableArea(PREF_PRINT_FACTURA.getMargenX(), PREF_PRINT_FACTURA.getMargenY(), height, width);
                 pageFormat.setOrientation(PageFormat.REVERSE_LANDSCAPE);
@@ -997,7 +1013,7 @@ public class Impresora {
                     try {
                         if (job != null) {
                             job.setPrintService(service);
-                            job.print();
+                            job.print(aset);
                             break;
                         } else {
                             JOptionPane.showMessageDialog(null, "No se pudo imprimir", "Error", JOptionPane.INFORMATION_MESSAGE);

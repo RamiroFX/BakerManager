@@ -443,6 +443,24 @@ public class BoletaPrintable implements Printable {
                     }
                 }
                 /*
+                VENDEDOR
+                 */
+                if (object.getCampo().equals(MyConstants.BOLETA_VENDEDOR)) {
+                    String vendedor = "";
+                    if (facturaCabecera.getVendedor().getNombreCompleto() != null) {
+                        vendedor = facturaCabecera.getVendedor().getNombreCompleto() + "";
+                    }
+                    g.drawString("Vendedor: " + vendedor, posX, posY);
+                    if (preferencia.getIdDuplicado() == 1) {
+                        int duplicadoDist = posY + preferencia.getDistanceBetweenCopies();
+                        g.drawString("Vendedor: " + vendedor, posX, duplicadoDist);
+                    }
+                    if (preferencia.getIdTriplicado() == 1) {
+                        int triplicadoDist = posY + preferencia.getDistanceBetweenCopies() + preferencia.getDistanceBetweenCopies();
+                        g.drawString("Vendedor: " + vendedor, posX, triplicadoDist);
+                    }
+                }
+                /*
                 DETALLE CANTIDAD
                  */
                 if (object.getCampo().equals(MyConstants.BOLETA_DET_CANT_PROD)) {

@@ -12,8 +12,10 @@ import Entities.M_facturaDetalle;
 import Entities.M_preferenciasImpresion;
 import Parametros.TipoOperacion;
 import Utilities.MyConstants;
+import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.print.PageFormat;
 import java.awt.print.Printable;
 import static java.awt.print.Printable.NO_SUCH_PAGE;
@@ -49,6 +51,9 @@ public class VentaPrintable implements Printable {
 
     @Override
     public int print(Graphics g, PageFormat pf, int pi) throws PrinterException {
+        Graphics2D g2d = (Graphics2D) g;
+        //g2d.translate(pf.getImageableX(), pf.getImageableY());
+        g2d.setColor(Color.black);
         final int espaciadorY = 10;
         SimpleDateFormat dateFormat = new SimpleDateFormat(preferencia.getFormatoFecha());
         Date fecha = Calendar.getInstance().getTime();
@@ -220,6 +225,19 @@ public class VentaPrintable implements Printable {
                     }
                     if (preferencia.getIdTriplicado() == 1) {
                         g.drawString(remision, triplicadoDistX, triplicadoDistY);
+                    }
+                }
+                if (object.getCampo().equals(MyConstants.VENDEDOR)) {
+                    String vendedor = "";
+                    if (facturaCabecera.getVendedor().getNombreCompleto() != null) {
+                        vendedor = facturaCabecera.getVendedor().getNombreCompleto() + "";
+                    }
+                    g.drawString(vendedor, posX, posY);
+                    if (preferencia.getIdDuplicado() == 1) {
+                        g.drawString(vendedor, duplicadoDistX, duplicadoDistY);
+                    }
+                    if (preferencia.getIdTriplicado() == 1) {
+                        g.drawString(vendedor, triplicadoDistX, triplicadoDistY);
                     }
                 }
                 if (object.getCampo().equals(MyConstants.DETAIL_CANT)) {

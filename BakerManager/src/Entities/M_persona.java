@@ -218,4 +218,15 @@ public class M_persona {
     public void setId_sexo(Integer id_sexo) {
         this.id_sexo = id_sexo;
     }
+
+    public String getNombreCompleto() {
+        String nombreCompleto = "";
+        if (getNombre() != null) {
+            nombreCompleto = nombreCompleto + getNombre();
+        }
+        if (getApellido() != null) {
+            nombreCompleto = nombreCompleto + getApellido();
+        }
+        return nombreCompleto;
+    }
 }
