@@ -198,7 +198,7 @@ public class C_gestionVentas implements GestionInterface, RecibirEmpleadoCallbac
                 M_cliente cliente = modelo.getCabecera().getCliente();
                 M_funcionario funcionario = modelo.getCabecera().getFuncionario();
                 long startTime = System.nanoTime();
-                modelo.getTm().setFacturaCabeceraList(modelo.obtenerVentas(cliente, funcionario, fechaInicio, fechaFinal, condVenta, nroFactura, estado, conFecha));
+                modelo.obtenerVentas(cliente, funcionario, fechaInicio, fechaFinal, condVenta, nroFactura, estado, conFecha);
                 scr.setList(modelo.getTm().getFacturaCabeceraList());
                 long elapsedTime = System.nanoTime() - startTime;
                 System.out.println("ventas: Tiempo total de busqueda  in millis: " + elapsedTime / 1000000);

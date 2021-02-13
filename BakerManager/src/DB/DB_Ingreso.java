@@ -218,7 +218,7 @@ public class DB_Ingreso {
         return (int) nroFactura;
     }
 
-    public static List<M_facturaCabecera> obtenerIngreso2(Date fechaInicio, Date fechaFinal, int idCliente, int idVendedor, int idCondVenta, int nroFactura, int idEstado, boolean conFechas) {
+    public static List<M_facturaCabecera> obtenerIngresos(Date fechaInicio, Date fechaFinal, int idCliente, int idVendedor, int idCondVenta, int nroFactura, int idEstado, boolean conFechas) {
         List<M_facturaCabecera> list = new ArrayList();
         String query = "SELECT "
                 + "FC.ID_FACTURA_CABECERA,"//1
@@ -245,7 +245,7 @@ public class DB_Ingreso {
                 + "AND FC.ID_CLIENTE = C.ID_CLIENTE ";
                 //+ "AND FC.ID_FUNCIONARIO = F.ID_FUNCIONARIO ";
         String groupBy = " GROUP BY FC.ID_FACTURA_CABECERA,FC.NRO_FACTURA, C.ENTIDAD, FC.TIEMPO, FC.ID_COND_VENTA ";
-        String orderBy = "ORDER BY FC.TIEMPO";
+        String orderBy = "ORDER BY FC.TIEMPO, FC.NRO_FACTURA ";
         if (conFechas) {
             query = query + "AND FC.TIEMPO BETWEEN ?  AND ? ";
         }
