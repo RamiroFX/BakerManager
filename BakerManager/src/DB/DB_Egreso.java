@@ -5,6 +5,7 @@
 package DB;
 
 import Entities.E_tipoOperacion;
+import Entities.Estado;
 import Entities.M_egreso_cabecera;
 import Entities.M_egreso_detalle;
 import Entities.M_egreso_detalleFX;
@@ -196,6 +197,126 @@ public class DB_Egreso {
          }*/
 
         return rstm;
+    }
+
+    public static List<M_egreso_cabecera> obtenerComprasCabecera(int idProveedor, int nroFactura, int idEmpleado, int idTipoOoperacion, int idEstado, Date inicio, Date fin, boolean conFecha) {
+        List<M_egreso_cabecera> list = new ArrayList<>();
+        String fromQuery = "FROM EGRESO_CABECERA EGCA ,FUNCIONARIO FUNC, PERSONA PERS ";
+        String fechaString = "";
+        String proveedorString = "";
+        String empleadoString = "";
+        String tiopString = "";
+        String nuneroFacturaString = "";
+        String estadoQuery = "";
+        if (conFecha) {
+            fechaString = "AND EGCA.TIEMPO BETWEEN ?  AND ? ";
+        }
+        //PROVEEDOR
+        if (idProveedor > 0) {
+            fromQuery = "FROM EGRESO_CABECERA EGCA, FUNCIONARIO FUNC, PERSONA PERS, PROVEEDOR PROV ";
+            proveedorString = " AND PROV.ID_PROVEEDOR = EGCA.ID_PROVEEDOR AND PROV.ID_PROVEEDOR = ?";
+        }
+        //FUNCIONARIO
+        if (idEmpleado > 0) {
+            empleadoString = " AND FUNC.ID_FUNCIONARIO = ? ";
+        }
+        //CONDICION DE COMPRA
+        if (idTipoOoperacion > 0) {
+            tiopString = " AND EGCA.ID_COND_COMPRA = ? ";
+        }
+        //NUMERO DE FACTURA
+        if (nroFactura > 0) {
+            nuneroFacturaString = " AND EGCA.NRO_FACTURA = ?";
+        }
+        //ESTADO
+        if (idEstado > 0) {
+            estadoQuery = " AND EGCA.ID_ESTADO = ? ";
+        }
+        String Query = "SELECT EGCA.ID_EGRESO_CABECERA, "//1
+                + "(SELECT PROV.ENTIDAD FROM PROVEEDOR PROV WHERE PROV.ID_PROVEEDOR = EGCA.ID_PROVEEDOR), "//2
+                + "EGCA.NRO_FACTURA, "//3
+                + "(SELECT PERS.NOMBRE || ' '|| PERS.APELLIDO WHERE PERS.ID_PERSONA = FUNC.ID_PERSONA), "//4
+                + "EGCA.TIEMPO, "//5
+                + "(SELECT SUM (CANTIDAD*(PRECIO-(PRECIO*DESCUENTO)/100)) FROM EGRESO_DETALLE EGDE WHERE EGDE.ID_EGRESO_CABECERA = EGCA.ID_EGRESO_CABECERA), "//6
+                + "(SELECT TIOP.DESCRIPCION FROM TIPO_OPERACION TIOP WHERE TIOP.ID_TIPO_OPERACION = EGCA.ID_COND_COMPRA) "//7
+                + fromQuery
+                + "WHERE EGCA.ID_FUNCIONARIO = FUNC.ID_FUNCIONARIO "
+                + "AND PERS.ID_PERSONA = FUNC.ID_PERSONA "
+                + proveedorString
+                + fechaString
+                + empleadoString
+                + tiopString
+                + nuneroFacturaString
+                + estadoQuery;
+        Query = Query + " ORDER BY EGCA.TIEMPO, EGCA.NRO_FACTURA ";
+        int pos = 1;
+        try {
+            pst = DB_manager.getConection().prepareStatement(Query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            if (conFecha) {
+                pst.setTimestamp(pos++, new java.sql.Timestamp(inicio.getTime()));
+                pst.setTimestamp(pos++, new java.sql.Timestamp(fin.getTime()));
+            }
+            if (idProveedor > 0) {
+                pst.setInt(pos++, idProveedor);
+            }
+            //FUNCIONARIO
+            if (idEmpleado > 0) {
+                pst.setInt(pos++, idEmpleado);
+            }
+            //CONDICION DE COMPRA
+            if (idTipoOoperacion > 0) {
+                pst.setInt(pos++, idTipoOoperacion);
+            }
+            //NUMERO DE FACTURA
+            if (nroFactura > 0) {
+                pst.setInt(pos++, nroFactura);
+            }
+            //ESTADO
+            if (idEstado > 0) {
+                pst.setInt(pos, idEstado);
+            }
+            rs = pst.executeQuery();
+            while (rs.next()) {
+                M_proveedor proveedor = new M_proveedor();
+                proveedor.setEntidad(rs.getString(111111));
+                proveedor.setRuc(rs.getString(111111));
+                proveedor.setRuc_id(rs.getString(111111));
+                M_funcionario f = new M_funcionario();
+                f.setNombre(rs.getString(111111));
+                E_tipoOperacion tiop = new E_tipoOperacion();
+                tiop.setId(rs.getInt(111111));
+                tiop.setDescripcion(rs.getString(111111));
+                Estado estado = new Estado();
+                estado.setId(rs.getInt(111111));
+                estado.setDescripcion(rs.getString(111111));
+                M_egreso_cabecera egresoCabecera = new M_egreso_cabecera();
+                egresoCabecera.setId_cabecera(rs.getInt(1));
+                egresoCabecera.setNro_factura(rs.getInt(111111));
+                egresoCabecera.setCondCompra(tiop);
+                egresoCabecera.setTiempo(rs.getTimestamp(111111));
+                egresoCabecera.setProveedor(proveedor);
+                egresoCabecera.setFuncionario(f);
+                egresoCabecera.setTotal(rs.getInt(111111));
+                egresoCabecera.setEstado(estado);
+                list.add(egresoCabecera);
+            }
+        } catch (SQLException ex) {
+            Logger lgr = Logger.getLogger(DB_NotaCredito.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (pst != null) {
+                    pst.close();
+                }
+            } catch (SQLException ex) {
+                Logger lgr = Logger.getLogger(DB_NotaCredito.class.getName());
+                lgr.log(Level.WARNING, ex.getMessage(), ex);
+            }
+        }
+        return list;
     }
 
     public static ResultSetTableModel obtenerEgresoDetalle(int idEgresoCabecera) {

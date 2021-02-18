@@ -17,6 +17,7 @@ import bakermanager.C_inicio;
 import Empleado.SeleccionarFuncionario;
 import Entities.Estado;
 import Interface.RecibirEmpleadoCallback;
+import ModeloTabla.EgresoCabeceraTableModel;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -39,6 +40,7 @@ import javax.swing.JOptionPane;
 public class C_gestionEgresos extends MouseAdapter implements ActionListener, KeyListener, RecibirEmpleadoCallback {
 
     private M_egreso_cabecera m_egreso_cabecera;
+    private EgresoCabeceraTableModel tm;
     V_gestion_egresos vista;
     public C_inicio c_inicio;
 
@@ -238,6 +240,7 @@ public class C_gestionEgresos extends MouseAdapter implements ActionListener, Ke
                  * Se utiliza el objeto factory para obtener un TableModel
                  * para los resultados del query.
                  */
+                tm.setList(DB_Egreso.obtenerComprasCabecera(1,1,1,1,1,vista.jddInicio.getDate(),vista.jddFinal.getDate(),true));
                 vista.jtEgresoCabecera.setModel(DB_Egreso.obtenerEgreso(proveedor, nro_factura, empleado, fechaInicio, fechaFinal, tiop, estado.getId()));
                 Utilities.c_packColumn.packColumns(vista.jtEgresoCabecera, 1);
                 controlarTablaEgreso();

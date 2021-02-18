@@ -24,6 +24,7 @@ public class M_egreso_cabecera {
     private M_funcionario funcionario;
     private E_tipoOperacion condCompra;
     private E_Timbrado timbrado;
+    private Estado estado;
 
     public M_egreso_cabecera() {
         this.proveedor = new M_proveedor();
@@ -167,6 +168,14 @@ public class M_egreso_cabecera {
 
     public void setTimbrado(E_Timbrado timbrado) {
         this.timbrado = timbrado;
+    }
+
+    public Estado getEstado() {
+        return estado;
+    }
+
+    public void setEstado(Estado estado) {
+        this.estado = estado;
     }
 
 }

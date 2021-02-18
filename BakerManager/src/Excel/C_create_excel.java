@@ -4,7 +4,13 @@
  */
 package Excel;
 
+import DB.DB_Egreso;
+import DB.DB_Ingreso;
+import Entities.E_impuesto;
+import Entities.M_egreso_cabecera;
+import Entities.M_egreso_detalle;
 import Entities.M_egreso_detalleFX;
+import Entities.M_facturaCabecera;
 import Entities.M_facturaDetalle;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -17,10 +23,12 @@ import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFRichTextString;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.hssf.util.HSSFRegionUtil;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.DataFormat;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.util.CellRangeAddress;
 
 /**
  *
@@ -32,10 +40,11 @@ public class C_create_excel {
     public static int UNA_FECHA = 2;
     String nombreHoja;
     ArrayList<M_egreso_detalleFX> egresoDetalle;
+    ArrayList<M_egreso_cabecera> egresoCabecera;
     Date fechaInic, fechaFinal;
     HSSFWorkbook workbook;
     HSSFSheet sheet;
-    CellStyle style1, style2, style3, style4;
+    CellStyle style1, style2, style3, style4, styleNumber;
     HSSFCellStyle dateCellStyle;
     int tipo_fecha;
 
@@ -58,6 +67,9 @@ public class C_create_excel {
         createCellStyles();
     }
 
+    public void establecerListaCabecera(){
+        
+    }
     private void createWorkBook() {
         workbook = new HSSFWorkbook();
         sheet = workbook.createSheet(nombreHoja);
@@ -86,6 +98,9 @@ public class C_create_excel {
         dateCellStyle = workbook.createCellStyle();
         short df = workbook.createDataFormat().getFormat("dd-MM-yyyy");
         dateCellStyle.setDataFormat(df);
+        
+        styleNumber = workbook.createCellStyle();
+        styleNumber.setDataFormat(format.getFormat("#,##0"));
         //END FORMAT STYLE
     }
 
@@ -297,6 +312,204 @@ public class C_create_excel {
                 i--;
                 filaActual++;
             }
+        }
+    }
+    
+    
+    public void exportacionCompleta() {
+        File directory = null;
+        String desktop = System.getProperty("user.home") + "\\Desktop";
+        JFileChooser chooser = new JFileChooser(desktop);
+        if (chooser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
+            directory = chooser.getSelectedFile();
+            directory.setWritable(true);
+            directory.setExecutable(true);
+            directory.setReadable(true);
+        } else {
+            return;
+        }
+        // Create a row and put some cells in it. Rows are 0 based.
+        int filaActual = 0;
+        Row fechaInicio = sheet.createRow(filaActual);
+        filaActual++;
+        Row fechaFin = null;
+        int col = 0;
+        //INICIO CAMPO DE FECHAS
+        if (fechaInic != null && fechaFinal != null) {
+            int dateType = fechaInic.compareTo(fechaFinal);
+            if (dateType == 0) {
+                fechaInicio.createCell(col).setCellValue(new HSSFRichTextString("Fecha :"));
+                col++;
+                fechaInicio.createCell(col).setCellValue(fechaInic);
+                fechaInicio.getCell(col).setCellStyle(dateCellStyle);
+            } else {
+                fechaFin = sheet.createRow(filaActual);
+                col = 0;
+                filaActual++;
+                fechaInicio.createCell(col).setCellValue(new HSSFRichTextString("Fecha inicio:"));
+                fechaFin.createCell(col).setCellValue(new HSSFRichTextString("Fecha fin:"));
+                col++;
+                fechaInicio.createCell(col).setCellValue(fechaInic);
+                fechaFin.createCell(col).setCellValue(fechaFinal);
+                fechaFin.getCell(col).setCellStyle(dateCellStyle);
+                fechaInicio.getCell(col).setCellStyle(dateCellStyle);
+            }
+        }
+        //FIN CAMPO DE FECHAS
+
+        //INICIO CAMPO DE TOTAL INGRESOS
+        Row rowTotalIngreso = sheet.createRow(filaActual);
+        filaActual++;
+        double total = 0;
+        double totalImpuesto = 0;
+        rowTotalIngreso.createCell(0).setCellValue(new HSSFRichTextString("Total compras"));
+        rowTotalIngreso.getCell(0).setCellStyle(style2);
+
+        Row rowTotalImpuesto = sheet.createRow(filaActual);
+        rowTotalImpuesto.createCell(0).setCellValue(new HSSFRichTextString("Total impuesto"));
+        rowTotalImpuesto.getCell(0).setCellStyle(style2);
+        filaActual++;
+        filaActual++;
+        //FIN CAMPO DE TOTAL INGRESOS
+        //INICIO CUERPO DE DATOS
+        for (M_egreso_cabecera egresoCabecera : egresoCabecera) {
+            int ventaPrimeraFila = filaActual;
+            //INICIO CABECERA DE DATOS
+            Row rowCabeceraFechaNroFactura = sheet.createRow(filaActual);
+            filaActual++;
+            col = 0;
+            rowCabeceraFechaNroFactura.createCell(col).setCellValue(new HSSFRichTextString("Fecha"));
+            rowCabeceraFechaNroFactura.getCell(col).setCellStyle(style2);
+            col++;
+            rowCabeceraFechaNroFactura.createCell(col).setCellValue(egresoCabecera.getTiempo());
+            rowCabeceraFechaNroFactura.getCell(col).setCellStyle(dateCellStyle);
+            col++;
+            rowCabeceraFechaNroFactura.createCell(col).setCellValue(new HSSFRichTextString("Nro. Factura"));
+            rowCabeceraFechaNroFactura.getCell(col).setCellStyle(style2);
+            col++;
+            rowCabeceraFechaNroFactura.createCell(col).setCellValue(egresoCabecera.getNro_factura());
+            rowCabeceraFechaNroFactura.getCell(col).setCellStyle(styleNumber);
+
+            Row rowCabeceraClienteCondVenta = sheet.createRow(filaActual);
+            filaActual++;
+            col = 0;
+            rowCabeceraClienteCondVenta.createCell(col).setCellValue(new HSSFRichTextString("Cliente"));
+            rowCabeceraClienteCondVenta.getCell(col).setCellStyle(style2);
+            col++;
+            rowCabeceraClienteCondVenta.createCell(col).setCellValue(egresoCabecera.getProveedor().getEntidad());
+            col++;
+            rowCabeceraClienteCondVenta.createCell(col).setCellValue(new HSSFRichTextString("Cond. compra"));
+            rowCabeceraClienteCondVenta.getCell(col).setCellStyle(style2);
+            col++;
+            rowCabeceraClienteCondVenta.createCell(col).setCellValue(egresoCabecera.getCondCompra().getDescripcion());
+
+            Row rowCabeceraFuncionarioTotalVenta = sheet.createRow(filaActual);
+            filaActual++;
+            col = 0;
+            rowCabeceraFuncionarioTotalVenta.createCell(col).setCellValue(new HSSFRichTextString("Funcionario"));
+            rowCabeceraFuncionarioTotalVenta.getCell(col).setCellStyle(style2);
+            col++;
+            rowCabeceraFuncionarioTotalVenta.createCell(col).setCellValue(egresoCabecera.getFuncionario().getAlias());
+            col++;
+            rowCabeceraFuncionarioTotalVenta.createCell(col).setCellValue(new HSSFRichTextString("Total compra"));
+            rowCabeceraFuncionarioTotalVenta.getCell(col).setCellStyle(style2);
+            col++;
+            rowCabeceraFuncionarioTotalVenta.createCell(col).setCellValue(egresoCabecera.getTotal());
+            rowCabeceraFuncionarioTotalVenta.getCell(col).setCellStyle(styleNumber);
+            //FIN CABECERA DE DATOS
+            ArrayList<M_egreso_detalle> detalles = DB_Egreso.obtenerEgresoDetalles(egresoCabecera.getId_cabecera());
+
+            //INICIO CABECERA DETALLE
+            Row rowCabeceraDetalle = sheet.createRow(filaActual);
+            filaActual++;
+            col = 0;
+            rowCabeceraDetalle.createCell(col).setCellValue(new HSSFRichTextString("Cantidad"));
+            rowCabeceraDetalle.getCell(col).setCellStyle(style1);
+            col++;
+            rowCabeceraDetalle.createCell(col).setCellValue(new HSSFRichTextString("Descripción"));
+            rowCabeceraDetalle.getCell(col).setCellStyle(style1);
+            col++;
+            rowCabeceraDetalle.createCell(col).setCellValue(new HSSFRichTextString("Descuento"));
+            rowCabeceraDetalle.getCell(col).setCellStyle(style1);
+            col++;
+            rowCabeceraDetalle.createCell(col).setCellValue(new HSSFRichTextString("Precio"));
+            rowCabeceraDetalle.getCell(col).setCellStyle(style1);
+            col++;
+            rowCabeceraDetalle.createCell(col).setCellValue(new HSSFRichTextString("Sub-total"));
+            rowCabeceraDetalle.getCell(col).setCellStyle(style1);
+            col++;
+            //FIN CABECERA DETALLE
+            for (M_egreso_detalle facturaDetalle : detalles) {
+                Row rowDetalle = sheet.createRow(filaActual);
+                filaActual++;
+                int colIndex = 0;
+                rowDetalle.createCell(colIndex).setCellValue(facturaDetalle.getCantidad());
+                colIndex++;
+                String prodDescripcion = facturaDetalle.getProducto().getDescripcion();
+                if (facturaDetalle.getObservacion() != null) {
+                    String obs = facturaDetalle.getObservacion();
+                    rowDetalle.createCell(colIndex).setCellValue(new HSSFRichTextString(prodDescripcion + "-(" + obs + ")"));
+                } else {
+                    rowDetalle.createCell(colIndex).setCellValue(new HSSFRichTextString(prodDescripcion));
+                }
+                colIndex++;
+                rowDetalle.createCell(colIndex).setCellValue(facturaDetalle.getDescuento());
+                colIndex++;
+                rowDetalle.createCell(colIndex).setCellValue(facturaDetalle.getPrecio());
+                colIndex++;
+                double subTotal = facturaDetalle.calcularSubTotal();
+                rowDetalle.createCell(colIndex).setCellValue(subTotal);
+                colIndex++;
+                total = total + subTotal;
+                double exenta = 0;
+                double iva5 = 0;
+                double iva10 = 0;
+                switch (facturaDetalle.getProducto().getIdImpuesto()) {
+                    case E_impuesto.EXENTA: {
+                        exenta = exenta + facturaDetalle.calcularSubTotal();
+                        break;
+                    }
+                    case E_impuesto.IVA5: {
+                        iva5 = iva5 + (facturaDetalle.calcularSubTotal() / 21);
+                        break;
+                    }
+                    case E_impuesto.IVA10: {
+                        iva10 = iva10 + (facturaDetalle.calcularSubTotal() / 11);
+                        break;
+                    }
+                }
+                totalImpuesto = totalImpuesto + exenta + iva5 + iva10;
+            }
+            CellRangeAddress cuerpoCRA = new CellRangeAddress(ventaPrimeraFila, filaActual - 1, 0, 4);
+            HSSFRegionUtil.setBorderTop(CellStyle.BORDER_THIN, cuerpoCRA, sheet, workbook);
+            HSSFRegionUtil.setBorderLeft(CellStyle.BORDER_THIN, cuerpoCRA, sheet, workbook);
+            HSSFRegionUtil.setBorderRight(CellStyle.BORDER_THIN, cuerpoCRA, sheet, workbook);
+            HSSFRegionUtil.setBorderBottom(CellStyle.BORDER_THIN, cuerpoCRA, sheet, workbook);
+            filaActual++;
+        }
+        rowTotalIngreso.createCell(1).setCellValue(total);
+        rowTotalIngreso.getCell(1).setCellStyle(styleNumber);
+        rowTotalImpuesto.createCell(1).setCellValue(totalImpuesto);
+        rowTotalImpuesto.getCell(1).setCellStyle(styleNumber);
+        //FIN CUERPO DE DATOS
+
+        //INICIO AJUSTAR COLUMNAS
+        sheet.autoSizeColumn(0);
+        sheet.autoSizeColumn(1);
+        sheet.autoSizeColumn(2);
+        sheet.autoSizeColumn(3);
+        sheet.autoSizeColumn(4);
+        sheet.autoSizeColumn(5);
+        sheet.autoSizeColumn(6);
+        //FIN AJUSTAR COLUMNAS
+        try {
+            FileOutputStream out = new FileOutputStream(directory.getPath() + ".xls");
+            workbook.write(out);
+            out.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }

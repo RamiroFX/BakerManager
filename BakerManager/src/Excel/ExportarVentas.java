@@ -20,10 +20,12 @@ import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFRichTextString;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.hssf.util.HSSFRegionUtil;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.DataFormat;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.util.CellRangeAddress;
 
 /**
  *
@@ -136,6 +138,7 @@ public class ExportarVentas {
         //FIN CAMPO DE TOTAL INGRESOS
         //INICIO CUERPO DE DATOS
         for (M_facturaCabecera facturaCabecera : facturaCabeceraFX) {
+            int ventaPrimeraFila = filaActual;
             //INICIO CABECERA DE DATOS
             Row rowCabeceraFechaNroFactura = sheet.createRow(filaActual);
             filaActual++;
@@ -185,10 +188,10 @@ public class ExportarVentas {
             Row rowCabeceraDetalle = sheet.createRow(filaActual);
             filaActual++;
             col = 0;
-            rowCabeceraDetalle.createCell(col).setCellValue(new HSSFRichTextString("Descripción"));
+            rowCabeceraDetalle.createCell(col).setCellValue(new HSSFRichTextString("Cantidad"));
             rowCabeceraDetalle.getCell(col).setCellStyle(style1);
             col++;
-            rowCabeceraDetalle.createCell(col).setCellValue(new HSSFRichTextString("Cantidad"));
+            rowCabeceraDetalle.createCell(col).setCellValue(new HSSFRichTextString("Descripción"));
             rowCabeceraDetalle.getCell(col).setCellStyle(style1);
             col++;
             rowCabeceraDetalle.createCell(col).setCellValue(new HSSFRichTextString("Descuento"));
@@ -205,6 +208,8 @@ public class ExportarVentas {
                 Row rowDetalle = sheet.createRow(filaActual);
                 filaActual++;
                 int colIndex = 0;
+                rowDetalle.createCell(colIndex).setCellValue(facturaDetalle.getCantidad());
+                colIndex++;
                 String prodDescripcion = facturaDetalle.getProducto().getDescripcion();
                 if (facturaDetalle.getObservacion() != null) {
                     String obs = facturaDetalle.getObservacion();
@@ -212,8 +217,6 @@ public class ExportarVentas {
                 } else {
                     rowDetalle.createCell(colIndex).setCellValue(new HSSFRichTextString(prodDescripcion));
                 }
-                colIndex++;
-                rowDetalle.createCell(colIndex).setCellValue(facturaDetalle.getCantidad());
                 colIndex++;
                 rowDetalle.createCell(colIndex).setCellValue(facturaDetalle.getDescuento());
                 colIndex++;
@@ -242,6 +245,11 @@ public class ExportarVentas {
                 }
                 totalImpuesto = totalImpuesto + exenta + iva5 + iva10;
             }
+            CellRangeAddress cuerpoCRA = new CellRangeAddress(ventaPrimeraFila, filaActual - 1, 0, 4);
+            HSSFRegionUtil.setBorderTop(CellStyle.BORDER_THIN, cuerpoCRA, sheet, workbook);
+            HSSFRegionUtil.setBorderLeft(CellStyle.BORDER_THIN, cuerpoCRA, sheet, workbook);
+            HSSFRegionUtil.setBorderRight(CellStyle.BORDER_THIN, cuerpoCRA, sheet, workbook);
+            HSSFRegionUtil.setBorderBottom(CellStyle.BORDER_THIN, cuerpoCRA, sheet, workbook);
             filaActual++;
         }
         rowTotalIngreso.createCell(1).setCellValue(total);
