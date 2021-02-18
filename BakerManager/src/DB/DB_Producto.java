@@ -609,7 +609,7 @@ public class DB_Producto {
             pst = DB_manager.getConection().prepareStatement(q);
             pst.setInt(1, idProducto);
             rs = pst.executeQuery();
-            return !rs.isBeforeFirst();
+            return rs.isBeforeFirst();
         } catch (SQLException ex) {
             ex.printStackTrace();
         }

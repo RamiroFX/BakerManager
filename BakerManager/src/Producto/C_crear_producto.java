@@ -50,6 +50,8 @@ public class C_crear_producto implements ActionListener, KeyListener, RecibirPro
     }
 
     private void inicializarVista() {
+        this.vista.jtfId.setText(this.modelo.obtenerUltimoIdProducto() + 1 + "");
+        this.vista.jtfId.setEditable(false);
         this.vista.jtfCodigo.setText(this.modelo.obtenerUltimoIdProducto() + 1 + "");
         Vector impuesto = modelo.obtenerImpuesto();
         for (int i = 0; i < impuesto.size(); i++) {
@@ -88,59 +90,100 @@ public class C_crear_producto implements ActionListener, KeyListener, RecibirPro
         this.vista.jtfProveedor.addKeyListener(this);
     }
 
+    private boolean validarDescripcion() {
+        String descripcion = this.vista.jtfProducto.getText().trim();
+        if (descripcion.isEmpty() || descripcion.length() > 80) {
+            javax.swing.JOptionPane.showMessageDialog(this.vista, "Verifique el nombre del producto. Máximo 50 caracteres permitidos.", "Parametros incorrectos",
+                    javax.swing.JOptionPane.OK_OPTION);
+            return false;
+        }
+        return true;
+    }
+
+    private boolean validarCodigo() {
+        String codigo = this.vista.jtfCodigo.getText().trim();
+        if (codigo.length() > 30) {
+            javax.swing.JOptionPane.showMessageDialog(this.vista, "Verifique el código del producto. Máximo 30 caracteres permitidos.", "Parametros incorrectos",
+                    javax.swing.JOptionPane.OK_OPTION);
+            return false;
+        }
+        if (codigo.isEmpty()) {
+            codigo = null;
+        }
+        return true;
+    }
+
+    private boolean validarPrecioCosto() {
+        double precioCosto = 0;
+        try {
+            precioCosto = Double.valueOf(this.vista.jtfPrecioCosto.getText());
+            if (precioCosto < 0 || precioCosto > 999999999) {
+                JOptionPane.showMessageDialog(vista, "Precio de costo. Máximo 9 dígitos permitido", "Atención", JOptionPane.ERROR_MESSAGE);
+                this.vista.jtfPrecioCosto.setText("");
+                return false;
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(vista, "Ingrese un precio de costo válido. Solo números enteros.", "Atención", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+        return true;
+    }
+
+    public boolean validarPrecioMayorista() {
+        double precioMayorista = 0;
+        try {
+            precioMayorista = Double.valueOf(this.vista.jtfPrecioMayorista.getText());
+            if (precioMayorista < 0 || precioMayorista > 999999999) {
+                JOptionPane.showMessageDialog(vista, "Precio mayorista. Máximo 9 dígitos permitido", "Atención", JOptionPane.ERROR_MESSAGE);
+                this.vista.jtfPrecioMayorista.setText("");
+                return false;
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(vista, "Ingrese un precio mayorista válido. Solo números enteros.", "Atención", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+
+        return true;
+    }
+
+    private boolean validarPrecioVenta() {
+        double precioVenta = 0.0;
+        try {
+            precioVenta = Double.valueOf(this.vista.jtfPrecioVta.getText());
+            if (precioVenta < 0 || precioVenta > 999999999) {
+                JOptionPane.showMessageDialog(vista, "Precio de venta. Máximo 9 dígitos permitido", "Atención", JOptionPane.ERROR_MESSAGE);
+                this.vista.jtfPrecioVta.setText("");
+                return false;
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(vista, "Ingrese un precio de venta válido. Solo números enteros.", "Atención", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+        return true;
+    }
+
     private void creaProducto() {
         try {
+            if (!validarDescripcion()) {
+                return;
+            }
+            if (!validarCodigo()) {
+                return;
+            }
+            if (!validarPrecioCosto()) {
+                return;
+            }
+            if (!validarPrecioMayorista()) {
+                return;
+            }
+            if (!validarPrecioVenta()) {
+                return;
+            }
             String descripcion = this.vista.jtfProducto.getText().trim();
-            if (descripcion.isEmpty() || descripcion.length() > 80) {
-                javax.swing.JOptionPane.showMessageDialog(this.vista, "Verifique el nombre del producto. Máximo 50 caracteres permitidos.", "Parametros incorrectos",
-                        javax.swing.JOptionPane.OK_OPTION);
-                return;
-            }
             String codigo = this.vista.jtfCodigo.getText().trim();
-            if (codigo.length() > 30) {
-                javax.swing.JOptionPane.showMessageDialog(this.vista, "Verifique el código del producto. Máximo 30 caracteres permitidos.", "Parametros incorrectos",
-                        javax.swing.JOptionPane.OK_OPTION);
-                return;
-            }
-            if (codigo.isEmpty()) {
-                codigo = null;
-            }
-            double precioCosto = 0;
-            try {
-                precioCosto = Integer.valueOf(this.vista.jtfPrecioCosto.getText());
-                if (precioCosto < 0 || precioCosto > 999999999) {
-                    JOptionPane.showMessageDialog(vista, "Precio de costo. Máximo 9 dígitos permitido", "Atención", JOptionPane.ERROR_MESSAGE);
-                    this.vista.jtfPrecioCosto.setText("");
-                    return;
-                }
-            } catch (Exception e) {
-                JOptionPane.showMessageDialog(vista, "Ingrese un precio de costo válido. Solo números enteros.", "Atención", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-            double precioMayorista = 0;
-            try {
-                precioMayorista = Integer.valueOf(this.vista.jtfPrecioMayorista.getText());
-                if (precioMayorista < 0 || precioMayorista > 999999999) {
-                    JOptionPane.showMessageDialog(vista, "Precio mayorista. Máximo 9 dígitos permitido", "Atención", JOptionPane.ERROR_MESSAGE);
-                    this.vista.jtfPrecioMayorista.setText("");
-                    return;
-                }
-            } catch (Exception e) {
-                JOptionPane.showMessageDialog(vista, "Ingrese un precio mayorista válido. Solo números enteros.", "Atención", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-            double precioVenta = 0.0;
-            try {
-                precioVenta = Integer.valueOf(this.vista.jtfPrecioVta.getText());
-                if (precioVenta < 0 || precioVenta > 999999999) {
-                    JOptionPane.showMessageDialog(vista, "Precio de venta. Máximo 9 dígitos permitido", "Atención", JOptionPane.ERROR_MESSAGE);
-                    this.vista.jtfPrecioVta.setText("");
-                    return;
-                }
-            } catch (Exception e) {
-                JOptionPane.showMessageDialog(vista, "Ingrese un precio de venta válido. Solo números enteros.", "Atención", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
+            double precioCosto = Double.valueOf(this.vista.jtfPrecioCosto.getText());
+            double precioMayorista = Double.valueOf(this.vista.jtfPrecioMayorista.getText());
+            double precioVenta = Double.valueOf(this.vista.jtfPrecioVta.getText());
             M_producto producto = new M_producto();
             producto.setCantActual(0.0);
             producto.setDescripcion(descripcion);
@@ -184,10 +227,10 @@ public class C_crear_producto implements ActionListener, KeyListener, RecibirPro
         this.vista.jtfProducto.setText(producto.getDescripcion());
         this.vista.jtfCodigo.setText(String.valueOf(producto.getCodBarra()));
         this.vista.jtfPrecioCosto.setText(producto.getPrecioCosto() + "");
-        this.vista.jtfPrecioMayorista.setText(producto.getPrecioMayorista()+"");
-        this.vista.jtfPrecioVta.setText(producto.getPrecioVenta()+"");
+        this.vista.jtfPrecioMayorista.setText(producto.getPrecioMayorista() + "");
+        this.vista.jtfPrecioVta.setText(producto.getPrecioVenta() + "");
         this.vista.jcbCategoria.setSelectedItem(producto.getCategoria());
-        this.vista.jcbImpuesto.setSelectedItem(producto.getImpuesto()+"");
+        this.vista.jcbImpuesto.setSelectedItem(producto.getImpuesto() + "");
         this.vista.jcbMarca.setSelectedItem(producto.getMarca());
     }
 

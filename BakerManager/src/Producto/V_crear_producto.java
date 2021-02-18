@@ -24,9 +24,9 @@ import static javax.swing.WindowConstants.DISPOSE_ON_CLOSE;
  */
 public class V_crear_producto extends JDialog {
 
-    private JLabel jlProducto, jlCodigo, jlImpuesto, jlRubro, jlPrecioCosto, jlMarca,
-            jlPrecioVta, jlPrecioMayorista;
-    public JTextField jtfProducto, jtfCodigo, jtfPrecioCosto,
+    private JLabel jlId, jlProducto, jlCodigo, jlImpuesto, jlRubro, jlPrecioCosto, 
+            jlMarca, jlPrecioVta, jlPrecioMayorista;
+    public JTextField jtfId, jtfProducto, jtfCodigo, jtfPrecioCosto,
             jtfPrecioVta, jtfPrecioMayorista, jtfProveedor;
     public JTextArea jtaIngredientes;
     public JComboBox jcbImpuesto, jcbMarca, jcbCategoria;
@@ -56,9 +56,11 @@ public class V_crear_producto extends JDialog {
 
     private JPanel getJpPrincipal() {
         if (jpPrincipal == null) {
-            jpPrincipal = new JPanel(new GridLayout(10, 2));
+            jpPrincipal = new JPanel(new GridLayout(11, 2));
 
             //Labels
+            jlId = new JLabel("ID");
+            jlId.setHorizontalAlignment(JLabel.CENTER);
             jlProducto = new JLabel("Producto");
             jlProducto.setHorizontalAlignment(JLabel.CENTER);
             jlCodigo = new JLabel("Codigo");
@@ -83,6 +85,7 @@ public class V_crear_producto extends JDialog {
             jpProv.add(jbProveedor);
             jpProv.add(jckBProveedor);
             //TextFields
+            jtfId = new JTextField();
             jtfProducto = new JTextField();
             jtfCodigo = new JTextField();
             jtfPrecioVta = new JTextField("1");
@@ -98,6 +101,8 @@ public class V_crear_producto extends JDialog {
 
             jtaIngredientes = new JTextArea();
 
+            jpPrincipal.add(jlId);
+            jpPrincipal.add(jtfId);
             jpPrincipal.add(jlProducto);
             jpPrincipal.add(jtfProducto);
             jpPrincipal.add(jlCodigo);

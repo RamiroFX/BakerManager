@@ -153,7 +153,8 @@ public class C_modificar_producto implements ActionListener {
         }
         System.out.println("Nombre nuevo");
         //PENDIENTE
-        if (modelo.productoEnUso(this.modelo.producto.getId())) {
+        boolean b = modelo.productoEnUso(this.modelo.producto.getId());
+        if (b) {
             Object[] options = {"Si",
                 "No"};
             int n = JOptionPane.showOptionDialog(null,
@@ -196,9 +197,9 @@ public class C_modificar_producto implements ActionListener {
     }
 
     private boolean controlarPrecioCosto() {
-        int precioCosto = 0;
+        double precioCosto = 0;
         try {
-            precioCosto = Integer.valueOf(this.vista.jtfPrecioCosto.getText());
+            precioCosto = Double.valueOf(this.vista.jtfPrecioCosto.getText());
             if (precioCosto < 0 || precioCosto > 999999999) {
                 JOptionPane.showMessageDialog(vista, "Precio de costo. Máximo 9 dígitos permitido", "Atención", JOptionPane.ERROR_MESSAGE);
                 this.vista.jtfPrecioCosto.setText("");
@@ -212,9 +213,9 @@ public class C_modificar_producto implements ActionListener {
     }
 
     private boolean controlarPrecioMayorista() {
-        int precioMayorista = 0;
+        double precioMayorista = 0;
         try {
-            precioMayorista = Integer.valueOf(this.vista.jtfPrecioMayorista.getText());
+            precioMayorista = Double.valueOf(this.vista.jtfPrecioMayorista.getText());
             if (precioMayorista < 0 || precioMayorista > 999999999) {
                 JOptionPane.showMessageDialog(vista, "Precio mayorista. Máximo 9 dígitos permitido", "Atención", JOptionPane.ERROR_MESSAGE);
                 this.vista.jtfPrecioMayorista.setText("");
@@ -228,9 +229,9 @@ public class C_modificar_producto implements ActionListener {
     }
 
     private boolean controlarPrecioVenta() {
-        int precioVenta = 0;
+        double precioVenta = 0;
         try {
-            precioVenta = Integer.valueOf(this.vista.jtfPrecioVta.getText());
+            precioVenta = Double.valueOf(this.vista.jtfPrecioVta.getText());
             if (precioVenta < 0 || precioVenta > 999999999) {
                 JOptionPane.showMessageDialog(vista, "Precio de venta. Máximo 9 dígitos permitido", "Atención", JOptionPane.ERROR_MESSAGE);
                 this.vista.jtfPrecioVta.setText("");
@@ -244,7 +245,7 @@ public class C_modificar_producto implements ActionListener {
     }
 
     private boolean controlarCantActual() {
-        Double cantActual = null;
+        double cantActual = 0.0;
         try {
             cantActual = Double.valueOf(this.vista.jtfCantActual.getText());
             if (cantActual > 999999) {
