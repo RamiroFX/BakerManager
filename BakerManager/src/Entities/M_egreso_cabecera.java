@@ -30,6 +30,8 @@ public class M_egreso_cabecera {
         this.proveedor = new M_proveedor();
         this.funcionario = new M_funcionario();
         this.timbrado = new E_Timbrado();
+        this.condCompra = new E_tipoOperacion();
+        this.estado = new Estado();
     }
 
     /**

@@ -12,12 +12,14 @@ import bakermanager.C_inicio;
  */
 public class Gestion_Egreso {
 
+    M_gestionEgresos modelo;
     V_gestion_egresos vista;
     C_gestionEgresos controlador;
 
     public Gestion_Egreso(C_inicio c_inicio) {
+        this.modelo = new M_gestionEgresos();
         this.vista = new V_gestion_egresos();
-        this.controlador = new C_gestionEgresos(this.vista, c_inicio);
+        this.controlador = new C_gestionEgresos(this.modelo, this.vista, c_inicio);
     }
 
     public void mostrarVista() {

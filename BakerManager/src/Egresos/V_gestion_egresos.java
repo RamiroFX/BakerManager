@@ -35,7 +35,7 @@ public class V_gestion_egresos extends JInternalFrame {
             jbResumen, jbProveedor, jbFuncionario, jbAnular, jbGraficos, jbMasOpciones;
     public JTextField jtfNroFactura, jtfProveedor, jtfFuncionario;
     public JComboBox<Estado> jcbEstado;
-    public JComboBox jcbCondCompra;
+    public JComboBox<E_tipoOperacion> jcbCondCompra;
     private JPanel jpTop, jpBotonesTop, jpBot;
     public JTable jtEgresoDetalle, jtEgresoCabecera;
     private JScrollPane jspEgresoDetalle, jspEgresoCabecera;

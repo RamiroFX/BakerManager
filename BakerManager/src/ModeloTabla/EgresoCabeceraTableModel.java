@@ -41,7 +41,7 @@ public class EgresoCabeceraTableModel extends AbstractTableModel {
         updateTable();
     }
 
-    public List<M_egreso_cabecera> getFacturaCabeceraList() {
+    public List<M_egreso_cabecera> getList() {
         return list;
     }
 

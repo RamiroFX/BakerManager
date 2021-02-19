@@ -226,7 +226,7 @@ public class DB_Egreso {
         }
         //NUMERO DE FACTURA
         if (nroFactura > 0) {
-            nuneroFacturaString = " AND EGCA.NRO_FACTURA = ?";
+            nuneroFacturaString = " AND EGCA.NRO_FACTURA = ? ";
         }
         //ESTADO
         if (idEstado > 0) {
@@ -234,16 +234,22 @@ public class DB_Egreso {
         }
         String Query = "SELECT EGCA.ID_EGRESO_CABECERA, "//1
                 + "(SELECT PROV.ENTIDAD FROM PROVEEDOR PROV WHERE PROV.ID_PROVEEDOR = EGCA.ID_PROVEEDOR), "//2
-                + "EGCA.NRO_FACTURA, "//3
-                + "(SELECT PERS.NOMBRE || ' '|| PERS.APELLIDO WHERE PERS.ID_PERSONA = FUNC.ID_PERSONA), "//4
-                + "EGCA.TIEMPO, "//5
-                + "(SELECT SUM (CANTIDAD*(PRECIO-(PRECIO*DESCUENTO)/100)) FROM EGRESO_DETALLE EGDE WHERE EGDE.ID_EGRESO_CABECERA = EGCA.ID_EGRESO_CABECERA), "//6
-                + "(SELECT TIOP.DESCRIPCION FROM TIPO_OPERACION TIOP WHERE TIOP.ID_TIPO_OPERACION = EGCA.ID_COND_COMPRA) "//7
+                + "(SELECT PROV.NOMBRE FROM PROVEEDOR PROV WHERE PROV.ID_PROVEEDOR = EGCA.ID_PROVEEDOR), "//3
+                + "EGCA.NRO_FACTURA, "//4
+                + "(SELECT PERS.NOMBRE WHERE PERS.ID_PERSONA = FUNC.ID_PERSONA), "//5
+                + "(SELECT PERS.APELLIDO WHERE PERS.ID_PERSONA = FUNC.ID_PERSONA), "//6
+                + "FUNC.ALIAS, "//7
+                + "EGCA.TIEMPO, "//8
+                + "(SELECT TIOP.ID_TIPO_OPERACION FROM TIPO_OPERACION TIOP WHERE TIOP.ID_TIPO_OPERACION = EGCA.ID_COND_COMPRA), "//9
+                + "(SELECT TIOP.DESCRIPCION FROM TIPO_OPERACION TIOP WHERE TIOP.ID_TIPO_OPERACION = EGCA.ID_COND_COMPRA), "//10
+                + "(SELECT ESTADO.ID_ESTADO FROM ESTADO WHERE ESTADO.ID_ESTADO = EGCA.ID_ESTADO), "//11
+                + "(SELECT ESTADO.DESCRIPCION FROM ESTADO WHERE ESTADO.ID_ESTADO = EGCA.ID_ESTADO), "//12
+                + "(SELECT SUM (CANTIDAD*(PRECIO-(PRECIO*DESCUENTO)/100)) FROM EGRESO_DETALLE EGDE WHERE EGDE.ID_EGRESO_CABECERA = EGCA.ID_EGRESO_CABECERA) "//13
                 + fromQuery
                 + "WHERE EGCA.ID_FUNCIONARIO = FUNC.ID_FUNCIONARIO "
                 + "AND PERS.ID_PERSONA = FUNC.ID_PERSONA "
-                + proveedorString
                 + fechaString
+                + proveedorString
                 + empleadoString
                 + tiopString
                 + nuneroFacturaString
@@ -278,25 +284,26 @@ public class DB_Egreso {
             rs = pst.executeQuery();
             while (rs.next()) {
                 M_proveedor proveedor = new M_proveedor();
-                proveedor.setEntidad(rs.getString(111111));
-                proveedor.setRuc(rs.getString(111111));
-                proveedor.setRuc_id(rs.getString(111111));
+                proveedor.setEntidad(rs.getString(2));
+                proveedor.setNombre(rs.getString(3));
                 M_funcionario f = new M_funcionario();
-                f.setNombre(rs.getString(111111));
+                f.setNombre(rs.getString(5));
+                f.setApellido(rs.getString(6));
+                f.setAlias(rs.getString(7));
                 E_tipoOperacion tiop = new E_tipoOperacion();
-                tiop.setId(rs.getInt(111111));
-                tiop.setDescripcion(rs.getString(111111));
+                tiop.setId(rs.getInt(9));
+                tiop.setDescripcion(rs.getString(10));
                 Estado estado = new Estado();
-                estado.setId(rs.getInt(111111));
-                estado.setDescripcion(rs.getString(111111));
+                estado.setId(rs.getInt(11));
+                estado.setDescripcion(rs.getString(12));
                 M_egreso_cabecera egresoCabecera = new M_egreso_cabecera();
                 egresoCabecera.setId_cabecera(rs.getInt(1));
-                egresoCabecera.setNro_factura(rs.getInt(111111));
+                egresoCabecera.setNro_factura(rs.getInt(4));
                 egresoCabecera.setCondCompra(tiop);
-                egresoCabecera.setTiempo(rs.getTimestamp(111111));
+                egresoCabecera.setTiempo(rs.getTimestamp(8));
                 egresoCabecera.setProveedor(proveedor);
                 egresoCabecera.setFuncionario(f);
-                egresoCabecera.setTotal(rs.getInt(111111));
+                egresoCabecera.setTotal(rs.getInt(13));
                 egresoCabecera.setEstado(estado);
                 list.add(egresoCabecera);
             }

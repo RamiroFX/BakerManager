@@ -15,6 +15,7 @@ import MenuPrincipal.DatosUsuario;
 import Proveedor.Seleccionar_proveedor;
 import bakermanager.C_inicio;
 import Empleado.SeleccionarFuncionario;
+import Entities.E_tipoOperacion;
 import Entities.Estado;
 import Interface.RecibirEmpleadoCallback;
 import ModeloTabla.EgresoCabeceraTableModel;
@@ -39,13 +40,15 @@ import javax.swing.JOptionPane;
  */
 public class C_gestionEgresos extends MouseAdapter implements ActionListener, KeyListener, RecibirEmpleadoCallback {
 
-    private M_egreso_cabecera m_egreso_cabecera;
-    private EgresoCabeceraTableModel tm;
+    private static final String VALIDAR_NRO_FACTURA_1 = "Ingrese solo números enteros en número de factura",
+            VALIDAR_NRO_FACTURA_2 = "Ingrese solo números enteros y positivos en número de factura";
+
+    M_gestionEgresos modelo;
     V_gestion_egresos vista;
     public C_inicio c_inicio;
 
-    public C_gestionEgresos(V_gestion_egresos vista, C_inicio c_inicio) {
-        this.m_egreso_cabecera = new M_egreso_cabecera();
+    public C_gestionEgresos(M_gestionEgresos modelo, V_gestion_egresos vista, C_inicio c_inicio) {
+        this.modelo = modelo;
         this.vista = vista;
         this.c_inicio = c_inicio;
         this.vista.setLocation(c_inicio.centrarPantalla(this.vista));
@@ -53,30 +56,15 @@ public class C_gestionEgresos extends MouseAdapter implements ActionListener, Ke
         concederPermisos();
     }
 
-    /**
-     * @return the producto
-     */
-    public M_egreso_cabecera getEgreso_cabecera() {
-        return m_egreso_cabecera;
-    }
-
-    /**
-     * @param producto the producto to set
-     */
-    public void setEgreso_cabecera(M_egreso_cabecera m_egreso_cabecera) {
-        this.m_egreso_cabecera = m_egreso_cabecera;
-    }
-
     private void inicializarVista() {
+        this.vista.jtEgresoCabecera.setModel(modelo.getTm());
         this.vista.jbDetalle.setEnabled(false);
         this.vista.jbAnular.setEnabled(false);
-        Vector condCompra = DB_Egreso.obtenerTipoOperacion();
-        this.vista.jcbCondCompra.addItem("Todos");
+        ArrayList<E_tipoOperacion> condCompra = modelo.obtenerTipoOperacion();
         for (int i = 0; i < condCompra.size(); i++) {
             this.vista.jcbCondCompra.addItem(condCompra.get(i));
         }
-        ArrayList<Estado> estados = DB_manager.obtenerEstados();
-        estados.add(new Estado(-1, "Todos"));
+        ArrayList<Estado> estados = modelo.obtenerEstados();
         for (int i = 0; i < estados.size(); i++) {
             this.vista.jcbEstado.addItem(estados.get(i));
         }
@@ -163,85 +151,70 @@ public class C_gestionEgresos extends MouseAdapter implements ActionListener, Ke
         }
     }
 
-    private String empleado() {
-        if (vista.jtfFuncionario.getText().isEmpty()) {
-            return "Todos";
-        }
-        return m_egreso_cabecera.getId_empleado().toString();
-    }
-
-    private String proveedor() {
-        if (vista.jtfProveedor.getText().isEmpty()) {
-            return "Todos";
-        }
-        return m_egreso_cabecera.getProveedor().getEntidad();
-    }
-
-    private String tipoOperacion() {
-        String idEmpleado = "";
-        String datosTipoOperacion = vista.jcbCondCompra.getSelectedItem().toString();
-        if (vista.jcbCondCompra.getSelectedItem().toString().equals("Todos")) {
-            return "Todos";//1kg*26000// 10kg*210000
+//    private String tipoOperacion() {
+//        String idEmpleado = "";
+//        String datosTipoOperacion = vista.jcbCondCompra.getSelectedItem().toString();
+//        if (vista.jcbCondCompra.getSelectedItem().toString().equals("Todos")) {
+//            return "Todos";//1kg*26000// 10kg*210000
+//        } else {
+//            idEmpleado = DB_Egreso.obtenerTipoOperacion(datosTipoOperacion).toString();
+//        }
+//        return idEmpleado;
+//    }
+    private boolean validarNroFactura() {
+        int nroFactura = -1;
+        if (this.vista.jtfNroFactura.getText().trim().isEmpty()) {
+            return true;
         } else {
-            idEmpleado = DB_Egreso.obtenerTipoOperacion(datosTipoOperacion).toString();
+            try {
+                nroFactura = Integer.valueOf(this.vista.jtfNroFactura.getText().trim());
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(vista, VALIDAR_NRO_FACTURA_1, "Atención", JOptionPane.WARNING_MESSAGE);
+                return false;
+            }
+            if (nroFactura < 0) {
+                JOptionPane.showMessageDialog(vista, VALIDAR_NRO_FACTURA_2, "Atención", JOptionPane.WARNING_MESSAGE);
+                return false;
+            }
         }
-        return idEmpleado;
+        return true;
     }
 
-    public void displayQueryResults() {
-        /*
-         * Para permitir que los mensajes puedan ser desplegados, no se ejecuta
-         * el query directamente, sino que se lo coloca en una cola de eventos
-         * para que se ejecute luego de los eventos pendientes.
-         */
 
+    private boolean validarFechas() {
+        Date inicio = vista.jddInicio.getDate();
+        Date fin = vista.jddFinal.getDate();
+        if (inicio != null && fin != null) {
+            int dateValue = inicio.compareTo(fin);
+            if (dateValue <= 0) {
+                return true;
+            }
+        }
+        vista.jddFinal.setDate(vista.jddInicio.getDate());
+        vista.jddFinal.updateUI();
+        JOptionPane.showMessageDialog(vista, "La fecha inicio debe ser menor que fecha final", "Atención", JOptionPane.WARNING_MESSAGE);
+        return false;
+    }
+    
+    public void displayQueryResults(final boolean conFecha) {
         EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
-                if (vista.jddInicio.getDate() != null && vista.jddFinal.getDate() != null) {
-                    int dateValue = vista.jddInicio.getDate().compareTo(vista.jddFinal.getDate());
-                    if (dateValue > 0) {
-                        vista.jddFinal.setDate(vista.jddInicio.getDate());
-                        vista.jddFinal.updateUI();
-                        JOptionPane.showMessageDialog(vista, "La fecha inicio debe ser menor que fecha final", "Atención", JOptionPane.WARNING_MESSAGE);
-                        return;
-                    }
-                }
-                String fechaInicio = "";
-                String fechaFinal = "";
-                Integer nro_factura = null;
-                try {
-                    java.util.Date dateInicio = vista.jddInicio.getDate();
-                    fechaInicio = new Timestamp(dateInicio.getTime()).toString().substring(0, 11);
-                    fechaInicio = fechaInicio + "00:00:00.000";
-                } catch (Exception e) {
-                    fechaInicio = "Todos";
-                }
-                try {
-                    java.util.Date dateFinal = vista.jddFinal.getDate();
-                    fechaFinal = new Timestamp(dateFinal.getTime()).toString().substring(0, 11);
-                    fechaFinal = fechaFinal + "23:59:59.000";
-                } catch (Exception e) {
-                    fechaFinal = "Todos";
-                }
-                try {
-                    if (!vista.jtfNroFactura.getText().isEmpty()) {
-                        nro_factura = Integer.valueOf(String.valueOf(vista.jtfNroFactura.getText()));
-                    }
-                } catch (Exception e) {
-                    JOptionPane.showMessageDialog(vista, "El numero de factura debe ser solo numérico", "Atención", JOptionPane.WARNING_MESSAGE);
+                if (!validarFechas()) {
                     return;
                 }
-                String empleado = empleado();
-                String proveedor = proveedor();
-                String tiop = tipoOperacion();
-                Estado estado = vista.jcbEstado.getItemAt(vista.jcbEstado.getSelectedIndex());
-                /*
-                 * Se utiliza el objeto factory para obtener un TableModel
-                 * para los resultados del query.
-                 */
-                tm.setList(DB_Egreso.obtenerComprasCabecera(1,1,1,1,1,vista.jddInicio.getDate(),vista.jddFinal.getDate(),true));
-                vista.jtEgresoCabecera.setModel(DB_Egreso.obtenerEgreso(proveedor, nro_factura, empleado, fechaInicio, fechaFinal, tiop, estado.getId()));
+                int nroFactura = -1;
+                if (!vista.jtfNroFactura.getText().trim().isEmpty()) {
+                    nroFactura = Integer.valueOf(vista.jtfNroFactura.getText().trim());
+                }
+                int condCompraIndex = vista.jcbCondCompra.getSelectedIndex();
+                E_tipoOperacion condCompra = vista.jcbCondCompra.getItemAt(condCompraIndex);
+                int estadoIndex = vista.jcbEstado.getSelectedIndex();
+                Estado estado = vista.jcbEstado.getItemAt(estadoIndex);
+                modelo.getCabecera().setCondCompra(condCompra);
+                modelo.getCabecera().setEstado(estado);
+                modelo.getCabecera().setNro_factura(nroFactura);
+                modelo.actualizarTabla(vista.jddInicio.getDate(), vista.jddFinal.getDate(), conFecha);
                 Utilities.c_packColumn.packColumns(vista.jtEgresoCabecera, 1);
                 controlarTablaEgreso();
             }
@@ -270,11 +243,7 @@ public class C_gestionEgresos extends MouseAdapter implements ActionListener, Ke
     }
 
     private void borrarParametros() {
-        this.m_egreso_cabecera.setId_empleado(null);
-        this.m_egreso_cabecera.setFuncionario(null);
-        this.m_egreso_cabecera.setId_proveedor(null);
-        this.m_egreso_cabecera.setProveedor(null);
-        this.m_egreso_cabecera.setNro_factura(null);
+        this.modelo.borrarParametros();
         this.vista.jtfProveedor.setText("");
         this.vista.jtfFuncionario.setText("");
         this.vista.jtfNroFactura.setText("");
@@ -300,29 +269,22 @@ public class C_gestionEgresos extends MouseAdapter implements ActionListener, Ke
             JOptionPane.showMessageDialog(vista, "El numero de factura debe ser solo numérico", "Atención", JOptionPane.WARNING_MESSAGE);
             return;
         }
-        String empleado = empleado();
-        String proveedor = proveedor();
-        String tiop = tipoOperacion();
-        Resumen_egreso re = new Resumen_egreso(c_inicio, this.vista.jtEgresoCabecera.getModel(), proveedor, nro_factura, empleado, vista.jddInicio.getDate(), vista.jddFinal.getDate(), tiop);
-        re.setVisible(true);
+//        int idEmpleado = modelo.getCabecera().getFuncionario().getId_funcionario();
+//        int idProveedor = modelo.getCabecera().getProveedor().getId();
+//        int tiop = modelo.getCabecera().getCondCompra().getId();
+//        Resumen_egreso re = new Resumen_egreso(c_inicio, this.vista.jtEgresoCabecera.getModel(), idProveedor, nro_factura, empleado, vista.jddInicio.getDate(), vista.jddFinal.getDate(), tiop);
+//        re.setVisible(true);
     }
 
     public void recibirProveedor(M_proveedor proveedor) {
-        this.m_egreso_cabecera.setProveedor(proveedor);
-        this.m_egreso_cabecera.setId_proveedor(proveedor.getId());
-        String entidad = this.m_egreso_cabecera.getProveedor().getEntidad();
-        String nombre = this.m_egreso_cabecera.getProveedor().getNombre();
-        this.vista.jtfProveedor.setText(nombre + " - " + entidad);
+        this.modelo.setProveedor(proveedor);
+        this.vista.jtfProveedor.setText(modelo.obtenerDescripcionProveedor());
     }
 
     @Override
     public void recibirFuncionario(M_funcionario funcionario) {
-        this.m_egreso_cabecera.setFuncionario(funcionario);
-        this.m_egreso_cabecera.setId_empleado(funcionario.getId_funcionario());
-        String alias = this.m_egreso_cabecera.getFuncionario().getAlias();
-        String apellido = this.m_egreso_cabecera.getFuncionario().getApellido();
-        String nombre = this.m_egreso_cabecera.getFuncionario().getNombre();
-        this.vista.jtfFuncionario.setText(nombre + " " + apellido + " (" + alias + ")");
+        this.modelo.setFuncionario(funcionario);
+        this.vista.jtfFuncionario.setText(modelo.obtenerNombreCompletoFuncionario());
     }
 
     private void controlarTablaEgreso() {
@@ -423,9 +385,12 @@ public class C_gestionEgresos extends MouseAdapter implements ActionListener, Ke
             verGraficos();
         } else if (e.getSource() == this.vista.jbDetalle) {
             verDetalle();
-        } else if (e.getSource() == this.vista.jbAnular) {
+        } else if (e.getSource().equals(this.vista.jtfNroFactura)) {
+            displayQueryResults(false);
+        }else if (e.getSource() == this.vista.jbAnular) {
             anularCompra();
-        } /*else if (e.getSource().equals(this.vista.jbMasOpciones)) {
+        }
+        /*else if (e.getSource().equals(this.vista.jbMasOpciones)) {
             mostrarOpciones();
         }*/
     }
@@ -436,8 +401,8 @@ public class C_gestionEgresos extends MouseAdapter implements ActionListener, Ke
             int fila = this.vista.jtEgresoCabecera.rowAtPoint(e.getPoint());
             int columna = this.vista.jtEgresoCabecera.columnAtPoint(e.getPoint());
             if ((fila > -1) && (columna > -1)) {
-                Integer idEgresoCabecera = Integer.valueOf(String.valueOf(this.vista.jtEgresoCabecera.getValueAt(fila, 0)));
-                setEgreso_cabecera(DB_Egreso.obtenerEgresoCabeceraID(idEgresoCabecera));
+                int idEgresoCabecera = modelo.getTm().getList().get(fila).getId_cabecera();
+                //setEgreso_cabecera(DB_Egreso.obtenerEgresoCabeceraID(idEgresoCabecera));
                 if (e.getClickCount() == 2) {
                     if (this.vista.jbDetalle.isEnabled()) {
                         verDetalle();
