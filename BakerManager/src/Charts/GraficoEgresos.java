@@ -4,7 +4,7 @@
  */
 package Charts;
 
-import Egresos.C_gestionEgresos;
+import Egresos.C_gestionCompras;
 
 
 /**
@@ -17,7 +17,7 @@ public class GraficoEgresos {
     V_graficoEgresos vista;
     C_graficoEgresos controlador;
 
-    public GraficoEgresos(C_gestionEgresos gestionEgresos) {
+    public GraficoEgresos(C_gestionCompras gestionEgresos) {
         this.modelo = new M_graficoEgresos();
         this.vista = new V_graficoEgresos(gestionEgresos.c_inicio.vista);
         this.controlador = new C_graficoEgresos(this.modelo,this.vista);

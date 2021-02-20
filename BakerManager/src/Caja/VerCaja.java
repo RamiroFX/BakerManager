@@ -20,7 +20,7 @@ import Entities.E_reciboPagoCabecera;
 import Entities.E_reciboPagoDetalle;
 import Entities.E_tipoOperacion;
 import Entities.Estado;
-import Entities.M_egreso_cabecera;
+import Entities.M_egresoCabecera;
 import Excel.ExportarCaja;
 import Impresora.Impresora;
 import Interface.MovimientosCaja;
@@ -157,7 +157,7 @@ public class VerCaja implements ActionListener, KeyListener {
 
     private void actualizarMovimientos() {
         movimientosCaja.setMovimientoVentas((ArrayList<E_facturaCabecera>) DB_Ingreso.obtenerMovimientoVentasCabeceras(this.caja.getIdCaja()));
-        movimientosCaja.setMovimientoCompras((ArrayList<M_egreso_cabecera>) DB_Egreso.obtenerMovimientoComprasCabeceras(this.caja.getIdCaja()));
+        movimientosCaja.setMovimientoCompras((ArrayList<M_egresoCabecera>) DB_Egreso.obtenerMovimientoComprasCabeceras(this.caja.getIdCaja()));
         movimientosCaja.setMovimientoCobros((ArrayList<E_cuentaCorrienteCabecera>) DB_Cobro.obtenerMovimientoCobrosCabeceras(this.caja.getIdCaja()));
         movimientosCaja.setMovimientoPagos((ArrayList<E_reciboPagoCabecera>) DB_Pago.obtenerMovimientoPagosCabeceras(this.caja.getIdCaja()));
         int totalVenta = 0, totalVentaContado = 0, totalVentaCredito = 0;
@@ -205,7 +205,7 @@ public class VerCaja implements ActionListener, KeyListener {
         /*
         MOVIMIENTO DE COMPRAS
          */
-        for (M_egreso_cabecera compra : movimientosCaja.getMovimientoCompras()) {
+        for (M_egresoCabecera compra : movimientosCaja.getMovimientoCompras()) {
             totalCompra = totalCompra + compra.getTotal();
             switch (compra.getId_condVenta()) {
                 case E_tipoOperacion.CONTADO: {

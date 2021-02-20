@@ -8,7 +8,7 @@ package Pagos;
 import DB.DB_Pago;
 import DB.DB_manager;
 import Entities.E_tipoOperacion;
-import Entities.M_egreso_cabecera;
+import Entities.M_egresoCabecera;
 import ModeloTabla.EgresoSinPagoTableModel;
 import java.util.ArrayList;
 
@@ -18,12 +18,12 @@ import java.util.ArrayList;
  */
 public class M_seleccionarPagoPendiente {
 
-    private M_egreso_cabecera facturaCabecera;
+    private M_egresoCabecera facturaCabecera;
     private EgresoSinPagoTableModel tm;
 
     public M_seleccionarPagoPendiente(int idProveedor) {
-        this.facturaCabecera = new M_egreso_cabecera();
-        this.facturaCabecera.getFuncionario().setId_funcionario(-1);
+        this.facturaCabecera = new M_egresoCabecera();
+        this.facturaCabecera.getFuncionario().setId(-1);
         this.facturaCabecera.getProveedor().setId(idProveedor);
         this.tm = new EgresoSinPagoTableModel();
     }
@@ -42,7 +42,7 @@ public class M_seleccionarPagoPendiente {
     }
 
     public void borrarDatos() {
-        this.facturaCabecera.getFuncionario().setId_funcionario(-1);
+        this.facturaCabecera.getFuncionario().setId(-1);
         this.facturaCabecera.getProveedor().setId(-1);
     }
 

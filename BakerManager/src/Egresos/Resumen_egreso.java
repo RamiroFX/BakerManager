@@ -5,25 +5,31 @@
 package Egresos;
 
 import DB.DB_Egreso;
-import Entities.M_egreso_detalleFX;
+import DB.DB_Ingreso;
+import Entities.E_tipoOperacion;
+import Entities.M_egresoCabecera;
 import Excel.C_create_excel;
+import ModeloTabla.EgresoCabeceraTableModel;
+import ModeloTabla.EgresoDetalleTableModel;
 import bakermanager.C_inicio;
 import java.awt.BorderLayout;
+import java.awt.EventQueue;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
 import javax.swing.table.TableModel;
@@ -32,29 +38,28 @@ import javax.swing.table.TableModel;
  *
  * @author Ramiro Ferreira
  */
-public class Resumen_egreso extends JDialog implements ActionListener {
+public class Resumen_egreso extends JDialog implements ActionListener, KeyListener {
 
-    JScrollPane jspEgreso;
-    JTable jtEgreso;
+    JScrollPane jspEgreso, jspDetalle;
+    JTable jtEgreso, jtDetalle;
     JButton jbSalir, jbImportarXLS;
     JLabel jlContado, jlCredito, jlTotal;
     JFormattedTextField jftTotalEgreso, jftTotalEgCont, jftTotalEgCred;
-    Date inicio, fin;
-    String proveedor_entidad, idEmpleado, tipo_operacion;
-    Integer nro_factura;
+    EgresoCabeceraTableModel cabeceraTm;
+    EgresoDetalleTableModel detalleTm;
+    JTabbedPane jtpPanel;
+    Date dateInicio, dateFin;
 
-    public Resumen_egreso(C_inicio c_inicio, TableModel tm, String proveedor_entidad, Integer nro_factura, String idEmpleado, Date inicio, Date fin, String tipo_operacion) {
+    public Resumen_egreso(C_inicio c_inicio, EgresoCabeceraTableModel tm, Date dateInicio, Date dateFin) {
         super(c_inicio.vista, DEFAULT_MODALITY_TYPE);
         setTitle("Resumen de compras");
         setSize(800, 600);
         setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(c_inicio.vista);
-        this.inicio = inicio;
-        this.fin = fin;
-        this.proveedor_entidad = proveedor_entidad;
-        this.idEmpleado = idEmpleado;
-        this.tipo_operacion = tipo_operacion;
-        this.nro_factura = nro_factura;
+        this.cabeceraTm = tm;
+        this.detalleTm = new EgresoDetalleTableModel();
+        this.dateInicio = dateInicio;
+        this.dateFin = dateFin;
         inicializarComponentes();
         inicializarVista(tm);
         agregarListener();
@@ -62,8 +67,9 @@ public class Resumen_egreso extends JDialog implements ActionListener {
 
     private void inicializarComponentes() {
         jtEgreso = new JTable();
-        this.jtEgreso.getTableHeader().setReorderingAllowed(false);
         jspEgreso = new JScrollPane(jtEgreso);
+        jtDetalle = new JTable();
+        jspDetalle = new JScrollPane(jtDetalle);
         JPanel jpTotalEgreso = new JPanel(new GridLayout(3, 2));
         jftTotalEgreso = new JFormattedTextField();
         jftTotalEgreso.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("¤#,##0"))));
@@ -85,70 +91,104 @@ public class Resumen_egreso extends JDialog implements ActionListener {
         jpTotalEgreso.add(jftTotalEgreso);
         jbSalir = new JButton("Salir");
         jbImportarXLS = new JButton("Importar a excel");
+        jtpPanel = new JTabbedPane();
+        jtpPanel.addKeyListener(this);
+        
         JPanel jpCenter = new JPanel(new BorderLayout());
         JPanel jpSouth = new JPanel(new FlowLayout(FlowLayout.CENTER));
         jpSouth.add(jbImportarXLS);
         jpSouth.add(jbSalir);
         jpCenter.add(jspEgreso, BorderLayout.CENTER);
         jpCenter.add(jpTotalEgreso, BorderLayout.SOUTH);
-        getContentPane().add(jpCenter, BorderLayout.CENTER);
+ 
+        jtpPanel.addTab("Resumen", jpCenter);
+        jtpPanel.addTab("Detalle", jspDetalle);
+        getContentPane().add(jtpPanel, BorderLayout.CENTER);
         getContentPane().add(jpSouth, BorderLayout.SOUTH);
     }
 
     private void inicializarVista(TableModel tm) {
-        //jtEgreso.setModel(DB_Egreso.consultarResumenEgreso(tsInicio, tsFinal));
         jtEgreso.setModel(tm);
         Utilities.c_packColumn.packColumns(jtEgreso, 1);
-        Integer total = 0;
-        Integer totalContado = 0;
-        Integer totalCredito = 0;
-        int cantFilas = jtEgreso.getRowCount();
-        for (int i = 0; i < cantFilas; i++) {
-            total = total + Integer.valueOf(String.valueOf(jtEgreso.getValueAt(i, 5)));
-            if (jtEgreso.getValueAt(i, 6).equals("Contado")) {
-                totalContado = totalContado + Integer.valueOf(String.valueOf(jtEgreso.getValueAt(i, 5)));
-            } else {
-                totalCredito = totalCredito + Integer.valueOf(String.valueOf(jtEgreso.getValueAt(i, 5)));
+        int total = 0;
+        int totalContado = 0;
+        int totalCredito = 0;
+        for (M_egresoCabecera unaCompra : this.cabeceraTm.getList()) {
+            total = total + unaCompra.getTotal();
+            switch (unaCompra.getCondCompra().getId()) {
+                case E_tipoOperacion.CONTADO: {
+                    totalContado = totalContado + unaCompra.getTotal();
+                    break;
+                }
+                case E_tipoOperacion.CREDITO_30: {
+                    totalCredito = totalCredito + unaCompra.getTotal();
+                    break;
+                }
+                default: {
+                    totalCredito = totalCredito + unaCompra.getTotal();
+                    break;
+                }
             }
         }
         jftTotalEgCred.setValue(totalCredito);
         jftTotalEgCont.setValue(totalContado);
         jftTotalEgreso.setValue(total);
+        jtDetalle.setModel(detalleTm);
+        detalleTm.setList(DB_Egreso.consultarEgresoDetalleAgrupado(this.cabeceraTm.getList()));
+        Utilities.c_packColumn.packColumns(jtDetalle, 1);
     }
 
+    private void cerrar() {
+        this.dispose();
+    }
+    
     private void agregarListener() {
         jbSalir.addActionListener(this);
         jbImportarXLS.addActionListener(this);
     }
 
-    private void importarExcel(String proveedor_entidad, Integer nro_factura, String idEmpleado, String tipo_operacion) {
-        String fechaInicio = "";
-        String fechaFinal = "";
-        try {
-            fechaInicio = new Timestamp(this.inicio.getTime()).toString().substring(0, 11);
-            fechaInicio = fechaInicio + "00:00:00.000";
-        } catch (Exception e) {
-            fechaInicio = "Todos";
-        }
-        try {
-            fechaFinal = new Timestamp(this.fin.getTime()).toString().substring(0, 11);
-            fechaFinal = fechaFinal + "23:59:59.000";
-        } catch (Exception e) {
-            fechaFinal = "Todos";
-        }
+    private void importarExcelCompleto() {
+        C_create_excel ce = new C_create_excel("Compras", dateInicio, dateFin, (ArrayList<M_egresoCabecera>) cabeceraTm.getList());
+        ce.exportacionCompleta();
+    }
+    private void importarExcelResumido() {
+        C_create_excel ce = new C_create_excel("Compras", dateInicio, dateFin, (ArrayList<M_egresoCabecera>) cabeceraTm.getList());
+        ce.exportacionResumida();
+    }
 
-        ArrayList<M_egreso_detalleFX> ed = DB_Egreso.obtenerEgresosDetalle(proveedor_entidad, nro_factura, idEmpleado, fechaInicio, fechaFinal, tipo_operacion);
-        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
-        sdf.format(Calendar.getInstance().getTime());
-        System.out.println("Calendar.getInstance().getTime().toString(): " + sdf.format(Calendar.getInstance().getTime()));
-        String nombreHoja = null;
-        try {
-            nombreHoja = new Timestamp(this.inicio.getTime()).toString().substring(0, 11);
-        } catch (Exception e) {
-            nombreHoja = sdf.format(Calendar.getInstance().getTime());
+    private void exportHandler() {
+        Object[] options = {"Completo",
+            "Resumido"};
+        int n = JOptionPane.showOptionDialog(this,
+                "Eliga tipo de reporte",
+                "Atención",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                null, //do not use a custom Icon
+                options, //the titles of buttons
+                options[0]); //default button title
+        switch (n) {
+            case 0: {
+                //Completo
+                EventQueue.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        importarExcelCompleto();
+                    }
+                });
+                break;
+            }
+            case 1: {
+                //Minimalista
+                EventQueue.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        importarExcelResumido();
+                    }
+                });
+                break;
+            }
         }
-        C_create_excel ce = new C_create_excel(nombreHoja, ed, this.inicio, this.fin);
-        ce.initComp();
     }
 
     @Override
@@ -156,7 +196,29 @@ public class Resumen_egreso extends JDialog implements ActionListener {
         if (ae.getSource().equals(jbSalir)) {
             dispose();
         } else if (ae.getSource().equals(jbImportarXLS)) {
-            importarExcel(proveedor_entidad, nro_factura, idEmpleado, tipo_operacion);
+            exportHandler();
         }
+    }
+
+    @Override
+    public void keyTyped(KeyEvent e) {
+    }
+
+    @Override
+    public void keyPressed(KeyEvent e) {
+        EventQueue.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                switch (e.getKeyCode()) {
+                    case KeyEvent.VK_ESCAPE: {
+                        cerrar();
+                    }
+                }
+            }
+        });
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
     }
 }

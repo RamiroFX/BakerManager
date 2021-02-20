@@ -34,7 +34,7 @@ public class M_gestionCobroPago {
 
     public M_gestionCobroPago() {
         this.funcionario = new M_funcionario();
-        this.funcionario.setId_funcionario(-1);
+        this.funcionario.setId(-1);
         this.cliente = new M_cliente();
         this.cliente.setIdCliente(-1);
         this.facturaCabecera = new M_facturaCabecera();
@@ -69,7 +69,7 @@ public class M_gestionCobroPago {
 
     public void borrarDatos() {
         this.funcionario = new M_funcionario();
-        this.funcionario.setId_funcionario(-1);
+        this.funcionario.setId(-1);
         this.cliente = new M_cliente();
         this.cliente.setIdCliente(-1);
     }

@@ -4,7 +4,7 @@
  */
 package Charts;
 
-import Egresos.C_gestionEgresos;
+import Egresos.C_gestionCompras;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -19,9 +19,9 @@ import javax.swing.JPanel;
 public class MenuDiagramas extends JDialog implements ActionListener {
 
     private JButton jbCompraProveedor, jbCompProv2, jbCerrar;
-    C_gestionEgresos gestionEgreso;
+    C_gestionCompras gestionEgreso;
 
-    public MenuDiagramas(C_gestionEgresos gestionEgreso) {
+    public MenuDiagramas(C_gestionCompras gestionEgreso) {
         super(gestionEgreso.c_inicio.vista, "Gráficos y diagramas", ModalityType.APPLICATION_MODAL);
         this.gestionEgreso = gestionEgreso;
         setSize(800, 600);

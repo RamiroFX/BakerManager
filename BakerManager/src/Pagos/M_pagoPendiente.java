@@ -10,7 +10,7 @@ import DB.DB_Pago;
 import DB.DB_manager;
 import Entities.E_egresoSinPago;
 import Entities.E_tipoOperacion;
-import Entities.M_egreso_cabecera;
+import Entities.M_egresoCabecera;
 import Entities.M_proveedor;
 import ModeloTabla.EgresoDetalleTableModel;
 import ModeloTabla.EgresoSinPagoTableModel;
@@ -25,13 +25,13 @@ import java.util.List;
  */
 public class M_pagoPendiente {
 
-    private M_egreso_cabecera facturaCabecera;
+    private M_egresoCabecera facturaCabecera;
     private EgresoSinPagoTableModel tm;
     private EgresoDetalleTableModel tmDetalle;
 
     public M_pagoPendiente() {
-        this.facturaCabecera = new M_egreso_cabecera();
-        this.facturaCabecera.getFuncionario().setId_funcionario(-1);
+        this.facturaCabecera = new M_egresoCabecera();
+        this.facturaCabecera.getFuncionario().setId(-1);
         this.facturaCabecera.getProveedor().setId(-1);
         this.tm = new EgresoSinPagoTableModel();
         this.tmDetalle = new EgresoDetalleTableModel();
@@ -76,14 +76,14 @@ public class M_pagoPendiente {
     /**
      * @return the facturaCabecera
      */
-    public M_egreso_cabecera getCabecera() {
+    public M_egresoCabecera getCabecera() {
         return facturaCabecera;
     }
 
     /**
      * @param cabecera the facturaCabecera to set
      */
-    public void setCabecera(M_egreso_cabecera cabecera) {
+    public void setCabecera(M_egresoCabecera cabecera) {
         this.facturaCabecera = cabecera;
     }
 
@@ -120,7 +120,7 @@ public class M_pagoPendiente {
     }
 
     public void borrarDatos() {
-        this.getCabecera().getFuncionario().setId_funcionario(-1);
+        this.getCabecera().getFuncionario().setId(-1);
         this.getCabecera().getProveedor().setId(-1);
     }
 

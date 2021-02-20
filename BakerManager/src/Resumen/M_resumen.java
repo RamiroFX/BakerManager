@@ -7,7 +7,7 @@ package Resumen;
 import DB.DB_Egreso;
 import DB.DB_Pedido;
 import DB.ResultSetTableModel;
-import Entities.M_egreso_cabecera;
+import Entities.M_egresoCabecera;
 import Entities.M_egreso_detalleFX;
 import Entities.M_pedido;
 import Pedido.C_gestionPedido;
@@ -26,12 +26,12 @@ public class M_resumen {
     public static final int RESUMEN_PEDIDO = 2;
     public int tipo;
     private Date inicio, fin;
-    private M_egreso_cabecera egresoCabecera;
+    private M_egresoCabecera egresoCabecera;
     private ArrayList<M_egreso_detalleFX> egresoDetalles;
     private ResultSetTableModel rstm;
     private M_pedido pedido;
 
-    public M_resumen(M_egreso_cabecera egresoCabecera, Date inicio, Date fin) {
+    public M_resumen(M_egresoCabecera egresoCabecera, Date inicio, Date fin) {
         this.tipo = RESUMEN_EGRESO;
         this.egresoCabecera = egresoCabecera;
         Calendar cal = Calendar.getInstance();
@@ -87,11 +87,11 @@ public class M_resumen {
         this.fin = fin;
     }
 
-    public M_egreso_cabecera getEgresoCabecera() {
+    public M_egresoCabecera getEgresoCabecera() {
         return egresoCabecera;
     }
 
-    public void setEgresoCabecera(M_egreso_cabecera egresoCabecera) {
+    public void setEgresoCabecera(M_egresoCabecera egresoCabecera) {
         this.egresoCabecera = egresoCabecera;
     }
 

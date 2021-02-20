@@ -12,7 +12,7 @@ import Entities.E_cuentaCorrienteCabecera;
 import Entities.E_facturaCabecera;
 import Entities.E_reciboPagoCabecera;
 import Entities.Estado;
-import Entities.M_egreso_cabecera;
+import Entities.M_egresoCabecera;
 import Entities.M_funcionario;
 import Entities.Moneda;
 import Interface.MovimientosCaja;
@@ -98,7 +98,7 @@ public class DB_Caja {
                 pst.executeUpdate();
                 pst.close();
             }
-            for (M_egreso_cabecera movimientoCompras : movimientosCaja.getMovimientoCompras()) {
+            for (M_egresoCabecera movimientoCompras : movimientosCaja.getMovimientoCompras()) {
                 pst = DB_manager.getConection().prepareStatement(INSERT_CAJA_MOVIMIENTO);
                 pst.setInt(1, (int) sq_cabecera);
                 pst.setInt(2, 2);
@@ -626,7 +626,7 @@ public class DB_Caja {
                 st = DB_manager.getConection().createStatement();
                 st.executeUpdate(query);
             }
-            List<M_egreso_cabecera> compras = DB_Egreso.obtenerMovimientoComprasCabeceras(idCaja);
+            List<M_egresoCabecera> compras = DB_Egreso.obtenerMovimientoComprasCabeceras(idCaja);
             for (int i = 0; i < compras.size(); i++) {
                 String query = "UPDATE caja_movimiento SET "
                         + "id_estado = 2 WHERE id_movimiento_contable_tipo = 2 AND id_movimiento = " + compras.get(i).getId_cabecera();

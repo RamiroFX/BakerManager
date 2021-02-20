@@ -377,7 +377,7 @@ public class DB_Funcionario {
                 f.setId_persona(rs.getInt("id_persona"));
                 f.setCedula(rs.getInt("ci"));
                 f.setEstado_civil(rs.getString("estado_civil"));
-                f.setId_funcionario(rs.getInt("id_funcionario"));
+                f.setId(rs.getInt("id_funcionario"));
                 f.setObservacion(rs.getString("OBSERVACION"));
             }
         } catch (SQLException ex) {
@@ -430,7 +430,7 @@ public class DB_Funcionario {
                 f.setId_persona(rs.getInt("id_persona"));
                 f.setCedula(rs.getInt("ci"));
                 f.setEstado_civil(rs.getString("estado_civil"));
-                f.setId_funcionario(rs.getInt("id_funcionario"));
+                f.setId(rs.getInt("id_funcionario"));
                 f.setObservacion(rs.getString("OBSERVACION"));
             }
         } catch (SQLException ex) {
@@ -1139,7 +1139,7 @@ public class DB_Funcionario {
                 f.setId_persona(rs.getInt("id_persona"));
                 f.setCedula(rs.getInt("ci"));
                 f.setEstado_civil(rs.getString("estado_civil"));
-                f.setId_funcionario(rs.getInt("id_funcionario"));
+                f.setId(rs.getInt("id_funcionario"));
                 f.setObservacion(rs.getString("OBSERVACION"));
                 //f.setRol(obtenerRolesFuncionario(f));
             }

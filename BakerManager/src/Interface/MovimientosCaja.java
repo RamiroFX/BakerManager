@@ -8,7 +8,7 @@ package Interface;
 import Entities.E_cuentaCorrienteCabecera;
 import Entities.E_facturaCabecera;
 import Entities.E_reciboPagoCabecera;
-import Entities.M_egreso_cabecera;
+import Entities.M_egresoCabecera;
 import java.util.ArrayList;
 
 /**
@@ -20,7 +20,7 @@ public class MovimientosCaja {
     ArrayList<E_reciboPagoCabecera> movimientoPagos;
     ArrayList<E_cuentaCorrienteCabecera> movimientoCobros;
     ArrayList<E_facturaCabecera> movimientoVentas;
-    ArrayList<M_egreso_cabecera> movimientoCompras;
+    ArrayList<M_egresoCabecera> movimientoCompras;
 
     public MovimientosCaja() {
         this.movimientoVentas = new ArrayList<>();
@@ -33,7 +33,7 @@ public class MovimientosCaja {
         this.movimientoCobros = movimientoCobros;
     }
 
-    public void setMovimientoCompras(ArrayList<M_egreso_cabecera> movimientoCompras) {
+    public void setMovimientoCompras(ArrayList<M_egresoCabecera> movimientoCompras) {
         this.movimientoCompras = movimientoCompras;
     }
 
@@ -49,7 +49,7 @@ public class MovimientosCaja {
         return movimientoCobros;
     }
 
-    public ArrayList<M_egreso_cabecera> getMovimientoCompras() {
+    public ArrayList<M_egresoCabecera> getMovimientoCompras() {
         return movimientoCompras;
     }
 

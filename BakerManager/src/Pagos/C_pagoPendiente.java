@@ -224,7 +224,7 @@ public class C_pagoPendiente extends MouseAdapter implements ActionListener, Key
         try {
             if (!vista.jtfNroFactura.getText().trim().isEmpty()) {
                 int nroFac = Integer.valueOf(vista.jtfNroFactura.getText());
-                modelo.getCabecera().setNro_factura(nroFac);
+                modelo.getCabecera().setNroFactura(nroFac);
             } else {
                 modelo.getCabecera().setId_cabecera(null);
             }

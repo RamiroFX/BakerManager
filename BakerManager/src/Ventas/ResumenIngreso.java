@@ -51,7 +51,7 @@ import javax.swing.SwingConstants;
  */
 public class ResumenIngreso extends JDialog implements ActionListener, KeyListener, InterfaceFacturaDetalle {
 
-    JScrollPane jspEgreso, jspDetalle;
+    JScrollPane jspCabecera, jspDetalle;
     JTable jtIngreso, jtDetalle;
     JButton jbSalir, jbImportarXLS, jbImprimirFacturacion;
     JLabel jlContado, jlCredito, jlTotal;
@@ -137,7 +137,7 @@ public class ResumenIngreso extends JDialog implements ActionListener, KeyListen
     private void inicializarComponentes() {
         jtIngreso = new JTable();
         jtIngreso.getTableHeader().setReorderingAllowed(false);
-        jspEgreso = new JScrollPane(jtIngreso);
+        jspCabecera = new JScrollPane(jtIngreso);
         jtDetalle = new JTable();
         jtDetalle.getTableHeader().setReorderingAllowed(false);
         jspDetalle = new JScrollPane(jtDetalle);
@@ -175,7 +175,7 @@ public class ResumenIngreso extends JDialog implements ActionListener, KeyListen
         jpSouth.add(jbImportarXLS);
         jpSouth.add(jbImprimirFacturacion);
         jpSouth.add(jbSalir);
-        jpCenter.add(jspEgreso, BorderLayout.CENTER);
+        jpCenter.add(jspCabecera, BorderLayout.CENTER);
         jpCenter.add(jpTotalEgreso, BorderLayout.SOUTH);
 
         jtpPanel.addTab("Resumen", jpCenter);

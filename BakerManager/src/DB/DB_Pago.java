@@ -170,7 +170,7 @@ public class DB_Pago {
                 proveedor.setEntidad(rs.getString(11));
                 proveedor.setId(rs.getInt(2));
                 M_funcionario usuario = new M_funcionario();
-                usuario.setId_funcionario(rs.getInt(3));
+                usuario.setId(rs.getInt(3));
                 usuario.setNombre(rs.getString(9));
                 Estado estado = new Estado();
                 estado.setId(rs.getInt(5));

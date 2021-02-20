@@ -98,9 +98,6 @@ public class NotaCreditoDetalleTableModel extends AbstractTableModel {
                 }
                 return 0;
             }
-            /*case 8: {
-                return nd.getObservacion();
-            }*/
             default: {
                 return null;
             }

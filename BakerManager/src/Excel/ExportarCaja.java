@@ -18,7 +18,7 @@ import Entities.E_facturaCabecera;
 import Entities.E_formaPago;
 import Entities.E_tipoOperacion;
 import Entities.Estado;
-import Entities.M_egreso_cabecera;
+import Entities.M_egresoCabecera;
 import Entities.M_funcionario;
 import Entities.Moneda;
 import Interface.MovimientosCaja;
@@ -850,7 +850,7 @@ public class ExportarCaja {
         rowCompraContadoCabecera.createCell(3).setCellValue(new HSSFRichTextString("Importe"));
         rowCompraContadoCabecera.getCell(3).setCellStyle(style8);
         fila++;
-        for (M_egreso_cabecera movimientoCompra : movimientosCaja.getMovimientoCompras()) {
+        for (M_egresoCabecera movimientoCompra : movimientosCaja.getMovimientoCompras()) {
             if (movimientoCompra.getId_condVenta() == E_tipoOperacion.CONTADO) {
                 compraContado = compraContado + movimientoCompra.getTotal();
                 //limite de lineas por hoja
@@ -899,7 +899,7 @@ public class ExportarCaja {
         rowCompraCreditoCabecera.createCell(3).setCellValue(new HSSFRichTextString("Importe"));
         rowCompraCreditoCabecera.getCell(3).setCellStyle(style8);
         fila++;
-        for (M_egreso_cabecera movimientoCompra : movimientosCaja.getMovimientoCompras()) {
+        for (M_egresoCabecera movimientoCompra : movimientosCaja.getMovimientoCompras()) {
             if (movimientoCompra.getId_condVenta() == E_tipoOperacion.CREDITO_30) {
                 compraCredito = compraCredito + movimientoCompra.getTotal();
                 //limite de lineas por hoja
@@ -1350,7 +1350,7 @@ public class ExportarCaja {
          */
         boolean bmc = true;
         int totalCompraContado = 0;
-        for (M_egreso_cabecera movimientoCompra : movimientosCaja.getMovimientoCompras()) {
+        for (M_egresoCabecera movimientoCompra : movimientosCaja.getMovimientoCompras()) {
             if (movimientoCompra.getId_condVenta() == E_tipoOperacion.CONTADO) {
                 totalCompraContado = totalCompraContado + movimientoCompra.getTotal();
                 Row rowCompraContadoDetalle = sheets.get(monthCursor).createRow(fila);
@@ -1408,7 +1408,7 @@ public class ExportarCaja {
          */
         boolean bmcred = true;
         int totalCompraCredito = 0;
-        for (M_egreso_cabecera movimientoCompra : movimientosCaja.getMovimientoCompras()) {
+        for (M_egresoCabecera movimientoCompra : movimientosCaja.getMovimientoCompras()) {
             if (movimientoCompra.getId_condVenta() == E_tipoOperacion.CREDITO_30) {
                 totalCompraCredito = totalCompraCredito + movimientoCompra.getTotal();
                 Row rowCompraCreditoDetalle = sheets.get(monthCursor).createRow(fila);

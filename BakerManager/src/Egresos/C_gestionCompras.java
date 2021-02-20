@@ -7,7 +7,7 @@ package Egresos;
 import Charts.MenuDiagramas;
 import DB.DB_Egreso;
 import DB.DB_manager;
-import Entities.M_egreso_cabecera;
+import Entities.M_egresoCabecera;
 import Entities.M_funcionario;
 import Entities.M_menu_item;
 import Entities.M_proveedor;
@@ -38,16 +38,16 @@ import javax.swing.JOptionPane;
  *
  * @author Ramiro Ferreira
  */
-public class C_gestionEgresos extends MouseAdapter implements ActionListener, KeyListener, RecibirEmpleadoCallback {
+public class C_gestionCompras extends MouseAdapter implements ActionListener, KeyListener, RecibirEmpleadoCallback {
 
     private static final String VALIDAR_NRO_FACTURA_1 = "Ingrese solo números enteros en número de factura",
             VALIDAR_NRO_FACTURA_2 = "Ingrese solo números enteros y positivos en número de factura";
 
-    M_gestionEgresos modelo;
-    V_gestion_egresos vista;
+    M_gestionCompras modelo;
+    V_gestionCompras vista;
     public C_inicio c_inicio;
 
-    public C_gestionEgresos(M_gestionEgresos modelo, V_gestion_egresos vista, C_inicio c_inicio) {
+    public C_gestionCompras(M_gestionCompras modelo, V_gestionCompras vista, C_inicio c_inicio) {
         this.modelo = modelo;
         this.vista = vista;
         this.c_inicio = c_inicio;
@@ -104,6 +104,7 @@ public class C_gestionEgresos extends MouseAdapter implements ActionListener, Ke
                 this.vista.jbFuncionario.addActionListener(this);
                 this.vista.jbBorrar.addActionListener(this);
                 this.vista.jbBuscarDetalle.addActionListener(this);
+                this.vista.jtfNroFactura.addActionListener(this);
             }
         }
         this.vista.jbMasOpciones.addActionListener(this);
@@ -180,7 +181,6 @@ public class C_gestionEgresos extends MouseAdapter implements ActionListener, Ke
         return true;
     }
 
-
     private boolean validarFechas() {
         Date inicio = vista.jddInicio.getDate();
         Date fin = vista.jddFinal.getDate();
@@ -195,7 +195,7 @@ public class C_gestionEgresos extends MouseAdapter implements ActionListener, Ke
         JOptionPane.showMessageDialog(vista, "La fecha inicio debe ser menor que fecha final", "Atención", JOptionPane.WARNING_MESSAGE);
         return false;
     }
-    
+
     public void displayQueryResults(final boolean conFecha) {
         EventQueue.invokeLater(new Runnable() {
             @Override
@@ -213,7 +213,7 @@ public class C_gestionEgresos extends MouseAdapter implements ActionListener, Ke
                 Estado estado = vista.jcbEstado.getItemAt(estadoIndex);
                 modelo.getCabecera().setCondCompra(condCompra);
                 modelo.getCabecera().setEstado(estado);
-                modelo.getCabecera().setNro_factura(nroFactura);
+                modelo.getCabecera().setNroFactura(nroFactura);
                 modelo.actualizarTabla(vista.jddInicio.getDate(), vista.jddFinal.getDate(), conFecha);
                 Utilities.c_packColumn.packColumns(vista.jtEgresoCabecera, 1);
                 controlarTablaEgreso();
@@ -272,8 +272,8 @@ public class C_gestionEgresos extends MouseAdapter implements ActionListener, Ke
 //        int idEmpleado = modelo.getCabecera().getFuncionario().getId_funcionario();
 //        int idProveedor = modelo.getCabecera().getProveedor().getId();
 //        int tiop = modelo.getCabecera().getCondCompra().getId();
-//        Resumen_egreso re = new Resumen_egreso(c_inicio, this.vista.jtEgresoCabecera.getModel(), idProveedor, nro_factura, empleado, vista.jddInicio.getDate(), vista.jddFinal.getDate(), tiop);
-//        re.setVisible(true);
+        Resumen_egreso re = new Resumen_egreso(c_inicio, modelo.getTm(), this.vista.jddInicio.getDate(), this.vista.jddFinal.getDate());
+        re.setVisible(true);
     }
 
     public void recibirProveedor(M_proveedor proveedor) {
@@ -319,7 +319,7 @@ public class C_gestionEgresos extends MouseAdapter implements ActionListener, Ke
                 }
             }
         }
-        displayQueryResults();
+        displayQueryResults(true);
         this.vista.jbDetalle.setEnabled(false);
         this.vista.jbAnular.setEnabled(false);
     }
@@ -364,7 +364,7 @@ public class C_gestionEgresos extends MouseAdapter implements ActionListener, Ke
         if (e.getSource() == this.vista.jbBuscar) {
             this.vista.jbDetalle.setEnabled(false);
             this.vista.jbAnular.setEnabled(false);
-            displayQueryResults();
+            displayQueryResults(true);
         } else if (e.getSource() == this.vista.jbBuscarDetalle) {
             C_buscar_detalle buscar_detalle = new C_buscar_detalle(c_inicio);
             buscar_detalle.mostrarVista();
@@ -387,7 +387,7 @@ public class C_gestionEgresos extends MouseAdapter implements ActionListener, Ke
             verDetalle();
         } else if (e.getSource().equals(this.vista.jtfNroFactura)) {
             displayQueryResults(false);
-        }else if (e.getSource() == this.vista.jbAnular) {
+        } else if (e.getSource() == this.vista.jbAnular) {
             anularCompra();
         }
         /*else if (e.getSource().equals(this.vista.jbMasOpciones)) {
@@ -419,7 +419,7 @@ public class C_gestionEgresos extends MouseAdapter implements ActionListener, Ke
     }
 
     public void keyTyped(KeyEvent e) {
-        displayQueryResults();
+        //displayQueryResults(true);
     }
 
     public void keyPressed(KeyEvent e) {

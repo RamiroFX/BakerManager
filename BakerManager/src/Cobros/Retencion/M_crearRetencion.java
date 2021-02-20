@@ -103,7 +103,7 @@ public class M_crearRetencion {
 
     public void guardarRetencion() {
         int idFuncionario = DatosUsuario.getRol_usuario().getFuncionario().getId_funcionario();
-        getRetencion().getFuncionario().setId_funcionario(idFuncionario);
+        getRetencion().getFuncionario().setId(idFuncionario);
         DB_Cobro.insertarRetencion(retencion);
     }
 

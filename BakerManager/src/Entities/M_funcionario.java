@@ -79,7 +79,7 @@ public class M_funcionario extends M_persona {
     /**
      * @param idUsuario the idUsuario to set
      */
-    public void setId_funcionario(Integer id_funcionario) {
+    public void setId(Integer id_funcionario) {
         this.id_funcionario = id_funcionario;
     }
 

@@ -29,7 +29,7 @@ import net.miginfocom.swing.MigLayout;
  *
  * @author Ramiro Ferreira
  */
-public class V_gestion_egresos extends JInternalFrame {
+public class V_gestionCompras extends JInternalFrame {
 
     public JButton jbBuscar, jbBuscarDetalle, jbBorrar, jbAgregar, jbDetalle,
             jbResumen, jbProveedor, jbFuncionario, jbAnular, jbGraficos, jbMasOpciones;
@@ -42,7 +42,7 @@ public class V_gestion_egresos extends JInternalFrame {
     private JSplitPane jspMid;
     public JDateChooser jddInicio, jddFinal;
 
-    public V_gestion_egresos() {
+    public V_gestionCompras() {
         super("Compras", true, true, true, true);
         setSize(950, 600);
         setName("jifGestionEgresos");

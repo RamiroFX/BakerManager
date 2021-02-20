@@ -170,10 +170,10 @@ public class DB_UtilizacionMateriaPrima {
             rs = pst.executeQuery();
             while (rs.next()) {
                 M_funcionario responsable = new M_funcionario();
-                responsable.setId_funcionario(rs.getInt("id_funcionario_responsable"));
+                responsable.setId(rs.getInt("id_funcionario_responsable"));
                 responsable.setNombre(rs.getString("RESPONSABLE"));
                 M_funcionario usuario = new M_funcionario();
-                usuario.setId_funcionario(rs.getInt("id_funcionario_usuario"));
+                usuario.setId(rs.getInt("id_funcionario_usuario"));
                 usuario.setNombre(rs.getString("USUARIO"));
                 Estado estado = new Estado();
                 estado.setId(rs.getInt("id_estado"));
@@ -247,10 +247,10 @@ public class DB_UtilizacionMateriaPrima {
             rs = pst.executeQuery();
             while (rs.next()) {
                 M_funcionario responsable = new M_funcionario();
-                responsable.setId_funcionario(rs.getInt("id_funcionario_responsable"));
+                responsable.setId(rs.getInt("id_funcionario_responsable"));
                 responsable.setNombre(rs.getString("RESPONSABLE"));
                 M_funcionario usuario = new M_funcionario();
-                usuario.setId_funcionario(rs.getInt("id_funcionario_usuario"));
+                usuario.setId(rs.getInt("id_funcionario_usuario"));
                 usuario.setNombre(rs.getString("USUARIO"));
                 Estado estado = new Estado();
                 estado.setId(rs.getInt("id_estado"));

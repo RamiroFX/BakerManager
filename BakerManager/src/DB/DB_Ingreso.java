@@ -851,7 +851,7 @@ public class DB_Ingreso {
                 ingreso_cabecera.setNroFactura(rs.getInt("NRO_FACTURA"));
                 ingreso_cabecera.setTiempo(rs.getTimestamp("TIEMPO"));
                 ingreso_cabecera.setIdTimbrado(rs.getInt("ID_TIMBRADO"));
-                ingreso_cabecera.getVendedor().setId_funcionario(rs.getInt("ID_VENDEDOR"));
+                ingreso_cabecera.getVendedor().setId(rs.getInt("ID_VENDEDOR"));
                 ingreso_cabecera.setIdTimbrado(rs.getInt("ID_TIMBRADO"));
                 ingreso_cabecera.setTiempoRegistro(rs.getTimestamp("TIEMPO_REGISTRO"));
             }
@@ -941,7 +941,7 @@ public class DB_Ingreso {
                 E_tipoOperacion tipoOperacion = new E_tipoOperacion();
                 tipoOperacion.setId(rs.getInt("ID_COND_VENTA"));
                 M_funcionario funcionario = new M_funcionario();
-                funcionario.setId_funcionario(rs.getInt("ID_FUNCIONARIO"));
+                funcionario.setId(rs.getInt("ID_FUNCIONARIO"));
                 facturaCabecera = new E_facturaCabecera();
                 facturaCabecera.setIdFacturaCabecera(rs.getInt("ID_FACTURA_CABECERA"));
                 facturaCabecera.setCliente(cliente);
@@ -1449,7 +1449,7 @@ public class DB_Ingreso {
                 f.setId_persona(rs.getInt("id_persona"));
                 f.setCedula(rs.getInt("ci"));
                 f.setEstado_civil(rs.getString("estado_civil"));
-                f.setId_funcionario(rs.getInt("id_funcionario"));
+                f.setId(rs.getInt("id_funcionario"));
                 f.setObservacion(rs.getString("FOBSERVACION"));
 
                 M_cliente cliente = new M_cliente();

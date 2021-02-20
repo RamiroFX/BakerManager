@@ -4,7 +4,7 @@
  */
 package Resumen;
 
-import Entities.M_egreso_cabecera;
+import Entities.M_egresoCabecera;
 import Pedido.C_gestionPedido;
 import bakermanager.C_inicio;
 import java.util.Date;
@@ -21,7 +21,7 @@ public class Resumen {
     V_resumen vista;
     C_resumen controlador;
 
-    public Resumen(C_inicio c_inicio, M_egreso_cabecera egresoCabecera, Date fechaInicio, Date fechaFin) {
+    public Resumen(C_inicio c_inicio, M_egresoCabecera egresoCabecera, Date fechaInicio, Date fechaFin) {
         this.modelo = new M_resumen(egresoCabecera, fechaInicio, fechaFin);
         this.vista = new V_resumen(c_inicio.vista);
         this.controlador = new C_resumen(this.modelo, this.vista, c_inicio);

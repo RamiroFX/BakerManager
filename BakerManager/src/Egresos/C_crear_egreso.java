@@ -117,9 +117,9 @@ public class C_crear_egreso extends MouseAdapter implements ActionListener, KeyL
             try {
                 if (!vista.jtfNroFactura.getText().isEmpty()) {
                     nro_factura = Integer.valueOf(String.valueOf(vista.jtfNroFactura.getText()));
-                    this.modelo.egreso_cabecera.setNro_factura(nro_factura);
+                    this.modelo.egreso_cabecera.setNroFactura(nro_factura);
                 } else {
-                    this.modelo.egreso_cabecera.setNro_factura(null);
+                    this.modelo.egreso_cabecera.setNroFactura(null);
                 }
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(vista, "El numero de factura debe ser solo numérico", "Atención", JOptionPane.WARNING_MESSAGE);

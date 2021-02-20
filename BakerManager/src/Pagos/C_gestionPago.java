@@ -300,9 +300,9 @@ public class C_gestionPago implements GestionInterface, RecibirEmpleadoCallback,
         try {
             if (!vista.jtfNroRecibo.getText().trim().isEmpty()) {
                 int nroFac = Integer.valueOf(vista.jtfNroRecibo.getText());
-                modelo.getFacturaCabecera().setNro_factura(nroFac);
+                modelo.getFacturaCabecera().setNroFactura(nroFac);
             } else {
-                modelo.getFacturaCabecera().setNro_factura(null);
+                modelo.getFacturaCabecera().setNroFactura(null);
             }
         } catch (Exception e) {
             JOptionPane.showMessageDialog(vista, "Ingrese un número entero válido para Nro. factura", "Atención", JOptionPane.WARNING_MESSAGE);

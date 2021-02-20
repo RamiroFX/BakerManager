@@ -4,7 +4,7 @@
  */
 package Charts;
 
-import Egresos.C_gestionEgresos;
+import Egresos.C_gestionCompras;
 import bakermanager.C_inicio;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
@@ -27,7 +27,7 @@ public class C_diagramas implements ActionListener, KeyListener {
     public M_diagramas modelo;
     public V_diagramas vista;
     public C_inicio c_inicio;
-    private C_gestionEgresos gestionEgreso;
+    private C_gestionCompras gestionEgreso;
 
     public C_diagramas(C_inicio c_inicio, M_diagramas modelo, V_diagramas vista) {
         this.modelo = modelo;
@@ -37,7 +37,7 @@ public class C_diagramas implements ActionListener, KeyListener {
         agregarListeners();
     }
 
-    public C_diagramas(M_diagramas modelo, V_diagramas vista, C_inicio c_inicio, C_gestionEgresos gestionEgreso) {
+    public C_diagramas(M_diagramas modelo, V_diagramas vista, C_inicio c_inicio, C_gestionCompras gestionEgreso) {
         this.modelo = modelo;
         this.vista = vista;
         this.c_inicio = c_inicio;

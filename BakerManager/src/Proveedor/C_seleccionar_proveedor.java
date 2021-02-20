@@ -7,7 +7,7 @@ package Proveedor;
 import DB.DB_Proveedor;
 import Egresos.C_buscar_detalle;
 import Egresos.C_crear_egreso;
-import Egresos.C_gestionEgresos;
+import Egresos.C_gestionCompras;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -45,7 +45,7 @@ public class C_seleccionar_proveedor extends MouseAdapter implements ActionListe
     private V_seleccionar_proveedor vista;
     private C_crear_egreso c_egresos;
     private Crear_producto_proveedor prodProv;
-    private C_gestionEgresos gestion_egreso;
+    private C_gestionCompras gestion_egreso;
     private C_gestion_producto gestion_producto;
     private C_crear_producto crear_producto;
     private C_buscar_detalle buscarDetalleEgreso;
@@ -59,7 +59,7 @@ public class C_seleccionar_proveedor extends MouseAdapter implements ActionListe
         agregarListeners();
     }
 
-    public C_seleccionar_proveedor(V_seleccionar_proveedor vista, C_gestionEgresos gestion_egreso) {
+    public C_seleccionar_proveedor(V_seleccionar_proveedor vista, C_gestionCompras gestion_egreso) {
         this.gestion_egreso = gestion_egreso;
         this.tipo = GESTION_EGRESO;
         this.vista = vista;

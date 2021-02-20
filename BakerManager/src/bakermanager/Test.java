@@ -23,7 +23,7 @@ import Entities.E_cuentaCorrienteCabecera;
 import Entities.E_facturaCabecera;
 import Entities.E_reciboPagoCabecera;
 import Entities.M_cliente;
-import Entities.M_egreso_cabecera;
+import Entities.M_egresoCabecera;
 import Entities.M_facturaCabecera;
 import Entities.M_funcionario;
 import Excel.ExportarCaja;
@@ -93,7 +93,7 @@ public class Test {
         Caja caja = DB_Caja.obtenerCaja(2);
         MovimientosCaja movimientosCaja = new MovimientosCaja();
         movimientosCaja.setMovimientoVentas((ArrayList<E_facturaCabecera>) DB_Ingreso.obtenerMovimientoVentasCabeceras(caja.getIdCaja()));
-        movimientosCaja.setMovimientoCompras((ArrayList<M_egreso_cabecera>) DB_Egreso.obtenerMovimientoComprasCabeceras(caja.getIdCaja()));
+        movimientosCaja.setMovimientoCompras((ArrayList<M_egresoCabecera>) DB_Egreso.obtenerMovimientoComprasCabeceras(caja.getIdCaja()));
         movimientosCaja.setMovimientoCobros((ArrayList<E_cuentaCorrienteCabecera>) DB_Cobro.obtenerMovimientoCobrosCabeceras(caja.getIdCaja()));
         movimientosCaja.setMovimientoPagos((ArrayList<E_reciboPagoCabecera>) DB_Pago.obtenerMovimientoPagosCabeceras(caja.getIdCaja()));
         ExportarCaja ec = new ExportarCaja();

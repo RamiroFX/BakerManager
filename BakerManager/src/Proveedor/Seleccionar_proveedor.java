@@ -6,7 +6,7 @@ package Proveedor;
 
 import Egresos.C_buscar_detalle;
 import Egresos.C_crear_egreso;
-import Egresos.C_gestionEgresos;
+import Egresos.C_gestionCompras;
 import Interface.RecibirProveedorCallback;
 import Producto.C_crear_producto;
 import Producto.C_gestion_producto;
@@ -34,7 +34,7 @@ public class Seleccionar_proveedor {
         controlador = new C_seleccionar_proveedor(vista, productoProveedor);
     }
 
-    public Seleccionar_proveedor(C_gestionEgresos gestionEgreso) {
+    public Seleccionar_proveedor(C_gestionCompras gestionEgreso) {
         vista = new V_seleccionar_proveedor(gestionEgreso.c_inicio.vista);
         controlador = new C_seleccionar_proveedor(vista, gestionEgreso);
     }

@@ -20,7 +20,7 @@ import Entities.E_reciboPagoCabecera;
 import Entities.E_reciboPagoDetalle;
 import Entities.E_tipoOperacion;
 import Entities.Estado;
-import Entities.M_egreso_cabecera;
+import Entities.M_egresoCabecera;
 import Entities.Moneda;
 import Interface.InterfaceCajaMovimientos;
 import Interface.MovimientosCaja;
@@ -190,7 +190,7 @@ public class SaldarCaja implements ActionListener, KeyListener, InterfaceCajaMov
         int idFuncionario = DatosUsuario.getRol_usuario().getFuncionario().getId_funcionario();
         movimientosCaja = new MovimientosCaja();
         movimientosCaja.setMovimientoVentas((ArrayList<E_facturaCabecera>) DB_Ingreso.obtenerMovimientoVentasCabeceras(idFuncionario, -1, fechaInicio, fechaFin, -1));
-        movimientosCaja.setMovimientoCompras((ArrayList<M_egreso_cabecera>) DB_Egreso.obtenerMovimientoComprasCabeceras(idFuncionario, -1, -1, fechaInicio, fechaFin));
+        movimientosCaja.setMovimientoCompras((ArrayList<M_egresoCabecera>) DB_Egreso.obtenerMovimientoComprasCabeceras(idFuncionario, -1, -1, fechaInicio, fechaFin));
         movimientosCaja.setMovimientoCobros((ArrayList<E_cuentaCorrienteCabecera>) DB_Cobro.obtenerMovimientoCobrosCabeceras(idFuncionario, -1, fechaInicio, fechaFin));
         movimientosCaja.setMovimientoPagos((ArrayList<E_reciboPagoCabecera>) DB_Pago.obtenerMovimientoPagosCabeceras(idFuncionario, -1, fechaInicio, fechaFin));
         actualizarMovimientos(movimientosCaja);
@@ -464,7 +464,7 @@ public class SaldarCaja implements ActionListener, KeyListener, InterfaceCajaMov
         /*
         MOVIMIENTO DE COMPRAS
          */
-        for (M_egreso_cabecera compra : movimientosCaja.getMovimientoCompras()) {
+        for (M_egresoCabecera compra : movimientosCaja.getMovimientoCompras()) {
             totalCompra = totalCompra + compra.getTotal();
             switch (compra.getId_condVenta()) {
                 case E_tipoOperacion.CONTADO: {

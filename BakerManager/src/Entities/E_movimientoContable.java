@@ -34,7 +34,7 @@ public class E_movimientoContable {
     private String tipoDescripcion;
     private E_NotaCreditoCabecera notaCredito;
     private E_facturaSinPago venta;
-    private M_egreso_cabecera compra;
+    private M_egresoCabecera compra;
     private E_cuentaCorrienteDetalle cobro;
     private E_reciboPagoCabecera pago;
     private M_cliente clienteSaldoInicial;
@@ -104,14 +104,14 @@ public class E_movimientoContable {
     /**
      * @return the compra
      */
-    public M_egreso_cabecera getCompra() {
+    public M_egresoCabecera getCompra() {
         return compra;
     }
 
     /**
      * @param compra the compra to set
      */
-    public void setCompra(M_egreso_cabecera compra) {
+    public void setCompra(M_egresoCabecera compra) {
         this.compra = compra;
     }
 

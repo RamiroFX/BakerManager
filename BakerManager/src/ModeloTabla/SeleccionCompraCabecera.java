@@ -5,7 +5,7 @@
  */
 package ModeloTabla;
 
-import Entities.M_egreso_cabecera;
+import Entities.M_egresoCabecera;
 
 /**
  *
@@ -13,15 +13,15 @@ import Entities.M_egreso_cabecera;
  */
 public class SeleccionCompraCabecera {
 
-    private M_egreso_cabecera egresoCabecera;
+    private M_egresoCabecera egresoCabecera;
     Boolean estaSeleccionado;
 
     public SeleccionCompraCabecera() {
-        this.egresoCabecera = new M_egreso_cabecera();
+        this.egresoCabecera = new M_egresoCabecera();
         this.estaSeleccionado = true;
     }
 
-    public SeleccionCompraCabecera(M_egreso_cabecera egresoCabecera, boolean estaSeleccionado) {
+    public SeleccionCompraCabecera(M_egresoCabecera egresoCabecera, boolean estaSeleccionado) {
         this.egresoCabecera = egresoCabecera;
         this.estaSeleccionado = estaSeleccionado;
     }
@@ -34,11 +34,11 @@ public class SeleccionCompraCabecera {
         this.estaSeleccionado = estaSeleccionado;
     }
 
-    public M_egreso_cabecera getFacturaCabecera() {
+    public M_egresoCabecera getFacturaCabecera() {
         return egresoCabecera;
     }
 
-    public void setFacturaCabecera(M_egreso_cabecera egresoCabecera) {
+    public void setFacturaCabecera(M_egresoCabecera egresoCabecera) {
         this.egresoCabecera = egresoCabecera;
     }
 

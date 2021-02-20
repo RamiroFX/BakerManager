@@ -21,7 +21,7 @@ import Entities.E_ticketPreferencia;
 import Entities.Estado;
 import Entities.M_campoImpresion;
 import Entities.M_cliente;
-import Entities.M_egreso_cabecera;
+import Entities.M_egresoCabecera;
 import Entities.M_egreso_detalle;
 import Entities.M_facturaCabecera;
 import Entities.M_facturaDetalle;
@@ -880,7 +880,7 @@ public class Impresora {
         }
     }
 
-    public static void imprimirTicketCompra(M_egreso_cabecera facturaCabecera, ArrayList<M_egreso_detalle> egresoDetalle) {
+    public static void imprimirTicketCompra(M_egresoCabecera facturaCabecera, ArrayList<M_egreso_detalle> egresoDetalle) {
         PrintService[] services = PrintServiceLookup.lookupPrintServices(null, null);
         String nombreImpresora = PREF_PRINT_TICKET.getNombreImpresora();
         Date today = Calendar.getInstance().getTime();
@@ -1073,7 +1073,7 @@ public class Impresora {
         }
     }
 
-    public static void imprimirBoletaCompra(M_egreso_cabecera facturaCabecera, ArrayList<M_egreso_detalle> facturaDetalle) {
+    public static void imprimirBoletaCompra(M_egresoCabecera facturaCabecera, ArrayList<M_egreso_detalle> facturaDetalle) {
         PrintService[] services = PrintServiceLookup.lookupPrintServices(null, null);
         PrinterJob job = PrinterJob.getPrinterJob();
         String nombreImpresora = PREF_PRINT_BOLETA.getNombreImpresora();

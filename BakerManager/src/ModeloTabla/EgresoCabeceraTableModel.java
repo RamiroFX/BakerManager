@@ -5,7 +5,7 @@
  */
 package ModeloTabla;
 
-import Entities.M_egreso_cabecera;
+import Entities.M_egresoCabecera;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
@@ -23,7 +23,7 @@ public class EgresoCabeceraTableModel extends AbstractTableModel {
     private DecimalFormat decimalFormat;
     private SimpleDateFormat dateFormater;
     private NumberFormat nfSmall, nfLarge;
-    private List<M_egreso_cabecera> list;
+    private List<M_egresoCabecera> list;
     private final String[] colNames = {"Id.", "Nro Factura", "Proveedor", "Funcionario", "Tiempo", "Total", "Cond. compra"};
     private int formato;
 
@@ -36,12 +36,12 @@ public class EgresoCabeceraTableModel extends AbstractTableModel {
         this.list = new ArrayList<>();
     }
 
-    public void setList(List<M_egreso_cabecera> list) {
+    public void setList(List<M_egresoCabecera> list) {
         this.list = list;
         updateTable();
     }
 
-    public List<M_egreso_cabecera> getList() {
+    public List<M_egresoCabecera> getList() {
         return list;
     }
 
@@ -72,7 +72,7 @@ public class EgresoCabeceraTableModel extends AbstractTableModel {
 
     @Override
     public Object getValueAt(int rowIndex, int colIndex) {
-        M_egreso_cabecera ec = this.list.get(rowIndex);
+        M_egresoCabecera ec = this.list.get(rowIndex);
         switch (colIndex) {
             case 0: {
                 return decimalFormat.format(ec.getId_cabecera());
@@ -120,7 +120,7 @@ public class EgresoCabeceraTableModel extends AbstractTableModel {
         }
     }
 
-    public void agregarDatos(M_egreso_cabecera fc) {
+    public void agregarDatos(M_egresoCabecera fc) {
         this.list.add(fc);
         fireTableDataChanged();
     }

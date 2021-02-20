@@ -14,7 +14,7 @@ import Entities.E_cuentaCorrienteDetalle;
 import Entities.E_facturaCabecera;
 import Entities.E_reciboPagoCabecera;
 import Entities.E_reciboPagoDetalle;
-import Entities.M_egreso_cabecera;
+import Entities.M_egresoCabecera;
 import Entities.M_funcionario;
 import Interface.MovimientosCaja;
 import ModeloTabla.SeleccionCobroCabecera;
@@ -48,7 +48,7 @@ public class M_cajaDetalle {
     public M_cajaDetalle() {
         this.editingMode = false;
         this.funcionario = new M_funcionario();
-        this.funcionario.setId_funcionario(-1);
+        this.funcionario.setId(-1);
         this.movVentasTM = new SeleccionVentaCabeceraTableModel();
         this.movCompraTM = new SeleccionCompraCabeceraTableModel();
         this.movCobroTM = new SeleccionCobroCabeceraTableModel();
@@ -95,8 +95,8 @@ public class M_cajaDetalle {
         }
         this.getMovVentasTM().setList(listaVentas);
         ArrayList<SeleccionCompraCabecera> listaCompras = new ArrayList<>();
-        List<M_egreso_cabecera> compras = this.movimientosCaja.getMovimientoCompras();
-        for (M_egreso_cabecera egresoCabecera : compras) {
+        List<M_egresoCabecera> compras = this.movimientosCaja.getMovimientoCompras();
+        for (M_egresoCabecera egresoCabecera : compras) {
             listaCompras.add(new SeleccionCompraCabecera(egresoCabecera, true));
         }
         this.getMovComprasTM().setList(listaCompras);
@@ -146,7 +146,7 @@ public class M_cajaDetalle {
         this.funcionario.setAlias("");
         this.funcionario.setApellido("");
         this.funcionario.setEmail("");
-        this.funcionario.setId_funcionario(-1);
+        this.funcionario.setId(-1);
         this.funcionario.setCedula(-1);
     }
 
@@ -161,8 +161,8 @@ public class M_cajaDetalle {
 
     public void obtenerComprasCabecera(int idFuncionario, int idProveedor, int idTipoOperacion, Date fechaInicio, Date fechaFin) {
         ArrayList<SeleccionCompraCabecera> lista = new ArrayList<>();
-        List<M_egreso_cabecera> list = DB_Egreso.obtenerMovimientoComprasCabeceras(idFuncionario, idProveedor, idTipoOperacion, fechaInicio, fechaFin);
-        for (M_egreso_cabecera egresoCabecera : list) {
+        List<M_egresoCabecera> list = DB_Egreso.obtenerMovimientoComprasCabeceras(idFuncionario, idProveedor, idTipoOperacion, fechaInicio, fechaFin);
+        for (M_egresoCabecera egresoCabecera : list) {
             lista.add(new SeleccionCompraCabecera(egresoCabecera, true));
         }
         this.getMovComprasTM().setList(lista);

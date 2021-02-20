@@ -8,7 +8,7 @@ package Impresora;
 import DB.DB_manager;
 import Entities.E_Empresa;
 import Entities.M_campoImpresion;
-import Entities.M_egreso_cabecera;
+import Entities.M_egresoCabecera;
 import Entities.M_egreso_detalle;
 import Entities.M_preferenciasImpresion;
 import Parametros.TipoOperacion;
@@ -36,12 +36,12 @@ public class CompraBoletaPrintable implements Printable {
 
     E_Empresa empresa;
     List<M_campoImpresion> campoImpresiones;
-    M_egreso_cabecera facturaCabecera;
+    M_egresoCabecera facturaCabecera;
     ArrayList<M_egreso_detalle> facturaDetalle;
     M_preferenciasImpresion preferencia;
     DecimalFormat decimalFormat;
 
-    public CompraBoletaPrintable(M_preferenciasImpresion preferencia, M_egreso_cabecera facturaCabecera, ArrayList<M_egreso_detalle> facturaDetalle) {
+    public CompraBoletaPrintable(M_preferenciasImpresion preferencia, M_egresoCabecera facturaCabecera, ArrayList<M_egreso_detalle> facturaDetalle) {
         this.preferencia = preferencia;
         this.facturaCabecera = facturaCabecera;
         this.facturaDetalle = facturaDetalle;

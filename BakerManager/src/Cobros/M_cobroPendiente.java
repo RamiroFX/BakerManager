@@ -37,7 +37,7 @@ public class M_cobroPendiente {
 
     public M_cobroPendiente() {
         this.facturaCabecera = new M_facturaCabecera();
-        this.facturaCabecera.getFuncionario().setId_funcionario(-1);
+        this.facturaCabecera.getFuncionario().setId(-1);
         this.facturaCabecera.getCliente().setIdCliente(-1);
         this.tm = new FacturaSinPagoTableModel();
         this.tmDetalle = new FacturaDetalleTableModel(interfaceFacturaDetalle);
@@ -126,7 +126,7 @@ public class M_cobroPendiente {
     }
 
     public void borrarDatos() {
-        this.getFacturaCabecera().getFuncionario().setId_funcionario(-1);
+        this.getFacturaCabecera().getFuncionario().setId(-1);
         this.getFacturaCabecera().getCliente().setIdCliente(-1);
     }
 

@@ -28,7 +28,7 @@ public class M_gestionMateriaPrima {
 
     public M_gestionMateriaPrima() {
         this.funcionario = new M_funcionario();
-        this.funcionario.setId_funcionario(-1);
+        this.funcionario.setId(-1);
         this.utilizacionMPCabeceraTM = new UtilizacionMPCabeceraTableModel();
         this.utilizacionMPDetalleTM = new UtilizacionMPDetalleTableModel();
     }
@@ -58,7 +58,7 @@ public class M_gestionMateriaPrima {
     }
 
     public void borrarDatos() {
-        this.funcionario.setId_funcionario(-1);
+        this.funcionario.setId(-1);
         getUtilizacionMPDetalleTM().vaciarLista();
         getUtilizacionMPCabeceraTM().vaciarLista();
 

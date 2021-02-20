@@ -7,7 +7,7 @@ package MenuPrincipal;
 import Caja.GestionCaja;
 import Cliente.Gestion_cliente;
 import Cobros.GestionCobroPago;
-import Egresos.Gestion_Egreso;
+import Egresos.GestionCompras;
 import Entities.M_menu_item;
 import Pedido.GestionPedidos;
 import Producto.Gestion_Producto;
@@ -184,7 +184,7 @@ public class C_MenuPrincipal implements ActionListener, KeyListener {
             Gestion_cliente gestionCliente = new Gestion_cliente(c_inicio);
             gestionCliente.mostrarVista();
         } else if (src.equals(this.vista.jbCompras)) {
-            Gestion_Egreso gestionEgreso = new Gestion_Egreso(c_inicio);
+            GestionCompras gestionEgreso = new GestionCompras(c_inicio);
             gestionEgreso.mostrarVista();
         } else if (src.equals(this.vista.jbPedidos)) {
             GestionPedidos gestionPedidos = new GestionPedidos(c_inicio);
@@ -240,7 +240,7 @@ public class C_MenuPrincipal implements ActionListener, KeyListener {
             }
             case (KeyEvent.VK_F2): {
                 if (vista.jbCompras.isEnabled()) {
-                    Gestion_Egreso gestionEgreso = new Gestion_Egreso(c_inicio);
+                    GestionCompras gestionEgreso = new GestionCompras(c_inicio);
                     gestionEgreso.mostrarVista();
                 }
                 break;

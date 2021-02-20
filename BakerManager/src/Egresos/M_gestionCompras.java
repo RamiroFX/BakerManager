@@ -9,7 +9,7 @@ import DB.DB_Egreso;
 import DB.DB_manager;
 import Entities.E_tipoOperacion;
 import Entities.Estado;
-import Entities.M_egreso_cabecera;
+import Entities.M_egresoCabecera;
 import Entities.M_funcionario;
 import Entities.M_proveedor;
 import ModeloTabla.EgresoCabeceraTableModel;
@@ -21,20 +21,20 @@ import java.util.Date;
  *
  * @author Ramiro Ferreira
  */
-public class M_gestionEgresos {
+public class M_gestionCompras {
 
-    private M_egreso_cabecera egresoCabecera;
+    private M_egresoCabecera egresoCabecera;
     private EgresoCabeceraTableModel tm;
 
-    public M_gestionEgresos() {
-        this.egresoCabecera = new M_egreso_cabecera();
-        this.egresoCabecera.getFuncionario().setId_funcionario(-1);
+    public M_gestionCompras() {
+        this.egresoCabecera = new M_egresoCabecera();
+        this.egresoCabecera.getFuncionario().setId(-1);
         this.egresoCabecera.getProveedor().setId(-1);
-        this.egresoCabecera.setNro_factura(-1);
+        this.egresoCabecera.setNroFactura(-1);
         this.tm = new EgresoCabeceraTableModel(EgresoCabeceraTableModel.SIMPLE);
     }
 
-    public M_egreso_cabecera getCabecera() {
+    public M_egresoCabecera getCabecera() {
         return egresoCabecera;
     }
 
@@ -86,9 +86,9 @@ public class M_gestionEgresos {
     }
 
     public void borrarParametros() {
-        this.egresoCabecera.getFuncionario().setId_funcionario(-1);
+        this.egresoCabecera.getFuncionario().setId(-1);
         this.egresoCabecera.getProveedor().setId(-1);
-        this.egresoCabecera.setNro_factura(-1);
+        this.egresoCabecera.setNroFactura(-1);
         this.egresoCabecera.getEstado().setId(-1);
     }
 

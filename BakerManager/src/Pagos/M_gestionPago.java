@@ -10,7 +10,7 @@ import DB.DB_manager;
 import Entities.E_reciboPagoCabecera;
 import Entities.E_tipoOperacion;
 import Entities.Estado;
-import Entities.M_egreso_cabecera;
+import Entities.M_egresoCabecera;
 import Entities.M_funcionario;
 import Entities.M_proveedor;
 import ModeloTabla.ReciboPagoCabeceraTableModel;
@@ -28,16 +28,16 @@ public class M_gestionPago {
 
     private M_funcionario funcionario;
     private M_proveedor proveedor;
-    private M_egreso_cabecera facturaCabecera;
+    private M_egresoCabecera facturaCabecera;
     private ReciboPagoCabeceraTableModel tmCabecera;
     private ReciboPagoDetalleTableModel tmDetalle;
 
     public M_gestionPago() {
         this.funcionario = new M_funcionario();
-        this.funcionario.setId_funcionario(-1);
+        this.funcionario.setId(-1);
         this.proveedor = new M_proveedor();
         this.proveedor.setId(-1);
-        this.facturaCabecera = new M_egreso_cabecera();
+        this.facturaCabecera = new M_egresoCabecera();
         this.tmCabecera = new ReciboPagoCabeceraTableModel();
         this.tmDetalle = new ReciboPagoDetalleTableModel();
     }
@@ -69,7 +69,7 @@ public class M_gestionPago {
 
     public void borrarDatos() {
         this.funcionario = new M_funcionario();
-        this.funcionario.setId_funcionario(-1);
+        this.funcionario.setId(-1);
         this.proveedor = new M_proveedor();
         this.proveedor.setId(-1);
     }
@@ -111,11 +111,11 @@ public class M_gestionPago {
         return estados;
     }
 
-    public M_egreso_cabecera getFacturaCabecera() {
+    public M_egresoCabecera getFacturaCabecera() {
         return facturaCabecera;
     }
 
-    public void setFacturaCabecera(M_egreso_cabecera facturaCabecera) {
+    public void setFacturaCabecera(M_egresoCabecera facturaCabecera) {
         this.facturaCabecera = facturaCabecera;
     }
 

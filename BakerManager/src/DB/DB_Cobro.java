@@ -336,10 +336,10 @@ public class DB_Cobro {
                 cliente.setEntidad(rs.getString(13));
                 cliente.setIdCliente(rs.getInt(2));
                 M_funcionario cobrador = new M_funcionario();
-                cobrador.setId_funcionario(rs.getInt(3));
+                cobrador.setId(rs.getInt(3));
                 cobrador.setNombre(rs.getString(10));
                 M_funcionario usuario = new M_funcionario();
-                usuario.setId_funcionario(rs.getInt(4));
+                usuario.setId(rs.getInt(4));
                 usuario.setNombre(rs.getString(11));
                 Estado estado = new Estado();
                 estado.setId(rs.getInt(6));
@@ -1228,10 +1228,10 @@ public class DB_Cobro {
                 cliente.setEntidad(rs.getString(13));
                 cliente.setIdCliente(rs.getInt(2));
                 M_funcionario cobrador = new M_funcionario();
-                cobrador.setId_funcionario(rs.getInt(3));
+                cobrador.setId(rs.getInt(3));
                 cobrador.setNombre(rs.getString(10));
                 M_funcionario usuario = new M_funcionario();
-                usuario.setId_funcionario(rs.getInt(4));
+                usuario.setId(rs.getInt(4));
                 usuario.setNombre(rs.getString(11));
                 Estado estado = new Estado();
                 estado.setId(rs.getInt(6));

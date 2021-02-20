@@ -7,7 +7,7 @@ package Pagos;
 
 import DB.DB_Egreso;
 import Entities.E_egresoSinPago;
-import Entities.M_egreso_cabecera;
+import Entities.M_egresoCabecera;
 import ModeloTabla.EgresoDetalleTableModel;
 import ModeloTabla.EgresoSinPagoTableModel;
 import java.awt.BorderLayout;
@@ -112,9 +112,9 @@ public class ResumenPagoPendiente extends JDialog implements ActionListener, Key
         this.cabeceraTableModel = tm;
         jtCobros.setModel(tm);
         BigInteger total = new BigInteger("0");
-        ArrayList<M_egreso_cabecera> cadenaCabeceras = new ArrayList<>();
+        ArrayList<M_egresoCabecera> cadenaCabeceras = new ArrayList<>();
         for (E_egresoSinPago e_facturaSinPago : cabeceraTableModel.getList()) {
-            M_egreso_cabecera faca = new M_egreso_cabecera();
+            M_egresoCabecera faca = new M_egresoCabecera();
             faca.setId_cabecera(e_facturaSinPago.getIdCabecera());
             //total = total + e_facturaSinPago.getSaldo();
             total = total.add(new BigInteger(e_facturaSinPago.getSaldo() + ""));

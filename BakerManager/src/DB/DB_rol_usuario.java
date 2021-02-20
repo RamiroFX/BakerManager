@@ -62,7 +62,7 @@ public class DB_rol_usuario {
                 f.setId_persona(rs.getInt("id_persona"));
                 f.setCedula(rs.getInt("ci"));
                 f.setEstado_civil(rs.getString("estado_civil"));
-                f.setId_funcionario(rs.getInt("id_funcionario"));
+                f.setId(rs.getInt("id_funcionario"));
                 f.setObservacion(rs.getString("OBSERVACION"));
             }
             st = DB_manager.getConection().createStatement();

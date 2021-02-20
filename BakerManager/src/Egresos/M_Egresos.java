@@ -5,7 +5,7 @@
 package Egresos;
 
 import DB.DB_Egreso;
-import Entities.M_egreso_cabecera;
+import Entities.M_egresoCabecera;
 import Entities.M_egreso_detalle;
 import Entities.M_funcionario;
 import Entities.M_proveedor;
@@ -21,7 +21,7 @@ public class M_Egresos {
 
     M_proveedor proveedor;
     M_funcionario empleado;
-    M_egreso_cabecera egreso_cabecera;
+    M_egresoCabecera egreso_cabecera;
     M_egreso_detalle[] egreso_detalle;
     ArrayList<M_egreso_detalle> egresoDetalles;
     Timestamp tiempo;
@@ -29,7 +29,7 @@ public class M_Egresos {
     public M_Egresos() {
         this.proveedor = new M_proveedor();
         this.empleado = DatosUsuario.getRol_usuario().getFuncionario();
-        this.egreso_cabecera = new M_egreso_cabecera();
+        this.egreso_cabecera = new M_egresoCabecera();
         this.egresoDetalles = new ArrayList<>();
         this.tiempo = null;
     }

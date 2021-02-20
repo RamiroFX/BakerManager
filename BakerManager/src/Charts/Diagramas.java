@@ -4,7 +4,7 @@
  */
 package Charts;
 
-import Egresos.C_gestionEgresos;
+import Egresos.C_gestionCompras;
 import Pedido.C_gestionPedido;
 import bakermanager.C_inicio;
 
@@ -26,7 +26,7 @@ public class Diagramas {
         this.controlador = new C_diagramas(this.c_inicio, this.modelo, this.vista);
     }
 
-    public Diagramas(C_inicio c_inicio, C_gestionEgresos gestionEgreso) {
+    public Diagramas(C_inicio c_inicio, C_gestionCompras gestionEgreso) {
         this.c_inicio = c_inicio;
         this.modelo = new M_diagramas();
         this.vista = new V_diagramas(c_inicio.vista);

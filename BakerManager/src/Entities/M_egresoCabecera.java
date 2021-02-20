@@ -10,7 +10,7 @@ import java.sql.Timestamp;
  *
  * @author Usuario
  */
-public class M_egreso_cabecera {
+public class M_egresoCabecera {
 
     private Integer id_cabecera;
     private Integer id_proveedor;
@@ -26,7 +26,7 @@ public class M_egreso_cabecera {
     private E_Timbrado timbrado;
     private Estado estado;
 
-    public M_egreso_cabecera() {
+    public M_egresoCabecera() {
         this.proveedor = new M_proveedor();
         this.funcionario = new M_funcionario();
         this.timbrado = new E_Timbrado();
@@ -114,7 +114,7 @@ public class M_egreso_cabecera {
     /**
      * @param nro_factura the nro_factura to set
      */
-    public void setNro_factura(Integer nro_factura) {
+    public void setNroFactura(Integer nro_factura) {
         this.nro_factura = nro_factura;
     }
 

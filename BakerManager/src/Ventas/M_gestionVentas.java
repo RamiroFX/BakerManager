@@ -34,7 +34,7 @@ public class M_gestionVentas {
 
     public M_gestionVentas() {
         this.cabecera = new M_facturaCabecera();
-        this.cabecera.getFuncionario().setId_funcionario(-1);
+        this.cabecera.getFuncionario().setId(-1);
         this.cabecera.getCliente().setIdCliente(-1);
         this.detalle = new M_facturaDetalle();
         this.detalles = new ArrayList<>();
@@ -94,7 +94,7 @@ public class M_gestionVentas {
 
     public void borrarDatos() {
         this.cabecera = new M_facturaCabecera();
-        this.cabecera.getFuncionario().setId_funcionario(-1);
+        this.cabecera.getFuncionario().setId(-1);
         this.cabecera.getCliente().setIdCliente(-1);
         this.detalles = new ArrayList<>();
         setDetalles(new ArrayList<M_facturaDetalle>());

@@ -32,7 +32,7 @@ public class M_gestionProduccion {
 
     public M_gestionProduccion() {
         this.funcionario = new M_funcionario();
-        this.funcionario.setId_funcionario(-1);
+        this.funcionario.setId(-1);
         this.produccionCabeceraTM = new ProduccionCabeceraTableModel();
         this.produccionDetalleTM = new ProduccionDetalleTableModel(ProduccionDetalleTableModel.SIMPLE);
     }
@@ -62,7 +62,7 @@ public class M_gestionProduccion {
     }
 
     public void borrarDatos() {
-        this.funcionario.setId_funcionario(-1);
+        this.funcionario.setId(-1);
         getProduccionDetalleTM().vaciarLista();
         getProduccionCabeceraTM().vaciarLista();
 

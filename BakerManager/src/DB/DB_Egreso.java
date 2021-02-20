@@ -6,7 +6,7 @@ package DB;
 
 import Entities.E_tipoOperacion;
 import Entities.Estado;
-import Entities.M_egreso_cabecera;
+import Entities.M_egresoCabecera;
 import Entities.M_egreso_detalle;
 import Entities.M_egreso_detalleFX;
 import Entities.M_funcionario;
@@ -199,8 +199,8 @@ public class DB_Egreso {
         return rstm;
     }
 
-    public static List<M_egreso_cabecera> obtenerComprasCabecera(int idProveedor, int nroFactura, int idEmpleado, int idTipoOoperacion, int idEstado, Date inicio, Date fin, boolean conFecha) {
-        List<M_egreso_cabecera> list = new ArrayList<>();
+    public static List<M_egresoCabecera> obtenerComprasCabecera(int idProveedor, int nroFactura, int idEmpleado, int idTipoOoperacion, int idEstado, Date inicio, Date fin, boolean conFecha) {
+        List<M_egresoCabecera> list = new ArrayList<>();
         String fromQuery = "FROM EGRESO_CABECERA EGCA ,FUNCIONARIO FUNC, PERSONA PERS ";
         String fechaString = "";
         String proveedorString = "";
@@ -296,9 +296,9 @@ public class DB_Egreso {
                 Estado estado = new Estado();
                 estado.setId(rs.getInt(11));
                 estado.setDescripcion(rs.getString(12));
-                M_egreso_cabecera egresoCabecera = new M_egreso_cabecera();
+                M_egresoCabecera egresoCabecera = new M_egresoCabecera();
                 egresoCabecera.setId_cabecera(rs.getInt(1));
-                egresoCabecera.setNro_factura(rs.getInt(4));
+                egresoCabecera.setNroFactura(rs.getInt(4));
                 egresoCabecera.setCondCompra(tiop);
                 egresoCabecera.setTiempo(rs.getTimestamp(8));
                 egresoCabecera.setProveedor(proveedor);
@@ -516,8 +516,8 @@ public class DB_Egreso {
         return rstm;
     }
 
-    public static M_egreso_cabecera obtenerEgresoCabeceraID(int idEgresoCabecera) {
-        M_egreso_cabecera egreso_cabecera = null;
+    public static M_egresoCabecera obtenerEgresoCabeceraID(int idEgresoCabecera) {
+        M_egresoCabecera egreso_cabecera = null;
         String query = "SELECT PROV.ID_PROVEEDOR, "
                 + "PROV.ENTIDAD, "
                 + "PROV.NOMBRE, "
@@ -565,7 +565,7 @@ public class DB_Egreso {
                 proveedor.setEmail(rs.getString(7));
                 proveedor.setPagWeb(rs.getString(8));
                 proveedor.setObservacion(rs.getString(9));
-                funcionario.setId_funcionario(rs.getInt(17));
+                funcionario.setId(rs.getInt(17));
                 funcionario.setId_persona(rs.getInt(18));
                 funcionario.setAlias(rs.getString(19));
                 funcionario.setFecha_ingreso(rs.getDate(20));
@@ -579,14 +579,14 @@ public class DB_Egreso {
                 E_tipoOperacion tiop = new E_tipoOperacion();
                 tiop.setId(rs.getInt(16));
                 tiop.setDescripcion(rs.getString(15));
-                egreso_cabecera = new M_egreso_cabecera();
+                egreso_cabecera = new M_egresoCabecera();
                 egreso_cabecera.setProveedor(proveedor);
                 egreso_cabecera.setFuncionario(funcionario);
                 egreso_cabecera.setId_cabecera(rs.getInt(10));
                 egreso_cabecera.setId_proveedor(rs.getInt(11));;
                 egreso_cabecera.setId_empleado(rs.getInt(12));
                 egreso_cabecera.setTiempo(rs.getTimestamp(13));
-                egreso_cabecera.setNro_factura(rs.getInt(14));
+                egreso_cabecera.setNroFactura(rs.getInt(14));
                 egreso_cabecera.setCondVenta(rs.getString(15));
                 egreso_cabecera.setId_condVenta(rs.getInt(16));
                 egreso_cabecera.setCondCompra(tiop);
@@ -990,7 +990,7 @@ public class DB_Egreso {
     /*
      * CREATE
      */
-    public static void insertarEgresoTEMPORAL(M_egreso_cabecera egreso_cabecera, M_egreso_detalle[] egreso_detalle) {
+    public static void insertarEgresoTEMPORAL(M_egresoCabecera egreso_cabecera, M_egreso_detalle[] egreso_detalle) {
         String insertDetalle = "INSERT INTO egreso_detalle(id_egreso_cabecera, id_producto, cantidad, precio, descuento, observacion)VALUES (?, ?, ?, ?, ?, ?)";
         String INSERT_CABECERA = "INSERT INTO egreso_cabecera(nro_factura, id_proveedor, id_funcionario, tiempo, ID_COND_COMPRA)VALUES (?, ?, ?, ?, ?)";
         long sq_egreso_cabecera = -1L;
@@ -1057,7 +1057,7 @@ public class DB_Egreso {
         }
     }
 
-    public static void insertarEgreso(M_egreso_cabecera egreso_cabecera, ArrayList<M_egreso_detalle> detalles) {
+    public static void insertarEgreso(M_egresoCabecera egreso_cabecera, ArrayList<M_egreso_detalle> detalles) {
         String INSERT_CABECERA = "INSERT INTO egreso_cabecera(nro_factura, id_proveedor, id_funcionario, tiempo, ID_COND_COMPRA, nro_timbrado, nro_sucursal, nro_punto_venta)VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         String insertDetalle = "INSERT INTO egreso_detalle(id_egreso_cabecera, id_producto, cantidad, precio, descuento, observacion)VALUES (?, ?, ?, ?, ?, ?)";
         long sq_egreso_cabecera = -1L;
@@ -1173,13 +1173,13 @@ public class DB_Egreso {
         return false;
     }
 
-    public static List<M_egreso_detalle> consultarEgresoDetalleAgrupado(List<M_egreso_cabecera> cadenaCabeceras) {
+    public static List<M_egreso_detalle> consultarEgresoDetalleAgrupado(List<M_egresoCabecera> cadenaCabeceras) {
         List<M_egreso_detalle> list = new ArrayList<>();
         boolean b = true;
-        List<M_egreso_cabecera> possibleValues = cadenaCabeceras;
+        List<M_egresoCabecera> possibleValues = cadenaCabeceras;
         StringBuilder builder = new StringBuilder();
 
-        for (M_egreso_cabecera seleccionVenta : possibleValues) {
+        for (M_egresoCabecera seleccionVenta : possibleValues) {
             builder.append("?,");
         }
         String QUERY = "SELECT PROD.CODIGO \"Codigo\", "
@@ -1200,7 +1200,7 @@ public class DB_Egreso {
         try {
             pst = DB_manager.getConection().prepareStatement(QUERY, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             int index = 1;
-            for (M_egreso_cabecera ventaCabecera : possibleValues) {
+            for (M_egresoCabecera ventaCabecera : possibleValues) {
                 pst.setInt(index++, ventaCabecera.getId_cabecera());
             }
             rs = pst.executeQuery();
@@ -1265,8 +1265,8 @@ public class DB_Egreso {
         }
     }
 
-    public static List<M_egreso_cabecera> obtenerMovimientoComprasCabeceras(int idFuncionario, int idProveedor, int idTipoOperacion, Date fechaInicio, Date fechaFinal) {
-        List<M_egreso_cabecera> list = new ArrayList<>();
+    public static List<M_egresoCabecera> obtenerMovimientoComprasCabeceras(int idFuncionario, int idProveedor, int idTipoOperacion, Date fechaInicio, Date fechaFinal) {
+        List<M_egresoCabecera> list = new ArrayList<>();
         String Query = "SELECT EC.ID_EGRESO_CABECERA \"ID\", "
                 + "EC.NRO_FACTURA \"NRO_FACTURA\", "
                 + "(SELECT NOMBRE || ' '|| APELLIDO WHERE F.ID_PERSONA = P.ID_PERSONA)\"EMPLEADO\", "
@@ -1316,9 +1316,9 @@ public class DB_Egreso {
                 M_funcionario funcionario = new M_funcionario();
                 funcionario.setNombre(rs.getString("EMPLEADO"));
                 proveedor.setEntidad(rs.getString("PROVEEDOR"));
-                M_egreso_cabecera egca = new M_egreso_cabecera();
+                M_egresoCabecera egca = new M_egresoCabecera();
                 egca.setId_cabecera(rs.getInt("ID"));
-                egca.setNro_factura(rs.getInt("NRO_FACTURA"));
+                egca.setNroFactura(rs.getInt("NRO_FACTURA"));
                 egca.setTotal(rs.getInt("TOTAL"));
                 egca.setProveedor(proveedor);
                 egca.setFuncionario(funcionario);
@@ -1346,8 +1346,8 @@ public class DB_Egreso {
         return list;
     }
 
-    public static List<M_egreso_cabecera> obtenerMovimientoComprasCabeceras(int idCaja) {
-        List<M_egreso_cabecera> list = new ArrayList<>();
+    public static List<M_egresoCabecera> obtenerMovimientoComprasCabeceras(int idCaja) {
+        List<M_egresoCabecera> list = new ArrayList<>();
         String Query = "SELECT EC.ID_EGRESO_CABECERA \"ID\", "
                 + "EC.NRO_FACTURA \"NRO_FACTURA\", "
                 + "(SELECT NOMBRE || ' '|| APELLIDO WHERE F.ID_PERSONA = P.ID_PERSONA)\"EMPLEADO\", "
@@ -1375,9 +1375,9 @@ public class DB_Egreso {
                 proveedor.setEntidad(rs.getString("PROVEEDOR"));
                 proveedor.setRuc(rs.getString("RUC_PROVEEDOR"));
                 proveedor.setRuc_id(rs.getString("RUC_ID_PROVEEDOR"));
-                M_egreso_cabecera egca = new M_egreso_cabecera();
+                M_egresoCabecera egca = new M_egresoCabecera();
                 egca.setId_cabecera(rs.getInt("ID"));
-                egca.setNro_factura(rs.getInt("NRO_FACTURA"));
+                egca.setNroFactura(rs.getInt("NRO_FACTURA"));
                 egca.setTotal(rs.getInt("TOTAL"));
                 egca.setProveedor(proveedor);
                 egca.setFuncionario(funcionario);

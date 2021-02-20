@@ -24,7 +24,7 @@ public class M_cobroAnticipado {
 
     public M_cobroAnticipado() {
         this.ctaCteCabecera = new E_cuentaCorrienteCabecera();
-        this.ctaCteCabecera.getCobrador().setId_funcionario(-1);
+        this.ctaCteCabecera.getCobrador().setId(-1);
         this.ctaCteCabecera.setFuncionario(DatosUsuario.getRol_usuario().getFuncionario());
         this.ctaCteCabecera.getCliente().setIdCliente(-1);
         this.ctaCteDetalleTm = new CtaCteDetalleTableModel();
@@ -58,7 +58,7 @@ public class M_cobroAnticipado {
 
     public void limpiarCampos() {
         getCabecera().getCliente().setIdCliente(-1);
-        getCabecera().getCobrador().setId_funcionario(-1);
+        getCabecera().getCobrador().setId(-1);
         getCtaCteDetalleTm().vaciarLista();
     }
 

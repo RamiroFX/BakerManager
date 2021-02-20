@@ -91,7 +91,7 @@ class M_modificar_usuario {
     public boolean modificarUsuario(String nombre, String apellido, Integer cedula, Date fechaNacimiento, String alias, String telefono, String celular, Date fechaIngreso, String estadoCivil, String observacion, String direccion, String email, String ciudad, String sexo, String pais) {
         M_funcionario nuevo = new M_funcionario(null, observacion, alias, email, celular, telefono, direccion, null, fechaIngreso, null, null, nombre, apellido, sexo, pais, ciudad, fechaNacimiento, estadoCivil, null, cedula);
         nuevo.setId_persona(funcionario.getId_persona());
-        nuevo.setId_funcionario(funcionario.getId_funcionario());
+        nuevo.setId(funcionario.getId_funcionario());
         //pregunta si el alias y el numero de cedula son iguales, que son los valores unicos de cada funcionario
         System.out.println("funcionario.getAlias()" + funcionario.getAlias());
         System.out.println("nuevo.getAlias()" + nuevo.getAlias());

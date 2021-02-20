@@ -9,7 +9,7 @@ import DB.DB_Egreso;
 import DB.DB_manager;
 import Entities.E_Timbrado;
 import Entities.E_tipoOperacion;
-import Entities.M_egreso_cabecera;
+import Entities.M_egresoCabecera;
 import Entities.M_egreso_detalle;
 import MenuPrincipal.DatosUsuario;
 import ModeloTabla.EgresoDetalleTableModel;
@@ -23,17 +23,17 @@ import java.util.ArrayList;
  */
 public class M_crearEgresoPorFecha {
 
-    private M_egreso_cabecera egresoCabecera;
+    private M_egresoCabecera egresoCabecera;
     private EgresoDetalleTableModel egresoDetalleTableModel;
     private NumberFormat nfSmall, nfLarge;
 
     public M_crearEgresoPorFecha() {
-        this.egresoCabecera = new M_egreso_cabecera();
+        this.egresoCabecera = new M_egresoCabecera();
         this.egresoCabecera.getProveedor().setId(-1);
         this.egresoCabecera.getTimbrado().setNroTimbrado(-1);
         this.egresoCabecera.getTimbrado().setNroSucursal(-1);
         this.egresoCabecera.getTimbrado().setNroPuntoVenta(-1);
-        this.egresoCabecera.setNro_factura(-1);
+        this.egresoCabecera.setNroFactura(-1);
         this.egresoCabecera.setFuncionario(DatosUsuario.getRol_usuario().getFuncionario());
         this.egresoDetalleTableModel = new EgresoDetalleTableModel();
         this.nfSmall = new DecimalFormat("000");
@@ -56,7 +56,7 @@ public class M_crearEgresoPorFecha {
         return DB_manager.obtenerTipoOperaciones();
     }
 
-    public M_egreso_cabecera getEgresoCabecera() {
+    public M_egresoCabecera getEgresoCabecera() {
         return egresoCabecera;
     }
 
@@ -65,7 +65,7 @@ public class M_crearEgresoPorFecha {
     }
 
     public void establecerNroFactura(E_Timbrado timbrado, int nroFactura) {
-        getEgresoCabecera().setNro_factura(nroFactura);
+        getEgresoCabecera().setNroFactura(nroFactura);
         getEgresoCabecera().setTimbrado(timbrado);
     }
 
