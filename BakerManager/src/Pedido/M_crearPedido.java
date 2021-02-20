@@ -11,6 +11,7 @@ import DB.DB_Preferencia;
 import Entities.E_impresionTipo;
 import Entities.M_pedido;
 import Entities.M_pedidoDetalle;
+import ModeloTabla.FacturaDetalleTableModel;
 import java.util.ArrayList;
 import java.util.Vector;
 import javax.swing.table.DefaultTableModel;
@@ -22,24 +23,11 @@ import javax.swing.table.DefaultTableModel;
 public class M_crearPedido {
 
     M_pedido pedido;
-    M_pedidoDetalle detalle;
-    ArrayList<M_pedidoDetalle> detalles;
-    private DefaultTableModel dtm;
+    private FacturaDetalleTableModel dtm;
 
     public M_crearPedido() {
         this.pedido = new M_pedido();
-        this.detalle = new M_pedidoDetalle();
-        this.detalles = new ArrayList<>();
-        this.dtm = new DefaultTableModel();
-        this.dtm.addColumn("ID art.");
-        this.dtm.addColumn("Producto");
-        this.dtm.addColumn("Cantidad");
-        this.dtm.addColumn("Precio");
-        this.dtm.addColumn("Descuento");
-        this.dtm.addColumn("Exenta");
-        this.dtm.addColumn("IVA 5%");
-        this.dtm.addColumn("IVA 10%");
-        this.dtm.addColumn("Obs.");
+        this.dtm = new FacturaDetalleTableModel();
     }
 
     public M_pedido getPedido() {
@@ -50,44 +38,18 @@ public class M_crearPedido {
         this.pedido = pedido;
     }
 
-    public M_pedidoDetalle getDetalle() {
-        return detalle;
-    }
 
-    public void setDetalle(M_pedidoDetalle detalle) {
-        this.detalle = detalle;
-    }
-
-    public ArrayList<M_pedidoDetalle> getDetalles() {
-        return detalles;
-    }
-
-    public void setDetalles(ArrayList<M_pedidoDetalle> detalles) {
-        this.detalles = detalles;
-    }
-
-    public DefaultTableModel getDtm() {
+    public FacturaDetalleTableModel getDtm() {
         return dtm;
     }
 
     public void borrarDatos() {
-        setPedido(new M_pedido());
-        setDetalle(new M_pedidoDetalle());
-        getDetalles().clear();
+        getPedido().getCliente().setIdCliente(-1);
+        getDtm().vaciarLista();
     }
 
     public void insertarPedido() {
-        DB_Pedido.insertarPedido(getPedido(), getDetalles());
-    }
-
-    public int getNroFactura() {
-        int nroFactura;
-        nroFactura = DB_Ingreso.obtenerUltimoNroFactura() + 1;
-        return nroFactura;
-    }
-
-    public boolean nroFacturaEnUso(int nroFactura) {
-        return DB_Ingreso.nroFacturaEnUso(nroFactura);
+        DB_Pedido.insertarPedido(getPedido(), getDtm().getFacturaDetalleList());
     }
 
     public Vector obtenerTipoOperacion() {

@@ -5,6 +5,7 @@
 package DB;
 
 import Entities.M_cliente;
+import Entities.M_facturaDetalle;
 import Entities.M_funcionario;
 import Entities.M_pedido;
 import Entities.M_pedidoDetalle;
@@ -15,6 +16,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Types;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -327,7 +329,7 @@ public class DB_Pedido {
     /*
      * CREATE
      */
-    public static long insertarPedido(M_pedido pedido, ArrayList<M_pedidoDetalle> pedidoDetalle) {
+    public static long insertarPedido(M_pedido pedido, List<M_facturaDetalle> pedidoDetalle) {
         //LA SGBD SE ENCARGA DE INSERTAR EL TIMESTAMP.
         String INSERT_DETALLE = "INSERT INTO PEDIDO_DETALLE(ID_PEDIDO_CABECERA, ID_PRODUCTO, CANTIDAD, PRECIO, DESCUENTO, OBSERVACION)VALUES (?, ?, ?, ?, ?, ?);";
         String INSERT_PEDIDO = "INSERT INTO PEDIDO_CABECERA(ID_CLIENTE, ID_FUNCIONARIO, TIEMPO_ENTREGA, ID_COND_VENTA, ID_PEDIDO_ESTADO, DIRECCION, REFERENCIA)VALUES (?, ?, ?, ?, ?, ?, ?);";
