@@ -16,6 +16,7 @@ import DB.DB_Ingreso;
 import DB.DB_Preferencia;
 import DB.DB_manager;
 import Entities.Caja;
+import Entities.E_facturaDetalle;
 import Entities.E_impresionOrientacion;
 import Entities.E_ticketPreferencia;
 import Entities.Estado;
@@ -29,7 +30,6 @@ import Entities.M_funcionario;
 import Entities.M_mesa;
 import Entities.M_mesa_detalle;
 import Entities.M_pedido;
-import Entities.M_pedidoDetalle;
 import Entities.M_preferenciasImpresion;
 import Entities.M_producto;
 import Entities.M_rol_usuario;
@@ -57,7 +57,6 @@ import javax.print.SimpleDoc;
 import javax.print.attribute.HashPrintRequestAttributeSet;
 import javax.print.attribute.PrintRequestAttributeSet;
 import javax.print.attribute.standard.JobName;
-import javax.print.attribute.standard.MediaSizeName;
 import javax.print.attribute.standard.OrientationRequested;
 import javax.swing.JOptionPane;
 
@@ -92,8 +91,8 @@ public class Impresora {
         return fc;
     }
 
-    private static ArrayList<M_facturaDetalle> obtenerFacturaDetallePrueba() {
-        ArrayList<M_facturaDetalle> faDetalles = new ArrayList<>();
+    private static ArrayList<E_facturaDetalle> obtenerFacturaDetallePrueba() {
+        ArrayList<E_facturaDetalle> faDetalles = new ArrayList<>();
         M_producto prod1 = new M_producto("XXXXXXXXXX", "XXXXXXX", "XXXX", "Activo", 1, "XXXXXXXX", 2, 1.0, 1.0, 1.0, 1.0, "");
         prod1.setIdImpuesto(1);
         M_producto prod2 = new M_producto("XXXXXXXXXXXXXXX", "XXXXXXX", "XXXX", "Activo", 1, "XXXXXXXX", 2, 1.0, 1.0, 1.0, 1.0, "");
@@ -114,61 +113,61 @@ public class Impresora {
         prod9.setIdImpuesto(2);
         M_producto prod10 = new M_producto("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX", "XXXXXXX", "XXXX", "Activo", 1, "XXXXXXXX", 2, 1.0, 1.0, 1.0, 1.0, "");
         prod10.setIdImpuesto(3);
-        M_facturaDetalle fd1 = new M_facturaDetalle();
+        E_facturaDetalle fd1 = new E_facturaDetalle();
         fd1.setCantidad(1.0);
         fd1.setDescuento(0.0);
         fd1.setPrecio(100.0);
         fd1.setProducto(prod1);
         faDetalles.add(fd1);
-        M_facturaDetalle fd2 = new M_facturaDetalle();
+        E_facturaDetalle fd2 = new E_facturaDetalle();
         fd2.setCantidad(10.0);
         fd2.setDescuento(10.0);
         fd2.setPrecio(150.0);
         fd2.setProducto(prod2);
         faDetalles.add(fd2);
-        M_facturaDetalle fd3 = new M_facturaDetalle();
+        E_facturaDetalle fd3 = new E_facturaDetalle();
         fd3.setCantidad(15.0);
         fd3.setDescuento(0.0);
         fd3.setPrecio(500.0);
         fd3.setProducto(prod3);
         faDetalles.add(fd3);
-        M_facturaDetalle fd4 = new M_facturaDetalle();
+        E_facturaDetalle fd4 = new E_facturaDetalle();
         fd4.setCantidad(750.0);
         fd4.setDescuento(0.0);
         fd4.setPrecio(100.0);
         fd4.setProducto(prod4);
         faDetalles.add(fd4);
-        M_facturaDetalle fd5 = new M_facturaDetalle();
+        E_facturaDetalle fd5 = new E_facturaDetalle();
         fd5.setCantidad(1000.0);
         fd5.setDescuento(0.0);
         fd5.setPrecio(850.0);
         fd5.setProducto(prod5);
         faDetalles.add(fd5);
-        M_facturaDetalle fd6 = new M_facturaDetalle();
+        E_facturaDetalle fd6 = new E_facturaDetalle();
         fd6.setCantidad(400.0);
         fd6.setDescuento(0.0);
         fd6.setPrecio(430.0);
         fd6.setProducto(prod6);
         faDetalles.add(fd6);
-        M_facturaDetalle fd7 = new M_facturaDetalle();
+        E_facturaDetalle fd7 = new E_facturaDetalle();
         fd7.setCantidad(9.0);
         fd7.setDescuento(0.0);
         fd7.setPrecio(5000.0);
         fd7.setProducto(prod7);
         faDetalles.add(fd7);
-        M_facturaDetalle fd8 = new M_facturaDetalle();
+        E_facturaDetalle fd8 = new E_facturaDetalle();
         fd8.setCantidad(19.0);
         fd8.setDescuento(0.0);
         fd8.setPrecio(20000.0);
         fd8.setProducto(prod8);
         faDetalles.add(fd8);
-        M_facturaDetalle fd9 = new M_facturaDetalle();
+        E_facturaDetalle fd9 = new E_facturaDetalle();
         fd9.setCantidad(1.0);
         fd9.setDescuento(0.0);
         fd9.setPrecio(47000.0);
         fd9.setProducto(prod9);
         faDetalles.add(fd9);
-        M_facturaDetalle fd10 = new M_facturaDetalle();
+        E_facturaDetalle fd10 = new E_facturaDetalle();
         fd10.setCantidad(3.0);
         fd10.setDescuento(0.0);
         fd10.setPrecio(250000.0);
@@ -225,7 +224,7 @@ public class Impresora {
     public static void imprimirFacturaPrueba() {
         String nombreImpresora = PREF_PRINT_FACTURA.getNombreImpresora();
         M_cliente cliente = obtenerClientePrueba();
-        ArrayList<M_facturaDetalle> facturaDetalle = obtenerFacturaDetallePrueba();
+        ArrayList<E_facturaDetalle> facturaDetalle = obtenerFacturaDetallePrueba();
         M_facturaCabecera facturaCabecera = obtenerFacturaCabeceraPrueba(cliente);
         List<M_campoImpresion> textoAImprimir = DB_manager.obtenerCampoImpresion(2, MyConstants.ACTIVO);
         PrinterJob job = PrinterJob.getPrinterJob();
@@ -292,7 +291,7 @@ public class Impresora {
         String nombreImpresora = PREF_PRINT_BOLETA.getNombreImpresora();
         M_cliente cliente = obtenerClientePrueba();
         M_facturaCabecera facturaCabecera = obtenerFacturaCabeceraPrueba(cliente);
-        ArrayList<M_facturaDetalle> facturaDetalle = obtenerFacturaDetallePrueba();
+        ArrayList<E_facturaDetalle> facturaDetalle = obtenerFacturaDetallePrueba();
         PrinterJob job = PrinterJob.getPrinterJob();
         PageFormat pageFormat = new PageFormat();
         Paper paper = new Paper();
@@ -359,7 +358,7 @@ public class Impresora {
         func.setNombre("Empleado test");
         M_facturaCabecera facturaCabecera = obtenerFacturaCabeceraPrueba(cliente);
         facturaCabecera.setFuncionario(func);
-        ArrayList<M_facturaDetalle> facturaDetalle = obtenerFacturaDetallePrueba();
+        ArrayList<E_facturaDetalle> facturaDetalle = obtenerFacturaDetallePrueba();
         String ruc = "-";
         if (facturaCabecera.getCliente().getRuc() != null) {
             if (facturaCabecera.getCliente().getRucId() != null) {
@@ -378,7 +377,7 @@ public class Impresora {
         int total = 0;
         int iva5 = 0;
         int iva10 = 0;
-        for (M_facturaDetalle fd : facturaDetalle) {
+        for (E_facturaDetalle fd : facturaDetalle) {
             double precio = fd.getPrecio() - Math.round(Math.round(((fd.getPrecio() * fd.getDescuento()) / 100)));
             int subtotal = Math.round(Math.round(fd.getCantidad() * precio));
             total = total + subtotal;
@@ -427,7 +426,7 @@ public class Impresora {
     /*
     IMPRIMIR TICKETS
      */
-    public static void imprimirTicketPedido(M_rol_usuario rol_usuario, M_pedido pedidoCabecera, ArrayList<M_pedidoDetalle> pedidoDetalle) {
+    public static void imprimirTicketPedido(M_rol_usuario rol_usuario, M_pedido pedidoCabecera, List<E_facturaDetalle> pedidoDetalle) {
         PrintService[] services = PrintServiceLookup.lookupPrintServices(null, null);
         String nombreImpresora = PREF_PRINT_TICKET.getNombreImpresora();
         Date today = Calendar.getInstance().getTime();
@@ -448,19 +447,18 @@ public class Impresora {
                 + "---------------------------------\n";
         String COLUMNAS = "producto   cant  precio  subtotal\n";
         String DETALLE = "";
-        int total = 0;
-        int iva5 = 0;
-        int iva10 = 0;
-        for (M_pedidoDetalle fd : pedidoDetalle) {
-            double precio = fd.getPrecio() - Math.round(Math.round(((fd.getPrecio() * fd.getDescuento()) / 100)));
-            int subtotal = Math.round(Math.round(fd.getCantidad() * precio));
+        double total = 0;
+        double iva5 = 0;
+        double iva10 = 0;
+        for (E_facturaDetalle fd : pedidoDetalle) {
+            double subtotal = fd.calcularSubTotal();
             total = total + subtotal;
             if (fd.getProducto().getIdImpuesto() == 2) {
                 iva5 = iva5 + subtotal;
             } else if (fd.getProducto().getIdImpuesto() == 3) {
                 iva10 = iva10 + subtotal;
             }
-            DETALLE = DETALLE + "-> " + fd.getProducto().getDescripcion() + "\n" + fd.getCantidad() + " " + precio + "  " + subtotal + "\n";
+            DETALLE = DETALLE + "-> " + fd.getProducto().getDescripcion() + "\n" + fd.getCantidad() + " " + fd.getPrecioConDescuento() + "  " + subtotal + "\n";
         }
         iva5 = iva5 / 21;
         iva10 = iva10 / 11;
@@ -517,13 +515,13 @@ public class Impresora {
                 + "Cliente: " + facturaCabecera.getCliente().getEntidad() + "\n"
                 + "R.U.C.: " + ruc + "\n"
                 + "---------------------------------\n";
-        ArrayList<M_facturaDetalle> facturaDetalle = DB_Ingreso.obtenerVentaDetalles(facturaCabecera.getIdFacturaCabecera());
+        ArrayList<E_facturaDetalle> facturaDetalle = DB_Ingreso.obtenerVentaDetalles(facturaCabecera.getIdFacturaCabecera());
         String COLUMNAS = "producto   cant  precio  subtotal\n";
         String DETALLE = "";
         int total = 0;
         int iva5 = 0;
         int iva10 = 0;
-        for (M_facturaDetalle fd : facturaDetalle) {
+        for (E_facturaDetalle fd : facturaDetalle) {
             double precio = fd.getPrecio() - Math.round(Math.round(((fd.getPrecio() * fd.getDescuento()) / 100)));
             int subtotal = Math.round(Math.round(fd.getCantidad() * precio));
             if (fd.getProducto().getIdImpuesto() == 2) {
@@ -578,7 +576,7 @@ public class Impresora {
         }
     }
 
-    public static void imprimirTicketVenta(M_rol_usuario rol_usuario, M_facturaCabecera facturaCabecera, ArrayList<M_facturaDetalle> facturaDetalle) {
+    public static void imprimirTicketVenta(M_rol_usuario rol_usuario, M_facturaCabecera facturaCabecera, ArrayList<E_facturaDetalle> facturaDetalle) {
         PrintService[] services = PrintServiceLookup.lookupPrintServices(null, null);
         String nombreImpresora = PREF_PRINT_TICKET.getNombreImpresora();
         Date today = Calendar.getInstance().getTime();
@@ -599,12 +597,11 @@ public class Impresora {
                 + "---------------------------------\n";
         String COLUMNAS = "producto   cant  precio  subtotal\n";
         String DETALLE = "";
-        int total = 0;
-        int iva5 = 0;
-        int iva10 = 0;
-        for (M_facturaDetalle fd : facturaDetalle) {
-            double precio = fd.getPrecio() - Math.round(Math.round(((fd.getPrecio() * fd.getDescuento()) / 100)));
-            int subtotal = Math.round(Math.round(fd.getCantidad() * precio));
+        double total = 0;
+        double iva5 = 0;
+        double iva10 = 0;
+        for (E_facturaDetalle fd : facturaDetalle) {
+            double subtotal = fd.calcularSubTotal();
             if (fd.getProducto().getIdImpuesto() == 2) {
                 iva5 = iva5 + subtotal;
             } else if (fd.getProducto().getIdImpuesto() == 3) {
@@ -618,7 +615,7 @@ public class Impresora {
                 }
             }
             total = total + subtotal;
-            DETALLE = DETALLE + "-> " + prodDescripcion + "\n" + fd.getCantidad() + " " + precio + "  " + subtotal + "\n";
+            DETALLE = DETALLE + "-> " + prodDescripcion + "\n" + fd.getCantidad() + " " + fd.getPrecioConDescuento() + "  " + subtotal + "\n";
         }
         iva5 = iva5 / 21;
         iva10 = iva10 / 11;
@@ -962,7 +959,7 @@ public class Impresora {
     /*
     IMPRIMIR FACTURA
      */
-    public static void imprimirFacturaVenta(final M_facturaCabecera facturaCabecera, final ArrayList<M_facturaDetalle> facturaDetalle) {
+    public static void imprimirFacturaVenta(final M_facturaCabecera facturaCabecera, final ArrayList<E_facturaDetalle> facturaDetalle) {
         PrintService[] services = PrintServiceLookup.lookupPrintServices(null, null);
         String nombreImpresora = PREF_PRINT_FACTURA.getNombreImpresora();
         int width = PREF_PRINT_FACTURA.getAnchoPagina();
@@ -1035,7 +1032,7 @@ public class Impresora {
     /*
     IMPRIMIR BOLETA
      */
-    public static void imprimirBoletaVenta(M_facturaCabecera facturaCabecera, ArrayList<M_facturaDetalle> facturaDetalle) {
+    public static void imprimirBoletaVenta(M_facturaCabecera facturaCabecera, ArrayList<E_facturaDetalle> facturaDetalle) {
         PrintService[] services = PrintServiceLookup.lookupPrintServices(null, null);
         PrinterJob job = PrinterJob.getPrinterJob();
         String nombreImpresora = PREF_PRINT_BOLETA.getNombreImpresora();

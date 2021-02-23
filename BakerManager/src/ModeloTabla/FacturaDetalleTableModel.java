@@ -5,6 +5,7 @@
  */
 package ModeloTabla;
 
+import Entities.E_facturaDetalle;
 import Entities.E_impuesto;
 import Interface.InterfaceFacturaDetalle;
 import Entities.M_facturaDetalle;
@@ -25,7 +26,7 @@ public class FacturaDetalleTableModel extends AbstractTableModel {
     private static final String SOLO_ENTERO = "Ingrese solo números enteros (Ej. 13)";
     private static final String ATENCION = "Atención";
 
-    private List<M_facturaDetalle> facturaDetalleList;
+    private List<E_facturaDetalle> facturaDetalleList;
     private DecimalFormat decimalFormat;
     private final String[] colNames = {"Cod.", "Cantidad", "Descripcion", "Precio", "Descuento", "Exenta", "IVA 5%", "IVA 10%", "Observacion"};
 
@@ -46,7 +47,7 @@ public class FacturaDetalleTableModel extends AbstractTableModel {
         this.interfaceFacturaDetalle = interfaceFacturaDetalle;
     }
 
-    public List<M_facturaDetalle> getFacturaDetalleList() {
+    public List<E_facturaDetalle> getList() {
         return facturaDetalleList;
     }
 
@@ -91,7 +92,7 @@ public class FacturaDetalleTableModel extends AbstractTableModel {
 
     @Override
     public Object getValueAt(int rowIndex, int colIndex) {
-        M_facturaDetalle fd = this.facturaDetalleList.get(rowIndex);
+        E_facturaDetalle fd = this.facturaDetalleList.get(rowIndex);
         switch (colIndex) {
             case 0: {
                 return fd.getProducto().getCodigo();
@@ -139,6 +140,7 @@ public class FacturaDetalleTableModel extends AbstractTableModel {
         }
     }
 
+    /*
     @Override
     public void setValueAt(Object aValue, int row, int column) {
         switch (column) {
@@ -159,13 +161,13 @@ public class FacturaDetalleTableModel extends AbstractTableModel {
         fireTableCellUpdated(row, column);
         fireTableDataChanged();
     }
-
-    public void setFacturaDetalleList(List<M_facturaDetalle> facturaDetalleList) {
+     */
+    public void setFacturaDetalleList(List<E_facturaDetalle> facturaDetalleList) {
         this.facturaDetalleList = facturaDetalleList;
         updateTable();
     }
 
-    public void agregarDetalle(M_facturaDetalle fd) {
+    public void agregarDetalle(E_facturaDetalle fd) {
         this.facturaDetalleList.add(fd);
         fireTableDataChanged();
     }
@@ -180,6 +182,7 @@ public class FacturaDetalleTableModel extends AbstractTableModel {
         fireTableDataChanged();
     }
 
+    /*
     private void modificarCantidadFila(Object aValue, int row) {
         try {
             Double cantidad = (Double.valueOf(aValue.toString()));
@@ -193,7 +196,6 @@ public class FacturaDetalleTableModel extends AbstractTableModel {
             JOptionPane.showMessageDialog(null, SOLO_DECIMAL, ATENCION, JOptionPane.WARNING_MESSAGE);
         }
     }
-
     private void modificarPrecioFila(Object aValue, int row) {
         try {
             double precio = (Integer.valueOf(aValue.toString()));
@@ -207,7 +209,6 @@ public class FacturaDetalleTableModel extends AbstractTableModel {
             JOptionPane.showMessageDialog(null, SOLO_ENTERO, ATENCION, JOptionPane.WARNING_MESSAGE);
         }
     }
-
     private void modificarDescuentoFila(Object aValue, int row) {
         try {
             Double descuento = (Double.valueOf(aValue.toString()));
@@ -223,25 +224,8 @@ public class FacturaDetalleTableModel extends AbstractTableModel {
     }
 
     private void modificarImpuestos(int row, double total) {
-        switch (facturaDetalleList.get(row).getProducto().getImpuesto()) {
-            case Impuesto.EXENTA:
-                facturaDetalleList.get(row).setExenta(total);
-                facturaDetalleList.get(row).setIva5(0.0);
-                facturaDetalleList.get(row).setIva10(0.0);
-                break;
-            case Impuesto.IVA5:
-                facturaDetalleList.get(row).setExenta(0.0);
-                facturaDetalleList.get(row).setIva5(total);
-                facturaDetalleList.get(row).setIva10(0.0);
-                break;
-            case Impuesto.IVA10:
-                facturaDetalleList.get(row).setExenta(0.0);
-                facturaDetalleList.get(row).setIva5(0.0);
-                facturaDetalleList.get(row).setIva10(total);
-                break;
-        }
     }
-
+     */
     public void modificarDetalle(int index, double cantidad, double descuento, double precio, String obs) {
         this.facturaDetalleList.get(index).setCantidad(cantidad);
         this.facturaDetalleList.get(index).setDescuento(descuento);

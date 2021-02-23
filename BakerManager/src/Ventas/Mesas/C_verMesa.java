@@ -11,7 +11,7 @@ import Entities.E_Timbrado;
 import Entities.E_impresionTipo;
 import Entities.E_impuesto;
 import Entities.M_cliente;
-import Entities.M_facturaDetalle;
+import Entities.E_facturaDetalle;
 import Entities.M_mesa_detalle;
 import Entities.M_producto;
 import Entities.M_telefono;
@@ -165,7 +165,7 @@ public class C_verMesa extends MouseAdapter implements ActionListener, KeyListen
         }
     }
 
-    public void recibirDetalle(M_facturaDetalle detalle) {
+    public void recibirDetalle(E_facturaDetalle detalle) {
         this.modelo.guardarVentaDetalle2(detalle);
         this.modelo.actualizarTabla();
         Utilities.c_packColumn.packColumns(this.vista.jtFacturaDetalle, 1);
@@ -181,7 +181,7 @@ public class C_verMesa extends MouseAdapter implements ActionListener, KeyListen
         int response = JOptionPane.showConfirmDialog(null, "¿Está seguro que desea eliminar el detalle?", "Confirmar",
                 JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
         if (response == JOptionPane.YES_OPTION) {
-            int idMesaDetalle = modelo.getTM().getFacturaDetalleList().get(row).getIdFacturaDetalle();
+            int idMesaDetalle = modelo.getTM().getList().get(row).getIdFacturaDetalle();
             this.modelo.eliminarVenta(idMesaDetalle);
             this.modelo.actualizarTabla();
             this.vista.jbEliminarDetalle.setEnabled(false);
@@ -213,7 +213,7 @@ public class C_verMesa extends MouseAdapter implements ActionListener, KeyListen
         double exenta = 0;
         double total5 = 0;
         double total10 = 0;
-        for (M_facturaDetalle unDetalle : modelo.getTM().getFacturaDetalleList()) {
+        for (E_facturaDetalle unDetalle : modelo.getTM().getList()) {
             switch (unDetalle.getProducto().getIdImpuesto()) {
                 case E_impuesto.EXENTA: {
                     exenta = exenta + unDetalle.calcularSubTotal();
@@ -257,7 +257,7 @@ public class C_verMesa extends MouseAdapter implements ActionListener, KeyListen
     }
 
     private void guardarVenta() {
-        if (!this.modelo.getTM().getFacturaDetalleList().isEmpty()) {
+        if (!this.modelo.getTM().getList().isEmpty()) {
             int option = JOptionPane.showConfirmDialog(this.vista, "¿Desea confirmar esta operación?", "Atención", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
             if (option == JOptionPane.YES_OPTION) {
                 this.modelo.guardarVenta();
@@ -311,7 +311,7 @@ public class C_verMesa extends MouseAdapter implements ActionListener, KeyListen
         EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
-                if (modelo.getTM().getFacturaDetalleList().isEmpty()) {
+                if (modelo.getTM().getList().isEmpty()) {
                     JOptionPane.showMessageDialog(vista, "No hay productos cargados", "Atención", JOptionPane.INFORMATION_MESSAGE);
                 } else {
                     int opcion = JOptionPane.showConfirmDialog(vista, "¿Desea imprimir el ticket?", "Atención", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
@@ -328,8 +328,8 @@ public class C_verMesa extends MouseAdapter implements ActionListener, KeyListen
         if (row < 0) {
             return;
         }
-        M_producto idProducto = modelo.getTM().getFacturaDetalleList().get(row).getProducto();
-        int idMesaDetalle = modelo.getTM().getFacturaDetalleList().get(row).getIdFacturaDetalle();
+        M_producto idProducto = modelo.getTM().getList().get(row).getProducto();
+        int idMesaDetalle = modelo.getTM().getList().get(row).getIdFacturaDetalle();
         SeleccionarCantidadProduducto scp = new SeleccionarCantidadProduducto(vista, idProducto, this, SeleccionarCantidadProduducto.PRECIO_VENTA_MINORISTA, idMesaDetalle);
         scp.setVisible(true);
     }

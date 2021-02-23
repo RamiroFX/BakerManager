@@ -13,6 +13,7 @@ import DB.ResultSetTableModel;
 import Entities.E_impresionTipo;
 import Entities.M_pedido;
 import Entities.M_pedidoDetalle;
+import ModeloTabla.FacturaDetalleTableModel;
 import java.util.ArrayList;
 import java.util.Vector;
 
@@ -23,16 +24,17 @@ import java.util.Vector;
 public class M_verPedido {
 
     private M_pedido pedido;
-    private M_pedidoDetalle detalle;
-    private ArrayList<M_pedidoDetalle> detalles;
-    private ResultSetTableModel rstm;
+    private FacturaDetalleTableModel tm;
     private E_impresionTipo tipoVenta;
 
     public M_verPedido(int idPedido) {
         this.pedido = DB_Pedido.obtenerPedido(idPedido);
-        this.detalle = new M_pedidoDetalle();
-        this.rstm = DB_Pedido.obtenerPedidoDetalle(idPedido);
-        this.detalles = DB_Pedido.obtenerPedidoDetalles(idPedido);
+        this.tm = new FacturaDetalleTableModel();
+        this.tm.setFacturaDetalleList(DB_Pedido.obtenerPedidoDetalle(idPedido));
+    }
+
+    public FacturaDetalleTableModel getTm() {
+        return tm;
     }
 
     /**
@@ -57,41 +59,21 @@ public class M_verPedido {
         this.pedido = pedido;
     }
 
-    public M_pedidoDetalle getDetalle() {
-        return detalle;
-    }
-
-    public void setDetalle(M_pedidoDetalle detalle) {
-        this.detalle = detalle;
-    }
-
-    public ResultSetTableModel getRstm() {
-        return rstm;
-    }
-
-    public void setRstm(ResultSetTableModel rstm) {
-        this.rstm = rstm;
-    }
-
-    public void borrarDatos() {
-        this.detalle = new M_pedidoDetalle();
-    }
-
     public void actualizarCliente() {
         DB_Pedido.actualizarPedidoCliente(getPedido());
     }
 
     public void actualizarPedidoDetalle() {
-        DB_Pedido.actualizarPedidoDetalle(getDetalle());
-        borrarDatos();
+//        DB_Pedido.actualizarPedidoDetalle(tm.getList());
+//        borrarDatos();
     }
 
     public void actualizarTablaPedidoDetalle() {
-        this.rstm = DB_Pedido.obtenerPedidoDetalle(getPedido().getIdPedido());
+        //this.rstm = DB_Pedido.obtenerPedidoDetalle(getPedido().getIdPedido());
     }
 
     public void eliminarPedidoDetalle() {
-        DB_Pedido.eliminarPedidoDetalle(getDetalle().getIdPedioDetalle());
+        //DB_Pedido.eliminarPedidoDetalle(getDetalle().getIdPedioDetalle());
     }
 
     public void insertarPedidoDetalle(M_pedidoDetalle detalle) {
@@ -102,18 +84,11 @@ public class M_verPedido {
         DB_Pedido.actualizarPedido(getPedido());
     }
 
-    public ArrayList<M_pedidoDetalle> getDetalles() {
-        return detalles;
-    }
-
-    public void setDetalles(ArrayList<M_pedidoDetalle> detalles) {
-        this.detalles = detalles;
-    }
-
     public int pagarPedido(int idPedido, Integer nroFactura) {
-        M_pedido p = DB_Pedido.obtenerPedido(idPedido);
-        setDetalles(DB_Pedido.obtenerPedidoDetalles(p.getIdPedido()));
-        return DB_Pedido.pagarPedido(p, getDetalles(), nroFactura);
+//        M_pedido p = DB_Pedido.obtenerPedido(idPedido);
+//        setDetalles(DB_Pedido.obtenerPedidoDetalles(p.getIdPedido()));
+//        return DB_Pedido.pagarPedido(p, getDetalles(), nroFactura);
+        return 0;
     }
 
     public int getNroFactura() {

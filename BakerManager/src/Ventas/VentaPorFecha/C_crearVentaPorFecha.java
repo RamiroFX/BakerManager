@@ -13,7 +13,7 @@ import Entities.E_Timbrado;
 import Entities.E_impresionTipo;
 import Entities.E_impuesto;
 import Entities.M_cliente;
-import Entities.M_facturaDetalle;
+import Entities.E_facturaDetalle;
 import Entities.M_funcionario;
 import Entities.M_menu_item;
 import Entities.M_producto;
@@ -196,7 +196,7 @@ public class C_crearVentaPorFecha implements GestionInterface, InterfaceFacturaD
         EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
-                if (modelo.getTableModel().getFacturaDetalleList().isEmpty()) {
+                if (modelo.getTableModel().getList().isEmpty()) {
                     vista.dispose();
                 } else {
                     int opcion = JOptionPane.showConfirmDialog(vista, "¿Cancelar venta?", "Atención", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
@@ -212,19 +212,19 @@ public class C_crearVentaPorFecha implements GestionInterface, InterfaceFacturaD
         EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
-                if (modelo.getTableModel().getFacturaDetalleList().isEmpty()) {
+                if (modelo.getTableModel().getList().isEmpty()) {
                     JOptionPane.showMessageDialog(vista, "No hay productos cargados", "Atención", JOptionPane.INFORMATION_MESSAGE);
                 } else {
                     int opcion = JOptionPane.showConfirmDialog(vista, "¿Desea imprimir la venta?", "Atención", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
                     if (opcion == JOptionPane.YES_OPTION) {
-                        Impresora.imprimirTicketVenta(DatosUsuario.getRol_usuario(), modelo.getCabecera(), (ArrayList<M_facturaDetalle>) modelo.getTableModel().getFacturaDetalleList());
+                        Impresora.imprimirTicketVenta(DatosUsuario.getRol_usuario(), modelo.getCabecera(), (ArrayList<E_facturaDetalle>) modelo.getTableModel().getList());
                     }
                 }
             }
         });
     }
 
-    public void recibirDetalle(M_facturaDetalle detalle) {
+    public void recibirDetalle(E_facturaDetalle detalle) {
         int rowCount = this.vista.jtFacturaDetalle.getRowCount();
         if (rowCount >= modelo.getMaxProdCant()) {
             if (rowCount % modelo.getMaxProdCant() == 0) {
@@ -261,7 +261,7 @@ public class C_crearVentaPorFecha implements GestionInterface, InterfaceFacturaD
         double totalIva5 = 0;
         double totalIva10 = 0;
         double total = 0;
-        for (M_facturaDetalle fade : modelo.getTableModel().getFacturaDetalleList()) {
+        for (E_facturaDetalle fade : modelo.getTableModel().getList()) {
             switch (fade.getProducto().getIdImpuesto()) {
                 case E_impuesto.EXENTA: {
                     exenta = exenta + fade.calcularSubTotal();
@@ -412,7 +412,7 @@ public class C_crearVentaPorFecha implements GestionInterface, InterfaceFacturaD
         if (row < 0) {
             return;
         }
-        M_facturaDetalle fd = modelo.getTableModel().getFacturaDetalleList().get(row);
+        E_facturaDetalle fd = modelo.getTableModel().getList().get(row);
         SeleccionarCantidadProduducto scp = new SeleccionarCantidadProduducto(this.vista, fd.getProducto(), this, SeleccionarCantidadProduducto.PRECIO_VENTA_MINORISTA, row);
         scp.cargarDatos(fd);
         scp.setVisible(true);
@@ -603,13 +603,13 @@ public class C_crearVentaPorFecha implements GestionInterface, InterfaceFacturaD
 
     @Override
     public void recibirProducto(double cantidad, double precio, double descuento, M_producto producto, String observacion) {
-        M_facturaDetalle detalle = new M_facturaDetalle();
+        E_facturaDetalle detalle = new E_facturaDetalle();
         detalle.setCantidad(cantidad);
         detalle.setDescuento(descuento);
         detalle.setPrecio(precio);
         detalle.setObservacion(observacion);
         detalle.setProducto(producto);
-        detalle.setIdProducto(producto.getId());
+        detalle.setProducto(producto);
         recibirDetalle(detalle);
     }
 

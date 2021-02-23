@@ -4,6 +4,7 @@
  */
 package DB;
 
+import Entities.E_facturaDetalle;
 import Entities.M_cliente;
 import Entities.M_facturaDetalle;
 import Entities.M_funcionario;
@@ -227,38 +228,57 @@ public class DB_Pedido {
         return pedido;
     }
 
-    public static ResultSetTableModel obtenerPedidoDetalle(Integer idPedido) {
-        String Query = "SELECT "
+    public static List<E_facturaDetalle> obtenerPedidoDetalle(int idPedido) {
+        String QUERY = "SELECT "
                 + "PEDE.ID_PEDIDO_DETALLE \"ID\", "
-                + "PEDE.ID_PRODUCTO \"ID art.\", "
-                + "PROD.DESCRIPCION \"Producto\", "
-                + "PEDE.CANTIDAD \"Cantidad\", "
-                + "PEDE.PRECIO \"Precio\", "
-                + "PEDE.DESCUENTO \"Descuento\","
-                + "CASE "
-                + "	WHEN PROD.ID_IMPUESTO = 1 THEN round(PEDE.CANTIDAD*(PEDE.PRECIO-(PEDE.PRECIO*PEDE.DESCUENTO)/100))ELSE '0' "
-                + "END AS \"Exenta\", "
-                + "CASE "
-                + "	WHEN PROD.ID_IMPUESTO = 2 THEN round(PEDE.CANTIDAD*(PEDE.PRECIO-(PEDE.PRECIO*PEDE.DESCUENTO)/100))ELSE '0' "
-                + "END AS \"IVA 5%\", "
-                + "CASE "
-                + "	WHEN PROD.ID_IMPUESTO = 3 THEN round(PEDE.CANTIDAD*(PEDE.PRECIO-(PEDE.PRECIO*PEDE.DESCUENTO)/100))ELSE '0' "
-                + "END AS \"IVA 10%\", "
-                + "PEDE.OBSERVACION \"Obs.\" "
+                + "PEDE.ID_PRODUCTO \"ID_PRODUCTO\", "
+                + "PROD.DESCRIPCION \"PRODUCTO\", "
+                + "PROD.CODIGO \"CODIGO_PROD\", "
+                + "PEDE.CANTIDAD \"CANTIDAD\", "
+                + "PEDE.PRECIO \"PRECIO\", "
+                + "PEDE.DESCUENTO \"DESCUENTO\","
+                + "PROD.ID_IMPUESTO \"ID_IMPUESTO\","
+                + "PEDE.OBSERVACION \"OBSERVACION\" "
                 + "FROM PEDIDO_DETALLE PEDE, PRODUCTO PROD "
                 + "WHERE PROD.ID_PRODUCTO = PEDE.ID_PRODUCTO "
                 + "AND PEDE.ID_PEDIDO_CABECERA = " + idPedido;
-        ResultSetTableModel rstm = null;
+        List<E_facturaDetalle> detalles = new ArrayList<>();
         try {
-            st = DB_manager.getConection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-            // se ejecuta el query y se obtienen los resultados en un ResultSet
-            rs = st.executeQuery(Query);
-            rstm = new ResultSetTableModel(rs);
+            pst = DB_manager.getConection().prepareStatement(QUERY, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            pst.setInt(1, idPedido);
+            rs = pst.executeQuery();
+            while (rs.next()) {
+                E_facturaDetalle facturaDetalle = new E_facturaDetalle();
+                M_producto producto = new M_producto();
+                producto.setId(rs.getInt("ID_PRODUCTO"));
+                producto.setCodigo(rs.getString("CODIGO_PROD"));
+                producto.setDescripcion(rs.getString("PRODUCTO"));
+                producto.setIdImpuesto(rs.getInt("ID_IMPUESTO"));
+                facturaDetalle.setIdFacturaDetalle(rs.getInt("ID"));
+                facturaDetalle.setProducto(producto);
+                facturaDetalle.setCantidad(rs.getDouble("CANTIDAD"));
+                facturaDetalle.setPrecio(rs.getDouble("PRECIO"));
+                facturaDetalle.setDescuento(rs.getDouble("DESCUENTO"));
+                facturaDetalle.setObservacion(rs.getString("OBSERVACION"));
+                detalles.add(facturaDetalle);
+            }
         } catch (SQLException ex) {
-            Logger lgr = Logger.getLogger(DB_Egreso.class.getName());
+            Logger lgr = Logger.getLogger(DB_Pedido.class.getName());
             lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (st != null) {
+                    st.close();
+                }
+            } catch (SQLException ex) {
+                Logger lgr = Logger.getLogger(DB_Pedido.class.getName());
+                lgr.log(Level.WARNING, ex.getMessage(), ex);
+            }
         }
-        return rstm;
+        return detalles;
     }
 
     public static ResultSetTableModel obtenerPedidoDetalleAgrupado(Integer idCliente, String fechaInicio, String fechaFin) {
@@ -329,7 +349,7 @@ public class DB_Pedido {
     /*
      * CREATE
      */
-    public static long insertarPedido(M_pedido pedido, List<M_facturaDetalle> pedidoDetalle) {
+    public static long insertarPedido(M_pedido pedido, List<E_facturaDetalle> pedidoDetalle) {
         //LA SGBD SE ENCARGA DE INSERTAR EL TIMESTAMP.
         String INSERT_DETALLE = "INSERT INTO PEDIDO_DETALLE(ID_PEDIDO_CABECERA, ID_PRODUCTO, CANTIDAD, PRECIO, DESCUENTO, OBSERVACION)VALUES (?, ?, ?, ?, ?, ?);";
         String INSERT_PEDIDO = "INSERT INTO PEDIDO_CABECERA(ID_CLIENTE, ID_FUNCIONARIO, TIEMPO_ENTREGA, ID_COND_VENTA, ID_PEDIDO_ESTADO, DIRECCION, REFERENCIA)VALUES (?, ?, ?, ?, ?, ?, ?);";
@@ -639,7 +659,7 @@ public class DB_Pedido {
         }
     }
 
-    public static int pagarPedido(M_pedido pedido, ArrayList<M_pedidoDetalle> detalle, Integer nroFactura) {
+    public static int pagarPedido(M_pedido pedido, ArrayList<E_facturaDetalle> detalle, Integer nroFactura) {
         String INSERT_DETALLE = "INSERT INTO FACTURA_DETALLE(ID_FACTURA_CABECERA, ID_PRODUCTO, CANTIDAD, PRECIO, DESCUENTO, OBSERVACION)VALUES (?, ?, ?, ?, ?, ?);";
         //LA SGBD SE ENCARGA DE INSERTAR EL TIMESTAMP.
         String INSERT_CABECERA = "INSERT INTO FACTURA_CABECERA(ID_FUNCIONARIO, ID_CLIENTE, NRO_FACTURA, ID_COND_VENTA)VALUES (?, ?, ?, ?);";

@@ -9,10 +9,9 @@ import DB.DB_Cliente;
 import DB.DB_Ingreso;
 import DB.DB_manager;
 import Entities.E_facturaCabecera;
-import Entities.E_facturaCabeceraFX;
+import Entities.E_facturaDetalle;
 import Entities.E_tipoOperacion;
 import Entities.M_cliente;
-import Entities.M_facturaDetalle;
 import MenuPrincipal.DatosUsuario;
 import ModeloTabla.SeleccionVentaCabecera;
 import java.util.ArrayList;
@@ -41,7 +40,7 @@ public class M_facturacion {
         return DB_Ingreso.obtenerVentasCabeceras(entidad, inicio, fin, condVenta);
     }
 
-    public List<M_facturaDetalle> obtenerVentasDetalle(ArrayList<SeleccionVentaCabecera> ventaCabecera) {
+    public List<E_facturaDetalle> obtenerVentasDetalle(ArrayList<SeleccionVentaCabecera> ventaCabecera) {
         return DB_Ingreso.obtenerVentaDetalles(ventaCabecera);
     }
 
@@ -65,7 +64,7 @@ public class M_facturacion {
 
     public boolean facturar(ArrayList<E_facturaCabecera> facalist, int nroFactura, int idTipoOperacion) {
         int idFuncionario = DatosUsuario.getRol_usuario().getFuncionario().getId_funcionario();
-        DB_Ingreso.facturarVentas(facalist, idFuncionario, entidad,nroFactura, idTipoOperacion);
+        DB_Ingreso.facturarVentas(facalist, idFuncionario, entidad, nroFactura, idTipoOperacion);
         return true;
     }
 

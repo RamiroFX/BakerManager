@@ -26,11 +26,6 @@ public class SeleccionarProducto {
         controlador = new C_seleccionarProducto(vista, egresos);
     }
 
-    public SeleccionarProducto(C_crearVentaRapida crearVentaRapida) {
-        vista = new V_seleccionarProducto(crearVentaRapida.vista);
-        controlador = new C_seleccionarProducto(vista, crearVentaRapida);
-    }
-
     public SeleccionarProducto(C_verMesa verMesa) {
         vista = new V_seleccionarProducto(verMesa.vista);
         controlador = new C_seleccionarProducto(vista, verMesa);

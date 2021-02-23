@@ -8,7 +8,7 @@ package Facturacion;
 import Entities.E_facturaCabecera;
 import Entities.E_facturacionCabecera;
 import Entities.M_facturaCabecera;
-import Entities.M_facturaDetalle;
+import Entities.E_facturaDetalle;
 import Impresora.Impresora;
 import Interface.InterfaceConfirmarFacturacion;
 import Interface.InterfaceFacturaDetalle;
@@ -175,11 +175,11 @@ public class C_facturacion implements ActionListener, KeyListener, InterfaceSele
     private void consultarDetalle() {
         SeleccionVentaCabeceraTableModel vctm = (SeleccionVentaCabeceraTableModel) vista.jtVentasCabecera.getModel();
         FacturaDetalleTableModel tm = new FacturaDetalleTableModel(this);
-        ArrayList<M_facturaDetalle> list = new ArrayList<>();
+        ArrayList<E_facturaDetalle> list = new ArrayList<>();
         double total = 0;
-        for (M_facturaDetalle ventaDetalle : modelo.obtenerVentasDetalle(vctm.getList())) {
+        for (E_facturaDetalle ventaDetalle : modelo.obtenerVentasDetalle(vctm.getList())) {
             list.add(ventaDetalle);
-            total = total + ventaDetalle.calcularTotal();
+            total = total + ventaDetalle.calcularSubTotal();
         }
         tm.setFacturaDetalleList(list);
         this.vista.jtVentasDetalle.setModel(tm);
@@ -221,7 +221,7 @@ public class C_facturacion implements ActionListener, KeyListener, InterfaceSele
             Calendar c = Calendar.getInstance();
             facturaCabecera.setTiempo(new Timestamp(c.getTimeInMillis()));
             FacturaDetalleTableModel tm = (FacturaDetalleTableModel) vista.jtVentasDetalle.getModel();
-            ArrayList<M_facturaDetalle> facturaDetalle = (ArrayList<M_facturaDetalle>) tm.getFacturaDetalleList();
+            ArrayList<E_facturaDetalle> facturaDetalle = (ArrayList<E_facturaDetalle>) tm.getList();
             Impresora.imprimirFacturaVenta(facturaCabecera, facturaDetalle);
         }
         completarCampos();

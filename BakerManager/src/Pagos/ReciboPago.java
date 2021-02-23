@@ -10,6 +10,7 @@ import DB.DB_manager;
 import Entities.E_Divisa;
 import Entities.E_banco;
 import Entities.E_egresoSinPago;
+import Entities.E_facturaDetalle;
 import Entities.E_formaPago;
 import Entities.E_reciboPagoDetalle;
 import Entities.E_tipoCheque;
@@ -514,8 +515,8 @@ public class ReciboPago extends javax.swing.JDialog implements ActionListener, K
      */
     private int totalFactura(int idFacturaCabecera) {
         int total = 0;
-        ArrayList<M_facturaDetalle> fade = DB_Ingreso.obtenerVentaDetalles(idFacturaCabecera);
-        for (M_facturaDetalle detalle : fade) {
+        ArrayList<E_facturaDetalle> fade = DB_Ingreso.obtenerVentaDetalles(idFacturaCabecera);
+        for (E_facturaDetalle detalle : fade) {
             double Precio = detalle.getPrecio() - Math.round(Math.round(((detalle.getPrecio() * detalle.getDescuento()) / 100)));
             Integer subTotal = Math.round(Math.round((detalle.getCantidad() * Precio)));
             total = total + subTotal;

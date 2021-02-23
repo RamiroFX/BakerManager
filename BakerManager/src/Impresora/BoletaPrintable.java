@@ -7,9 +7,9 @@ package Impresora;
 
 import DB.DB_manager;
 import Entities.E_Empresa;
+import Entities.E_facturaDetalle;
 import Entities.M_campoImpresion;
 import Entities.M_facturaCabecera;
-import Entities.M_facturaDetalle;
 import Entities.M_preferenciasImpresion;
 import Parametros.TipoOperacion;
 import Utilities.MyConstants;
@@ -37,11 +37,11 @@ public class BoletaPrintable implements Printable {
     E_Empresa empresa;
     List<M_campoImpresion> campoImpresiones;
     M_facturaCabecera facturaCabecera;
-    ArrayList<M_facturaDetalle> facturaDetalle;
+    ArrayList<E_facturaDetalle> facturaDetalle;
     M_preferenciasImpresion preferencia;
     DecimalFormat decimalFormat;
 
-    public BoletaPrintable(M_preferenciasImpresion preferencia, M_facturaCabecera facturaCabecera, ArrayList<M_facturaDetalle> facturaDetalle) {
+    public BoletaPrintable(M_preferenciasImpresion preferencia, M_facturaCabecera facturaCabecera, ArrayList<E_facturaDetalle> facturaDetalle) {
         this.preferencia = preferencia;
         this.facturaCabecera = facturaCabecera;
         this.facturaDetalle = facturaDetalle;
@@ -115,7 +115,7 @@ public class BoletaPrintable implements Printable {
             g.drawRoundRect(10, duplicadoDist + alturaCabecera + alturaDetalle + alturaSubtotal + alturaTotal + espacio, ancho - espacio, alturaLiquidacion, 0, 0);//LIQUIDACION
             //LINEAS DIVISORIAS DEL DETALLE
             g.drawLine(10, (duplicadoDist + alturaCabecera + espacio + espacio), (ancho - 10), (duplicadoDist + alturaCabecera + espacio + espacio));//CABECERA
-            g.drawLine(70, (duplicadoDist + alturaCabecera + espacio), 70, (duplicadoDist+alturaCabecera + alturaDetalle + espacio));//CANTIDAD
+            g.drawLine(70, (duplicadoDist + alturaCabecera + espacio), 70, (duplicadoDist + alturaCabecera + alturaDetalle + espacio));//CANTIDAD
             g.drawLine(ancho - (espacioPeque * 25), (duplicadoDist + alturaCabecera + espacio), ancho - (espacioPeque * 25), (duplicadoDist + alturaCabecera + alturaDetalle + espacio));//PRECIO
             g.drawLine(ancho - (espacioPeque * 20), (duplicadoDist + alturaCabecera + espacio), ancho - (espacioPeque * 20), (duplicadoDist + alturaCabecera + alturaDetalle + espacio));//EXENTA
             g.drawLine(ancho - (espacioPeque * 14), (duplicadoDist + alturaCabecera + espacio), ancho - (espacioPeque * 14), (duplicadoDist + alturaCabecera + alturaDetalle + espacio));//IVA5
@@ -147,7 +147,7 @@ public class BoletaPrintable implements Printable {
             g.drawRoundRect(10, triplicadoDist + alturaCabecera + alturaDetalle + alturaSubtotal + alturaTotal + espacio, ancho - espacio, alturaLiquidacion, 0, 0);//LIQUIDACION
             //LINEAS DIVISORIAS DEL DETALLE
             g.drawLine(10, (triplicadoDist + alturaCabecera + espacio + espacio), (ancho - 10), (triplicadoDist + alturaCabecera + espacio + espacio));//CABECERA
-            g.drawLine(70, (triplicadoDist + alturaCabecera + espacio), 70, (triplicadoDist+alturaCabecera + alturaDetalle + espacio));//CANTIDAD
+            g.drawLine(70, (triplicadoDist + alturaCabecera + espacio), 70, (triplicadoDist + alturaCabecera + alturaDetalle + espacio));//CANTIDAD
             g.drawLine(ancho - (espacioPeque * 25), (triplicadoDist + alturaCabecera + espacio), ancho - (espacioPeque * 25), (triplicadoDist + alturaCabecera + alturaDetalle + espacio));//PRECIO
             g.drawLine(ancho - (espacioPeque * 20), (triplicadoDist + alturaCabecera + espacio), ancho - (espacioPeque * 20), (triplicadoDist + alturaCabecera + alturaDetalle + espacio));//EXENTA
             g.drawLine(ancho - (espacioPeque * 14), (triplicadoDist + alturaCabecera + espacio), ancho - (espacioPeque * 14), (triplicadoDist + alturaCabecera + alturaDetalle + espacio));//IVA5
@@ -464,7 +464,7 @@ public class BoletaPrintable implements Printable {
                 DETALLE CANTIDAD
                  */
                 if (object.getCampo().equals(MyConstants.BOLETA_DET_CANT_PROD)) {
-                    for (M_facturaDetalle fd : facturaDetalle) {
+                    for (E_facturaDetalle fd : facturaDetalle) {
                         g.drawString(decimalFormat.format(fd.getCantidad()) + "", posX, posY);
                         if (preferencia.getIdDuplicado() == 1) {
                             int duplicadoDist = posY + preferencia.getDistanceBetweenCopies();
@@ -481,7 +481,7 @@ public class BoletaPrintable implements Printable {
                 DETALLE CODIGO
                  */
                 if (object.getCampo().equals(MyConstants.BOLETA_DET_COD_PROD)) {
-                    for (M_facturaDetalle fd : facturaDetalle) {
+                    for (E_facturaDetalle fd : facturaDetalle) {
                         g.drawString(fd.getProducto().getCodBarra() + "", posX, posY);
                         if (preferencia.getIdDuplicado() == 1) {
                             int duplicadoDist = posY + preferencia.getDistanceBetweenCopies();
@@ -498,7 +498,7 @@ public class BoletaPrintable implements Printable {
                 DETALLE PRODUCTO
                  */
                 if (object.getCampo().equals(MyConstants.BOLETA_DET_DESCRIPCION_PROD)) {
-                    for (M_facturaDetalle fd : facturaDetalle) {
+                    for (E_facturaDetalle fd : facturaDetalle) {
                         g.drawString(fd.getProducto().getDescripcion() + "", posX, posY);
                         if (preferencia.getIdDuplicado() == 1) {
                             int duplicadoDist = posY + preferencia.getDistanceBetweenCopies();
@@ -515,7 +515,7 @@ public class BoletaPrintable implements Printable {
                 DETALLE PRECIO
                  */
                 if (object.getCampo().equals(MyConstants.BOLETA_DET_PRECIO_PROD)) {
-                    for (M_facturaDetalle fd : facturaDetalle) {
+                    for (E_facturaDetalle fd : facturaDetalle) {
                         double precio = fd.getPrecio() - Math.round(Math.round(((fd.getPrecio() * fd.getDescuento()) / 100)));
                         //int precio = fd.getPrecio();
                         g.drawString(decimalFormat.format(precio) + "", posX, posY);
@@ -534,7 +534,7 @@ public class BoletaPrintable implements Printable {
                 DETALLE DESCUENTO
                  */
                 if (object.getCampo().equals(MyConstants.BOLETA_DET_DESC_PROD)) {
-                    for (M_facturaDetalle fd : facturaDetalle) {
+                    for (E_facturaDetalle fd : facturaDetalle) {
                         double descuento = fd.getDescuento();
                         g.drawString(descuento + "", posX, posY);
                         if (preferencia.getIdDuplicado() == 1) {
@@ -552,7 +552,7 @@ public class BoletaPrintable implements Printable {
                 DETALLE EXENTA
                  */
                 if (object.getCampo().equals(MyConstants.BOLETA_DET_EXENTA_PROD)) {
-                    for (M_facturaDetalle fd : facturaDetalle) {
+                    for (E_facturaDetalle fd : facturaDetalle) {
                         if (fd.getProducto().getIdImpuesto() == 1) {
                             double precio = fd.getPrecio() - Math.round(Math.round(((fd.getPrecio() * fd.getDescuento()) / 100)));
                             int subtotal = Math.round(Math.round(fd.getCantidad() * precio));
@@ -574,7 +574,7 @@ public class BoletaPrintable implements Printable {
                 DETALLE IVA5%
                  */
                 if (object.getCampo().equals(MyConstants.BOLETA_DET_IVA5_PROD)) {
-                    for (M_facturaDetalle fd : facturaDetalle) {
+                    for (E_facturaDetalle fd : facturaDetalle) {
                         if (fd.getProducto().getIdImpuesto() == 2) {
                             double precio = fd.getPrecio() - Math.round(Math.round(((fd.getPrecio() * fd.getDescuento()) / 100)));
                             int subtotal = Math.round(Math.round(fd.getCantidad() * precio));
@@ -596,7 +596,7 @@ public class BoletaPrintable implements Printable {
                 DETALLE IVA10%
                  */
                 if (object.getCampo().equals(MyConstants.BOLETA_DET_IVA10_PROD)) {
-                    for (M_facturaDetalle fd : facturaDetalle) {
+                    for (E_facturaDetalle fd : facturaDetalle) {
                         if (fd.getProducto().getIdImpuesto() == 3) {
                             double precio = fd.getPrecio() - Math.round(Math.round(((fd.getPrecio() * fd.getDescuento()) / 100)));
                             int subtotal = Math.round(Math.round(fd.getCantidad() * precio));
@@ -662,7 +662,7 @@ public class BoletaPrintable implements Printable {
                 if (object.getCampo().equals(MyConstants.BOLETA_TOTAL_LETRA)) {
                     //Calcular el total
                     int total_letra = 0;
-                    for (M_facturaDetalle fd : facturaDetalle) {
+                    for (E_facturaDetalle fd : facturaDetalle) {
                         int subtotal = Math.round(Math.round(fd.getCantidad() * fd.getPrecio()));
                         total_letra = total_letra + subtotal;
                     }
@@ -688,7 +688,7 @@ public class BoletaPrintable implements Printable {
                 if (object.getCampo().equals(MyConstants.BOLETA_TOTAL_NUMERO)) {
                     //Calcular el total
                     int total = 0;
-                    for (M_facturaDetalle fd : facturaDetalle) {
+                    for (E_facturaDetalle fd : facturaDetalle) {
                         int subtotal = Math.round(Math.round(fd.getCantidad() * fd.getPrecio()));
                         total = total + subtotal;
                     }

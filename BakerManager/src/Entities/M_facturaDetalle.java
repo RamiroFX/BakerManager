@@ -72,11 +72,15 @@ public class M_facturaDetalle {
     }
 
     public double calcularSubTotal() {
-        return getCantidad() * (getPrecio() -((getPrecio() * getDescuento()) / 100));
+        return getCantidad() * (getPrecio() - ((getPrecio() * getDescuento()) / 100));
     }
 
     public Double calcularTotal() {
-        return getCantidad() * (getPrecio() -((getPrecio() * getDescuento()) / 100));
+        return getCantidad() * (getPrecio() - ((getPrecio() * getDescuento()) / 100));
+    }
+
+    public double getPrecioConDescuento() {
+        return getPrecio() - ((getPrecio() * getDescuento()) / 100);
     }
 
     public Double getExenta() {

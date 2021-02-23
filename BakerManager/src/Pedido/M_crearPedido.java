@@ -49,7 +49,7 @@ public class M_crearPedido {
     }
 
     public void insertarPedido() {
-        DB_Pedido.insertarPedido(getPedido(), getDtm().getFacturaDetalleList());
+        DB_Pedido.insertarPedido(getPedido(), getDtm().getList());
     }
 
     public Vector obtenerTipoOperacion() {

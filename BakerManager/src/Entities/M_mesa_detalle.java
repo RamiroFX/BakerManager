@@ -19,7 +19,7 @@ public class M_mesa_detalle {
     public M_mesa_detalle() {
     }
 
-    public M_mesa_detalle(M_facturaDetalle detalle) {
+    public M_mesa_detalle(E_facturaDetalle detalle) {
         this.idMesaDetalle = detalle.getIdFacturaDetalle();
         this.cantidad = detalle.getCantidad();
         this.descuento = detalle.getDescuento();

@@ -618,7 +618,7 @@ public class DB_Ingreso {
     /*
      * INSERT
      */
-    public static int insertarIngreso(M_facturaCabecera cabecera, ArrayList<M_facturaDetalle> detalle) {
+    public static int insertarIngreso(M_facturaCabecera cabecera, ArrayList<E_facturaDetalle> detalle) {
         String INSERT_DETALLE = "INSERT INTO FACTURA_DETALLE(ID_FACTURA_CABECERA, ID_PRODUCTO, CANTIDAD, PRECIO, DESCUENTO, OBSERVACION)VALUES (?, ?, ?, ?, ?, ?);";
         //LA SGBD SE ENCARGA DE INSERTAR EL TIMESTAMP.
         String INSERT_CABECERA = "INSERT INTO FACTURA_CABECERA(ID_FUNCIONARIO, ID_CLIENTE, ID_COND_VENTA, NRO_FACTURA, ID_TIMBRADO)VALUES (?, ?, ?, ?, ?);";
@@ -650,7 +650,7 @@ public class DB_Ingreso {
             for (int i = 0; i < detalle.size(); i++) {
                 pst = DB_manager.getConection().prepareStatement(INSERT_DETALLE);
                 pst.setInt(1, (int) sq_cabecera);
-                pst.setInt(2, detalle.get(i).getIdProducto());
+                pst.setInt(2, detalle.get(i).getProducto().getId());
                 pst.setDouble(3, detalle.get(i).getCantidad());
                 pst.setDouble(4, detalle.get(i).getPrecio());
                 pst.setDouble(5, detalle.get(i).getDescuento());
@@ -681,7 +681,7 @@ public class DB_Ingreso {
             if (cabecera.getIdCondVenta() != E_tipoOperacion.CONTADO) {
                 int total = 0;
                 for (int i = 0; i < detalle.size(); i++) {
-                    M_facturaDetalle get = detalle.get(i);
+                    E_facturaDetalle get = detalle.get(i);
                     total = total + (int)get.calcularSubTotal();
                 }
                 pst = DB_manager.getConection().prepareStatement(INSERT_CTA_CTE);
@@ -721,7 +721,7 @@ public class DB_Ingreso {
         return (int) sq_cabecera;
     }
 
-    public static int insertarIngresoConFecha(M_facturaCabecera cabecera, ArrayList<M_facturaDetalle> detalle) {
+    public static int insertarIngresoConFecha(M_facturaCabecera cabecera, ArrayList<E_facturaDetalle> detalle) {
         String INSERT_DETALLE = "INSERT INTO FACTURA_DETALLE(ID_FACTURA_CABECERA, ID_PRODUCTO, CANTIDAD, PRECIO, DESCUENTO, OBSERVACION)VALUES (?, ?, ?, ?, ?, ?);";
         //LA SGBD SE ENCARGA DE INSERTAR EL TIMESTAMP.
         String INSERT_CABECERA = "INSERT INTO FACTURA_CABECERA(ID_FUNCIONARIO, ID_CLIENTE, ID_COND_VENTA, NRO_FACTURA, ID_TIMBRADO, TIEMPO, ID_VENDEDOR)VALUES (?, ?, ?, ?, ?, ?, ?);";
@@ -755,7 +755,7 @@ public class DB_Ingreso {
             for (int i = 0; i < detalle.size(); i++) {
                 pst = DB_manager.getConection().prepareStatement(INSERT_DETALLE);
                 pst.setInt(1, (int) sq_cabecera);
-                pst.setInt(2, detalle.get(i).getIdProducto());
+                pst.setInt(2, detalle.get(i).getProducto().getId());
                 pst.setDouble(3, detalle.get(i).getCantidad());
                 pst.setDouble(4, detalle.get(i).getPrecio());
                 pst.setDouble(5, detalle.get(i).getDescuento());
@@ -786,7 +786,7 @@ public class DB_Ingreso {
             if (cabecera.getIdCondVenta() != E_tipoOperacion.CONTADO) {
                 int total = 0;
                 for (int i = 0; i < detalle.size(); i++) {
-                    M_facturaDetalle get = detalle.get(i);
+                    E_facturaDetalle get = detalle.get(i);
                     total = total + (int)get.calcularSubTotal();
                 }
                 pst = DB_manager.getConection().prepareStatement(INSERT_CTA_CTE);
@@ -1084,8 +1084,8 @@ public class DB_Ingreso {
         return rstm;
     }
 
-    public static List<M_facturaDetalle> consultarIngresoDetalleAgrupado(List<M_facturaCabecera> cadenaCabeceras) {
-        List<M_facturaDetalle> list = new ArrayList<>();
+    public static List<E_facturaDetalle> consultarIngresoDetalleAgrupado(List<M_facturaCabecera> cadenaCabeceras) {
+        List<E_facturaDetalle> list = new ArrayList<>();
         boolean b = true;
         List<M_facturaCabecera> possibleValues = cadenaCabeceras;
         StringBuilder builder = new StringBuilder();
@@ -1095,9 +1095,11 @@ public class DB_Ingreso {
         }
         String QUERY = "SELECT PROD.CODIGO \"Codigo\", "
                 + "(SELECT IMPU.DESCRIPCION FROM IMPUESTO IMPU WHERE IMPU.ID_IMPUESTO = PROD.ID_IMPUESTO)\"IMPUESTO\","
-                + "PROD.DESCRIPCION \"Producto\", SUM(FADE.CANTIDAD) \"Cantidad\", "
+                + "PROD.DESCRIPCION \"Producto\", "
+                + "SUM(FADE.CANTIDAD) \"Cantidad\", "
                 + "PROD.ID_IMPUESTO \"ID_IMPUESTO\","
-                + "FADE.PRECIO \"Precio\", FADE.DESCUENTO \"Descuento\", "
+                + "FADE.PRECIO \"Precio\", "
+                + "FADE.DESCUENTO \"Descuento\", "
                 + "CASE WHEN PROD.ID_IMPUESTO = 1 THEN SUM(ROUND(FADE.CANTIDAD*(FADE.PRECIO-(FADE.PRECIO*FADE.DESCUENTO)/100))) ELSE '0' END AS \"Exenta\", "
                 + "CASE WHEN PROD.ID_IMPUESTO = 2 THEN SUM(ROUND(FADE.CANTIDAD*(FADE.PRECIO-(FADE.PRECIO*FADE.DESCUENTO)/100))) ELSE '0' END AS \"IVA 5%\", "
                 + "CASE WHEN PROD.ID_IMPUESTO = 3 THEN SUM(ROUND(FADE.CANTIDAD*(FADE.PRECIO-(FADE.PRECIO*FADE.DESCUENTO)/100))) ELSE '0' END AS \"IVA 10%\" "
@@ -1118,7 +1120,7 @@ public class DB_Ingreso {
             }
             rs = pst.executeQuery();
             while (rs.next()) {
-                M_facturaDetalle fade = new M_facturaDetalle();
+                E_facturaDetalle fade = new E_facturaDetalle();
                 M_producto producto = new M_producto();
                 producto.setCodBarra(rs.getString("Codigo"));
                 producto.setDescripcion(rs.getString("Producto"));
@@ -1128,9 +1130,6 @@ public class DB_Ingreso {
                 fade.setCantidad(rs.getDouble("Cantidad"));
                 fade.setPrecio(rs.getDouble("Precio"));
                 fade.setDescuento(rs.getDouble("Descuento"));
-                fade.setExenta(rs.getDouble("Exenta"));
-                fade.setIva5(rs.getDouble("IVA 5%"));
-                fade.setIva10(rs.getDouble("IVA 10%"));
                 fade.setObservacion("");
                 list.add(fade);
             }
@@ -1285,8 +1284,8 @@ public class DB_Ingreso {
         return rstm;
     }
 
-    public static List<M_facturaDetalle> obtenerMesaDetalle2(int idMesa) {
-        List<M_facturaDetalle> detalles = null;
+    public static List<E_facturaDetalle> obtenerMesaDetalle2(int idMesa) {
+        List<E_facturaDetalle> detalles = null;
         String QUERY = "SELECT "
                 + "MD.ID_MESA_DETALLE \"ID_MESA_DETALLE\", "
                 + "MD.ID_PRODUCTO \"ID_PRODUCTO\", "
@@ -1305,7 +1304,7 @@ public class DB_Ingreso {
             rs = st.executeQuery(QUERY);
             detalles = new ArrayList();
             while (rs.next()) {
-                M_facturaDetalle detalle = new M_facturaDetalle();
+                E_facturaDetalle detalle = new E_facturaDetalle();
                 detalle.setCantidad(rs.getDouble("CANTIDAD"));
                 detalle.setDescuento(rs.getDouble("DESCUENTO"));
                 detalle.setIdFacturaDetalle(rs.getInt("ID_MESA_DETALLE"));
@@ -1755,8 +1754,8 @@ public class DB_Ingreso {
         return (int) sq_cabecera;
     }
 
-    public static ArrayList<M_facturaDetalle> obtenerVentaDetalles(Integer idFacturaCabecera) {
-        ArrayList<M_facturaDetalle> detalles = null;
+    public static ArrayList<E_facturaDetalle> obtenerVentaDetalles(Integer idFacturaCabecera) {
+        ArrayList<E_facturaDetalle> detalles = null;
         String query = "SELECT ID_FACTURA_DETALLE, "
                 + "ID_FACTURA_CABECERA, ID_PRODUCTO,"
                 + "(SELECT P.DESCRIPCION FROM PRODUCTO P WHERE P.ID_PRODUCTO = FD.ID_PRODUCTO)\"PRODUCTO\", "
@@ -1773,10 +1772,10 @@ public class DB_Ingreso {
             rs = st.executeQuery(query);
             detalles = new ArrayList();
             while (rs.next()) {
-                M_facturaDetalle detalle = new M_facturaDetalle();
+                E_facturaDetalle detalle = new E_facturaDetalle();
                 detalle.setCantidad(rs.getDouble("CANTIDAD"));
                 detalle.setDescuento(rs.getDouble("DESCUENTO"));
-                detalle.setIdFacturaCabecera(rs.getInt("ID_FACTURA_CABECERA"));
+                //detalle.setIdFacturaCabecera(rs.getInt("ID_FACTURA_CABECERA"));
                 detalle.setIdFacturaDetalle(rs.getInt("ID_FACTURA_DETALLE"));
                 detalle.setObservacion(rs.getString("OBSERVACION"));
                 detalle.setPrecio(rs.getDouble("PRECIO"));
@@ -2372,7 +2371,7 @@ public class DB_Ingreso {
             pst.executeUpdate();
             pst.close();
             //se devuelve al stock lo que se anuló
-            ArrayList<M_facturaDetalle> detalle = obtenerVentaDetalles(idVenta);
+            ArrayList<E_facturaDetalle> detalle = obtenerVentaDetalles(idVenta);
             for (int i = 0; i < detalle.size(); i++) {
                 String query = "UPDATE PRODUCTO SET "
                         + "CANT_ACTUAL = "
@@ -2598,8 +2597,8 @@ public class DB_Ingreso {
         return list;
     }
 
-    public static List<M_facturaDetalle> obtenerVentaDetalles(ArrayList<SeleccionVentaCabecera> cadenaCabeceras) {
-        List<M_facturaDetalle> list = new ArrayList<>();
+    public static List<E_facturaDetalle> obtenerVentaDetalles(ArrayList<SeleccionVentaCabecera> cadenaCabeceras) {
+        List<E_facturaDetalle> list = new ArrayList<>();
         boolean b = true;
         List<SeleccionVentaCabecera> possibleValues = cadenaCabeceras;
         StringBuilder builder = new StringBuilder();
@@ -2641,7 +2640,7 @@ public class DB_Ingreso {
             }
             rs = pst.executeQuery();
             while (rs.next()) {
-                M_facturaDetalle fade = new M_facturaDetalle();
+                E_facturaDetalle fade = new E_facturaDetalle();
                 M_producto producto = new M_producto();
                 producto.setCodBarra(rs.getString("Codigo"));
                 producto.setDescripcion(rs.getString("Producto"));
@@ -2651,9 +2650,6 @@ public class DB_Ingreso {
                 fade.setCantidad(rs.getDouble("Cantidad"));
                 fade.setPrecio(rs.getDouble("Precio"));
                 fade.setDescuento(rs.getDouble("Descuento"));
-                fade.setExenta(rs.getDouble("Exenta"));
-                fade.setIva5(rs.getDouble("IVA 5%"));
-                fade.setIva10(rs.getDouble("IVA 10%"));
                 fade.setObservacion("");
                 list.add(fade);
             }

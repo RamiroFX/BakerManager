@@ -9,6 +9,7 @@ import DB.DB_Ingreso;
 import DB.DB_Preferencia;
 import DB.DB_Producto;
 import Entities.E_Timbrado;
+import Entities.E_facturaDetalle;
 import Entities.E_impresionTipo;
 import Entities.M_cliente;
 import Entities.M_facturaCabecera;
@@ -147,11 +148,11 @@ public class M_verMesa {
             E_impresionTipo tipoImpresion = new E_impresionTipo();
             tipoImpresion.setId(getTipoVenta().getId());
             tipoImpresion.setDescripcion(getTipoVenta().getDescripcion());
-            int totalRows = getTM().getFacturaDetalleList().size();
+            int totalRows = getTM().getList().size();
             float maxProdsAux = getMaxProdCant();
             int cantVentas = (int) Math.ceil(totalRows / maxProdsAux);
-            ArrayList<M_facturaDetalle> totalList = (ArrayList<M_facturaDetalle>) getTM().getFacturaDetalleList();
-            ArrayList<M_facturaDetalle> currentList;
+            ArrayList<E_facturaDetalle> totalList = (ArrayList<E_facturaDetalle>) getTM().getList();
+            ArrayList<E_facturaDetalle> currentList;
             int index1 = 0;
             int index2 = getMaxProdCant();
             for (int i = 0; i < cantVentas; i++) {
@@ -178,7 +179,7 @@ public class M_verMesa {
             if (!"factura".equals(tipoVenta.getDescripcion())) {
                 this.getMesa().setNroFactura(null);
             }
-            int nroTicket = DB_Ingreso.insertarIngreso(getMesa().toMFacturaCabecera(), (ArrayList<M_facturaDetalle>) getTM().getFacturaDetalleList());
+            int nroTicket = DB_Ingreso.insertarIngreso(getMesa().toMFacturaCabecera(), (ArrayList<E_facturaDetalle>) getTM().getList());
             getMesa().setIdFacturaCabecera(nroTicket);
         }
         Calendar c = Calendar.getInstance();
@@ -195,7 +196,7 @@ public class M_verMesa {
         return unProducto;
     }
 
-    public void guardarVentaDetalle2(M_facturaDetalle detalle) {
+    public void guardarVentaDetalle2(E_facturaDetalle detalle) {
         M_mesa_detalle mesaDetalle = new M_mesa_detalle(detalle);
         DB_Ingreso.insertarMesaDetalle(getMesa().getIdMesa(), mesaDetalle);
     }
@@ -219,7 +220,7 @@ public class M_verMesa {
 
     private ArrayList<M_mesa_detalle> obtenerListaDetalleMesa() {
         ArrayList<M_mesa_detalle> detalles = new ArrayList<>();
-        for (M_facturaDetalle facturaDetalle : getTM().getFacturaDetalleList()) {
+        for (E_facturaDetalle facturaDetalle : getTM().getList()) {
             detalles.add(new M_mesa_detalle(facturaDetalle));
         }
         return detalles;

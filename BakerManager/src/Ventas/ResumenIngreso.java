@@ -6,12 +6,12 @@
 package Ventas;
 
 import DB.DB_Ingreso;
+import Entities.E_facturaDetalle;
 import Entities.E_facturacionCabecera;
 import Entities.E_tipoOperacion;
 import Entities.Estado;
 import Entities.M_cliente;
 import Entities.M_facturaCabecera;
-import Entities.M_facturaDetalle;
 import Entities.M_rol_usuario;
 import Excel.ExportarVentas;
 import Impresora.Impresora;
@@ -106,18 +106,18 @@ public class ResumenIngreso extends JDialog implements ActionListener, KeyListen
         BigDecimal totalContado = new BigDecimal("0");
         BigDecimal totalCredito = new BigDecimal("0");
         for (M_facturaCabecera faca : tm.getFacturaCabeceraList()) {
-            total = total.add(new BigDecimal(faca.getTotal()+""));
+            total = total.add(new BigDecimal(faca.getTotal() + ""));
             switch (faca.getCondVenta().getId()) {
                 case E_tipoOperacion.CONTADO: {//contado
-                    totalContado = totalContado.add(new BigDecimal(faca.getTotal()+""));
+                    totalContado = totalContado.add(new BigDecimal(faca.getTotal() + ""));
                     break;
                 }
                 case E_tipoOperacion.CREDITO_30: {//credito
-                    totalCredito = totalCredito.add(new BigDecimal(faca.getTotal()+""));
+                    totalCredito = totalCredito.add(new BigDecimal(faca.getTotal() + ""));
                     break;
                 }
                 default: {//credito
-                    totalCredito = totalCredito.add(new BigDecimal(faca.getTotal()+""));
+                    totalCredito = totalCredito.add(new BigDecimal(faca.getTotal() + ""));
                     break;
                 }
             }
@@ -191,18 +191,18 @@ public class ResumenIngreso extends JDialog implements ActionListener, KeyListen
         BigDecimal totalContado = new BigDecimal("0");
         BigDecimal totalCredito = new BigDecimal("0");
         for (M_facturaCabecera faca : tm.getFacturaCabeceraList()) {
-            total = total.add(new BigDecimal(faca.getTotal()+""));
+            total = total.add(new BigDecimal(faca.getTotal() + ""));
             switch (faca.getCondVenta().getId()) {
                 case E_tipoOperacion.CONTADO: {//contado
-                    totalContado = totalContado.add(new BigDecimal(faca.getTotal()+""));
+                    totalContado = totalContado.add(new BigDecimal(faca.getTotal() + ""));
                     break;
                 }
                 case E_tipoOperacion.CREDITO_30: {//credito
-                    totalCredito = totalCredito.add(new BigDecimal(faca.getTotal()+""));
+                    totalCredito = totalCredito.add(new BigDecimal(faca.getTotal() + ""));
                     break;
                 }
                 default: {//credito
-                    totalCredito = totalCredito.add(new BigDecimal(faca.getTotal()+""));
+                    totalCredito = totalCredito.add(new BigDecimal(faca.getTotal() + ""));
                     break;
                 }
             }
@@ -315,7 +315,7 @@ public class ResumenIngreso extends JDialog implements ActionListener, KeyListen
                         } else {
                             M_facturaCabecera facturaCabecera = tmCabecera.getFacturaCabeceraList().get(0);
                             facturaCabecera.setTiempo(new Timestamp(facturacionCabecera.getTiempo().getTime()));
-                            ArrayList<M_facturaDetalle> facturaDetalle = (ArrayList<M_facturaDetalle>) tmDetalle.getFacturaDetalleList();
+                            ArrayList<E_facturaDetalle> facturaDetalle = (ArrayList<E_facturaDetalle>) tmDetalle.getList();
                             M_rol_usuario rol_usuario = DatosUsuario.getRol_usuario();
                             Impresora.imprimirTicketVenta(rol_usuario, facturaCabecera, facturaDetalle);
                         }
@@ -335,7 +335,7 @@ public class ResumenIngreso extends JDialog implements ActionListener, KeyListen
                         } else {
                             M_facturaCabecera facturaCabecera = tmCabecera.getFacturaCabeceraList().get(0);
                             facturaCabecera.setTiempo(new Timestamp(facturacionCabecera.getTiempo().getTime()));
-                            ArrayList<M_facturaDetalle> facturaDetalle = (ArrayList<M_facturaDetalle>) tmDetalle.getFacturaDetalleList();
+                            ArrayList<E_facturaDetalle> facturaDetalle = (ArrayList<E_facturaDetalle>) tmDetalle.getList();
                             Impresora.imprimirBoletaVenta(facturaCabecera, facturaDetalle);
                         }
                     }
@@ -353,7 +353,7 @@ public class ResumenIngreso extends JDialog implements ActionListener, KeyListen
                         } else {
                             M_facturaCabecera facturaCabecera = tmCabecera.getFacturaCabeceraList().get(0);
                             facturaCabecera.setTiempo(new Timestamp(facturacionCabecera.getTiempo().getTime()));
-                            ArrayList<M_facturaDetalle> facturaDetalle = (ArrayList<M_facturaDetalle>) tmDetalle.getFacturaDetalleList();
+                            ArrayList<E_facturaDetalle> facturaDetalle = (ArrayList<E_facturaDetalle>) tmDetalle.getList();
                             Impresora.imprimirFacturaVenta(facturaCabecera, facturaDetalle);
                         }
                     }

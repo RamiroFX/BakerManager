@@ -7,14 +7,17 @@ package Pedido;
 import DB.DB_Egreso;
 import DB.DB_Pedido;
 import DB.ResultSetTableModel;
+import Entities.E_facturaDetalle;
 import Entities.M_cliente;
 import Entities.M_funcionario;
 import Entities.M_pedido;
 import Entities.M_pedidoDetalle;
+import ModeloTabla.FacturaDetalleTableModel;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Vector;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
 
 /**
  *
@@ -23,23 +26,13 @@ import javax.swing.table.DefaultTableModel;
 public class M_gestionPedido {
 
     private M_pedido pedido;
-    private ResultSetTableModel rstmPedido, rstmPedidoDetalle;
-    private DefaultTableModel dtm;
-    private ArrayList<M_pedidoDetalle> detalles;
+    private ResultSetTableModel rstmPedido;
+    private FacturaDetalleTableModel pedidoDetalleTM;
 
     public M_gestionPedido() {
         this.pedido = new M_pedido();
-        this.dtm = new DefaultTableModel();
-        this.dtm.addColumn("ID art.");
-        this.dtm.addColumn("Producto");
-        this.dtm.addColumn("Cantidad");
-        this.dtm.addColumn("Precio");
-        this.dtm.addColumn("Descuento");
-        this.dtm.addColumn("Exenta");
-        this.dtm.addColumn("IVA 5%");
-        this.dtm.addColumn("IVA 10%");
-        this.dtm.addColumn("Obs.");
         this.rstmPedido = DB_Pedido.obtenerPedidosPendientes(true);
+        this.pedidoDetalleTM = new FacturaDetalleTableModel();
     }
 
     public String obtenerNombreFuncionario() {
@@ -69,28 +62,8 @@ public class M_gestionPedido {
         this.rstmPedido = rstmPedido;
     }
 
-    public ResultSetTableModel getRstmPedidoDetalle() {
-        return rstmPedidoDetalle;
-    }
-
-    public void setRstmPedidoDetalle(ResultSetTableModel rstmPedidoDetalle) {
-        this.rstmPedidoDetalle = rstmPedidoDetalle;
-    }
-
-    public DefaultTableModel getDtm() {
-        return dtm;
-    }
-
-    public void setDtm(DefaultTableModel dtm) {
-        this.dtm = dtm;
-    }
-
-    public ArrayList<M_pedidoDetalle> getDetalles() {
-        return detalles;
-    }
-
-    public void setDetalles(ArrayList<M_pedidoDetalle> detalles) {
-        this.detalles = detalles;
+    public FacturaDetalleTableModel getPedidoDetalleTM() {
+        return pedidoDetalleTM;
     }
 
     public void borrarDatos() {
@@ -119,8 +92,7 @@ public class M_gestionPedido {
 
     public void pagarPedido(int idPedido) {
         M_pedido p = DB_Pedido.obtenerPedido(idPedido);
-        setDetalles(DB_Pedido.obtenerPedidoDetalles(p.getIdPedido()));
-        DB_Pedido.pagarPedido(p, getDetalles(), null);
+        DB_Pedido.pagarPedido(p, (ArrayList<E_facturaDetalle>) DB_Pedido.obtenerPedidoDetalle(idPedido), null);
     }
 
     Vector obtenerTipoOperacion() {
@@ -135,7 +107,8 @@ public class M_gestionPedido {
         return DB_Pedido.obtenerPedido(idPedido);
     }
 
-    ResultSetTableModel obtenerPedidoDetalle(Integer idPedido) {
-        return DB_Pedido.obtenerPedidoDetalle(idPedido);
+    public void obtenerPedidoDetalle(int idPedido) {
+        this.pedidoDetalleTM.setFacturaDetalleList(DB_Pedido.obtenerPedidoDetalle(idPedido));
     }
+
 }

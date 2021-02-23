@@ -5,6 +5,8 @@
 package Pedido;
 
 import Cliente.SeleccionarCliente;
+import Entities.E_facturaDetalle;
+import Entities.E_impuesto;
 import Entities.M_cliente;
 import Entities.M_pedidoDetalle;
 import Entities.M_producto;
@@ -35,7 +37,7 @@ import javax.swing.JOptionPane;
  *
  * @author Ramiro Ferreira
  */
-public class C_crearPedido extends MouseAdapter implements ActionListener, KeyListener, 
+public class C_crearPedido extends MouseAdapter implements ActionListener, KeyListener,
         RecibirClienteCallback, RecibirProductoCallback {
 
     public M_crearPedido modelo;
@@ -55,7 +57,7 @@ public class C_crearPedido extends MouseAdapter implements ActionListener, KeyLi
     }
 
     private void cerrar() {
-        if (!this.modelo.getDetalles().isEmpty()) {
+        if (!this.modelo.getDtm().getList().isEmpty()) {
             int opcion = JOptionPane.showConfirmDialog(vista, "Hay producto cargados, ¿Desea cancelar?", "Atención", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
             if (opcion == JOptionPane.YES_OPTION) {
                 this.vista.dispose();
@@ -142,65 +144,54 @@ public class C_crearPedido extends MouseAdapter implements ActionListener, KeyLi
     }
 
     public void recibirDetalle(M_pedidoDetalle detalle) {
-        double impExenta = 0.0;
-        double imp5 = 0.0;
-        double imp10 = 0.0;
-        double Precio = detalle.getPrecio() - Math.round(Math.round(((detalle.getPrecio() * detalle.getDescuento()) / 100)));
-        Integer total = Math.round(Math.round((detalle.getCantidad() * Precio)));
-        if (detalle.getProducto().getImpuesto().equals(0)) {
-            impExenta = total;
-            imp5 = 0;
-            imp10 = 0;
-        } else if (detalle.getProducto().getImpuesto().equals(5)) {
-            impExenta = 0;
-            imp5 = total;
-            imp10 = 0;
-        } else {
-            impExenta = 0;
-            imp5 = 0;
-            imp10 = total;
-        }
-        if (null != detalle.getObservacion()) {
-            String aux = detalle.getProducto().getDescripcion();
-            detalle.getProducto().setDescripcion(aux + "-(" + detalle.getObservacion() + ")");
-        }
-        Object[] rowData = {detalle.getProducto().getId(), detalle.getProducto().getDescripcion(), detalle.getCantidad(), detalle.getPrecio(), detalle.getDescuento(), impExenta, imp5, imp10};
-        detalle.setIva_exenta(impExenta);
-        detalle.setIva_cinco(imp5);
-        detalle.setIva_diez(imp10);
-        this.modelo.getDetalles().add(detalle);
-        this.modelo.getDtm().addRow(rowData);
-        this.vista.jtPedidoDetalle.updateUI();
-        Utilities.c_packColumn.packColumns(this.vista.jtPedidoDetalle, 1);
-        sumarTotal();
+//        this.modelo.getDetalles().add(detalle);
+//        this.modelo.getDtm().addRow(rowData);
+//        this.vista.jtPedidoDetalle.updateUI();
+//        Utilities.c_packColumn.packColumns(this.vista.jtPedidoDetalle, 1);
+//        sumarTotal();
     }
 
     private void eliminarDetalle() {
         int row = this.vista.jtPedidoDetalle.getSelectedRow();
-        this.modelo.getDetalles().remove(row);
-        this.modelo.getDtm().removeRow(row);
+        if (row < 0) {
+            return;
+        }
+        this.modelo.getDtm().quitarDetalle(row);
         this.vista.jtPedidoDetalle.updateUI();
         this.vista.jbEliminarDetalle.setEnabled(false);
         this.vista.jbModificarDetalle.setEnabled(false);
         sumarTotal();
     }
 
-
     private void sumarTotal() {
-        Integer exenta = 0;
-        Integer iva5 = 0;
-        Integer iva10 = 0;
-        Integer total = 0;
-        int cantFilas = this.modelo.getDtm().getRowCount();
-        for (int i = 0; i < cantFilas; i++) {
-            exenta = exenta + Integer.valueOf(String.valueOf(this.modelo.getDtm().getValueAt(i, 5)));
-            iva5 = iva5 + Integer.valueOf(String.valueOf(this.modelo.getDtm().getValueAt(i, 6)));
-            iva10 = iva10 + Integer.valueOf(String.valueOf(this.modelo.getDtm().getValueAt(i, 7)));
+        double exenta = 0;
+        double total5 = 0;
+        double total10 = 0;
+        double totalIva5 = 0;
+        double totalIva10 = 0;
+        double total = 0;
+        for (E_facturaDetalle fade : modelo.getDtm().getList()) {
+            switch (fade.getProducto().getIdImpuesto()) {
+                case E_impuesto.EXENTA: {
+                    exenta = exenta + fade.calcularSubTotal();
+                    break;
+                }
+                case E_impuesto.IVA5: {
+                    total5 = total5 + fade.calcularSubTotal();
+                    break;
+                }
+                case E_impuesto.IVA10: {
+                    total10 = total10 + fade.calcularSubTotal();
+                    break;
+                }
+            }
         }
-        total = exenta + iva5 + iva10;
+        total = exenta + total5 + total10;
+        totalIva5 = total5 / 21;
+        totalIva10 = total10 / 11;
         this.vista.jftExenta.setValue(exenta);
-        this.vista.jftIva5.setValue(iva5);
-        this.vista.jftIva10.setValue(iva10);
+        this.vista.jftIva5.setValue(totalIva5);
+        this.vista.jftIva10.setValue(totalIva10);
         this.vista.jftTotal.setValue(total);
     }
 
@@ -226,7 +217,7 @@ public class C_crearPedido extends MouseAdapter implements ActionListener, KeyLi
             JOptionPane.showMessageDialog(vista, "Seleccione un Cliente.", "Atención", JOptionPane.WARNING_MESSAGE);
             return;
         }
-        if (this.modelo.getDetalles().isEmpty()) {
+        if (this.modelo.getDtm().getList().isEmpty()) {
             JOptionPane.showMessageDialog(vista, "Seleccione por lo menos un producto.", "Atención", JOptionPane.WARNING_MESSAGE);
             return;
         }
@@ -315,7 +306,7 @@ public class C_crearPedido extends MouseAdapter implements ActionListener, KeyLi
                     JOptionPane.showMessageDialog(vista, "Seleccione un Cliente.", "Atención", JOptionPane.WARNING_MESSAGE);
                     return;
                 }
-                if (modelo.getDetalles().isEmpty()) {
+                if (modelo.getDtm().getList().isEmpty()) {
                     JOptionPane.showMessageDialog(vista, "Seleccione por lo menos un producto.", "Atención", JOptionPane.WARNING_MESSAGE);
                     return;
                 }
@@ -324,7 +315,7 @@ public class C_crearPedido extends MouseAdapter implements ActionListener, KeyLi
                 }
                 int opcion = JOptionPane.showConfirmDialog(vista, "¿Desea imprimir el pedido?", "Atención", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
                 if (opcion == JOptionPane.YES_OPTION) {
-                    Impresora.imprimirTicketPedido(DatosUsuario.getRol_usuario(), modelo.getPedido(), modelo.getDetalles());
+                    Impresora.imprimirTicketPedido(DatosUsuario.getRol_usuario(), modelo.getPedido(), modelo.getDtm().getList());
                 }
             }
         });
@@ -333,10 +324,21 @@ public class C_crearPedido extends MouseAdapter implements ActionListener, KeyLi
     private void modificarDetalle() {
         int row = vista.jtPedidoDetalle.getSelectedRow();
         if (row > -1) {
-            M_producto producto = modelo.getDetalles().get(row).getProducto();
+            M_producto producto = modelo.getDtm().getList().get(row).getProducto();
             SeleccionarCantidadProduducto scp = new SeleccionarCantidadProduducto(vista, producto, this, row);
             scp.setVisible(true);
         }
+    }
+
+    private void invocarSeleccionarCliente() {
+        SeleccionarCliente sc = new SeleccionarCliente(this.gestionPedido.c_inicio.vista);
+        sc.setCallback(this);
+        sc.mostrarVista();
+    }
+
+    private void invocarSeleccionarProducto() {
+        SeleccionarProducto sp = new SeleccionarProducto(this);
+        sp.mostrarVista();
     }
 
     @Override
@@ -353,12 +355,9 @@ public class C_crearPedido extends MouseAdapter implements ActionListener, KeyLi
         } else if (source.equals(this.vista.jcbMinuto)) {
             establecerHoraEntrega();
         } else if (source.equals(this.vista.jbSeleccionarProducto)) {
-            SeleccionarProducto sp = new SeleccionarProducto(this);
-            sp.mostrarVista();
+            invocarSeleccionarProducto();
         } else if (source.equals(this.vista.jbCliente)) {
-            SeleccionarCliente sc = new SeleccionarCliente(this.gestionPedido.c_inicio.vista);
-            sc.setCallback(this);
-            sc.mostrarVista();
+            invocarSeleccionarCliente();
         } else if (source.equals(this.vista.jbEliminarDetalle)) {
             eliminarDetalle();
         } else if (source.equals(this.vista.jbModificarDetalle)) {
@@ -394,14 +393,11 @@ public class C_crearPedido extends MouseAdapter implements ActionListener, KeyLi
                 break;
             }
             case KeyEvent.VK_F3: {
-                SeleccionarCliente sc = new SeleccionarCliente(this.gestionPedido.c_inicio.vista);
-                sc.setCallback(this);
-                sc.mostrarVista();
+                invocarSeleccionarCliente();
                 break;
             }
             case KeyEvent.VK_F4: {
-                SeleccionarProducto sp = new SeleccionarProducto(this);
-                sp.mostrarVista();
+                invocarSeleccionarProducto();
                 break;
             }
             case KeyEvent.VK_ESCAPE: {
@@ -422,46 +418,10 @@ public class C_crearPedido extends MouseAdapter implements ActionListener, KeyLi
 
     @Override
     public void modificarProducto(int row, double cantidad, double precio, double descuento, M_producto producto, String observacion) {
-        this.modelo.getDtm().setValueAt(cantidad, row, 2);//producto
-        this.modelo.getDtm().setValueAt(precio, row, 3);//precio
-        this.modelo.getDtm().setValueAt(descuento, row, 4);//descuento
-        M_producto prod = this.modelo.getDetalles().get(row).getProducto();
-        String productoString = prod.getDescripcion();
-        if (null != observacion) {
-            if (!observacion.isEmpty()) {
-                productoString = productoString + "- (" + observacion + ")";
-            }
-        }
-        this.modelo.getDtm().setValueAt(productoString, row, 1);
-        Double impExenta = null;
-        Double imp5 = null;
-        Double imp10 = null;
-        Double Precio = precio - Math.round(Math.round(((precio * descuento) / 100)));
-        Double total = (cantidad * Precio);
-        if (prod.getImpuesto().equals(0)) {
-            impExenta = total;
-            imp5 = 0.0;
-            imp10 = 0.0;
-        } else if (prod.getImpuesto().equals(5)) {
-            impExenta = 0.0;
-            imp5 = total;
-            imp10 = 0.0;
-        } else {
-            impExenta = 0.0;
-            imp5 = 0.0;
-            imp10 = total;
-        }
-        this.modelo.getDtm().setValueAt(impExenta, row, 5);
-        this.modelo.getDtm().setValueAt(imp5, row, 6);
-        this.modelo.getDtm().setValueAt(imp10, row, 7);
-        M_pedidoDetalle detalle = this.modelo.getDetalles().get(row);
-        detalle.setCantidad(cantidad);
-        detalle.setPrecio(precio);
-        detalle.setDescuento(descuento);
-        detalle.setObservacion(observacion);
+        this.modelo.getDtm().modificarDetalle(row, cantidad, descuento, precio, observacion);
         this.vista.jtPedidoDetalle.updateUI();
         this.vista.jbEliminarDetalle.setEnabled(false);
         this.vista.jbModificarDetalle.setEnabled(false);
-        sumarTotal();        
+        sumarTotal();
     }
 }

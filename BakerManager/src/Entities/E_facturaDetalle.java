@@ -85,4 +85,8 @@ public class E_facturaDetalle {
         return getCantidad() + "|" + getProducto().getDescripcion() + "|" + getPrecio();
     }
 
+    public double getPrecioConDescuento() {
+        return (getPrecio() - ((getPrecio() * getDescuento()) / 100));
+    }
+
 }

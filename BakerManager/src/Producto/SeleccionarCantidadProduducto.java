@@ -4,6 +4,7 @@
  */
 package Producto;
 
+import Entities.E_facturaDetalle;
 import Entities.M_egreso_detalle;
 import Entities.M_facturaDetalle;
 import Entities.M_producto;
@@ -410,7 +411,7 @@ public class SeleccionarCantidadProduducto extends javax.swing.JDialog implement
         }*/
     }
 
-    public void cargarDatos(M_facturaDetalle fd) {
+    public void cargarDatos(E_facturaDetalle fd) {
         jtfCantidad.setText(fd.getCantidad() + "");
         jtfDescuento.setText(fd.getDescuento() + "");
         jtfPrecio.setText(fd.getPrecio() + "");

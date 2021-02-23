@@ -10,7 +10,7 @@ import DB.DB_Ingreso;
 import DB.DB_Preferencia;
 import Entities.E_impresionTipo;
 import Entities.E_impuesto;
-import Entities.M_facturaDetalle;
+import Entities.E_facturaDetalle;
 import Entities.M_telefono;
 import MenuPrincipal.DatosUsuario;
 import Impresora.Impresora;
@@ -81,7 +81,7 @@ public class C_ver_ingreso implements ActionListener, KeyListener {
         double totalIva5 = 0;
         double totalIva10 = 0;
         double total = 0;
-        for (M_facturaDetalle m_facturaDetalle : modelo.getFadeTM().getFacturaDetalleList()) {
+        for (E_facturaDetalle m_facturaDetalle : modelo.getFadeTM().getList()) {
             switch (m_facturaDetalle.getProducto().getIdImpuesto()) {
                 case E_impuesto.EXENTA: {
                     exenta = exenta + m_facturaDetalle.calcularSubTotal();
@@ -215,7 +215,7 @@ public class C_ver_ingreso implements ActionListener, KeyListener {
                     case "factura": {
                         int opcion = JOptionPane.showConfirmDialog(vista, "¿Desea imprimir la factura?", "Atención", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
                         if (opcion == JOptionPane.YES_OPTION) {
-                            ArrayList<M_facturaDetalle> fade = DB_Ingreso.obtenerVentaDetalles(modelo.getIdIngresoCabecera());
+                            ArrayList<E_facturaDetalle> fade = DB_Ingreso.obtenerVentaDetalles(modelo.getIdIngresoCabecera());
                             Impresora.imprimirFacturaVenta(modelo.getFaca(), fade);
                         }
                         break;
@@ -223,7 +223,7 @@ public class C_ver_ingreso implements ActionListener, KeyListener {
                     case "boleta": {
                         int opcion = JOptionPane.showConfirmDialog(vista, "¿Desea imprimir la boleta?", "Atención", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
                         if (opcion == JOptionPane.YES_OPTION) {
-                            ArrayList<M_facturaDetalle> facturaDetalle = DB_Ingreso.obtenerVentaDetalles(modelo.getIdIngresoCabecera());
+                            ArrayList<E_facturaDetalle> facturaDetalle = DB_Ingreso.obtenerVentaDetalles(modelo.getIdIngresoCabecera());
                             Impresora.imprimirBoletaVenta(modelo.getFaca(), facturaDetalle);
                         }
                         break;

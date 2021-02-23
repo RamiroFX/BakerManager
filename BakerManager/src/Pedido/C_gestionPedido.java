@@ -50,6 +50,7 @@ public class C_gestionPedido implements GestionInterface, RecibirEmpleadoCallbac
 
     @Override
     public final void inicializarVista() {
+        this.vista.jtPedidoDetalle.setModel(modelo.getPedidoDetalleTM());
         this.vista.jbDetalle.setEnabled(false);
         this.vista.jbBuscarDetalle.setEnabled(false);
         Vector condCompra = modelo.obtenerTipoOperacion();
@@ -184,7 +185,6 @@ public class C_gestionPedido implements GestionInterface, RecibirEmpleadoCallbac
                     vista.jtPedido.setModel(modelo.obtenerPedidos(esTiempoRecepcionOEntrega, fecha_inicio, fecha_fin, conVenta, nroPedido, estado));
                     modelo.setRstmPedido((ResultSetTableModel) vista.jtPedido.getModel());
                     Utilities.c_packColumn.packColumns(vista.jtPedido, 1);
-                    vista.jtPedidoDetalle.setModel(modelo.getDtm());
                     vista.jbDetalle.setEnabled(false);
                 } else {
                     vista.jddFinal.setDate(vista.jddInicio.getDate());
@@ -234,7 +234,7 @@ public class C_gestionPedido implements GestionInterface, RecibirEmpleadoCallbac
                 //this.vista.jbPagoPedido.setEnabled(false);
                 this.vista.jbCancelarPedido.setEnabled(false);
             }
-            this.vista.jtPedidoDetalle.setModel(modelo.obtenerPedidoDetalle(idPedido));
+            modelo.obtenerPedidoDetalle(idPedido);
             Utilities.c_packColumn.packColumns(this.vista.jtPedidoDetalle, 1);
         }
         if (e.getClickCount() == 2) {
@@ -297,7 +297,6 @@ public class C_gestionPedido implements GestionInterface, RecibirEmpleadoCallbac
             Integer idPedido = Integer.valueOf(String.valueOf(this.vista.jtPedido.getValueAt(fila, 0)));
             this.modelo.pagarPedido(idPedido);
             this.vista.jtPedido.setModel(this.modelo.getPedidosPendientes());
-            this.vista.jtPedidoDetalle.setModel(this.modelo.getDtm());
             Utilities.c_packColumn.packColumns(this.vista.jtPedido, 1);
             controlarTablaPedido();
             this.vista.jbDetalle.setEnabled(false);
@@ -313,7 +312,7 @@ public class C_gestionPedido implements GestionInterface, RecibirEmpleadoCallbac
             Integer idPedido = Integer.valueOf(String.valueOf(this.vista.jtPedido.getValueAt(fila, 0)));
             this.modelo.cancelarPedido(idPedido);
             this.vista.jtPedido.setModel(this.modelo.getPedidosPendientes());
-            this.vista.jtPedidoDetalle.setModel(this.modelo.getDtm());
+            //this.vista.jtPedidoDetalle.setModel(this.modelo.getDtm());
             Utilities.c_packColumn.packColumns(this.vista.jtPedido, 1);
             controlarTablaPedido();
             this.modelo.borrarDatos();
@@ -325,7 +324,7 @@ public class C_gestionPedido implements GestionInterface, RecibirEmpleadoCallbac
 
     private void jbPedidosPendientesButtonHandler() {
         this.vista.jtPedido.setModel(this.modelo.getPedidosPendientes());
-        this.vista.jtPedidoDetalle.setModel(this.modelo.getDtm());
+        //this.vista.jtPedidoDetalle.setModel(this.modelo.getDtm());
         Utilities.c_packColumn.packColumns(this.vista.jtPedido, 1);
     }
 
@@ -344,7 +343,7 @@ public class C_gestionPedido implements GestionInterface, RecibirEmpleadoCallbac
                     //this.vista.jbPagoPedido.setEnabled(false);
                     this.vista.jbCancelarPedido.setEnabled(false);
                 }
-                this.vista.jtPedidoDetalle.setModel(modelo.obtenerPedidoDetalle(idPedido));
+                modelo.obtenerPedidoDetalle(idPedido);
                 Utilities.c_packColumn.packColumns(this.vista.jtPedidoDetalle, 1);
             }
         }

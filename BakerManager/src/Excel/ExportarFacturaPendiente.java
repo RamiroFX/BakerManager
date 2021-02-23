@@ -9,6 +9,7 @@ import DB.DB_Cobro;
 import DB.DB_Ingreso;
 import Entities.E_cuentaCorrienteCabecera;
 import Entities.E_cuentaCorrienteDetalle;
+import Entities.E_facturaDetalle;
 import Entities.E_facturaSinPago;
 import Entities.M_facturaDetalle;
 import java.io.File;
@@ -180,12 +181,12 @@ public class ExportarFacturaPendiente {
             //FIN CABECERA FACTURA PENDIENTE DETALLE
 
             //INICIO FACTURA PENDIENTE DETALLE
-            ArrayList<M_facturaDetalle> prodDetalleList;
+            ArrayList<E_facturaDetalle> prodDetalleList;
             prodDetalleList = new ArrayList<>(DB_Ingreso.obtenerVentaDetalles(cabecera.getIdCabecera()));
             for (int i = 0; i < prodDetalleList.size(); i++) {
                 Row rowDetail = sheet.createRow(filaActual);
                 filaActual++;
-                M_facturaDetalle unDetalle = prodDetalleList.get(i);
+                E_facturaDetalle unDetalle = prodDetalleList.get(i);
                 rowDetail.createCell(0).setCellValue(unDetalle.getProducto().getCodigo());
                 //rowDetail.getCell(0).setCellStyle(style4);
                 rowDetail.createCell(1).setCellValue(unDetalle.getProducto().getDescripcion());
@@ -194,7 +195,7 @@ public class ExportarFacturaPendiente {
                 rowDetail.createCell(4).setCellValue(unDetalle.getDescuento());
                 switch (unDetalle.getProducto().getIdImpuesto()) {
                     case 1: {
-                        rowDetail.createCell(5).setCellValue(unDetalle.calcularTotal());
+                        rowDetail.createCell(5).setCellValue(unDetalle.calcularSubTotal());
                         rowDetail.getCell(5).setCellStyle(style4);
                         rowDetail.createCell(6).setCellValue(0);
                         rowDetail.getCell(6).setCellStyle(style4);
@@ -205,7 +206,7 @@ public class ExportarFacturaPendiente {
                     case 2: {
                         rowDetail.createCell(5).setCellValue(0);
                         rowDetail.getCell(5).setCellStyle(style4);
-                        rowDetail.createCell(6).setCellValue(unDetalle.calcularTotal());
+                        rowDetail.createCell(6).setCellValue(unDetalle.calcularSubTotal());
                         rowDetail.getCell(6).setCellStyle(style4);
                         rowDetail.createCell(7).setCellValue(0);
                         rowDetail.getCell(7).setCellStyle(style4);
@@ -216,7 +217,7 @@ public class ExportarFacturaPendiente {
                         rowDetail.getCell(5).setCellStyle(style4);
                         rowDetail.createCell(6).setCellValue(0);
                         rowDetail.getCell(6).setCellStyle(style4);
-                        rowDetail.createCell(7).setCellValue(unDetalle.calcularTotal());
+                        rowDetail.createCell(7).setCellValue(unDetalle.calcularSubTotal());
                         rowDetail.getCell(7).setCellStyle(style4);
                         break;
                     }

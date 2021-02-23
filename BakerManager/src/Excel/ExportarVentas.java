@@ -6,9 +6,9 @@
 package Excel;
 
 import DB.DB_Ingreso;
+import Entities.E_facturaDetalle;
 import Entities.E_impuesto;
 import Entities.M_facturaCabecera;
-import Entities.M_facturaDetalle;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -182,7 +182,7 @@ public class ExportarVentas {
             rowCabeceraFuncionarioTotalVenta.createCell(col).setCellValue(facturaCabecera.getTotal());
             rowCabeceraFuncionarioTotalVenta.getCell(col).setCellStyle(styleNumber);
             //FIN CABECERA DE DATOS
-            ArrayList<M_facturaDetalle> detalles = DB_Ingreso.obtenerVentaDetalles(facturaCabecera.getIdFacturaCabecera());
+            ArrayList<E_facturaDetalle> detalles = DB_Ingreso.obtenerVentaDetalles(facturaCabecera.getIdFacturaCabecera());
 
             //INICIO CABECERA DETALLE
             Row rowCabeceraDetalle = sheet.createRow(filaActual);
@@ -204,7 +204,7 @@ public class ExportarVentas {
             rowCabeceraDetalle.getCell(col).setCellStyle(style1);
             col++;
             //FIN CABECERA DETALLE
-            for (M_facturaDetalle facturaDetalle : detalles) {
+            for (E_facturaDetalle facturaDetalle : detalles) {
                 Row rowDetalle = sheet.createRow(filaActual);
                 filaActual++;
                 int colIndex = 0;
@@ -384,9 +384,9 @@ public class ExportarVentas {
             row.createCell(col).setCellValue(facturaCabecera.getTotal());
             row.getCell(col).setCellStyle(styleNumber);
             col++;
-            ArrayList<M_facturaDetalle> detalles = DB_Ingreso.obtenerVentaDetalles(facturaCabecera.getIdFacturaCabecera());
+            ArrayList<E_facturaDetalle> detalles = DB_Ingreso.obtenerVentaDetalles(facturaCabecera.getIdFacturaCabecera());
             double subTotalImpuesto = 0;
-            for (M_facturaDetalle facturaDetalle : detalles) {
+            for (E_facturaDetalle facturaDetalle : detalles) {
                 double exenta = 0;
                 double iva5 = 0;
                 double iva10 = 0;
