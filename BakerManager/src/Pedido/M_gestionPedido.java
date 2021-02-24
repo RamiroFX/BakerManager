@@ -4,7 +4,6 @@
  */
 package Pedido;
 
-import DB.DB_Egreso;
 import DB.DB_Pedido;
 import DB.DB_manager;
 import DB.ResultSetTableModel;
@@ -14,15 +13,11 @@ import Entities.E_tipoOperacion;
 import Entities.M_cliente;
 import Entities.M_funcionario;
 import Entities.M_pedidoCabecera;
-import Entities.M_pedidoDetalle;
 import ModeloTabla.FacturaDetalleTableModel;
 import ModeloTabla.PedidoCabeceraTableModel;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Vector;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableModel;
 
 /**
  *
@@ -119,7 +114,7 @@ public class M_gestionPedido {
 
     public void pagarPedido(int idPedido) {
         M_pedidoCabecera p = DB_Pedido.obtenerPedido(idPedido);
-        DB_Pedido.pagarPedido(p, (ArrayList<E_facturaDetalle>) DB_Pedido.obtenerPedidoDetalle(idPedido), null);
+        DB_Pedido.pagarPedido(p, DB_Pedido.obtenerPedidoDetalle(idPedido), -1, -1);
     }
 
     public ArrayList<E_tipoOperacion> obtenerTipoOperacion() {

@@ -90,7 +90,7 @@ public class E_tipoOperacion {
         E_tipoOperacion c = (E_tipoOperacion) o;
 
         // Compare the data members and return accordingly  
-        return this.getDescripcion().equals(c.getDescripcion());
+        return this.getId() == c.getId();
     }
 
 }

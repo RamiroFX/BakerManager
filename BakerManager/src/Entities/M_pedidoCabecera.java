@@ -68,5 +68,4 @@ public class M_pedidoCabecera extends E_facturaCabecera {
     public E_estadoPedido getEstadoPedido() {
         return estadoPedido;
     }
-
 }

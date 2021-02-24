@@ -5,23 +5,25 @@
 package Pedido;
 
 import Cliente.SeleccionarCliente;
+import Configuracion.Timbrado.SeleccionarNroFactura;
+import Configuracion.Timbrado.SeleccionarTimbrado;
 import DB.DB_Ingreso;
+import Entities.E_Timbrado;
 import Entities.E_facturaDetalle;
 import Entities.E_impresionTipo;
 import Entities.E_impuesto;
+import Entities.E_tipoOperacion;
 import Entities.M_cliente;
 import Entities.M_facturaCabecera;
-import Entities.M_facturaDetalle;
-import Entities.M_pedidoDetalle;
 import Entities.M_producto;
 import MenuPrincipal.DatosUsuario;
 import Parametros.PedidoEstado;
-import Parametros.TipoOperacion;
 import Producto.SeleccionarCantidadProduducto;
 import Producto.SeleccionarProducto;
 import Impresora.Impresora;
 import Interface.RecibirClienteCallback;
 import Interface.RecibirProductoCallback;
+import Interface.RecibirTimbradoVentaCallback;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -34,25 +36,26 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Vector;
 import javax.swing.JOptionPane;
 
 /**
  *
  * @author Ramiro Ferreira
  */
-public class C_verPedido extends MouseAdapter implements ActionListener, KeyListener, 
-        RecibirClienteCallback, RecibirProductoCallback {
+public class C_verPedido extends MouseAdapter implements ActionListener, KeyListener,
+        RecibirClienteCallback, RecibirProductoCallback, RecibirTimbradoVentaCallback {
 
     public V_crearPedido vista;
     public M_verPedido modelo;
     public C_gestionPedido gestionPedido;
+    private boolean isJCBTrigger;
 
     public C_verPedido(V_crearPedido vista, M_verPedido modelo, C_gestionPedido gestionPedido) {
         this.vista = vista;
         this.vista.setTitle("Ver pedido");
         this.modelo = modelo;
         this.gestionPedido = gestionPedido;
+        this.isJCBTrigger = true;
         inicializarVista();
         agregarListeners();
     }
@@ -66,22 +69,18 @@ public class C_verPedido extends MouseAdapter implements ActionListener, KeyList
     }
 
     private void inicializarVista() {
-        this.vista.jtfClieDireccion.setText(this.modelo.getPedido().getCliente().getDireccion());
-        String ruc = this.modelo.getPedido().getCliente().getRuc();
-        String rucDiv = this.modelo.getPedido().getCliente().getRucId();
-        this.vista.jtfClieRuc.setText(ruc + "-" + rucDiv);
-        String nombre = this.modelo.getPedido().getCliente().getNombre();
-        String entidad = this.modelo.getPedido().getCliente().getEntidad();
-        this.vista.jtfCliente.setText(nombre + " (" + entidad + ")");
+        this.vista.jtfClieDireccion.setText(this.modelo.obtenerDireccionCliente());
+        this.vista.jtfClieRuc.setText(this.modelo.obtenerRucCliente());
+        this.vista.jtfCliente.setText(this.modelo.obtenerNombreCliente());
         this.vista.jtfDireccionPedido.setText(this.modelo.getPedido().getDireccion());
         this.vista.jtfNroFactura.setText("");
         this.vista.jtfNroFactura.setEnabled(false);
         this.vista.jtfReferencia.setText(this.modelo.getPedido().getReferencia());
         this.vista.jdcFechaEntrega.setDate(this.modelo.getPedido().getTiempoEntrega());
         this.vista.jtPedidoDetalle.setModel(this.modelo.getTm());
-        Vector condCompra = modelo.obtenerTipoOperacion();
-        for (int i = 0; i < condCompra.size(); i++) {
-            this.vista.jcbCondVenta.addItem(condCompra.get(i));
+        ArrayList<E_tipoOperacion> condVenta = modelo.obtenerTipoOperacion();
+        for (int i = 0; i < condVenta.size(); i++) {
+            this.vista.jcbCondVenta.addItem(condVenta.get(i));
         }
         ArrayList<E_impresionTipo> tipoVenta = modelo.obtenerTipoVenta();
         for (int i = 0; i < tipoVenta.size(); i++) {
@@ -105,11 +104,10 @@ public class C_verPedido extends MouseAdapter implements ActionListener, KeyList
         }
         this.vista.jcbHora.setSelectedItem(_hora);
         this.vista.jcbMinuto.setSelectedItem(_minuto);
-        int condVenta = this.modelo.getPedido().getTipoOperacion().getId();
-        this.vista.jcbCondVenta.setSelectedIndex(condVenta - 1);
+        this.vista.jcbCondVenta.setSelectedItem(this.modelo.getPedido().getTipoOperacion());
         this.vista.jbEliminarDetalle.setEnabled(false);
         this.vista.jbModificarDetalle.setEnabled(false);
-        if (!this.modelo.getPedido().getEstado().equals(PedidoEstado.PENDIENTE.getDescripcion())) {
+        if (!this.modelo.getPedido().getEstadoPedido().getDescripcion().equals(PedidoEstado.PENDIENTE.getDescripcion())) {
             this.vista.jbAceptar.setEnabled(false);
             this.vista.jbCliente.setEnabled(false);
             this.vista.jbSeleccionarProducto.setEnabled(false);
@@ -138,7 +136,7 @@ public class C_verPedido extends MouseAdapter implements ActionListener, KeyList
     }
 
     private void agregarListeners() {
-        if (this.modelo.getPedido().getEstado().equals("Pendiente")) {
+        if (this.modelo.getPedido().getEstadoPedido().getDescripcion().equals("Pendiente")) {
             this.vista.jtPedidoDetalle.addMouseListener(this);
             this.vista.jcbCondVenta.addActionListener(this);
             this.vista.jcbTipoVenta.addActionListener(this);
@@ -152,6 +150,8 @@ public class C_verPedido extends MouseAdapter implements ActionListener, KeyList
             this.vista.jbAceptar.addKeyListener(this);
             this.vista.jbPagarPedido.addActionListener(this);
             this.vista.jbPagarPedido.addKeyListener(this);
+            this.vista.jbNroFactura.addActionListener(this);
+            this.vista.jbNroFactura.addKeyListener(this);
         }
         this.vista.jbSalir.addActionListener(this);
         this.vista.jbImprimir.addActionListener(this);
@@ -170,67 +170,39 @@ public class C_verPedido extends MouseAdapter implements ActionListener, KeyList
     private void establecerTipoVenta() {
         E_impresionTipo tipoVenta = this.vista.jcbTipoVenta.getItemAt(this.vista.jcbTipoVenta.getSelectedIndex());
         switch (tipoVenta.getDescripcion()) {
-            case "ticket": {
+            case E_impresionTipo.TICKET_STRING: {
                 this.vista.jtfNroFactura.setText("");
                 this.vista.jtfNroFactura.setEnabled(false);
+                this.modelo.setIdTimbrado(1);
                 this.modelo.setTipoVenta(tipoVenta);
                 break;
             }
-            case "factura": {
-                this.vista.jtfNroFactura.setText(modelo.getNroFactura() + "");
-                this.vista.jtfNroFactura.setEnabled(true);
-                this.modelo.setTipoVenta(tipoVenta);
+            case E_impresionTipo.FACTURA_STRING: {
+                if (isJCBTrigger) {
+                    this.modelo.setTipoVenta(tipoVenta);
+                    invocarSeleccionarNroFactura();
+                }
                 break;
             }
-            case "boleta": {
+            case E_impresionTipo.BOLETA_STRING: {
                 this.vista.jtfNroFactura.setText("");
                 this.vista.jtfNroFactura.setEnabled(false);
+                this.modelo.setIdTimbrado(1);
                 this.modelo.setTipoVenta(tipoVenta);
                 break;
             }
         }
-    }
-
-    public void recibirDetalle(M_pedidoDetalle detalle) {
-        detalle.setIdPedido(modelo.getPedido().getIdPedido());
-        Double Precio = detalle.getPrecio() - Math.round(Math.round(((detalle.getPrecio() * detalle.getDescuento()) / 100)));
-        Double total = (detalle.getCantidad() * Precio);
-        switch (detalle.getProducto().getImpuesto()) {
-            case (0): {//exenta
-                detalle.setIva_exenta(total);
-                detalle.setIva_cinco(0.0);
-                detalle.setIva_diez(0.0);
-                break;
-            }
-            case (5): {//iva 5%
-                detalle.setIva_exenta(0.0);
-                detalle.setIva_cinco(total);
-                detalle.setIva_diez(0.0);
-                break;
-            }
-            case (10): {//iva10%
-                detalle.setIva_exenta(0.0);
-                detalle.setIva_cinco(0.0);
-                detalle.setIva_diez(total);
-                break;
-            }
-        }
-        this.modelo.insertarPedidoDetalle(detalle);
-        this.modelo.actualizarTablaPedidoDetalle();
-        this.vista.jbEliminarDetalle.setEnabled(false);
-        this.vista.jbModificarDetalle.setEnabled(false);
-        this.vista.jtPedidoDetalle.setModel(this.modelo.getTm());
-        Utilities.c_packColumn.packColumns(this.vista.jtPedidoDetalle, 1);
-        sumarTotal();
     }
 
     private void eliminarDetalle() {
         int opcion = JOptionPane.showConfirmDialog(vista, "¿Desea confirmar esta operación?", "Atención", JOptionPane.YES_NO_OPTION);
         if (opcion == JOptionPane.YES_OPTION) {
             int row = this.vista.jtPedidoDetalle.getSelectedRow();
-            int idPedidoDetalle = Integer.valueOf(String.valueOf(this.vista.jtPedidoDetalle.getValueAt(row, 0)));
-            //this.modelo.getDetalle().setIdPedioDetalle(idPedidoDetalle);
-            this.modelo.eliminarPedidoDetalle();
+            if (row < 0) {
+                return;
+            }
+            int idPedidoDetalle = modelo.getTm().getList().get(row).getIdFacturaDetalle();
+            this.modelo.eliminarPedidoDetalle(idPedidoDetalle);
             this.modelo.actualizarTablaPedidoDetalle();
             this.vista.jbEliminarDetalle.setEnabled(false);
             this.vista.jbModificarDetalle.setEnabled(false);
@@ -240,11 +212,11 @@ public class C_verPedido extends MouseAdapter implements ActionListener, KeyList
 
     private void jbModificarDetalleButtonHandler() {
         int row = this.vista.jtPedidoDetalle.getSelectedRow();
-        if(row<0){
+        if (row < 0) {
             return;
         }
         M_producto producto = modelo.getTm().getList().get(row).getProducto();
-        SeleccionarCantidadProduducto scp = new SeleccionarCantidadProduducto(vista, producto,this, SeleccionarCantidadProduducto.PRECIO_VENTA_MINORISTA);
+        SeleccionarCantidadProduducto scp = new SeleccionarCantidadProduducto(vista, producto, this, SeleccionarCantidadProduducto.PRECIO_VENTA_MINORISTA);
         scp.setVisible(true);
     }
 
@@ -293,16 +265,10 @@ public class C_verPedido extends MouseAdapter implements ActionListener, KeyList
         int opcion = JOptionPane.showConfirmDialog(vista, "¿Desea confirmar esta operación?", "Atención", JOptionPane.YES_NO_OPTION);
         if (opcion == JOptionPane.YES_OPTION) {
             this.modelo.getPedido().setCliente(cliente);
-            String nombre = this.modelo.getPedido().getCliente().getNombre();
-            String entidad = this.modelo.getPedido().getCliente().getEntidad();
-            this.vista.jtfCliente.setText(nombre + " (" + entidad + ")");
-
-            String ruc = this.modelo.getPedido().getCliente().getRuc();
-            String ruc_id = this.modelo.getPedido().getCliente().getRucId();
-            this.vista.jtfClieRuc.setText(ruc + "-" + ruc_id);
-            String direccion = this.modelo.getPedido().getCliente().getDireccion();
-            this.vista.jtfClieDireccion.setText(direccion);
-            this.vista.jtfDireccionPedido.setText(direccion);
+            this.vista.jtfCliente.setText(modelo.obtenerNombreCliente());
+            this.vista.jtfClieRuc.setText(modelo.obtenerRucCliente());
+            this.vista.jtfClieDireccion.setText(modelo.obtenerDireccionCliente());
+            this.vista.jtfDireccionPedido.setText(modelo.obtenerDireccionCliente());
             //String telefono = this.modelo.getPedido().getCliente().getDireccion();
             this.vista.jtfClieTelefono.setText("");
             this.modelo.actualizarCliente();
@@ -351,9 +317,13 @@ public class C_verPedido extends MouseAdapter implements ActionListener, KeyList
         int opcion = JOptionPane.showConfirmDialog(vista, "¿Desea confirmas esta operación?\n Venta tipo: " + vista.jcbTipoVenta.getSelectedItem(), "Atención", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
         if (opcion == JOptionPane.YES_OPTION) {
             Integer idPedido = modelo.getPedido().getIdPedido();
-            Integer nroFactura = null;
+            int nroFactura = -1;
             E_impresionTipo tipoVenta = this.vista.jcbTipoVenta.getItemAt(this.vista.jcbTipoVenta.getSelectedIndex());
-            if (tipoVenta.getDescripcion().equals("factura")) {
+            if (tipoVenta.getDescripcion().equals(E_impresionTipo.FACTURA_STRING)) {
+                if (!modelo.validarNroFactura()) {
+                    JOptionPane.showMessageDialog(vista, "Seleccione un nro de factura", "Atención", JOptionPane.INFORMATION_MESSAGE);
+                    return;
+                }
                 nroFactura = modelo.getNroFactura();
             }
             //GUARDAR VENTA
@@ -364,15 +334,15 @@ public class C_verPedido extends MouseAdapter implements ActionListener, KeyList
             int opcion2 = JOptionPane.showConfirmDialog(vista, "¿Desea imprimir la venta?", "Atención", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
             if (opcion2 == JOptionPane.YES_OPTION) {
                 switch (tipoVenta.getDescripcion()) {
-                    case "ticket": {
+                    case E_impresionTipo.TICKET_STRING: {
                         Impresora.imprimirTicketVenta(DatosUsuario.getRol_usuario(), faca, fades);
                         break;
                     }
-                    case "factura": {
+                    case E_impresionTipo.FACTURA_STRING: {
                         Impresora.imprimirFacturaVenta(faca, fades);
                         break;
                     }
-                    case "boleta": {
+                    case E_impresionTipo.BOLETA_STRING: {
                         Impresora.imprimirBoletaVenta(faca, fades);
                         break;
                     }
@@ -394,6 +364,22 @@ public class C_verPedido extends MouseAdapter implements ActionListener, KeyList
         });
     }
 
+    public void invocarSeleccionarProducto() {
+        SeleccionarProducto sp = new SeleccionarProducto(this.vista, this);
+        sp.mostrarVista();
+    }
+
+    public void invocarSeleccionarCliente() {
+        SeleccionarCliente sc = new SeleccionarCliente(this.gestionPedido.c_inicio.vista);
+        sc.setCallback(this);
+        sc.mostrarVista();
+    }
+
+    public void invocarSeleccionarNroFactura() {
+        SeleccionarNroFactura st = new SeleccionarNroFactura(this.vista, this, modelo.obtenerTimbradoPredeterminado());
+        st.mostrarVista();
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         Object source = e.getSource();
@@ -404,12 +390,9 @@ public class C_verPedido extends MouseAdapter implements ActionListener, KeyList
         } else if (source.equals(this.vista.jcbTipoVenta)) {
             establecerTipoVenta();
         } else if (source.equals(this.vista.jbSeleccionarProducto)) {
-            SeleccionarProducto sp = new SeleccionarProducto(this);
-            sp.mostrarVista();
+            invocarSeleccionarProducto();
         } else if (source.equals(this.vista.jbCliente)) {
-            SeleccionarCliente sc = new SeleccionarCliente(this.gestionPedido.c_inicio.vista);
-            sc.setCallback(this);
-            sc.mostrarVista();
+            invocarSeleccionarCliente();
         } else if (source.equals(this.vista.jbEliminarDetalle)) {
             eliminarDetalle();
         } else if (source.equals(this.vista.jbModificarDetalle)) {
@@ -418,6 +401,8 @@ public class C_verPedido extends MouseAdapter implements ActionListener, KeyList
             imprimir();
         } else if (source.equals(this.vista.jbPagarPedido)) {
             pagarPedido();
+        } else if (source.equals(this.vista.jbNroFactura)) {
+            invocarSeleccionarNroFactura();
         } else if (source.equals(this.vista.jbSalir)) {
             cerrar();
         }
@@ -450,13 +435,10 @@ public class C_verPedido extends MouseAdapter implements ActionListener, KeyList
             cerrar();
         }
         if (e.getKeyCode() == KeyEvent.VK_F4) {
-            SeleccionarProducto sp = new SeleccionarProducto(this);
-            sp.mostrarVista();
+            invocarSeleccionarProducto();
         }
         if (e.getKeyCode() == KeyEvent.VK_F3) {
-            SeleccionarCliente sc = new SeleccionarCliente(this.gestionPedido.c_inicio.vista);
-            sc.setCallback(this);
-            sc.mostrarVista();
+            invocarSeleccionarCliente();
         }
     }
 
@@ -466,11 +448,33 @@ public class C_verPedido extends MouseAdapter implements ActionListener, KeyList
 
     @Override
     public void recibirProducto(double cantidad, double precio, double descuento, M_producto producto, String observacion) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        this.modelo.insertarPedidoDetalle(cantidad, precio, descuento, producto, observacion);
+        this.modelo.actualizarTablaPedidoDetalle();
+        this.vista.jbEliminarDetalle.setEnabled(false);
+        this.vista.jbModificarDetalle.setEnabled(false);
+        Utilities.c_packColumn.packColumns(this.vista.jtPedidoDetalle, 1);
+        sumarTotal();
     }
 
     @Override
     public void modificarProducto(int posicion, double cantidad, double precio, double descuento, M_producto producto, String observacion) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void recibirTimbrado(E_Timbrado timbrado) {
+    }
+
+    @Override
+    public void recibirTimbradoNroFactura(E_Timbrado timbrado, int nroFactura) {
+        E_impresionTipo tipoVenta = new E_impresionTipo(E_impresionTipo.FACTURA, E_impresionTipo.FACTURA_STRING);
+        modelo.getPedido().setTimbrado(timbrado);
+        modelo.getPedido().setNroFactura(nroFactura);
+        modelo.setTipoVenta(tipoVenta);
+        isJCBTrigger = false;
+        this.vista.jcbTipoVenta.setSelectedItem(tipoVenta);
+        this.vista.jtfNroFactura.setText(modelo.obtenerNroFactura());
+        this.vista.jtfNroFactura.setEnabled(true);
+        isJCBTrigger = true;
     }
 }

@@ -5,16 +5,9 @@
  */
 package bauplast.desperdicio;
 
-import Entities.E_produccionDetalle;
 import Entities.E_produccionFilm;
-import Entities.E_productoClasificacion;
-import Entities.M_producto;
-import Entities.ProductoCategoria;
 import Interface.InterfaceRecibirProduccionFilm;
-import Interface.RecibirProductoCallback;
-import ModeloTabla.SeleccionarProductoTableModel;
 import Produccion.SeleccionCantidadProductoSimple;
-import bauplast.SeleccionarProductoPorClasif;
 import bauplast.crearProductoTerminado.SeleccionarFilm;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

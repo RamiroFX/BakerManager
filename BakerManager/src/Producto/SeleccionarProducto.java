@@ -31,16 +31,6 @@ public class SeleccionarProducto {
         controlador = new C_seleccionarProducto(vista, verMesa);
     }
 
-    public SeleccionarProducto(C_crearPedido crearPedido) {
-        vista = new V_seleccionarProducto(crearPedido.vista);
-        controlador = new C_seleccionarProducto(vista, crearPedido);
-    }
-
-    public SeleccionarProducto(C_verPedido verPedido) {
-        vista = new V_seleccionarProducto(verPedido.vista);
-        controlador = new C_seleccionarProducto(vista, verPedido);
-    }
-
     public SeleccionarProducto(JDialog main, RecibirProductoCallback callback) {
         vista = new V_seleccionarProducto(main);
         controlador = new C_seleccionarProducto(vista, callback);

@@ -264,6 +264,7 @@ public class DB_Pedido {
                 + "(SELECT PEES.DESCRIPCION FROM PEDIDO_ESTADO PEES WHERE PEES.ID_PEDIDO_ESTADO = PEDI.ID_PEDIDO_ESTADO) \"ESTADO\","
                 + "PEDI.DIRECCION \"PDIRECCION\", "
                 + "PEDI.REFERENCIA, "
+                + "(SELECT TIOP.DESCRIPCION FROM TIPO_OPERACION TIOP WHERE TIOP.ID_TIPO_OPERACION = PEDI.ID_COND_VENTA) \"COND_VENTA_DESCRIPCION\","
                 + "CLIE.ID_CLIENTE, CLIE.NOMBRE, CLIE.ENTIDAD, CLIE.RUC, CLIE.RUC_IDENTIFICADOR, " + categoria + "," + tipo + ","
                 + "       CLIE.DIRECCION \"CDIRECCION\", CLIE.EMAIL, CLIE.PAG_WEB, CLIE.ID_TIPO, CLIE.ID_CATEGORIA, "
                 + "       CLIE.OBSERVACION, "
@@ -316,9 +317,12 @@ public class DB_Pedido {
 
                 E_estadoPedido ep = new E_estadoPedido();
                 ep.setId(rs.getInt("ID_PEDIDO_ESTADO"));
+                ep.setDescripcion(rs.getString("ESTADO"));
+
                 E_tipoOperacion tiop = new E_tipoOperacion();
                 tiop.setId(rs.getInt("ID_COND_VENTA"));
-                ep.setDescripcion(rs.getString("ESTADO"));
+                tiop.setDescripcion(rs.getString("COND_VENTA_DESCRIPCION"));
+
                 pedido = new M_pedidoCabecera();
                 pedido.setIdPedido(rs.getInt("ID_PEDIDO_CABECERA"));
                 pedido.setCliente(cliente);
@@ -782,10 +786,10 @@ public class DB_Pedido {
         }
     }
 
-    public static int pagarPedido(M_pedidoCabecera pedido, ArrayList<E_facturaDetalle> detalle, Integer nroFactura) {
+    public static int pagarPedido(M_pedidoCabecera pedido, List<E_facturaDetalle> detalle, int nroFactura, int idTimbrado) {
         String INSERT_DETALLE = "INSERT INTO FACTURA_DETALLE(ID_FACTURA_CABECERA, ID_PRODUCTO, CANTIDAD, PRECIO, DESCUENTO, OBSERVACION)VALUES (?, ?, ?, ?, ?, ?);";
         //LA SGBD SE ENCARGA DE INSERTAR EL TIMESTAMP.
-        String INSERT_CABECERA = "INSERT INTO FACTURA_CABECERA(ID_FUNCIONARIO, ID_CLIENTE, NRO_FACTURA, ID_COND_VENTA)VALUES (?, ?, ?, ?);";
+        String INSERT_CABECERA = "INSERT INTO FACTURA_CABECERA(ID_FUNCIONARIO, ID_CLIENTE, NRO_FACTURA, ID_COND_VENTA, ID_TIMBRADO)VALUES (?, ?, ?, ?, ?);";
 
         long sq_cabecera = -1L;
         try {
@@ -794,7 +798,7 @@ public class DB_Pedido {
             pst.setInt(1, pedido.getFuncionario().getIdFuncionario());
             pst.setInt(2, pedido.getCliente().getIdCliente());
             try {
-                if (nroFactura == null) {
+                if (nroFactura < 0) {
                     pst.setNull(3, Types.BIGINT);
                 } else {
                     pst.setInt(3, nroFactura);
@@ -803,6 +807,11 @@ public class DB_Pedido {
                 pst.setNull(3, Types.BIGINT);
             }
             pst.setInt(4, pedido.getTipoOperacion().getId());
+            if (idTimbrado < 0) {
+                pst.setNull(5, Types.BIGINT);
+            } else {
+                pst.setInt(5, idTimbrado);
+            }
             pst.executeUpdate();
             rs = pst.getGeneratedKeys();
             if (rs != null && rs.next()) {

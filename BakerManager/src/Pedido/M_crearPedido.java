@@ -4,23 +4,18 @@
  */
 package Pedido;
 
-import DB.DB_Egreso;
-import DB.DB_Ingreso;
 import DB.DB_Pedido;
 import DB.DB_Preferencia;
+import DB.DB_manager;
 import Entities.E_estadoPedido;
 import Entities.E_facturaDetalle;
 import Entities.E_impresionTipo;
 import Entities.E_tipoOperacion;
 import Entities.M_pedidoCabecera;
-import Entities.M_pedidoDetalle;
 import Entities.M_producto;
+import MenuPrincipal.DatosUsuario;
 import ModeloTabla.FacturaDetalleTableModel;
-import Parametros.PedidoEstado;
-import Parametros.TipoOperacion;
 import java.util.ArrayList;
-import java.util.Vector;
-import javax.swing.table.DefaultTableModel;
 
 /**
  *
@@ -33,6 +28,7 @@ public class M_crearPedido {
 
     public M_crearPedido() {
         this.pedido = new M_pedidoCabecera();
+        this.pedido.setFuncionario(DatosUsuario.getRol_usuario().getFuncionario());
         this.pedido.setTipoOperacion(new E_tipoOperacion(E_tipoOperacion.CONTADO, 0, "Contado"));
         this.pedido.setEstadoPedido(new E_estadoPedido(E_estadoPedido.PENDIENTE, E_estadoPedido.PENDIENTE_STRING));
         this.dtm = new FacturaDetalleTableModel();
@@ -59,8 +55,9 @@ public class M_crearPedido {
         DB_Pedido.insertarPedido(getPedido(), getDtm().getList());
     }
 
-    public Vector obtenerTipoOperacion() {
-        return DB_Egreso.obtenerTipoOperacion();
+    public ArrayList<E_tipoOperacion> obtenerTipoOperacion() {
+        ArrayList<E_tipoOperacion> list = new ArrayList<>(DB_manager.obtenerTipoOperaciones());
+        return list;
     }
 
     public ArrayList<E_impresionTipo> obtenerTipoVenta() {

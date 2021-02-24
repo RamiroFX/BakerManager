@@ -6,7 +6,6 @@ package Pedido;
 
 import Charts.Diagramas;
 import Cliente.SeleccionarCliente;
-import DB.ResultSetTableModel;
 import Entities.M_cliente;
 import Entities.M_funcionario;
 import Entities.M_menu_item;
@@ -25,11 +24,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.beans.PropertyVetoException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Vector;
 import javax.swing.JOptionPane;
 
 /**
@@ -353,9 +350,9 @@ public class C_gestionPedido implements GestionInterface, RecibirEmpleadoCallbac
         if (e.getSource().equals(this.vista.jtPedido)) {
             int row = this.vista.jtPedido.getSelectedRow();
             int columna = this.vista.jtPedido.getSelectedRow();
-            int idPedido = Integer.valueOf(String.valueOf(this.vista.jtPedido.getValueAt(row, 0) + ""));
             controlarTablaPedido();
             if ((row > -1) && (columna > -1)) {
+            int idPedido = modelo.getPedidoCabeceraTM().getList().get(row).getIdPedido();
                 String estado = String.valueOf(this.vista.jtPedido.getValueAt(row, 6));
                 if (!estado.equals("Entregado")) {
                     //this.vista.jbPagoPedido.setEnabled(true);

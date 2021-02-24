@@ -7,6 +7,7 @@ package Pedido;
 import Cliente.SeleccionarCliente;
 import Entities.E_facturaDetalle;
 import Entities.E_impuesto;
+import Entities.E_tipoOperacion;
 import Entities.M_cliente;
 import Entities.M_producto;
 import MenuPrincipal.DatosUsuario;
@@ -25,6 +26,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Vector;
@@ -64,9 +66,9 @@ public class C_crearPedido extends MouseAdapter implements ActionListener, KeyLi
     }
 
     private void inicializarVista() {
-        Vector condCompra = modelo.obtenerTipoOperacion();
-        for (int i = 0; i < condCompra.size(); i++) {
-            this.vista.jcbCondVenta.addItem(condCompra.get(i));
+        ArrayList<E_tipoOperacion> condVenta = modelo.obtenerTipoOperacion();
+        for (int i = 0; i < condVenta.size(); i++) {
+            this.vista.jcbCondVenta.addItem(condVenta.get(i));
         }
         this.vista.jcbTipoVenta.setEnabled(false);
         this.vista.jtfNroFactura.setEnabled(false);

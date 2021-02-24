@@ -5,6 +5,7 @@
 package Pedido;
 
 import Entities.E_impresionTipo;
+import Entities.E_tipoOperacion;
 import com.toedter.calendar.JDateChooser;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -34,9 +35,8 @@ public class V_crearPedido extends JDialog {
     //norte 1
     JPanel jpNorth, jpNorth1, jpNorth2;
     public JTextField jtfCliente, jtfNroFactura, jtfClieDireccion, jtfClieTelefono, jtfClieRuc;
-    public JButton jbCliente;
-    public JLabel jlNroFactura;
-    public JComboBox jcbCondVenta;
+    public JButton jbCliente, jbNroFactura;
+    public JComboBox<E_tipoOperacion> jcbCondVenta;
     public JComboBox<E_impresionTipo> jcbTipoVenta;
     //norte 2
     public JComboBox jcbHora, jcbMinuto;
@@ -77,7 +77,7 @@ public class V_crearPedido extends JDialog {
         jbCliente = new JButton("Agregar cliente[F3]");
         jtfCliente = new JTextField(30);
         jtfCliente.setEditable(false);
-        jlNroFactura = new JLabel("Nro. factura");
+        jbNroFactura = new JButton("Nro. factura");
         jtfNroFactura = new JTextField(30);
         jcbCondVenta = new JComboBox();
         jcbTipoVenta = new JComboBox();
@@ -95,7 +95,7 @@ public class V_crearPedido extends JDialog {
         jpCondVenta.add(jcbCondVenta);
         jpNorth1.add(jbCliente);
         jpNorth1.add(jtfCliente);
-        jpNorth1.add(jlNroFactura);
+        jpNorth1.add(jbNroFactura);
         jpNorth1.add(jtfNroFactura);
         jpNorth1.add(jpCondVenta);
         jpNorth1.add(jpTiop, "wrap");
