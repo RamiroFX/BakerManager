@@ -8,6 +8,7 @@ import Entities.E_Divisa;
 import Entities.E_Empresa;
 import Entities.E_Marca;
 import Entities.E_banco;
+import Entities.E_estadoPedido;
 import Entities.E_formaPago;
 import Entities.E_impuesto;
 import Entities.E_tipoCheque;
@@ -1568,23 +1569,39 @@ public class DB_manager {
         return tiopList;
     }
 
-    /*
-    public static Vector obtenerTipoVenta() {
-        Vector tipoVenta = null;
-        String q = "SELECT descripcion  "
-                + "FROM impresion_tipo ";
+    public static ArrayList<E_estadoPedido> obtenerPedidoEstados() {
+        ArrayList<E_estadoPedido> list = null;
+        String q = "SELECT *  "
+                + "FROM PEDIDO_ESTADO ";
         try {
-            st = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            st = DB_manager.getConection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             rs = st.executeQuery(q);
-            tipoVenta = new Vector();
+            list = new ArrayList();
             while (rs.next()) {
-                tipoVenta.add(rs.getString("descripcion"));
+                E_estadoPedido estados = new E_estadoPedido();
+                estados.setId(rs.getInt("id_pedido_estado"));
+                estados.setDescripcion(rs.getString("descripcion"));
+                list.add(estados);
             }
         } catch (SQLException ex) {
-            ex.printStackTrace();
+            Logger lgr = Logger.getLogger(DB_manager.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (st != null) {
+                    st.close();
+                }
+            } catch (SQLException ex) {
+                Logger lgr = Logger.getLogger(DB_manager.class.getName());
+                lgr.log(Level.WARNING, ex.getMessage(), ex);
+            }
         }
-        return tipoVenta;
-    }*/
+        return list;
+    }
+
     public static E_Empresa obtenerDatosEmpresa() {
         E_Empresa e = null;
         String Query = "SELECT id_empresa, razon_social, nombre_fantasia, "

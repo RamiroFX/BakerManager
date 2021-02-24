@@ -82,8 +82,8 @@ public class M_historialFacturacion {
         if (cabecera.getCliente().getIdCliente() != null) {
             idCliente = cabecera.getCliente().getIdCliente();
         }
-        if (cabecera.getFuncionario().getId_funcionario() != null) {
-            idFuncionario = cabecera.getFuncionario().getId_funcionario();
+        if (cabecera.getFuncionario().getIdFuncionario() != null) {
+            idFuncionario = cabecera.getFuncionario().getIdFuncionario();
         }
         if (cabecera.getNroFactura() > 0) {
             nroFactura = cabecera.getNroFactura();

@@ -32,7 +32,7 @@ public class M_gestionProduccion {
 
     public M_gestionProduccion() {
         this.funcionario = new M_funcionario();
-        this.funcionario.setId(-1);
+        this.funcionario.setIdFuncionario(-1);
         this.produccionCabeceraTM = new ProduccionCabeceraTableModel();
         this.produccionDetalleTM = new ProduccionDetalleTableModel(ProduccionDetalleTableModel.SIMPLE);
     }
@@ -62,7 +62,7 @@ public class M_gestionProduccion {
     }
 
     public void borrarDatos() {
-        this.funcionario.setId(-1);
+        this.funcionario.setIdFuncionario(-1);
         getProduccionDetalleTM().vaciarLista();
         getProduccionCabeceraTM().vaciarLista();
 
@@ -91,7 +91,7 @@ public class M_gestionProduccion {
         calendarFinal.set(Calendar.MINUTE, 59);
         calendarFinal.set(Calendar.SECOND, 59);
         calendarFinal.set(Calendar.MILLISECOND, 999);
-        getProduccionCabeceraTM().setList(DB_Produccion.consultarProduccion(calendarInicio.getTime(), calendarFinal.getTime(), prodTipo.getId(), nroPedido, estado.getId(), funcionario.getId_funcionario(), conFecha));
+        getProduccionCabeceraTM().setList(DB_Produccion.consultarProduccion(calendarInicio.getTime(), calendarFinal.getTime(), prodTipo.getId(), nroPedido, estado.getId(), funcionario.getIdFuncionario(), conFecha));
     }
 
     public ArrayList<E_produccionTipo> obtenerProduccionTipo() {

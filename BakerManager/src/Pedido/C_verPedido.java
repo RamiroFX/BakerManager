@@ -121,18 +121,18 @@ public class C_verPedido extends MouseAdapter implements ActionListener, KeyList
             this.vista.jcbCondVenta.setEnabled(false);
             this.vista.jcbTipoVenta.setEnabled(false);
             this.vista.jbPagarPedido.setEnabled(false);
-            if (modelo.getPedido().getIdFacturaCabecera() != null) {
-                int idFaca = modelo.getPedido().getIdFacturaCabecera();
-                M_facturaCabecera faca = DB_Ingreso.obtenerIngresoCabeceraCompleto(idFaca);
-                if (faca.getNroFactura() != null) {
-                    if (faca.getNroFactura() > 0) {
-                        this.vista.jtfNroFactura.setText(faca.getNroFactura() + "");
-                        this.vista.jcbTipoVenta.setSelectedIndex(1);
-                    } else {
-                        this.vista.jcbTipoVenta.setSelectedIndex(0);
-                    }
-                }
-            }
+//            if (modelo.getPedido().getIdFacturaCabecera() != null) {
+//                int idFaca = modelo.getPedido().getIdFacturaCabecera();
+//                M_facturaCabecera faca = DB_Ingreso.obtenerIngresoCabeceraCompleto(idFaca);
+//                if (faca.getNroFactura() != null) {
+//                    if (faca.getNroFactura() > 0) {
+//                        this.vista.jtfNroFactura.setText(faca.getNroFactura() + "");
+//                        this.vista.jcbTipoVenta.setSelectedIndex(1);
+//                    } else {
+//                        this.vista.jcbTipoVenta.setSelectedIndex(0);
+//                    }
+//                }
+//            }
         }
         sumarTotal();
     }

@@ -48,7 +48,7 @@ public class M_resumen {
         cal.set(Calendar.MILLISECOND, 250);
         this.inicio = cal.getTime();
         this.rstm = DB_Egreso.consultarResumenEgreso(new Timestamp(this.inicio.getTime()), new Timestamp(this.fin.getTime()));
-        this.egresoDetalles = DB_Egreso.obtenerEgresosDetalle(this.egresoCabecera.getProveedor().getEntidad(), this.egresoCabecera.getId_cabecera(), this.egresoCabecera.getFuncionario().getId_funcionario().toString(), new Timestamp(this.inicio.getTime()).toString(), new Timestamp(this.fin.getTime()).toString(), this.egresoCabecera.getCondVenta());
+        this.egresoDetalles = DB_Egreso.obtenerEgresosDetalle(this.egresoCabecera.getProveedor().getEntidad(), this.egresoCabecera.getId_cabecera(), this.egresoCabecera.getFuncionario().getIdFuncionario().toString(), new Timestamp(this.inicio.getTime()).toString(), new Timestamp(this.fin.getTime()).toString(), this.egresoCabecera.getCondVenta());
     }
 
     public M_resumen(C_gestionPedido gestionPedido) {

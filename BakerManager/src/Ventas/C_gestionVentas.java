@@ -288,7 +288,7 @@ public class C_gestionVentas implements GestionInterface, RecibirEmpleadoCallbac
         if (vista.jtfEmpleado.getText().isEmpty()) {
             return "Todos";
         }
-        return modelo.cabecera.getFuncionario().getId_funcionario().toString();
+        return modelo.cabecera.getFuncionario().getIdFuncionario().toString();
     }
 
     private M_cliente cliente() {

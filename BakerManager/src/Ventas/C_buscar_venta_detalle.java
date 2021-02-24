@@ -97,7 +97,7 @@ public class C_buscar_venta_detalle extends MouseAdapter implements ActionListen
         if (vista.jtfFuncionario.getText().isEmpty()) {
             return "Todos";
         }
-        return funcionario.getId_funcionario().toString();
+        return funcionario.getIdFuncionario().toString();
     }
 
     private String cliente() {

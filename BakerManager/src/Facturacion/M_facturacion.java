@@ -63,7 +63,7 @@ public class M_facturacion {
     }
 
     public boolean facturar(ArrayList<E_facturaCabecera> facalist, int nroFactura, int idTipoOperacion) {
-        int idFuncionario = DatosUsuario.getRol_usuario().getFuncionario().getId_funcionario();
+        int idFuncionario = DatosUsuario.getRol_usuario().getFuncionario().getIdFuncionario();
         DB_Ingreso.facturarVentas(facalist, idFuncionario, entidad, nroFactura, idTipoOperacion);
         return true;
     }

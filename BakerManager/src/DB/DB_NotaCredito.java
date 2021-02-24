@@ -305,7 +305,7 @@ public class DB_NotaCredito {
             pst.setInt(1, cabecera.getNroNotaCredito());
             pst.setInt(2, cabecera.getFacturaCabecera().getIdFacturaCabecera());
             pst.setInt(3, cabecera.getCliente().getIdCliente());
-            pst.setInt(4, cabecera.getFuncionario().getId_funcionario());
+            pst.setInt(4, cabecera.getFuncionario().getIdFuncionario());
             pst.setTimestamp(5, new Timestamp(cabecera.getTiempo().getTime()));
             pst.setInt(6, Estado.ACTIVO);//ESTADO ACTIVO
             pst.executeUpdate();

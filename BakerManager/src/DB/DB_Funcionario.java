@@ -78,7 +78,7 @@ public class DB_Funcionario {
             System.out.println("insertarFuncionario(): Asignando roles");
             for (int i = 0; i < rol.size(); i++) {
                 M_rol _rol = (M_rol) rol.get(i);
-                String as = "INSERT INTO ROL_USUARIO (ID_ROL,ID_FUNCIONARIO)VALUES(" + _rol.getId() + ",+" + funcionario.getId_funcionario() + ")";
+                String as = "INSERT INTO ROL_USUARIO (ID_ROL,ID_FUNCIONARIO)VALUES(" + _rol.getId() + ",+" + funcionario.getIdFuncionario() + ")";
                 pst = DB_manager.getConection().prepareStatement(as, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
                 pst.executeUpdate();
                 pst.close();
@@ -324,7 +324,7 @@ public class DB_Funcionario {
             DB_manager.habilitarTransaccionManual();
             pst = DB_manager.getConection().prepareStatement(INSERT_PERSONA);
             pst.setInt(1, rol.getId());
-            pst.setInt(2, funcionario.getId_funcionario());
+            pst.setInt(2, funcionario.getIdFuncionario());
             pst.executeUpdate();
             rs.close();
             pst.close();
@@ -377,7 +377,7 @@ public class DB_Funcionario {
                 f.setId_persona(rs.getInt("id_persona"));
                 f.setCedula(rs.getInt("ci"));
                 f.setEstado_civil(rs.getString("estado_civil"));
-                f.setId(rs.getInt("id_funcionario"));
+                f.setIdFuncionario(rs.getInt("id_funcionario"));
                 f.setObservacion(rs.getString("OBSERVACION"));
             }
         } catch (SQLException ex) {
@@ -430,7 +430,7 @@ public class DB_Funcionario {
                 f.setId_persona(rs.getInt("id_persona"));
                 f.setCedula(rs.getInt("ci"));
                 f.setEstado_civil(rs.getString("estado_civil"));
-                f.setId(rs.getInt("id_funcionario"));
+                f.setIdFuncionario(rs.getInt("id_funcionario"));
                 f.setObservacion(rs.getString("OBSERVACION"));
             }
         } catch (SQLException ex) {
@@ -739,7 +739,7 @@ public class DB_Funcionario {
      * UPDATE
      */
     public static void actualizarFuncionario(M_funcionario funcionario) {
-        System.out.println("actualizarFuncionario: " + funcionario.getId_funcionario());
+        System.out.println("actualizarFuncionario: " + funcionario.getIdFuncionario());
         String id_ciudad = "SELECT ID_CIUDAD FROM CIUDAD WHERE DESCRIPCION LIKE'" + funcionario.getCiudad() + "'";
         String id_pais = "SELECT ID_PAIS FROM PAIS WHERE DESCRIPCION LIKE'" + funcionario.getPais() + "'";
         String id_estado_civil = "SELECT ID_ESTADO_CIVIL FROM ESTADO_CIVIL WHERE DESCRIPCION LIKE'" + funcionario.getEstado_civil() + "'";
@@ -838,7 +838,7 @@ public class DB_Funcionario {
             } catch (Exception e) {
                 pst.setNull(7, Types.VARCHAR);
             }
-            pst.setInt(8, funcionario.getId_funcionario());
+            pst.setInt(8, funcionario.getIdFuncionario());
             pst.executeUpdate();
             pst = DB_manager.getConection().prepareStatement(UPDATE_PERSONA);
             try {
@@ -941,13 +941,13 @@ public class DB_Funcionario {
      * DELETE
      */
     public static void eliminarFuncionario(M_funcionario funcionario) {
-        System.out.println("eliminarFuncionario: " + funcionario.getId_funcionario());
+        System.out.println("eliminarFuncionario: " + funcionario.getIdFuncionario());
         String deleteFuncionario = "DELETE FROM  funcionario "
-                + " WHERE id_funcionario = " + funcionario.getId_funcionario() + "";
+                + " WHERE id_funcionario = " + funcionario.getIdFuncionario() + "";
         //String idPersona="(SELECT ID_PERSONA FROM PERSONA,FUNCIONARIO WHERE ID_PERSONA = ID_PERSONA AND ID_FUNCIONARIO ="+funcionario+")";
         String deletePersona = "DELETE FROM  persona "
                 + " WHERE id_persona =" + funcionario.getId_persona();
-        String borrarPermisos = "DELETE FROM ROL_USUARIO WHERE ID_FUNCIONARIO = " + funcionario.getId_funcionario();
+        String borrarPermisos = "DELETE FROM ROL_USUARIO WHERE ID_FUNCIONARIO = " + funcionario.getIdFuncionario();
 
         String borrarUSUARIO = "DROP USER " + funcionario.getAlias() + " CASCADE ";
 
@@ -1139,7 +1139,7 @@ public class DB_Funcionario {
                 f.setId_persona(rs.getInt("id_persona"));
                 f.setCedula(rs.getInt("ci"));
                 f.setEstado_civil(rs.getString("estado_civil"));
-                f.setId(rs.getInt("id_funcionario"));
+                f.setIdFuncionario(rs.getInt("id_funcionario"));
                 f.setObservacion(rs.getString("OBSERVACION"));
                 //f.setRol(obtenerRolesFuncionario(f));
             }
@@ -1169,7 +1169,7 @@ public class DB_Funcionario {
             DB_manager.habilitarTransaccionManual();
             pst = DB_manager.getConection().prepareStatement(DELETE_ROL_USUARIO);
             pst.setInt(1, rol.getId());
-            pst.setInt(2, m_funcionario.getId_funcionario());
+            pst.setInt(2, m_funcionario.getIdFuncionario());
             pst.executeUpdate();
             DB_manager.establecerTransaccion();
         } catch (SQLException ex) {
@@ -1337,11 +1337,11 @@ public class DB_Funcionario {
     public static int eliminarFuncionarioFX(M_funcionario funcionario) {
         int result = 0;
         String DELETE_FUNCIONARIO = "DELETE FROM  funcionario "
-                + " WHERE id_funcionario = " + funcionario.getId_funcionario() + "";
+                + " WHERE id_funcionario = " + funcionario.getIdFuncionario() + "";
         //String idPersona="(SELECT ID_PERSONA FROM PERSONA,FUNCIONARIO WHERE ID_PERSONA = ID_PERSONA AND ID_FUNCIONARIO ="+funcionario+")";
         String DELETE_PERSONA = "DELETE FROM  persona "
                 + " WHERE id_persona =" + funcionario.getId_persona();
-        String DELETE_ROL_USUARIO = "DELETE FROM ROL_USUARIO WHERE ID_FUNCIONARIO = " + funcionario.getId_funcionario();
+        String DELETE_ROL_USUARIO = "DELETE FROM ROL_USUARIO WHERE ID_FUNCIONARIO = " + funcionario.getIdFuncionario();
 
 
         try {

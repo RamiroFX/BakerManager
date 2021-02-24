@@ -47,8 +47,8 @@ public class M_facturaCabecera {
     public void setFuncionario(M_funcionario funcionario) {
         this.funcionario = funcionario;
         if (funcionario != null) {
-            if (funcionario.getId_funcionario() != null) {
-                setIdFuncionario(funcionario.getId_funcionario());
+            if (funcionario.getIdFuncionario() != null) {
+                setIdFuncionario(funcionario.getIdFuncionario());
             }
         }
     }

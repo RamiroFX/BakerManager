@@ -167,7 +167,7 @@ public class C_cajaDetalle implements GestionInterface, RecibirEmpleadoCallback,
                     JOptionPane.showMessageDialog(vista, "La fecha inicio debe ser menor que fecha final", "Atención", JOptionPane.WARNING_MESSAGE);
                     return;
                 }
-                int idFuncionario = modelo.getFuncionario().getId_funcionario();
+                int idFuncionario = modelo.getFuncionario().getIdFuncionario();
                 modelo.buscarMovimientos(idFuncionario, inicio, fin);
                 actualizarSumaVentas();
                 actualizarSumaCompras();

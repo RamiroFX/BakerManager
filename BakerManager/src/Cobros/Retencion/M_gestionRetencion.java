@@ -26,7 +26,7 @@ public class M_gestionRetencion {
 
     public M_gestionRetencion() {
         this.cabecera = new E_retencionVenta();
-        this.cabecera.getFuncionario().setId(-1);
+        this.cabecera.getFuncionario().setIdFuncionario(-1);
         this.cabecera.getVenta().getCliente().setIdCliente(-1);
         this.tmCabecera = new RetencionVentaTableModel();
     }
@@ -49,7 +49,7 @@ public class M_gestionRetencion {
 
     public void borrarDatos() {
         this.cabecera.getFuncionario().setNombre("");
-        this.cabecera.getFuncionario().setId(-1);
+        this.cabecera.getFuncionario().setIdFuncionario(-1);
         this.cabecera.getVenta().getCliente().setEntidad("");
         this.cabecera.getVenta().getCliente().setIdCliente(-1);
     }
@@ -86,7 +86,7 @@ public class M_gestionRetencion {
         calendarFinal.set(Calendar.MILLISECOND, 999);
         int idEstado = estado.getId();
         int idCliente = getCabecera().getVenta().getCliente().getIdCliente();
-        int idFuncionario = getCabecera().getFuncionario().getId_funcionario();
+        int idFuncionario = getCabecera().getFuncionario().getIdFuncionario();
         return DB_Cobro.obtenerRetenciones(idCliente, idFuncionario, nroRetencion,
                 calendarInicio.getTime(), calendarFinal.getTime(), idEstado, conFecha);
 

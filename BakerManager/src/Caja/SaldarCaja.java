@@ -187,7 +187,7 @@ public class SaldarCaja implements ActionListener, KeyListener, InterfaceCajaMov
         this.tbmDepositar.setArqueoCajaList(arqueoDeposito);
         this.tbmDepositar.updateTable();
         Utilities.c_packColumn.packColumns(this.vista.jtDepositar, 1);
-        int idFuncionario = DatosUsuario.getRol_usuario().getFuncionario().getId_funcionario();
+        int idFuncionario = DatosUsuario.getRol_usuario().getFuncionario().getIdFuncionario();
         movimientosCaja = new MovimientosCaja();
         movimientosCaja.setMovimientoVentas((ArrayList<E_facturaCabecera>) DB_Ingreso.obtenerMovimientoVentasCabeceras(idFuncionario, -1, fechaInicio, fechaFin, -1));
         movimientosCaja.setMovimientoCompras((ArrayList<M_egresoCabecera>) DB_Egreso.obtenerMovimientoComprasCabeceras(idFuncionario, -1, -1, fechaInicio, fechaFin));
@@ -265,7 +265,7 @@ public class SaldarCaja implements ActionListener, KeyListener, InterfaceCajaMov
                     javax.swing.JOptionPane.OK_OPTION);
             return;
         }
-        int idFuncionario = DatosUsuario.getRol_usuario().getFuncionario().getId_funcionario();
+        int idFuncionario = DatosUsuario.getRol_usuario().getFuncionario().getIdFuncionario();
         Caja caja = new Caja();
         try {
             caja.setIdEmpleadoApertura(idFuncionario);

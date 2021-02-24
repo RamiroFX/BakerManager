@@ -59,7 +59,7 @@ public class M_verIngreso {
         this.setFaca(DB_Ingreso.obtenerIngresoCabeceraID(getIdIngresoCabecera()));
         setCliente(DB_Cliente.obtenerDatosClienteID(getFaca().getIdCliente()));
         M_funcionario funcionario = DB_Funcionario.obtenerDatosFuncionarioID(getFaca().getIdFuncionario());
-        M_funcionario vendedor = DB_Funcionario.obtenerDatosFuncionarioID(getFaca().getVendedor().getId_funcionario());
+        M_funcionario vendedor = DB_Funcionario.obtenerDatosFuncionarioID(getFaca().getVendedor().getIdFuncionario());
         int idTimbradoAux = getFaca().getIdTimbrado();
         if (idTimbradoAux > 0) {
             getFaca().setTimbrado(DB_Timbrado.obtenerTimbrado(idTimbradoAux));

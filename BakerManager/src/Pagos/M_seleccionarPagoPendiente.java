@@ -23,7 +23,7 @@ public class M_seleccionarPagoPendiente {
 
     public M_seleccionarPagoPendiente(int idProveedor) {
         this.facturaCabecera = new M_egresoCabecera();
-        this.facturaCabecera.getFuncionario().setId(-1);
+        this.facturaCabecera.getFuncionario().setIdFuncionario(-1);
         this.facturaCabecera.getProveedor().setId(idProveedor);
         this.tm = new EgresoSinPagoTableModel();
     }
@@ -42,7 +42,7 @@ public class M_seleccionarPagoPendiente {
     }
 
     public void borrarDatos() {
-        this.facturaCabecera.getFuncionario().setId(-1);
+        this.facturaCabecera.getFuncionario().setIdFuncionario(-1);
         this.facturaCabecera.getProveedor().setId(-1);
     }
 

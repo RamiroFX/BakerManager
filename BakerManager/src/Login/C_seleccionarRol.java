@@ -57,7 +57,7 @@ public class C_seleccionarRol implements ActionListener, KeyListener {
     private void agregarPermisosYProceder() {
         vista.dispose();
         c_inicio.modelo.getRol_usuario().getFuncionario().setOcupacion((String) vista.jcbRol.getSelectedItem());
-        c_inicio.setRol_usuario(DB_rol_usuario.obtenerRolUsuario(c_inicio.modelo.getRol_usuario().getFuncionario().getId_funcionario()));
+        c_inicio.setRol_usuario(DB_rol_usuario.obtenerRolUsuario(c_inicio.modelo.getRol_usuario().getFuncionario().getIdFuncionario()));
         c_inicio.getRol_usuario().setRolActual(DB_rol.obtenerRol((String) vista.jcbRol.getSelectedItem()));
         c_inicio.getRol_usuario().setAccesos(DB_rol.obtenerAccesos(c_inicio.getRol_usuario().getRolActual().getId()));
         DatosUsuario.setRol_usuario(c_inicio.getRol_usuario());

@@ -28,7 +28,7 @@ public class M_gestionTimbrado {
 
     public M_gestionTimbrado() {
         this.cabecera = new E_Timbrado();
-        this.cabecera.getCreador().setId(-1);
+        this.cabecera.getCreador().setIdFuncionario(-1);
         this.tmCabecera = new TimbradoVentaTableModel();
         this.tipoFechas = new ArrayList();
         this.tipoFechas.add("Fecha vencimiento");
@@ -53,7 +53,7 @@ public class M_gestionTimbrado {
 
     public void borrarDatos() {
         this.cabecera.getCreador().setNombre("");
-        this.cabecera.getCreador().setId(-1);
+        this.cabecera.getCreador().setIdFuncionario(-1);
     }
 
     String obtenerNombreFuncionario() {
@@ -88,7 +88,7 @@ public class M_gestionTimbrado {
         calendarFinal.set(Calendar.SECOND, 59);
         calendarFinal.set(Calendar.MILLISECOND, 999);
         int idEstado = estado.getId();
-        int idFuncionario = getCabecera().getCreador().getId_funcionario();
+        int idFuncionario = getCabecera().getCreador().getIdFuncionario();
         return DB_Timbrado.obtenerTimbrados(idFuncionario, nroTimbrado, calendarInicio.getTime(), calendarFinal.getTime(), tipoFecha, idEstado, conFecha);
     }
 

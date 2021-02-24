@@ -565,7 +565,7 @@ public class DB_Egreso {
                 proveedor.setEmail(rs.getString(7));
                 proveedor.setPagWeb(rs.getString(8));
                 proveedor.setObservacion(rs.getString(9));
-                funcionario.setId(rs.getInt(17));
+                funcionario.setIdFuncionario(rs.getInt(17));
                 funcionario.setId_persona(rs.getInt(18));
                 funcionario.setAlias(rs.getString(19));
                 funcionario.setFecha_ingreso(rs.getDate(20));
@@ -1070,7 +1070,7 @@ public class DB_Egreso {
                 pst.setInt(1, egreso_cabecera.getNro_factura());
             }
             pst.setInt(2, egreso_cabecera.getProveedor().getId());
-            pst.setInt(3, egreso_cabecera.getFuncionario().getId_funcionario());
+            pst.setInt(3, egreso_cabecera.getFuncionario().getIdFuncionario());
             pst.setTimestamp(4, egreso_cabecera.getTiempo());
             pst.setInt(5, egreso_cabecera.getId_condVenta());
             if (egreso_cabecera.getTimbrado().getNroTimbrado() < 1) {

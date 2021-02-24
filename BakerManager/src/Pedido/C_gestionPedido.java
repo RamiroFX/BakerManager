@@ -15,6 +15,8 @@ import MenuPrincipal.DatosUsuario;
 import Resumen.Resumen;
 import bakermanager.C_inicio;
 import Empleado.SeleccionarFuncionario;
+import Entities.E_estadoPedido;
+import Entities.E_tipoOperacion;
 import Interface.RecibirClienteCallback;
 import Interface.RecibirEmpleadoCallback;
 import Utilities.MyColorCellRenderer;
@@ -50,16 +52,15 @@ public class C_gestionPedido implements GestionInterface, RecibirEmpleadoCallbac
 
     @Override
     public final void inicializarVista() {
+        this.vista.jtPedido.setModel(modelo.getPedidoCabeceraTM());
         this.vista.jtPedidoDetalle.setModel(modelo.getPedidoDetalleTM());
         this.vista.jbDetalle.setEnabled(false);
         this.vista.jbBuscarDetalle.setEnabled(false);
-        Vector condCompra = modelo.obtenerTipoOperacion();
-        this.vista.jcbCondVenta.addItem("Todos");
+        ArrayList<E_tipoOperacion> condCompra = modelo.obtenerTipoOperacion();
         for (int i = 0; i < condCompra.size(); i++) {
             this.vista.jcbCondVenta.addItem(condCompra.get(i));
         }
-        Vector estadoPedido = modelo.obtenerEstado();
-        this.vista.jcbEstadoPedido.addItem("Todos");
+        ArrayList<E_estadoPedido> estadoPedido = modelo.obtenerEstado();
         for (int i = 0; i < estadoPedido.size(); i++) {
             this.vista.jcbEstadoPedido.addItem(estadoPedido.get(i));
         }
@@ -168,29 +169,49 @@ public class C_gestionPedido implements GestionInterface, RecibirEmpleadoCallbac
         }
     }
 
+    private int obtenerNroPedido() {
+        String nroPedido = vista.jtfNroPedido.getText().trim();
+        int value = -1;
+        if (nroPedido.isEmpty()) {
+            return value;
+        }
+        try {
+            value = Integer.valueOf(nroPedido);
+        } catch (Exception e) {
+            return -1;
+        }
+        if (value > 0) {
+            return value;
+        } else {
+            return -1;
+        }
+    }
+
     private void displayQueryResults() {
         EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
                 Date inicio = vista.jddInicio.getDate();
                 Date fin = vista.jddFinal.getDate();
-                if (modelo.validarFechas(inicio, fin)) {
-                    boolean esTiempoRecepcionOEntrega = true;
-                    SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-                    String fecha_inicio = sdf.format(vista.jddInicio.getDate()) + " 00:00:00.00";
-                    String fecha_fin = sdf.format(vista.jddFinal.getDate()) + " 23:59:59.00";
-                    String nroPedido = vista.jtfNroPedido.getText();
-                    String conVenta = vista.jcbCondVenta.getSelectedItem().toString();
-                    String estado = vista.jcbEstadoPedido.getSelectedItem().toString();
-                    vista.jtPedido.setModel(modelo.obtenerPedidos(esTiempoRecepcionOEntrega, fecha_inicio, fecha_fin, conVenta, nroPedido, estado));
-                    modelo.setRstmPedido((ResultSetTableModel) vista.jtPedido.getModel());
-                    Utilities.c_packColumn.packColumns(vista.jtPedido, 1);
-                    vista.jbDetalle.setEnabled(false);
-                } else {
+                if (!modelo.validarFechas(inicio, fin)) {
                     vista.jddFinal.setDate(vista.jddInicio.getDate());
                     vista.jddFinal.updateUI();
                     JOptionPane.showMessageDialog(vista, "La fecha inicio debe ser menor que fecha final", "Atención", JOptionPane.WARNING_MESSAGE);
+                    return;
                 }
+                boolean conFecha = true;
+                boolean esTiempoRecepcionOEntrega = true;
+                Date fechaInicio = vista.jddInicio.getDate();
+                Date fechaFin = vista.jddFinal.getDate();
+                int condVentaIndex = vista.jcbCondVenta.getSelectedIndex();
+                int estadoIndex = vista.jcbEstadoPedido.getSelectedIndex();
+                int idPedido = obtenerNroPedido();
+                int idEstado = vista.jcbEstadoPedido.getItemAt(estadoIndex).getId();
+                int idCondVenta = vista.jcbCondVenta.getItemAt(condVentaIndex).getId();
+                modelo.obtenerPedidos(conFecha, esTiempoRecepcionOEntrega, fechaInicio, fechaFin, idCondVenta, idPedido, idEstado);
+                Utilities.c_packColumn.packColumns(vista.jtPedido, 1);
+                vista.jbDetalle.setEnabled(false);
+
             }
         });
     }

@@ -30,7 +30,7 @@ public class M_gestionNotasCredito {
 
     public M_gestionNotasCredito() {
         this.cabecera = new E_NotaCreditoCabecera();
-        this.cabecera.getFuncionario().setId(-1);
+        this.cabecera.getFuncionario().setIdFuncionario(-1);
         this.cabecera.getCliente().setIdCliente(-1);
         this.tmCabecera = new NotaCreditoCabeceraTableModel();
         this.tmDetalle = new NotaCreditoDetalleTableModel();
@@ -79,7 +79,7 @@ public class M_gestionNotasCredito {
 
     public void borrarDatos() {
         this.cabecera.getFuncionario().setNombre("");
-        this.cabecera.getFuncionario().setId(-1);
+        this.cabecera.getFuncionario().setIdFuncionario(-1);
         this.cabecera.getCliente().setEntidad("");
         this.cabecera.getCliente().setIdCliente(-1);
     }

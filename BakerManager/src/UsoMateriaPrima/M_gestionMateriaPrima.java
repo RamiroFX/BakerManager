@@ -28,7 +28,7 @@ public class M_gestionMateriaPrima {
 
     public M_gestionMateriaPrima() {
         this.funcionario = new M_funcionario();
-        this.funcionario.setId(-1);
+        this.funcionario.setIdFuncionario(-1);
         this.utilizacionMPCabeceraTM = new UtilizacionMPCabeceraTableModel();
         this.utilizacionMPDetalleTM = new UtilizacionMPDetalleTableModel();
     }
@@ -58,7 +58,7 @@ public class M_gestionMateriaPrima {
     }
 
     public void borrarDatos() {
-        this.funcionario.setId(-1);
+        this.funcionario.setIdFuncionario(-1);
         getUtilizacionMPDetalleTM().vaciarLista();
         getUtilizacionMPCabeceraTM().vaciarLista();
 
@@ -83,7 +83,7 @@ public class M_gestionMateriaPrima {
         calendarFinal.set(Calendar.MINUTE, 59);
         calendarFinal.set(Calendar.SECOND, 59);
         calendarFinal.set(Calendar.MILLISECOND, 999);
-        getUtilizacionMPCabeceraTM().setList(DB_UtilizacionMateriaPrima.consultarUtilizacionMateriaCabeceras(calendarInicio.getTime(), calendarFinal.getTime(), nroPedido, estado.getId(), funcionario.getId_funcionario()));
+        getUtilizacionMPCabeceraTM().setList(DB_UtilizacionMateriaPrima.consultarUtilizacionMateriaCabeceras(calendarInicio.getTime(), calendarFinal.getTime(), nroPedido, estado.getId(), funcionario.getIdFuncionario()));
         return getUtilizacionMPCabeceraTM();
     }
 

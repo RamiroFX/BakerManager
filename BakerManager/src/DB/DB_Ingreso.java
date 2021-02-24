@@ -744,7 +744,7 @@ public class DB_Ingreso {
             }
             pst.setInt(5, cabecera.getIdTimbrado());
             pst.setTimestamp(6, cabecera.getTiempo());
-            pst.setInt(7, cabecera.getVendedor().getId_funcionario());
+            pst.setInt(7, cabecera.getVendedor().getIdFuncionario());
             pst.executeUpdate();
             rs = pst.getGeneratedKeys();
             if (rs != null && rs.next()) {
@@ -851,7 +851,7 @@ public class DB_Ingreso {
                 ingreso_cabecera.setNroFactura(rs.getInt("NRO_FACTURA"));
                 ingreso_cabecera.setTiempo(rs.getTimestamp("TIEMPO"));
                 ingreso_cabecera.setIdTimbrado(rs.getInt("ID_TIMBRADO"));
-                ingreso_cabecera.getVendedor().setId(rs.getInt("ID_VENDEDOR"));
+                ingreso_cabecera.getVendedor().setIdFuncionario(rs.getInt("ID_VENDEDOR"));
                 ingreso_cabecera.setIdTimbrado(rs.getInt("ID_TIMBRADO"));
                 ingreso_cabecera.setTiempoRegistro(rs.getTimestamp("TIEMPO_REGISTRO"));
             }
@@ -941,7 +941,7 @@ public class DB_Ingreso {
                 E_tipoOperacion tipoOperacion = new E_tipoOperacion();
                 tipoOperacion.setId(rs.getInt("ID_COND_VENTA"));
                 M_funcionario funcionario = new M_funcionario();
-                funcionario.setId(rs.getInt("ID_FUNCIONARIO"));
+                funcionario.setIdFuncionario(rs.getInt("ID_FUNCIONARIO"));
                 facturaCabecera = new E_facturaCabecera();
                 facturaCabecera.setIdFacturaCabecera(rs.getInt("ID_FACTURA_CABECERA"));
                 facturaCabecera.setCliente(cliente);
@@ -1345,7 +1345,7 @@ public class DB_Ingreso {
         try {
             DB_manager.getConection().setAutoCommit(false);
             pst = DB_manager.getConection().prepareStatement(INSERT_MESA, PreparedStatement.RETURN_GENERATED_KEYS);
-            pst.setInt(1, mesa.getFuncionario().getId_funcionario());
+            pst.setInt(1, mesa.getFuncionario().getIdFuncionario());
             pst.setInt(2, mesa.getCliente().getIdCliente());
             pst.setInt(3, mesa.getIdCondVenta());
             pst.setInt(4, mesa.getNumeroMesa());
@@ -1448,7 +1448,7 @@ public class DB_Ingreso {
                 f.setId_persona(rs.getInt("id_persona"));
                 f.setCedula(rs.getInt("ci"));
                 f.setEstado_civil(rs.getString("estado_civil"));
-                f.setId(rs.getInt("id_funcionario"));
+                f.setIdFuncionario(rs.getInt("id_funcionario"));
                 f.setObservacion(rs.getString("FOBSERVACION"));
 
                 M_cliente cliente = new M_cliente();
@@ -1498,7 +1498,7 @@ public class DB_Ingreso {
         try {
             DB_manager.habilitarTransaccionManual();
             pst = DB_manager.getConection().prepareStatement(UPDATE_MESA);
-            pst.setInt(1, mesa.getFuncionario().getId_funcionario());
+            pst.setInt(1, mesa.getFuncionario().getIdFuncionario());
             pst.setInt(2, mesa.getCliente().getIdCliente());
             pst.setInt(3, mesa.getNumeroMesa());
             pst.setInt(4, mesa.getIdCondVenta());
@@ -1686,7 +1686,7 @@ public class DB_Ingreso {
         try {
             DB_manager.getConection().setAutoCommit(false);
             pst = DB_manager.getConection().prepareStatement(INSERT_CABECERA, PreparedStatement.RETURN_GENERATED_KEYS);
-            pst.setInt(1, mesa.getFuncionario().getId_funcionario());
+            pst.setInt(1, mesa.getFuncionario().getIdFuncionario());
             pst.setInt(2, mesa.getCliente().getIdCliente());
             pst.setInt(3, mesa.getIdCondVenta());
             pst.setInt(4, mesa.getTimbrado().getId());

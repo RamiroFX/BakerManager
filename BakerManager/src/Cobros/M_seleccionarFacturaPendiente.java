@@ -24,7 +24,7 @@ public class M_seleccionarFacturaPendiente {
 
     public M_seleccionarFacturaPendiente(int idCliente, int tipo) {
         this.facturaCabecera = new M_facturaCabecera();
-        this.facturaCabecera.getFuncionario().setId(-1);
+        this.facturaCabecera.getFuncionario().setIdFuncionario(-1);
         this.facturaCabecera.getCliente().setIdCliente(idCliente);
         this.tm = new FacturaSinPagoTableModel();
         this.tipo = tipo;
@@ -44,7 +44,7 @@ public class M_seleccionarFacturaPendiente {
     }
 
     public void borrarDatos() {
-        this.facturaCabecera.getFuncionario().setId(-1);
+        this.facturaCabecera.getFuncionario().setIdFuncionario(-1);
         this.facturaCabecera.getCliente().setIdCliente(-1);
     }
 

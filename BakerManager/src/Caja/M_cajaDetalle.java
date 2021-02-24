@@ -48,7 +48,7 @@ public class M_cajaDetalle {
     public M_cajaDetalle() {
         this.editingMode = false;
         this.funcionario = new M_funcionario();
-        this.funcionario.setId(-1);
+        this.funcionario.setIdFuncionario(-1);
         this.movVentasTM = new SeleccionVentaCabeceraTableModel();
         this.movCompraTM = new SeleccionCompraCabeceraTableModel();
         this.movCobroTM = new SeleccionCobroCabeceraTableModel();
@@ -146,7 +146,7 @@ public class M_cajaDetalle {
         this.funcionario.setAlias("");
         this.funcionario.setApellido("");
         this.funcionario.setEmail("");
-        this.funcionario.setId(-1);
+        this.funcionario.setIdFuncionario(-1);
         this.funcionario.setCedula(-1);
     }
 

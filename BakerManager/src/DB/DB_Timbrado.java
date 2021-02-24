@@ -400,7 +400,7 @@ public class DB_Timbrado {
             pst.setInt(4, cabecera.getNroBoletaInicial());
             pst.setInt(5, cabecera.getNroBoletaFinal());
             pst.setTimestamp(6, new Timestamp(cabecera.getFechaVencimiento().getTime()));
-            pst.setInt(7, cabecera.getCreador().getId_funcionario());
+            pst.setInt(7, cabecera.getCreador().getIdFuncionario());
             pst.setString(8, cabecera.getDescripcion());
             pst.setInt(9, 1);
             pst.executeUpdate();

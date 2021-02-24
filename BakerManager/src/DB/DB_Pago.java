@@ -170,7 +170,7 @@ public class DB_Pago {
                 proveedor.setEntidad(rs.getString(11));
                 proveedor.setId(rs.getInt(2));
                 M_funcionario usuario = new M_funcionario();
-                usuario.setId(rs.getInt(3));
+                usuario.setIdFuncionario(rs.getInt(3));
                 usuario.setNombre(rs.getString(9));
                 Estado estado = new Estado();
                 estado.setId(rs.getInt(5));
@@ -683,7 +683,7 @@ public class DB_Pago {
             DB_manager.getConection().setAutoCommit(false);
             pst = DB_manager.getConection().prepareStatement(INSERT_CABECERA, PreparedStatement.RETURN_GENERATED_KEYS);
             pst.setInt(1, cabecera.getProveedor().getId());
-            pst.setInt(2, cabecera.getFuncionario().getId_funcionario());
+            pst.setInt(2, cabecera.getFuncionario().getIdFuncionario());
             pst.setInt(3, cabecera.getNroRecibo());
             pst.setInt(4, Estado.ACTIVO);//ESTADO ACTIVO
             pst.setTimestamp(5, new Timestamp(cabecera.getFechaPago().getTime()));

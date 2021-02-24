@@ -74,7 +74,7 @@ public class CambiarPassword extends JDialog implements ActionListener {
         this.jbAceptar = new JButton("Aceptar");
         this.jbCancelar = new JButton("Cancelar");
         //El usuario con id=1 es el admin por defecto
-        int idCurrentUser = DatosUsuario.getRol_usuario().getFuncionario().getId_funcionario();
+        int idCurrentUser = DatosUsuario.getRol_usuario().getFuncionario().getIdFuncionario();
 
         if (idFuncionario == 1) {
             jlPasswordNuevo1.setVisible(false);
@@ -103,7 +103,7 @@ public class CambiarPassword extends JDialog implements ActionListener {
     private void cambiarContraseña() {
         char[] passwordActual = jpfPasswordActual.getPassword();
         String pass = String.copyValueOf(passwordActual);
-        int idFuncionario = this.c_inicio.modelo.getRol_usuario().getFuncionario().getId_funcionario();
+        int idFuncionario = this.c_inicio.modelo.getRol_usuario().getFuncionario().getIdFuncionario();
         String alias = this.c_inicio.modelo.getRol_usuario().getFuncionario().getAlias();
         if (DB_Funcionario.isPasswordCorrect(idFuncionario, alias, pass)) {
             char[] passwordNuevo1 = jpfPasswordNuevo1.getPassword();

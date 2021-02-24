@@ -34,7 +34,7 @@ public class M_gestionVentas {
 
     public M_gestionVentas() {
         this.cabecera = new M_facturaCabecera();
-        this.cabecera.getFuncionario().setId(-1);
+        this.cabecera.getFuncionario().setIdFuncionario(-1);
         this.cabecera.getCliente().setIdCliente(-1);
         this.detalle = new M_facturaDetalle();
         this.detalles = new ArrayList<>();
@@ -89,12 +89,12 @@ public class M_gestionVentas {
         calendarFinal.set(Calendar.MINUTE, 59);
         calendarFinal.set(Calendar.SECOND, 59);
         calendarFinal.set(Calendar.MILLISECOND, 999);
-        this.getTm().setFacturaCabeceraList(DB_Ingreso.obtenerIngresos(calendarInicio.getTime(), calendarFinal.getTime(), cliente.getIdCliente(), funcionario.getId_funcionario(), condCompra.getId(), nroFactura, estado.getId(), conFecha));
+        this.getTm().setFacturaCabeceraList(DB_Ingreso.obtenerIngresos(calendarInicio.getTime(), calendarFinal.getTime(), cliente.getIdCliente(), funcionario.getIdFuncionario(), condCompra.getId(), nroFactura, estado.getId(), conFecha));
     }
 
     public void borrarDatos() {
         this.cabecera = new M_facturaCabecera();
-        this.cabecera.getFuncionario().setId(-1);
+        this.cabecera.getFuncionario().setIdFuncionario(-1);
         this.cabecera.getCliente().setIdCliente(-1);
         this.detalles = new ArrayList<>();
         setDetalles(new ArrayList<M_facturaDetalle>());

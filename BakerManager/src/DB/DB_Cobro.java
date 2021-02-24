@@ -336,10 +336,10 @@ public class DB_Cobro {
                 cliente.setEntidad(rs.getString(13));
                 cliente.setIdCliente(rs.getInt(2));
                 M_funcionario cobrador = new M_funcionario();
-                cobrador.setId(rs.getInt(3));
+                cobrador.setIdFuncionario(rs.getInt(3));
                 cobrador.setNombre(rs.getString(10));
                 M_funcionario usuario = new M_funcionario();
-                usuario.setId(rs.getInt(4));
+                usuario.setIdFuncionario(rs.getInt(4));
                 usuario.setNombre(rs.getString(11));
                 Estado estado = new Estado();
                 estado.setId(rs.getInt(6));
@@ -513,8 +513,8 @@ public class DB_Cobro {
             DB_manager.getConection().setAutoCommit(false);
             pst = DB_manager.getConection().prepareStatement(INSERT_CABECERA, PreparedStatement.RETURN_GENERATED_KEYS);
             pst.setInt(1, cabecera.getCliente().getIdCliente());
-            pst.setInt(2, cabecera.getCobrador().getId_funcionario());
-            pst.setInt(3, cabecera.getFuncionario().getId_funcionario());
+            pst.setInt(2, cabecera.getCobrador().getIdFuncionario());
+            pst.setInt(3, cabecera.getFuncionario().getIdFuncionario());
             pst.setInt(4, cabecera.getNroRecibo());
             pst.setInt(5, Estado.ACTIVO);//ESTADO ACTIVO
             pst.setTimestamp(6, new Timestamp(cabecera.getFechaPago().getTime()));
@@ -961,7 +961,7 @@ public class DB_Cobro {
             DB_manager.getConection().setAutoCommit(false);
             pst = DB_manager.getConection().prepareStatement(INSERT_CABECERA, PreparedStatement.RETURN_GENERATED_KEYS);
             pst.setInt(1, cabecera.getNroRetencion());
-            pst.setInt(2, cabecera.getFuncionario().getId_funcionario());
+            pst.setInt(2, cabecera.getFuncionario().getIdFuncionario());
             pst.setInt(3, cabecera.getVenta().getIdFacturaCabecera());
             pst.setDouble(4, cabecera.getPorcentaje());
             pst.setInt(5, cabecera.getMonto());
@@ -1228,10 +1228,10 @@ public class DB_Cobro {
                 cliente.setEntidad(rs.getString(13));
                 cliente.setIdCliente(rs.getInt(2));
                 M_funcionario cobrador = new M_funcionario();
-                cobrador.setId(rs.getInt(3));
+                cobrador.setIdFuncionario(rs.getInt(3));
                 cobrador.setNombre(rs.getString(10));
                 M_funcionario usuario = new M_funcionario();
-                usuario.setId(rs.getInt(4));
+                usuario.setIdFuncionario(rs.getInt(4));
                 usuario.setNombre(rs.getString(11));
                 Estado estado = new Estado();
                 estado.setId(rs.getInt(6));
@@ -1329,7 +1329,7 @@ public class DB_Cobro {
                 pst.setInt(1, cabecera.getId());
                 pst.setInt(2, unDetalle.getIdFacturaCabecera());
                 pst.setDouble(3, unDetalle.getMonto());
-                pst.setInt(4, cabecera.getFuncionario().getId_funcionario());
+                pst.setInt(4, cabecera.getFuncionario().getIdFuncionario());
                 pst.executeUpdate();
                 pst.close();
                 rs.close();

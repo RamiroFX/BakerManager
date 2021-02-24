@@ -4,6 +4,8 @@
  */
 package Pedido;
 
+import Entities.E_estadoPedido;
+import Entities.E_tipoOperacion;
 import Interface.CommonFormat;
 import com.toedter.calendar.JDateChooser;
 import java.awt.Dimension;
@@ -32,7 +34,8 @@ public class V_gestionPedido extends JInternalFrame {
             jbResumen, jbCliente, jbEmpleado, jbCancelarPedido
             ,jbPedidosPendientes,jbCharts;
     public JTextField jtfNroPedido, jtfCliente, jtfEmpleado;
-    public JComboBox jcbEmpleado, jcbCondVenta, jcbEstadoPedido;
+    public JComboBox<E_tipoOperacion> jcbCondVenta;
+    public JComboBox<E_estadoPedido> jcbEstadoPedido;
     private JPanel jpTop, jpBotonesTop, jpBot;
     public JTable jtPedido, jtPedidoDetalle;
     private JScrollPane jspEgresoCabecera, jspEgresoDetalle;

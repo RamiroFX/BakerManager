@@ -34,7 +34,7 @@ public class M_gestionCobroPago {
 
     public M_gestionCobroPago() {
         this.funcionario = new M_funcionario();
-        this.funcionario.setId(-1);
+        this.funcionario.setIdFuncionario(-1);
         this.cliente = new M_cliente();
         this.cliente.setIdCliente(-1);
         this.facturaCabecera = new M_facturaCabecera();
@@ -69,7 +69,7 @@ public class M_gestionCobroPago {
 
     public void borrarDatos() {
         this.funcionario = new M_funcionario();
-        this.funcionario.setId(-1);
+        this.funcionario.setIdFuncionario(-1);
         this.cliente = new M_cliente();
         this.cliente.setIdCliente(-1);
     }
@@ -144,7 +144,7 @@ public class M_gestionCobroPago {
         calendarFinal.set(Calendar.MINUTE, 59);
         calendarFinal.set(Calendar.SECOND, 59);
         calendarFinal.set(Calendar.MILLISECOND, 999);
-        return DB_Cobro.obtenerCobros(cliente.getIdCliente(), funcionario.getId_funcionario(), calendarInicio.getTime(), calendarFinal.getTime(), nroFactura, estado.getId(), conFecha);
+        return DB_Cobro.obtenerCobros(cliente.getIdCliente(), funcionario.getIdFuncionario(), calendarInicio.getTime(), calendarFinal.getTime(), nroFactura, estado.getId(), conFecha);
     }
 
     /*

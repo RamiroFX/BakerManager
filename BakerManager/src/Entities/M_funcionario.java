@@ -10,7 +10,7 @@ public class M_funcionario extends M_persona {
     private String ocupacion, observacion, alias, email, nro_celular,
             nro_telefono, direccion, password;
     private Date fechaIngreso;
-    private Integer id_funcionario;
+    private Integer idFuncionario;
 
     private ArrayList rol;
 
@@ -29,7 +29,7 @@ public class M_funcionario extends M_persona {
         this.direccion = direccion;
         this.password = password;
         this.fechaIngreso = fechaIngreso;
-        this.id_funcionario = id_funcionario;
+        this.idFuncionario = id_funcionario;
         this.rol = rol;
     }
 
@@ -72,15 +72,15 @@ public class M_funcionario extends M_persona {
     /**
      * @return the idUsuario
      */
-    public Integer getId_funcionario() {
-        return id_funcionario;
+    public Integer getIdFuncionario() {
+        return idFuncionario;
     }
 
     /**
      * @param idUsuario the idUsuario to set
      */
-    public void setId(Integer id_funcionario) {
-        this.id_funcionario = id_funcionario;
+    public void setIdFuncionario(Integer id_funcionario) {
+        this.idFuncionario = id_funcionario;
     }
 
     /**

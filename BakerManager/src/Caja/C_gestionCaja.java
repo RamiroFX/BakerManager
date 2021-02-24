@@ -154,8 +154,8 @@ public class C_gestionCaja implements GestionInterface, RecibirEmpleadoCallback 
                     Timestamp ini = new Timestamp(calendarioInicio.getTimeInMillis());
                     Timestamp fi = new Timestamp(calendarioFin.getTimeInMillis());
                     int idFuncionario = -1;
-                    if (modelo.getFuncionario() != null && modelo.getFuncionario().getId_funcionario() != null) {
-                        idFuncionario = modelo.getFuncionario().getId_funcionario();
+                    if (modelo.getFuncionario() != null && modelo.getFuncionario().getIdFuncionario() != null) {
+                        idFuncionario = modelo.getFuncionario().getIdFuncionario();
                     }
                     Estado estado = vista.jcbEstado.getItemAt(vista.jcbEstado.getSelectedIndex());
                     modelo.consultarCajas(idFuncionario, estado.getId(), ini, fi);
@@ -202,8 +202,8 @@ public class C_gestionCaja implements GestionInterface, RecibirEmpleadoCallback 
                         Date fin = vista.jddFinal.getDate();
                         if (validarFechas(inicio, fin)) {
                             Integer idFuncionario = null;
-                            if (modelo.getFuncionario() != null && modelo.getFuncionario().getId_funcionario() != null) {
-                                idFuncionario = modelo.getFuncionario().getId_funcionario();
+                            if (modelo.getFuncionario() != null && modelo.getFuncionario().getIdFuncionario() != null) {
+                                idFuncionario = modelo.getFuncionario().getIdFuncionario();
                             }
                             modelo.exportarExcel(idFuncionario, inicio, fin);
                             Utilities.c_packColumn.packColumns(vista.jtCaja, 1);
@@ -225,8 +225,8 @@ public class C_gestionCaja implements GestionInterface, RecibirEmpleadoCallback 
                         Date fin = vista.jddFinal.getDate();
                         if (validarFechas(inicio, fin)) {
                             Integer idFuncionario = null;
-                            if (modelo.getFuncionario() != null && modelo.getFuncionario().getId_funcionario() != null) {
-                                idFuncionario = modelo.getFuncionario().getId_funcionario();
+                            if (modelo.getFuncionario() != null && modelo.getFuncionario().getIdFuncionario() != null) {
+                                idFuncionario = modelo.getFuncionario().getIdFuncionario();
                             }
                             modelo.exportarExcelMinimalista(idFuncionario, inicio, fin);
                             Utilities.c_packColumn.packColumns(vista.jtCaja, 1);

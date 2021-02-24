@@ -20,6 +20,7 @@ import java.sql.Statement;
 import java.sql.Timestamp;
 import java.sql.Types;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Vector;
 import java.util.logging.Level;
@@ -38,7 +39,122 @@ public class DB_Pedido {
     /*
      * READ
      */
-    public static ResultSetTableModel obtenerPedidos(boolean esTiempoRecepcionOEntrega, String inicio, String fin, String tipo_operacion, String nroFactura, String estado, M_pedidoCabecera pedido, boolean conTotal) {
+    public static List<M_pedidoCabecera> obtenerPedidos(boolean conFecha, boolean esTiempoRecepcionOEntrega, Date fechaInicio, Date fechaFin, int idTipoOperacion, int idPedido, int idEstado, int idVendedor, int idCliente, boolean conTotal) {
+        List<M_pedidoCabecera> list = new ArrayList<>();
+        String SQL_TOTAL = "";
+        String SQL_TIEMPO = "";
+        String SQL_TIOP = "";
+        String SQL_ESTADO_PEDIDO = "";
+        String SQL_CLIENTE = "";
+        String SQL_VENDEDOR = "";
+        String SQL_ID_PEDIDO = "";
+        String SQL_ORDER_BY = " ORDER BY PEDI.TIEMPO_RECEPCION";
+        if (conTotal) {
+            SQL_TOTAL = " (SELECT SUM(PEDE.CANTIDAD*(PEDE.PRECIO-(PEDE.PRECIO*PEDE.DESCUENTO)/100)) FROM PEDIDO_DETALLE PEDE WHERE PEDE.ID_PEDIDO_CABECERA = PEDI.ID_PEDIDO_CABECERA)  \"TOTAL\", ";
+        }
+        if (conFecha) {
+            if (esTiempoRecepcionOEntrega) {
+                SQL_TIEMPO = "AND PEDI.TIEMPO_RECEPCION BETWEEN ? AND ? ";
+            } else {
+                SQL_TIEMPO = "AND PEDI.TIEMPO_ENTREGA BETWEEN ? AND ? ";
+            }
+        }
+        if (idTipoOperacion > 0) {
+            SQL_TIOP = "AND PEDI.ID_COND_VENTA = ? ";
+        }
+        if (idEstado > 0) {
+            SQL_ESTADO_PEDIDO = "AND PEDI.ID_PEDIDO_ESTADO = ? ";
+        }
+        if (idCliente > 0) {
+            SQL_CLIENTE = "AND PEDI.ID_CLIENTE = ? ";
+        }
+        if (idVendedor > 0) {
+            SQL_VENDEDOR = "AND PEDI.ID_FUNCIONARIO = ? ";
+        }
+        if (idPedido > 0) {
+            SQL_ID_PEDIDO = "AND PEDI.ID_PEDIDO_CABECERA = ? ";
+        }
+        String QUERY = "SELECT PEDI.ID_PEDIDO_CABECERA \"ID\", "
+                + "(SELECT PERS.NOMBRE WHERE PERS.ID_PERSONA = FUNC.ID_PERSONA)\"VENDEDOR_NOMBRE\", "
+                + "(SELECT PERS.APELLIDO WHERE PERS.ID_PERSONA = FUNC.ID_PERSONA)\"VENDEDOR_APELLIDO\", "
+                + "(SELECT CLIE.ENTIDAD FROM CLIENTE CLIE WHERE CLIE.ID_CLIENTE = PEDI.ID_CLIENTE) \"CLIENTE_ENTIDAD\", "
+                + "PEDI.TIEMPO_RECEPCION, "
+                + "PEDI.TIEMPO_ENTREGA, "
+                + SQL_TOTAL
+                + "PEDI.ID_PEDIDO_ESTADO \"ESTADO_ID\", "
+                + "(SELECT PEES.DESCRIPCION FROM PEDIDO_ESTADO PEES WHERE PEES.ID_PEDIDO_ESTADO = PEDI.ID_PEDIDO_ESTADO) \"ESTADO_DESCRIPCION\", "
+                + "PEDI.ID_COND_VENTA \"COND_VENTA_ID\", "
+                + "(SELECT TIOP.DESCRIPCION FROM TIPO_OPERACION TIOP WHERE TIOP.ID_TIPO_OPERACION = PEDI.ID_COND_VENTA) \"COND_VENTA_DESCRIPCION\" "
+                + "FROM PEDIDO_CABECERA PEDI, FUNCIONARIO FUNC, PERSONA PERS "
+                + "WHERE PEDI.ID_FUNCIONARIO = FUNC.ID_FUNCIONARIO "
+                + "AND PERS.ID_PERSONA = FUNC.ID_PERSONA ";
+        QUERY = QUERY + SQL_TIEMPO + SQL_TIOP + SQL_ESTADO_PEDIDO + SQL_CLIENTE + SQL_VENDEDOR + SQL_ID_PEDIDO + SQL_ORDER_BY;
+        int pos = 1;
+        try {
+            pst = DB_manager.getConection().prepareStatement(QUERY, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            if (conFecha) {
+                pst.setTimestamp(pos++, new java.sql.Timestamp(fechaInicio.getTime()));
+                pst.setTimestamp(pos++, new java.sql.Timestamp(fechaFin.getTime()));
+            }
+            if (idTipoOperacion > 0) {
+                pst.setInt(pos++, idTipoOperacion);
+            }
+            if (idEstado > 0) {
+                pst.setInt(pos++, idEstado);
+            }
+            if (idCliente > 0) {
+                pst.setInt(pos++, idCliente);
+            }
+            if (idVendedor > 0) {
+                pst.setInt(pos++, idVendedor);
+            }
+            if (idPedido > 0) {
+                pst.setInt(pos++, idPedido);
+            }
+            rs = pst.executeQuery();
+            while (rs.next()) {
+                M_cliente cliente = new M_cliente();
+                cliente.setEntidad(rs.getString("CLIENTE_ENTIDAD"));
+                M_funcionario funcionario = new M_funcionario();
+                funcionario.setNombre(rs.getString("VENDEDOR_NOMBRE"));
+                funcionario.setApellido(rs.getString("VENDEDOR_APELLIDO"));
+                E_tipoOperacion tiop = new E_tipoOperacion();
+                tiop.setId(rs.getInt("COND_VENTA_ID"));
+                tiop.setDescripcion(rs.getString("COND_VENTA_DESCRIPCION"));
+                E_estadoPedido estado = new E_estadoPedido();
+                estado.setId(rs.getInt("ESTADO_ID"));
+                estado.setDescripcion(rs.getString("ESTADO_DESCRIPCION"));
+                M_pedidoCabecera pedidoCabecera = new M_pedidoCabecera();
+                pedidoCabecera.setIdPedido(rs.getInt("ID"));
+                pedidoCabecera.setTiempoRecepcion(rs.getTimestamp("TIEMPO_RECEPCION"));
+                pedidoCabecera.setTiempoEntrega(rs.getTimestamp("TIEMPO_ENTREGA"));
+                pedidoCabecera.setCliente(cliente);
+                pedidoCabecera.setFuncionario(funcionario);
+                pedidoCabecera.setTotal(rs.getInt("TOTAL"));
+                pedidoCabecera.setEstadoPedido(estado);
+                pedidoCabecera.setTipoOperacion(tiop);
+                list.add(pedidoCabecera);
+            }
+        } catch (SQLException ex) {
+            Logger lgr = Logger.getLogger(DB_Pedido.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (pst != null) {
+                    pst.close();
+                }
+            } catch (SQLException ex) {
+                Logger lgr = Logger.getLogger(DB_Pedido.class.getName());
+                lgr.log(Level.WARNING, ex.getMessage(), ex);
+            }
+        }
+        return list;
+    }
+
+    public static ResultSetTableModel obtenerPedidosOLD(boolean esTiempoRecepcionOEntrega, String inicio, String fin, String tipo_operacion, String nroFactura, String estado, M_pedidoCabecera pedido, boolean conTotal) {
         ResultSetTableModel rstm = null;
         String total = "";
         if (conTotal) {
@@ -77,8 +193,8 @@ public class DB_Pedido {
                 }
             }
             if (null != pedido.getFuncionario()) {
-                if (null != pedido.getFuncionario().getId_funcionario()) {
-                    Query = Query + " AND PEDI.ID_FUNCIONARIO = " + pedido.getFuncionario().getId_funcionario();
+                if (null != pedido.getFuncionario().getIdFuncionario()) {
+                    Query = Query + " AND PEDI.ID_FUNCIONARIO = " + pedido.getFuncionario().getIdFuncionario();
                 }
             }
         }
@@ -180,7 +296,7 @@ public class DB_Pedido {
                 f.setId_persona(rs.getInt("id_persona"));
                 f.setCedula(rs.getInt("ci"));
                 f.setEstado_civil(rs.getString("estado_civil"));
-                f.setId(rs.getInt("id_funcionario"));
+                f.setIdFuncionario(rs.getInt("id_funcionario"));
                 f.setObservacion(rs.getString("OBSERVACION"));
 
                 M_cliente cliente = new M_cliente();
@@ -200,7 +316,7 @@ public class DB_Pedido {
 
                 E_estadoPedido ep = new E_estadoPedido();
                 ep.setId(rs.getInt("ID_PEDIDO_ESTADO"));
-                E_tipoOperacion tiop= new E_tipoOperacion();
+                E_tipoOperacion tiop = new E_tipoOperacion();
                 tiop.setId(rs.getInt("ID_COND_VENTA"));
                 ep.setDescripcion(rs.getString("ESTADO"));
                 pedido = new M_pedidoCabecera();
@@ -365,7 +481,7 @@ public class DB_Pedido {
             DB_manager.getConection().setAutoCommit(false);
             pst = DB_manager.getConection().prepareStatement(INSERT_PEDIDO, PreparedStatement.RETURN_GENERATED_KEYS);
             pst.setInt(1, pedido.getCliente().getIdCliente());
-            pst.setInt(2, pedido.getFuncionario().getId_funcionario());
+            pst.setInt(2, pedido.getFuncionario().getIdFuncionario());
             pst.setTimestamp(3, new Timestamp(pedido.getTiempoEntrega().getTime()));
             pst.setInt(4, pedido.getTipoOperacion().getId());
             pst.setInt(5, pedido.getEstadoPedido().getId());
@@ -447,12 +563,12 @@ public class DB_Pedido {
      */
     public static void actualizarPedido(M_pedidoCabecera pedido) {
         String UPDATE_PEDIDO = "UPDATE PEDIDO_CABECERA SET "
-                + "ID_FUNCIONARIO= " + pedido.getFuncionario().getId_funcionario() + ", "
+                + "ID_FUNCIONARIO= " + pedido.getFuncionario().getIdFuncionario() + ", "
                 + "ID_CLIENTE=" + pedido.getCliente().getIdCliente() + ", "
                 + "DIRECCION= '" + pedido.getDireccion() + "', "
                 + "REFERENCIA= '" + pedido.getReferencia() + "', "
                 + "TIEMPO_ENTREGA= '" + pedido.getTiempoEntrega() + "', "
-                + "ID_PEDIDO_ESTADO = " + pedido.getEstadoPedido().getId()+ ", "
+                + "ID_PEDIDO_ESTADO = " + pedido.getEstadoPedido().getId() + ", "
                 + "ID_COND_VENTA = " + pedido.getTipoOperacion().getId()
                 + " WHERE ID_PEDIDO_CABECERA = " + pedido.getIdPedido();
         try {
@@ -541,7 +657,7 @@ public class DB_Pedido {
 
     public static void actualizarPedidoEstado(M_pedidoCabecera pedido) {
         String UPDATE_PEDIDO = "UPDATE PEDIDO_CABECERA SET "
-                + "ID_PEDIDO_ESTADO = " + pedido.getEstadoPedido().getId()+ " "
+                + "ID_PEDIDO_ESTADO = " + pedido.getEstadoPedido().getId() + " "
                 + " WHERE ID_PEDIDO_CABECERA = " + pedido.getIdPedido();
         try {
             DB_manager.habilitarTransaccionManual();
@@ -675,7 +791,7 @@ public class DB_Pedido {
         try {
             DB_manager.getConection().setAutoCommit(false);
             pst = DB_manager.getConection().prepareStatement(INSERT_CABECERA, PreparedStatement.RETURN_GENERATED_KEYS);
-            pst.setInt(1, pedido.getFuncionario().getId_funcionario());
+            pst.setInt(1, pedido.getFuncionario().getIdFuncionario());
             pst.setInt(2, pedido.getCliente().getIdCliente());
             try {
                 if (nroFactura == null) {

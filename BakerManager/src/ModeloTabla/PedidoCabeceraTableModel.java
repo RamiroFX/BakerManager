@@ -76,7 +76,7 @@ public class PedidoCabeceraTableModel extends AbstractTableModel {
                 return decimalFormat.format(fc.getIdPedido());
             }
             case 1: {
-                return fc.getFuncionario().getAlias();
+                return fc.getFuncionario().getNombre();
             }
             case 2: {
                 return fc.getCliente().getEntidad();

@@ -151,7 +151,7 @@ public class C_gestionNotasCredito implements ActionListener, MouseListener, Key
         EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
-                int idFuncionario = modelo.getCabecera().getFuncionario().getId_funcionario();
+                int idFuncionario = modelo.getCabecera().getFuncionario().getIdFuncionario();
                 int idCliente = modelo.getCabecera().getCliente().getIdCliente();
                 int nroNotaCredito = obtenerNroNotaCredito();
                 E_tipoOperacion tiop = vista.jcbCondVenta.getItemAt(vista.jcbCondVenta.getSelectedIndex());

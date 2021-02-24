@@ -69,8 +69,8 @@ public class DB_UtilizacionMateriaPrima {
             pst = DB_manager.getConection().prepareStatement(INSERT_CABECERA, PreparedStatement.RETURN_GENERATED_KEYS);
             pst.setInt(1, utilizacionCabecera.getNroOrdenTrabajo());
             pst.setTimestamp(2, new Timestamp(utilizacionCabecera.getFechaUtilizacion().getTime()));
-            pst.setInt(3, utilizacionCabecera.getFuncionarioProduccion().getId_funcionario());
-            pst.setInt(4, utilizacionCabecera.getFuncionarioSistema().getId_funcionario());
+            pst.setInt(3, utilizacionCabecera.getFuncionarioProduccion().getIdFuncionario());
+            pst.setInt(4, utilizacionCabecera.getFuncionarioSistema().getIdFuncionario());
             pst.executeUpdate();
             rs = pst.getGeneratedKeys();
             if (rs != null && rs.next()) {
@@ -170,10 +170,10 @@ public class DB_UtilizacionMateriaPrima {
             rs = pst.executeQuery();
             while (rs.next()) {
                 M_funcionario responsable = new M_funcionario();
-                responsable.setId(rs.getInt("id_funcionario_responsable"));
+                responsable.setIdFuncionario(rs.getInt("id_funcionario_responsable"));
                 responsable.setNombre(rs.getString("RESPONSABLE"));
                 M_funcionario usuario = new M_funcionario();
-                usuario.setId(rs.getInt("id_funcionario_usuario"));
+                usuario.setIdFuncionario(rs.getInt("id_funcionario_usuario"));
                 usuario.setNombre(rs.getString("USUARIO"));
                 Estado estado = new Estado();
                 estado.setId(rs.getInt("id_estado"));
@@ -247,10 +247,10 @@ public class DB_UtilizacionMateriaPrima {
             rs = pst.executeQuery();
             while (rs.next()) {
                 M_funcionario responsable = new M_funcionario();
-                responsable.setId(rs.getInt("id_funcionario_responsable"));
+                responsable.setIdFuncionario(rs.getInt("id_funcionario_responsable"));
                 responsable.setNombre(rs.getString("RESPONSABLE"));
                 M_funcionario usuario = new M_funcionario();
-                usuario.setId(rs.getInt("id_funcionario_usuario"));
+                usuario.setIdFuncionario(rs.getInt("id_funcionario_usuario"));
                 usuario.setNombre(rs.getString("USUARIO"));
                 Estado estado = new Estado();
                 estado.setId(rs.getInt("id_estado"));

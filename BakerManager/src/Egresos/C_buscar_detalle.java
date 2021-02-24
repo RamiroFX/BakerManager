@@ -95,7 +95,7 @@ public class C_buscar_detalle extends MouseAdapter implements ActionListener, Ke
         if (vista.jtfFuncionario.getText().isEmpty()) {
             return "Todos";
         }
-        return funcionario.getId_funcionario().toString();
+        return funcionario.getIdFuncionario().toString();
     }
 
     private String proveedor() {

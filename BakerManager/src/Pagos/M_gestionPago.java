@@ -34,7 +34,7 @@ public class M_gestionPago {
 
     public M_gestionPago() {
         this.funcionario = new M_funcionario();
-        this.funcionario.setId(-1);
+        this.funcionario.setIdFuncionario(-1);
         this.proveedor = new M_proveedor();
         this.proveedor.setId(-1);
         this.facturaCabecera = new M_egresoCabecera();
@@ -69,7 +69,7 @@ public class M_gestionPago {
 
     public void borrarDatos() {
         this.funcionario = new M_funcionario();
-        this.funcionario.setId(-1);
+        this.funcionario.setIdFuncionario(-1);
         this.proveedor = new M_proveedor();
         this.proveedor.setId(-1);
     }
@@ -132,7 +132,7 @@ public class M_gestionPago {
         calendarFinal.set(Calendar.MINUTE, 59);
         calendarFinal.set(Calendar.SECOND, 59);
         calendarFinal.set(Calendar.MILLISECOND, 999);
-        return DB_Pago.obtenerPago(proveedor.getId(), funcionario.getId_funcionario(), calendarInicio.getTime(), calendarFinal.getTime(), nroFactura, estado.getId());
+        return DB_Pago.obtenerPago(proveedor.getId(), funcionario.getIdFuncionario(), calendarInicio.getTime(), calendarFinal.getTime(), nroFactura, estado.getId());
     }
 
     /**

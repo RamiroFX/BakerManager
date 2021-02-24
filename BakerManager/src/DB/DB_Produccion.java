@@ -172,8 +172,8 @@ public class DB_Produccion {
             pst = DB_manager.getConection().prepareStatement(INSERT_CABECERA, PreparedStatement.RETURN_GENERATED_KEYS);
             pst.setInt(1, produccionCabecera.getNroOrdenTrabajo());
             pst.setTimestamp(2, new Timestamp(produccionCabecera.getFechaProduccion().getTime()));
-            pst.setInt(3, produccionCabecera.getFuncionarioProduccion().getId_funcionario());
-            pst.setInt(4, produccionCabecera.getFuncionarioSistema().getId_funcionario());
+            pst.setInt(3, produccionCabecera.getFuncionarioProduccion().getIdFuncionario());
+            pst.setInt(4, produccionCabecera.getFuncionarioSistema().getIdFuncionario());
             pst.setInt(5, produccionCabecera.getTipo().getId());
             pst.executeUpdate();
             rs = pst.getGeneratedKeys();
@@ -289,10 +289,10 @@ public class DB_Produccion {
             rs = pst.executeQuery();
             while (rs.next()) {
                 M_funcionario responsable = new M_funcionario();
-                responsable.setId(rs.getInt("id_funcionario_responsable"));
+                responsable.setIdFuncionario(rs.getInt("id_funcionario_responsable"));
                 responsable.setNombre(rs.getString("RESPONSABLE"));
                 M_funcionario usuario = new M_funcionario();
-                usuario.setId(rs.getInt("id_funcionario_usuario"));
+                usuario.setIdFuncionario(rs.getInt("id_funcionario_usuario"));
                 usuario.setNombre(rs.getString("USUARIO"));
                 Estado estado = new Estado();
                 estado.setId(rs.getInt("id_estado"));
@@ -345,10 +345,10 @@ public class DB_Produccion {
             rs = pst.executeQuery();
             while (rs.next()) {
                 M_funcionario responsable = new M_funcionario();
-                responsable.setId(rs.getInt("id_funcionario_responsable"));
+                responsable.setIdFuncionario(rs.getInt("id_funcionario_responsable"));
                 responsable.setNombre(rs.getString("RESPONSABLE"));
                 M_funcionario usuario = new M_funcionario();
-                usuario.setId(rs.getInt("id_funcionario_usuario"));
+                usuario.setIdFuncionario(rs.getInt("id_funcionario_usuario"));
                 usuario.setNombre(rs.getString("USUARIO"));
                 Estado estado = new Estado();
                 estado.setId(rs.getInt("id_estado"));
@@ -1160,10 +1160,10 @@ public class DB_Produccion {
             rs = pst.executeQuery();
             while (rs.next()) {
                 M_funcionario responsable = new M_funcionario();
-                responsable.setId(rs.getInt("id_funcionario_responsable"));
+                responsable.setIdFuncionario(rs.getInt("id_funcionario_responsable"));
                 responsable.setNombre(rs.getString("RESPONSABLE"));
                 M_funcionario usuario = new M_funcionario();
-                usuario.setId(rs.getInt("id_funcionario_usuario"));
+                usuario.setIdFuncionario(rs.getInt("id_funcionario_usuario"));
                 usuario.setNombre(rs.getString("USUARIO"));
                 Estado estado = new Estado();
                 estado.setId(rs.getInt("id_estado"));
@@ -1420,10 +1420,10 @@ public class DB_Produccion {
             rs = pst.executeQuery();
             while (rs.next()) {
                 M_funcionario responsable = new M_funcionario();
-                responsable.setId(rs.getInt("id_funcionario_responsable"));
+                responsable.setIdFuncionario(rs.getInt("id_funcionario_responsable"));
                 responsable.setNombre(rs.getString("RESPONSABLE"));
                 M_funcionario usuario = new M_funcionario();
-                usuario.setId(rs.getInt("id_funcionario_usuario"));
+                usuario.setIdFuncionario(rs.getInt("id_funcionario_usuario"));
                 usuario.setNombre(rs.getString("USUARIO"));
                 Estado estado = new Estado();
                 estado.setId(rs.getInt("id_estado"));
@@ -1580,8 +1580,8 @@ public class DB_Produccion {
             pst = DB_manager.getConection().prepareStatement(INSERT_CABECERA, PreparedStatement.RETURN_GENERATED_KEYS);
             pst.setInt(1, produccionCabecera.getNroOrdenTrabajo());
             pst.setTimestamp(2, new Timestamp(produccionCabecera.getFechaProduccion().getTime()));
-            pst.setInt(3, produccionCabecera.getFuncionarioProduccion().getId_funcionario());
-            pst.setInt(4, produccionCabecera.getFuncionarioSistema().getId_funcionario());
+            pst.setInt(3, produccionCabecera.getFuncionarioProduccion().getIdFuncionario());
+            pst.setInt(4, produccionCabecera.getFuncionarioSistema().getIdFuncionario());
             pst.setInt(5, E_produccionTipo.ROLLO);
             pst.executeUpdate();
             rs = pst.getGeneratedKeys();
@@ -1610,7 +1610,7 @@ public class DB_Produccion {
                 pst.setInt(3, prodFilm.getId());
                 pst.setDouble(4, prodFilm.getPeso());
                 pst.setTimestamp(5, new Timestamp(produccionCabecera.getFechaProduccion().getTime()));
-                pst.setInt(6, produccionCabecera.getFuncionarioProduccion().getId_funcionario());
+                pst.setInt(6, produccionCabecera.getFuncionarioProduccion().getIdFuncionario());
                 pst.setInt(7, prodFilm.getCono());
                 pst.setInt(8, prodFilm.getMedida());
                 pst.setInt(9, prodFilm.getMicron());
@@ -1704,8 +1704,8 @@ public class DB_Produccion {
             pst = DB_manager.getConection().prepareStatement(INSERT_CABECERA, PreparedStatement.RETURN_GENERATED_KEYS);
             pst.setInt(1, produccionCabecera.getNroOrdenTrabajo());
             pst.setTimestamp(2, new Timestamp(produccionCabecera.getFechaProduccion().getTime()));
-            pst.setInt(3, produccionCabecera.getFuncionarioProduccion().getId_funcionario());
-            pst.setInt(4, produccionCabecera.getFuncionarioSistema().getId_funcionario());
+            pst.setInt(3, produccionCabecera.getFuncionarioProduccion().getIdFuncionario());
+            pst.setInt(4, produccionCabecera.getFuncionarioSistema().getIdFuncionario());
             pst.setInt(5, E_produccionTipo.PRODUCTO_TERMINADO);
             pst.executeUpdate();
             rs = pst.getGeneratedKeys();
@@ -1829,7 +1829,7 @@ public class DB_Produccion {
             pst.setInt(3, (int) sqDetalle);
             pst.setDouble(4, detalle.getPeso());
             pst.setTimestamp(5, new Timestamp(produccionCabecera.getFechaProduccion().getTime()));
-            pst.setInt(6, produccionCabecera.getFuncionarioProduccion().getId_funcionario());
+            pst.setInt(6, produccionCabecera.getFuncionarioProduccion().getIdFuncionario());
             pst.setInt(7, detalle.getCono());
             pst.setInt(8, detalle.getMedida());
             pst.setInt(9, detalle.getMicron());

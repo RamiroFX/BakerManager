@@ -28,7 +28,7 @@ public class M_gestionCompras {
 
     public M_gestionCompras() {
         this.egresoCabecera = new M_egresoCabecera();
-        this.egresoCabecera.getFuncionario().setId(-1);
+        this.egresoCabecera.getFuncionario().setIdFuncionario(-1);
         this.egresoCabecera.getProveedor().setId(-1);
         this.egresoCabecera.setNroFactura(-1);
         this.tm = new EgresoCabeceraTableModel(EgresoCabeceraTableModel.SIMPLE);
@@ -86,7 +86,7 @@ public class M_gestionCompras {
     }
 
     public void borrarParametros() {
-        this.egresoCabecera.getFuncionario().setId(-1);
+        this.egresoCabecera.getFuncionario().setIdFuncionario(-1);
         this.egresoCabecera.getProveedor().setId(-1);
         this.egresoCabecera.setNroFactura(-1);
         this.egresoCabecera.getEstado().setId(-1);
@@ -105,7 +105,7 @@ public class M_gestionCompras {
         calendarFinal.set(Calendar.MINUTE, 59);
         calendarFinal.set(Calendar.SECOND, 59);
         calendarFinal.set(Calendar.MILLISECOND, 999);
-        int idEmpleado = getCabecera().getFuncionario().getId_funcionario();
+        int idEmpleado = getCabecera().getFuncionario().getIdFuncionario();
         int idProveedor = getCabecera().getProveedor().getId();
         int idTiop = getCabecera().getCondCompra().getId();
         int nroFactura = getCabecera().getNro_factura();

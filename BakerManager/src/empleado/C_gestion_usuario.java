@@ -198,7 +198,7 @@ public class C_gestion_usuario implements GestionInterface {
             } else {
                 modelo.eliminarUsuario(idEmpleado);
                 this.vista.jtUsuario.setModel(modelo.consultarFuncionario("", false, false, false));
-                int idCurrentUser = DatosUsuario.getRol_usuario().getFuncionario().getId_funcionario();
+                int idCurrentUser = DatosUsuario.getRol_usuario().getFuncionario().getIdFuncionario();
                 if (idEmpleado == idCurrentUser) {
                     System.exit(0);
                 }

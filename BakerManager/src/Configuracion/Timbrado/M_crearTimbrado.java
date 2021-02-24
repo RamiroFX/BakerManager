@@ -36,8 +36,8 @@ public class M_crearTimbrado {
     }
 
     public void guardarTimbrado() {
-        int idFuncionario = DatosUsuario.getRol_usuario().getFuncionario().getId_funcionario();
-        getTimbrado().getCreador().setId(idFuncionario);
+        int idFuncionario = DatosUsuario.getRol_usuario().getFuncionario().getIdFuncionario();
+        getTimbrado().getCreador().setIdFuncionario(idFuncionario);
         DB_Timbrado.insertarTimbrado(getTimbrado());
     }
 

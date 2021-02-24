@@ -88,7 +88,7 @@ public class E_facturacionCabecera {
         return getClass().getName() + "{"
                 + "id: " + getId() + ","
                 + "cliente.id: " + getCliente().getIdCliente()+ ","
-                + "funcionario.id: " + getFuncionario().getId_funcionario()+ ","
+                + "funcionario.id: " + getFuncionario().getIdFuncionario()+ ","
                 + "tipoOperacion.id: " + getCondVenta().getId() + ","
                 + "nroFactura: " + getNroFactura()+ ","
                 + "tiempo: " + getTiempo() + ","
