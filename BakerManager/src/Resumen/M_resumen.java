@@ -9,7 +9,7 @@ import DB.DB_Pedido;
 import DB.ResultSetTableModel;
 import Entities.M_egresoCabecera;
 import Entities.M_egreso_detalleFX;
-import Entities.M_pedido;
+import Entities.M_pedidoCabecera;
 import Pedido.C_gestionPedido;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -29,7 +29,7 @@ public class M_resumen {
     private M_egresoCabecera egresoCabecera;
     private ArrayList<M_egreso_detalleFX> egresoDetalles;
     private ResultSetTableModel rstm;
-    private M_pedido pedido;
+    private M_pedidoCabecera pedido;
 
     public M_resumen(M_egresoCabecera egresoCabecera, Date inicio, Date fin) {
         this.tipo = RESUMEN_EGRESO;

@@ -10,7 +10,7 @@ import DB.ResultSetTableModel;
 import Entities.E_facturaDetalle;
 import Entities.M_cliente;
 import Entities.M_funcionario;
-import Entities.M_pedido;
+import Entities.M_pedidoCabecera;
 import Entities.M_pedidoDetalle;
 import ModeloTabla.FacturaDetalleTableModel;
 import java.util.ArrayList;
@@ -25,12 +25,12 @@ import javax.swing.table.TableModel;
  */
 public class M_gestionPedido {
 
-    private M_pedido pedido;
+    private M_pedidoCabecera pedido;
     private ResultSetTableModel rstmPedido;
     private FacturaDetalleTableModel pedidoDetalleTM;
 
     public M_gestionPedido() {
-        this.pedido = new M_pedido();
+        this.pedido = new M_pedidoCabecera();
         this.rstmPedido = DB_Pedido.obtenerPedidosPendientes(true);
         this.pedidoDetalleTM = new FacturaDetalleTableModel();
     }
@@ -42,11 +42,11 @@ public class M_gestionPedido {
         return alias + "-(" + nombre + " " + apellido + ")";
     }
 
-    public M_pedido getPedido() {
+    public M_pedidoCabecera getPedido() {
         return pedido;
     }
 
-    public void setPedido(M_pedido pedido) {
+    public void setPedido(M_pedidoCabecera pedido) {
         this.pedido = pedido;
     }
 
@@ -91,7 +91,7 @@ public class M_gestionPedido {
     }
 
     public void pagarPedido(int idPedido) {
-        M_pedido p = DB_Pedido.obtenerPedido(idPedido);
+        M_pedidoCabecera p = DB_Pedido.obtenerPedido(idPedido);
         DB_Pedido.pagarPedido(p, (ArrayList<E_facturaDetalle>) DB_Pedido.obtenerPedidoDetalle(idPedido), null);
     }
 
@@ -103,7 +103,7 @@ public class M_gestionPedido {
         return DB_Pedido.obtenerEstado();
     }
 
-    M_pedido obtenerPedido(Integer idPedido) {
+    M_pedidoCabecera obtenerPedido(Integer idPedido) {
         return DB_Pedido.obtenerPedido(idPedido);
     }
 

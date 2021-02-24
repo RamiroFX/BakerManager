@@ -29,7 +29,7 @@ import Entities.M_facturaDetalle;
 import Entities.M_funcionario;
 import Entities.M_mesa;
 import Entities.M_mesa_detalle;
-import Entities.M_pedido;
+import Entities.M_pedidoCabecera;
 import Entities.M_preferenciasImpresion;
 import Entities.M_producto;
 import Entities.M_rol_usuario;
@@ -426,7 +426,7 @@ public class Impresora {
     /*
     IMPRIMIR TICKETS
      */
-    public static void imprimirTicketPedido(M_rol_usuario rol_usuario, M_pedido pedidoCabecera, List<E_facturaDetalle> pedidoDetalle) {
+    public static void imprimirTicketPedido(M_rol_usuario rol_usuario, M_pedidoCabecera pedidoCabecera, List<E_facturaDetalle> pedidoDetalle) {
         PrintService[] services = PrintServiceLookup.lookupPrintServices(null, null);
         String nombreImpresora = PREF_PRINT_TICKET.getNombreImpresora();
         Date today = Calendar.getInstance().getTime();

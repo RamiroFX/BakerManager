@@ -11,7 +11,8 @@ import DB.DB_Preferencia;
 import DB.DB_manager;
 import DB.ResultSetTableModel;
 import Entities.E_impresionTipo;
-import Entities.M_pedido;
+import Entities.E_tipoOperacion;
+import Entities.M_pedidoCabecera;
 import Entities.M_pedidoDetalle;
 import ModeloTabla.FacturaDetalleTableModel;
 import java.util.ArrayList;
@@ -23,7 +24,7 @@ import java.util.Vector;
  */
 public class M_verPedido {
 
-    private M_pedido pedido;
+    private M_pedidoCabecera pedido;
     private FacturaDetalleTableModel tm;
     private E_impresionTipo tipoVenta;
 
@@ -51,11 +52,11 @@ public class M_verPedido {
         this.tipoVenta = tipoVenta;
     }
 
-    public M_pedido getPedido() {
+    public M_pedidoCabecera getPedido() {
         return pedido;
     }
 
-    public void setPedido(M_pedido pedido) {
+    public void setPedido(M_pedidoCabecera pedido) {
         this.pedido = pedido;
     }
 
@@ -107,5 +108,13 @@ public class M_verPedido {
 
     public ArrayList<E_impresionTipo> obtenerTipoVenta() {
         return DB_Preferencia.obtenerImpresionTipo();
+    }
+    
+    public void establecerCondicionVentaContado() {
+        this.pedido.setTipoOperacion(new E_tipoOperacion(E_tipoOperacion.CONTADO, 0, "Contado"));
+    }
+
+    public void establecerCondicionVentaCredito() {
+        this.pedido.setTipoOperacion(new E_tipoOperacion(E_tipoOperacion.CREDITO_30, 30, "Credito"));
     }
 }

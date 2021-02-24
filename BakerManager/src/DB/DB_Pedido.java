@@ -4,17 +4,20 @@
  */
 package DB;
 
+import Entities.E_estadoPedido;
 import Entities.E_facturaDetalle;
+import Entities.E_tipoOperacion;
 import Entities.M_cliente;
 import Entities.M_facturaDetalle;
 import Entities.M_funcionario;
-import Entities.M_pedido;
+import Entities.M_pedidoCabecera;
 import Entities.M_pedidoDetalle;
 import Entities.M_producto;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Timestamp;
 import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,7 +38,7 @@ public class DB_Pedido {
     /*
      * READ
      */
-    public static ResultSetTableModel obtenerPedidos(boolean esTiempoRecepcionOEntrega, String inicio, String fin, String tipo_operacion, String nroFactura, String estado, M_pedido pedido, boolean conTotal) {
+    public static ResultSetTableModel obtenerPedidos(boolean esTiempoRecepcionOEntrega, String inicio, String fin, String tipo_operacion, String nroFactura, String estado, M_pedidoCabecera pedido, boolean conTotal) {
         ResultSetTableModel rstm = null;
         String total = "";
         if (conTotal) {
@@ -126,8 +129,8 @@ public class DB_Pedido {
         return rstm;
     }
 
-    public static M_pedido obtenerPedido(Integer idPedido) {
-        M_pedido pedido = null;
+    public static M_pedidoCabecera obtenerPedido(Integer idPedido) {
+        M_pedidoCabecera pedido = null;
         String genero = "(SELECT SEXO.DESCRIPCION  FROM SEXO SEXO WHERE SEXO.ID_SEXO = PERS.ID_SEXO) \"SEXO\"";
         String pais = "(SELECT PAIS.DESCRIPCION FROM PAIS PAIS WHERE PERS.ID_PAIS=PAIS.ID_PAIS) \"NACIONALIDAD\"";
         String ciudad = " (SELECT CIUD.DESCRIPCION FROM CIUDAD CIUD WHERE PERS.ID_CIUDAD=CIUD.ID_CIUDAD)\"CIUDAD\"";
@@ -195,13 +198,17 @@ public class DB_Pedido {
                 cliente.setRucId(rs.getString("RUC_IDENTIFICADOR"));
                 cliente.setTipo(rs.getString("TIPO"));
 
-                pedido = new M_pedido();
+                E_estadoPedido ep = new E_estadoPedido();
+                ep.setId(rs.getInt("ID_PEDIDO_ESTADO"));
+                E_tipoOperacion tiop= new E_tipoOperacion();
+                tiop.setId(rs.getInt("ID_COND_VENTA"));
+                ep.setDescripcion(rs.getString("ESTADO"));
+                pedido = new M_pedidoCabecera();
                 pedido.setIdPedido(rs.getInt("ID_PEDIDO_CABECERA"));
                 pedido.setCliente(cliente);
                 pedido.getCliente().setIdCliente(rs.getInt("ID_CLIENTE"));
-                pedido.setIdCondVenta(rs.getInt("ID_COND_VENTA"));
-                pedido.setIdEstado(rs.getInt("ID_PEDIDO_ESTADO"));
-                pedido.setEstado(rs.getString("ESTADO"));
+                pedido.setTipoOperacion(tiop);
+                pedido.setEstadoPedido(ep);
                 pedido.setFuncionario(f);
                 pedido.setTiempoEntrega(rs.getTimestamp("TIEMPO_ENTREGA"));
                 pedido.setTiempoRecepcion(rs.getTimestamp("TIEMPO_RECEPCION"));
@@ -241,7 +248,7 @@ public class DB_Pedido {
                 + "PEDE.OBSERVACION \"OBSERVACION\" "
                 + "FROM PEDIDO_DETALLE PEDE, PRODUCTO PROD "
                 + "WHERE PROD.ID_PRODUCTO = PEDE.ID_PRODUCTO "
-                + "AND PEDE.ID_PEDIDO_CABECERA = " + idPedido;
+                + "AND PEDE.ID_PEDIDO_CABECERA = ?;";
         List<E_facturaDetalle> detalles = new ArrayList<>();
         try {
             pst = DB_manager.getConection().prepareStatement(QUERY, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
@@ -349,7 +356,7 @@ public class DB_Pedido {
     /*
      * CREATE
      */
-    public static long insertarPedido(M_pedido pedido, List<E_facturaDetalle> pedidoDetalle) {
+    public static long insertarPedido(M_pedidoCabecera pedido, List<E_facturaDetalle> pedidoDetalle) {
         //LA SGBD SE ENCARGA DE INSERTAR EL TIMESTAMP.
         String INSERT_DETALLE = "INSERT INTO PEDIDO_DETALLE(ID_PEDIDO_CABECERA, ID_PRODUCTO, CANTIDAD, PRECIO, DESCUENTO, OBSERVACION)VALUES (?, ?, ?, ?, ?, ?);";
         String INSERT_PEDIDO = "INSERT INTO PEDIDO_CABECERA(ID_CLIENTE, ID_FUNCIONARIO, TIEMPO_ENTREGA, ID_COND_VENTA, ID_PEDIDO_ESTADO, DIRECCION, REFERENCIA)VALUES (?, ?, ?, ?, ?, ?, ?);";
@@ -359,9 +366,9 @@ public class DB_Pedido {
             pst = DB_manager.getConection().prepareStatement(INSERT_PEDIDO, PreparedStatement.RETURN_GENERATED_KEYS);
             pst.setInt(1, pedido.getCliente().getIdCliente());
             pst.setInt(2, pedido.getFuncionario().getId_funcionario());
-            pst.setTimestamp(3, pedido.getTiempoEntrega());
-            pst.setInt(4, pedido.getIdCondVenta());
-            pst.setInt(5, pedido.getIdEstado());
+            pst.setTimestamp(3, new Timestamp(pedido.getTiempoEntrega().getTime()));
+            pst.setInt(4, pedido.getTipoOperacion().getId());
+            pst.setInt(5, pedido.getEstadoPedido().getId());
             try {
                 if (pedido.getDireccion().isEmpty()) {
                     pst.setNull(6, Types.VARCHAR);
@@ -438,15 +445,15 @@ public class DB_Pedido {
     /*
      * UPDATE
      */
-    public static void actualizarPedido(M_pedido pedido) {
+    public static void actualizarPedido(M_pedidoCabecera pedido) {
         String UPDATE_PEDIDO = "UPDATE PEDIDO_CABECERA SET "
                 + "ID_FUNCIONARIO= " + pedido.getFuncionario().getId_funcionario() + ", "
                 + "ID_CLIENTE=" + pedido.getCliente().getIdCliente() + ", "
                 + "DIRECCION= '" + pedido.getDireccion() + "', "
                 + "REFERENCIA= '" + pedido.getReferencia() + "', "
                 + "TIEMPO_ENTREGA= '" + pedido.getTiempoEntrega() + "', "
-                + "ID_PEDIDO_ESTADO = " + pedido.getIdEstado() + ", "
-                + "ID_COND_VENTA = " + pedido.getIdCondVenta()
+                + "ID_PEDIDO_ESTADO = " + pedido.getEstadoPedido().getId()+ ", "
+                + "ID_COND_VENTA = " + pedido.getTipoOperacion().getId()
                 + " WHERE ID_PEDIDO_CABECERA = " + pedido.getIdPedido();
         try {
             DB_manager.habilitarTransaccionManual();
@@ -471,7 +478,7 @@ public class DB_Pedido {
         }
     }
 
-    public static void actualizarPedidoCliente(M_pedido pedido) {
+    public static void actualizarPedidoCliente(M_pedidoCabecera pedido) {
         String UPDATE_PEDIDO = "UPDATE PEDIDO_CABECERA SET "
                 + "ID_CLIENTE=" + pedido.getCliente().getIdCliente()
                 + " WHERE ID_PEDIDO_CABECERA = " + pedido.getIdPedido();
@@ -532,9 +539,9 @@ public class DB_Pedido {
         }
     }
 
-    public static void actualizarPedidoEstado(M_pedido pedido) {
+    public static void actualizarPedidoEstado(M_pedidoCabecera pedido) {
         String UPDATE_PEDIDO = "UPDATE PEDIDO_CABECERA SET "
-                + "ID_PEDIDO_ESTADO = " + pedido.getIdEstado() + " "
+                + "ID_PEDIDO_ESTADO = " + pedido.getEstadoPedido().getId()+ " "
                 + " WHERE ID_PEDIDO_CABECERA = " + pedido.getIdPedido();
         try {
             DB_manager.habilitarTransaccionManual();
@@ -659,7 +666,7 @@ public class DB_Pedido {
         }
     }
 
-    public static int pagarPedido(M_pedido pedido, ArrayList<E_facturaDetalle> detalle, Integer nroFactura) {
+    public static int pagarPedido(M_pedidoCabecera pedido, ArrayList<E_facturaDetalle> detalle, Integer nroFactura) {
         String INSERT_DETALLE = "INSERT INTO FACTURA_DETALLE(ID_FACTURA_CABECERA, ID_PRODUCTO, CANTIDAD, PRECIO, DESCUENTO, OBSERVACION)VALUES (?, ?, ?, ?, ?, ?);";
         //LA SGBD SE ENCARGA DE INSERTAR EL TIMESTAMP.
         String INSERT_CABECERA = "INSERT INTO FACTURA_CABECERA(ID_FUNCIONARIO, ID_CLIENTE, NRO_FACTURA, ID_COND_VENTA)VALUES (?, ?, ?, ?);";
@@ -679,7 +686,7 @@ public class DB_Pedido {
             } catch (Exception e) {
                 pst.setNull(3, Types.BIGINT);
             }
-            pst.setInt(4, pedido.getIdCondVenta());
+            pst.setInt(4, pedido.getTipoOperacion().getId());
             pst.executeUpdate();
             rs = pst.getGeneratedKeys();
             if (rs != null && rs.next()) {

@@ -105,7 +105,7 @@ public class C_verPedido extends MouseAdapter implements ActionListener, KeyList
         }
         this.vista.jcbHora.setSelectedItem(_hora);
         this.vista.jcbMinuto.setSelectedItem(_minuto);
-        int condVenta = this.modelo.getPedido().getIdCondVenta();
+        int condVenta = this.modelo.getPedido().getTipoOperacion().getId();
         this.vista.jcbCondVenta.setSelectedIndex(condVenta - 1);
         this.vista.jbEliminarDetalle.setEnabled(false);
         this.vista.jbModificarDetalle.setEnabled(false);
@@ -161,9 +161,9 @@ public class C_verPedido extends MouseAdapter implements ActionListener, KeyList
 
     private void establecerCondicionVenta() {
         if (this.vista.jcbCondVenta.getSelectedIndex() == 0) {
-            this.modelo.getPedido().setIdCondVenta(TipoOperacion.CONTADO);
+            this.modelo.establecerCondicionVentaContado();
         } else {
-            this.modelo.getPedido().setIdCondVenta(TipoOperacion.CREDITO);
+            this.modelo.establecerCondicionVentaCredito();
         }
     }
 

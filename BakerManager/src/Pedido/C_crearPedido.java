@@ -73,9 +73,6 @@ public class C_crearPedido extends MouseAdapter implements ActionListener, KeyLi
         }
         this.vista.jcbTipoVenta.setEnabled(false);
         this.vista.jtfNroFactura.setEnabled(false);
-        this.modelo.getPedido().setIdCondVenta(TipoOperacion.CONTADO);
-        this.modelo.getPedido().setEstado(PedidoEstado.PENDIENTE.getDescripcion());
-        this.modelo.getPedido().setIdEstado(PedidoEstado.PENDIENTE.getId());
         this.vista.jtPedidoDetalle.setModel(this.modelo.getDtm());
         this.vista.jbModificarDetalle.setEnabled(false);
         this.vista.jbEliminarDetalle.setEnabled(false);
@@ -137,18 +134,10 @@ public class C_crearPedido extends MouseAdapter implements ActionListener, KeyLi
 
     private void establecerCondicionVenta() {
         if (this.vista.jcbCondVenta.getSelectedIndex() == 0) {
-            this.modelo.getPedido().setIdCondVenta(TipoOperacion.CONTADO);
+            this.modelo.establecerCondicionVentaContado();
         } else {
-            this.modelo.getPedido().setIdCondVenta(TipoOperacion.CREDITO);
+            this.modelo.establecerCondicionVentaCredito();
         }
-    }
-
-    public void recibirDetalle(M_pedidoDetalle detalle) {
-//        this.modelo.getDetalles().add(detalle);
-//        this.modelo.getDtm().addRow(rowData);
-//        this.vista.jtPedidoDetalle.updateUI();
-//        Utilities.c_packColumn.packColumns(this.vista.jtPedidoDetalle, 1);
-//        sumarTotal();
     }
 
     private void eliminarDetalle() {
@@ -337,7 +326,7 @@ public class C_crearPedido extends MouseAdapter implements ActionListener, KeyLi
     }
 
     private void invocarSeleccionarProducto() {
-        SeleccionarProducto sp = new SeleccionarProducto(this);
+        SeleccionarProducto sp = new SeleccionarProducto(this.vista, this);
         sp.mostrarVista();
     }
 
@@ -413,7 +402,9 @@ public class C_crearPedido extends MouseAdapter implements ActionListener, KeyLi
 
     @Override
     public void recibirProducto(double cantidad, double precio, double descuento, M_producto producto, String observacion) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        this.modelo.agregarDetalle(cantidad, precio, descuento, producto, observacion);
+        Utilities.c_packColumn.packColumns(this.vista.jtPedidoDetalle, 1);
+        sumarTotal();
     }
 
     @Override
