@@ -239,11 +239,11 @@ public class C_gestionPedido implements GestionInterface, RecibirEmpleadoCallbac
     private void obtenerPedidoDetalle(MouseEvent e) {
         int fila = this.vista.jtPedido.rowAtPoint(e.getPoint());
         int columna = this.vista.jtPedido.columnAtPoint(e.getPoint());
-        Integer idPedido = Integer.valueOf(String.valueOf(this.vista.jtPedido.getValueAt(fila, 0)));
         //this.modelo.setPedido(modelo.obtenerPedido(idPedido));
         controlarTablaPedido();
         /**/
         if ((fila > -1) && (columna > -1)) {
+            Integer idPedido = modelo.getPedidoCabeceraTM().getList().get(fila).getIdPedido();
             String estado = String.valueOf(this.vista.jtPedido.getValueAt(fila, 6));
             if (!estado.equals("Entregado")) {
                 //this.vista.jbPagoPedido.setEnabled(true);
@@ -264,7 +264,10 @@ public class C_gestionPedido implements GestionInterface, RecibirEmpleadoCallbac
 
     private void verDetalle() {
         int row = this.vista.jtPedido.getSelectedRow();
-        int idPedido = Integer.valueOf(String.valueOf(this.vista.jtPedido.getValueAt(row, 0)));
+        if (row < 0) {
+            return;
+        }
+        int idPedido = modelo.getPedidoCabeceraTM().getList().get(row).getIdPedido();
         VerPedido vp = new VerPedido(this, idPedido);
         vp.mostrarVista();
         displayQueryResults();
@@ -309,7 +312,7 @@ public class C_gestionPedido implements GestionInterface, RecibirEmpleadoCallbac
         int opcion = JOptionPane.showConfirmDialog(vista, "¿Desea confirmas esta operación?", "Atención", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
         if (opcion == JOptionPane.YES_OPTION) {
             int fila = this.vista.jtPedido.getSelectedRow();
-            Integer idPedido = Integer.valueOf(String.valueOf(this.vista.jtPedido.getValueAt(fila, 0)));
+            int idPedido = modelo.getPedidoCabeceraTM().getList().get(fila).getIdPedido();
             this.modelo.pagarPedido(idPedido);
             this.vista.jtPedido.setModel(this.modelo.getPedidosPendientes());
             Utilities.c_packColumn.packColumns(this.vista.jtPedido, 1);
@@ -324,7 +327,7 @@ public class C_gestionPedido implements GestionInterface, RecibirEmpleadoCallbac
         int opcion = JOptionPane.showConfirmDialog(vista, "¿Desea confirmas esta operación?", "Atención", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
         if (opcion == JOptionPane.YES_OPTION) {
             int fila = this.vista.jtPedido.getSelectedRow();
-            Integer idPedido = Integer.valueOf(String.valueOf(this.vista.jtPedido.getValueAt(fila, 0)));
+            int idPedido = modelo.getPedidoCabeceraTM().getList().get(fila).getIdPedido();
             this.modelo.cancelarPedido(idPedido);
             this.vista.jtPedido.setModel(this.modelo.getPedidosPendientes());
             //this.vista.jtPedidoDetalle.setModel(this.modelo.getDtm());

@@ -25,7 +25,6 @@ import Entities.M_cliente;
 import Entities.M_egresoCabecera;
 import Entities.M_egreso_detalle;
 import Entities.M_facturaCabecera;
-import Entities.M_facturaDetalle;
 import Entities.M_funcionario;
 import Entities.M_mesa;
 import Entities.M_mesa_detalle;
@@ -40,6 +39,7 @@ import java.awt.print.Paper;
 import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
 import java.sql.Timestamp;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -427,6 +427,7 @@ public class Impresora {
     IMPRIMIR TICKETS
      */
     public static void imprimirTicketPedido(M_rol_usuario rol_usuario, M_pedidoCabecera pedidoCabecera, List<E_facturaDetalle> pedidoDetalle) {
+        DecimalFormat decimalFormat = new DecimalFormat("#,##0.##");
         PrintService[] services = PrintServiceLookup.lookupPrintServices(null, null);
         String nombreImpresora = PREF_PRINT_TICKET.getNombreImpresora();
         Date today = Calendar.getInstance().getTime();
@@ -463,10 +464,10 @@ public class Impresora {
         iva5 = iva5 / 21;
         iva10 = iva10 / 11;
         String SUMATOTAL = "---------------------------------\n"
-                + "Total= " + total + "\n"
-                + "liq. iva5% = " + iva5 + "\n"
-                + "liq. iva10% = " + iva10 + "\n"
-                + "liq. total = " + (iva5 + iva10) + "\n";
+                + "Total= " + decimalFormat.format(total) + "\n"
+                + "liq. iva5% = " + decimalFormat.format(iva5) + "\n"
+                + "liq. iva10% = " + decimalFormat.format(iva10) + "\n"
+                + "liq. total = " + decimalFormat.format((iva5 + iva10)) + "\n";
         String cabecera = PREF_PRINT_TICKET.getCabecera();
         String pie = PREF_PRINT_TICKET.getPie();
         String ticket = cabecera + ventaCabecera + COLUMNAS + DETALLE + SUMATOTAL + pie;
@@ -498,6 +499,7 @@ public class Impresora {
     }
 
     public static void imprimirTicketVentaGuardada(M_rol_usuario rol_usuario, M_facturaCabecera facturaCabecera) {
+        DecimalFormat decimalFormat = new DecimalFormat("#,##0.##");
         PrintService[] services = PrintServiceLookup.lookupPrintServices(null, null);
         String nombreImpresora = PREF_PRINT_TICKET.getNombreImpresora();
         String fechaEntrega = sdfs.format(facturaCabecera.getTiempo());
@@ -542,10 +544,10 @@ public class Impresora {
         iva5 = iva5 / 21;
         iva10 = iva10 / 11;
         String SUMATOTAL = "---------------------------------\n"
-                + "Total= " + total + "\n"
-                + "liq. iva5% = " + iva5 + "\n"
-                + "liq. iva10% = " + iva10 + "\n"
-                + "liq. total = " + (iva5 + iva10) + "\n";
+                + "Total= " + decimalFormat.format(total) + "\n"
+                + "liq. iva5% = " + decimalFormat.format(iva5) + "\n"
+                + "liq. iva10% = " + decimalFormat.format(iva10) + "\n"
+                + "liq. total = " + decimalFormat.format((iva5 + iva10)) + "\n";
         String cabecera = PREF_PRINT_TICKET.getCabecera();
         String pie = PREF_PRINT_TICKET.getPie();
         String ticket = cabecera + ventaCabecera + COLUMNAS + DETALLE + SUMATOTAL + pie;
@@ -577,6 +579,7 @@ public class Impresora {
     }
 
     public static void imprimirTicketVenta(M_rol_usuario rol_usuario, M_facturaCabecera facturaCabecera, ArrayList<E_facturaDetalle> facturaDetalle) {
+        DecimalFormat decimalFormat = new DecimalFormat("#,##0.##");
         PrintService[] services = PrintServiceLookup.lookupPrintServices(null, null);
         String nombreImpresora = PREF_PRINT_TICKET.getNombreImpresora();
         Date today = Calendar.getInstance().getTime();
@@ -620,10 +623,10 @@ public class Impresora {
         iva5 = iva5 / 21;
         iva10 = iva10 / 11;
         String SUMATOTAL = "---------------------------------\n"
-                + "Total= " + total + "\n"
-                + "liq. iva5% = " + iva5 + "\n"
-                + "liq. iva10% = " + iva10 + "\n"
-                + "liq. total = " + (iva5 + iva10) + "\n";
+                + "Total= " + decimalFormat.format(total) + "\n"
+                + "liq. iva5% = " + decimalFormat.format(iva5) + "\n"
+                + "liq. iva10% = " + decimalFormat.format(iva10) + "\n"
+                + "liq. total = " + decimalFormat.format(iva5 + iva10) + "\n";
         String cabecera = PREF_PRINT_TICKET.getCabecera();
         String pie = PREF_PRINT_TICKET.getPie();
         String ticket = cabecera + ventaCabecera + COLUMNAS + DETALLE + SUMATOTAL + pie;
@@ -655,6 +658,7 @@ public class Impresora {
     }
 
     public static void imprimirTicketMesa(M_mesa mesaCabecera, ArrayList<M_mesa_detalle> detalles) {
+        DecimalFormat decimalFormat = new DecimalFormat("#,##0.##");
         PrintService[] services = PrintServiceLookup.lookupPrintServices(null, null);
         String nombreImpresora = PREF_PRINT_TICKET.getNombreImpresora();
         Date today = Calendar.getInstance().getTime();
@@ -699,10 +703,10 @@ public class Impresora {
         iva5 = iva5 / 21;
         iva10 = iva10 / 11;
         String SUMATOTAL = "---------------------------------\n"
-                + "Total= " + total + "\n"
-                + "liq. iva5% = " + iva5 + "\n"
-                + "liq. iva10% = " + iva10 + "\n"
-                + "liq. total = " + (iva5 + iva10) + "\n";
+                + "Total= " + decimalFormat.format(total) + "\n"
+                + "liq. iva5% = " + decimalFormat.format(iva5) + "\n"
+                + "liq. iva10% = " + decimalFormat.format(iva10) + "\n"
+                + "liq. total = " + decimalFormat.format((iva5 + iva10)) + "\n";
         String cabecera = PREF_PRINT_TICKET.getCabecera();
         String pie = PREF_PRINT_TICKET.getPie();
         String ticket = cabecera + ventaCabecera + COLUMNAS + DETALLE + SUMATOTAL + pie;
@@ -734,6 +738,7 @@ public class Impresora {
     }
 
     public static void imprimirTicketVentaMesa(M_mesa mesaCabecera, ArrayList<M_mesa_detalle> detalles) {
+        DecimalFormat decimalFormat = new DecimalFormat("#,##0.##");
         PrintService[] services = PrintServiceLookup.lookupPrintServices(null, null);
         String nombreImpresora = PREF_PRINT_TICKET.getNombreImpresora();
         Date today = Calendar.getInstance().getTime();
@@ -777,11 +782,12 @@ public class Impresora {
         }
         iva5 = iva5 / 21;
         iva10 = iva10 / 11;
+
         String SUMATOTAL = "---------------------------------\n"
-                + "Total= " + total + "\n"
-                + "liq. iva5% = " + iva5 + "\n"
-                + "liq. iva10% = " + iva10 + "\n"
-                + "liq. total = " + (iva5 + iva10) + "\n";
+                + "Total= " + decimalFormat.format(total) + "\n"
+                + "liq. iva5% = " + decimalFormat.format(iva5) + "\n"
+                + "liq. iva10% = " + decimalFormat.format(iva10) + "\n"
+                + "liq. total = " + decimalFormat.format((iva5 + iva10)) + "\n";
         String cabecera = PREF_PRINT_TICKET.getCabecera();
         String pie = PREF_PRINT_TICKET.getPie();
         String ticket = cabecera + ventaCabecera + COLUMNAS + DETALLE + SUMATOTAL + pie;
@@ -813,6 +819,7 @@ public class Impresora {
     }
 
     public static void imprimirTicketCaja(Caja caja, int efectivoDepositado) {
+        DecimalFormat decimalFormat = new DecimalFormat("#,##0.##");
         PrintService[] services = PrintServiceLookup.lookupPrintServices(null, null);
         String nombreImpresora = PREF_PRINT_TICKET.getNombreImpresora();
         Date today = Calendar.getInstance().getTime();
@@ -878,6 +885,7 @@ public class Impresora {
     }
 
     public static void imprimirTicketCompra(M_egresoCabecera facturaCabecera, ArrayList<M_egreso_detalle> egresoDetalle) {
+        DecimalFormat decimalFormat = new DecimalFormat("#,##0.##");
         PrintService[] services = PrintServiceLookup.lookupPrintServices(null, null);
         String nombreImpresora = PREF_PRINT_TICKET.getNombreImpresora();
         Date today = Calendar.getInstance().getTime();
@@ -921,11 +929,12 @@ public class Impresora {
         }
         iva5 = iva5 / 21;
         iva10 = iva10 / 11;
+
         String SUMATOTAL = "---------------------------------\n"
-                + "Total= " + total + "\n"
-                + "liq. iva5% = " + iva5 + "\n"
-                + "liq. iva10% = " + iva10 + "\n"
-                + "liq. total = " + (iva5 + iva10) + "\n";
+                + "Total= " + decimalFormat.format(total) + "\n"
+                + "liq. iva5% = " + decimalFormat.format(iva5) + "\n"
+                + "liq. iva10% = " + decimalFormat.format(iva10) + "\n"
+                + "liq. total = " + decimalFormat.format((iva5 + iva10)) + "\n";
         String cabecera = PREF_PRINT_TICKET.getCabecera();
         String pie = PREF_PRINT_TICKET.getPie();
         String ticket = cabecera + ventaCabecera + COLUMNAS + DETALLE + SUMATOTAL + pie;

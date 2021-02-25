@@ -6,9 +6,6 @@ package Producto;
 
 import Egresos.C_crear_egreso;
 import Interface.RecibirProductoCallback;
-import Pedido.C_crearPedido;
-import Pedido.C_verPedido;
-import Ventas.C_crearVentaRapida;
 import Ventas.Mesas.C_verMesa;
 import javax.swing.JDialog;
 

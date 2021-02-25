@@ -144,7 +144,7 @@ public class C_gestionCompras extends MouseAdapter implements ActionListener, Ke
     private void verDetalle() {
         int row = this.vista.jtEgresoCabecera.getSelectedRow();
         if (row > -1) {
-            Integer idEgresoCabecera = Integer.valueOf(String.valueOf(this.vista.jtEgresoCabecera.getValueAt(row, 0)));
+            Integer idEgresoCabecera = modelo.getTm().getList().get(row).getId_cabecera();
             Ver_Egresos ver_egreso = new Ver_Egresos(c_inicio, idEgresoCabecera);
             ver_egreso.mostrarVista();
             this.vista.jbDetalle.setEnabled(false);
@@ -227,7 +227,7 @@ public class C_gestionCompras extends MouseAdapter implements ActionListener, Ke
             public void run() {
                 int fila = vista.jtEgresoCabecera.getSelectedRow();
                 if (fila > -1) {
-                    int idEgrsoCabecera = Integer.valueOf(String.valueOf(vista.jtEgresoCabecera.getValueAt(fila, 0).toString()));
+                    int idEgrsoCabecera = modelo.getTm().getList().get(fila).getId_cabecera();
                     vista.jtEgresoDetalle.setModel(DB_Egreso.obtenerEgresoDetalle(idEgrsoCabecera));
                     Utilities.c_packColumn.packColumns(vista.jtEgresoDetalle, 1);
                 }
@@ -269,9 +269,6 @@ public class C_gestionCompras extends MouseAdapter implements ActionListener, Ke
             JOptionPane.showMessageDialog(vista, "El numero de factura debe ser solo numérico", "Atención", JOptionPane.WARNING_MESSAGE);
             return;
         }
-//        int idEmpleado = modelo.getCabecera().getFuncionario().getId_funcionario();
-//        int idProveedor = modelo.getCabecera().getProveedor().getId();
-//        int tiop = modelo.getCabecera().getCondCompra().getId();
         Resumen_egreso re = new Resumen_egreso(c_inicio, modelo.getTm(), this.vista.jddInicio.getDate(), this.vista.jddFinal.getDate());
         re.setVisible(true);
     }

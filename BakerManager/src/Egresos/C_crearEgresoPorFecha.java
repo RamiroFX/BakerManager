@@ -267,7 +267,7 @@ public class C_crearEgresoPorFecha extends MouseAdapter implements ActionListene
     }
 
     private void invocarSeleccionProducto() {
-        SeleccionarProducto sp = new SeleccionarProducto(vista, this);
+        SeleccionarProducto sp = new SeleccionarProducto(vista, this, SeleccionarCantidadProduducto.PRECIO_COSTO);
         sp.mostrarVista();
     }
 
@@ -330,8 +330,7 @@ public class C_crearEgresoPorFecha extends MouseAdapter implements ActionListene
                 break;
             }
             case KeyEvent.VK_F4: {
-                SeleccionarProducto sp = new SeleccionarProducto(vista, this);
-                sp.mostrarVista();
+                invocarSeleccionProducto();
                 break;
             }
             case KeyEvent.VK_F5: {

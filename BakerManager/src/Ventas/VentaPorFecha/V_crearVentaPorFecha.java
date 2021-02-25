@@ -173,7 +173,7 @@ public class V_crearVentaPorFecha extends JDialog {
         jbAgregarProducto = new JButton("Agregar producto [F4]");
         jbModificarDetalle = new JButton("Modificar detalle");
         jbEliminarDetalle = new JButton("Eliminar detalle");
-        JPanel jpSouthAux = new JPanel(new MigLayout());
+        JPanel jpSouthAux = new JPanel(new MigLayout("insets 0 0 0 0, fill, ", "", ""));
         jpSouthAux.setBorder(new EtchedBorder(EtchedBorder.LOWERED));
         jpSouthAux.add(jpCodProd, "growx, wrap");
         jpSouthAux.add(jbAgregarProducto, "growx, wrap");
@@ -185,7 +185,7 @@ public class V_crearVentaPorFecha extends JDialog {
         jftExenta = new JFormattedTextField();
         jftExenta.setColumns(columns);
         jftExenta.setEditable(false);
-        JPanel jpExenta = new JPanel(new MigLayout());
+        JPanel jpExenta = new JPanel(new MigLayout("insets 0 0 0 0, fill, ", "", ""));
         jpExenta.setBorder(new EtchedBorder(EtchedBorder.RAISED));
         jpExenta.add(jlExenta);
         jpExenta.add(jftExenta);
@@ -199,7 +199,7 @@ public class V_crearVentaPorFecha extends JDialog {
         jftIva5.setColumns(columns);
         jftImpIva5.setEditable(false);
         jftImpIva5.setColumns(columns);
-        JPanel jpIva5 = new JPanel(new MigLayout());
+        JPanel jpIva5 = new JPanel(new MigLayout("insets 0 0 0 0, fill, ", "", ""));
         jpIva5.setBorder(new EtchedBorder(EtchedBorder.RAISED));
         jpIva5.add(jlIva5);
         jpIva5.add(jftIva5, "growx, wrap");
@@ -215,7 +215,7 @@ public class V_crearVentaPorFecha extends JDialog {
         jftImpIva10.setColumns(columns);
         jlIva10.setHorizontalAlignment(SwingConstants.CENTER);
         jlImpIva10.setHorizontalAlignment(SwingConstants.CENTER);
-        JPanel jpIva10 = new JPanel(new MigLayout());
+        JPanel jpIva10 = new JPanel(new MigLayout("insets 0 0 0 0, fill, ", "", ""));
         jpIva10.setBorder(new EtchedBorder(EtchedBorder.RAISED));
         jpIva10.add(jlIva10);
         jpIva10.add(jftIva10, "growx, wrap");
@@ -235,14 +235,14 @@ public class V_crearVentaPorFecha extends JDialog {
         jftIvaTotal = new JFormattedTextField();
         jftIvaTotal.setEditable(false);
         jftIvaTotal.setColumns(columns);
-        JPanel jpTotal = new JPanel(new MigLayout());
+        JPanel jpTotal = new JPanel(new MigLayout("insets 0 0 0 0, fill, ", "", ""));
         jpTotal.setBorder(new EtchedBorder(EtchedBorder.RAISED));
         jpTotal.add(jlTotal);
         jpTotal.add(jftTotal, "growx, wrap");
         jpTotal.add(jlIvaTotal);
         jpTotal.add(jftIvaTotal);
 
-        JPanel jpDetalleAux = new JPanel(new MigLayout());
+        JPanel jpDetalleAux = new JPanel(new MigLayout("insets 0 0 0 0, fill, ", "", ""));
         jpDetalleAux.add(jpSouthAux, "growx,wrap");
         jpDetalleAux.add(jpExenta, "growx, wrap");
         jpDetalleAux.add(jpIva5, "growx, wrap");
