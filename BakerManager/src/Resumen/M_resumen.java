@@ -4,16 +4,9 @@
  */
 package Resumen;
 
-import DB.DB_Egreso;
 import DB.DB_Pedido;
-import DB.ResultSetTableModel;
-import Entities.M_egresoCabecera;
-import Entities.M_egreso_detalleFX;
-import Entities.M_pedidoCabecera;
-import Pedido.C_gestionPedido;
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Calendar;
+import ModeloTabla.FacturaDetalleTableModel;
+import ModeloTabla.PedidoCabeceraTableModel;
 import java.util.Date;
 
 /**
@@ -22,109 +15,36 @@ import java.util.Date;
  */
 public class M_resumen {
 
-    public static final int RESUMEN_EGRESO = 1;
-    public static final int RESUMEN_PEDIDO = 2;
-    public int tipo;
-    private Date inicio, fin;
-    private M_egresoCabecera egresoCabecera;
-    private ArrayList<M_egreso_detalleFX> egresoDetalles;
-    private ResultSetTableModel rstm;
-    private M_pedidoCabecera pedido;
+    private Date fechaInicio, fechaFin;
+    private PedidoCabeceraTableModel tm;
+    private FacturaDetalleTableModel tmDetalle;
 
-    public M_resumen(M_egresoCabecera egresoCabecera, Date inicio, Date fin) {
-        this.tipo = RESUMEN_EGRESO;
-        this.egresoCabecera = egresoCabecera;
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(fin);
-        cal.set(Calendar.HOUR_OF_DAY, 00);
-        cal.set(Calendar.MINUTE, 00);
-        cal.set(Calendar.SECOND, 00);
-        cal.set(Calendar.MILLISECOND, 00);
-        this.fin = cal.getTime();
-        cal.setTime(inicio);
-        cal.set(Calendar.HOUR_OF_DAY, 23);
-        cal.set(Calendar.MINUTE, 59);
-        cal.set(Calendar.SECOND, 59);
-        cal.set(Calendar.MILLISECOND, 250);
-        this.inicio = cal.getTime();
-        this.rstm = DB_Egreso.consultarResumenEgreso(new Timestamp(this.inicio.getTime()), new Timestamp(this.fin.getTime()));
-        this.egresoDetalles = DB_Egreso.obtenerEgresosDetalle(this.egresoCabecera.getProveedor().getEntidad(), this.egresoCabecera.getId_cabecera(), this.egresoCabecera.getFuncionario().getIdFuncionario().toString(), new Timestamp(this.inicio.getTime()).toString(), new Timestamp(this.fin.getTime()).toString(), this.egresoCabecera.getCondVenta());
+    public M_resumen(PedidoCabeceraTableModel tm, Date fechaInicio, Date fechaFin) {
+        this.tm = tm;
+        this.fechaInicio = fechaInicio;
+        this.fechaFin = fechaFin;
+        this.tmDetalle = new FacturaDetalleTableModel();
+        this.tmDetalle.setFacturaDetalleList(DB_Pedido.consultarDetalleAgrupado(tm.getList()));
     }
 
-    public M_resumen(C_gestionPedido gestionPedido) {
-        this.tipo = RESUMEN_PEDIDO;
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(gestionPedido.vista.jddFinal.getDate());
-        cal.set(Calendar.HOUR_OF_DAY, 23);
-        cal.set(Calendar.MINUTE, 59);
-        cal.set(Calendar.SECOND, 59);
-        cal.set(Calendar.MILLISECOND, 250);
-        this.fin = cal.getTime();
-        cal.setTime(gestionPedido.vista.jddInicio.getDate());
-        cal.set(Calendar.HOUR_OF_DAY, 00);
-        cal.set(Calendar.MINUTE, 00);
-        cal.set(Calendar.SECOND, 00);
-        cal.set(Calendar.MILLISECOND, 00);
-        this.pedido = gestionPedido.modelo.getPedido();
-        this.inicio = cal.getTime();
-        this.rstm = gestionPedido.modelo.getRstmPedido();
-        System.out.println("cliente:"+this.pedido.getCliente().getNombre());
+    public PedidoCabeceraTableModel getTm() {
+        return tm;
     }
 
-    public Date getInicio() {
-        return inicio;
+    public void setTm(PedidoCabeceraTableModel tm) {
+        this.tm = tm;
     }
 
-    public void setInicio(Date inicio) {
-        this.inicio = inicio;
+    public FacturaDetalleTableModel getTmDetalle() {
+        return tmDetalle;
     }
 
-    public Date getFin() {
-        return fin;
+    public Date getFechaFin() {
+        return fechaFin;
     }
 
-    public void setFin(Date fin) {
-        this.fin = fin;
+    public Date getFechaInicio() {
+        return fechaInicio;
     }
 
-    public M_egresoCabecera getEgresoCabecera() {
-        return egresoCabecera;
-    }
-
-    public void setEgresoCabecera(M_egresoCabecera egresoCabecera) {
-        this.egresoCabecera = egresoCabecera;
-    }
-
-    public ResultSetTableModel getRstm() {
-        return rstm;
-    }
-
-    public void setRstm(ResultSetTableModel rstm) {
-        this.rstm = rstm;
-    }
-
-    /**
-     * @return the egresoDetalles
-     */
-    public ArrayList<M_egreso_detalleFX> getEgresoDetalles() {
-        return egresoDetalles;
-    }
-
-    /**
-     * @param egresoDetalles the egresoDetalles to set
-     */
-    public void setEgresoDetalles(ArrayList<M_egreso_detalleFX> egresoDetalles) {
-        this.egresoDetalles = egresoDetalles;
-    }
-
-    public ResultSetTableModel obtenerDetallePedido() {
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(inicio);
-        int mes = cal.get(Calendar.MONTH) + 1;
-        String fechaInicio = cal.get(Calendar.DAY_OF_MONTH) + "/" + mes + "/" + cal.get(Calendar.YEAR);
-        cal.setTime(fin);
-        mes = cal.get(Calendar.MONTH) + 1;
-        String fechaFin = cal.get(Calendar.DAY_OF_MONTH) + "/" + mes + "/" + cal.get(Calendar.YEAR);
-        return DB_Pedido.obtenerPedidoDetalleAgrupado(pedido.getCliente().getIdCliente(), fechaInicio, fechaFin);
-    }
 }

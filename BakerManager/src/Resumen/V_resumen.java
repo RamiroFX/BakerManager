@@ -44,14 +44,6 @@ public class V_resumen extends JDialog {
         inicializarComponentes(1);
     }
 
-    public V_resumen(JFrame jFrame, int tipo) {
-        super(jFrame, ModalityType.APPLICATION_MODAL);
-        setSize(800, 600);
-        setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-        setLocationRelativeTo(jFrame);
-        inicializarComponentes(PEDIDO);
-    }
-
     private void inicializarComponentes(int tipo) {
         jtResumen = new JTable();
         jtResumen.getTableHeader().setReorderingAllowed(false);

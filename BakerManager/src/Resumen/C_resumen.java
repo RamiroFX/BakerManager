@@ -4,13 +4,14 @@
  */
 package Resumen;
 
-import Excel.C_create_excel;
+import Entities.E_facturaCabecera;
+import Entities.E_tipoOperacion;
+import Excel.ExportarPedidos;
 import bakermanager.C_inicio;
+import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -31,39 +32,29 @@ public class C_resumen implements ActionListener {
     }
 
     private void inicializarVista() {
-        this.vista.jtResumen.setModel(this.modelo.getRstm());
+        this.vista.jtResumen.setModel(this.modelo.getTm());
+        this.vista.jtDetalle.setModel(this.modelo.getTmDetalle());
         Utilities.c_packColumn.packColumns(this.vista.jtResumen, 1);
         Integer total = 0;
         Integer totalContado = 0;
         Integer totalCredito = 0;
-        switch (this.modelo.tipo) {
-            case (M_resumen.RESUMEN_EGRESO): {
-                int cantFilas = this.vista.jtResumen.getRowCount();
-                for (int i = 0; i < cantFilas; i++) {
-                    total = total + Integer.valueOf(String.valueOf(this.vista.jtResumen.getValueAt(i, 5)));
-                    if (this.vista.jtResumen.getValueAt(i, 6).equals("Contado")) {
-                        totalContado = totalContado + Integer.valueOf(String.valueOf(this.vista.jtResumen.getValueAt(i, 5)));
-                    } else {
-                        totalCredito = totalCredito + Integer.valueOf(String.valueOf(this.vista.jtResumen.getValueAt(i, 5)));
-                    }
+        for (E_facturaCabecera fade : modelo.getTm().getList()) {
+            switch (fade.getTipoOperacion().getId()) {
+                case E_tipoOperacion.CONTADO: {
+                    totalContado = totalContado + fade.getTotal();
+                    break;
                 }
-                break;
-            }
-            case (M_resumen.RESUMEN_PEDIDO): {
-                int cantFilas = this.vista.jtResumen.getRowCount();
-                for (int i = 0; i < cantFilas; i++) {
-                    total = total + Integer.valueOf(String.valueOf(this.vista.jtResumen.getValueAt(i, 5)));
-                    if (this.vista.jtResumen.getValueAt(i, 7).equals("Contado")) {
-                        totalContado = totalContado + Integer.valueOf(String.valueOf(this.vista.jtResumen.getValueAt(i, 5)));
-                    } else {
-                        totalCredito = totalCredito + Integer.valueOf(String.valueOf(this.vista.jtResumen.getValueAt(i, 5)));
-                    }
+                case E_tipoOperacion.CREDITO_30: {
+                    totalCredito = totalCredito + fade.getTotal();
+                    break;
                 }
-                this.vista.jtDetalle.setModel(this.modelo.obtenerDetallePedido());
-                Utilities.c_packColumn.packColumns(this.vista.jtDetalle, 1);
-                break;
+                default: {
+                    totalCredito = totalCredito + fade.getTotal();
+                    break;
+                }
             }
         }
+        total = totalContado + totalCredito;
         this.vista.jftTotalEgCred.setValue(totalCredito);
         this.vista.jftTotalEgCont.setValue(totalContado);
         this.vista.jftTotalEgreso.setValue(total);
@@ -74,20 +65,49 @@ public class C_resumen implements ActionListener {
         this.vista.jbImportarXLS.addActionListener(this);
     }
 
-    private void importarExcel() {
-        String fechaInicio = "";
-        String fechaFinal = "";
+    private void importarExcelCompleto() {
+        ExportarPedidos ce = new ExportarPedidos("Pedidos", modelo.getFechaInicio(), modelo.getFechaInicio(), modelo.getTm().getList());
+        ce.exportacionCompleta();
+    }
 
-        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
-        sdf.format(Calendar.getInstance().getTime());
-        String nombreHoja = null;
-        try {
-            nombreHoja = new Timestamp(this.modelo.getInicio().getTime()).toString().substring(0, 11);
-        } catch (Exception e) {
-            nombreHoja = sdf.format(Calendar.getInstance().getTime());
+    private void importarExcelResumido() {
+        ExportarPedidos ce = new ExportarPedidos("Pedidos", modelo.getFechaInicio(), modelo.getFechaInicio(), modelo.getTm().getList());
+        ce.exportacionResumida();
+    }
+
+    private void exportHandler() {
+        Object[] options = {"Completo",
+            "Resumido"};
+        int n = JOptionPane.showOptionDialog(this.vista,
+                "Eliga tipo de reporte",
+                "Atención",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                null, //do not use a custom Icon
+                options, //the titles of buttons
+                options[0]); //default button title
+        switch (n) {
+            case 0: {
+                //Completo
+                EventQueue.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        importarExcelCompleto();
+                    }
+                });
+                break;
+            }
+            case 1: {
+                //Minimalista
+                EventQueue.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        importarExcelResumido();
+                    }
+                });
+                break;
+            }
         }
-        C_create_excel ce = new C_create_excel(nombreHoja, this.modelo.getEgresoDetalles(), this.modelo.getInicio(), this.modelo.getFin());
-        ce.initComp();
     }
 
     @Override
@@ -95,7 +115,7 @@ public class C_resumen implements ActionListener {
         if (ae.getSource().equals(this.vista.jbSalir)) {
             cerrar();
         } else if (ae.getSource().equals(this.vista.jbImportarXLS)) {
-            importarExcel();
+            exportHandler();
         }
     }
 

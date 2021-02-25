@@ -10,8 +10,10 @@ import DB.DB_Preferencia;
 import DB.DB_Timbrado;
 import DB.DB_manager;
 import Entities.E_Timbrado;
+import Entities.E_estadoPedido;
 import Entities.E_impresionTipo;
 import Entities.E_tipoOperacion;
+import Entities.M_facturaCabecera;
 import Entities.M_pedidoCabecera;
 import Entities.M_pedidoDetalle;
 import Entities.M_producto;
@@ -36,6 +38,10 @@ public class M_verPedido {
         this.pedido.setTimbrado(new E_Timbrado());
         this.pedido.getTimbrado().setId(1);
         this.pedido.setNroFactura(-1);
+        if (pedido.getEstadoPedido().getId() == E_estadoPedido.ENTREGADO) {
+            M_facturaCabecera faca = DB_Ingreso.obtenerIngresoCabeceraCompleto(pedido.getIdFacturaCabecera());
+            this.pedido.setNroFactura(faca.getNroFactura());
+        }
         this.tm = new FacturaDetalleTableModel();
         this.tm.setFacturaDetalleList(DB_Pedido.obtenerPedidoDetalle(idPedido));
         this.nfSmall = new DecimalFormat("000");
@@ -66,9 +72,16 @@ public class M_verPedido {
         DB_Pedido.actualizarPedidoCliente(getPedido());
     }
 
-    public void actualizarPedidoDetalle() {
-//        DB_Pedido.actualizarPedidoDetalle(tm.getList());
-//        borrarDatos();
+    public void actualizarPedidoDetalle(int posicion, double cantidad, double precio, double descuento, M_producto producto, String observacion) {
+        int idPedidoDetalle = getTm().getList().get(posicion).getIdFacturaDetalle();
+        M_pedidoDetalle pd = new M_pedidoDetalle();
+        pd.setCantidad(cantidad);
+        pd.setDescuento(descuento);
+        pd.setObservacion(observacion);
+        pd.setPrecio(precio);
+        pd.setProducto(producto);
+        pd.setIdPedioDetalle(idPedidoDetalle);
+        DB_Pedido.actualizarPedidoDetalle(pd);
     }
 
     public void actualizarTablaPedidoDetalle() {
@@ -86,6 +99,7 @@ public class M_verPedido {
         detalle.setDescuento(descuento);
         detalle.setProducto(producto);
         detalle.setObservacion(observacion);
+        detalle.setIdPedido(pedido.getIdPedido());
         DB_Pedido.insertarPedidoDetalle(detalle);
     }
 
@@ -94,8 +108,6 @@ public class M_verPedido {
     }
 
     public int pagarPedido(int idPedido, Integer nroFactura) {
-//        M_pedido p = DB_Pedido.obtenerPedido(idPedido);
-//        setDetalles(DB_Pedido.obtenerPedidoDetalles(p.getIdPedido()));
         return DB_Pedido.pagarPedido(pedido, getTm().getList(), nroFactura, pedido.getTimbrado().getId());
     }
 

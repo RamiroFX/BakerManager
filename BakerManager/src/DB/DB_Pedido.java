@@ -8,7 +8,6 @@ import Entities.E_estadoPedido;
 import Entities.E_facturaDetalle;
 import Entities.E_tipoOperacion;
 import Entities.M_cliente;
-import Entities.M_facturaDetalle;
 import Entities.M_funcionario;
 import Entities.M_pedidoCabecera;
 import Entities.M_pedidoDetalle;
@@ -152,66 +151,6 @@ public class DB_Pedido {
             }
         }
         return list;
-    }
-
-    public static ResultSetTableModel obtenerPedidosOLD(boolean esTiempoRecepcionOEntrega, String inicio, String fin, String tipo_operacion, String nroFactura, String estado, M_pedidoCabecera pedido, boolean conTotal) {
-        ResultSetTableModel rstm = null;
-        String total = "";
-        if (conTotal) {
-            total = " COALESCE( ROUND((SELECT SUM(PEDE.CANTIDAD*(PEDE.PRECIO-(PEDE.PRECIO*PEDE.DESCUENTO)/100)) FROM PEDIDO_DETALLE PEDE WHERE PEDE.ID_PEDIDO_CABECERA = PEDI.ID_PEDIDO_CABECERA)), 0 )  \"Total\", ";
-        }
-        String Query = "SELECT PEDI.ID_PEDIDO_CABECERA \"ID\", "
-                + "(SELECT PERS.NOMBRE || ' '|| PERS.APELLIDO WHERE PERS.ID_PERSONA = FUNC.ID_PERSONA)\"Empleado\", "
-                + "(SELECT CLIE.ENTIDAD FROM CLIENTE CLIE WHERE CLIE.ID_CLIENTE = PEDI.ID_CLIENTE) \"Cliente\", "
-                + "to_char(PEDI.TIEMPO_RECEPCION ,'DD/MM/YYYY HH24:MI:SS:MS') \"Tiempo recepción\", "
-                + "to_char(PEDI.TIEMPO_ENTREGA ,'DD/MM/YYYY HH24:MI:SS:MS') \"Tiempo entrega\", "
-                + total
-                + "(SELECT PEES.DESCRIPCION FROM PEDIDO_ESTADO PEES WHERE PEES.ID_PEDIDO_ESTADO = PEDI.ID_PEDIDO_ESTADO) \"Estado\", "
-                + "(SELECT TIOP.DESCRIPCION FROM TIPO_OPERACION TIOP WHERE TIOP.ID_TIPO_OPERACION = PEDI.ID_COND_VENTA) \"Cond. venta\" "
-                + "FROM PEDIDO_CABECERA PEDI, FUNCIONARIO FUNC, PERSONA PERS "
-                + "WHERE PEDI.ID_FUNCIONARIO = FUNC.ID_FUNCIONARIO "
-                + "AND PERS.ID_PERSONA = FUNC.ID_PERSONA ";
-        if (!inicio.isEmpty() && !fin.isEmpty()) {
-            if (esTiempoRecepcionOEntrega) {
-                Query = Query + " AND PEDI.TIEMPO_RECEPCION BETWEEN '" + inicio + "'::timestamp  "
-                        + "AND '" + fin + "'::timestamp ";
-            } else {
-                Query = Query + " AND PEDI.TIEMPO_ENTREGA BETWEEN '" + inicio + "'::timestamp  "
-                        + "AND '" + fin + "'::timestamp ";
-            }
-        }
-        if (!"Todos".equals(tipo_operacion)) {
-            Query = Query + " AND PEDI.ID_COND_VENTA = (SELECT TIOP.ID_TIPO_OPERACION FROM TIPO_OPERACION TIOP WHERE TIOP.DESCRIPCION LIKE'" + tipo_operacion + "')";
-        }
-        if (!"Todos".equals(estado)) {
-            Query = Query + " AND PEDI.ID_PEDIDO_ESTADO = (SELECT PEES.ID_PEDIDO_ESTADO FROM PEDIDO_ESTADO PEES WHERE PEES.DESCRIPCION LIKE'" + estado + "')";
-        }
-        if (null != pedido) {
-            if (null != pedido.getCliente()) {
-                if (null != pedido.getCliente().getIdCliente()) {
-                    Query = Query + " AND PEDI.ID_CLIENTE = " + pedido.getCliente().getIdCliente();
-                }
-            }
-            if (null != pedido.getFuncionario()) {
-                if (null != pedido.getFuncionario().getIdFuncionario()) {
-                    Query = Query + " AND PEDI.ID_FUNCIONARIO = " + pedido.getFuncionario().getIdFuncionario();
-                }
-            }
-        }
-        if (!nroFactura.isEmpty()) {
-            Query = Query + " AND PEDI.ID_PEDIDO_CABECERA = " + nroFactura;
-        }
-        Query = Query + " ORDER BY PEDI.TIEMPO_RECEPCION";
-        try {
-            st = DB_manager.getConection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-            // se ejecuta el query y se obtienen los resultados en un ResultSet
-            rs = st.executeQuery(Query);
-            rstm = new ResultSetTableModel(rs);
-        } catch (SQLException ex) {
-            Logger lgr = Logger.getLogger(DB_Egreso.class.getName());
-            lgr.log(Level.SEVERE, ex.getMessage(), ex);
-        }
-        return rstm;
     }
 
     public static ResultSetTableModel obtenerPedidosPendientes(boolean conTotal) {
@@ -927,5 +866,62 @@ public class DB_Pedido {
             }
         }
         return detalles;
+    }
+
+    public static List<E_facturaDetalle> consultarDetalleAgrupado(List<M_pedidoCabecera> cadenaCabeceras) {
+        List<E_facturaDetalle> list = new ArrayList<>();
+        boolean b = true;
+        StringBuilder builder = new StringBuilder();
+        for (M_pedidoCabecera pedidoCabecera : cadenaCabeceras) {
+            builder.append("?,");
+            b = false;
+        }
+        //para controlar que la lista contenga por lo menos una venta seleccionada
+        if (b) {
+            return list;
+        }
+        String QUERY = "SELECT "
+                + "PD.ID_PRODUCTO,"
+                + "(SELECT P.DESCRIPCION FROM PRODUCTO P WHERE P.ID_PRODUCTO = PD.ID_PRODUCTO)\"PRODUCTO\", "
+                + "(SELECT P.ID_IMPUESTO FROM PRODUCTO P WHERE P.ID_PRODUCTO = PD.ID_PRODUCTO)\"ID_IMPUESTO\", "
+                + "(SELECT P.CODIGO FROM PRODUCTO P WHERE P.ID_PRODUCTO = PD.ID_PRODUCTO)\"CODIGO_PROD\", "
+                + "SUM(PD.CANTIDAD) \"CANTIDAD\", "
+                + "PD.PRECIO , "
+                + "SUM(PD.DESCUENTO) \"DESCUENTO\" "
+                + "FROM PEDIDO_DETALLE PD, PEDIDO_CABECERA PC "
+                + "WHERE PC.ID_PEDIDO_CABECERA = PD.ID_PEDIDO_CABECERA "
+                + "AND PC.ID_PEDIDO_CABECERA IN ("
+                + builder.substring(0, builder.length() - 1) + ") ";
+
+        String PIE = "GROUP BY PD.ID_PRODUCTO, PD.PRECIO, \"PRODUCTO\", \"ID_IMPUESTO\", \"CODIGO_PROD\" "
+                + "ORDER BY \"PRODUCTO\" ;";
+        QUERY = QUERY + PIE;
+        try {
+            pst = DB_manager.getConection().prepareStatement(QUERY, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            int index = 1;
+            for (M_pedidoCabecera notaCredito : cadenaCabeceras) {
+                pst.setInt(index, notaCredito.getIdPedido());
+                index++;
+            }
+            rs = pst.executeQuery();
+            while (rs.next()) {
+                E_facturaDetalle fade = new E_facturaDetalle();
+                M_producto producto = new M_producto();
+                producto.setId(rs.getInt("ID_PRODUCTO"));
+                producto.setCodigo(rs.getString("CODIGO_PROD"));
+                producto.setDescripcion(rs.getString("PRODUCTO"));
+                producto.setIdImpuesto(rs.getInt("ID_IMPUESTO"));
+                fade.setProducto(producto);
+                fade.setCantidad(rs.getDouble("CANTIDAD"));
+                fade.setPrecio(rs.getDouble("PRECIO"));
+                fade.setDescuento(rs.getDouble("DESCUENTO"));
+                fade.setObservacion("");
+                list.add(fade);
+            }
+        } catch (SQLException ex) {
+            Logger lgr = Logger.getLogger(DB_Pedido.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        }
+        return list;
     }
 }

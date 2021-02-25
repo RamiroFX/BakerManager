@@ -6,7 +6,6 @@ package Producto;
 
 import Entities.E_facturaDetalle;
 import Entities.M_egreso_detalle;
-import Entities.M_facturaDetalle;
 import Entities.M_producto;
 import Interface.RecibirProductoCallback;
 import java.awt.EventQueue;
@@ -419,7 +418,7 @@ public class SeleccionarCantidadProduducto extends javax.swing.JDialog implement
             jtfObservacion.setText(fd.getObservacion());
         }
     }
-    
+
     public void loadData(double cantidad, double descuento, double precio, String observacion) {
         jtfCantidad.setText(cantidad + "");
         jtfDescuento.setText(descuento + "");
@@ -429,7 +428,6 @@ public class SeleccionarCantidadProduducto extends javax.swing.JDialog implement
         }
     }
 
-
     public void cargarDatosCompra(M_egreso_detalle ed) {
         jtfCantidad.setText(ed.getCantidad() + "");
         jtfDescuento.setText(ed.getDescuento() + "");
@@ -438,6 +436,7 @@ public class SeleccionarCantidadProduducto extends javax.swing.JDialog implement
             jtfObservacion.setText(ed.getObservacion());
         }
     }
+
     public void setTipo(int tipo) {
         this.tipo = tipo;
     }

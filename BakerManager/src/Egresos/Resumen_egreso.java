@@ -5,7 +5,6 @@
 package Egresos;
 
 import DB.DB_Egreso;
-import DB.DB_Ingreso;
 import Entities.E_tipoOperacion;
 import Entities.M_egresoCabecera;
 import Excel.C_create_excel;
@@ -93,14 +92,14 @@ public class Resumen_egreso extends JDialog implements ActionListener, KeyListen
         jbImportarXLS = new JButton("Importar a excel");
         jtpPanel = new JTabbedPane();
         jtpPanel.addKeyListener(this);
-        
+
         JPanel jpCenter = new JPanel(new BorderLayout());
         JPanel jpSouth = new JPanel(new FlowLayout(FlowLayout.CENTER));
         jpSouth.add(jbImportarXLS);
         jpSouth.add(jbSalir);
         jpCenter.add(jspEgreso, BorderLayout.CENTER);
         jpCenter.add(jpTotalEgreso, BorderLayout.SOUTH);
- 
+
         jtpPanel.addTab("Resumen", jpCenter);
         jtpPanel.addTab("Detalle", jspDetalle);
         getContentPane().add(jtpPanel, BorderLayout.CENTER);
@@ -141,7 +140,7 @@ public class Resumen_egreso extends JDialog implements ActionListener, KeyListen
     private void cerrar() {
         this.dispose();
     }
-    
+
     private void agregarListener() {
         jbSalir.addActionListener(this);
         jbImportarXLS.addActionListener(this);
@@ -151,6 +150,7 @@ public class Resumen_egreso extends JDialog implements ActionListener, KeyListen
         C_create_excel ce = new C_create_excel("Compras", dateInicio, dateFin, (ArrayList<M_egresoCabecera>) cabeceraTm.getList());
         ce.exportacionCompleta();
     }
+
     private void importarExcelResumido() {
         C_create_excel ce = new C_create_excel("Compras", dateInicio, dateFin, (ArrayList<M_egresoCabecera>) cabeceraTm.getList());
         ce.exportacionResumida();

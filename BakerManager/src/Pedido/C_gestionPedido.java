@@ -267,9 +267,6 @@ public class C_gestionPedido implements GestionInterface, RecibirEmpleadoCallbac
         int idPedido = Integer.valueOf(String.valueOf(this.vista.jtPedido.getValueAt(row, 0)));
         VerPedido vp = new VerPedido(this, idPedido);
         vp.mostrarVista();
-        //Refrescar tabla
-        //this.vista.jtPedido.setModel(this.modelo.getPedidosPendientes());
-        //this.vista.jtPedidoDetalle.setModel(this.modelo.getDtm());
         displayQueryResults();
         Utilities.c_packColumn.packColumns(this.vista.jtPedido, 1);
         controlarTablaPedido();
@@ -279,7 +276,7 @@ public class C_gestionPedido implements GestionInterface, RecibirEmpleadoCallbac
     }
 
     private void verResumen() {
-        Resumen resumen = new Resumen(this);
+        Resumen resumen = new Resumen(this, modelo.getPedidoCabeceraTM(), vista.jddInicio.getDate(), vista.jddFinal.getDate());
         resumen.mostrarVista();
     }
 
@@ -352,7 +349,7 @@ public class C_gestionPedido implements GestionInterface, RecibirEmpleadoCallbac
             int columna = this.vista.jtPedido.getSelectedRow();
             controlarTablaPedido();
             if ((row > -1) && (columna > -1)) {
-            int idPedido = modelo.getPedidoCabeceraTM().getList().get(row).getIdPedido();
+                int idPedido = modelo.getPedidoCabeceraTM().getList().get(row).getIdPedido();
                 String estado = String.valueOf(this.vista.jtPedido.getValueAt(row, 6));
                 if (!estado.equals("Entregado")) {
                     //this.vista.jbPagoPedido.setEnabled(true);

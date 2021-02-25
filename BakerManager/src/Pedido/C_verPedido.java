@@ -6,7 +6,6 @@ package Pedido;
 
 import Cliente.SeleccionarCliente;
 import Configuracion.Timbrado.SeleccionarNroFactura;
-import Configuracion.Timbrado.SeleccionarTimbrado;
 import DB.DB_Ingreso;
 import Entities.E_Timbrado;
 import Entities.E_facturaDetalle;
@@ -119,19 +118,19 @@ public class C_verPedido extends MouseAdapter implements ActionListener, KeyList
             this.vista.jcbCondVenta.setEnabled(false);
             this.vista.jcbTipoVenta.setEnabled(false);
             this.vista.jbPagarPedido.setEnabled(false);
-//            if (modelo.getPedido().getIdFacturaCabecera() != null) {
-//                int idFaca = modelo.getPedido().getIdFacturaCabecera();
-//                M_facturaCabecera faca = DB_Ingreso.obtenerIngresoCabeceraCompleto(idFaca);
-//                if (faca.getNroFactura() != null) {
-//                    if (faca.getNroFactura() > 0) {
-//                        this.vista.jtfNroFactura.setText(faca.getNroFactura() + "");
-//                        this.vista.jcbTipoVenta.setSelectedIndex(1);
-//                    } else {
-//                        this.vista.jcbTipoVenta.setSelectedIndex(0);
-//                    }
-//                }
-//            }
+            if (modelo.getPedido().getIdFacturaCabecera() != null) {
+                this.vista.jtfNroFactura.setText(modelo.obtenerNroFactura());
+                this.vista.jcbTipoVenta.setSelectedIndex(1);
+            }
+            this.vista.jcbTipoVenta.setSelectedIndex(0);
         }
+        javax.swing.text.DefaultFormatterFactory dffTotal = new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#,##0.##")));
+        javax.swing.text.DefaultFormatterFactory dffIva = new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#,##0")));
+
+        this.vista.jftExenta.setFormatterFactory(dffIva);
+        this.vista.jftIva5.setFormatterFactory(dffIva);
+        this.vista.jftIva10.setFormatterFactory(dffIva);
+        this.vista.jftTotal.setFormatterFactory(dffTotal);
         sumarTotal();
     }
 
@@ -215,17 +214,10 @@ public class C_verPedido extends MouseAdapter implements ActionListener, KeyList
         if (row < 0) {
             return;
         }
-        M_producto producto = modelo.getTm().getList().get(row).getProducto();
-        SeleccionarCantidadProduducto scp = new SeleccionarCantidadProduducto(vista, producto, this, SeleccionarCantidadProduducto.PRECIO_VENTA_MINORISTA);
+        E_facturaDetalle fade = modelo.getTm().getList().get(row);
+        SeleccionarCantidadProduducto scp = new SeleccionarCantidadProduducto(vista, fade.getProducto(), this, SeleccionarCantidadProduducto.PRECIO_VENTA_MINORISTA, row);
+        scp.loadData(fade.getCantidad(), fade.getDescuento(), fade.getPrecio(), fade.getObservacion());
         scp.setVisible(true);
-    }
-
-    public void modificarDetalle(Double cantidad, Double precio, Double descuento, String observacion, int idDetalle) {
-        this.modelo.actualizarPedidoDetalle();
-        this.modelo.actualizarTablaPedidoDetalle();
-        this.vista.jbEliminarDetalle.setEnabled(false);
-        this.vista.jbModificarDetalle.setEnabled(false);
-        sumarTotal();
     }
 
     private void sumarTotal() {
@@ -458,7 +450,12 @@ public class C_verPedido extends MouseAdapter implements ActionListener, KeyList
 
     @Override
     public void modificarProducto(int posicion, double cantidad, double precio, double descuento, M_producto producto, String observacion) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        this.modelo.actualizarPedidoDetalle(posicion, cantidad, precio, descuento, producto, observacion);
+        this.modelo.actualizarTablaPedidoDetalle();
+        this.vista.jbEliminarDetalle.setEnabled(false);
+        this.vista.jbModificarDetalle.setEnabled(false);
+        this.modelo.actualizarTablaPedidoDetalle();
+        sumarTotal();
     }
 
     @Override

@@ -106,4 +106,7 @@ public class M_pedidoDetalle {
     public void setProducto(M_producto producto) {
         this.producto = producto;
     }
+    public double calcularSubTotal() {
+        return getCantidad() * (getPrecio() - ((getPrecio() * getDescuento()) / 100));
+    }
 }

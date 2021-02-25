@@ -4,9 +4,8 @@
  */
 package Resumen;
 
-import Entities.M_egresoCabecera;
+import ModeloTabla.PedidoCabeceraTableModel;
 import Pedido.C_gestionPedido;
-import bakermanager.C_inicio;
 import java.util.Date;
 
 /**
@@ -15,21 +14,13 @@ import java.util.Date;
  */
 public class Resumen {
 
-    public static final int PEDIDO = 1;
-    public static final int EGRESO = 2;
     M_resumen modelo;
     V_resumen vista;
     C_resumen controlador;
 
-    public Resumen(C_inicio c_inicio, M_egresoCabecera egresoCabecera, Date fechaInicio, Date fechaFin) {
-        this.modelo = new M_resumen(egresoCabecera, fechaInicio, fechaFin);
-        this.vista = new V_resumen(c_inicio.vista);
-        this.controlador = new C_resumen(this.modelo, this.vista, c_inicio);
-    }
-
-    public Resumen(C_gestionPedido controlador) {
-        this.modelo = new M_resumen(controlador);
-        this.vista = new V_resumen(controlador.c_inicio.vista, PEDIDO);
+    public Resumen(C_gestionPedido controlador, PedidoCabeceraTableModel tm, Date fechaInicio, Date fechaFin) {
+        this.modelo = new M_resumen(tm, fechaInicio, fechaFin);
+        this.vista = new V_resumen(controlador.c_inicio.vista);
         this.controlador = new C_resumen(this.modelo, this.vista, controlador.c_inicio);
     }
 
