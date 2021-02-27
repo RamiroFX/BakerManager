@@ -32,7 +32,8 @@ import net.miginfocom.swing.MigLayout;
 public class V_gestion_producto extends JInternalFrame {
 
     public JButton jbParametros, jbBuscar, jbBorrar, jbProveedor,
-            jbModificar, jbAgregar, jbEliminar, jbAsigProdProv, jbExportar;
+            jbModificar, jbAgregar, jbEliminar, jbAsigProdProv, jbExportar,
+            jbMasOpciones;
     private JLabel jlProducto, jlCodigo, jlImpuesto, jlRubro, jlPrecioCosto, jlMarca,
             jlPrecioVta, jlPrecioMayorista, jlEstado, jlCantActual, jlObservacion;
     public JTextField jtfBuscar, jtfProducto, jtfCodigo, jtfPrecioCosto,
@@ -210,6 +211,11 @@ public class V_gestion_producto extends JInternalFrame {
         jbExportar.setFont(CommonFormat.fuente);
         jbExportar.setMargin(insets);
         jbExportar.setEnabled(false);
+        jbMasOpciones = new JButton("Más opciones");
+        jbMasOpciones.setName("producto mas opciones");
+        jbMasOpciones.setFont(CommonFormat.fuente);
+        jbMasOpciones.setMargin(insets);
+        //jbMasOpciones.setEnabled(false);
         jbEliminar = new JButton("Eliminar");
         jbEliminar.setName("eliminar producto");
         jbEliminar.setMargin(insets);
@@ -226,6 +232,7 @@ public class V_gestion_producto extends JInternalFrame {
         jpBot.add(jbModificar);
         //jpBot.add(jbAsigProdProv);
         jpBot.add(jbExportar);
+        jpBot.add(jbMasOpciones);
         jpBot.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED), "Opciones"));
         //jpBot.add(jbEliminar);
         //jpBot.add(jbCostear);

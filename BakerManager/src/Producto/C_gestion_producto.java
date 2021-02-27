@@ -14,6 +14,8 @@ import Excel.ExportarProducto;
 import Interface.InterfaceNotificarCambio;
 import MenuPrincipal.DatosUsuario;
 import ModeloTabla.ProductoSimpleTableModel;
+import Producto.AjusteStock.GestionAjusteStock;
+import Producto.AjusteStock.V_gestionAjusteStock;
 import Proveedor.Seleccionar_proveedor;
 import bakermanager.C_inicio;
 import java.awt.EventQueue;
@@ -44,8 +46,10 @@ public class C_gestion_producto implements ActionListener, KeyListener, MouseLis
     private DecimalFormat decimalFormat;
     public V_gestion_producto vista;
     public C_inicio c_inicio;
+    private M_gestionProducto modelo;
 
-    public C_gestion_producto(V_gestion_producto vista, C_inicio c_inicio) {
+    public C_gestion_producto(M_gestionProducto modelo, V_gestion_producto vista, C_inicio c_inicio) {
+        this.modelo = modelo;
         this.m_producto = new M_producto();
         this.proveedor = new M_proveedor();
         this.productoTM = new ProductoSimpleTableModel();
@@ -160,7 +164,9 @@ public class C_gestion_producto implements ActionListener, KeyListener, MouseLis
 //                this.vista.jbEliminar.addActionListener(this);
 //            }
         }
+        this.vista.jbMasOpciones.addActionListener(this);
         this.vista.jcbCategoria.addActionListener(this);
+        this.vista.jbMasOpciones.addKeyListener(this);
         this.vista.jtfBuscar.addKeyListener(this);
         this.vista.jbBuscar.addKeyListener(this);
         this.vista.jbBorrar.addKeyListener(this);
@@ -326,6 +332,41 @@ public class C_gestion_producto implements ActionListener, KeyListener, MouseLis
         }
     }
 
+    private void invocarGestionAjusteStock() {
+        GestionAjusteStock gaj = new GestionAjusteStock(this.c_inicio.vista);
+        gaj.mostrarVista();
+    }
+
+    private void masOpciones() {
+        Object[] options = {"Ajuste de stock"};
+        int n = JOptionPane.showOptionDialog(this.vista,
+                "Eliga su opción",
+                "Atención",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                null, //do not use a custom Icon
+                options, //the titles of buttons
+                options[0]); //default button title
+        switch (n) {
+            case 0: {
+                EventQueue.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        invocarGestionAjusteStock();
+                        ArrayList<M_menu_item> accesos = modelo.getAccesos();
+                        for (int i = 0; i < accesos.size(); i++) {
+                            if (V_gestionAjusteStock.NOMBRE_MODULO.equals(accesos.get(i).getItemDescripcion())) {
+                                invocarGestionAjusteStock();
+                                return;
+                            }
+                        }
+                    }
+                });
+                break;
+            }
+        }
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == this.vista.jtfBuscar) {
@@ -359,6 +400,8 @@ public class C_gestion_producto implements ActionListener, KeyListener, MouseLis
             sp.mostrarVista();
         } else if (e.getSource() == this.vista.jcbCategoria) {
             actualizarJCBsubCategoria();
+        } else if (e.getSource() == this.vista.jbMasOpciones) {
+            masOpciones();
         }
     }
 

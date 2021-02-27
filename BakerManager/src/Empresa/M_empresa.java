@@ -31,4 +31,12 @@ public class M_empresa {
     public int modificarDatosEmpresa(E_Empresa empresa) {
         return DB_manager.modificarDatosEmpresa(empresa);
     }
+
+    public String getDireccionEmpresa() {
+        String dir = "";
+        if (getEmpresa().getDireccion() != null) {
+            dir = getEmpresa().getDireccion();
+        }
+        return dir;
+    }
 }

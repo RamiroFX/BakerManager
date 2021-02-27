@@ -55,7 +55,7 @@ public class C_empresa implements ActionListener {
      * Agrega valores a los componentes.
      */
     private void inicializarVista() {
-        this.vista.jtfDireccion.setText(modelo.getEmpresa().getDireccion());
+        this.vista.jtfDireccion.setText(modelo.getDireccionEmpresa());
         this.vista.jtfEmail.setText(modelo.getEmpresa().getEmail());
         this.vista.jtfEntidad.setText(modelo.getEmpresa().getEntidad());
         this.vista.jtfNombre.setText(modelo.getEmpresa().getNombre());
