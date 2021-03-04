@@ -65,12 +65,14 @@ public class C_gestionAjusteStock implements GestionInterface, RecibirEmpleadoCa
                 this.vista.jbVentaDetalle.addActionListener(this);
             }
         }*/
-        //TODO remove
+        //TODO remove        
+        this.vista.jbCrear.addActionListener(this);
         this.vista.jbSalir.addActionListener(this);
         this.vista.jbBuscar.addActionListener(this);
         this.vista.jbEmpleado.addActionListener(this);
 
         this.vista.jtCabecera.addMouseListener(this);
+        this.vista.jbCrear.addKeyListener(this);
         this.vista.jtCabecera.addKeyListener(this);
         this.vista.jtDetalle.addMouseListener(this);
         this.vista.jtDetalle.addKeyListener(this);
@@ -176,16 +178,22 @@ public class C_gestionAjusteStock implements GestionInterface, RecibirEmpleadoCa
         }
     }
 
-
     private void invocarSeleccionFuncionario() {
         SeleccionarFuncionario sf = new SeleccionarFuncionario(this.vista);
         sf.setCallback(this);
         sf.mostrarVista();
     }
+    private void invocarPrevisionStock() {
+        PrevisionStock ps = new PrevisionStock(this.vista);
+        ps.mostrarVista();
+    }
     
     @Override
     public void actionPerformed(ActionEvent e) {
         Object source = e.getSource();
+        if (source.equals(this.vista.jbCrear)) {
+            invocarPrevisionStock();
+        }
         if (source.equals(this.vista.jbBuscar)) {
             consultarFacturaciones();
         }

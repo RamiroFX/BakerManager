@@ -35,7 +35,8 @@ public class C_previsionStock extends MouseAdapter implements ActionListener, Ke
     private void inicializarComponentes() {
         this.vista.jbVerDetalle.setEnabled(false);
         this.vista.jbEliminarDetalle.setEnabled(false);
-        //this.vista.jtCabecera.setModel(this.modelo.getTmCabecera());
+        this.vista.jtCabecera.setModel(this.modelo.getTmCabecera());
+        this.vista.jtDetalle.setModel(this.modelo.getTmDetalle());
         Utilities.c_packColumn.packColumns(this.vista.jtCabecera, 1);
     }
 
@@ -83,7 +84,8 @@ public class C_previsionStock extends MouseAdapter implements ActionListener, Ke
     }
 
     private void crearAjuste() {
-        //IMPLEMENTAR VISTA PARA CREAR DETALLE
+        CrearAjuste ca = new CrearAjuste(this.vista);
+        ca.mostrarVista();
         this.vista.jbVerDetalle.setEnabled(false);
         this.vista.jbEliminarDetalle.setEnabled(false);
     }

@@ -5,10 +5,30 @@
  */
 package Producto.AjusteStock;
 
+import ModeloTabla.AjusteStockCabeceraTableModel;
+import ModeloTabla.AjusteStockDetalleTableModel;
+
 /**
  *
  * @author Ramiro Ferreira
  */
 public class M_previsionStock {
+
+    private AjusteStockCabeceraTableModel tmCabecera;
+    private AjusteStockDetalleTableModel tmDetalle;
+
+    public M_previsionStock() {
+        this.tmCabecera = new AjusteStockCabeceraTableModel();
+        this.tmDetalle = new AjusteStockDetalleTableModel();
+    }
+
+    public AjusteStockCabeceraTableModel getTmCabecera() {
+        return tmCabecera;
+    }
+
+    public AjusteStockDetalleTableModel getTmDetalle() {
+        return tmDetalle;
+    }
+
     
 }

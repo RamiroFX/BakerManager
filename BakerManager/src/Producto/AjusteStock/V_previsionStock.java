@@ -4,7 +4,6 @@
  */
 package Producto.AjusteStock;
 
-import bakermanager.V_inicio;
 import java.awt.BorderLayout;
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -25,12 +24,12 @@ public class V_previsionStock extends JDialog {
     public JButton jbVerDetalle, jbCrearAjuste, jbEliminarDetalle, jbSalir;
     private JPanel jpNorth, jpCenter, jpSouth;
 
-    public V_previsionStock(V_inicio vista) {
-        super(vista, "Crear ajuste de stock", true);
+    public V_previsionStock(JDialog dialog) {
+        super(dialog, "Crear ajuste de stock", true);
         setSize(1200, 700);
         setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
         initComponents();
-        setLocationRelativeTo(vista);
+        setLocationRelativeTo(dialog);
         getContentPane().setLayout(new BorderLayout());
         getContentPane().add(jpNorth, BorderLayout.NORTH);
         getContentPane().add(jpCenter, BorderLayout.CENTER);
