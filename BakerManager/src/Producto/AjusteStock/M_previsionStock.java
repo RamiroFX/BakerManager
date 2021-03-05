@@ -52,4 +52,8 @@ public class M_previsionStock {
         this.tmCabecera.setList(DB_Inventario.consultarAjusteStockCabecera(-1, -1, false, null, null, -1));
     }
 
+    public void actualizarTablaDetalle(int idCabecera) {
+        this.tmDetalle.setList(DB_Inventario.consultarAjusteStockDetalle(idCabecera));
+    }
+
 }

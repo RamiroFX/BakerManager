@@ -62,11 +62,11 @@ public class C_previsionStock extends MouseAdapter implements ActionListener, Ke
 
     private void facturaCabeceraHandler(MouseEvent e) {
         int row = this.vista.jtCabecera.getSelectedRow();
-        int idCabecera = 111;//TODO
         if (row > -1) {
+            int idCabecera=modelo.getTmCabecera().getList().get(row).getId();
+            consultarDetalle(idCabecera);
             this.vista.jbVerDetalle.setEnabled(true);
             this.vista.jbEliminarDetalle.setEnabled(true);
-            //this.modelo.actualizarTablaDetalle(idCabecera);
         } else {
             this.vista.jbVerDetalle.setEnabled(false);
             this.vista.jbEliminarDetalle.setEnabled(false);
@@ -79,10 +79,17 @@ public class C_previsionStock extends MouseAdapter implements ActionListener, Ke
     }
 
     private void verDetalle() {
-        int idMesa = 11111;//TODO
-        //IMPLEMENTAR VISTA PARA VER DETALLE
-        this.vista.jbVerDetalle.setEnabled(false);
+        int row = this.vista.jtCabecera.getSelectedRow();
+        if (row < 0) {
+            return;
+        }
+        int idCabecera = modelo.getTmCabecera().getList().get(row).getId();
+        CrearAjuste ca = new CrearAjuste(vista, idCabecera);
+        ca.mostrarVista();
+        this.modelo.actualizarTablaCabecera();
+        Utilities.c_packColumn.packColumns(this.vista.jtCabecera, 1);
         this.vista.jbEliminarDetalle.setEnabled(false);
+        this.vista.jbVerDetalle.setEnabled(false);
     }
 
     private void crearAjuste() {
@@ -106,9 +113,9 @@ public class C_previsionStock extends MouseAdapter implements ActionListener, Ke
         }
         int option = JOptionPane.showConfirmDialog(this.vista, "¿Desea confirmar esta operación?", "Atención", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
         if (option == JOptionPane.YES_OPTION) {
-            int idCabecera = 111;//TODO
-            //this.modelo.eliminarDetalle(idCabecera);
-            //this.modelo.actualizarTablaDetalle();
+            int idCabecera = modelo.getTmCabecera().getList().get(row).getId();
+            this.modelo.eliminarAjusteStock(idCabecera);
+            this.modelo.actualizarTablaCabecera();
             Utilities.c_packColumn.packColumns(this.vista.jtCabecera, 1);
             this.vista.jbEliminarDetalle.setEnabled(false);
             this.vista.jbVerDetalle.setEnabled(false);
@@ -117,6 +124,10 @@ public class C_previsionStock extends MouseAdapter implements ActionListener, Ke
 
     public void actualizarTablaCabecera() {
         modelo.actualizarTablaCabecera();
+    }
+
+    public void consultarDetalle(int idCabecera) {
+        modelo.actualizarTablaDetalle(idCabecera);
     }
 
     @Override

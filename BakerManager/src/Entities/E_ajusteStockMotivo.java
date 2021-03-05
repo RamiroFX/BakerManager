@@ -9,13 +9,13 @@ package Entities;
  *
  * @author Ramiro Ferreira
  */
-public class E_ajusteMotivo {
+public class E_ajusteStockMotivo {
 
     private int id;
     private String descripcion;
     private String observacion;
 
-    public E_ajusteMotivo() {
+    public E_ajusteStockMotivo() {
     }
 
     public void setId(int id) {
@@ -56,12 +56,12 @@ public class E_ajusteMotivo {
 
         /* Check if o is an instance of Complex or not 
           "null instanceof [type]" also returns false */
-        if (!(o instanceof E_ajusteMotivo)) {
+        if (!(o instanceof E_ajusteStockMotivo)) {
             return false;
         }
 
         // typecast o to Complex so that we can compare data members  
-        E_ajusteMotivo c = (E_ajusteMotivo) o;
+        E_ajusteStockMotivo c = (E_ajusteStockMotivo) o;
 
         // Compare the data members and return accordingly  
         return this.getId() == c.getId();

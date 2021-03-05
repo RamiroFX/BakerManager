@@ -5,8 +5,13 @@
  */
 package Producto.AjusteStock;
 
+import Entities.E_ajusteStockMotivo;
 import Entities.M_producto;
+import Interface.RecibirAjusteStockDetalleCB;
 import Interface.RecibirProductoCallback;
+import ModeloTabla.SeleccionarProductoTableModel;
+import bauplast.C_seleccionarProductoPorClasif;
+import bauplast.SeleccionarProductoPorClasif;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -22,7 +27,7 @@ import javax.swing.JOptionPane;
  * @author Ramiro Ferreira
  */
 public class C_crearAjuste extends MouseAdapter implements ActionListener, KeyListener,
-        RecibirProductoCallback {
+        RecibirAjusteStockDetalleCB {
 
     private static final String VALIDAR_RESPONSABLE_MSG = "Seleccione un responsable de producción",
             VALIDAR_FECHA_PRODUCCION_MSG_1 = "La fecha seleccionada no es valida.",
@@ -63,12 +68,10 @@ public class C_crearAjuste extends MouseAdapter implements ActionListener, KeyLi
         this.vista.jbSalir.addActionListener(this);
     }
 
-    private void invocarSeleccionarDetalle() {
-//        ProductoCategoria pc = new ProductoCategoria(E_productoClasificacion.PROD_TERMINADO, E_productoClasificacion.S_MATERIA_PRIMA);
-//        SeleccionarProductoPorClasif sp = new SeleccionarProductoPorClasif(vista, SeleccionarProductoTableModel.DETALLE);
-//        sp.setProductoCallback(this);
-//        sp.setProductoClasificacion(pc);
-//        sp.mostrarVista();
+    private void invocarSeleccionarDetalle() {        
+        SeleccionarProductoPorClasif sp = new SeleccionarProductoPorClasif(vista, SeleccionarProductoTableModel.DETALLE);
+        sp.setAjusteStockCallback(this);
+        sp.mostrarVista();
     }
 
     private void invocarModificarDetalle() {
@@ -184,14 +187,14 @@ public class C_crearAjuste extends MouseAdapter implements ActionListener, KeyLi
     }
 
     @Override
-    public void recibirProducto(double cantidad, double precio, double descuento, M_producto producto, String observacion) {
-        modelo.agregarProducto(cantidad, producto);
+    public void recibirAjusteStock(M_producto producto, double cantidadVieja, double cantidadNueva, E_ajusteStockMotivo motivo, Date tiempo, String observacion) {
+        modelo.recibirAjusteStock(producto, cantidadVieja, cantidadNueva, motivo, tiempo, observacion);
         Utilities.c_packColumn.packColumns(vista.jtDetalle, 1);
     }
 
     @Override
-    public void modificarProducto(int posicion, double cantidad, double precio, double descuento, M_producto producto, String observacion) {
-        modelo.modificarProducto(posicion, cantidad, producto, observacion);
+    public void modificarAjusteStock(int index, M_producto producto, double cantidadVieja, double cantidadNueva, E_ajusteStockMotivo motivo, Date tiempo, String observacion) {
+        modelo.modificarAjusteStock(index, producto, cantidadVieja, cantidadNueva, motivo, tiempo, observacion);
         Utilities.c_packColumn.packColumns(vista.jtDetalle, 1);
     }
 }

@@ -5,7 +5,7 @@
  */
 package DB;
 
-import Entities.E_ajusteMotivo;
+import Entities.E_ajusteStockMotivo;
 import Entities.E_ajusteStockCabecera;
 import Entities.E_ajusteStockDetalle;
 import Entities.Estado;
@@ -331,7 +331,7 @@ public class DB_Inventario {
                 producto.setId(rs.getInt(2));
                 producto.setDescripcion(rs.getString(9));
                 producto.setCodigo(rs.getString(10));
-                E_ajusteMotivo motivo = new E_ajusteMotivo();
+                E_ajusteStockMotivo motivo = new E_ajusteStockMotivo();
                 motivo.setId(rs.getInt(3));
                 motivo.setDescripcion(rs.getString(8));
                 E_ajusteStockDetalle detalle = new E_ajusteStockDetalle();

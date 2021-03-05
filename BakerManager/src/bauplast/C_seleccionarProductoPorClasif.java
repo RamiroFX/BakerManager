@@ -4,6 +4,7 @@
  */
 package bauplast;
 
+import Entities.E_ajusteStockDetalle;
 import Entities.E_produccionDetalle;
 import bauplast.crearRollo.CrearFilm;
 import Entities.Estado;
@@ -12,9 +13,11 @@ import Entities.M_producto;
 import Entities.ProductoCategoria;
 import Interface.InterfaceRecibirProduccionFilm;
 import Interface.InterfaceRecibirProduccionTerminados;
+import Interface.RecibirAjusteStockDetalleCB;
 import Interface.RecibirProductoCallback;
 import MenuPrincipal.DatosUsuario;
 import Produccion.SeleccionCantidadProductoSimple;
+import Producto.AjusteStock.SeleccionarCantidadAjuste.SeleccionarProductoAjusteStock;
 import Producto.C_crear_producto;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -39,13 +42,14 @@ import javax.swing.SwingUtilities;
 public class C_seleccionarProductoPorClasif extends MouseAdapter implements ActionListener, KeyListener {
 
     private static final String ENTER_KEY = "Entrar";
-    public static final int PRODUCTO = 1, ROLLO = 2, PRODUCTO_TERMINADO = 3;
+    public static final int PRODUCTO = 1, ROLLO = 2, PRODUCTO_TERMINADO = 3, INVENTARIO = 4;
 
     private M_seleccionarProductoPorClasif modelo;
     private V_seleccionarProductoPorClasif vista;
     private InterfaceRecibirProduccionFilm filmCallback;
     private InterfaceRecibirProduccionTerminados terminadosCallback;
     private RecibirProductoCallback productoCallback;
+    private RecibirAjusteStockDetalleCB inventarioCallback;
     private int tipo;
 
     public C_seleccionarProductoPorClasif(M_seleccionarProductoPorClasif modelo, V_seleccionarProductoPorClasif vista) {
@@ -53,6 +57,11 @@ public class C_seleccionarProductoPorClasif extends MouseAdapter implements Acti
         this.modelo = modelo;
         inicializarVista();
         agregarListeners();
+    }
+
+    void setAjusteStockCallback(RecibirAjusteStockDetalleCB inventarioCallback) {
+        this.tipo = INVENTARIO;
+        this.inventarioCallback = inventarioCallback;
     }
 
     public void setProductoCallback(RecibirProductoCallback productoCallback) {
@@ -110,7 +119,7 @@ public class C_seleccionarProductoPorClasif extends MouseAdapter implements Acti
         this.vista.jcbBuscarPor.addItem("Código");
     }
 
-    private void agregarListeners() {        
+    private void agregarListeners() {
         vista.addWindowFocusListener(new WindowAdapter() {
             public void windowGainedFocus(WindowEvent e) {
                 vista.jcbCategoria.setSelectedItem(modelo.getPc());
@@ -200,6 +209,16 @@ public class C_seleccionarProductoPorClasif extends MouseAdapter implements Acti
                     scp.setProduccionTerminados(pd);
                     scp.setProduccionTerminadosCallback(terminadosCallback);
                     scp.setTipo(SeleccionCantidadProductoSimple.PRODUCCION_TERMINADOS);
+                    scp.inicializarVista();
+                    scp.setVisible(true);
+                    break;
+                }
+                case INVENTARIO: {
+                    SeleccionarProductoAjusteStock scp = new SeleccionarProductoAjusteStock(vista);
+                    E_ajusteStockDetalle detalle = new E_ajusteStockDetalle();
+                    detalle.setProducto(producto);
+                    scp.setProducto(detalle);
+                    scp.setProductoCallback(inventarioCallback);
                     scp.inicializarVista();
                     scp.setVisible(true);
                     break;

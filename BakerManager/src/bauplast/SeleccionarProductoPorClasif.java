@@ -8,7 +8,9 @@ package bauplast;
 import Entities.ProductoCategoria;
 import Interface.InterfaceRecibirProduccionFilm;
 import Interface.InterfaceRecibirProduccionTerminados;
+import Interface.RecibirAjusteStockDetalleCB;
 import Interface.RecibirProductoCallback;
+import Producto.AjusteStock.C_crearAjuste;
 import javax.swing.JDialog;
 
 /**
@@ -26,7 +28,7 @@ public class SeleccionarProductoPorClasif {
         this.vista = new V_seleccionarProductoPorClasif(dialog);
         this.controlador = new C_seleccionarProductoPorClasif(modelo, vista);
     }
-
+    
     public void mostrarVista() {
         this.controlador.mostrarVista();
     }
@@ -45,6 +47,10 @@ public class SeleccionarProductoPorClasif {
 
     public void setProductoCallback(RecibirProductoCallback callback) {
         this.controlador.setProductoCallback(callback);
+    }
+
+    public void setAjusteStockCallback(RecibirAjusteStockDetalleCB callback) {
+        this.controlador.setAjusteStockCallback(callback);
     }
 
 }

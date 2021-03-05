@@ -17,13 +17,13 @@ public class E_ajusteStockDetalle {
     private double cantidadVieja;
     private double cantidadNueva;
     private M_producto producto;
-    private E_ajusteMotivo motivo;
+    private E_ajusteStockMotivo motivo;
     private Date tiempoRegistro;
     private String observacion;
 
     public E_ajusteStockDetalle() {
         this.producto = new M_producto();
-        this.motivo = new E_ajusteMotivo();
+        this.motivo = new E_ajusteStockMotivo();
     }
 
     public int getId() {
@@ -66,11 +66,11 @@ public class E_ajusteStockDetalle {
         this.producto = producto;
     }
 
-    public E_ajusteMotivo getMotivo() {
+    public E_ajusteStockMotivo getMotivo() {
         return motivo;
     }
 
-    public void setMotivo(E_ajusteMotivo motivo) {
+    public void setMotivo(E_ajusteStockMotivo motivo) {
         this.motivo = motivo;
     }
 
