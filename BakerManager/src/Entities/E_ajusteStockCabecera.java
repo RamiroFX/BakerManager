@@ -17,6 +17,7 @@ public class E_ajusteStockCabecera {
     private M_funcionario responsable, registradoPor;
     private Date tiempo;
     private Estado estado;
+    private String observacion;
 
     public E_ajusteStockCabecera() {
         this.responsable = new M_funcionario();
@@ -62,6 +63,14 @@ public class E_ajusteStockCabecera {
 
     public void setEstado(Estado estado) {
         this.estado = estado;
+    }
+
+    public void setObservacion(String observacion) {
+        this.observacion = observacion;
+    }
+
+    public String getObservacion() {
+        return observacion;
     }
 
     @Override

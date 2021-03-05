@@ -24,7 +24,7 @@ public class AjusteStockCabeceraTableModel extends AbstractTableModel {
     private final String[] colNames = {"Id.", "Responsable", "Tiempo"};
 
     public AjusteStockCabeceraTableModel() {
-        this.dateFormater = new SimpleDateFormat("dd/MM/YYYY hh:mm:ss");
+        this.dateFormater = new SimpleDateFormat("dd/MM/YYYY HH:mm:ss");
         this.decimalFormat = new DecimalFormat("###,###");
         this.list = new ArrayList<>();
     }

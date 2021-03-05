@@ -24,7 +24,7 @@ public class ProduccionCabeceraTableModel extends AbstractTableModel {
     private final String[] colNames = {"ID", "O.T.", "Fecha producción", "Responsable", "Tipo"};
 
     public ProduccionCabeceraTableModel() {
-        this.dateFormater = new SimpleDateFormat("dd/MM/YYYY hh:mm:ss");
+        this.dateFormater = new SimpleDateFormat("dd/MM/YYYY HH:mm:ss");
         this.decimalFormat = new DecimalFormat("#,##0.##");
         this.produccionList = new ArrayList<>();
     }

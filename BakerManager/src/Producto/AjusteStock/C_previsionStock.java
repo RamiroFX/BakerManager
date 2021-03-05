@@ -4,6 +4,7 @@
  */
 package Producto.AjusteStock;
 
+import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -26,6 +27,7 @@ public class C_previsionStock extends MouseAdapter implements ActionListener, Ke
         this.modelo = modelo;
         inicializarComponentes();
         agregarListeners();
+        this.modelo.actualizarTablaCabecera();
     }
 
     void mostrarVista() {
@@ -84,8 +86,15 @@ public class C_previsionStock extends MouseAdapter implements ActionListener, Ke
     }
 
     private void crearAjuste() {
-        CrearAjuste ca = new CrearAjuste(this.vista);
-        ca.mostrarVista();
+        EventQueue.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                int id = modelo.crearAjusteStock();
+                modelo.actualizarTablaCabecera();
+                CrearAjuste ca = new CrearAjuste(vista, id);
+                ca.mostrarVista();
+            }
+        });
         this.vista.jbVerDetalle.setEnabled(false);
         this.vista.jbEliminarDetalle.setEnabled(false);
     }
@@ -106,10 +115,8 @@ public class C_previsionStock extends MouseAdapter implements ActionListener, Ke
         }
     }
 
-    public void actualizarTablaMesa() {
-//        this.modelo.actualizarTablaMesa();
-//        this.vista.jtMesa.setModel(this.modelo.getRstmMesa());
-//        Utilities.c_packColumn.packColumns(this.vista.jtMesa, 1);
+    public void actualizarTablaCabecera() {
+        modelo.actualizarTablaCabecera();
     }
 
     @Override

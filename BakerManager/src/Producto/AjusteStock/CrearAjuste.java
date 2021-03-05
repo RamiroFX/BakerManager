@@ -17,8 +17,8 @@ public class CrearAjuste {
     private V_crearAjuste vista;
     private C_crearAjuste controlador;
 
-    public CrearAjuste(JDialog dialog) {
-        this.modelo = new M_crearAjuste();
+    public CrearAjuste(JDialog dialog, int idAjuste) {
+        this.modelo = new M_crearAjuste(idAjuste);
         this.vista = new V_crearAjuste(dialog);
         this.controlador = new C_crearAjuste(this.modelo, this.vista);
     }

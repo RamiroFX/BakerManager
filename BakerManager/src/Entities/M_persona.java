@@ -225,7 +225,7 @@ public class M_persona {
             nombreCompleto = nombreCompleto + getNombre();
         }
         if (getApellido() != null) {
-            nombreCompleto = nombreCompleto + getApellido();
+            nombreCompleto = nombreCompleto + " " + getApellido();
         }
         return nombreCompleto;
     }

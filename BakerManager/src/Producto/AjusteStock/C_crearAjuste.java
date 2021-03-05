@@ -5,13 +5,8 @@
  */
 package Producto.AjusteStock;
 
-import Entities.E_produccionFilm;
 import Entities.M_producto;
-import Interface.InterfaceRecibirProduccionFilm;
 import Interface.RecibirProductoCallback;
-import Produccion.SeleccionCantidadProductoSimple;
-import bauplast.crearProductoTerminado.SeleccionarFilm;
-import bauplast.desperdicio.M_crearDesperdicioRapido;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -36,18 +31,15 @@ public class C_crearAjuste extends MouseAdapter implements ActionListener, KeyLi
 
     public M_crearAjuste modelo;
     public V_crearAjuste vista;
-    private boolean esModoCreacion;
 
     public C_crearAjuste(M_crearAjuste modelo, V_crearAjuste vista) {
         this.modelo = modelo;
         this.vista = vista;
-        this.esModoCreacion = true;
         inicializarVista();
         agregarListeners();
     }
 
     public void mostrarVista() {
-        inicializarLogica();
         vista.setVisible(true);
     }
 
@@ -56,16 +48,10 @@ public class C_crearAjuste extends MouseAdapter implements ActionListener, KeyLi
         System.runFinalization();
     }
 
-    public void esablecerModoActualizacion() {
-        this.esModoCreacion = false;
-        this.vista.setTitle(V_crearAjuste.UPDATE_TITLE);
-        this.vista.jtfFuncionario.setEditable(false);
-        this.modelo.consultarConteo();
-        Utilities.c_packColumn.packColumns(vista.jtDetalle, 1);
-    }
-
     private void inicializarVista() {
-        this.vista.jdcFecha.setDate(Calendar.getInstance().getTime());
+        this.vista.jtfFuncionario.setText(modelo.obtenerFuncionario());
+        this.vista.jdcFecha.setDate(modelo.getCabecera().getTiempo());
+        this.vista.jtDetalle.setModel(modelo.getTmDetalle());
         this.vista.jtfFuncionario.setEditable(false);
     }
 
@@ -77,16 +63,7 @@ public class C_crearAjuste extends MouseAdapter implements ActionListener, KeyLi
         this.vista.jbSalir.addActionListener(this);
     }
 
-    private void inicializarLogica() {
-        this.vista.jtfFuncionario.setText(modelo.obtenerFuncionario());
-        this.vista.jtDetalle.setModel(modelo.getTmDetalle());
-    }
-
-    public void cargarDatos() {
-        esModoCreacion = false;
-    }
-
-    private void invocarSeleccionProduccion() {
+    private void invocarSeleccionarDetalle() {
 //        ProductoCategoria pc = new ProductoCategoria(E_productoClasificacion.PROD_TERMINADO, E_productoClasificacion.S_MATERIA_PRIMA);
 //        SeleccionarProductoPorClasif sp = new SeleccionarProductoPorClasif(vista, SeleccionarProductoTableModel.DETALLE);
 //        sp.setProductoCallback(this);
@@ -94,31 +71,10 @@ public class C_crearAjuste extends MouseAdapter implements ActionListener, KeyLi
 //        sp.mostrarVista();
     }
 
-    private void buscarProduccion() {
-//        SeleccionarFilm sf = new SeleccionarFilm(vista);
-//        if (!esModoCreacion) {
-//            int opcion = JOptionPane.showConfirmDialog(vista, "Al cargar un nuevo rollo ya no se podrá revertir la acción. ¿Está seguro que desea continuar?.", "Atención", JOptionPane.WARNING_MESSAGE, JOptionPane.YES_NO_OPTION);
-//            if (opcion != JOptionPane.YES_OPTION) {
-//                return;
-//            }
-//            sf.desactivarModoCreacion();
-//        }
-//        sf.setCallback(this);
-//        sf.mostrarVista();
-    }
-
-    private void invocarModificarBaja() {
+    private void invocarModificarDetalle() {
         int fila = this.vista.jtDetalle.getSelectedRow();
         if (fila > -1) {
             M_producto prod = modelo.getTmDetalle().getList().get(fila).getProducto();
-            if (!esModoCreacion) {
-//                E_produccionFilm filmAux = modelo.obtenerRollo(fila);
-//                double pesoDisponible = filmAux.getPesoActual();
-//                double pesoActual = film.getPeso();
-//                film.setPeso(filmAux.getPeso());
-//                film.setPesoUtilizado(filmAux.getPesoUtilizado());
-//                film.setPesoActual(pesoDisponible + pesoActual);
-            }
 //            SeleccionCantidadProductoSimple scp = new SeleccionCantidadProductoSimple(this.vista, false);
 //            scp.setUpdateIndex(fila);
 //            scp.setTipo(SeleccionCantidadProductoSimple.ROLLO);
@@ -129,7 +85,7 @@ public class C_crearAjuste extends MouseAdapter implements ActionListener, KeyLi
         }
     }
 
-    private void eliminarProducto() {
+    private void eliminarDetalle() {
         int index = vista.jtDetalle.getSelectedRow();
         if (index > -1) {
             modelo.removerProducto(index);
@@ -175,18 +131,7 @@ public class C_crearAjuste extends MouseAdapter implements ActionListener, KeyLi
         return true;
     }
 
-    private boolean validarCambioTipoBaja() {
-        if (!modelo.getTmDetalle().getList().isEmpty()) {
-            JOptionPane.showMessageDialog(vista, "Vacíe la selección antes de cambiar el tipo de baja", "Atención", JOptionPane.WARNING_MESSAGE);
-            return false;
-        }
-        return true;
-    }
-
     private void guardar() {
-        if (!esModoCreacion) {
-            return;
-        }
         if (!validarFilas()) {
             return;
         }
@@ -206,13 +151,13 @@ public class C_crearAjuste extends MouseAdapter implements ActionListener, KeyLi
     public void actionPerformed(ActionEvent e) {
         Object source = e.getSource();
         if (source.equals(vista.jbSeleccionarProducto)) {
-            buscarProduccion();
+            invocarSeleccionarDetalle();
         }
         if (source.equals(vista.jbModificarProducto)) {
-            invocarModificarBaja();
+            invocarModificarDetalle();
         }
         if (source.equals(vista.jbEliminarProducto)) {
-            eliminarProducto();
+            eliminarDetalle();
         }
         if (source.equals(vista.jbAceptar)) {
             guardar();

@@ -5,7 +5,6 @@
  */
 package Egresos.SeleccionarTimbrado;
 
-import Configuracion.Timbrado.*;
 import javax.swing.JDialog;
 import net.miginfocom.swing.MigLayout;
 

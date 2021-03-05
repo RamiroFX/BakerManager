@@ -5,9 +5,9 @@
  */
 package Producto.AjusteStock;
 
+import DB.DB_Inventario;
 import Entities.E_ajusteStockCabecera;
 import Entities.M_producto;
-import MenuPrincipal.DatosUsuario;
 import ModeloTabla.AjusteStockDetalleTableModel;
 
 /**
@@ -19,11 +19,10 @@ public class M_crearAjuste {
     private E_ajusteStockCabecera cabecera;
     private AjusteStockDetalleTableModel tmDetalle;
 
-    public M_crearAjuste() {
-        this.cabecera = new E_ajusteStockCabecera();
-        this.cabecera.setResponsable(DatosUsuario.getRol_usuario().getFuncionario());
-        this.cabecera.setRegistradoPor(DatosUsuario.getRol_usuario().getFuncionario());
+    public M_crearAjuste(int idAjusteCabecera) {
+        this.cabecera = DB_Inventario.obtenerAjusteStockCabecera(idAjusteCabecera);
         this.tmDetalle = new AjusteStockDetalleTableModel();
+        this.tmDetalle.setList(DB_Inventario.consultarAjusteStockDetalle(idAjusteCabecera));
     }
 
     public E_ajusteStockCabecera getCabecera() {
@@ -34,8 +33,8 @@ public class M_crearAjuste {
         return tmDetalle;
     }
 
-    void consultarConteo() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void consultarConteo() {
+        this.tmDetalle.setList(DB_Inventario.consultarAjusteStockDetalle(getCabecera().getId()));
     }
 
     public String obtenerFuncionario() {

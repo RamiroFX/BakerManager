@@ -13,7 +13,7 @@ import java.util.Date;
  */
 public class E_ajusteStockDetalle {
 
-    private int id;
+    private int id, idCabecera;
     private double cantidadVieja;
     private double cantidadNueva;
     private M_producto producto;
@@ -32,6 +32,14 @@ public class E_ajusteStockDetalle {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public int getIdCabecera() {
+        return idCabecera;
+    }
+
+    public void setIdCabecera(int idCabecera) {
+        this.idCabecera = idCabecera;
     }
 
     public double getCantidadVieja() {

@@ -24,7 +24,7 @@ public class NotaCreditoCabeceraTableModel extends AbstractTableModel {
     private final String[] colNames = {"Id.", "Nro Nota Crédito", "Nro. Factura", "Cliente", "Funcionario", "Tiempo", "Total", "Cond. venta"};
 
     public NotaCreditoCabeceraTableModel() {
-        this.dateFormater = new SimpleDateFormat("dd/MM/YYYY hh:mm:ss");
+        this.dateFormater = new SimpleDateFormat("dd/MM/YYYY HH:mm:ss");
         this.decimalFormat = new DecimalFormat("###,###");
         this.list = new ArrayList<>();
     }

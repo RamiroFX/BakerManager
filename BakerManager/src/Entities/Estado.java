@@ -12,6 +12,7 @@ package Entities;
 public class Estado {
 
     public static final int ACTIVO = 1, INACTIVO = 2, TODOS = 3;
+    public static final String ACTIVO_STR = "Activo", INACTIVO_STR = "Inactivo", TODOS_STR = "Todos";
 
     private int id;
     private String descripcion;
