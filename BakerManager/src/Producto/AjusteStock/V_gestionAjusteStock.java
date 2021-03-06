@@ -30,7 +30,7 @@ public class V_gestionAjusteStock extends JDialog {
     public static final String NOMBRE_MODULO = "Gestión de ajuste de stock";
 
     public JButton jbBuscar, jbBorrar, jbSalir,
-            jbEmpleado, jbCrear, jbVer, jbAnular;
+            jbEmpleado, jbCrear, jbVer, jbAnular, jbParametros;
     public JTextField jtfIDAjusteStock, jtfCliente, jtfEmpleado;
     private JPanel jpTop, jpBotonesTop, jpBot;
     public JTable jtCabecera, jtDetalle;
@@ -112,9 +112,11 @@ public class V_gestionAjusteStock extends JDialog {
         jbCrear = new JButton("Crear ajuste");
         jbVer = new JButton("Ver detalle");
         jbAnular = new JButton("Anular ajuste");
+        jbParametros = new JButton("Parametros");
         jpBot.add(jbCrear);
         jpBot.add(jbVer);
         jpBot.add(jbAnular);
+        jpBot.add(jbParametros);
         jpBot.add(jbSalir);
         jpBot.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED), "Opciones"));
     }

@@ -63,7 +63,7 @@ public class C_previsionStock extends MouseAdapter implements ActionListener, Ke
     private void facturaCabeceraHandler(MouseEvent e) {
         int row = this.vista.jtCabecera.getSelectedRow();
         if (row > -1) {
-            int idCabecera=modelo.getTmCabecera().getList().get(row).getId();
+            int idCabecera = modelo.getTmCabecera().getList().get(row).getId();
             consultarDetalle(idCabecera);
             this.vista.jbVerDetalle.setEnabled(true);
             this.vista.jbEliminarDetalle.setEnabled(true);

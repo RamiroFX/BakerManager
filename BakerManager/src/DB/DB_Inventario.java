@@ -135,6 +135,54 @@ public class DB_Inventario {
         return sq_cabecera;
     }
 
+    public static long insertarAjusteStockMotivo(E_ajusteStockMotivo unMotivo) {
+        String INSERT_DETALLE = "INSERT INTO ajuste_stock_motivo(descripcion, observacion)VALUES (?, ?);";
+        long sq_cabecera = -1L;
+        try {
+            DB_manager.getConection().setAutoCommit(false);
+            pst = DB_manager.getConection().prepareStatement(INSERT_DETALLE, PreparedStatement.RETURN_GENERATED_KEYS);
+            pst.setString(1, unMotivo.getDescripcion());
+            if (unMotivo.getObservacion() == null || unMotivo.getObservacion().trim().isEmpty()) {
+                pst.setNull(2, Types.VARCHAR);
+            } else {
+                pst.setString(2, unMotivo.getObservacion());
+            }
+            pst.executeUpdate();
+            rs = pst.getGeneratedKeys();
+            if (rs != null && rs.next()) {
+                sq_cabecera = rs.getLong(1);
+            }
+            pst.close();
+            rs.close();
+            DB_manager.establecerTransaccion();
+        } catch (SQLException ex) {
+            System.out.println(ex.getNextException());
+            if (DB_manager.getConection() != null) {
+                try {
+                    DB_manager.getConection().rollback();
+                } catch (SQLException ex1) {
+                    Logger lgr = Logger.getLogger(DB_Inventario.class.getName());
+                    lgr.log(Level.WARNING, ex1.getMessage(), ex1);
+                }
+            }
+            Logger lgr = Logger.getLogger(DB_Inventario.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        } finally {
+            try {
+                if (pst != null) {
+                    pst.close();
+                }
+                if (rs != null) {
+                    rs.close();
+                }
+            } catch (SQLException ex) {
+                Logger lgr = Logger.getLogger(DB_Inventario.class.getName());
+                lgr.log(Level.WARNING, ex.getMessage(), ex);
+            }
+        }
+        return sq_cabecera;
+    }
+
     /*
     READS
      */
@@ -201,19 +249,23 @@ public class DB_Inventario {
     }
 
     /**
-    *Retorna una lista con las cabeceras de ajuste de stock con los parametros deseados.
-    *El parametro esConFecha determina si se busca dentro del rango establecido en los parametros
-    *fechaDesde y fechaHasta, por lo que las misma deben estar establecidas.
-    *Si el parametro esConFecha es igual a FALSE entonces se ignoran los parametros fechaDesde y
-    *fechaHasta por lo que puede ser igual a NULL.
-    * @param idFuncionarioResponsable int con el id del funcionario responsable. -1 para omitir
-    * @param idFuncionarioRegistro int con el id del funcionario que registro la información. -1 para omitir
-    * @param esConFecha boolean
-    * @param fechaDesde date
-    * @param fechaHasta date
-    * @param idEstado int con el id del estado de la cabecera. -1 para omitir
-    * @return list E_ajusteStockCabecera
-    */    
+     * Retorna una lista con las cabeceras de ajuste de stock con los parametros
+     * deseados. El parametro esConFecha determina si se busca dentro del rango
+     * establecido en los parametros fechaDesde y fechaHasta, por lo que las
+     * misma deben estar establecidas. Si el parametro esConFecha es igual a
+     * FALSE entonces se ignoran los parametros fechaDesde y fechaHasta por lo
+     * que puede ser igual a NULL.
+     *
+     * @param idFuncionarioResponsable int con el id del funcionario
+     * responsable. -1 para omitir
+     * @param idFuncionarioRegistro int con el id del funcionario que registro
+     * la información. -1 para omitir
+     * @param esConFecha boolean
+     * @param fechaDesde date
+     * @param fechaHasta date
+     * @param idEstado int con el id del estado de la cabecera. -1 para omitir
+     * @return List E_ajusteStockCabecera
+     */
     public static List<E_ajusteStockCabecera> consultarAjusteStockCabecera(int idFuncionarioResponsable, int idFuncionarioRegistro, boolean esConFecha, Date fechaDesde, Date fechaHasta, int idEstado) {
         List<E_ajusteStockCabecera> list = new ArrayList<>();
         String QUERY_RESPONSABLE = "";
@@ -364,6 +416,92 @@ public class DB_Inventario {
         return list;
     }
 
+    public static List<E_ajusteStockMotivo> consultarAjusteStockMotivo() {
+        List<E_ajusteStockMotivo> list = new ArrayList<>();
+        String QUERY = "SELECT id_ajuste_stock_motivo, descripcion, observacion	FROM ajuste_stock_motivo;";
+        try {
+            pst = DB_manager.getConection().prepareStatement(QUERY, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            rs = pst.executeQuery();
+            while (rs.next()) {
+                E_ajusteStockMotivo motivo = new E_ajusteStockMotivo();
+                motivo.setId(rs.getInt(1));
+                motivo.setDescripcion(rs.getString(2));
+                motivo.setObservacion(rs.getString(3));
+                list.add(motivo);
+            }
+        } catch (SQLException ex) {
+            Logger lgr = Logger.getLogger(DB_Inventario.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (pst != null) {
+                    pst.close();
+                }
+            } catch (SQLException ex) {
+                Logger lgr = Logger.getLogger(DB_Inventario.class.getName());
+                lgr.log(Level.WARNING, ex.getMessage(), ex);
+            }
+        }
+        return list;
+    }
+
+    public static boolean existeAjusteMotivoEnUso(int idMotivo) {
+        String Query = "SELECT id_ajuste_stock_detalle FROM ajuste_stock_detalle WHERE id_motivo = ?";
+        try {
+            pst = DB_manager.getConection().prepareStatement(Query);
+            pst.setInt(1, idMotivo);
+            rs = pst.executeQuery();
+            return rs.next();
+        } catch (SQLException ex) {
+            Logger lgr = Logger.getLogger(DB_Inventario.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (st != null) {
+                    st.close();
+                }
+            } catch (SQLException ex) {
+                Logger lgr = Logger.getLogger(DB_Inventario.class.getName());
+                lgr.log(Level.WARNING, ex.getMessage(), ex);
+            }
+        }
+        return false;
+    }
+
+    public static boolean existeAjusteMotivoEnUso(String descripcion) {
+        String Query = "SELECT descripcion FROM ajuste_stock_motivo WHERE LOWER(descripcion) LIKE ?";
+        try {
+            pst = DB_manager.getConection().prepareStatement(Query);
+            pst.setString(1, descripcion.toLowerCase());
+            rs = pst.executeQuery();
+            return rs.next();
+        } catch (SQLException ex) {
+            Logger lgr = Logger.getLogger(DB_Inventario.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (st != null) {
+                    st.close();
+                }
+            } catch (SQLException ex) {
+                Logger lgr = Logger.getLogger(DB_Inventario.class.getName());
+                lgr.log(Level.WARNING, ex.getMessage(), ex);
+            }
+        }
+        return false;
+    }
+
     /*
     UPDATES
      */
@@ -417,7 +555,7 @@ public class DB_Inventario {
             }
         }
     }
-    
+
     public static void actualizarAjusteStockDetalle(E_ajusteStockDetalle detalle) {
         String UPDATE_DETALLE = "UPDATE ajuste_stock_detalle SET "
                 + "id_motivo=?, "
@@ -439,6 +577,51 @@ public class DB_Inventario {
                 pst.setString(4, detalle.getObservacion());
             }
             pst.setInt(5, detalle.getId());
+            pst.executeUpdate();
+            pst.close();
+            DB_manager.establecerTransaccion();
+        } catch (SQLException ex) {
+            System.out.println(ex.getNextException());
+            if (DB_manager.getConection() != null) {
+                try {
+                    DB_manager.getConection().rollback();
+                } catch (SQLException ex1) {
+                    Logger lgr = Logger.getLogger(DB_Inventario.class.getName());
+                    lgr.log(Level.WARNING, ex1.getMessage(), ex1);
+                }
+            }
+            Logger lgr = Logger.getLogger(DB_Inventario.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        } finally {
+            try {
+                if (pst != null) {
+                    pst.close();
+                }
+                if (rs != null) {
+                    rs.close();
+                }
+            } catch (SQLException ex) {
+                Logger lgr = Logger.getLogger(DB_Produccion.class.getName());
+                lgr.log(Level.WARNING, ex.getMessage(), ex);
+            }
+        }
+    }
+
+    public static void actualizarAjusteStockMotivo(E_ajusteStockMotivo unMotivo) {
+        String UPDATE_DETALLE = "UPDATE ajuste_stock_motivo SET "
+                + "descripcion=?, "
+                + "observacion=? "
+                + "WHERE id_ajuste_stock_motivo=?;";
+        try {
+            DB_manager.getConection().setAutoCommit(false);
+            pst = DB_manager.getConection().prepareStatement(UPDATE_DETALLE);//, PreparedStatement.RETURN_GENERATED_KEYS);
+            pst.setString(1, unMotivo.getDescripcion());
+            if (unMotivo.getObservacion() == null || unMotivo.getObservacion().trim().isEmpty()) {
+                pst.setNull(2, Types.VARCHAR);
+            } else {
+                pst.setString(2, unMotivo.getObservacion());
+            }
+            pst.setInt(3, unMotivo.getId());
             pst.executeUpdate();
             pst.close();
             DB_manager.establecerTransaccion();
@@ -548,4 +731,41 @@ public class DB_Inventario {
             }
         }
     }
+
+    public static void eliminarAjusteStockMotivo(int idMotivo) {
+        String DELETE_DETALLE = "DELETE FROM ajuste_stock_motivo WHERE id_ajuste_stock_motivo = ?;";
+        try {
+            DB_manager.getConection().setAutoCommit(false);
+            pst = DB_manager.getConection().prepareStatement(DELETE_DETALLE);
+            pst.setInt(1, idMotivo);
+            pst.executeUpdate();
+            pst.close();
+            DB_manager.establecerTransaccion();
+        } catch (SQLException ex) {
+            System.out.println(ex.getNextException());
+            if (DB_manager.getConection() != null) {
+                try {
+                    DB_manager.getConection().rollback();
+                } catch (SQLException ex1) {
+                    Logger lgr = Logger.getLogger(DB_Inventario.class.getName());
+                    lgr.log(Level.WARNING, ex1.getMessage(), ex1);
+                }
+            }
+            Logger lgr = Logger.getLogger(DB_Inventario.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        } finally {
+            try {
+                if (pst != null) {
+                    pst.close();
+                }
+                if (rs != null) {
+                    rs.close();
+                }
+            } catch (SQLException ex) {
+                Logger lgr = Logger.getLogger(DB_Inventario.class.getName());
+                lgr.log(Level.WARNING, ex.getMessage(), ex);
+            }
+        }
+    }
+
 }
