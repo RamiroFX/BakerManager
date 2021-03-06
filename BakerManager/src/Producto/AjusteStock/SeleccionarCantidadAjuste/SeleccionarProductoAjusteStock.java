@@ -5,6 +5,7 @@
  */
 package Producto.AjusteStock.SeleccionarCantidadAjuste;
 
+import DB.DB_Inventario;
 import Entities.E_ajusteStockDetalle;
 import Entities.E_ajusteStockMotivo;
 import Interface.RecibirAjusteStockDetalleCB;
@@ -16,6 +17,7 @@ import java.awt.event.KeyListener;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
@@ -69,7 +71,11 @@ public class SeleccionarProductoAjusteStock extends javax.swing.JDialog implemen
     public void inicializarVista() {
         jtfProducto.setText(detalle.getProducto().getDescripcion());
         jtfProductoCodigo.setText(detalle.getProducto().getCodigo());
-        jtfCantidadVieja.setText(detalle.getProducto().getCantActual()+"");
+        jtfCantidadVieja.setText(detalle.getProducto().getCantActual() + "");
+        List<E_ajusteStockMotivo> motivos = DB_Inventario.consultarAjusteStockMotivo();
+        motivos.forEach((unMotivo) -> {
+            jcbMotivo.addItem(unMotivo);
+        });
         for (int i = 1; i < 10; i++) {
             jcbHora.addItem("0" + i);
         }
@@ -157,27 +163,8 @@ public class SeleccionarProductoAjusteStock extends javax.swing.JDialog implemen
         jtfCantidadNueva.selectAll();
     }
 
-    public void enviarCantidad() {
-        if (!checkearCantidad()) {
-            return;
-        }
-        double cantidadVieja = Double.valueOf(jtfCantidadVieja.getText().trim().replace(",", "."));
-        double cantidadNueva = Double.valueOf(jtfCantidadNueva.getText().trim().replace(",", "."));
-        String observacion = jtfObservacion.getText().trim();
-        Calendar tiempo = Calendar.getInstance();
-        tiempo.setTime(jdcFecha.getDate());
-        E_ajusteStockMotivo motivo = jcbMotivo.getItemAt(jcbMotivo.getSelectedIndex());
-        if (index < 0) {
-            productoCallback.recibirAjusteStock(detalle.getProducto(), cantidadVieja, cantidadNueva, motivo, tiempo.getTime(), observacion);
-
-        } else {
-            productoCallback.modificarAjusteStock(index, detalle.getProducto(), cantidadVieja, cantidadNueva, motivo, tiempo.getTime(), observacion);
-        }
-        dispose();
-    }
-
-    private boolean checkearCantidad() {
-        Double d = null;
+    private boolean validarCantidadNueva() {
+        double d = -1;
         if (this.jtfCantidadNueva.getText().trim().isEmpty()) {
             javax.swing.JOptionPane.showMessageDialog(this, "Verifique en uno de los campos el parametro:"
                     + "Asegurese de colocar un numero valido\n"
@@ -202,11 +189,42 @@ public class SeleccionarProductoAjusteStock extends javax.swing.JDialog implemen
             this.jtfCantidadNueva.requestFocusInWindow();
             return false;
         }
-        if (d <= 0.0) {
-            JOptionPane.showMessageDialog(this, "Inserte un valor mayor a 0 en Cantidad.", "Parametros incorrectos", JOptionPane.ERROR_MESSAGE);
+        if (d < 0.0) {
+            JOptionPane.showMessageDialog(this, "Inserte un valor mayor o igual a 0 en Cantidad.", "Parametros incorrectos", JOptionPane.ERROR_MESSAGE);
             return false;
         }
         return true;
+    }
+
+    private boolean validarObservacion() {
+        String obs = jtfObservacion.getText().trim();
+        if (obs.length() > 150) {
+            JOptionPane.showMessageDialog(this, "Campo Observación: Máximo permitido 150 caracteres. Total (" + obs.length() + ")", "Parametros incorrectos", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+        return true;
+    }
+
+    public void enviarCantidad() {
+        if (!validarCantidadNueva()) {
+            return;
+        }
+        if (!validarObservacion()) {
+            return;
+        }
+        double cantidadVieja = Double.valueOf(jtfCantidadVieja.getText().trim().replace(",", "."));
+        double cantidadNueva = Double.valueOf(jtfCantidadNueva.getText().trim().replace(",", "."));
+        String observacion = jtfObservacion.getText().trim();
+        Calendar tiempo = Calendar.getInstance();
+        tiempo.setTime(jdcFecha.getDate());
+        E_ajusteStockMotivo motivo = jcbMotivo.getItemAt(jcbMotivo.getSelectedIndex());
+        if (index < 0) {
+            productoCallback.recibirAjusteStock(detalle.getProducto(), cantidadVieja, cantidadNueva, motivo, tiempo.getTime(), observacion);
+
+        } else {
+            productoCallback.modificarAjusteStock(index, detalle.getProducto(), cantidadVieja, cantidadNueva, motivo, tiempo.getTime(), observacion);
+        }
+        dispose();
     }
 
     @Override
