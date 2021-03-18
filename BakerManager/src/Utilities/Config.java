@@ -161,4 +161,27 @@ public class Config {
             }
         }
     }
+
+    public static String getDB() {
+        usuario = propiedades.getProperty("newproperties.database", "bakermanager");
+        return usuario;
+    }
+
+    public static void setDB(String database) {
+        propiedades.setProperty("newproperties.database", database);
+        try {
+            w = new FileWriter(path);
+            propiedades.store(w, database);
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(null, "Ha ocurrido una excepcion al abrir el fichero, no se encuentra o está protegido " + ex, "Atención", JOptionPane.WARNING_MESSAGE);
+        } finally {
+            if (w != null) {
+                try {
+                    w.close();
+                } catch (IOException ex) {
+                    JOptionPane.showMessageDialog(null, "Ha ocurrido una excepcion al cerrar el fichero: " + ex, "Atención", JOptionPane.WARNING_MESSAGE);
+                }
+            }
+        }
+    }
 }

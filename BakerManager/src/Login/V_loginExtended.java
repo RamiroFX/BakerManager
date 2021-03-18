@@ -35,8 +35,8 @@ public class V_loginExtended extends JInternalFrame {
     private JTabbedPane jtpPaneles;
     public JFrame frame; //referencia a la ventana principal
 
-    public JTextField jtfPort, jtfHost;
-    public JLabel jlPort, jlHost;
+    public JTextField jtfPort, jtfHost, jtfDB;
+    public JLabel jlPort, jlHost, jlDB;
     public JButton jbSaveConfig;
     public JPanel jpConection;
 
@@ -104,12 +104,16 @@ public class V_loginExtended extends JInternalFrame {
         this.jlPort = new JLabel("Port");
         this.jtfHost = new JTextField();
         this.jlHost = new JLabel("Host");
+        this.jtfDB = new JTextField();
+        this.jlDB = new JLabel("Database");
         this.jbSaveConfig = new JButton("Guardar");
         this.jpConection = new JPanel(new MigLayout());
         this.jpConection.add(jlPort);
         this.jpConection.add(jtfPort, "growx, pushx, wrap");
         this.jpConection.add(jlHost);
         this.jpConection.add(jtfHost, "growx, pushx, wrap");
+        this.jpConection.add(jlDB);
+        this.jpConection.add(jtfDB, "growx, pushx, wrap");
         this.jpConection.add(jbSaveConfig);
         jtpPaneles = new JTabbedPane();
         jtpPaneles.add("Ingreso", jpLogin);

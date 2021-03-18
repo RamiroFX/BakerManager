@@ -8,12 +8,9 @@ package ModeloTabla;
 import Entities.E_facturaDetalle;
 import Entities.E_impuesto;
 import Interface.InterfaceFacturaDetalle;
-import Entities.M_facturaDetalle;
-import Parametros.Impuesto;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
-import javax.swing.JOptionPane;
 import javax.swing.table.AbstractTableModel;
 
 /**

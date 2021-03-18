@@ -40,11 +40,12 @@ public class C_login implements ActionListener, KeyListener {
         this.vista.txtPassword.setText("admin");
         this.vista.jtfHost.setText(Config.getHost());
         this.vista.jtfPort.setText(Config.getPort());
+        this.vista.jtfDB.setText(Config.getDB());
         this.vista.txtPassword.requestFocusInWindow();
     }
 
     public void mostrarVista() {
-        this.vista.setSize(400, 200);
+        this.vista.setSize(400, 220);
         this.vista.setLocation(this.c_inicio.centrarPantalla(this.vista));
         c_inicio.agregarVentana(vista);
         this.vista.btnAceptar.requestFocusInWindow();
@@ -133,6 +134,8 @@ public class C_login implements ActionListener, KeyListener {
             Config.setPort(port);
             String host = vista.jtfHost.getText().trim();
             Config.setHost(host);
+            String database = vista.jtfDB.getText().trim();
+            Config.setDB(database);
             JOptionPane.showMessageDialog(vista, "Cambios guardados", "Atención", JOptionPane.INFORMATION_MESSAGE);
         } catch (HeadlessException e) {
             JOptionPane.showMessageDialog(vista, "Ocurrio un error al guardar cambios. Intente nuevamente", "Atención", JOptionPane.INFORMATION_MESSAGE);
