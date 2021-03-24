@@ -79,4 +79,9 @@ public class ReportesCobros {
         FiltroCliente fc = new FiltroCliente(frame, 1, FiltroCliente.VENCIDAS);
         fc.setVisible(true);
     }
+
+    public static void estadoCuentaClientes(JFrame frame) {
+        FiltroReportes fc = new FiltroReportes(frame, 1, FiltroCliente.VENCIDAS);
+        fc.setVisible(true);
+    }
 }
