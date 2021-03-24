@@ -40,8 +40,9 @@ public class M_previsionStock {
         cabecera.setEstado(new Estado(Estado.ACTIVO, Estado.ACTIVO_STR));
         cabecera.setResponsable(DatosUsuario.getRol_usuario().getFuncionario());
         cabecera.setRegistradoPor(DatosUsuario.getRol_usuario().getFuncionario());
-        cabecera.setTiempo(Calendar.getInstance().getTime());
-        return (int) DB_Inventario.insertarAjusteStockCabecera(cabecera);
+        cabecera.setTiempoInicio(Calendar.getInstance().getTime());
+        cabecera.setTiempoFin(Calendar.getInstance().getTime());
+        return (int) DB_Inventario.insertarAjusteStockCabeceraTemporal(cabecera);
     }
 
     public void eliminarAjusteStock(int idCabecera) {
@@ -49,11 +50,11 @@ public class M_previsionStock {
     }
 
     public void actualizarTablaCabecera() {
-        this.tmCabecera.setList(DB_Inventario.consultarAjusteStockCabecera(-1, -1, false, null, null, -1));
+        this.tmCabecera.setList(DB_Inventario.consultarAjusteStockCabecera(-1, -1, false, null, null, -1, true));
     }
 
     public void actualizarTablaDetalle(int idCabecera) {
-        this.tmDetalle.setList(DB_Inventario.consultarAjusteStockDetalle(idCabecera));
+        this.tmDetalle.setList(DB_Inventario.consultarAjusteStockDetalle(idCabecera, true));
     }
 
 }

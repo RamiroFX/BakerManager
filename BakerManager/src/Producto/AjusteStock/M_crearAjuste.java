@@ -23,9 +23,9 @@ public class M_crearAjuste {
     private AjusteStockDetalleTableModel tmDetalle;
 
     public M_crearAjuste(int idAjusteCabecera) {
-        this.cabecera = DB_Inventario.obtenerAjusteStockCabecera(idAjusteCabecera);
+        this.cabecera = DB_Inventario.obtenerAjusteStockCabecera(idAjusteCabecera, true);
         this.tmDetalle = new AjusteStockDetalleTableModel();
-        this.tmDetalle.setList(DB_Inventario.consultarAjusteStockDetalle(idAjusteCabecera));
+        this.tmDetalle.setList(DB_Inventario.consultarAjusteStockDetalle(idAjusteCabecera, true));
     }
 
     public E_ajusteStockCabecera getCabecera() {
@@ -37,7 +37,7 @@ public class M_crearAjuste {
     }
 
     public void consultarConteo() {
-        this.tmDetalle.setList(DB_Inventario.consultarAjusteStockDetalle(getCabecera().getId()));
+        this.tmDetalle.setList(DB_Inventario.consultarAjusteStockDetalle(getCabecera().getId(), true));
     }
 
     public String obtenerFuncionario() {
@@ -53,7 +53,7 @@ public class M_crearAjuste {
         detalle.setObservacion(observacion);
         detalle.setProducto(producto);
         detalle.setTiempoRegistro(tiempo);
-        DB_Inventario.insertarAjusteStockDetalle(detalle);
+        DB_Inventario.insertarAjusteStockDetalleTemporal(detalle);
         consultarConteo();
     }
 

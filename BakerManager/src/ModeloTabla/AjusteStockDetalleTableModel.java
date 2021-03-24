@@ -88,7 +88,11 @@ public class AjusteStockDetalleTableModel extends AbstractTableModel {
                 return data.getMotivo().getDescripcion();
             }
             case 7: {
-                return data.getObservacion();
+                if (data.getObservacion() != null) {
+                    return data.getObservacion();
+                }else{
+                    return "";
+                }
             }
             default: {
                 return null;

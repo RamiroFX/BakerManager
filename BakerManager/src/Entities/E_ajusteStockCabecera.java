@@ -15,9 +15,9 @@ public class E_ajusteStockCabecera {
 
     private int id;
     private M_funcionario responsable, registradoPor;
-    private Date tiempo;
     private Estado estado;
     private String observacion;
+    private Date tiempoInicio, tiempoFin;
 
     public E_ajusteStockCabecera() {
         this.responsable = new M_funcionario();
@@ -49,14 +49,6 @@ public class E_ajusteStockCabecera {
         this.registradoPor = registradoPor;
     }
 
-    public Date getTiempo() {
-        return tiempo;
-    }
-
-    public void setTiempo(Date tiempo) {
-        this.tiempo = tiempo;
-    }
-
     public Estado getEstado() {
         return estado;
     }
@@ -73,13 +65,30 @@ public class E_ajusteStockCabecera {
         return observacion;
     }
 
+    public void setTiempoFin(Date tiempoFin) {
+        this.tiempoFin = tiempoFin;
+    }
+
+    public Date getTiempoFin() {
+        return tiempoFin;
+    }
+
+    public void setTiempoInicio(Date tiempoInicio) {
+        this.tiempoInicio = tiempoInicio;
+    }
+
+    public Date getTiempoInicio() {
+        return tiempoInicio;
+    }
+
     @Override
     public String toString() {
         return "AjusteStockCabecera{"
                 + "id: " + getId() + ","
                 + "responsable: " + getResponsable() + ","
                 + "registradoPor: " + getRegistradoPor() + ","
-                + "tiempo: " + getTiempo() + ","
+                + "tiempoInicio: " + getTiempoInicio()+ ","
+                + "tiempoFin: " + getTiempoFin()+ ","
                 + "Estado: " + getEstado().getDescripcion()
                 + "}";
     }

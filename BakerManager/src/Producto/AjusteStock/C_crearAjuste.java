@@ -8,9 +8,7 @@ package Producto.AjusteStock;
 import Entities.E_ajusteStockMotivo;
 import Entities.M_producto;
 import Interface.RecibirAjusteStockDetalleCB;
-import Interface.RecibirProductoCallback;
 import ModeloTabla.SeleccionarProductoTableModel;
-import bauplast.C_seleccionarProductoPorClasif;
 import bauplast.SeleccionarProductoPorClasif;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -55,7 +53,7 @@ public class C_crearAjuste extends MouseAdapter implements ActionListener, KeyLi
 
     private void inicializarVista() {
         this.vista.jtfFuncionario.setText(modelo.obtenerFuncionario());
-        this.vista.jdcFecha.setDate(modelo.getCabecera().getTiempo());
+        this.vista.jdcFecha.setDate(modelo.getCabecera().getTiempoInicio());
         this.vista.jtDetalle.setModel(modelo.getTmDetalle());
         this.vista.jtfFuncionario.setEditable(false);
     }
@@ -145,7 +143,7 @@ public class C_crearAjuste extends MouseAdapter implements ActionListener, KeyLi
             return;
         }
         String observacion = vista.jtfObservacion.getText().trim();
-        modelo.getCabecera().setTiempo(vista.jdcFecha.getDate());
+        modelo.getCabecera().setTiempoInicio(vista.jdcFecha.getDate());
         modelo.guardar();
         cerrar();
     }

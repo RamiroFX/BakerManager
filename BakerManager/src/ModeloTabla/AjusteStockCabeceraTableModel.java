@@ -21,7 +21,7 @@ public class AjusteStockCabeceraTableModel extends AbstractTableModel {
     private SimpleDateFormat dateFormater;
     private DecimalFormat decimalFormat;
     private List<E_ajusteStockCabecera> list;
-    private final String[] colNames = {"Id.", "Responsable", "Tiempo"};
+    private final String[] colNames = {"Id.", "Responsable", "Tiempo inicio"};
 
     public AjusteStockCabeceraTableModel() {
         this.dateFormater = new SimpleDateFormat("dd/MM/YYYY HH:mm:ss");
@@ -74,7 +74,7 @@ public class AjusteStockCabeceraTableModel extends AbstractTableModel {
                 return nc.getResponsable().getNombre();
             }
             case 2: {
-                return dateFormater.format(nc.getTiempo());
+                return dateFormater.format(nc.getTiempoInicio());
             }
             default: {
                 return null;
