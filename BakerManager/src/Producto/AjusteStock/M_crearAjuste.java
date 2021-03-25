@@ -7,11 +7,8 @@ package Producto.AjusteStock;
 
 import DB.DB_Inventario;
 import Entities.E_ajusteStockCabecera;
-import Entities.E_ajusteStockDetalle;
-import Entities.E_ajusteStockMotivo;
-import Entities.M_producto;
-import ModeloTabla.AjusteStockDetalleTableModel;
-import java.util.Date;
+import Entities.SeleccionAjusteStockDetalle;
+import ModeloTabla.SeleccionAjusteStockDetalleTM;
 
 /**
  *
@@ -20,59 +17,49 @@ import java.util.Date;
 public class M_crearAjuste {
 
     private E_ajusteStockCabecera cabecera;
-    private AjusteStockDetalleTableModel tmDetalle;
+    private SeleccionAjusteStockDetalleTM tmDetalle;
 
     public M_crearAjuste(int idAjusteCabecera) {
         this.cabecera = DB_Inventario.obtenerAjusteStockCabecera(idAjusteCabecera, true);
-        this.tmDetalle = new AjusteStockDetalleTableModel();
-        this.tmDetalle.setList(DB_Inventario.consultarAjusteStockDetalle(idAjusteCabecera, true));
+        this.tmDetalle = new SeleccionAjusteStockDetalleTM();
+        this.tmDetalle.setList(DB_Inventario.consultarAjusteStockDetalleTemporal(idAjusteCabecera));
     }
 
     public E_ajusteStockCabecera getCabecera() {
         return cabecera;
     }
 
-    public AjusteStockDetalleTableModel getTmDetalle() {
+    public SeleccionAjusteStockDetalleTM getTmDetalle() {
         return tmDetalle;
     }
 
     public void consultarConteo() {
-        this.tmDetalle.setList(DB_Inventario.consultarAjusteStockDetalle(getCabecera().getId(), true));
+        this.tmDetalle.setList(DB_Inventario.consultarAjusteStockDetalleTemporal(getCabecera().getId()));
     }
 
     public String obtenerFuncionario() {
         return this.cabecera.getResponsable().getNombreCompleto();
     }
 
-    public void recibirAjusteStock(M_producto producto, double cantidadVieja, double cantidadNueva, E_ajusteStockMotivo motivo, Date tiempo, String observacion) {
-        E_ajusteStockDetalle detalle = new E_ajusteStockDetalle();
+    public void recibirAjusteStock(SeleccionAjusteStockDetalle ajusteStockDetalle) {
+        SeleccionAjusteStockDetalle detalle = ajusteStockDetalle;
         detalle.setIdCabecera(getCabecera().getId());
-        detalle.setCantidadNueva(cantidadNueva);
-        detalle.setCantidadVieja(cantidadVieja);
-        detalle.setMotivo(motivo);
-        detalle.setObservacion(observacion);
-        detalle.setProducto(producto);
-        detalle.setTiempoRegistro(tiempo);
         DB_Inventario.insertarAjusteStockDetalleTemporal(detalle);
         consultarConteo();
     }
 
-    public void modificarAjusteStock(int index, M_producto producto, double cantidadVieja, double cantidadNueva, E_ajusteStockMotivo motivo, Date tiempo, String observacion) {
-        E_ajusteStockDetalle detalle = new E_ajusteStockDetalle();
+    public void modificarAjusteStock(int index, SeleccionAjusteStockDetalle ajusteStockDetalle) {
+        SeleccionAjusteStockDetalle detalle = ajusteStockDetalle;
         detalle.setId(tmDetalle.getList().get(index).getId());
         detalle.setIdCabecera(getCabecera().getId());
-        detalle.setCantidadNueva(cantidadNueva);
-        detalle.setCantidadVieja(cantidadVieja);
-        detalle.setMotivo(motivo);
-        detalle.setObservacion(observacion);
-        detalle.setProducto(producto);
-        detalle.setTiempoRegistro(tiempo);
-        DB_Inventario.actualizarAjusteStockDetalle(detalle);
+        DB_Inventario.actualizarAjusteStockDetalleTemporal(ajusteStockDetalle);
         consultarConteo();
     }
 
-    void removerProducto(int index) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void removerProducto(int index) {
+        int idDetalle = tmDetalle.getList().get(index).getId();
+        DB_Inventario.eliminarAjusteStockDetalleTemporal(idDetalle);
+        consultarConteo();
     }
 
     void guardar() {

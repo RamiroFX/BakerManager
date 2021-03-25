@@ -5,9 +5,7 @@
  */
 package Interface;
 
-import Entities.E_ajusteStockMotivo;
-import Entities.M_producto;
-import java.util.Date;
+import Entities.SeleccionAjusteStockDetalle;
 
 /**
  *
@@ -15,8 +13,8 @@ import java.util.Date;
  */
 public interface RecibirAjusteStockDetalleCB {
 
-    public void recibirAjusteStock(M_producto producto, double cantidadVieja, double cantidadNueva, E_ajusteStockMotivo motivo, Date tiempo, String observacion);
+    public void recibirAjusteStock(SeleccionAjusteStockDetalle ajusteStockDetalle);
 
-    public void modificarAjusteStock(int index, M_producto producto, double cantidadVieja, double cantidadNueva, E_ajusteStockMotivo motivo, Date tiempo, String observacion);
-
+    public void modificarAjusteStock(int index, SeleccionAjusteStockDetalle ajusteStockDetalle);
+    
 }

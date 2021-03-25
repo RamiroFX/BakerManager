@@ -11,6 +11,7 @@ import Entities.Estado;
 import MenuPrincipal.DatosUsuario;
 import ModeloTabla.AjusteStockCabeceraTableModel;
 import ModeloTabla.AjusteStockDetalleTableModel;
+import ModeloTabla.SeleccionAjusteStockDetalleTM;
 import java.util.Calendar;
 
 /**
@@ -20,18 +21,18 @@ import java.util.Calendar;
 public class M_previsionStock {
 
     private AjusteStockCabeceraTableModel tmCabecera;
-    private AjusteStockDetalleTableModel tmDetalle;
+    private SeleccionAjusteStockDetalleTM tmDetalle;
 
     public M_previsionStock() {
         this.tmCabecera = new AjusteStockCabeceraTableModel();
-        this.tmDetalle = new AjusteStockDetalleTableModel();
+        this.tmDetalle = new SeleccionAjusteStockDetalleTM();
     }
 
     public AjusteStockCabeceraTableModel getTmCabecera() {
         return tmCabecera;
     }
 
-    public AjusteStockDetalleTableModel getTmDetalle() {
+    public SeleccionAjusteStockDetalleTM getTmDetalle() {
         return tmDetalle;
     }
 
@@ -54,7 +55,7 @@ public class M_previsionStock {
     }
 
     public void actualizarTablaDetalle(int idCabecera) {
-        this.tmDetalle.setList(DB_Inventario.consultarAjusteStockDetalle(idCabecera, true));
+        this.tmDetalle.setList(DB_Inventario.consultarAjusteStockDetalleTemporal(idCabecera));
     }
 
 }

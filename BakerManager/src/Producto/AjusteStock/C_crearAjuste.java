@@ -5,10 +5,11 @@
  */
 package Producto.AjusteStock;
 
-import Entities.E_ajusteStockMotivo;
 import Entities.M_producto;
+import Entities.SeleccionAjusteStockDetalle;
 import Interface.RecibirAjusteStockDetalleCB;
 import ModeloTabla.SeleccionarProductoTableModel;
+import Producto.AjusteStock.SeleccionarCantidadAjuste.SeleccionarProductoAjusteStock;
 import bauplast.SeleccionarProductoPorClasif;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -66,7 +67,7 @@ public class C_crearAjuste extends MouseAdapter implements ActionListener, KeyLi
         this.vista.jbSalir.addActionListener(this);
     }
 
-    private void invocarSeleccionarDetalle() {        
+    private void invocarSeleccionarDetalle() {
         SeleccionarProductoPorClasif sp = new SeleccionarProductoPorClasif(vista, SeleccionarProductoTableModel.DETALLE);
         sp.setAjusteStockCallback(this);
         sp.mostrarVista();
@@ -75,28 +76,21 @@ public class C_crearAjuste extends MouseAdapter implements ActionListener, KeyLi
     private void invocarModificarDetalle() {
         int fila = this.vista.jtDetalle.getSelectedRow();
         if (fila > -1) {
-            M_producto prod = modelo.getTmDetalle().getList().get(fila).getProducto();
-//            SeleccionCantidadProductoSimple scp = new SeleccionCantidadProductoSimple(this.vista, false);
-//            scp.setUpdateIndex(fila);
-//            scp.setTipo(SeleccionCantidadProductoSimple.ROLLO);
-//            scp.setFilm(prod);
-//            scp.setFilmCallback(this);
-//            scp.inicializarVista();
-//            scp.setVisible(true);
+            SeleccionAjusteStockDetalle detalle = modelo.getTmDetalle().getList().get(fila);
+            SeleccionarProductoAjusteStock scp = new SeleccionarProductoAjusteStock(vista);
+            scp.setProductoCallback(this);
+            scp.cargarDatos(detalle, fila);
+            scp.setVisible(true);
         }
     }
 
     private void eliminarDetalle() {
         int index = vista.jtDetalle.getSelectedRow();
         if (index > -1) {
-            modelo.removerProducto(index);
-//            if (esModoCreacion) {
-//            } else {
-//                int opcion = JOptionPane.showConfirmDialog(vista, "Confirmar", "Atención", JOptionPane.WARNING_MESSAGE, JOptionPane.YES_NO_OPTION);
-//                if (opcion == JOptionPane.YES_OPTION) {
-//                    modelo.removerBajaPosterior(index);
-//                }
-//            }
+            int opcion = JOptionPane.showConfirmDialog(vista, "Confirmar", "Atención", JOptionPane.WARNING_MESSAGE, JOptionPane.YES_NO_OPTION);
+            if (opcion == JOptionPane.YES_OPTION) {
+                modelo.removerProducto(index);
+            }
         }
     }
 
@@ -185,14 +179,14 @@ public class C_crearAjuste extends MouseAdapter implements ActionListener, KeyLi
     }
 
     @Override
-    public void recibirAjusteStock(M_producto producto, double cantidadVieja, double cantidadNueva, E_ajusteStockMotivo motivo, Date tiempo, String observacion) {
-        modelo.recibirAjusteStock(producto, cantidadVieja, cantidadNueva, motivo, tiempo, observacion);
+    public void recibirAjusteStock(SeleccionAjusteStockDetalle ajusteStockDetalle) {
+        modelo.recibirAjusteStock(ajusteStockDetalle);
         Utilities.c_packColumn.packColumns(vista.jtDetalle, 1);
     }
 
     @Override
-    public void modificarAjusteStock(int index, M_producto producto, double cantidadVieja, double cantidadNueva, E_ajusteStockMotivo motivo, Date tiempo, String observacion) {
-        modelo.modificarAjusteStock(index, producto, cantidadVieja, cantidadNueva, motivo, tiempo, observacion);
+    public void modificarAjusteStock(int index, SeleccionAjusteStockDetalle ajusteStockDetalle) {
+        modelo.modificarAjusteStock(index, ajusteStockDetalle);
         Utilities.c_packColumn.packColumns(vista.jtDetalle, 1);
     }
 }

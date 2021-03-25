@@ -6,7 +6,7 @@
 package Producto.AjusteStock.SeleccionarCantidadAjuste;
 
 import DB.DB_Inventario;
-import Entities.E_ajusteStockDetalle;
+import Entities.SeleccionAjusteStockDetalle;
 import Entities.E_ajusteStockMotivo;
 import Interface.RecibirAjusteStockDetalleCB;
 import com.toedter.calendar.JDateChooser;
@@ -18,8 +18,10 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import net.miginfocom.swing.MigLayout;
@@ -40,23 +42,20 @@ public class SeleccionarProductoAjusteStock extends javax.swing.JDialog implemen
     private JDateChooser jdcFecha;
     private JComboBox<String> jcbHora, jcbMinuto;
     int index;
-    E_ajusteStockDetalle detalle;
+    SeleccionAjusteStockDetalle detalle;
+    private JCheckBox jcbIncluirMovimientos;
     private RecibirAjusteStockDetalleCB productoCallback;
 
     public SeleccionarProductoAjusteStock(JDialog vista) {
         super(vista, true);
         setTitle("Seleccione una cantidad");
-        setSize(new java.awt.Dimension(350, 350));
+        setSize(new java.awt.Dimension(350, 370));
         setLocationRelativeTo(vista);
         initComponents();
         initLogic();
     }
 
-    public void setUpdateIndex(int index) {
-        this.index = index;
-    }
-
-    public void setProducto(E_ajusteStockDetalle detalle) {
+    public void setProducto(SeleccionAjusteStockDetalle detalle) {
         this.detalle = detalle;
     }
 
@@ -66,6 +65,49 @@ public class SeleccionarProductoAjusteStock extends javax.swing.JDialog implemen
 
     private void initLogic() {
         this.index = -1;
+    }
+
+    public void cargarDatos(SeleccionAjusteStockDetalle detalle, int index) {
+        this.detalle = detalle;
+        this.index = index;
+        jtfProducto.setText(detalle.getProducto().getDescripcion());
+        jtfProductoCodigo.setText(detalle.getProducto().getCodigo());
+        jtfCantidadNueva.setText(detalle.getCantidadNueva() + "");
+        jtfCantidadVieja.setText(detalle.getCantidadVieja() + "");
+        List<E_ajusteStockMotivo> motivos = DB_Inventario.consultarAjusteStockMotivo();
+        motivos.forEach((unMotivo) -> {
+            jcbMotivo.addItem(unMotivo);
+        });
+        jcbMotivo.setSelectedItem(detalle.getMotivo());
+        for (int i = 1; i < 10; i++) {
+            jcbHora.addItem("0" + i);
+        }
+        for (int i = 10; i < 24; i++) {
+            jcbHora.addItem("" + i);
+        }
+        for (int i = 0; i < 10; i++) {
+            jcbMinuto.addItem("0" + i);
+        }
+        for (int i = 10; i < 60; i++) {
+            jcbMinuto.addItem("" + i);
+        }
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+        Date currentTime = detalle.getTiempoRegistro();
+        String horaString = sdf.format(currentTime).substring(0, 2);
+        String minutoString = sdf.format(currentTime).substring(3, 5);
+        int horas = Integer.valueOf(horaString);
+        int minutos = Integer.valueOf(minutoString);
+        if (horas >= 0 && horas < 10) {
+            this.jcbHora.setSelectedItem("0" + horas);
+        } else {
+            this.jcbHora.setSelectedItem("" + horas);
+        }
+        if (minutos >= 0 && minutos < 10) {
+            this.jcbMinuto.setSelectedItem("0" + minutos);
+        } else {
+            this.jcbMinuto.setSelectedItem("" + minutos);
+        }
+        this.jcbIncluirMovimientos.setSelected(detalle.isEstaSeleccionado());
     }
 
     public void inicializarVista() {
@@ -100,6 +142,7 @@ public class SeleccionarProductoAjusteStock extends javax.swing.JDialog implemen
         } else {
             this.jcbHora.setSelectedItem("" + horaAux);
         }
+        this.jcbIncluirMovimientos.setSelected(true);
     }
 
     private void initComponents() {
@@ -129,6 +172,8 @@ public class SeleccionarProductoAjusteStock extends javax.swing.JDialog implemen
         jdcFecha = new JDateChooser(Calendar.getInstance().getTime());
         jcbHora = new javax.swing.JComboBox<>();
         jcbMinuto = new javax.swing.JComboBox<>();
+        jcbIncluirMovimientos = new javax.swing.JCheckBox("Incluir movimientos de E/S");
+        jcbIncluirMovimientos.setToolTipText("Incluye los movimientos de entrada y salida del producto (producción, ventas, compras, etc.) desde la fecha que se registra en el inventario.");
 
         JPanel jpTiempo = new JPanel();
         jpTiempo.add(jcbHora);
@@ -157,6 +202,8 @@ public class SeleccionarProductoAjusteStock extends javax.swing.JDialog implemen
         getContentPane().add(jpTiempo, "width :250:,grow,wrap");
         getContentPane().add(jlObservacion);
         getContentPane().add(jtfObservacion, "width :200:,grow,wrap");
+        getContentPane().add(new JLabel(""));
+        getContentPane().add(jcbIncluirMovimientos, "width :200:,grow,wrap");
         getContentPane().add(jbOK);
         getContentPane().add(jbCancel);
 
@@ -218,11 +265,19 @@ public class SeleccionarProductoAjusteStock extends javax.swing.JDialog implemen
         Calendar tiempo = Calendar.getInstance();
         tiempo.setTime(jdcFecha.getDate());
         E_ajusteStockMotivo motivo = jcbMotivo.getItemAt(jcbMotivo.getSelectedIndex());
+        SeleccionAjusteStockDetalle ajusteStockDetalle = new SeleccionAjusteStockDetalle();
+        ajusteStockDetalle.setCantidadNueva(cantidadNueva);
+        ajusteStockDetalle.setCantidadVieja(cantidadVieja);
+        ajusteStockDetalle.setMotivo(motivo);
+        ajusteStockDetalle.setObservacion(observacion);
+        ajusteStockDetalle.setProducto(detalle.getProducto());
+        ajusteStockDetalle.setTiempoRegistro(tiempo.getTime());
+        ajusteStockDetalle.setEstaSeleccionado(jcbIncluirMovimientos.isSelected());
         if (index < 0) {
-            productoCallback.recibirAjusteStock(detalle.getProducto(), cantidadVieja, cantidadNueva, motivo, tiempo.getTime(), observacion);
+            productoCallback.recibirAjusteStock(ajusteStockDetalle);
 
         } else {
-            productoCallback.modificarAjusteStock(index, detalle.getProducto(), cantidadVieja, cantidadNueva, motivo, tiempo.getTime(), observacion);
+            productoCallback.modificarAjusteStock(index, ajusteStockDetalle);
         }
         dispose();
     }

@@ -11,6 +11,7 @@ import Entities.Estado;
 import Entities.M_menu_item;
 import Entities.M_producto;
 import Entities.ProductoCategoria;
+import Entities.SeleccionAjusteStockDetalle;
 import Interface.InterfaceRecibirProduccionFilm;
 import Interface.InterfaceRecibirProduccionTerminados;
 import Interface.RecibirAjusteStockDetalleCB;
@@ -215,7 +216,7 @@ public class C_seleccionarProductoPorClasif extends MouseAdapter implements Acti
                 }
                 case INVENTARIO: {
                     SeleccionarProductoAjusteStock scp = new SeleccionarProductoAjusteStock(vista);
-                    E_ajusteStockDetalle detalle = new E_ajusteStockDetalle();
+                    SeleccionAjusteStockDetalle detalle = new SeleccionAjusteStockDetalle();
                     detalle.setProducto(producto);
                     scp.setProducto(detalle);
                     scp.setProductoCallback(inventarioCallback);
