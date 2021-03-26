@@ -17,7 +17,7 @@ public class E_ajusteStockCabecera {
     private M_funcionario responsable, registradoPor;
     private Estado estado;
     private String observacion;
-    private Date tiempoInicio, tiempoFin;
+    private Date tiempoInicio, tiempoFin, tiempoRegistroInicio, tiempoRegistroFin;
 
     public E_ajusteStockCabecera() {
         this.responsable = new M_funcionario();
@@ -111,5 +111,21 @@ public class E_ajusteStockCabecera {
 
         // Compare the data members and return accordingly  
         return this.getId() == c.getId();
+    }
+    
+    public Date getTiempoRegistroInicio() {
+        return tiempoRegistroInicio;
+    }
+
+    public void setTiempoRegistroInicio(Date tiempoRegistroInicio) {
+        this.tiempoRegistroInicio = tiempoRegistroInicio;
+    }
+    
+    public Date getTiempoRegistroFin() {
+        return tiempoRegistroFin;
+    }
+    
+    public void setTiempoRegistroFin(Date tiempoRegistroFin) {
+        this.tiempoRegistroFin = tiempoRegistroFin;
     }
 }

@@ -9,6 +9,7 @@ import DB.DB_Inventario;
 import Entities.E_ajusteStockCabecera;
 import Entities.SeleccionAjusteStockDetalle;
 import ModeloTabla.SeleccionAjusteStockDetalleTM;
+import java.util.Date;
 
 /**
  *
@@ -62,8 +63,16 @@ public class M_crearAjuste {
         consultarConteo();
     }
 
-    void guardar() {
+    public void guardar() {
+        DB_Inventario.transferirInventarioTemporalAPermanente(cabecera, tmDetalle.getList());
+    }
+
+    void establecerFechaInicio(Date dateInicio) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    public void establecerFechaFin(Date dateFin) {
+        DB_Inventario.establecerAjusteStockFechaFin(cabecera.getId(), dateFin);
     }
 
 }

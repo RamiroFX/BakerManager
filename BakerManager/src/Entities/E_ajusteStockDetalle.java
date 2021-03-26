@@ -16,6 +16,7 @@ public class E_ajusteStockDetalle {
     private int id, idCabecera;
     private double cantidadVieja;
     private double cantidadNueva;
+    private double cantidadMovimiento;
     private M_producto producto;
     private E_ajusteStockMotivo motivo;
     private Date tiempoRegistro;
@@ -121,5 +122,19 @@ public class E_ajusteStockDetalle {
 
         // Compare the data members and return accordingly  
         return this.getId() == c.getId();
+    }
+
+    /**
+     * @return the cantidadMovimiento
+     */
+    public double getCantidadMovimiento() {
+        return cantidadMovimiento;
+    }
+
+    /**
+     * @param cantidadMovimiento the cantidadMovimiento to set
+     */
+    public void setCantidadMovimiento(double cantidadMovimiento) {
+        this.cantidadMovimiento = cantidadMovimiento;
     }
 }

@@ -5,8 +5,6 @@
  */
 package bauplast;
 
-import Entities.E_produccionFilm;
-import Interface.InterfaceRecibirProduccionFilm;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -16,7 +14,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Calendar;
 import java.util.Date;
-import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.KeyStroke;

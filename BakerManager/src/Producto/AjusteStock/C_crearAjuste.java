@@ -5,19 +5,23 @@
  */
 package Producto.AjusteStock;
 
-import Entities.M_producto;
 import Entities.SeleccionAjusteStockDetalle;
 import Interface.RecibirAjusteStockDetalleCB;
 import ModeloTabla.SeleccionarProductoTableModel;
 import Producto.AjusteStock.SeleccionarCantidadAjuste.SeleccionarProductoAjusteStock;
 import bauplast.SeleccionarProductoPorClasif;
+import com.toedter.calendar.JDateChooser;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.Calendar;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.lang.reflect.Field;
 import java.util.Date;
 import javax.swing.JOptionPane;
 
@@ -54,9 +58,44 @@ public class C_crearAjuste extends MouseAdapter implements ActionListener, KeyLi
 
     private void inicializarVista() {
         this.vista.jtfFuncionario.setText(modelo.obtenerFuncionario());
-        this.vista.jdcFecha.setDate(modelo.getCabecera().getTiempoInicio());
+        this.vista.jdcFechaInicio.setDate(modelo.getCabecera().getTiempoInicio());
+        this.vista.jdcFechaFin.setDate(modelo.getCabecera().getTiempoFin());
+        this.vista.jdcFechaFin.addPropertyChangeListener(new PropertyChangeListener() {
+            @Override
+            public void propertyChange(PropertyChangeEvent evt) {
+                // If the 'date' property was changed...
+                if ("date".equals(evt.getPropertyName())) {
+                    JDateChooser aDateChooser = (JDateChooser) evt.getSource();
+                    boolean isDateSelectedByUser = false;
+                    // Get the otherwise unaccessible JDateChooser's 'dateSelected' field.
+                    try {
+                        // Get the desired field using reflection
+                        Field dateSelectedField = JDateChooser.class.getDeclaredField("dateSelected");
+                        // This line makes the value accesible (can be read and/or modified)
+                        dateSelectedField.setAccessible(true);
+                        isDateSelectedByUser = dateSelectedField.getBoolean(aDateChooser);
+                    } catch (Exception ignoreOrNot) {
+                    }
+
+                    // Do some important stuff depending on wether value was changed by user
+                    if (isDateSelectedByUser) {
+                        establecerFechaFin();
+                    }
+
+                    // Reset the value to false
+                    try {
+                        Field dateSelectedField = JDateChooser.class.getDeclaredField("dateSelected");
+                        dateSelectedField.setAccessible(true);
+                        isDateSelectedByUser = false;
+                        dateSelectedField.setBoolean(aDateChooser, false);
+                    } catch (Exception ignoreOrNot) {
+                    }
+                }
+            }
+        });
         this.vista.jtDetalle.setModel(modelo.getTmDetalle());
         this.vista.jtfFuncionario.setEditable(false);
+        Utilities.c_packColumn.packColumns(vista.jtDetalle, 1);
     }
 
     private void agregarListeners() {
@@ -95,15 +134,21 @@ public class C_crearAjuste extends MouseAdapter implements ActionListener, KeyLi
     }
 
     private boolean validarFecha() {
-        Date entrega = null;
+        Date dateInicio = null, dateFin = null;
         try {
-            entrega = vista.jdcFecha.getDate();
+            dateInicio = vista.jdcFechaInicio.getDate();
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(vista, VALIDAR_FECHA_PRODUCCION_MSG_1, "Fecha inválida", JOptionPane.WARNING_MESSAGE);
             return false;
         }
-        if (entrega.after(Calendar.getInstance().getTime())) {
-            JOptionPane.showMessageDialog(vista, "La fecha del desperdicio no puede ser mayor al tiempo actual", "Fecha inválida", JOptionPane.WARNING_MESSAGE);
+        try {
+            dateFin = vista.jdcFechaFin.getDate();
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(vista, VALIDAR_FECHA_PRODUCCION_MSG_1, "Fecha inválida", JOptionPane.WARNING_MESSAGE);
+            return false;
+        }
+        if (dateInicio.after(dateFin)) {
+            JOptionPane.showMessageDialog(vista, "La fecha de inicio no puede ser mayor a la fecha de finalización", "Fecha inválida", JOptionPane.WARNING_MESSAGE);
             return false;
         }
         return true;
@@ -136,8 +181,14 @@ public class C_crearAjuste extends MouseAdapter implements ActionListener, KeyLi
         if (!validarObservacion()) {
             return;
         }
+        int opcion = JOptionPane.showConfirmDialog(vista, "Confirmar", "Atención", JOptionPane.WARNING_MESSAGE, JOptionPane.YES_NO_OPTION);
+        if (opcion != JOptionPane.YES_OPTION) {
+            return;
+        }
         String observacion = vista.jtfObservacion.getText().trim();
-        modelo.getCabecera().setTiempoInicio(vista.jdcFecha.getDate());
+        modelo.getCabecera().setTiempoInicio(vista.jdcFechaInicio.getDate());
+        modelo.getCabecera().setTiempoFin(vista.jdcFechaFin.getDate());
+        modelo.getCabecera().setObservacion(observacion);
         modelo.guardar();
         cerrar();
     }
@@ -188,5 +239,28 @@ public class C_crearAjuste extends MouseAdapter implements ActionListener, KeyLi
     public void modificarAjusteStock(int index, SeleccionAjusteStockDetalle ajusteStockDetalle) {
         modelo.modificarAjusteStock(index, ajusteStockDetalle);
         Utilities.c_packColumn.packColumns(vista.jtDetalle, 1);
+    }
+
+    private void establecerFechaInicio() {
+        Date dateInicio = null;
+        try {
+            dateInicio = vista.jdcFechaInicio.getDate();
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(vista, VALIDAR_FECHA_PRODUCCION_MSG_1, "Fecha inválida", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        modelo.establecerFechaInicio(dateInicio);
+    }
+
+    private void establecerFechaFin() {
+        System.out.println("Producto.AjusteStock.C_crearAjuste.establecerFechaFin()");
+        Date dateFin = null;
+        try {
+            dateFin = vista.jdcFechaFin.getDate();
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(vista, VALIDAR_FECHA_PRODUCCION_MSG_1, "Fecha inválida", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        modelo.establecerFechaFin(dateFin);
     }
 }

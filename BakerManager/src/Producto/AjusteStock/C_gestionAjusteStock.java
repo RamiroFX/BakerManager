@@ -18,6 +18,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.Calendar;
 import java.util.Date;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -40,6 +41,8 @@ public class C_gestionAjusteStock implements GestionInterface, RecibirEmpleadoCa
         Date today = Calendar.getInstance().getTime();
         this.vista.jddInicio.setDate(today);
         this.vista.jddFinal.setDate(today);
+        this.vista.jtCabecera.setModel(modelo.getTmCabecera());
+        this.vista.jtDetalle.setModel(modelo.getTmDetalle());
         /*this.vista.jbBuscar.setEnabled(false);
         this.vista.jbEmpleado.setEnabled(false);
         this.vista.jbSalir.setEnabled(false);*/
@@ -108,8 +111,8 @@ public class C_gestionAjusteStock implements GestionInterface, RecibirEmpleadoCa
 
     @Override
     public void recibirFuncionario(M_funcionario funcionario) {
-//        this.modelo.cabecera.setFuncionario(funcionario);
-//        this.vista.jtfEmpleado.setText(this.modelo.obtenerNombreFuncionario());
+        this.modelo.getCabecera().setResponsable(funcionario);
+        this.vista.jtfEmpleado.setText(this.modelo.obtenerNombreFuncionario());
     }
 
     private void borrarDatos() {
@@ -119,10 +122,33 @@ public class C_gestionAjusteStock implements GestionInterface, RecibirEmpleadoCa
         this.vista.jtfIDAjusteStock.setText("");
     }
 
-    private void consultarFacturaciones() {
+    private boolean validarFechas() {
+        Date inicio = vista.jddInicio.getDate();
+        Date fin = vista.jddFinal.getDate();
+        if (inicio != null && fin != null) {
+            int dateValue = inicio.compareTo(fin);
+            if (dateValue <= 0) {
+                return true;
+            }
+        }
+        vista.jddInicio.setDate(vista.jddInicio.getDate());
+        vista.jddFinal.updateUI();
+        JOptionPane.showMessageDialog(vista, "La fecha inicio debe ser menor que fecha final", "Atención", JOptionPane.WARNING_MESSAGE);
+        return false;
+    }
+
+    private void consultarInventarios() {
         EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
+
+                if (!validarFechas()) {
+                    return;
+                }
+                Date fechaInicio = vista.jddInicio.getDate();
+                Date fechaFinal = vista.jddFinal.getDate();
+                modelo.consultarInventarios(fechaInicio, fechaFinal);
+                Utilities.c_packColumn.packColumns(vista.jtCabecera, 1);
             }
         });
     }
@@ -204,7 +230,7 @@ public class C_gestionAjusteStock implements GestionInterface, RecibirEmpleadoCa
             invocarPrevisionStock();
         }
         if (source.equals(this.vista.jbBuscar)) {
-            consultarFacturaciones();
+            consultarInventarios();
         }
         if (source.equals(this.vista.jbEmpleado)) {
             invocarSeleccionFuncionario();

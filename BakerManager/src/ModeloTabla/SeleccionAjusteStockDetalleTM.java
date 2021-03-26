@@ -25,7 +25,7 @@ public class SeleccionAjusteStockDetalleTM extends AbstractTableModel {
     private final String[] colNames = {"id", "Cod.", "Producto", "Cant. actual", "Cant. nueva", "Tiempo", "Motivo", "Obs.", "Incluir mov."};
 
     public SeleccionAjusteStockDetalleTM() {
-        this.dateFormater = new SimpleDateFormat("dd/MM/YYYY hh:mm:ss");
+        this.dateFormater = new SimpleDateFormat("dd/MM/YYYY HH:mm:ss");
         this.decimalFormat = new DecimalFormat("#,##0.##");
         this.list = new ArrayList<>();
     }

@@ -99,7 +99,7 @@ public class V_gestionAjusteStock extends JDialog {
         jtCabecera = new JTable();
         JScrollPane jspCabecera = new JScrollPane(jtCabecera);
         jtDetalle = new JTable();
-        JScrollPane jspDetalle = new JScrollPane(jtCabecera);
+        JScrollPane jspDetalle = new JScrollPane(jtDetalle);
         //creamos nuestro splitpane y agregamos los dos paneles del medio
         jspMid = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, jspCabecera, jspDetalle);
         jspMid.setDividerLocation(this.getWidth() / 2);

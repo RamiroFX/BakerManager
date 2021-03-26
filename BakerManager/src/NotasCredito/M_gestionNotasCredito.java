@@ -84,7 +84,7 @@ public class M_gestionNotasCredito {
         this.cabecera.getCliente().setIdCliente(-1);
     }
 
-    String obtenerNombreFuncionario() {
+    public String obtenerNombreFuncionario() {
         String alias = this.getCabecera().getFuncionario().getAlias();
         String nombre = this.getCabecera().getFuncionario().getNombre();
         String apellido = this.getCabecera().getFuncionario().getApellido();

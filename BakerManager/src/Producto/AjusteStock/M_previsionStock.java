@@ -43,6 +43,7 @@ public class M_previsionStock {
         cabecera.setRegistradoPor(DatosUsuario.getRol_usuario().getFuncionario());
         cabecera.setTiempoInicio(Calendar.getInstance().getTime());
         cabecera.setTiempoFin(Calendar.getInstance().getTime());
+        cabecera.setTiempoRegistroInicio(Calendar.getInstance().getTime());
         return (int) DB_Inventario.insertarAjusteStockCabeceraTemporal(cabecera);
     }
 

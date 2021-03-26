@@ -245,7 +245,7 @@ public class DB_Inventario {
     }
 
     public static long insertarAjusteStockCabeceraTemporal(E_ajusteStockCabecera cabecera) {
-        String INSERT_CABECERA = "INSERT INTO ajuste_stock_cabecera_temporal(id_funcionario_responsable, id_funcionario_registro, tiempo_inicio, id_estado, tiempo_fin)VALUES (?, ?, ?, ?, ?);";
+        String INSERT_CABECERA = "INSERT INTO ajuste_stock_cabecera_temporal(id_funcionario_responsable, id_funcionario_registro, tiempo_inicio, id_estado, tiempo_fin, tiempo_registro_inicio)VALUES (?, ?, ?, ?, ?, ?);";
         long sq_cabecera = -1L;
         try {
             DB_manager.getConection().setAutoCommit(false);
@@ -255,6 +255,7 @@ public class DB_Inventario {
             pst.setTimestamp(3, new Timestamp(cabecera.getTiempoInicio().getTime()));
             pst.setInt(4, cabecera.getEstado().getId());
             pst.setTimestamp(5, new Timestamp(cabecera.getTiempoFin().getTime()));
+            pst.setTimestamp(6, new Timestamp(cabecera.getTiempoRegistroInicio().getTime()));
             pst.executeUpdate();
             rs = pst.getGeneratedKeys();
             if (rs != null && rs.next()) {
@@ -292,11 +293,15 @@ public class DB_Inventario {
     }
 
     public static int transferirInventarioTemporalAPermanente(E_ajusteStockCabecera cabecera, List<SeleccionAjusteStockDetalle> detalle) {
-        String INSERT_DETALLE = "INSERT INTO ajuste_stock_detalle(id_ajuste_stock_cabecera, id_producto, id_motivo, cantidad_vieja, cantidad_nueva, tiempo, observacion)VALUES (?, ?, ?, ?, ?, ?, ?);";
+        String INSERT_DETALLE = "INSERT INTO ajuste_stock_detalle(id_ajuste_stock_cabecera, id_producto, id_motivo, cantidad_vieja, cantidad_nueva, tiempo, observacion, incluir_movimiento, cant_movimiento)VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);";
         //LA SGBD SE ENCARGA DE INSERTAR EL TIMESTAMP.
-        String INSERT_CABECERA = "INSERT INTO ajuste_stock_cabecera(id_funcionario_responsable, id_funcionario_registro, tiempo_inicio, id_estado, tiempo_fin)VALUES (?, ?, ?, ?, ?);";
+        String INSERT_CABECERA = "INSERT INTO ajuste_stock_cabecera(id_funcionario_responsable, id_funcionario_registro, tiempo_inicio, id_estado, tiempo_fin, tiempo_registro_inicio)VALUES (?, ?, ?, ?, ?, ?);";
         String DELETE_DETALLE = "DELETE FROM ajuste_stock_detalle_temporal WHERE id_ajuste_stock_cabecera_temporal = ?;";
         String DELETE_CABECERA = "DELETE FROM ajuste_stock_cabecera_temporal WHERE id_ajuste_stock_cabecera_temporal = ?;";
+        String UPDATE_PRODUCTO = "UPDATE PRODUCTO SET CANT_ACTUAL = ? WHERE ID_PRODUCTO = ?;";
+        String CALCULO_MOVIMIENTO = "select COALESCE( (select  SUM(entrada)- SUM(salida ) "
+                + "from consultar_entrada_salida_productos_terminados(?, ?) "
+                + "WHERE id_producto =?), 0 ) AS cant_actual;";
         long sq_cabecera = -1L;
         try {
             DB_manager.getConection().setAutoCommit(false);
@@ -306,6 +311,7 @@ public class DB_Inventario {
             pst.setTimestamp(3, new Timestamp(cabecera.getTiempoInicio().getTime()));
             pst.setInt(4, cabecera.getEstado().getId());
             pst.setTimestamp(5, new Timestamp(cabecera.getTiempoFin().getTime()));
+            pst.setTimestamp(6, new Timestamp(cabecera.getTiempoRegistroInicio().getTime()));
             pst.executeUpdate();
             rs = pst.getGeneratedKeys();
             if (rs != null && rs.next()) {
@@ -319,10 +325,7 @@ public class DB_Inventario {
             for (int i = 0; i < detalle.size(); i++) {
                 double cant = 0.0;
                 if (detalle.get(i).isEstaSeleccionado()) {
-                    String CALCULAR_STOCK = "select COALESCE( (select  SUM(entrada)- SUM(salida ) "
-                            + "from consultar_entrada_salida_productos_terminados(?, ?) "
-                            + "WHERE id_producto =?), 0 ) AS cant_actual;";
-                    pst = DB_manager.getConection().prepareStatement(CALCULAR_STOCK);
+                    pst = DB_manager.getConection().prepareStatement(CALCULO_MOVIMIENTO);
                     pst.setTimestamp(1, new Timestamp(detalle.get(i).getTiempoRegistro().getTime()));
                     pst.setTimestamp(2, new Timestamp(cal.getTimeInMillis()));
                     pst.setInt(3, detalle.get(i).getProducto().getId());
@@ -336,15 +339,30 @@ public class DB_Inventario {
                 pst.setInt(2, detalle.get(i).getProducto().getId());
                 pst.setInt(3, detalle.get(i).getMotivo().getId());
                 pst.setDouble(4, detalle.get(i).getCantidadVieja());
-                pst.setDouble(5, detalle.get(i).getCantidadNueva() + cant);
+                pst.setDouble(5, detalle.get(i).getCantidadNueva());
                 pst.setTimestamp(6, new Timestamp(detalle.get(i).getTiempoRegistro().getTime()));
                 if (detalle.get(i).getObservacion() != null && !detalle.get(i).getObservacion().trim().isEmpty()) {
                     pst.setString(7, detalle.get(i).getObservacion());
                 } else {
                     pst.setNull(7, Types.VARCHAR);
                 }
+                if (detalle.get(i).isEstaSeleccionado()) {
+                    pst.setInt(8, 1);
+                } else {
+                    pst.setInt(8, 2);
+                }
+                if (detalle.get(i).getCantidadMovimiento() != 0) {
+                    pst.setDouble(9, cant);
+                } else {
+                    pst.setNull(9, Types.DOUBLE);
+                }
                 pst.executeUpdate();
                 pst.close();
+                //ACTUALIZAR CANTIDAD DEL PRODUCTO
+                pst = DB_manager.getConection().prepareStatement(UPDATE_PRODUCTO);
+                pst.setDouble(1, detalle.get(i).getCantidadNueva() + cant);
+                pst.setInt(2, detalle.get(i).getProducto().getId());
+                pst.executeUpdate();
             }
             pst = DB_manager.getConection().prepareStatement(DELETE_DETALLE);
             pst.setInt(1, cabecera.getId());
@@ -498,7 +516,7 @@ public class DB_Inventario {
             QUERY_ESTADO = "AND id_funcionario_registro = ? ";
         }
         if (esConFecha) {
-            QUERY_TIEMPO = "AND tiempo BETWEEN ? AND ? ";
+            QUERY_TIEMPO = "AND tiempo_inicio BETWEEN ? AND ? ";
         }
         String QUERY = QUERY_SELECT
                 + "id_funcionario_responsable, "//2
@@ -982,7 +1000,46 @@ public class DB_Inventario {
                     rs.close();
                 }
             } catch (SQLException ex) {
-                Logger lgr = Logger.getLogger(DB_Produccion.class.getName());
+                Logger lgr = Logger.getLogger(DB_Inventario.class.getName());
+                lgr.log(Level.WARNING, ex.getMessage(), ex);
+            }
+        }
+    }
+
+    public static void establecerAjusteStockFechaFin(int idCabeceraTemp, Date fechaFin) {
+        String UPDATE_DETALLE = "UPDATE ajuste_stock_cabecera_temporal SET "
+                + "tiempo_fin=? "
+                + "WHERE id_ajuste_stock_cabecera_temporal=?;";
+        try {
+            DB_manager.getConection().setAutoCommit(false);
+            pst = DB_manager.getConection().prepareStatement(UPDATE_DETALLE);//, PreparedStatement.RETURN_GENERATED_KEYS);
+            pst.setTimestamp(1, new Timestamp(fechaFin.getTime()));
+            pst.setInt(2, idCabeceraTemp);
+            pst.executeUpdate();
+            pst.close();
+            DB_manager.establecerTransaccion();
+        } catch (SQLException ex) {
+            System.out.println(ex.getNextException());
+            if (DB_manager.getConection() != null) {
+                try {
+                    DB_manager.getConection().rollback();
+                } catch (SQLException ex1) {
+                    Logger lgr = Logger.getLogger(DB_Inventario.class.getName());
+                    lgr.log(Level.WARNING, ex1.getMessage(), ex1);
+                }
+            }
+            Logger lgr = Logger.getLogger(DB_Inventario.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        } finally {
+            try {
+                if (pst != null) {
+                    pst.close();
+                }
+                if (rs != null) {
+                    rs.close();
+                }
+            } catch (SQLException ex) {
+                Logger lgr = Logger.getLogger(DB_Inventario.class.getName());
                 lgr.log(Level.WARNING, ex.getMessage(), ex);
             }
         }

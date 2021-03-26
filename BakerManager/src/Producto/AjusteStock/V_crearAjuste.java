@@ -36,8 +36,8 @@ public class V_crearAjuste extends JDialog {
     JPanel jpNorth1;
     public JTextField jtfFuncionario, jtfObservacion;
     public JButton jbFuncionario;
-    public JLabel jlFecha;
-    public JDateChooser jdcFecha;
+    public JLabel jlFechaInicio, jlFechaFin;
+    public JDateChooser jdcFechaInicio, jdcFechaFin;
     //CENTRO
     JPanel jpCenter;
     //MATERIA PRIMA
@@ -72,15 +72,20 @@ public class V_crearAjuste extends JDialog {
         jbFuncionario = new JButton("Responsable");
         jtfFuncionario = new JTextField(30);
         jtfFuncionario.setEditable(false);
-        jlFecha = new JLabel("Fecha");
+        jlFechaInicio = new JLabel("Fecha inicio");
+        jlFechaFin = new JLabel("Fecha fin");
         jtfObservacion = new JTextField(30);
 
-        jdcFecha = new JDateChooser();
-        jdcFecha.setPreferredSize(new Dimension(150, 20));
+        jdcFechaInicio = new JDateChooser();
+        jdcFechaInicio.setPreferredSize(new Dimension(150, 20));
+        jdcFechaFin = new JDateChooser();
+        jdcFechaFin.setPreferredSize(new Dimension(150, 20));
         jpNorth1.add(jbFuncionario);
-        jpNorth1.add(jtfFuncionario);
-        jpNorth1.add(jlFecha);
-        jpNorth1.add(jdcFecha, "wrap");
+        jpNorth1.add(jtfFuncionario, "wrap");
+        jpNorth1.add(jlFechaInicio);
+        jpNorth1.add(jdcFechaInicio, "wrap");
+        jpNorth1.add(jlFechaFin);
+        jpNorth1.add(jdcFechaFin, "wrap");
         jpNorth1.add(new JLabel("Observación"));
         jpNorth1.add(jtfObservacion, "pushx, growx, spanx");
     }
@@ -92,9 +97,9 @@ public class V_crearAjuste extends JDialog {
 
         //ROLLOS UTILIZADOS
         jtDetalle = new JTable();
-        jtDetalle.getTableHeader().setReorderingAllowed(false);
         jtDetalle.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        jspDetalle = new JScrollPane(jtDetalle);
+        jtDetalle.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+        jspDetalle = new JScrollPane(jtDetalle, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         jbSeleccionarProducto = new JButton("Agregar");
         jbSeleccionarProducto.setName(JB_ADD_PROD);
         jbSeleccionarProducto.setSize(new Dimension(width, height));
