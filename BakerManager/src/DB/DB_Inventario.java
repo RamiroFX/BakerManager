@@ -295,7 +295,7 @@ public class DB_Inventario {
     public static int transferirInventarioTemporalAPermanente(E_ajusteStockCabecera cabecera, List<SeleccionAjusteStockDetalle> detalle) {
         String INSERT_DETALLE = "INSERT INTO ajuste_stock_detalle(id_ajuste_stock_cabecera, id_producto, id_motivo, cantidad_vieja, cantidad_nueva, tiempo, observacion, incluir_movimiento, cant_movimiento)VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);";
         //LA SGBD SE ENCARGA DE INSERTAR EL TIMESTAMP.
-        String INSERT_CABECERA = "INSERT INTO ajuste_stock_cabecera(id_funcionario_responsable, id_funcionario_registro, tiempo_inicio, id_estado, tiempo_fin, tiempo_registro_inicio)VALUES (?, ?, ?, ?, ?, ?);";
+        String INSERT_CABECERA = "INSERT INTO ajuste_stock_cabecera(id_funcionario_responsable, id_funcionario_registro, tiempo_inicio, id_estado, tiempo_fin, tiempo_registro_inicio, observacion)VALUES (?, ?, ?, ?, ?, ?, ?);";
         String DELETE_DETALLE = "DELETE FROM ajuste_stock_detalle_temporal WHERE id_ajuste_stock_cabecera_temporal = ?;";
         String DELETE_CABECERA = "DELETE FROM ajuste_stock_cabecera_temporal WHERE id_ajuste_stock_cabecera_temporal = ?;";
         String UPDATE_PRODUCTO = "UPDATE PRODUCTO SET CANT_ACTUAL = ? WHERE ID_PRODUCTO = ?;";
@@ -312,6 +312,11 @@ public class DB_Inventario {
             pst.setInt(4, cabecera.getEstado().getId());
             pst.setTimestamp(5, new Timestamp(cabecera.getTiempoFin().getTime()));
             pst.setTimestamp(6, new Timestamp(cabecera.getTiempoRegistroInicio().getTime()));
+            if (cabecera.getObservacion() == null || cabecera.getObservacion().trim().isEmpty()) {
+                pst.setNull(7, Types.VARCHAR);
+            } else {
+                pst.setString(7, cabecera.getObservacion());
+            }
             pst.executeUpdate();
             rs = pst.getGeneratedKeys();
             if (rs != null && rs.next()) {
@@ -425,7 +430,8 @@ public class DB_Inventario {
                 + "(SELECT P.NOMBRE  FROM FUNCIONARIO F, PERSONA P WHERE P.ID_PERSONA = F.ID_PERSONA AND F.ID_FUNCIONARIO = a.id_funcionario_registro)\"USUARIO_NOMBRE\", "//9
                 + "(SELECT P.APELLIDO FROM FUNCIONARIO F, PERSONA P WHERE P.ID_PERSONA = F.ID_PERSONA AND F.ID_FUNCIONARIO = a.id_funcionario_registro)\"USUARIO_APELLIDO\", "//10
                 + "a.observacion, "//11
-                + "tiempo_inicio "//12
+                + "tiempo_inicio, "//12
+                + "tiempo_registro_inicio "//13
                 + QUERY_FROM;
         try {
             pst = DB_manager.getConection().prepareStatement(QUERY, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
@@ -450,6 +456,7 @@ public class DB_Inventario {
                 cabecera.setId(rs.getInt(1));
                 cabecera.setTiempoInicio(rs.getTimestamp(4));
                 cabecera.setTiempoFin(rs.getTimestamp(12));
+                cabecera.setTiempoRegistroInicio(rs.getTimestamp(13));
                 cabecera.setResponsable(funcResponsable);
                 cabecera.setRegistradoPor(funcRegistro);
                 cabecera.setEstado(estado);
@@ -593,11 +600,11 @@ public class DB_Inventario {
         }
         return list;
     }
-
-    public static List<E_ajusteStockDetalle> consultarAjusteStockDetalle(int idCabecera) {
-        List<E_ajusteStockDetalle> list = new ArrayList<>();
-        String QUERY = "SELECT id_ajuste_stock_detalle, "
-                + "id_ajuste_stock_cabecera, "
+    
+    public static List<SeleccionAjusteStockDetalle> consultarAjusteStockDetalle(int idCabecera) {
+        List<SeleccionAjusteStockDetalle> list = new ArrayList<>();
+        String QUERY = "SELECT id_ajuste_stock_detalle, "//1
+                + "id_ajuste_stock_cabecera, "//2
                 + "id_producto, "//3
                 + "id_motivo, "//4
                 + "cantidad_vieja, "//5
@@ -606,7 +613,9 @@ public class DB_Inventario {
                 + "observacion, "//8
                 + "(SELECT am.descripcion FROM ajuste_stock_motivo am WHERE am.id_ajuste_stock_motivo = id_motivo)\"motivo\", "//9
                 + "(SELECT p.descripcion FROM producto p WHERE p.id_producto = a.id_producto)\"producto\", "//10
-                + "(SELECT p.codigo FROM producto p WHERE p.id_producto = a.id_producto)\"codigo\" 	"//11
+                + "(SELECT p.codigo FROM producto p WHERE p.id_producto = a.id_producto)\"codigo\", 	"//11
+                + "incluir_movimiento, "//12
+                + "cant_movimiento "//13
                 + "FROM ajuste_stock_detalle a "
                 + "WHERE id_ajuste_stock_cabecera = ?;";
         try {
@@ -621,15 +630,17 @@ public class DB_Inventario {
                 E_ajusteStockMotivo motivo = new E_ajusteStockMotivo();
                 motivo.setId(rs.getInt(4));
                 motivo.setDescripcion(rs.getString(9));
-                E_ajusteStockDetalle detalle = new E_ajusteStockDetalle();
+                SeleccionAjusteStockDetalle detalle = new SeleccionAjusteStockDetalle();
                 detalle.setId(rs.getInt(1));
                 detalle.setIdCabecera(rs.getInt(2));
-                detalle.setCantidadVieja(rs.getDouble(4));
+                detalle.setCantidadVieja(rs.getDouble(5));
                 detalle.setCantidadNueva(rs.getDouble(6));
+                detalle.setCantidadMovimiento(rs.getDouble(13));
                 detalle.setTiempoRegistro(rs.getTimestamp(7));
                 detalle.setObservacion(rs.getString(8));
                 detalle.setProducto(producto);
                 detalle.setMotivo(motivo);
+                detalle.setEstaSeleccionado(rs.getInt(12) == 1);//1=Si -2=NO
                 list.add(detalle);
             }
         } catch (SQLException ex) {
@@ -683,7 +694,7 @@ public class DB_Inventario {
                 SeleccionAjusteStockDetalle detalle = new SeleccionAjusteStockDetalle();
                 detalle.setId(rs.getInt(1));
                 detalle.setIdCabecera(rs.getInt(2));
-                detalle.setCantidadVieja(rs.getDouble(4));
+                detalle.setCantidadVieja(rs.getDouble(5));
                 detalle.setCantidadNueva(rs.getDouble(6));
                 detalle.setTiempoRegistro(rs.getTimestamp(7));
                 detalle.setObservacion(rs.getString(8));

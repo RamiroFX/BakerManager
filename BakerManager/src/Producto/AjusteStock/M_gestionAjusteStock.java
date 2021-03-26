@@ -9,6 +9,7 @@ import DB.DB_Inventario;
 import Entities.E_ajusteStockCabecera;
 import ModeloTabla.AjusteStockCabeceraTableModel;
 import ModeloTabla.AjusteStockDetalleTableModel;
+import ModeloTabla.SeleccionAjusteStockDetalleTM;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -20,14 +21,14 @@ public class M_gestionAjusteStock {
 
     private E_ajusteStockCabecera cabecera;
     private AjusteStockCabeceraTableModel tmCabecera;
-    private AjusteStockDetalleTableModel tmDetalle;
+    private SeleccionAjusteStockDetalleTM tmDetalle;
 
     public M_gestionAjusteStock() {
         this.cabecera = new E_ajusteStockCabecera();
         this.cabecera.setId(-1);
         this.cabecera.getResponsable().setIdFuncionario(-1);
         this.tmCabecera = new AjusteStockCabeceraTableModel();
-        this.tmDetalle = new AjusteStockDetalleTableModel();
+        this.tmDetalle = new SeleccionAjusteStockDetalleTM();
     }
 
     public E_ajusteStockCabecera getCabecera() {
@@ -38,9 +39,10 @@ public class M_gestionAjusteStock {
         return tmCabecera;
     }
 
-    public AjusteStockDetalleTableModel getTmDetalle() {
+    public SeleccionAjusteStockDetalleTM getTmDetalle() {
         return tmDetalle;
     }
+
     public String obtenerNombreFuncionario() {
         String alias = this.getCabecera().getResponsable().getAlias();
         String nombre = this.getCabecera().getResponsable().getNombre();
@@ -68,6 +70,10 @@ public class M_gestionAjusteStock {
         calendarFinal.set(Calendar.SECOND, 59);
         calendarFinal.set(Calendar.MILLISECOND, 999);
         this.tmCabecera.setList(DB_Inventario.consultarAjusteStockCabecera(idResponsable, -1, true, calendarInicio.getTime(), calendarFinal.getTime(), 0, false));
+    }
+
+    public void consultarInventarioDetalle(int idCabecera) {
+        this.tmDetalle.setList(DB_Inventario.consultarAjusteStockDetalle(idCabecera));
     }
 
 }

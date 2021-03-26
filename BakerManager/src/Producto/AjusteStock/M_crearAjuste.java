@@ -19,11 +19,17 @@ public class M_crearAjuste {
 
     private E_ajusteStockCabecera cabecera;
     private SeleccionAjusteStockDetalleTM tmDetalle;
+    private boolean esTemporal;
 
-    public M_crearAjuste(int idAjusteCabecera) {
-        this.cabecera = DB_Inventario.obtenerAjusteStockCabecera(idAjusteCabecera, true);
+    public M_crearAjuste(int idAjusteCabecera, boolean esTemporal) {
+        this.esTemporal = esTemporal;
+        this.cabecera = DB_Inventario.obtenerAjusteStockCabecera(idAjusteCabecera, esTemporal);
         this.tmDetalle = new SeleccionAjusteStockDetalleTM();
-        this.tmDetalle.setList(DB_Inventario.consultarAjusteStockDetalleTemporal(idAjusteCabecera));
+        if (esTemporal) {
+            this.tmDetalle.setList(DB_Inventario.consultarAjusteStockDetalleTemporal(idAjusteCabecera));
+        }else{
+            this.tmDetalle.setList(DB_Inventario.consultarAjusteStockDetalle(idAjusteCabecera));            
+        }            
     }
 
     public E_ajusteStockCabecera getCabecera() {
@@ -73,6 +79,14 @@ public class M_crearAjuste {
 
     public void establecerFechaFin(Date dateFin) {
         DB_Inventario.establecerAjusteStockFechaFin(cabecera.getId(), dateFin);
+    }
+
+    public boolean getEsTemporal() {
+        return esTemporal;
+    }
+
+    public void setEsTemporal(boolean esTemporal) {
+        this.esTemporal = esTemporal;
     }
 
 }

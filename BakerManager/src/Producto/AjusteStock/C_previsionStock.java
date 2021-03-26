@@ -84,7 +84,7 @@ public class C_previsionStock extends MouseAdapter implements ActionListener, Ke
             return;
         }
         int idCabecera = modelo.getTmCabecera().getList().get(row).getId();
-        CrearAjuste ca = new CrearAjuste(vista, idCabecera);
+        CrearAjuste ca = new CrearAjuste(vista, idCabecera, true);
         ca.mostrarVista();
         this.modelo.actualizarTablaCabecera();
         Utilities.c_packColumn.packColumns(this.vista.jtCabecera, 1);
@@ -98,7 +98,7 @@ public class C_previsionStock extends MouseAdapter implements ActionListener, Ke
             public void run() {
                 int id = modelo.crearAjusteStock();
                 modelo.actualizarTablaCabecera();
-                CrearAjuste ca = new CrearAjuste(vista, id);
+                CrearAjuste ca = new CrearAjuste(vista, id, true);
                 ca.mostrarVista();
             }
         });

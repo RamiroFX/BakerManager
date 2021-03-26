@@ -24,7 +24,7 @@ public class AjusteStockDetalleTableModel extends AbstractTableModel {
     private final String[] colNames = {"id", "Cod.", "Producto", "Cant. actual", "Cant. nueva", "Tiempo", "Motivo", "Obs."};
 
     public AjusteStockDetalleTableModel() {
-        this.dateFormater = new SimpleDateFormat("dd/MM/YYYY hh:mm:ss");
+        this.dateFormater = new SimpleDateFormat("dd/MM/YYYY HH:mm:ss");
         this.decimalFormat = new DecimalFormat("#,##0.##");
         this.list = new ArrayList<>();
     }

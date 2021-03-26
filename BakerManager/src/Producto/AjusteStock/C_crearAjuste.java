@@ -13,8 +13,6 @@ import bauplast.SeleccionarProductoPorClasif;
 import com.toedter.calendar.JDateChooser;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
@@ -96,6 +94,15 @@ public class C_crearAjuste extends MouseAdapter implements ActionListener, KeyLi
         this.vista.jtDetalle.setModel(modelo.getTmDetalle());
         this.vista.jtfFuncionario.setEditable(false);
         Utilities.c_packColumn.packColumns(vista.jtDetalle, 1);
+        if(!this.modelo.getEsTemporal()){
+            this.vista.jbFuncionario.setEnabled(false);
+            this.vista.jdcFechaFin.setEnabled(false);
+            this.vista.jdcFechaInicio.setEnabled(false);
+            this.vista.jbSeleccionarProducto.setEnabled(false);
+            this.vista.jbModificarProducto.setEnabled(false);
+            this.vista.jbEliminarProducto.setEnabled(false);
+            this.vista.jbAceptar.setEnabled(false);
+        }
     }
 
     private void agregarListeners() {
@@ -156,8 +163,8 @@ public class C_crearAjuste extends MouseAdapter implements ActionListener, KeyLi
 
     private boolean validarObservacion() {
         String obs = vista.jtfObservacion.getText().trim();
-        if (obs.length() > 200) {
-            JOptionPane.showMessageDialog(vista, "Solo se permiten 200 caracteres en observación. Cant. actual: " + obs.length(), VALIDAR_TITULO, JOptionPane.WARNING_MESSAGE);
+        if (obs.length() > 150) {
+            JOptionPane.showMessageDialog(vista, "Solo se permiten 150 caracteres en observación. Cant. actual: " + obs.length(), VALIDAR_TITULO, JOptionPane.WARNING_MESSAGE);
             return false;
         }
         return true;

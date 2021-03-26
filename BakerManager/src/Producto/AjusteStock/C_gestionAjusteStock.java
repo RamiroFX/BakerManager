@@ -6,10 +6,8 @@
 package Producto.AjusteStock;
 
 import Empleado.SeleccionarFuncionario;
-import Entities.M_cliente;
 import Entities.M_funcionario;
 import Interface.GestionInterface;
-import Interface.RecibirClienteCallback;
 import Interface.RecibirEmpleadoCallback;
 import Producto.AjusteStock.Parametros.AjusteStockParametros;
 import java.awt.EventQueue;
@@ -24,7 +22,7 @@ import javax.swing.JOptionPane;
  *
  * @author Ramiro Ferreira
  */
-public class C_gestionAjusteStock implements GestionInterface, RecibirEmpleadoCallback, RecibirClienteCallback {
+public class C_gestionAjusteStock implements GestionInterface, RecibirEmpleadoCallback {
 
     public M_gestionAjusteStock modelo;
     public V_gestionAjusteStock vista;
@@ -71,6 +69,7 @@ public class C_gestionAjusteStock implements GestionInterface, RecibirEmpleadoCa
         }*/
         //TODO remove
         this.vista.jbCrear.addActionListener(this);
+        this.vista.jbVer.addActionListener(this);
         this.vista.jbSalir.addActionListener(this);
         this.vista.jbBuscar.addActionListener(this);
         this.vista.jbEmpleado.addActionListener(this);
@@ -99,14 +98,6 @@ public class C_gestionAjusteStock implements GestionInterface, RecibirEmpleadoCa
     @Override
     public final void cerrar() {
         this.vista.dispose();
-    }
-
-    @Override
-    public void recibirCliente(M_cliente cliente) {
-//        this.modelo.cabecera.setCliente(cliente);
-//        String nombre = this.modelo.cabecera.getCliente().getNombre();
-//        String entidad = this.modelo.cabecera.getCliente().getEntidad();
-//        this.vista.jtfCliente.setText(nombre + "-(" + entidad + ")");
     }
 
     @Override
@@ -153,58 +144,58 @@ public class C_gestionAjusteStock implements GestionInterface, RecibirEmpleadoCa
         });
     }
 
-    private void consultarVentas() {
+    private void consultarInventarioDetalle() {
         EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
                 int fila = vista.jtCabecera.getSelectedRow();
-                if (fila > -1) {
-
+                if (fila < 0) {
+                    vista.jbVer.setEnabled(false);
+                    vista.jbAnular.setEnabled(false);
+                    return;
                 }
+                //TODO add verificarPermiso();
+                vista.jbVer.setEnabled(true);
+                vista.jbAnular.setEnabled(true);
+                int idCabecera = modelo.getTmCabecera().getList().get(fila).getId();
+                modelo.consultarInventarioDetalle(idCabecera);
+                Utilities.c_packColumn.packColumns(vista.jtDetalle, 1);
             }
         });
     }
 
     private void facturacionMouseHandler(MouseEvent e) {
-//        int fila = this.vista.jtFacturacion.rowAtPoint(e.getPoint());
-//        int columna = this.vista.jtFacturacion.columnAtPoint(e.getPoint());
-//        Integer idFacturacion = Integer.valueOf(String.valueOf(this.vista.jtFacturacion.getValueAt(fila, 0)));
-//        if ((fila > -1) && (columna > -1)) {
-//            //TODO add verificarPermiso();
-//            this.vista.jtVentas.setModel(modelo.obtenerVentasPorFacturacion(idFacturacion));
-//            this.vista.jbFacturacionDetalle.setEnabled(true);//TODO si tiene permiso
-//        } else {
-//            this.vista.jbFacturacionDetalle.setEnabled(false);
-//        }
-//        if (e.getClickCount() == 2) {
-//            if (vista.jbFacturacionDetalle.isEnabled()) {
-//                facturacionDetalle();
-//                this.vista.jbFacturacionDetalle.setEnabled(false);
-//            }
-//        }
+        int fila = this.vista.jtCabecera.getSelectedRow();
+        if (fila < 0) {
+            this.vista.jbVer.setEnabled(false);
+            this.vista.jbAnular.setEnabled(false);
+            return;
+        }
+        //TODO add verificarPermiso();
+        this.vista.jbVer.setEnabled(true);
+        this.vista.jbAnular.setEnabled(true);
+        int idCabecera = this.modelo.getTmCabecera().getList().get(fila).getId();
+        this.modelo.consultarInventarioDetalle(idCabecera);
+        Utilities.c_packColumn.packColumns(vista.jtDetalle, 1);
+        if (e.getClickCount() == 2) {
+            if (vista.jbVer.isEnabled()) {
+                verDetalle();
+                this.vista.jbVer.setEnabled(false);
+                this.vista.jbAnular.setEnabled(false);
+            }
+        }
     }
 
-    private void facturacionDetalle() {
+    private void verDetalle() {
         int fila = vista.jtCabecera.getSelectedRow();
-        if (fila > -1) {
-//            Integer idFacturacion = Integer.valueOf(String.valueOf(this.vista.jtFacturacion.getValueAt(fila, 0)));
-//            FacturacionCabeceraTableModel tm = (FacturacionCabeceraTableModel) this.vista.jtFacturacion.getModel();
-//            E_facturacionCabecera facturacionCabecera = tm.getFacturacionCabeceraList().get(fila);
-//            ResumenIngreso re = new ResumenIngreso(c_inicio);
-//            re.inicializarDatos(facturacionCabecera);
-//            re.setVisible(true);
+        if (fila < 0) {
+            this.vista.jbVer.setEnabled(false);
+            this.vista.jbAnular.setEnabled(false);
+            return;
         }
-    }
-
-    private void ventaDetalle() {
-        int fila = this.vista.jtDetalle.getSelectedRow();
-        if (fila > -1) {
-            //verificarPermiso();
-//            Integer idVentaCabecera = Integer.valueOf(String.valueOf(this.vista.jtVentas.getValueAt(fila, 0)));
-//            VerIngreso ver_egreso = new VerIngreso(c_inicio, idVentaCabecera, false);
-//            ver_egreso.mostrarVista();
-//            this.vista.jbVentaDetalle.setEnabled(false);
-        }
+        int idCabecera = this.modelo.getTmCabecera().getList().get(fila).getId();
+        CrearAjuste ca = new CrearAjuste(vista, idCabecera, false);
+        ca.mostrarVista();
     }
 
     private void invocarSeleccionFuncionario() {
@@ -240,6 +231,9 @@ public class C_gestionAjusteStock implements GestionInterface, RecibirEmpleadoCa
         }
         if (source.equals(this.vista.jbParametros)) {
             invocarGestionParametros();
+        }
+        if (source.equals(this.vista.jbVer)) {
+            verDetalle();
         }
         if (source.equals(this.vista.jbSalir)) {
             cerrar();
@@ -294,7 +288,7 @@ public class C_gestionAjusteStock implements GestionInterface, RecibirEmpleadoCa
     @Override
     public void keyReleased(KeyEvent e) {
         if (this.vista.jtCabecera.hasFocus()) {
-            consultarVentas();
+            consultarInventarioDetalle();
         }
     }
 }
