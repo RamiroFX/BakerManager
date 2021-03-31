@@ -6,11 +6,13 @@
 package Producto.AjusteStock;
 
 import Entities.SeleccionAjusteStockDetalle;
+import Excel.ExportarInventario;
 import Interface.RecibirAjusteStockDetalleCB;
 import ModeloTabla.SeleccionarProductoTableModel;
 import Producto.AjusteStock.SeleccionarCantidadAjuste.SeleccionarProductoAjusteStock;
 import bauplast.SeleccionarProductoPorClasif;
 import com.toedter.calendar.JDateChooser;
+import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -56,6 +58,7 @@ public class C_crearAjuste extends MouseAdapter implements ActionListener, KeyLi
 
     private void inicializarVista() {
         this.vista.jtfFuncionario.setText(modelo.obtenerFuncionario());
+        this.vista.jtfObservacion.setText(modelo.obtenerObsInventario());
         this.vista.jdcFechaInicio.setDate(modelo.getCabecera().getTiempoInicio());
         this.vista.jdcFechaFin.setDate(modelo.getCabecera().getTiempoFin());
         this.vista.jdcFechaFin.addPropertyChangeListener(new PropertyChangeListener() {
@@ -93,8 +96,10 @@ public class C_crearAjuste extends MouseAdapter implements ActionListener, KeyLi
         });
         this.vista.jtDetalle.setModel(modelo.getTmDetalle());
         this.vista.jtfFuncionario.setEditable(false);
+        this.vista.jbExportar.setVisible(false);
         Utilities.c_packColumn.packColumns(vista.jtDetalle, 1);
-        if(!this.modelo.getEsTemporal()){
+        if (!this.modelo.getEsTemporal()) {
+            this.vista.setTitle(modelo.getTituloInventario());
             this.vista.jbFuncionario.setEnabled(false);
             this.vista.jdcFechaFin.setEnabled(false);
             this.vista.jdcFechaInicio.setEnabled(false);
@@ -102,6 +107,7 @@ public class C_crearAjuste extends MouseAdapter implements ActionListener, KeyLi
             this.vista.jbModificarProducto.setEnabled(false);
             this.vista.jbEliminarProducto.setEnabled(false);
             this.vista.jbAceptar.setEnabled(false);
+            this.vista.jbExportar.setVisible(true);
         }
     }
 
@@ -111,6 +117,9 @@ public class C_crearAjuste extends MouseAdapter implements ActionListener, KeyLi
         this.vista.jbEliminarProducto.addActionListener(this);
         this.vista.jbAceptar.addActionListener(this);
         this.vista.jbSalir.addActionListener(this);
+        if (!this.modelo.getEsTemporal()) {
+            this.vista.jbExportar.addActionListener(this);
+        }
     }
 
     private void invocarSeleccionarDetalle() {
@@ -158,7 +167,24 @@ public class C_crearAjuste extends MouseAdapter implements ActionListener, KeyLi
             JOptionPane.showMessageDialog(vista, "La fecha de inicio no puede ser mayor a la fecha de finalización", "Fecha inválida", JOptionPane.WARNING_MESSAGE);
             return false;
         }
-        return true;
+        int prodFechaInicio = modelo.validarFechaInicio(dateInicio);
+        if (prodFechaInicio > 0) {
+            String producto = "Código: " + modelo.obtenerProducto(prodFechaInicio).getProducto().getCodigo() + "\n"
+                    + "Descripción: " + modelo.obtenerProducto(prodFechaInicio).getProducto().getDescripcion() + "\n"
+                    + "Tiempo registro: " + modelo.obtenerProducto(prodFechaInicio).getTiempoRegistro();
+            JOptionPane.showMessageDialog(vista, "La fecha del siguiente producto es menor a la fecha de inicio:\n" + producto, "Fecha inválida", JOptionPane.WARNING_MESSAGE);
+            return false;
+        }
+        int prodFechaFin = modelo.validarFechaFin(dateFin);
+        if (modelo.validarFechaFin(dateFin) > 0) {
+            String producto = "Código: " + modelo.obtenerProducto(prodFechaFin).getProducto().getCodigo() + "\n"
+                    + "Descripción: " + modelo.obtenerProducto(prodFechaFin).getProducto().getDescripcion() + "\n"
+                    + "Tiempo registro: " + modelo.obtenerProducto(prodFechaFin).getTiempoRegistro();
+            JOptionPane.showMessageDialog(vista, "La fecha del siguiente producto es mayor a la fecha de finalización:\n" + producto, "Fecha inválida", JOptionPane.WARNING_MESSAGE);
+            return false;
+        }
+        JOptionPane.showMessageDialog(vista, "TEST FINALIZADO", VALIDAR_TITULO, JOptionPane.INFORMATION_MESSAGE);
+        return false;
     }
 
     private boolean validarObservacion() {
@@ -215,6 +241,9 @@ public class C_crearAjuste extends MouseAdapter implements ActionListener, KeyLi
         if (source.equals(vista.jbAceptar)) {
             guardar();
         }
+        if (source.equals(vista.jbExportar)) {
+            exportarAExcel();
+        }
         if (source.equals(vista.jbSalir)) {
             cerrar();
         }
@@ -238,7 +267,12 @@ public class C_crearAjuste extends MouseAdapter implements ActionListener, KeyLi
 
     @Override
     public void recibirAjusteStock(SeleccionAjusteStockDetalle ajusteStockDetalle) {
-        modelo.recibirAjusteStock(ajusteStockDetalle);
+        int indexProdDup = modelo.existeProducto(ajusteStockDetalle.getProducto().getId());
+        if (indexProdDup > -1) {
+            manejarProductoRepetido(indexProdDup, ajusteStockDetalle);
+        } else {
+            modelo.recibirAjusteStock(ajusteStockDetalle);
+        }
         Utilities.c_packColumn.packColumns(vista.jtDetalle, 1);
     }
 
@@ -260,7 +294,6 @@ public class C_crearAjuste extends MouseAdapter implements ActionListener, KeyLi
     }
 
     private void establecerFechaFin() {
-        System.out.println("Producto.AjusteStock.C_crearAjuste.establecerFechaFin()");
         Date dateFin = null;
         try {
             dateFin = vista.jdcFechaFin.getDate();
@@ -269,5 +302,22 @@ public class C_crearAjuste extends MouseAdapter implements ActionListener, KeyLi
             return;
         }
         modelo.establecerFechaFin(dateFin);
+    }
+
+    private void manejarProductoRepetido(int indexProdDup, SeleccionAjusteStockDetalle ajusteStockDetalle) {
+        int opcion = JOptionPane.showConfirmDialog(vista, "El producto seleccionado ya se encuentra cargado.\n ¿Desea modificarlo?", "Atención", JOptionPane.WARNING_MESSAGE, JOptionPane.YES_NO_OPTION);
+        if (opcion == JOptionPane.YES_OPTION) {
+            modelo.modificarAjusteStock(indexProdDup, ajusteStockDetalle);
+        }
+    }
+
+    private void exportarAExcel() {
+        EventQueue.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                ExportarInventario ei = new ExportarInventario("Inventario", modelo.getCabecera());
+                ei.exportacionCompleta();
+            }
+        });
     }
 }

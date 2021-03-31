@@ -5,10 +5,12 @@
  */
 package Producto.AjusteStock;
 
+import Entities.Estado;
 import com.toedter.calendar.JDateChooser;
 import java.awt.Dimension;
 import java.awt.Insets;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -34,7 +36,7 @@ public class V_gestionAjusteStock extends JDialog {
     public JTextField jtfIDAjusteStock, jtfCliente, jtfEmpleado;
     private JPanel jpTop, jpBotonesTop, jpBot;
     public JTable jtCabecera, jtDetalle;
-    ;
+    public JComboBox<Estado> jcbEstado;
     private JSplitPane jspMid;
     public JDateChooser jddInicio, jddFinal;
 
@@ -69,10 +71,13 @@ public class V_gestionAjusteStock extends JDialog {
         jddInicio.setPreferredSize(new Dimension(150, 10));
         jddFinal = new JDateChooser();
         jddFinal.setPreferredSize(new Dimension(150, 10));
+        jcbEstado = new JComboBox();
         jpFiltros.add(jbEmpleado, "growx");
         jpFiltros.add(jtfEmpleado, "growx");
         jpFiltros.add(new JLabel("Fecha inicio:"));
-        jpFiltros.add(jddInicio, "growx, wrap");
+        jpFiltros.add(jddInicio, "growx");
+        jpFiltros.add(new JLabel("Estado:"));
+        jpFiltros.add(jcbEstado, "wrap");
         jpFiltros.add(new JLabel("ID ajuste:"));
         jpFiltros.add(jtfIDAjusteStock);
         jpFiltros.add(new JLabel("Fecha final:"));

@@ -176,11 +176,13 @@ public class C_gestionNotasCredito implements ActionListener, MouseListener, Key
         try {
             value = Integer.valueOf(nroNotaCredito);
         } catch (Exception e) {
+            vista.jtfNroNotaCredito.setText("");
             return -1;
         }
         if (value > 0) {
             return value;
         } else {
+            vista.jtfNroNotaCredito.setText("");
             return -1;
         }
     }

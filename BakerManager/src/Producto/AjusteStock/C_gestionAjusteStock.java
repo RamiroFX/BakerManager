@@ -6,14 +6,18 @@
 package Producto.AjusteStock;
 
 import Empleado.SeleccionarFuncionario;
+import Entities.Estado;
 import Entities.M_funcionario;
 import Interface.GestionInterface;
 import Interface.RecibirEmpleadoCallback;
 import Producto.AjusteStock.Parametros.AjusteStockParametros;
+import Utilities.CellRenderers.InventarioStatusCellRenderer;
+import com.nitido.utils.toaster.Toaster;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import javax.swing.JOptionPane;
@@ -26,6 +30,7 @@ public class C_gestionAjusteStock implements GestionInterface, RecibirEmpleadoCa
 
     public M_gestionAjusteStock modelo;
     public V_gestionAjusteStock vista;
+    private InventarioStatusCellRenderer scr;
 
     public C_gestionAjusteStock(M_gestionAjusteStock modelo, V_gestionAjusteStock vista) {
         this.modelo = modelo;
@@ -36,11 +41,21 @@ public class C_gestionAjusteStock implements GestionInterface, RecibirEmpleadoCa
 
     @Override
     public final void inicializarVista() {
+        this.scr = new InventarioStatusCellRenderer();
         Date today = Calendar.getInstance().getTime();
-        this.vista.jddInicio.setDate(today);
         this.vista.jddFinal.setDate(today);
+        Calendar c = Calendar.getInstance();
+        c.setTime(today);
+        c.set(Calendar.DAY_OF_MONTH, 1);
+        this.vista.jddInicio.setDate(c.getTime());
         this.vista.jtCabecera.setModel(modelo.getTmCabecera());
+        this.vista.jtCabecera.setDefaultRenderer(Object.class, scr);
         this.vista.jtDetalle.setModel(modelo.getTmDetalle());
+
+        ArrayList<Estado> estados = modelo.obtenerEstados();
+        for (int i = 0; i < estados.size(); i++) {
+            this.vista.jcbEstado.addItem(estados.get(i));
+        }
         /*this.vista.jbBuscar.setEnabled(false);
         this.vista.jbEmpleado.setEnabled(false);
         this.vista.jbSalir.setEnabled(false);*/
@@ -70,6 +85,8 @@ public class C_gestionAjusteStock implements GestionInterface, RecibirEmpleadoCa
         //TODO remove
         this.vista.jbCrear.addActionListener(this);
         this.vista.jbVer.addActionListener(this);
+        this.vista.jbAnular.addActionListener(this);
+        this.vista.jbBorrar.addActionListener(this);
         this.vista.jbSalir.addActionListener(this);
         this.vista.jbBuscar.addActionListener(this);
         this.vista.jbEmpleado.addActionListener(this);
@@ -128,17 +145,40 @@ public class C_gestionAjusteStock implements GestionInterface, RecibirEmpleadoCa
         return false;
     }
 
+    private int obtenerIDCabecera() {
+        String idCabecera = vista.jtfIDAjusteStock.getText().trim();
+        int value = -1;
+        if (idCabecera.isEmpty()) {
+            return value;
+        }
+        try {
+            value = Integer.valueOf(idCabecera);
+        } catch (Exception e) {
+            vista.jtfIDAjusteStock.setText("");
+            return -1;
+        }
+        if (value > 0) {
+            return value;
+        } else {
+            vista.jtfIDAjusteStock.setText("");
+            return -1;
+        }
+    }
+
     private void consultarInventarios() {
         EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
-
                 if (!validarFechas()) {
                     return;
                 }
                 Date fechaInicio = vista.jddInicio.getDate();
                 Date fechaFinal = vista.jddFinal.getDate();
-                modelo.consultarInventarios(fechaInicio, fechaFinal);
+                Estado estado = vista.jcbEstado.getItemAt(vista.jcbEstado.getSelectedIndex());
+                int idEstado = estado.getId();
+                int idCabecera = obtenerIDCabecera();
+                modelo.consultarInventarios(fechaInicio, fechaFinal, idEstado, idCabecera);
+                scr.setList(modelo.getTmCabecera().getList());
                 Utilities.c_packColumn.packColumns(vista.jtCabecera, 1);
             }
         });
@@ -164,7 +204,7 @@ public class C_gestionAjusteStock implements GestionInterface, RecibirEmpleadoCa
         });
     }
 
-    private void facturacionMouseHandler(MouseEvent e) {
+    private void inventarioMouseHandler(MouseEvent e) {
         int fila = this.vista.jtCabecera.getSelectedRow();
         if (fila < 0) {
             this.vista.jbVer.setEnabled(false);
@@ -186,18 +226,6 @@ public class C_gestionAjusteStock implements GestionInterface, RecibirEmpleadoCa
         }
     }
 
-    private void verDetalle() {
-        int fila = vista.jtCabecera.getSelectedRow();
-        if (fila < 0) {
-            this.vista.jbVer.setEnabled(false);
-            this.vista.jbAnular.setEnabled(false);
-            return;
-        }
-        int idCabecera = this.modelo.getTmCabecera().getList().get(fila).getId();
-        CrearAjuste ca = new CrearAjuste(vista, idCabecera, false);
-        ca.mostrarVista();
-    }
-
     private void invocarSeleccionFuncionario() {
         SeleccionarFuncionario sf = new SeleccionarFuncionario(this.vista);
         sf.setCallback(this);
@@ -212,6 +240,44 @@ public class C_gestionAjusteStock implements GestionInterface, RecibirEmpleadoCa
     private void invocarGestionParametros() {
         AjusteStockParametros ap = new AjusteStockParametros(this.vista);
         ap.mostrarVista();
+    }
+
+    private void verDetalle() {
+        int fila = vista.jtCabecera.getSelectedRow();
+        if (fila < 0) {
+            this.vista.jbVer.setEnabled(false);
+            this.vista.jbAnular.setEnabled(false);
+            return;
+        }
+        int idCabecera = this.modelo.getTmCabecera().getList().get(fila).getId();
+        CrearAjuste ca = new CrearAjuste(vista, idCabecera, false);
+        ca.mostrarVista();
+    }
+
+    private void anularInventario() {
+        int fila = vista.jtCabecera.getSelectedRow();
+        if (fila < 0) {
+            this.vista.jbVer.setEnabled(false);
+            this.vista.jbAnular.setEnabled(false);
+            return;
+        }
+        int opcion = JOptionPane.showConfirmDialog(vista, "¿Está seguro que desea continuar? Accion irreversible.", "Atención", JOptionPane.WARNING_MESSAGE, JOptionPane.YES_NO_OPTION);
+        if (opcion != JOptionPane.YES_OPTION) {
+            return;
+        }
+        int idCabecera = modelo.getTmCabecera().getList().get(fila).getId();
+        int genKey = modelo.anularInventario(idCabecera);
+        if (genKey > 0) {
+            mostrarMensaje("Inventario anulado");
+        }
+        consultarInventarios();
+        this.vista.jbVer.setEnabled(false);
+        this.vista.jbAnular.setEnabled(false);
+    }
+
+    private void mostrarMensaje(String message) {
+        Toaster popUp = new Toaster();
+        popUp.showToaster(message);
     }
 
     @Override
@@ -235,6 +301,9 @@ public class C_gestionAjusteStock implements GestionInterface, RecibirEmpleadoCa
         if (source.equals(this.vista.jbVer)) {
             verDetalle();
         }
+        if (source.equals(this.vista.jbAnular)) {
+            anularInventario();
+        }
         if (source.equals(this.vista.jbSalir)) {
             cerrar();
         }
@@ -245,7 +314,7 @@ public class C_gestionAjusteStock implements GestionInterface, RecibirEmpleadoCa
         Object source = e.getSource();
         if (source.equals(this.vista.jtCabecera)) {
             //verificarPermiso();
-            facturacionMouseHandler(e);
+            inventarioMouseHandler(e);
         }
     }
 

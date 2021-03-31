@@ -328,7 +328,7 @@ public class DB_Inventario {
             cal.setTime(cabecera.getTiempoInicio());
             cal.add(Calendar.YEAR, 1);
             for (int i = 0; i < detalle.size(); i++) {
-                double cant = 0.0;
+                double cantMovimiento = 0.0;
                 if (detalle.get(i).isEstaSeleccionado()) {
                     pst = DB_manager.getConection().prepareStatement(CALCULO_MOVIMIENTO);
                     pst.setTimestamp(1, new Timestamp(detalle.get(i).getTiempoRegistro().getTime()));
@@ -336,7 +336,7 @@ public class DB_Inventario {
                     pst.setInt(3, detalle.get(i).getProducto().getId());
                     rs = pst.executeQuery();
                     while (rs.next()) {
-                        cant = rs.getDouble(1);
+                        cantMovimiento = rs.getDouble(1);
                     }
                 }
                 pst = DB_manager.getConection().prepareStatement(INSERT_DETALLE);
@@ -356,8 +356,8 @@ public class DB_Inventario {
                 } else {
                     pst.setInt(8, 2);
                 }
-                if (detalle.get(i).getCantidadMovimiento() != 0) {
-                    pst.setDouble(9, cant);
+                if (cantMovimiento != 0) {
+                    pst.setDouble(9, cantMovimiento);
                 } else {
                     pst.setNull(9, Types.DOUBLE);
                 }
@@ -365,7 +365,7 @@ public class DB_Inventario {
                 pst.close();
                 //ACTUALIZAR CANTIDAD DEL PRODUCTO
                 pst = DB_manager.getConection().prepareStatement(UPDATE_PRODUCTO);
-                pst.setDouble(1, detalle.get(i).getCantidadNueva() + cant);
+                pst.setDouble(1, detalle.get(i).getCantidadNueva() + cantMovimiento);
                 pst.setInt(2, detalle.get(i).getProducto().getId());
                 pst.executeUpdate();
             }
@@ -412,11 +412,11 @@ public class DB_Inventario {
     public static E_ajusteStockCabecera obtenerAjusteStockCabecera(int idCabecera, boolean esTemporal) {
         E_ajusteStockCabecera cabecera = null;
         String QUERY_SELECT = "SELECT id_ajuste_stock_cabecera, ";
-        String QUERY_FROM = "FROM ajuste_stock_cabecera a, estado e WHERE a.id_estado = e.id_estado "
+        String QUERY_FROM = "tiempo_registro_inicio, tiempo_registro_fin FROM ajuste_stock_cabecera a, estado e WHERE a.id_estado = e.id_estado "
                 + "AND id_ajuste_stock_cabecera = ? ;";
         if (esTemporal) {
             QUERY_SELECT = "SELECT id_ajuste_stock_cabecera_temporal, ";
-            QUERY_FROM = "FROM ajuste_stock_cabecera_temporal a, estado e WHERE a.id_estado = e.id_estado "
+            QUERY_FROM = "tiempo_registro_inicio FROM ajuste_stock_cabecera_temporal a, estado e WHERE a.id_estado = e.id_estado "
                     + "AND id_ajuste_stock_cabecera_temporal = ? ;";
         }
         String QUERY = QUERY_SELECT
@@ -431,7 +431,6 @@ public class DB_Inventario {
                 + "(SELECT P.APELLIDO FROM FUNCIONARIO F, PERSONA P WHERE P.ID_PERSONA = F.ID_PERSONA AND F.ID_FUNCIONARIO = a.id_funcionario_registro)\"USUARIO_APELLIDO\", "//10
                 + "a.observacion, "//11
                 + "tiempo_inicio, "//12
-                + "tiempo_registro_inicio "//13
                 + QUERY_FROM;
         try {
             pst = DB_manager.getConection().prepareStatement(QUERY, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
@@ -461,6 +460,9 @@ public class DB_Inventario {
                 cabecera.setRegistradoPor(funcRegistro);
                 cabecera.setEstado(estado);
                 cabecera.setObservacion(rs.getString(11));
+                if (!esTemporal) {
+                    cabecera.setTiempoRegistroFin(rs.getTimestamp(14));
+                }
             }
         } catch (SQLException ex) {
             Logger lgr = Logger.getLogger(DB_Inventario.class.getName());
@@ -500,12 +502,13 @@ public class DB_Inventario {
      * @param esTemporal boolean indica si es la tabla temporal o la permanente
      * @return List E_ajusteStockCabecera
      */
-    public static List<E_ajusteStockCabecera> consultarAjusteStockCabecera(int idFuncionarioResponsable, int idFuncionarioRegistro, boolean esConFecha, Date fechaDesde, Date fechaHasta, int idEstado, boolean esTemporal) {
+    public static List<E_ajusteStockCabecera> consultarAjusteStockCabecera(int idFuncionarioResponsable, int idFuncionarioRegistro, boolean esConFecha, Date fechaDesde, Date fechaHasta, int idEstado, boolean esTemporal, int idCabecera) {
         List<E_ajusteStockCabecera> list = new ArrayList<>();
         String QUERY_RESPONSABLE = "";
         String QUERY_REGISTRADO_POR = "";
         String QUERY_ESTADO = "";
         String QUERY_TIEMPO = "";
+        String QUERY_ID = "";
         String QUERY_ORDERBY = "ORDER BY a.tiempo_inicio;";
         String QUERY_FROM = "FROM ajuste_stock_cabecera a, estado e ";
         String QUERY_SELECT = "SELECT id_ajuste_stock_cabecera, ";
@@ -520,10 +523,17 @@ public class DB_Inventario {
             QUERY_REGISTRADO_POR = "AND id_funcionario_registro = ? ";
         }
         if (idEstado > 0) {
-            QUERY_ESTADO = "AND id_funcionario_registro = ? ";
+            QUERY_ESTADO = "AND a.id_estado = ? ";
         }
         if (esConFecha) {
             QUERY_TIEMPO = "AND tiempo_inicio BETWEEN ? AND ? ";
+        }
+        if (idCabecera > 0) {
+            if (esTemporal) {
+                QUERY_ID = "AND id_ajuste_stock_cabecera_temporal = ? ";
+            } else {
+                QUERY_ID = "AND id_ajuste_stock_cabecera = ? ";
+            }
         }
         String QUERY = QUERY_SELECT
                 + "id_funcionario_responsable, "//2
@@ -539,7 +549,7 @@ public class DB_Inventario {
                 + "tiempo_fin "//12
                 + QUERY_FROM
                 + "WHERE a.id_estado = e.id_estado ";
-        QUERY = QUERY + QUERY_RESPONSABLE + QUERY_REGISTRADO_POR + QUERY_ESTADO + QUERY_TIEMPO + QUERY_ORDERBY;
+        QUERY = QUERY + QUERY_RESPONSABLE + QUERY_REGISTRADO_POR + QUERY_ESTADO + QUERY_TIEMPO + QUERY_ID + QUERY_ORDERBY;
         try {
             pst = DB_manager.getConection().prepareStatement(QUERY, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             int pos = 1;
@@ -555,6 +565,9 @@ public class DB_Inventario {
             if (esConFecha) {
                 pst.setTimestamp(pos++, new Timestamp(fechaDesde.getTime()));
                 pst.setTimestamp(pos++, new Timestamp(fechaHasta.getTime()));
+            }
+            if (idCabecera > 0) {
+                pst.setInt(pos++, idCabecera);
             }
             rs = pst.executeQuery();
             while (rs.next()) {
@@ -600,7 +613,7 @@ public class DB_Inventario {
         }
         return list;
     }
-    
+
     public static List<SeleccionAjusteStockDetalle> consultarAjusteStockDetalle(int idCabecera) {
         List<SeleccionAjusteStockDetalle> list = new ArrayList<>();
         String QUERY = "SELECT id_ajuste_stock_detalle, "//1
@@ -812,7 +825,7 @@ public class DB_Inventario {
     UPDATES
      */
     public static void actualizarAjusteStockCabecera(E_ajusteStockCabecera cabecera) {
-        String UPDATE_DETALLE = "UPDATE ajuste_stock_cabecera SET "
+        String UPDATE_CABECERA = "UPDATE ajuste_stock_cabecera SET "
                 + "id_funcionario_responsable=?, "
                 + "id_funcionario_registro=?, "
                 + "tiempo_inicio=?, "
@@ -822,7 +835,7 @@ public class DB_Inventario {
                 + "WHERE id_ajuste_stock_cabecera= ?;";
         try {
             DB_manager.getConection().setAutoCommit(false);
-            pst = DB_manager.getConection().prepareStatement(UPDATE_DETALLE);//, PreparedStatement.RETURN_GENERATED_KEYS);
+            pst = DB_manager.getConection().prepareStatement(UPDATE_CABECERA);//, PreparedStatement.RETURN_GENERATED_KEYS);
             pst.setInt(1, cabecera.getResponsable().getIdFuncionario());
             pst.setInt(2, cabecera.getRegistradoPor().getIdFuncionario());
             pst.setTimestamp(3, new Timestamp(cabecera.getTiempoInicio().getTime()));
@@ -1099,6 +1112,46 @@ public class DB_Inventario {
             }
         }
     }
+    public static void eliminarAjusteStockCabeceraTemporal(int idCabecera) {
+        String DELETE_DETALLE = "DELETE FROM ajuste_stock_detalle_temporal WHERE id_ajuste_stock_cabecera_temporal = ?;";
+        String DELETE_CABECERA = "DELETE FROM ajuste_stock_cabecera_temporal WHERE id_ajuste_stock_cabecera_temporal = ?;";
+        try {
+            DB_manager.getConection().setAutoCommit(false);
+            pst = DB_manager.getConection().prepareStatement(DELETE_DETALLE);
+            pst.setInt(1, idCabecera);
+            pst.executeUpdate();
+            pst.close();
+            pst = DB_manager.getConection().prepareStatement(DELETE_CABECERA);
+            pst.setInt(1, idCabecera);
+            pst.executeUpdate();
+            pst.close();
+            DB_manager.establecerTransaccion();
+        } catch (SQLException ex) {
+            System.out.println(ex.getNextException());
+            if (DB_manager.getConection() != null) {
+                try {
+                    DB_manager.getConection().rollback();
+                } catch (SQLException ex1) {
+                    Logger lgr = Logger.getLogger(DB_Inventario.class.getName());
+                    lgr.log(Level.WARNING, ex1.getMessage(), ex1);
+                }
+            }
+            Logger lgr = Logger.getLogger(DB_Inventario.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        } finally {
+            try {
+                if (pst != null) {
+                    pst.close();
+                }
+                if (rs != null) {
+                    rs.close();
+                }
+            } catch (SQLException ex) {
+                Logger lgr = Logger.getLogger(DB_Inventario.class.getName());
+                lgr.log(Level.WARNING, ex.getMessage(), ex);
+            }
+        }
+    }
 
     public static void eliminarAjusteStockDetalleTemporal(int idDetalle) {
         String DELETE_DETALLE = "DELETE FROM ajuste_stock_detalle_temporal WHERE id_ajuste_stock_detalle_temporal = ?;";
@@ -1170,6 +1223,62 @@ public class DB_Inventario {
                 lgr.log(Level.WARNING, ex.getMessage(), ex);
             }
         }
+    }
+
+    public static int anularInventario(int idCabecera, List<SeleccionAjusteStockDetalle> detalles) {
+        String UPDATE_CABECERA = "UPDATE ajuste_stock_cabecera SET id_estado=? WHERE id_ajuste_stock_cabecera= ?;";
+        String UPDATE_PRODUCTO = "UPDATE PRODUCTO SET CANT_ACTUAL = ? WHERE ID_PRODUCTO = ?;";
+        //////////////////////
+        long sq_cabecera = -1L;
+        try {
+            DB_manager.getConection().setAutoCommit(false);
+            pst = DB_manager.getConection().prepareStatement(UPDATE_CABECERA, PreparedStatement.RETURN_GENERATED_KEYS);
+            pst.setInt(1, Estado.INACTIVO);
+            pst.setInt(2, idCabecera);
+            pst.executeUpdate();
+            rs = pst.getGeneratedKeys();
+            if (rs != null && rs.next()) {
+                sq_cabecera = rs.getLong(1);
+            }
+            pst.close();
+            for (SeleccionAjusteStockDetalle unDetalle : detalles) {
+                pst = DB_manager.getConection().prepareStatement(UPDATE_PRODUCTO, PreparedStatement.RETURN_GENERATED_KEYS);
+                pst.setDouble(1, unDetalle.getCantidadVieja());
+                pst.setInt(2, unDetalle.getProducto().getId());
+                pst.executeUpdate();
+                rs = pst.getGeneratedKeys();
+                if (rs != null && rs.next()) {
+                    sq_cabecera = rs.getLong(1);
+                }
+                pst.close();
+            }
+            DB_manager.establecerTransaccion();
+        } catch (SQLException ex) {
+            System.out.println(ex.getNextException());
+            if (DB_manager.getConection() != null) {
+                try {
+                    DB_manager.getConection().rollback();
+                } catch (SQLException ex1) {
+                    Logger lgr = Logger.getLogger(DB_Inventario.class.getName());
+                    lgr.log(Level.WARNING, ex1.getMessage(), ex1);
+                }
+            }
+            Logger lgr = Logger.getLogger(DB_Inventario.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        } finally {
+            try {
+                if (pst != null) {
+                    pst.close();
+                }
+                if (rs != null) {
+                    rs.close();
+                }
+            } catch (SQLException ex) {
+                Logger lgr = Logger.getLogger(DB_Produccion.class.getName());
+                lgr.log(Level.WARNING, ex.getMessage(), ex);
+            }
+        }
+        return (int) sq_cabecera;
     }
 
 }

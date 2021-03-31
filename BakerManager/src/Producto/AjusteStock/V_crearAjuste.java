@@ -46,7 +46,7 @@ public class V_crearAjuste extends JDialog {
     public JButton jbSeleccionarProducto, jbModificarProducto, jbEliminarProducto;
     //SUR
     public JPanel jpSouth;
-    public JButton jbAceptar, jbSalir;
+    public JButton jbAceptar, jbSalir, jbExportar;
 
     public V_crearAjuste(JDialog dialog) {
         super(dialog, "Crear ajuste de Stock", JDialog.ModalityType.APPLICATION_MODAL);
@@ -126,7 +126,9 @@ public class V_crearAjuste extends JDialog {
         jpSouth = new JPanel();
         jbAceptar = new JButton("Guardar cambios[F1]");
         jbSalir = new JButton("Salir[ESC]");
+        jbExportar = new JButton("Exportar a XLS");
         jpSouth.add(jbAceptar);
         jpSouth.add(jbSalir);
+        jpSouth.add(jbExportar);
     }
 }

@@ -6,12 +6,16 @@
 package Producto.AjusteStock;
 
 import DB.DB_Inventario;
+import DB.DB_manager;
 import Entities.E_ajusteStockCabecera;
+import Entities.Estado;
+import Entities.SeleccionAjusteStockDetalle;
 import ModeloTabla.AjusteStockCabeceraTableModel;
-import ModeloTabla.AjusteStockDetalleTableModel;
 import ModeloTabla.SeleccionAjusteStockDetalleTM;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 /**
  *
@@ -43,6 +47,12 @@ public class M_gestionAjusteStock {
         return tmDetalle;
     }
 
+    public ArrayList<Estado> obtenerEstados() {
+        ArrayList<Estado> estados = DB_manager.obtenerEstados();
+        estados.add(new Estado(-1, "Todos"));
+        return estados;
+    }
+
     public String obtenerNombreFuncionario() {
         String alias = this.getCabecera().getResponsable().getAlias();
         String nombre = this.getCabecera().getResponsable().getNombre();
@@ -55,7 +65,7 @@ public class M_gestionAjusteStock {
         this.cabecera.getResponsable().setIdFuncionario(-1);
     }
 
-    public void consultarInventarios(Date fechaDesde, Date fechaHasta) {
+    public void consultarInventarios(Date fechaDesde, Date fechaHasta, int idEstado, int idCabecera) {
         int idResponsable = cabecera.getResponsable().getIdFuncionario();
         Calendar calendarInicio = Calendar.getInstance();
         calendarInicio.setTime(fechaDesde);
@@ -69,11 +79,16 @@ public class M_gestionAjusteStock {
         calendarFinal.set(Calendar.MINUTE, 59);
         calendarFinal.set(Calendar.SECOND, 59);
         calendarFinal.set(Calendar.MILLISECOND, 999);
-        this.tmCabecera.setList(DB_Inventario.consultarAjusteStockCabecera(idResponsable, -1, true, calendarInicio.getTime(), calendarFinal.getTime(), 0, false));
+        this.tmCabecera.setList(DB_Inventario.consultarAjusteStockCabecera(idResponsable, -1, true, calendarInicio.getTime(), calendarFinal.getTime(), idEstado, false, idCabecera));
     }
 
     public void consultarInventarioDetalle(int idCabecera) {
         this.tmDetalle.setList(DB_Inventario.consultarAjusteStockDetalle(idCabecera));
+    }
+
+    public int anularInventario(int idCabecera) {
+        List<SeleccionAjusteStockDetalle> detalles = DB_Inventario.consultarAjusteStockDetalle(idCabecera);
+        return DB_Inventario.anularInventario(idCabecera, detalles);
     }
 
 }

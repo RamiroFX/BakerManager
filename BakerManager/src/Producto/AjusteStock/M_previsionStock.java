@@ -10,7 +10,6 @@ import Entities.E_ajusteStockCabecera;
 import Entities.Estado;
 import MenuPrincipal.DatosUsuario;
 import ModeloTabla.AjusteStockCabeceraTableModel;
-import ModeloTabla.AjusteStockDetalleTableModel;
 import ModeloTabla.SeleccionAjusteStockDetalleTM;
 import java.util.Calendar;
 
@@ -48,11 +47,12 @@ public class M_previsionStock {
     }
 
     public void eliminarAjusteStock(int idCabecera) {
-        DB_Inventario.eliminarAjusteStockCabecera(idCabecera);
+        DB_Inventario.eliminarAjusteStockCabeceraTemporal(idCabecera);
     }
 
     public void actualizarTablaCabecera() {
-        this.tmCabecera.setList(DB_Inventario.consultarAjusteStockCabecera(-1, -1, false, null, null, -1, true));
+        this.tmCabecera.setList(DB_Inventario.consultarAjusteStockCabecera(-1, -1, false, null, null, -1, true, -1));
+        this.tmDetalle.vaciarLista();
     }
 
     public void actualizarTablaDetalle(int idCabecera) {

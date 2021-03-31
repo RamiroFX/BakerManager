@@ -9,6 +9,7 @@ import DB.DB_Inventario;
 import Entities.E_ajusteStockCabecera;
 import Entities.SeleccionAjusteStockDetalle;
 import ModeloTabla.SeleccionAjusteStockDetalleTM;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
@@ -27,9 +28,9 @@ public class M_crearAjuste {
         this.tmDetalle = new SeleccionAjusteStockDetalleTM();
         if (esTemporal) {
             this.tmDetalle.setList(DB_Inventario.consultarAjusteStockDetalleTemporal(idAjusteCabecera));
-        }else{
-            this.tmDetalle.setList(DB_Inventario.consultarAjusteStockDetalle(idAjusteCabecera));            
-        }            
+        } else {
+            this.tmDetalle.setList(DB_Inventario.consultarAjusteStockDetalle(idAjusteCabecera));
+        }
     }
 
     public E_ajusteStockCabecera getCabecera() {
@@ -46,6 +47,31 @@ public class M_crearAjuste {
 
     public String obtenerFuncionario() {
         return this.cabecera.getResponsable().getNombreCompleto();
+    }
+
+    public String obtenerObsInventario() {
+        if (cabecera.getObservacion() != null) {
+            if (cabecera.getObservacion().isEmpty()) {
+                return "";
+            } else {
+                return this.cabecera.getObservacion();
+            }
+        } else {
+
+            return "";
+        }
+    }
+
+    public int existeProducto(int idProducto) {
+        int index = -1;
+        for (int i = 0; i < getTmDetalle().getList().size(); i++) {
+            SeleccionAjusteStockDetalle get = getTmDetalle().getList().get(i);
+            if (get.getProducto().getId() == idProducto) {
+                index = i;
+                return index;
+            }
+        }
+        return index;
     }
 
     public void recibirAjusteStock(SeleccionAjusteStockDetalle ajusteStockDetalle) {
@@ -89,4 +115,41 @@ public class M_crearAjuste {
         this.esTemporal = esTemporal;
     }
 
+    public String getTituloInventario() {
+        SimpleDateFormat sdfs = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+        String fechaRegistroInicio = sdfs.format(cabecera.getTiempoRegistroInicio());
+        String fechaRegistroFin = sdfs.format(cabecera.getTiempoRegistroFin());
+        String funcionario = obtenerFuncionario();
+        String titulo = "Ver detalle de Inventario" + " (Tiempo de registro inicio: " + fechaRegistroInicio + ")" + " (Tiempo de registro fin: " + fechaRegistroFin + ") - (Registrado por: " + funcionario + ")";
+        return titulo;
+    }
+
+    public int validarFechaInicio(Date dateInicio) {
+        Date fechaInicioInventario = dateInicio;
+        for (SeleccionAjusteStockDetalle unDetalle : getTmDetalle().getList()) {
+            if (unDetalle.getTiempoRegistro().before(fechaInicioInventario)) {
+                return unDetalle.getProducto().getId();
+            }
+        }
+        return -1;
+    }
+
+    public int validarFechaFin(Date fechaFin) {
+        Date fechaFinInventario = fechaFin;
+        for (SeleccionAjusteStockDetalle unDetalle : getTmDetalle().getList()) {
+            if (unDetalle.getTiempoRegistro().after(fechaFinInventario)) {
+                return unDetalle.getProducto().getId();
+            }
+        }
+        return -1;
+    }
+
+    public SeleccionAjusteStockDetalle obtenerProducto(int idProducto) {
+        for (SeleccionAjusteStockDetalle unDetalle : getTmDetalle().getList()) {
+            if (unDetalle.getProducto().getId() == idProducto) {
+                return unDetalle;
+            }
+        }
+        return null;
+    }
 }

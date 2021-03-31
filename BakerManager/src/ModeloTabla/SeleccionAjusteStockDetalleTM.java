@@ -5,7 +5,6 @@
  */
 package ModeloTabla;
 
-import Entities.E_ajusteStockDetalle;
 import Entities.SeleccionAjusteStockDetalle;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -22,7 +21,7 @@ public class SeleccionAjusteStockDetalleTM extends AbstractTableModel {
     private SimpleDateFormat dateFormater;
     private DecimalFormat decimalFormat;
     private List<SeleccionAjusteStockDetalle> list;
-    private final String[] colNames = {"id", "Cod.", "Producto", "Cant. actual", "Cant. nueva", "Tiempo", "Motivo", "Obs.", "Incluir mov."};
+    private final String[] colNames = {"id", "Cod.", "Producto", "Cant. actual", "Cant. nueva", "Tiempo", "Motivo", "Obs.", "Incluir mov.", "Cant. mov."};
 
     public SeleccionAjusteStockDetalleTM() {
         this.dateFormater = new SimpleDateFormat("dd/MM/YYYY HH:mm:ss");
@@ -97,6 +96,9 @@ public class SeleccionAjusteStockDetalleTM extends AbstractTableModel {
             }
             case 8:{
                 return data.isEstaSeleccionado();
+            }
+            case 9:{
+                return data.getCantidadMovimiento();
             }
             default: {
                 return null;
