@@ -1036,7 +1036,7 @@ public class DB_Producto {
         List<ProductoCategoria> list = null;
         String q = "SELECT id_producto_categoria, id_padre, descripcion FROM producto_categoria "
                 + "WHERE id_padre = 0 "
-                + "ORDER BY id_producto_categoria;";
+                + "ORDER BY descripcion;";
         try {
             st = DB_manager.getConection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             rs = st.executeQuery(q);

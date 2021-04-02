@@ -615,7 +615,7 @@ public class DB_manager {
     public static ResultSetTableModel consultarMarca() {
         ResultSetTableModel impuesto = null;
         String q = "SELECT id_marca \"ID\" ,descripcion \"Descripcion\" "
-                + "FROM marca ";
+                + "FROM marca ORDER BY descripcion";
         try {
             st = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             rs = st.executeQuery(q);

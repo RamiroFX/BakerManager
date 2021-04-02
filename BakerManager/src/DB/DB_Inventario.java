@@ -368,6 +368,7 @@ public class DB_Inventario {
                 pst.setDouble(1, detalle.get(i).getCantidadNueva() + cantMovimiento);
                 pst.setInt(2, detalle.get(i).getProducto().getId());
                 pst.executeUpdate();
+                pst.close();
             }
             pst = DB_manager.getConection().prepareStatement(DELETE_DETALLE);
             pst.setInt(1, cabecera.getId());
@@ -691,7 +692,8 @@ public class DB_Inventario {
                 + "(SELECT p.codigo FROM producto p WHERE p.id_producto = a.id_producto)\"codigo\", 	"//11
                 + "incluir_movimiento "//12
                 + "FROM ajuste_stock_detalle_temporal a "
-                + "WHERE id_ajuste_stock_cabecera_temporal = ?;";
+                + "WHERE id_ajuste_stock_cabecera_temporal = ? "
+                + "ORDER BY tiempo;";
         try {
             pst = DB_manager.getConection().prepareStatement(QUERY, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             pst.setInt(1, idCabecera);
@@ -1112,6 +1114,7 @@ public class DB_Inventario {
             }
         }
     }
+
     public static void eliminarAjusteStockCabeceraTemporal(int idCabecera) {
         String DELETE_DETALLE = "DELETE FROM ajuste_stock_detalle_temporal WHERE id_ajuste_stock_cabecera_temporal = ?;";
         String DELETE_CABECERA = "DELETE FROM ajuste_stock_cabecera_temporal WHERE id_ajuste_stock_cabecera_temporal = ?;";

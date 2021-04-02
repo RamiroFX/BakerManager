@@ -61,7 +61,7 @@ public class C_crearAjuste extends MouseAdapter implements ActionListener, KeyLi
         this.vista.jtfObservacion.setText(modelo.obtenerObsInventario());
         this.vista.jdcFechaInicio.setDate(modelo.getCabecera().getTiempoInicio());
         this.vista.jdcFechaFin.setDate(modelo.getCabecera().getTiempoFin());
-        this.vista.jdcFechaFin.addPropertyChangeListener(new PropertyChangeListener() {
+        /*this.vista.jdcFechaFin.addPropertyChangeListener(new PropertyChangeListener() {
             @Override
             public void propertyChange(PropertyChangeEvent evt) {
                 // If the 'date' property was changed...
@@ -93,7 +93,7 @@ public class C_crearAjuste extends MouseAdapter implements ActionListener, KeyLi
                     }
                 }
             }
-        });
+        });*/
         this.vista.jtDetalle.setModel(modelo.getTmDetalle());
         this.vista.jtfFuncionario.setEditable(false);
         this.vista.jbExportar.setVisible(false);
@@ -183,8 +183,8 @@ public class C_crearAjuste extends MouseAdapter implements ActionListener, KeyLi
             JOptionPane.showMessageDialog(vista, "La fecha del siguiente producto es mayor a la fecha de finalización:\n" + producto, "Fecha inválida", JOptionPane.WARNING_MESSAGE);
             return false;
         }
-        JOptionPane.showMessageDialog(vista, "TEST FINALIZADO", VALIDAR_TITULO, JOptionPane.INFORMATION_MESSAGE);
-        return false;
+        //JOptionPane.showMessageDialog(vista, "TEST FINALIZADO", VALIDAR_TITULO, JOptionPane.INFORMATION_MESSAGE);
+        return true;
     }
 
     private boolean validarObservacion() {
@@ -294,6 +294,7 @@ public class C_crearAjuste extends MouseAdapter implements ActionListener, KeyLi
     }
 
     private void establecerFechaFin() {
+        System.out.println("Producto.AjusteStock.C_crearAjuste.establecerFechaFin()");
         Date dateFin = null;
         try {
             dateFin = vista.jdcFechaFin.getDate();

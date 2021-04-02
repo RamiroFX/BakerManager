@@ -53,8 +53,14 @@ public class V_previsionStock extends JDialog {
         jpSouth = new JPanel();
         jpSouth.setBorder(new EtchedBorder());
         jbVerDetalle = new JButton("Ver detalle");
+        jbVerDetalle.setName("ver detalle provision");
+        jbVerDetalle.setEnabled(false);
         jbCrearAjuste = new JButton("Crear ajuste");
+        jbCrearAjuste.setName("crear inventario");
+        jbCrearAjuste.setEnabled(false);
         jbEliminarDetalle = new JButton("Eliminar");
+        jbEliminarDetalle.setName("eliminar provision");
+        jbEliminarDetalle.setEnabled(false);
         jbSalir = new JButton("Salir");
         jpSouth.add(jbCrearAjuste);
         jpSouth.add(jbVerDetalle);

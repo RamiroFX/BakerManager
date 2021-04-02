@@ -57,6 +57,7 @@ public class C_modificar_producto implements ActionListener {
         for (int i = 0; i < estado.size(); i++) {
             this.vista.jcbEstado.addItem(estado.get(i));
         }
+        this.vista.jtfCantActual.setEditable(false);
     }
 
     private void cerrar() {

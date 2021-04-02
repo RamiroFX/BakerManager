@@ -4,6 +4,8 @@
  */
 package Producto.AjusteStock;
 
+import Entities.M_menu_item;
+import MenuPrincipal.DatosUsuario;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -11,6 +13,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 import javax.swing.JOptionPane;
 
 /**
@@ -26,7 +29,7 @@ public class C_previsionStock extends MouseAdapter implements ActionListener, Ke
         this.vista = vista;
         this.modelo = modelo;
         inicializarComponentes();
-        agregarListeners();
+        concederPermisos();
         this.modelo.actualizarTablaCabecera();
     }
 
@@ -42,17 +45,39 @@ public class C_previsionStock extends MouseAdapter implements ActionListener, Ke
         Utilities.c_packColumn.packColumns(this.vista.jtCabecera, 1);
     }
 
-    private void agregarListeners() {
-        this.vista.jbCrearAjuste.addActionListener(this);
-        this.vista.jbCrearAjuste.addKeyListener(this);
-        this.vista.jbVerDetalle.addActionListener(this);
-        this.vista.jbVerDetalle.addKeyListener(this);
-        this.vista.jbEliminarDetalle.addActionListener(this);
-        this.vista.jbEliminarDetalle.addKeyListener(this);
+    public final void concederPermisos() {
         this.vista.jbSalir.addActionListener(this);
         this.vista.jbSalir.addKeyListener(this);
         this.vista.jtCabecera.addMouseListener(this);
         this.vista.jtCabecera.addKeyListener(this);
+        ArrayList<M_menu_item> accesos = DatosUsuario.getRol_usuario().getAccesos();
+        for (int i = 0; i < accesos.size(); i++) {
+            if (this.vista.jbCrearAjuste.getName().equals(accesos.get(i).getItemDescripcion())) {
+                this.vista.jbCrearAjuste.addActionListener(this);
+                this.vista.jbCrearAjuste.addKeyListener(this);
+                this.vista.jbCrearAjuste.setEnabled(true);
+            }
+            if (this.vista.jbVerDetalle.getName().equals(accesos.get(i).getItemDescripcion())) {
+                this.vista.jbVerDetalle.addActionListener(this);
+                this.vista.jbVerDetalle.addKeyListener(this);
+            }
+            if (this.vista.jbEliminarDetalle.getName().equals(accesos.get(i).getItemDescripcion())) {
+                this.vista.jbEliminarDetalle.addActionListener(this);
+                this.vista.jbEliminarDetalle.addKeyListener(this);
+            }
+        }
+    }
+
+    private void verificarPermiso() {
+        ArrayList<M_menu_item> accesos = DatosUsuario.getRol_usuario().getAccesos();
+        for (int i = 0; i < accesos.size(); i++) {
+            if (this.vista.jbVerDetalle.getName().equals(accesos.get(i).getItemDescripcion())) {
+                this.vista.jbVerDetalle.setEnabled(true);
+            }
+            if (this.vista.jbEliminarDetalle.getName().equals(accesos.get(i).getItemDescripcion())) {
+                this.vista.jbEliminarDetalle.setEnabled(true);
+            }
+        }
     }
 
     public void cerrar() {
@@ -65,8 +90,7 @@ public class C_previsionStock extends MouseAdapter implements ActionListener, Ke
         if (row > -1) {
             int idCabecera = modelo.getTmCabecera().getList().get(row).getId();
             consultarDetalle(idCabecera);
-            this.vista.jbVerDetalle.setEnabled(true);
-            this.vista.jbEliminarDetalle.setEnabled(true);
+            verificarPermiso();
         } else {
             this.vista.jbVerDetalle.setEnabled(false);
             this.vista.jbEliminarDetalle.setEnabled(false);
@@ -86,7 +110,7 @@ public class C_previsionStock extends MouseAdapter implements ActionListener, Ke
         int idCabecera = modelo.getTmCabecera().getList().get(row).getId();
         CrearAjuste ca = new CrearAjuste(vista, idCabecera, true);
         ca.mostrarVista();
-        this.modelo.actualizarTablaCabecera();
+        actualizarTablaCabecera();
         Utilities.c_packColumn.packColumns(this.vista.jtCabecera, 1);
         this.vista.jbEliminarDetalle.setEnabled(false);
         this.vista.jbVerDetalle.setEnabled(false);
@@ -97,7 +121,7 @@ public class C_previsionStock extends MouseAdapter implements ActionListener, Ke
             @Override
             public void run() {
                 int id = modelo.crearAjusteStock();
-                modelo.actualizarTablaCabecera();
+                actualizarTablaCabecera();
                 CrearAjuste ca = new CrearAjuste(vista, id, true);
                 ca.mostrarVista();
             }
@@ -115,7 +139,7 @@ public class C_previsionStock extends MouseAdapter implements ActionListener, Ke
         if (option == JOptionPane.YES_OPTION) {
             int idCabecera = modelo.getTmCabecera().getList().get(row).getId();
             this.modelo.eliminarAjusteStock(idCabecera);
-            this.modelo.actualizarTablaCabecera();
+            actualizarTablaCabecera();
             Utilities.c_packColumn.packColumns(this.vista.jtCabecera, 1);
             this.vista.jbEliminarDetalle.setEnabled(false);
             this.vista.jbVerDetalle.setEnabled(false);

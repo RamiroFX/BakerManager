@@ -4,7 +4,6 @@
  */
 package bauplast;
 
-import Entities.E_ajusteStockDetalle;
 import Entities.E_produccionDetalle;
 import bauplast.crearRollo.CrearFilm;
 import Entities.Estado;
@@ -226,19 +225,19 @@ public class C_seleccionarProductoPorClasif extends MouseAdapter implements Acti
                 }
             }
         }
+        this.vista.jtfBuscar.requestFocusInWindow();
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                vista.jtfBuscar.selectAll();
+            }
+        });
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == this.vista.jbAceptar) {
             seleccionarProducto();
-            this.vista.jtfBuscar.requestFocusInWindow();
-            SwingUtilities.invokeLater(new Runnable() {
-                @Override
-                public void run() {
-                    vista.jtfBuscar.selectAll();
-                }
-            });
         }
 
         if (e.getSource() == this.vista.jbCrearProducto) {

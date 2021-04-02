@@ -96,7 +96,11 @@ public class M_crearAjuste {
     }
 
     public void guardar() {
+        System.out.println("Producto.AjusteStock.M_crearAjuste.guardar()");
+        long startTime = System.nanoTime();
         DB_Inventario.transferirInventarioTemporalAPermanente(cabecera, tmDetalle.getList());
+        long elapsedTime = System.nanoTime() - startTime;
+        System.out.println("Inventario: Tiempo total in millis: " + elapsedTime / 1000000);
     }
 
     void establecerFechaInicio(Date dateInicio) {

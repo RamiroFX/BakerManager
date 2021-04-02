@@ -246,7 +246,6 @@ public class C_gestion_producto implements ActionListener, KeyListener, MouseLis
         for (int i = 0; i < marca.size(); i++) {
             this.vista.jcbMarca.addItem(marca.get(i));
         }
-
         ArrayList<ProductoCategoria> categorias = new ArrayList<>(DB_Producto.obtenerProductoCategoria());
         this.vista.jcbCategoria.removeAllItems();
         ProductoCategoria unaCategoria = new ProductoCategoria(-1, "Todas");
@@ -352,7 +351,6 @@ public class C_gestion_producto implements ActionListener, KeyListener, MouseLis
                 EventQueue.invokeLater(new Runnable() {
                     @Override
                     public void run() {
-                        invocarGestionAjusteStock();
                         ArrayList<M_menu_item> accesos = modelo.getAccesos();
                         for (int i = 0; i < accesos.size(); i++) {
                             if (V_gestionAjusteStock.NOMBRE_MODULO.equals(accesos.get(i).getItemDescripcion())) {

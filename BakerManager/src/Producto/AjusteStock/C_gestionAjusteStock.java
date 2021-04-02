@@ -8,8 +8,10 @@ package Producto.AjusteStock;
 import Empleado.SeleccionarFuncionario;
 import Entities.Estado;
 import Entities.M_funcionario;
+import Entities.M_menu_item;
 import Interface.GestionInterface;
 import Interface.RecibirEmpleadoCallback;
+import MenuPrincipal.DatosUsuario;
 import Producto.AjusteStock.Parametros.AjusteStockParametros;
 import Utilities.CellRenderers.InventarioStatusCellRenderer;
 import com.nitido.utils.toaster.Toaster;
@@ -56,41 +58,42 @@ public class C_gestionAjusteStock implements GestionInterface, RecibirEmpleadoCa
         for (int i = 0; i < estados.size(); i++) {
             this.vista.jcbEstado.addItem(estados.get(i));
         }
-        /*this.vista.jbBuscar.setEnabled(false);
-        this.vista.jbEmpleado.setEnabled(false);
-        this.vista.jbSalir.setEnabled(false);*/
     }
 
     @Override
     public final void concederPermisos() {
-        /*ArrayList<M_menu_item> accesos = DatosUsuario.getRol_usuario().getAccesos();
+        ArrayList<M_menu_item> accesos = DatosUsuario.getRol_usuario().getAccesos();
         for (int i = 0; i < accesos.size(); i++) {
             if (this.vista.jbBuscar.getName().equals(accesos.get(i).getItemDescripcion())) {
-                this.vista.jbBuscar.setEnabled(true);
-                this.vista.jbBuscar.addActionListener(this);
-                this.vista.jbCliente.setEnabled(true);
-                this.vista.jbCliente.addActionListener(this);
+                this.vista.jtfIDAjusteStock.setEnabled(true);
+                this.vista.jtfEmpleado.setEnabled(true);
+                this.vista.jddFinal.setEnabled(true);
+                this.vista.jddInicio.setEnabled(true);
+                this.vista.jcbEstado.setEnabled(true);
                 this.vista.jbEmpleado.setEnabled(true);
+                this.vista.jbBorrar.setEnabled(true);
+                this.vista.jbBuscar.setEnabled(true);
+                this.vista.jbEmpleado.setEnabled(true);
+                this.vista.jbBuscar.addActionListener(this);
                 this.vista.jbEmpleado.addActionListener(this);
-                this.vista.jcbCondVenta.setEnabled(true);
                 this.vista.jbBorrar.addActionListener(this);
             }
-            if (this.vista.jbFacturacionDetalle.getName().equals(accesos.get(i).getItemDescripcion())) {
-                this.vista.jbFacturacionDetalle.addActionListener(this);
+            if (this.vista.jbCrear.getName().equals(accesos.get(i).getItemDescripcion())) {
+                this.vista.jbCrear.addActionListener(this);
+                this.vista.jbCrear.setEnabled(true);
             }
-            if (this.vista.jbVentaDetalle.getName().equals(accesos.get(i).getItemDescripcion())) {
-                this.vista.jbVentaDetalle.addActionListener(this);
+            if (this.vista.jbVer.getName().equals(accesos.get(i).getItemDescripcion())) {
+                this.vista.jbVer.addActionListener(this);
             }
-        }*/
-        //TODO remove
-        this.vista.jbCrear.addActionListener(this);
-        this.vista.jbVer.addActionListener(this);
-        this.vista.jbAnular.addActionListener(this);
-        this.vista.jbBorrar.addActionListener(this);
+            if (this.vista.jbAnular.getName().equals(accesos.get(i).getItemDescripcion())) {
+                this.vista.jbAnular.addActionListener(this);
+            }
+            if (this.vista.jbParametros.getName().equals(accesos.get(i).getItemDescripcion())) {
+                this.vista.jbParametros.addActionListener(this);
+                this.vista.jbParametros.setEnabled(true);
+            }
+        }
         this.vista.jbSalir.addActionListener(this);
-        this.vista.jbBuscar.addActionListener(this);
-        this.vista.jbEmpleado.addActionListener(this);
-        this.vista.jbParametros.addActionListener(this);
 
         this.vista.jtCabecera.addMouseListener(this);
         this.vista.jbParametros.addKeyListener(this);
@@ -105,6 +108,18 @@ public class C_gestionAjusteStock implements GestionInterface, RecibirEmpleadoCa
         this.vista.jbEmpleado.addKeyListener(this);
         this.vista.jbBorrar.addKeyListener(this);
         this.vista.jbSalir.addKeyListener(this);
+    }
+
+    private void verificarPermiso() {
+        ArrayList<M_menu_item> accesos = DatosUsuario.getRol_usuario().getAccesos();
+        for (int i = 0; i < accesos.size(); i++) {
+            if (this.vista.jbVer.getName().equals(accesos.get(i).getItemDescripcion())) {
+                this.vista.jbVer.setEnabled(true);
+            }
+            if (this.vista.jbAnular.getName().equals(accesos.get(i).getItemDescripcion())) {
+                this.vista.jbAnular.setEnabled(true);
+            }
+        }
     }
 
     @Override
@@ -211,9 +226,7 @@ public class C_gestionAjusteStock implements GestionInterface, RecibirEmpleadoCa
             this.vista.jbAnular.setEnabled(false);
             return;
         }
-        //TODO add verificarPermiso();
-        this.vista.jbVer.setEnabled(true);
-        this.vista.jbAnular.setEnabled(true);
+        verificarPermiso();
         int idCabecera = this.modelo.getTmCabecera().getList().get(fila).getId();
         this.modelo.consultarInventarioDetalle(idCabecera);
         Utilities.c_packColumn.packColumns(vista.jtDetalle, 1);
