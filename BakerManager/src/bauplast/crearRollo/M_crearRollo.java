@@ -183,4 +183,11 @@ public class M_crearRollo {
         getMateriaPrimaTM().setList(DB_Produccion.consultarUtilizacionMP(getProduccionCabecera().getId()));
     }
 
+    public String obtenerDatosProduccion(int nroOT, E_produccionTipo pt) {
+        E_produccionCabecera pc = DB_Produccion.obtenerProduccion(pt.getId(), nroOT, -1);
+        return "ID: " + pc.getId() + "\n"
+                + "Fecha: " + pc.getFechaProduccion() + "\n"
+                + "Responsable: " + pc.getFuncionarioProduccion().getNombre() + "\n";
+    }
+
 }

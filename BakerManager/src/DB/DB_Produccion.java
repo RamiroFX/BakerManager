@@ -228,6 +228,80 @@ public class DB_Produccion {
         return (int) sq_cabecera;
     }
 
+    public static E_produccionCabecera obtenerProduccion(int idProdTipo, int nroOT, int idEstado) {
+        int pos = 1;
+        E_produccionCabecera pc = null;
+        String Query = "SELECT id_produccion_cabecera, "
+                + "nro_orden_trabajo, "
+                + "fecha_registro, "
+                + "fecha_produccion, "
+                + "fecha_vencimiento, "
+                + "id_funcionario_responsable, "
+                + "id_funcionario_usuario, "
+                + "id_produccion_tipo, "
+                + "id_estado, "
+                + "(SELECT PRTI.DESCRIPCION FROM PRODUCCION_TIPO PRTI WHERE PRTI.ID_PRODUCCION_TIPO = PC.id_produccion_tipo) \"TIPO_PRODUCCION\", "
+                + "(SELECT ESTA.DESCRIPCION FROM ESTADO ESTA WHERE ESTA.ID_ESTADO = PC.ID_ESTADO) \"ESTADO\", "
+                + "(SELECT P.NOMBRE || ' '|| P.APELLIDO FROM FUNCIONARIO F, PERSONA P WHERE P.ID_PERSONA = F.ID_PERSONA AND F.ID_FUNCIONARIO = PC.id_funcionario_responsable )\"RESPONSABLE\", "
+                + "(SELECT P.NOMBRE || ' '|| P.APELLIDO FROM FUNCIONARIO F, PERSONA P WHERE P.ID_PERSONA = F.ID_PERSONA AND F.ID_FUNCIONARIO = PC.id_funcionario_usuario)\"USUARIO\" "
+                + "FROM produccion_cabecera PC "
+                + "WHERE  1=1 ";
+
+        if (idProdTipo > -1) {
+            Query = Query + " AND PC.ID_PRODUCCION_TIPO = ? ";
+        }
+        if (idEstado > -1) {
+            Query = Query + " AND PC.ID_ESTADO = ? ";
+        }
+        if (nroOT > -1) {
+            Query = Query + " AND PC.nro_orden_trabajo = ? ";
+        }
+        Query = Query + " ORDER BY fecha_produccion ;";
+        try {
+            pst = DB_manager.getConection().prepareStatement(Query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            if (idProdTipo > -1) {
+                pst.setInt(pos, idProdTipo);
+                pos++;
+            }
+            if (idEstado > -1) {
+                pst.setInt(pos, idEstado);
+                pos++;
+            }
+            if (nroOT > -1) {
+                pst.setInt(pos, nroOT);
+            }
+            rs = pst.executeQuery();
+            while (rs.next()) {
+                M_funcionario responsable = new M_funcionario();
+                responsable.setIdFuncionario(rs.getInt("id_funcionario_responsable"));
+                responsable.setNombre(rs.getString("RESPONSABLE"));
+                M_funcionario usuario = new M_funcionario();
+                usuario.setIdFuncionario(rs.getInt("id_funcionario_usuario"));
+                usuario.setNombre(rs.getString("USUARIO"));
+                Estado estado = new Estado();
+                estado.setId(rs.getInt("id_estado"));
+                estado.setDescripcion(rs.getString("ESTADO"));
+                E_produccionTipo pt = new E_produccionTipo();
+                pt.setId(rs.getInt("id_produccion_tipo"));
+                pt.setDescripcion(rs.getString("TIPO_PRODUCCION"));
+                pc = new E_produccionCabecera();
+                pc.setFuncionarioProduccion(responsable);
+                pc.setFuncionarioSistema(usuario);
+                pc.setTipo(pt);
+                pc.setEstado(estado);
+                pc.setId(rs.getInt("id_produccion_cabecera"));
+                pc.setNroOrdenTrabajo(rs.getInt("nro_orden_trabajo"));
+                pc.setFechaProduccion(rs.getDate("fecha_produccion"));
+                pc.setFechaRegistro(rs.getDate("fecha_registro"));
+                pc.setFechaVencimiento(rs.getDate("fecha_vencimiento"));
+            }
+        } catch (SQLException ex) {
+            Logger lgr = Logger.getLogger(DB_Produccion.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        }
+        return pc;
+    }
+
     public static List<E_produccionCabecera> consultarProduccion(Date inicio, Date fin, int idProdTipo, int nroPedido, int idEstado, int idFuncionario, boolean conFecha) {
         int pos = 1;
         List<E_produccionCabecera> list = new ArrayList<>();
@@ -3479,7 +3553,7 @@ public class DB_Produccion {
         }
         return (int) sq_cabecera;
     }
-    
+
     public static int insertarBajaFilmPorVenta(List<E_produccionFilm> rollosList) {
         String INSERT_PRODUCCION_FILM_BAJA = "INSERT INTO produccion_film_baja(id_produccion_film, id_produccion_cabecera, peso_utilizado, fecha_utilizado, id_produccion_tipo_baja)VALUES (?, ?, ?, ?, ?);";
         long sq_cabecera = -1L;
@@ -3500,7 +3574,7 @@ public class DB_Produccion {
 //            }
 //            pst.close();
 //            rs.close();
-            
+
             for (int i = 0; i < rollosList.size(); i++) {
                 //id_produccion_film, id_produccion_cabecera, peso_utilizado, fecha_utilizado, id_produccion_tipo_baja
                 E_produccionFilm prodFilm = rollosList.get(i);

@@ -142,9 +142,9 @@ public class C_gestionProduccion implements GestionInterface, RecibirEmpleadoCal
                 if (!vista.jtfNroOrdenTrabajo.getText().trim().isEmpty()) {
                     nroOrdenTrabajo = Integer.valueOf(vista.jtfNroOrdenTrabajo.getText().trim());
                 }
-                E_produccionTipo conVenta = vista.jcbTipoProduccion.getItemAt(vista.jcbTipoProduccion.getSelectedIndex());
+                E_produccionTipo tipoProd = vista.jcbTipoProduccion.getItemAt(vista.jcbTipoProduccion.getSelectedIndex());
                 Estado estado = vista.jcbEstado.getItemAt(vista.jcbEstado.getSelectedIndex());
-                modelo.consultarProduccion(fecha_inicio, fecha_fin, conVenta, nroOrdenTrabajo, estado, conFecha);
+                modelo.consultarProduccion(fecha_inicio, fecha_fin, tipoProd, nroOrdenTrabajo, estado, conFecha);
                 Utilities.c_packColumn.packColumns(vista.jtProduccionCabecera, 1);
                 vista.jbDetalle.setEnabled(false);
                 vista.jbAnular.setEnabled(false);

@@ -253,8 +253,11 @@ class C_crearRollo extends MouseAdapter implements ActionListener, KeyListener,
         }
         E_produccionTipo pt = new E_produccionTipo(E_produccionTipo.ROLLO, "Rollo");
         if (modelo.existeOrdenTrabajoPorProduccion(ordenTrabajo, pt)) {
-            JOptionPane.showMessageDialog(vista, VALIDAR_ORDEN_TRABAJO_MSG_4, VALIDAR_TITULO, JOptionPane.WARNING_MESSAGE);
-            return false;
+            //JOptionPane.showMessageDialog(vista, VALIDAR_ORDEN_TRABAJO_MSG_4, VALIDAR_TITULO, JOptionPane.WARNING_MESSAGE);
+            //return false;
+            String datosProduccion = modelo.obtenerDatosProduccion(ordenTrabajo, pt);
+            int opcion = JOptionPane.showConfirmDialog(vista, VALIDAR_ORDEN_TRABAJO_MSG_4 + "\n ¿Desea continuar?" + "\n" + datosProduccion, "Atención", JOptionPane.WARNING_MESSAGE, JOptionPane.YES_NO_OPTION);
+            return opcion == JOptionPane.YES_OPTION;
         }
         return true;
     }
