@@ -19,6 +19,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.File;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -72,17 +73,40 @@ public class FiltroReportes extends JDialog implements ActionListener, KeyListen
         getContentPane().add(jpCliente, BorderLayout.CENTER);
         getContentPane().add(jpSouth, BorderLayout.SOUTH);
         completarCampos();
+        testInit();
+    }
+
+    private void testInit() {
+        M_cliente unCliente = new M_cliente();
+        unCliente.setIdCliente(461);
+        unCliente.setEntidad("");
+        unCliente.setNombre("");
+        unCliente.setRuc("123");
+        unCliente.setRucId("1");
+        recibirCliente(unCliente);
+        Calendar firstDay = Calendar.getInstance();
+        firstDay.set(Calendar.DAY_OF_MONTH, 1);
+        firstDay.set(Calendar.MONTH, 2);
+        Calendar secDay = Calendar.getInstance();
+        secDay.set(Calendar.DAY_OF_MONTH, 30);
+        secDay.set(Calendar.MONTH, 2);
+        this.jdcFechaDesde.setDate(firstDay.getTime());
+        this.jdcFechaHasta.setDate(secDay.getTime());
     }
 
     private void inicializarVista() {
         Calendar today = Calendar.getInstance();
+        Calendar firstDay = Calendar.getInstance();
+        firstDay.set(Calendar.DAY_OF_MONTH, 1);
         this.jtClientes = new JTable();
         JScrollPane jspProveedor = new JScrollPane(this.jtClientes);
         this.jbAgregar = new JButton("Busca clientes");
         this.jbQuitar = new JButton("Quitar");
         this.jtbTipoSeleccion = new JToggleButton("Inclusivo");
-        this.jdcFechaDesde = new JDateChooser(today.getTime());
+        this.jdcFechaDesde = new JDateChooser(firstDay.getTime());
+        this.jdcFechaDesde.setPreferredSize(new Dimension(150, 25));
         this.jdcFechaHasta = new JDateChooser(today.getTime());
+        this.jdcFechaHasta.setPreferredSize(new Dimension(150, 25));
         this.jcbFechaDesde = new JCheckBox("Fecha desde");
         this.jcbFechaHasta = new JCheckBox("Fecha hasta");
         this.jcbFechaHasta.setSelected(true);
@@ -165,19 +189,22 @@ public class FiltroReportes extends JDialog implements ActionListener, KeyListen
         tm.getList().forEach((unCliente) -> {
             idClientes.add(unCliente.getIdCliente());
         });
-        Date fechaDesde=null;
-        if(jcbFechaDesde.isSelected()){
+        Date fechaDesde = null;
+        if (jcbFechaDesde.isSelected()) {
             fechaDesde = jdcFechaDesde.getDate();
         }
-        Date fechaHasta=null;
-        if(jcbFechaHasta.isSelected()){
+        Date fechaHasta = null;
+        if (jcbFechaHasta.isSelected()) {
             fechaHasta = jdcFechaHasta.getDate();
         }
-        File file;
+        File file, subFile;
         JasperReport reporte = null;
+        JasperReport subReports = null;
         try {
-            file = new File(System.getProperty("user.dir") + "\\Assets\\Reportes\\estado_cuenta_cliente.jasper");
+            file = new File(System.getProperty("user.dir") + "\\Assets\\Reportes\\ccc.jasper");
+            subFile = new File(System.getProperty("user.dir") + "\\Assets\\Reportes\\ccc_subtotal.jasper");
             reporte = (JasperReport) JRLoader.loadObject(file);
+            subReports = (JasperReport) JRLoader.loadObject(subFile);
         } catch (JRException ex) {
             ex.printStackTrace();
             JOptionPane.showMessageDialog(this, "No se encontró la ubicación del reporte", "Atención", JOptionPane.WARNING_MESSAGE);
@@ -188,8 +215,11 @@ public class FiltroReportes extends JDialog implements ActionListener, KeyListen
             Map<String, Object> map = new HashMap<String, Object>();
             map.put("empresa_nombre", empresa.getEntidad());
             map.put("empresa_descripcion", empresa.getDescripcion());
-            map.put("fecha_desde", fechaDesde);
-            map.put("fecha_hasta", fechaHasta);
+            map.put("fecha_desde", new java.sql.Date(fechaDesde.getTime()));
+            map.put("fecha_hasta", new java.sql.Date(fechaHasta.getTime()));
+            map.put("id_clientes", idClientes);
+            //map.put("subReport", subReport);
+            map.put("subReport", subReports);
             JasperPrint jp = JasperFillManager.fillReport(reporte, map, DB_manager.getConection());
             JRViewer jv = new JRViewer(jp);
             JFrame jf = new JFrame();
