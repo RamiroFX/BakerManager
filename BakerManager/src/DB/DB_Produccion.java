@@ -9,6 +9,7 @@ import Entities.E_produccionCabecera;
 import Entities.E_produccionDesperdicioCabecera;
 import Entities.E_produccionDesperdicioDetalle;
 import Entities.E_produccionDetalle;
+import Entities.E_produccionDetallePlus;
 import Entities.E_produccionFilm;
 import Entities.E_produccionTipo;
 import Entities.E_produccionTipoBaja;
@@ -3423,6 +3424,115 @@ public class DB_Produccion {
                 E_produccionDetalle pdd = new E_produccionDetalle();
                 pdd.setCantidad(rs.getDouble("cantidad"));
                 pdd.setProducto(producto);
+                list.add(pdd);
+            }
+        } catch (SQLException ex) {
+            Logger lgr = Logger.getLogger(DB_Produccion.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        }
+        return list;
+    }
+
+    public static List<E_produccionDetallePlus> consultarProductosTerminadosAgrupado(String descripcion, String buscarPor, String ordenarPor,
+            String categoria, boolean porFecha, Date fechaInicio, Date fechaFinal) {
+        List<E_produccionDetallePlus> list = new ArrayList<>();
+        try {
+            if (DB_manager.getConection() == null) {
+                throw new IllegalStateException("Connection already closed.");
+            }
+            String CRITERIA = "";
+            String DATE_RANGE_PRODUCCION = "";
+            String DATE_RANGE_VENTA = "";
+            //BUSCAR 
+            switch (buscarPor) {
+                case "Todos": {
+                    CRITERIA = "AND ((LOWER(CAST(nro_orden_trabajo AS CHARACTER VARYING)) LIKE ?) "
+                            + "OR (LOWER(producto.descripcion) LIKE ?) OR (LOWER(producto.codigo) LIKE ?) )";
+                    break;
+                }
+                case "OT": {
+                    CRITERIA = "AND LOWER(CAST(nro_orden_trabajo AS CHARACTER VARYING)) LIKE ? ";
+                    break;
+                }
+                case "Producto": {
+                    CRITERIA = "AND LOWER(producto.descripcion) LIKE ? ";
+                    break;
+                }
+                case "Código": {
+                    CRITERIA = "AND LOWER(descripcion.codigo) LIKE ? ";
+                    break;
+                }
+            }
+            if (porFecha) {
+                DATE_RANGE_VENTA = "AND FC.TIEMPO between ? AND ? ";
+                DATE_RANGE_PRODUCCION = "AND fecha_produccion between ? AND ? ";
+            }
+            String QUERY = "select "
+                    + "	SUM(produccion_detalle.cantidad) producido, "
+                    + "	COALESCE( (select "
+                    + "		SUM(fd.cantidad) "
+                    + "	from "
+                    + "		factura_detalle fd, "
+                    + "		factura_cabecera fc "
+                    + "	where "
+                    + "		fc.id_factura_cabecera= fd.id_factura_cabecera "
+                    + "		and fd.id_producto = producto.id_producto "
+                    + "		and fc.id_estado = 1 "
+                    + DATE_RANGE_VENTA + "), 0 ) "
+                    + "	 vendido, "
+                    + "	producto.cant_actual, "
+                    + "	producto.id_producto, "
+                    + "	producto.codigo, "
+                    + "	producto.descripcion as producto, "
+                    + "	producto.id_categoria, "
+                    + "	producto_categoria.descripcion as categoria "
+                    + "from "
+                    + "	produccion_detalle "
+                    + "join produccion_cabecera on "
+                    + "	produccion_cabecera.id_produccion_cabecera = produccion_detalle.id_produccion_cabecera "
+                    + "join producto on "
+                    + "	producto.id_producto = produccion_detalle.id_producto "
+                    + "join producto_categoria on "
+                    + "	producto_categoria.id_producto_categoria = producto.id_categoria "
+                    + "where "
+                    + "	produccion_cabecera.id_estado = 1 "
+                    + CRITERIA
+                    + DATE_RANGE_PRODUCCION;
+            String GROUP_BY = "group by producto.id_producto, "
+                    + "	producto.codigo, "
+                    + "	producto.descripcion, "
+                    + "	producto.id_categoria, "
+                    + "	producto_categoria.descripcion "
+                    + "ORDER BY producto DESC ";
+            QUERY = QUERY + GROUP_BY;
+            int pos = 1;
+            pst = DB_manager.getConection().prepareStatement(QUERY, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            if (porFecha) {
+                pst.setTimestamp(pos++, new Timestamp(fechaInicio.getTime()));
+                pst.setTimestamp(pos++, new Timestamp(fechaFinal.getTime()));
+            }
+            if (buscarPor.equals("Todos")) {
+                pst.setString(pos++, "%" + descripcion + "%");
+                pst.setString(pos++, "%" + descripcion + "%");
+                pst.setString(pos++, "%" + descripcion + "%");
+            } else {
+                pst.setString(pos++, "%" + descripcion + "%");
+            }
+            if (porFecha) {
+                pst.setTimestamp(pos++, new Timestamp(fechaInicio.getTime()));
+                pst.setTimestamp(pos++, new Timestamp(fechaFinal.getTime()));
+            }
+            rs = pst.executeQuery();
+            while (rs.next()) {
+                M_producto producto = new M_producto();
+                producto.setId(rs.getInt("id_producto"));
+                producto.setDescripcion(rs.getString("producto"));
+                producto.setCodigo(rs.getString("codigo"));
+                producto.setCantActual(rs.getDouble("cant_actual"));
+                E_produccionDetallePlus pdd = new E_produccionDetallePlus();
+                pdd.setCantidad(rs.getDouble("producido"));
+                pdd.setProducto(producto);
+                pdd.setCantidadVendida(rs.getDouble("vendido"));
                 list.add(pdd);
             }
         } catch (SQLException ex) {

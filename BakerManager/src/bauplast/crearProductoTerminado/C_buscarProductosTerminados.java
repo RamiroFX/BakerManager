@@ -152,7 +152,21 @@ public class C_buscarProductosTerminados extends MouseAdapter implements ActionL
     }
 
     private void invocarResumen() {
-        ResumenProductosTerminados rpt = new ResumenProductosTerminados(vista, modelo.getTm());
+        String desc = vista.jtfBuscar.getText();
+        if (desc.length() > 50) {
+            JOptionPane.showMessageDialog(vista, "El texto ingresado supera el máximo permitido de 50 caracteres.", "Atención", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        if (!validarFechas()) {
+            return;
+        }
+        boolean porFecha = vista.jcbActivarFecha.isSelected();
+        Date fechaInicio = vista.jdcFechaInicio.getDate();
+        Date fechaFinal = vista.jdcFechaFinal.getDate();
+        String buscarPor = vista.jcbBuscarPor.getSelectedItem().toString();
+        String ordenarPor = vista.jcbOrdenarPor.getSelectedItem().toString();
+        String categoria = vista.jcbCategoria.getSelectedItem().toString();
+        ResumenProductosTerminados rpt = new ResumenProductosTerminados(vista, desc.toLowerCase(), buscarPor, ordenarPor, categoria, porFecha, fechaInicio, fechaFinal);
         rpt.mostrarVista();
     }
 

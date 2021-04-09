@@ -6,11 +6,7 @@
 package Excel;
 
 import DB.DB_Inventario;
-import DB.DB_NotaCredito;
-import Entities.E_NotaCreditoCabecera;
-import Entities.E_NotaCreditoDetalle;
 import Entities.E_ajusteStockCabecera;
-import Entities.E_impuesto;
 import Entities.SeleccionAjusteStockDetalle;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -25,12 +21,10 @@ import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFRichTextString;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.hssf.util.HSSFRegionUtil;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.DataFormat;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.util.CellRangeAddress;
 
 /**
  *

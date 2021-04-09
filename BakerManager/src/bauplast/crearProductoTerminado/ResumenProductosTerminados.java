@@ -7,9 +7,9 @@ package bauplast.crearProductoTerminado;
 
 import DB.DB_Produccion;
 import Entities.E_produccionDetalle;
+import Excel.ExportarProduccionTerminados;
 import Interface.InterfaceFacturaDetalle;
-import ModeloTabla.ProduccionDetalleTableModel;
-import ModeloTabla.ProduccionTerminadosTableModel;
+import ModeloTabla.ProduccionDetalleAgrupadaTableModel;
 import java.awt.BorderLayout;
 import static java.awt.Dialog.DEFAULT_MODALITY_TYPE;
 import java.awt.EventQueue;
@@ -42,24 +42,31 @@ public class ResumenProductosTerminados extends JDialog implements ActionListene
     JButton jbSalir, jbImportarXLS;
     JLabel jlTotalDesperdicio;
     JFormattedTextField jftTotalUtilizado;
-    Date inicio, fin;
+    Date fechaInicio, fechaFinal;
+    boolean conFecha;
     JTabbedPane jtpPanel;
-    ProduccionDetalleTableModel productosTerminadosAgrupadosTM;
+    ProduccionDetalleAgrupadaTableModel productosTerminadosAgrupadosTM;
 
-    public ResumenProductosTerminados(JDialog frame, ProduccionTerminadosTableModel tm2) {
+    public ResumenProductosTerminados(JDialog frame, String descripcion, String buscarPor, String ordenarPor,
+            String categoria, boolean porFecha, Date fechaInicio, Date fechaFinal) {
         super(frame, DEFAULT_MODALITY_TYPE);
         setTitle("Resumen de productos terminados");
         setSize(800, 600);
         setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(frame);
         inicializarComponentes();
-        inicializarDatos(tm2);
+        inicializarDatos(descripcion, buscarPor, ordenarPor,
+            categoria, porFecha, fechaInicio, fechaFinal);
         agregarListener();
     }
-
-    private void inicializarDatos(ProduccionTerminadosTableModel tm) {
-        productosTerminadosAgrupadosTM = new ProduccionDetalleTableModel(ProduccionDetalleTableModel.DETALLE);
-        productosTerminadosAgrupadosTM.setList(DB_Produccion.consultarProductosTerminadosAgrupado(tm.getList()));
+    private void inicializarDatos(String descripcion, String buscarPor, String ordenarPor,
+            String categoria, boolean porFecha, Date fechaInicio, Date fechaFinal) {
+        this.fechaInicio= fechaInicio;
+        this.fechaFinal = fechaFinal;
+        this.conFecha = porFecha;
+        productosTerminadosAgrupadosTM = new ProduccionDetalleAgrupadaTableModel(ProduccionDetalleAgrupadaTableModel.COMPLETA);
+        productosTerminadosAgrupadosTM.setList(DB_Produccion.consultarProductosTerminadosAgrupado(descripcion, buscarPor, ordenarPor,
+            categoria, porFecha, fechaInicio, fechaFinal));
         jtDesperdicios.setModel(productosTerminadosAgrupadosTM);
         double totalUtilizado = 0;
         for (E_produccionDetalle unaMP : productosTerminadosAgrupadosTM.getList()) {
@@ -91,7 +98,7 @@ public class ResumenProductosTerminados extends JDialog implements ActionListene
 
         JPanel jpCenter = new JPanel(new BorderLayout());
         JPanel jpSouth = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        //jpSouth.add(jbImportarXLS);
+        jpSouth.add(jbImportarXLS);
         jpSouth.add(jbSalir);
         jpCenter.add(jspDesperdicios, BorderLayout.CENTER);
         jpCenter.add(jpTotalProducido, BorderLayout.SOUTH);
@@ -110,7 +117,8 @@ public class ResumenProductosTerminados extends JDialog implements ActionListene
         EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
-
+                ExportarProduccionTerminados ept = new ExportarProduccionTerminados("Prod terminados", conFecha, fechaInicio, fechaFinal, productosTerminadosAgrupadosTM.getList());
+                ept.exportacionAgrupada();
             }
         });
     }
@@ -177,7 +185,7 @@ public class ResumenProductosTerminados extends JDialog implements ActionListene
         if (ae.getSource().equals(jbSalir)) {
             dispose();
         } else if (ae.getSource().equals(jbImportarXLS)) {
-            exportHandler();
+            importarExcelAgrupado();
         }
     }
 
