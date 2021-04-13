@@ -133,7 +133,7 @@ public class DB_Ingreso {
     }
 
     public static int obtenerUltimoNroFacturacion() {
-        String Query = "SELECT max(nro_factura) FROM facturacion_cabecera WHERE nro_factura IS NOT NULL  ORDER BY id_facturacion_cabecera DESC LIMIT 1;";
+        String Query = "SELECT max(nro_factura) FROM facturacion_cabecera WHERE nro_factura IS NOT NULL GROUP BY id_facturacion_cabecera ORDER BY id_facturacion_cabecera DESC LIMIT 1;";
         long nroFactura = 0;
         try {
             DB_manager.getConection().setAutoCommit(false);
@@ -2415,8 +2415,6 @@ public class DB_Ingreso {
                 + " AND FC.ID_CLIENTE = " + idCliente;
 
         Query = Query + " ORDER BY \"ID\"";
-        System.err.println("q:");
-        System.err.println(Query);
         try {
             st = DB_manager.getConection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             // se ejecuta el query y se obtienen los resultados en un ResultSet

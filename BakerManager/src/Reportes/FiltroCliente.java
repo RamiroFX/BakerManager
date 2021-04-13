@@ -151,6 +151,8 @@ public class FiltroCliente extends JDialog implements ActionListener, KeyListene
                         System.out.println("inclusivo pendiente");
                         try {
                             file = new File(System.getProperty("user.dir") + "\\Assets\\Reportes\\cobros_pendientes_por_cliente_inclusivo.jasper");
+
+                            System.out.println("file: " + file);
                             reporte = (JasperReport) JRLoader.loadObject(file);
                         } catch (JRException ex) {
                             ex.printStackTrace();

@@ -19,6 +19,7 @@ import Entities.E_tipoOperacion;
 import Entities.Estado;
 import Interface.RecibirEmpleadoCallback;
 import ModeloTabla.EgresoCabeceraTableModel;
+import Utilities.CellRenderers.CompraCabeceraStatusCellRenderer;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -46,6 +47,7 @@ public class C_gestionCompras extends MouseAdapter implements ActionListener, Ke
     M_gestionCompras modelo;
     V_gestionCompras vista;
     public C_inicio c_inicio;
+    private CompraCabeceraStatusCellRenderer scr;
 
     public C_gestionCompras(M_gestionCompras modelo, V_gestionCompras vista, C_inicio c_inicio) {
         this.modelo = modelo;
@@ -58,6 +60,8 @@ public class C_gestionCompras extends MouseAdapter implements ActionListener, Ke
 
     private void inicializarVista() {
         this.vista.jtEgresoCabecera.setModel(modelo.getTm());
+        this.scr = new CompraCabeceraStatusCellRenderer(this.modelo.getTm().getList());
+        this.vista.jtEgresoCabecera.setDefaultRenderer(Object.class, scr);
         this.vista.jbDetalle.setEnabled(false);
         this.vista.jbAnular.setEnabled(false);
         ArrayList<E_tipoOperacion> condCompra = modelo.obtenerTipoOperacion();
@@ -215,6 +219,7 @@ public class C_gestionCompras extends MouseAdapter implements ActionListener, Ke
                 modelo.getCabecera().setEstado(estado);
                 modelo.getCabecera().setNroFactura(nroFactura);
                 modelo.actualizarTabla(vista.jddInicio.getDate(), vista.jddFinal.getDate(), conFecha);
+                scr.setList(modelo.getTm().getList());
                 Utilities.c_packColumn.packColumns(vista.jtEgresoCabecera, 1);
                 controlarTablaEgreso();
             }

@@ -51,10 +51,12 @@ public class C_seleccionar_proveedor extends MouseAdapter implements ActionListe
     private C_buscar_detalle buscarDetalleEgreso;
     private C_seleccionarProducto seleccionarProducto;
     private RecibirProveedorCallback callback;
+    boolean cerrar;
 
     public C_seleccionar_proveedor(V_seleccionar_proveedor vista) {
         this.vista = vista;
         this.tipo = -1;//TODO remove
+        this.cerrar = true;
         inicializarVista();
         agregarListeners();
     }
@@ -63,6 +65,7 @@ public class C_seleccionar_proveedor extends MouseAdapter implements ActionListe
         this.gestion_egreso = gestion_egreso;
         this.tipo = GESTION_EGRESO;
         this.vista = vista;
+        this.cerrar = true;
         inicializarVista();
         agregarListeners();
     }
@@ -71,6 +74,7 @@ public class C_seleccionar_proveedor extends MouseAdapter implements ActionListe
         this.c_egresos = c_egresos;
         this.tipo = CREAR_EGRESO;
         this.vista = vista;
+        this.cerrar = true;
         inicializarVista();
         agregarListeners();
     }
@@ -79,6 +83,7 @@ public class C_seleccionar_proveedor extends MouseAdapter implements ActionListe
         this.crear_producto = crear_producto;
         this.tipo = CREAR_PRODUCTO;
         this.vista = vista;
+        this.cerrar = true;
         inicializarVista();
         agregarListeners();
     }
@@ -87,6 +92,7 @@ public class C_seleccionar_proveedor extends MouseAdapter implements ActionListe
         this.prodProv = prodProv;
         this.tipo = ASIGNAR_PRODUCTO_PROVEEDOR;
         this.vista = vista;
+        this.cerrar = true;
         inicializarVista();
         agregarListeners();
     }
@@ -95,6 +101,7 @@ public class C_seleccionar_proveedor extends MouseAdapter implements ActionListe
         this.buscarDetalleEgreso = buscarDetalleEgreso;
         this.tipo = BUSCAR_DETALLE_EGRESO;
         this.vista = vista;
+        this.cerrar = true;
         inicializarVista();
         agregarListeners();
     }
@@ -205,9 +212,17 @@ public class C_seleccionar_proveedor extends MouseAdapter implements ActionListe
                 break;
             }
         }
-        cerrar();
+        if (cerrar) {
+            cerrar();
+        }
     }
-
+//
+//    private void seleccionarCliente(M_cliente cliente) {
+//        this.callback.recibirCliente(cliente);
+//        if (cerrar) {
+//            cerrar();
+//        }
+//    }
     private void displayQueryResults() {
         EventQueue.invokeLater(new Runnable() {
             @Override
@@ -312,6 +327,10 @@ public class C_seleccionar_proveedor extends MouseAdapter implements ActionListe
     @Override
     public void notificarCambio() {
         displayQueryResults();
+    }
+
+    public void establecerSiempreVisible() {
+        this.cerrar = false;
     }
 
 }

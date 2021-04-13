@@ -5,6 +5,8 @@
  */
 package Facturacion;
 
+import Configuracion.Timbrado.SeleccionarNroFactura;
+import Entities.E_Timbrado;
 import Entities.E_facturaCabecera;
 import Entities.E_facturacionCabecera;
 import Entities.M_facturaCabecera;
@@ -13,6 +15,7 @@ import Impresora.Impresora;
 import Interface.InterfaceConfirmarFacturacion;
 import Interface.InterfaceFacturaDetalle;
 import Interface.InterfaceSeleccionVentaCabecera;
+import Interface.RecibirTimbradoVentaCallback;
 import ModeloTabla.FacturaDetalleTableModel;
 import ModeloTabla.SeleccionVentaCabecera;
 import ModeloTabla.SeleccionVentaCabeceraTableModel;
@@ -30,7 +33,8 @@ import javax.swing.JOptionPane;
  *
  * @author Ramiro
  */
-public class C_facturacion implements ActionListener, KeyListener, InterfaceSeleccionVentaCabecera, InterfaceFacturaDetalle, InterfaceConfirmarFacturacion {
+public class C_facturacion implements ActionListener, KeyListener, InterfaceSeleccionVentaCabecera,
+        InterfaceFacturaDetalle, InterfaceConfirmarFacturacion, RecibirTimbradoVentaCallback {
 
     private static final String MESSAGE = "La cantidad actual sobrepasa el limite permitido ", TITLE = "Atención";
     private static final String MESSAGE2 = "Seleccione por lo menos una venta";
@@ -47,15 +51,15 @@ public class C_facturacion implements ActionListener, KeyListener, InterfaceSele
     }
 
     private void completarCampos() {
-        SeleccionVentaCabeceraTableModel tm = new SeleccionVentaCabeceraTableModel(this);
-        FacturaDetalleTableModel tmd = new FacturaDetalleTableModel(this);
+        modelo.getTm().setInterface(this);
+        modelo.getTmd().setInterface(this);
         ArrayList<SeleccionVentaCabecera> list = new ArrayList<>();
         for (E_facturaCabecera ventaCabecera : modelo.obtenerVentasCabecera()) {
             list.add(new SeleccionVentaCabecera(ventaCabecera, false));
         }
-        tm.setList(list);
-        this.vista.jtVentasCabecera.setModel(tm);
-        this.vista.jtVentasDetalle.setModel(tmd);
+        modelo.getTm().setList(list);
+        this.vista.jtVentasCabecera.setModel(modelo.getTm());
+        this.vista.jtVentasDetalle.setModel(modelo.getTmd());
         this.vista.jftTotalItems.setValue(0);
         this.vista.jftTotal.setValue(0);
         Utilities.c_packColumn.packColumns(this.vista.jtVentasCabecera, 1);
@@ -86,11 +90,17 @@ public class C_facturacion implements ActionListener, KeyListener, InterfaceSele
         return false;
     }
 
+    private void seleccionarNroFactura() {
+        E_Timbrado timbradoPred = modelo.obtenerTimbradoPredeterminado();
+        SeleccionarNroFactura snf = new SeleccionarNroFactura(vista, this, timbradoPred);
+        snf.mostrarVista();
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         Object src = e.getSource();
         if (src.equals(this.vista.jbFacturar)) {
-            facturar();
+            seleccionarNroFactura();
         } else if (src.equals(this.vista.jbQuitar)) {
             quitarTodos();
         } else if (src.equals(this.vista.jbAgregar)) {
@@ -105,7 +115,7 @@ public class C_facturacion implements ActionListener, KeyListener, InterfaceSele
         modelo.setAgregarTodos(true);
         int rows = this.vista.jtVentasCabecera.getModel().getRowCount();
         for (int i = 0; i < rows; i++) {
-            this.vista.jtVentasCabecera.getModel().setValueAt(false, i, 5);
+            modelo.getTmd().setValueAt(false, rows, 7);
         }
         modelo.setAgregarTodos(false);
         consultarDetalle();
@@ -115,7 +125,7 @@ public class C_facturacion implements ActionListener, KeyListener, InterfaceSele
         modelo.setAgregarTodos(true);
         int rows = this.vista.jtVentasCabecera.getModel().getRowCount();
         for (int i = 0; i < rows; i++) {
-            this.vista.jtVentasCabecera.getModel().setValueAt(true, i, 5);
+            modelo.getTmd().setValueAt(true, rows, 7);
         }
         modelo.setAgregarTodos(false);
         consultarDetalle();
@@ -157,6 +167,20 @@ public class C_facturacion implements ActionListener, KeyListener, InterfaceSele
         cf.mostrarVista();
     }
 
+    private boolean verificarTimbrados() {
+        String mensaje = modelo.verificarTimbrados();
+        if (mensaje.equals("OK")) {
+            return true;
+        } else {
+            int opcion = JOptionPane.showConfirmDialog(vista, mensaje, "Atención", JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE);
+            if (opcion != JOptionPane.YES_OPTION) {
+                return false;
+            } else {
+                return true;
+            }
+        }
+    }
+
     private boolean controlarCantidadItems() {
         FacturaDetalleTableModel fdtm = (FacturaDetalleTableModel) vista.jtVentasDetalle.getModel();
         int cantidadMaxima = Impresora.PREF_PRINT_FACTURA.getMaxProducts();
@@ -173,11 +197,10 @@ public class C_facturacion implements ActionListener, KeyListener, InterfaceSele
     }
 
     private void consultarDetalle() {
-        SeleccionVentaCabeceraTableModel vctm = (SeleccionVentaCabeceraTableModel) vista.jtVentasCabecera.getModel();
         FacturaDetalleTableModel tm = new FacturaDetalleTableModel(this);
         ArrayList<E_facturaDetalle> list = new ArrayList<>();
         double total = 0;
-        for (E_facturaDetalle ventaDetalle : modelo.obtenerVentasDetalle(vctm.getList())) {
+        for (E_facturaDetalle ventaDetalle : modelo.obtenerVentasDetalle(modelo.getTm().getList())) {
             list.add(ventaDetalle);
             total = total + ventaDetalle.calcularSubTotal();
         }
@@ -210,7 +233,7 @@ public class C_facturacion implements ActionListener, KeyListener, InterfaceSele
                 facalist.add(get.getFacturaCabecera());
             }
         }
-        modelo.facturar(facalist, facturacionCabecera.getNroFactura(), modelo.obtenerTipoOperacion().getId());
+        //modelo.facturar(facalist, facturacionCabecera.getNroFactura(), modelo.obtenerTipoOperacion().getId());
         //IMPRIMIR FACTURA
         int opcion = JOptionPane.showConfirmDialog(vista, IMPRIMIR_VENTA, ATENCION, JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
         if (opcion == JOptionPane.YES_OPTION) {
@@ -222,6 +245,40 @@ public class C_facturacion implements ActionListener, KeyListener, InterfaceSele
             facturaCabecera.setTiempo(new Timestamp(c.getTimeInMillis()));
             FacturaDetalleTableModel tm = (FacturaDetalleTableModel) vista.jtVentasDetalle.getModel();
             ArrayList<E_facturaDetalle> facturaDetalle = (ArrayList<E_facturaDetalle>) tm.getList();
+            Impresora.imprimirFacturaVenta(facturaCabecera, facturaDetalle);
+        }
+        completarCampos();
+    }
+
+    @Override
+    public void recibirTimbrado(E_Timbrado timbrado) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void recibirTimbradoNroFactura(E_Timbrado timbrado, int nroFactura) {
+        if (!verificarTimbrados()) {
+            return;
+        }
+        ArrayList<E_facturaCabecera> facalist = new ArrayList<>();
+        ArrayList<SeleccionVentaCabecera> sefacalist = modelo.getTm().getList();
+        for (int i = 0; i < sefacalist.size(); i++) {
+            SeleccionVentaCabecera get = sefacalist.get(i);
+            if (get.isEstaSeleccionado()) {
+                facalist.add(get.getFacturaCabecera());
+            }
+        }
+        modelo.facturar(facalist, timbrado.getId(), nroFactura, modelo.obtenerTipoOperacion().getId());
+        //IMPRIMIR FACTURA
+        int opcion = JOptionPane.showConfirmDialog(vista, IMPRIMIR_VENTA, ATENCION, JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+        if (opcion == JOptionPane.YES_OPTION) {
+            M_facturaCabecera facturaCabecera = new M_facturaCabecera();
+            facturaCabecera.setCliente(modelo.obtenerCliente());
+            facturaCabecera.setNroFactura(nroFactura);
+            facturaCabecera.setIdCondVenta(modelo.obtenerTipoOperacion().getId());
+            Calendar c = Calendar.getInstance();
+            facturaCabecera.setTiempo(new Timestamp(c.getTimeInMillis()));
+            ArrayList<E_facturaDetalle> facturaDetalle = (ArrayList<E_facturaDetalle>) modelo.getTmd().getList();
             Impresora.imprimirFacturaVenta(facturaCabecera, facturaDetalle);
         }
         completarCampos();

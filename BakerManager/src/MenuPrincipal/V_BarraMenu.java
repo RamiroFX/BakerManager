@@ -19,13 +19,14 @@ import javax.swing.JMenuItem;
  */
 public class V_BarraMenu extends JMenuBar {
 
-    public JMenu jmInicio, jmAyuda, jmHerramientas, jmOpciones, jmReportes, jmiCobro;
+    public JMenu jmInicio, jmAyuda, jmHerramientas, jmOpciones, jmReportes, jmiCobro,
+            jmPago;
     public JMenuItem jmiCerrar, jmiAcerca, jmiPersonalizar, jmiConfigImpresion,
             jmiConfigImpresionTicket, jmiConfigImpresionBoleta, jmiEmpresa,
             jmiProduccion, jmiMateriaPrima, jmiGestionTimbrado;
             
     public JMenuItem jmiCobroPendiente, jmiCobroPendienteVencidos, jmiCobroPendientePorCliente,
-            jmiCobroPendientePorClienteVencidos, jmiEstadoCuenta;
+            jmiCobroPendientePorClienteVencidos, jmiEstadoCuentaClientes, jmiEstadoCuentaProveedores;
     //public JMenuItem  jmiLogIn,jmiLogOut, jmiMenuPrincipal;
     private V_inicio frame; //referencia al frame principal.
     //private boolean loginActivo=true;
@@ -145,19 +146,23 @@ public class V_BarraMenu extends JMenuBar {
     private void inicializarReportes() {
         jmReportes = new JMenu("Reportes");
         jmiCobro = new JMenu("Cobros");
+        jmPago = new JMenu("Pago");
         jmiCobroPendiente = new JMenuItem("Cobros pendientes");
         jmiCobroPendienteVencidos = new JMenuItem("Cobros pendientes vencidos(30Días)");
         jmiCobroPendientePorCliente = new JMenuItem("Cobros pendientes por Cliente");
         jmiCobroPendientePorClienteVencidos = new JMenuItem("Cobros pendientes por Cliente vencidos(30Días)");
-        jmiEstadoCuenta = new JMenuItem("Estado de cuenta de clientes");
+        jmiEstadoCuentaClientes = new JMenuItem("Estado de cuenta de clientes");
+        jmiEstadoCuentaProveedores = new JMenuItem("Estado de cuenta de proveedores");
         jmReportes.add(jmiCobro);
-        jmiCobro.add(jmiEstadoCuenta);
+        jmReportes.add(jmPago);
+        jmiCobro.add(jmiEstadoCuentaClientes);
         jmiCobro.addSeparator();
         jmiCobro.add(jmiCobroPendiente);
         jmiCobro.add(jmiCobroPendienteVencidos);
         jmiCobro.addSeparator();
         jmiCobro.add(jmiCobroPendientePorCliente);
         jmiCobro.add(jmiCobroPendientePorClienteVencidos);
+        jmPago.add(jmiEstadoCuentaProveedores);
     }
 
 }
