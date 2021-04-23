@@ -3496,6 +3496,7 @@ public class DB_Produccion {
                     + "	producto_categoria.id_producto_categoria = producto.id_categoria "
                     + "where "
                     + "	produccion_cabecera.id_estado = 1 "
+                    + "AND produccion_cabecera.id_produccion_tipo = 1 "
                     + CRITERIA
                     + DATE_RANGE_PRODUCCION;
             String GROUP_BY = "group by producto.id_producto, "

@@ -19,7 +19,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.File;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -210,7 +209,6 @@ public class FiltroReportes extends JDialog implements ActionListener, KeyListen
             JOptionPane.showMessageDialog(this, "No se encontró la ubicación del reporte", "Atención", JOptionPane.WARNING_MESSAGE);
             return;
         }
-
         try {
             Map<String, Object> map = new HashMap<String, Object>();
             map.put("empresa_nombre", empresa.getEntidad());
@@ -218,8 +216,17 @@ public class FiltroReportes extends JDialog implements ActionListener, KeyListen
             map.put("fecha_desde", new java.sql.Date(fechaDesde.getTime()));
             map.put("fecha_hasta", new java.sql.Date(fechaHasta.getTime()));
             map.put("id_clientes", idClientes);
-            //map.put("subReport", subReport);
             map.put("subReport", subReports);
+            map.put("report", reporte);
+            
+            System.out.println("Reportes.FiltroReportes.generarReporte()");
+            System.out.println("empresa.getEntidad(): " + empresa.getEntidad());
+            System.out.println("empresa.getDescripcion(): " + empresa.getDescripcion());
+            System.out.println("fecha_desde: " + new java.sql.Date(fechaDesde.getTime()));
+            System.out.println("fecha_hasta: " + new java.sql.Date(fechaHasta.getTime()));
+            System.out.println("id_clientes: " + idClientes);
+            System.out.println("subReports: " + subReports);
+            System.out.println("report: " + reporte);
             JasperPrint jp = JasperFillManager.fillReport(reporte, map, DB_manager.getConection());
             JRViewer jv = new JRViewer(jp);
             JFrame jf = new JFrame();

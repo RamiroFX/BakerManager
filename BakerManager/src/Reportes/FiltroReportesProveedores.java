@@ -4,14 +4,10 @@
  */
 package Reportes;
 
-import Cliente.SeleccionarCliente;
 import DB.DB_manager;
 import Entities.E_Empresa;
-import Entities.M_cliente;
 import Entities.M_proveedor;
-import Interface.RecibirClienteCallback;
 import Interface.RecibirProveedorCallback;
-import ModeloTabla.ClienteTableModel;
 import ModeloTabla.ProveedorTableModel;
 import Proveedor.Seleccionar_proveedor;
 import com.toedter.calendar.JDateChooser;
@@ -23,13 +19,14 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.File;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JDialog;
@@ -42,6 +39,7 @@ import javax.swing.JToggleButton;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.TitledBorder;
 import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperCompileManager;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
@@ -207,16 +205,17 @@ public class FiltroReportesProveedores extends JDialog implements ActionListener
         try {
             file = new File(System.getProperty("user.dir") + "\\Assets\\Reportes\\ccp.jasper");
             subFile = new File(System.getProperty("user.dir") + "\\Assets\\Reportes\\ccp_subtotal.jasper");
-            System.out.println("master-file: " + file);
-            System.out.println("subRep-File: " + subFile);
-            reporte = (JasperReport) JRLoader.loadObject(file);
-            subReports = (JasperReport) JRLoader.loadObject(subFile);
+            File fileReporte = new File("Assets/Reportes/ccp.jasper");
+            File fileSubReporte = new File("Assets/Reportes/ccp_subtotal.jasper");
+            String path = fileReporte.getAbsolutePath();
+            reporte = (JasperReport) JRLoader.loadObject(fileReporte);
+            subReports = (JasperReport) JRLoader.loadObject(fileSubReporte);
+            System.out.println("path: " + path);
         } catch (JRException ex) {
             ex.printStackTrace();
             JOptionPane.showMessageDialog(this, "No se encontró la ubicación del reporte", "Atención", JOptionPane.WARNING_MESSAGE);
             return;
         }
-
         try {
             Map<String, Object> map = new HashMap<String, Object>();
             map.put("empresa_nombre", empresa.getEntidad());
@@ -232,6 +231,7 @@ public class FiltroReportesProveedores extends JDialog implements ActionListener
             System.out.println("fecha_hasta: " + new java.sql.Date(fechaHasta.getTime()));
             System.out.println("id_proveedores: " + idProveedores);
             System.out.println("subReports: " + subReports);
+            System.out.println("report: " + reporte);
             JasperPrint jp = JasperFillManager.fillReport(reporte, map, DB_manager.getConection());
             JRViewer jv = new JRViewer(jp);
             JFrame jf = new JFrame();
@@ -244,6 +244,9 @@ public class FiltroReportesProveedores extends JDialog implements ActionListener
         } catch (JRException ex) {
             ex.printStackTrace();
             JOptionPane.showMessageDialog(this, "Hubo un problema al generar el reporte, intentelo nuevamente", "Alerta", JOptionPane.WARNING_MESSAGE);
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Hubo un error al generar el reporte, intentelo nuevamente", "Alerta", JOptionPane.WARNING_MESSAGE);
         }
     }
 

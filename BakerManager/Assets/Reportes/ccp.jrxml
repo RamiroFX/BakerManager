@@ -16,8 +16,12 @@
 	<parameter name="id_proveedores" class="java.util.Collection" nestedType="java.lang.Integer">
 		<defaultValueExpression><![CDATA[new ArrayList(Arrays.asList())]]></defaultValueExpression>
 	</parameter>
-	<parameter name="fecha_desde" class="java.sql.Date"/>
-	<parameter name="fecha_hasta" class="java.sql.Date"/>
+	<parameter name="fecha_desde" class="java.sql.Date">
+		<defaultValueExpression><![CDATA[NOW( )]]></defaultValueExpression>
+	</parameter>
+	<parameter name="fecha_hasta" class="java.sql.Date">
+		<defaultValueExpression><![CDATA[NOW( )]]></defaultValueExpression>
+	</parameter>
 	<parameter name="empresa_nombre" class="java.lang.String"/>
 	<parameter name="empresa_descripcion" class="java.lang.String"/>
 	<parameter name="subReport" class="net.sf.jasperreports.engine.JasperReport">
