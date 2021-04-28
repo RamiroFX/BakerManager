@@ -24,9 +24,9 @@ import javax.swing.JTextField;
 public class V_configuracionFactura extends javax.swing.JDialog {
 
     private final String paperHint = "A4(595 x 842)pixels";
-    public javax.swing.JButton jbCancelar, jbAgregarCampo, jbModificarCampo,
+    public javax.swing.JButton jbNuevo, jbCancelar, jbAgregarCampo, jbModificarCampo,
             jbHabilitarDeshabilitarCampo, jbImprimirPaginaPrueba, jbOcultarMostrarCampo;
-    public javax.swing.JPanel jpSouth, jpFactura, jpFacturaPreferences,
+    public javax.swing.JPanel jpNorth, jpSouth, jpFactura, jpFacturaPreferences,
             jpImpresoraYPapel;
     public javax.swing.JTabbedPane jtpCenter;
     public JTable jtFactura;
@@ -41,6 +41,7 @@ public class V_configuracionFactura extends javax.swing.JDialog {
     public javax.swing.JButton jbGuardarPreferencias, jbGuardarImpresora;
     public javax.swing.JLabel jlOrientacion;
     public JComboBox<E_impresionOrientacion> jcbOrientacion;
+    public JComboBox jcbPlantillas;
 
     public V_configuracionFactura(JFrame frame) {
         super(frame, true);
@@ -62,12 +63,19 @@ public class V_configuracionFactura extends javax.swing.JDialog {
         jtpCenter.add("Coord. de parametros", jpFactura);
         jtpCenter.add("Preferencias", jpFacturaPreferences);
         jtpCenter.add("Impresora y papel", jpImpresoraYPapel);
+        getContentPane().add(jpNorth, java.awt.BorderLayout.NORTH);
         getContentPane().add(jtpCenter, java.awt.BorderLayout.CENTER);
         getContentPane().add(jpSouth, java.awt.BorderLayout.SOUTH);
         pack();
     }
 
     private void initPanelNorth() {
+        jpNorth = new javax.swing.JPanel();
+        jcbPlantillas = new javax.swing.JComboBox();
+        jcbPlantillas.addItem("Factura beracah");
+        jcbPlantillas.addItem("Escencia de lo Alto");
+        jpNorth.add(new JLabel("Plantilla"));
+        jpNorth.add(jcbPlantillas);
         //Panel
         jpFactura = new javax.swing.JPanel(new java.awt.BorderLayout());
         jpFacturaPreferences = new javax.swing.JPanel(new java.awt.BorderLayout());
@@ -116,6 +124,7 @@ public class V_configuracionFactura extends javax.swing.JDialog {
     private void initPanelSouth() {
         jpSouth = new javax.swing.JPanel(new java.awt.BorderLayout());
         //jpSouth.setBorder(new javax.swing.border.EtchedBorder());
+        jbNuevo = new javax.swing.JButton("Nuevo");
         jbCancelar = new javax.swing.JButton("Salir");
         jbAgregarCampo = new javax.swing.JButton("Agregar");
         jbModificarCampo = new javax.swing.JButton("Modificar");
@@ -130,6 +139,7 @@ public class V_configuracionFactura extends javax.swing.JDialog {
         jpSouthButtons.add(jbOcultarMostrarCampo);
         javax.swing.JPanel jpBotones = new javax.swing.JPanel();
         jpBotones.setBorder(new javax.swing.border.EtchedBorder());
+        jpBotones.add(jbNuevo);
         jpBotones.add(jbCancelar);
         jpFactura.add(jpSouthButtons, BorderLayout.SOUTH);
         jpSouth.add(jpBotones);

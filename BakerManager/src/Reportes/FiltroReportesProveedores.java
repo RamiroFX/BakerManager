@@ -205,12 +205,8 @@ public class FiltroReportesProveedores extends JDialog implements ActionListener
         try {
             file = new File(System.getProperty("user.dir") + "\\Assets\\Reportes\\ccp.jasper");
             subFile = new File(System.getProperty("user.dir") + "\\Assets\\Reportes\\ccp_subtotal.jasper");
-            File fileReporte = new File("Assets/Reportes/ccp.jasper");
-            File fileSubReporte = new File("Assets/Reportes/ccp_subtotal.jasper");
-            String path = fileReporte.getAbsolutePath();
-            reporte = (JasperReport) JRLoader.loadObject(fileReporte);
-            subReports = (JasperReport) JRLoader.loadObject(fileSubReporte);
-            System.out.println("path: " + path);
+            reporte = (JasperReport) JRLoader.loadObject(file);
+            subReports = (JasperReport) JRLoader.loadObject(subFile);
         } catch (JRException ex) {
             ex.printStackTrace();
             JOptionPane.showMessageDialog(this, "No se encontró la ubicación del reporte", "Atención", JOptionPane.WARNING_MESSAGE);
@@ -224,14 +220,6 @@ public class FiltroReportesProveedores extends JDialog implements ActionListener
             map.put("fecha_hasta", new java.sql.Date(fechaHasta.getTime()));
             map.put("id_proveedores", idProveedores);
             map.put("subReport", subReports);
-            System.out.println("Reportes.FiltroReportesProveedores.generarReporte()");
-            System.out.println("empresa.getEntidad(): " + empresa.getEntidad());
-            System.out.println("empresa.getDescripcion(): " + empresa.getDescripcion());
-            System.out.println("fecha_desde: " + new java.sql.Date(fechaDesde.getTime()));
-            System.out.println("fecha_hasta: " + new java.sql.Date(fechaHasta.getTime()));
-            System.out.println("id_proveedores: " + idProveedores);
-            System.out.println("subReports: " + subReports);
-            System.out.println("report: " + reporte);
             JasperPrint jp = JasperFillManager.fillReport(reporte, map, DB_manager.getConection());
             JRViewer jv = new JRViewer(jp);
             JFrame jf = new JFrame();

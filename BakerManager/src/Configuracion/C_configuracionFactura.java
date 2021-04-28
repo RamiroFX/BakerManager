@@ -5,9 +5,9 @@
  */
 package Configuracion;
 
+import Configuracion.CrearPlantillaImpresion.CrearPlantillaVenta;
 import DB.DB_Preferencia;
 import Entities.E_Divisa;
-import Entities.E_impresionOrientacion;
 import Entities.M_campoImpresion;
 import Entities.M_preferenciasImpresion;
 import Interface.crearModificarParametroCallback;
@@ -22,7 +22,7 @@ import java.awt.event.MouseListener;
 
 /**
  *
- * @author Ramiro
+ * @author Ramiro Ferreira
  */
 public class C_configuracionFactura extends MouseAdapter implements ActionListener, KeyListener, MouseListener, crearModificarParametroCallback {
 
@@ -66,6 +66,7 @@ public class C_configuracionFactura extends MouseAdapter implements ActionListen
         this.vista.jbOcultarMostrarCampo.addActionListener(this);
         this.vista.jbGuardarPreferencias.addActionListener(this);
         this.vista.jbGuardarImpresora.addActionListener(this);
+        this.vista.jbNuevo.addActionListener(this);
         this.vista.jtFactura.addMouseListener(this);
     }
 
@@ -410,6 +411,11 @@ public class C_configuracionFactura extends MouseAdapter implements ActionListen
         Impresora.imprimirFacturaPrueba();
     }
 
+    private void invocarCrearPlantilla() {
+        CrearPlantillaVenta cpv = new CrearPlantillaVenta(this.vista);
+        cpv.mostrarVista();
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == this.vista.jbCancelar) {
@@ -428,6 +434,8 @@ public class C_configuracionFactura extends MouseAdapter implements ActionListen
             guardarPreferencia();
         } else if (e.getSource() == this.vista.jbGuardarImpresora) {
             guardarPreferencia();
+        } else if (e.getSource() == this.vista.jbNuevo) {
+            invocarCrearPlantilla();
         }
     }
 

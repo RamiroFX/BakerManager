@@ -218,15 +218,6 @@ public class FiltroReportes extends JDialog implements ActionListener, KeyListen
             map.put("id_clientes", idClientes);
             map.put("subReport", subReports);
             map.put("report", reporte);
-            
-            System.out.println("Reportes.FiltroReportes.generarReporte()");
-            System.out.println("empresa.getEntidad(): " + empresa.getEntidad());
-            System.out.println("empresa.getDescripcion(): " + empresa.getDescripcion());
-            System.out.println("fecha_desde: " + new java.sql.Date(fechaDesde.getTime()));
-            System.out.println("fecha_hasta: " + new java.sql.Date(fechaHasta.getTime()));
-            System.out.println("id_clientes: " + idClientes);
-            System.out.println("subReports: " + subReports);
-            System.out.println("report: " + reporte);
             JasperPrint jp = JasperFillManager.fillReport(reporte, map, DB_manager.getConection());
             JRViewer jv = new JRViewer(jp);
             JFrame jf = new JFrame();
