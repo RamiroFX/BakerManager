@@ -6,6 +6,7 @@
 package Configuracion;
 
 import Entities.E_impresionOrientacion;
+import Entities.E_impresionPlantilla;
 import java.awt.BorderLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -41,7 +42,7 @@ public class V_configuracionFactura extends javax.swing.JDialog {
     public javax.swing.JButton jbGuardarPreferencias, jbGuardarImpresora;
     public javax.swing.JLabel jlOrientacion;
     public JComboBox<E_impresionOrientacion> jcbOrientacion;
-    public JComboBox jcbPlantillas;
+    public JComboBox<E_impresionPlantilla> jcbPlantillas;
 
     public V_configuracionFactura(JFrame frame) {
         super(frame, true);
@@ -72,8 +73,6 @@ public class V_configuracionFactura extends javax.swing.JDialog {
     private void initPanelNorth() {
         jpNorth = new javax.swing.JPanel();
         jcbPlantillas = new javax.swing.JComboBox();
-        jcbPlantillas.addItem("Factura beracah");
-        jcbPlantillas.addItem("Escencia de lo Alto");
         jpNorth.add(new JLabel("Plantilla"));
         jpNorth.add(jcbPlantillas);
         //Panel

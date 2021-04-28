@@ -45,7 +45,7 @@ public class CompraBoletaPrintable implements Printable {
         this.preferencia = preferencia;
         this.facturaCabecera = facturaCabecera;
         this.facturaDetalle = facturaDetalle;
-        this.campoImpresiones = DB_manager.obtenerCampoImpresion(3, MyConstants.ACTIVO);
+        this.campoImpresiones = DB_manager.obtenerCampoImpresionPorPlantilla(3, MyConstants.ACTIVO);
         this.empresa = DB_manager.obtenerDatosEmpresa();
         this.decimalFormat = new DecimalFormat("###,###.###");
     }

@@ -321,6 +321,65 @@ public class DB_Preferencia {
         }
         return prefPrint;
     }
+    
+    public static M_preferenciasImpresion obtenerPreferenciaImpresion(int idPlantilla) {
+        M_preferenciasImpresion prefPrint = null;
+        String Query = "SELECT id_preferencia_impresion, "
+                + "tamanho_letra, "
+                + "tipo_letra, "
+                + "formato_fecha, "
+                + "max_producto, "
+                + "id_estado_duplicado, "
+                + "id_estado_triplicado, "
+                + "distancia_entre_copias, "
+                + "id_imprimir_moneda, "
+                + "id_divisa, "
+                + "nombre_impresora, "
+                + "ancho_pagina, "
+                + "largo_pagina, "
+                + "margen_x, "
+                + "margen_y, "
+                + "id_impresion_orientacion, "
+                + "(SELECT descripcion FROM divisa WHERE id_divisa = preferencia_impresion.id_divisa)\"divisa_descripcion\", "
+                + "(SELECT descripcion FROM impresion_orientacion WHERE id_impresion_orientacion = preferencia_impresion.id_impresion_orientacion)\"orientacion_descripcion\", "
+                + "distancia_triplicado "
+                + "FROM preferencia_impresion WHERE id_impresion_plantilla = ? ";
+        try {
+            pst = DB_manager.getConection().prepareStatement(Query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            pst.setInt(1, idPlantilla);
+            rs = pst.executeQuery();            
+            while (rs.next()) {
+                E_Divisa d = new E_Divisa();
+                d.setId(rs.getInt("id_divisa"));
+                d.setDescripcion(rs.getString("divisa_descripcion"));
+                E_impresionOrientacion o = new E_impresionOrientacion();
+                o.setId(rs.getInt("id_impresion_orientacion"));
+                o.setDescripcion(rs.getString("orientacion_descripcion"));
+                prefPrint = new M_preferenciasImpresion();
+                prefPrint.setDistanceBetweenCopies(rs.getInt("distancia_entre_copias"));
+                prefPrint.setDivisa(d);
+                prefPrint.setOrientacion(o);
+                prefPrint.setId(rs.getInt("id_preferencia_impresion"));
+                prefPrint.setIdDuplicado(rs.getInt("id_estado_duplicado"));
+                prefPrint.setIdTriplicado(rs.getInt("id_estado_triplicado"));
+                prefPrint.setImprimirMoneda(rs.getInt("id_imprimir_moneda"));
+                prefPrint.setLetterFont(rs.getString("tipo_letra"));
+                prefPrint.setFormatoFecha(rs.getString("formato_fecha"));
+                prefPrint.setNombreImpresora(rs.getString("nombre_impresora"));
+                prefPrint.setLetterSize(rs.getInt("tamanho_letra"));
+                prefPrint.setMaxProducts(rs.getInt("max_producto"));
+                prefPrint.setAnchoPagina(rs.getInt("ancho_pagina"));
+                prefPrint.setLargoPagina(rs.getInt("largo_pagina"));
+                prefPrint.setMargenX(rs.getDouble("margen_x"));
+                prefPrint.setMargenY(rs.getDouble("margen_y"));
+                prefPrint.setDistanceForTriplicate(rs.getInt("distancia_triplicado"));
+            }
+        } catch (SQLException ex) {
+            Logger lgr = Logger.getLogger(DB_Producto.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        }
+        return prefPrint;
+    }
 
     public static E_ticketPreferencia obtenerPreferenciaImpresionTicket() {
         E_ticketPreferencia ticketPref = null;

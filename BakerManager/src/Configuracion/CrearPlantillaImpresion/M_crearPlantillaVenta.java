@@ -38,8 +38,8 @@ public class M_crearPlantillaVenta {
     }
 
     private void inicializarDatos() {
-        preferenciasImpresion = DB_Preferencia.obtenerPreferenciaImpresionFactura();
-        ArrayList<M_campoImpresion> campoImpresionLista = DB_manager.obtenerCampoImpresion(2, MyConstants.TODOS);
+        preferenciasImpresion = DB_Preferencia.obtenerPreferenciaImpresion(1);
+        ArrayList<M_campoImpresion> campoImpresionLista = DB_manager.obtenerCampoImpresionPorPlantilla(1, MyConstants.TODOS);
         impresionFacturaTM.setCampoImpresionList(campoImpresionLista);
     }
 
@@ -77,7 +77,7 @@ public class M_crearPlantillaVenta {
     }
 
     public void updateTable() {
-        ArrayList<M_campoImpresion> campoImpresionLista = DB_manager.obtenerCampoImpresion(2, MyConstants.TODOS);
+        ArrayList<M_campoImpresion> campoImpresionLista = DB_manager.obtenerCampoImpresionPorPlantilla(2, MyConstants.TODOS);
         impresionFacturaTM.setCampoImpresionList(campoImpresionLista);
         this.impresionFacturaTM.updateTable();
     }
@@ -99,11 +99,11 @@ public class M_crearPlantillaVenta {
 
     public void ocultarMostrarCampo() {
         if (isIsVisible()) {
-            ArrayList<M_campoImpresion> campoImpresionLista = DB_manager.obtenerCampoImpresion(2, MyConstants.ACTIVO);
+            ArrayList<M_campoImpresion> campoImpresionLista = DB_manager.obtenerCampoImpresionPorPlantilla(2, MyConstants.ACTIVO);
             impresionFacturaTM.setCampoImpresionList(campoImpresionLista);
             this.impresionFacturaTM.updateTable();
         } else {
-            ArrayList<M_campoImpresion> campoImpresionLista = DB_manager.obtenerCampoImpresion(2, MyConstants.TODOS);
+            ArrayList<M_campoImpresion> campoImpresionLista = DB_manager.obtenerCampoImpresionPorPlantilla(2, MyConstants.TODOS);
             impresionFacturaTM.setCampoImpresionList(campoImpresionLista);
             this.impresionFacturaTM.updateTable();
         }

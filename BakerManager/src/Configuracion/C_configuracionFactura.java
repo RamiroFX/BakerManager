@@ -8,6 +8,7 @@ package Configuracion;
 import Configuracion.CrearPlantillaImpresion.CrearPlantillaVenta;
 import DB.DB_Preferencia;
 import Entities.E_Divisa;
+import Entities.E_impresionPlantilla;
 import Entities.M_campoImpresion;
 import Entities.M_preferenciasImpresion;
 import Interface.crearModificarParametroCallback;
@@ -58,6 +59,7 @@ public class C_configuracionFactura extends MouseAdapter implements ActionListen
      * Agrega ActionListeners los controles.
      */
     private void agregarListeners() {
+        this.vista.jcbPlantillas.addActionListener(this);
         this.vista.jbCancelar.addActionListener(this);
         this.vista.jbAgregarCampo.addActionListener(this);
         this.vista.jbModificarCampo.addActionListener(this);
@@ -90,6 +92,40 @@ public class C_configuracionFactura extends MouseAdapter implements ActionListen
         for (int i = 0; i < modelo.getOrientations().size(); i++) {
             this.vista.jcbOrientacion.addItem(modelo.getOrientations().get(i));
         }
+        for (int i = 0; i < modelo.getPlantillas().size(); i++) {
+            this.vista.jcbPlantillas.addItem(modelo.getPlantillas().get(i));
+        }/*
+        this.vista.jcbMoneda.addItem(new E_Divisa(1, "Guaraní/es"));
+        this.vista.jtfDistanciaEntreCopias.setText(modelo.getPreferenciasImpresion().getDistanceBetweenCopies() + "");
+        this.vista.jtfTipoLetra.setText(modelo.getPreferenciasImpresion().getLetterFont());
+        this.vista.jcbCantProd.setSelectedItem(modelo.getPreferenciasImpresion().getMaxProducts());
+        this.vista.jcbTamañoLetra.setSelectedItem(modelo.getPreferenciasImpresion().getLetterSize());
+        this.vista.jcbFormatoFecha.setSelectedItem(modelo.getPreferenciasImpresion().getFormatoFecha());
+        if (modelo.getPreferenciasImpresion().getIdDuplicado() == 1) {
+            this.vista.jchkDuplicado.setSelected(true);
+        } else {
+            this.vista.jchkDuplicado.setSelected(false);
+        }
+        if (modelo.getPreferenciasImpresion().getIdTriplicado() == 1) {
+            this.vista.jchkTriplicado.setSelected(true);
+        } else {
+            this.vista.jchkTriplicado.setSelected(false);
+        }
+        if (modelo.getPreferenciasImpresion().getImprimirMoneda() == 1) {
+            this.vista.jchkMoneda.setSelected(true);
+        } else {
+            this.vista.jchkMoneda.setSelected(false);
+        }
+        this.vista.jcbOrientacion.setSelectedItem(modelo.getPreferenciasImpresion().getOrientacion());
+        this.vista.jtfNombreImpresora.setText(modelo.getPreferenciasImpresion().getNombreImpresora());
+        this.vista.jtfAnchoPapel.setText(modelo.getPreferenciasImpresion().getAnchoPagina() + "");
+        this.vista.jtfLargoPapel.setText(modelo.getPreferenciasImpresion().getLargoPagina() + "");
+        this.vista.jtfMargenX.setText(modelo.getPreferenciasImpresion().getMargenX() + "");
+        this.vista.jtfMargenY.setText(modelo.getPreferenciasImpresion().getMargenY() + "");*/
+    }
+
+    private void actualizarVista() {
+        //panel de preferencia
         this.vista.jcbMoneda.addItem(new E_Divisa(1, "Guaraní/es"));
         this.vista.jtfDistanciaEntreCopias.setText(modelo.getPreferenciasImpresion().getDistanceBetweenCopies() + "");
         this.vista.jtfTipoLetra.setText(modelo.getPreferenciasImpresion().getLetterFont());
@@ -416,6 +452,12 @@ public class C_configuracionFactura extends MouseAdapter implements ActionListen
         cpv.mostrarVista();
     }
 
+    private void jcbPlantillasHandler() {
+        E_impresionPlantilla plantilla = vista.jcbPlantillas.getItemAt(vista.jcbPlantillas.getSelectedIndex());
+        modelo.inicializarDatos(plantilla.getId());
+        actualizarVista();
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == this.vista.jbCancelar) {
@@ -436,6 +478,8 @@ public class C_configuracionFactura extends MouseAdapter implements ActionListen
             guardarPreferencia();
         } else if (e.getSource() == this.vista.jbNuevo) {
             invocarCrearPlantilla();
+        } else if (e.getSource() == this.vista.jcbPlantillas) {
+            jcbPlantillasHandler();
         }
     }
 

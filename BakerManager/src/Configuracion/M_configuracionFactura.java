@@ -9,6 +9,7 @@ import DB.DB_Preferencia;
 import DB.DB_manager;
 import DB.ResultSetTableModel;
 import Entities.E_impresionOrientacion;
+import Entities.E_impresionPlantilla;
 import Entities.M_campoImpresion;
 import Entities.M_preferenciasImpresion;
 import ModeloTabla.ImpresionTableModel;
@@ -32,14 +33,13 @@ public class M_configuracionFactura {
 
     public M_configuracionFactura() {
         impresionFacturaTM = new ImpresionTableModel();
-        inicializarDatos();
         isVisible = true;
         formatoFechas = new String[]{"dd/MMMM/yy", "dd/MMMM/yyyy", "dd/MM/yyyy"};
     }
 
-    private void inicializarDatos() {
-        preferenciasImpresion = DB_Preferencia.obtenerPreferenciaImpresionFactura();
-        ArrayList<M_campoImpresion> campoImpresionLista = DB_manager.obtenerCampoImpresion(2, MyConstants.TODOS);
+    public void inicializarDatos(int idPlantilla) {
+        preferenciasImpresion = DB_Preferencia.obtenerPreferenciaImpresion(idPlantilla);
+        ArrayList<M_campoImpresion> campoImpresionLista = DB_manager.obtenerCampoImpresionPorPlantilla(idPlantilla, MyConstants.TODOS);
         impresionFacturaTM.setCampoImpresionList(campoImpresionLista);
     }
 
@@ -77,7 +77,7 @@ public class M_configuracionFactura {
     }
 
     public void updateTable() {
-        ArrayList<M_campoImpresion> campoImpresionLista = DB_manager.obtenerCampoImpresion(2, MyConstants.TODOS);
+        ArrayList<M_campoImpresion> campoImpresionLista = DB_manager.obtenerCampoImpresionPorPlantilla(2, MyConstants.TODOS);
         impresionFacturaTM.setCampoImpresionList(campoImpresionLista);
         this.impresionFacturaTM.updateTable();
     }
@@ -99,11 +99,11 @@ public class M_configuracionFactura {
 
     public void ocultarMostrarCampo() {
         if (isIsVisible()) {
-            ArrayList<M_campoImpresion> campoImpresionLista = DB_manager.obtenerCampoImpresion(2, MyConstants.ACTIVO);
+            ArrayList<M_campoImpresion> campoImpresionLista = DB_manager.obtenerCampoImpresionPorPlantilla(2, MyConstants.ACTIVO);
             impresionFacturaTM.setCampoImpresionList(campoImpresionLista);
             this.impresionFacturaTM.updateTable();
         } else {
-            ArrayList<M_campoImpresion> campoImpresionLista = DB_manager.obtenerCampoImpresion(2, MyConstants.TODOS);
+            ArrayList<M_campoImpresion> campoImpresionLista = DB_manager.obtenerCampoImpresionPorPlantilla(2, MyConstants.TODOS);
             impresionFacturaTM.setCampoImpresionList(campoImpresionLista);
             this.impresionFacturaTM.updateTable();
         }
@@ -145,6 +145,10 @@ public class M_configuracionFactura {
 
     public ArrayList<E_impresionOrientacion> getOrientations() {
         return DB_Preferencia.obtenerImpresionOrientacion();
+    }
+
+    public ArrayList<E_impresionPlantilla> getPlantillas() {
+        return DB_manager.obtenerImpresionPlantillas(-1);
     }
 
 }

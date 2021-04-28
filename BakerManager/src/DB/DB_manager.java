@@ -10,6 +10,7 @@ import Entities.E_Marca;
 import Entities.E_banco;
 import Entities.E_estadoPedido;
 import Entities.E_formaPago;
+import Entities.E_impresionPlantilla;
 import Entities.E_impuesto;
 import Entities.E_tipoCheque;
 import Entities.E_tipoOperacion;
@@ -189,22 +190,78 @@ public class DB_manager {
         return rubro;
     }
 
-    public static ArrayList<M_campoImpresion> obtenerCampoImpresion(int idImpresionTipo, int status) {
+    public static ArrayList<M_campoImpresion> obtenerCampoImpresionPorPlantilla(int idImpresionPlantilla, int status) {
+        ArrayList<M_campoImpresion> campoImpresionList = null;
+        String Query = "";
+
+        if (status == MyConstants.TODOS) {
+            Query = "SELECT IC.ID_IMPRESION_CAMPO, IC.DESCRIPCION, IC.COORDENADA_X, IC.COORDENADA_Y, "
+                    + "ESTADO.ID_ESTADO , ESTADO.DESCRIPCION "
+                    + "FROM IMPRESION_CAMPO IC, ESTADO, IMPRESION_PLANTILLA IP "
+                    + "WHERE IP.ID_IMPRESION_PLANTILLA = ? "
+                    + "AND IC.ID_ESTADO = ESTADO.ID_ESTADO "
+                    + "AND IC.ID_IMPRESION_PLANTILLA = IP.ID_IMPRESION_PLANTILLA "
+                    + "ORDER BY IC.ID_IMPRESION_CAMPO;";
+        } else {
+            Query = "SELECT IC.ID_IMPRESION_CAMPO, IC.DESCRIPCION, IC.COORDENADA_X, IC.COORDENADA_Y, "
+                    + "ESTADO.ID_ESTADO , ESTADO.DESCRIPCION "
+                    + "FROM IMPRESION_CAMPO IC, ESTADO, IMPRESION_PLANTILLA IP "
+                    + "WHERE IP.ID_IMPRESION_PLANTILLA = ? "
+                    + "AND IC.ID_ESTADO = ? "
+                    + "AND IC.ID_ESTADO = ESTADO.ID_ESTADO "
+                    + "AND IC.ID_IMPRESION_PLANTILLA = IP.ID_IMPRESION_PLANTILLA "
+                    + "ORDER BY IC.ID_IMPRESION_CAMPO;";
+        }
+        try {
+            pst = DB_manager.getConection().prepareStatement(Query);
+            pst.setInt(1, idImpresionPlantilla);
+            if (status == MyConstants.TODOS) {
+                pst.setInt(1, idImpresionPlantilla);
+            } else {
+                pst.setInt(1, idImpresionPlantilla);
+                pst.setInt(2, status);
+            }
+            rs = pst.executeQuery();
+            campoImpresionList = new ArrayList();
+            while (rs.next()) {
+                Estado estado = new Estado();
+                estado.setId(rs.getInt(5));
+                estado.setDescripcion(rs.getString(6));
+                M_campoImpresion ci = new M_campoImpresion();
+                ci.setId(rs.getInt(1));
+                ci.setCampo(rs.getString(2));
+                ci.setX(rs.getDouble(3));
+                ci.setY(rs.getDouble(4));
+                ci.setEstado(estado);
+                campoImpresionList.add(ci);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return campoImpresionList;
+    }
+
+    public static ArrayList<M_campoImpresion> obtenerCampoImpresionPorTipo(int idImpresionTipo, int status) {
         ArrayList<M_campoImpresion> campoImpresionList = null;
         String Query = "";
 
         if (status == MyConstants.TODOS) {
             Query = "SELECT IMPRESION_CAMPO.ID_IMPRESION_CAMPO, IMPRESION_CAMPO.DESCRIPCION, IMPRESION_CAMPO.COORDENADA_X, IMPRESION_CAMPO.COORDENADA_Y, "
-                    + "ESTADO.ID_ESTADO , ESTADO.DESCRIPCION FROM IMPRESION_CAMPO, ESTADO "
-                    + "WHERE IMPRESION_CAMPO.ID_IMPRESION_TIPO = ? AND IMPRESION_CAMPO.ID_ESTADO= ESTADO.ID_ESTADO "
+                    + "ESTADO.ID_ESTADO , ESTADO.DESCRIPCION "
+                    + "FROM IMPRESION_CAMPO IC, ESTADO, IMPRESION_PLANTILLA IP "
+                    + "WHERE IP.ID_IMPRESION_TIPO = ? "
+                    + "AND IC.ID_ESTADO = ESTADO.ID_ESTADO "
+                    + "AND IC.ID_IMPRESION_PLANTILLA = IP.ID_IMPRESION_PLANTILLA "
                     + "ORDER BY IMPRESION_CAMPO.ID_IMPRESION_CAMPO;";
         } else {
-            Query = "SELECT IMPRESION_CAMPO.ID_IMPRESION_CAMPO, IMPRESION_CAMPO.DESCRIPCION, IMPRESION_CAMPO.COORDENADA_X, IMPRESION_CAMPO.COORDENADA_Y, "
-                    + "ESTADO.ID_ESTADO , ESTADO.DESCRIPCION FROM IMPRESION_CAMPO, ESTADO "
-                    + "WHERE IMPRESION_CAMPO.ID_IMPRESION_TIPO = ? "
-                    + "AND IMPRESION_CAMPO.ID_ESTADO = ? "
-                    + "AND IMPRESION_CAMPO.ID_ESTADO = ESTADO.ID_ESTADO "
-                    + "ORDER BY IMPRESION_CAMPO.ID_IMPRESION_CAMPO;";
+            Query = "SELECT IC.ID_IMPRESION_CAMPO, IC.DESCRIPCION, IC.COORDENADA_X, IC.COORDENADA_Y, "
+                    + "ESTADO.ID_ESTADO , ESTADO.DESCRIPCION "
+                    + "FROM IMPRESION_CAMPO IC, ESTADO, IMPRESION_PLANTILLA IP "
+                    + "WHERE IP.ID_IMPRESION_TIPO = ? "
+                    + "AND IC.ID_ESTADO = ? "
+                    + "AND IC.ID_ESTADO = ESTADO.ID_ESTADO "
+                    + "AND IC.ID_IMPRESION_PLANTILLA = IP.ID_IMPRESION_PLANTILLA "
+                    + "ORDER BY IP.ID_IMPRESION_CAMPO;";
         }
         try {
             pst = DB_manager.getConection().prepareStatement(Query);
@@ -233,6 +290,33 @@ public class DB_manager {
             ex.printStackTrace();
         }
         return campoImpresionList;
+    }
+
+    public static ArrayList<E_impresionPlantilla> obtenerImpresionPlantillas(int idTipo) {
+        ArrayList<E_impresionPlantilla> impresionPlantilla = null;
+        String q = "";
+        if (idTipo > 0) {
+            q = "SELECT * FROM impresion_plantilla WHERE id_tipo = ? ;";
+        } else {
+            q = "SELECT * FROM impresion_plantilla ";
+        }
+        try {
+            pst = DB_manager.getConection().prepareStatement(q);
+            if (idTipo > 0) {
+                pst.setInt(1, idTipo);
+            }
+            rs = pst.executeQuery();
+            impresionPlantilla = new ArrayList();
+            while (rs.next()) {
+                E_impresionPlantilla pc = new E_impresionPlantilla();
+                pc.setId(rs.getInt("id_impresion_plantilla"));
+                pc.setDescripcion(rs.getString("descripcion"));
+                impresionPlantilla.add(pc);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return impresionPlantilla;
     }
 
     public static boolean existeCampoParametro(int idTipo, String campoParametroDescripcion) {
