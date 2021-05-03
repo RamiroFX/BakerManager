@@ -23,6 +23,10 @@ public class ImpresionTableModel extends AbstractTableModel {
         campoImpresionList = new ArrayList<>();
     }
 
+    public List<M_campoImpresion> getList() {
+        return campoImpresionList;
+    }
+
     @Override
     public String getColumnName(int i) {
         return this.colNames[i];

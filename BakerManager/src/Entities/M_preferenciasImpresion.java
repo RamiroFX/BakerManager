@@ -28,6 +28,7 @@ public class M_preferenciasImpresion {
     private String nombreImpresora;
     private E_Divisa divisa;
     private E_impresionOrientacion orientacion;
+    private E_impresionPlantilla plantilla;
 
     /**
      * @return the id
@@ -225,5 +226,13 @@ public class M_preferenciasImpresion {
 
     public void setDistanceForTriplicate(int distanceForTriplicate) {
         this.distanceForTriplicate = distanceForTriplicate;
+    }
+
+    public E_impresionPlantilla getPlantilla() {
+        return plantilla;
+    }
+
+    public void setPlantilla(E_impresionPlantilla plantilla) {
+        this.plantilla = plantilla;
     }
 }

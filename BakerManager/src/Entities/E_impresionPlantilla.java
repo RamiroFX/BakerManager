@@ -11,6 +11,8 @@ package Entities;
  */
 public class E_impresionPlantilla {
 
+    public static final int TICKET = 1, FACTURA = 2, BOLETA = 3;
+
     private int id;
     private String descripcion;
     private E_impresionTipo tipo;
@@ -55,5 +57,5 @@ public class E_impresionPlantilla {
     public String toString() {
         return getDescripcion();
     }
-    
+
 }

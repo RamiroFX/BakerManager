@@ -148,7 +148,7 @@ public class M_configuracionFactura {
     }
 
     public ArrayList<E_impresionPlantilla> getPlantillas() {
-        return DB_manager.obtenerImpresionPlantillas(-1);
+        return DB_manager.obtenerImpresionPlantillas(E_impresionPlantilla.FACTURA);
     }
 
 }

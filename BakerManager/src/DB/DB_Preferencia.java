@@ -7,15 +7,19 @@ package DB;
 
 import Entities.E_Divisa;
 import Entities.E_impresionOrientacion;
+import Entities.E_impresionPlantilla;
 import Entities.E_impresionTipo;
 import Entities.E_preferenciaGeneral;
 import Entities.E_ticketPreferencia;
+import Entities.M_campoImpresion;
 import Entities.M_preferenciasImpresion;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -28,6 +32,89 @@ public class DB_Preferencia {
     private static Statement st = null;
     private static PreparedStatement pst = null;
     private static ResultSet rs = null;
+
+    public static long insertarPlantilla(E_impresionPlantilla plantilla, M_preferenciasImpresion cabecera, List<M_campoImpresion> campos) {
+        String INSERT_TEMPLATE = "INSERT INTO impresion_plantilla (id_impresion_tipo, descripcion, id_estado) VALUES(?, ?, ?);";
+        String INSERT_PRINT_FIELD = "INSERT INTO IMPRESION_CAMPO("
+                + "ID_IMPRESION_PLANTILLA, DESCRIPCION, COORDENADA_X, COORDENADA_Y, ID_ESTADO"
+                + ")VALUES (?,?,?,?,?);";
+        String QUERY = "INSERT INTO preferencia_impresion (tamanho_letra, tipo_letra, formato_fecha, max_producto, "
+                + "id_estado_duplicado, id_estado_triplicado, distancia_entre_copias, id_imprimir_moneda, "
+                + "nombre_impresora, ancho_pagina, largo_pagina, margen_x, margen_y, id_divisa, "
+                + "id_impresion_orientacion, distancia_triplicado, id_impresion_plantilla) "
+                + "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
+        long sq_cabecera = -1L;
+        try {
+            DB_manager.getConection().setAutoCommit(false);
+            pst = DB_manager.getConection().prepareStatement(INSERT_TEMPLATE, PreparedStatement.RETURN_GENERATED_KEYS);
+            pst.setInt(1, plantilla.getTipo().getId());
+            pst.setString(2, plantilla.getDescripcion());
+            pst.setInt(3, plantilla.getEstado().getId());
+            pst.executeUpdate();
+            rs = pst.getGeneratedKeys();
+            if (rs != null && rs.next()) {
+                sq_cabecera = rs.getLong(1);
+            }
+            pst.close();
+            rs.close();
+            for (M_campoImpresion unCampo : campos) {
+                pst = DB_manager.getConection().prepareStatement(INSERT_PRINT_FIELD);
+                pst.setInt(1, (int) sq_cabecera);
+                pst.setString(2, unCampo.getCampo());
+                pst.setDouble(3, unCampo.getX());
+                pst.setDouble(4, unCampo.getY());
+                pst.setInt(5, unCampo.getEstado().getId());
+                pst.executeUpdate();
+            }
+            pst = DB_manager.getConection().prepareStatement(QUERY, PreparedStatement.RETURN_GENERATED_KEYS);
+            pst.setInt(1, cabecera.getLetterSize());
+            pst.setString(2, cabecera.getLetterFont());
+            pst.setString(3, cabecera.getFormatoFecha());
+            pst.setInt(4, cabecera.getMaxProducts());
+            pst.setInt(5, cabecera.getIdDuplicado());
+            pst.setInt(6, cabecera.getIdTriplicado());
+            pst.setInt(7, cabecera.getDistanceBetweenCopies());
+            pst.setInt(8, cabecera.getImprimirMoneda());
+            pst.setString(9, cabecera.getNombreImpresora());
+            pst.setInt(10, cabecera.getAnchoPagina());
+            pst.setInt(11, cabecera.getLargoPagina());
+            pst.setDouble(12, cabecera.getMargenX());
+            pst.setDouble(13, cabecera.getMargenY());
+            pst.setInt(14, cabecera.getDivisa().getId());
+            pst.setInt(15, cabecera.getOrientacion().getId());
+            pst.setInt(16, cabecera.getIdTriplicado());
+            pst.setInt(17, (int) sq_cabecera);
+            pst.executeUpdate();
+            pst.close();
+            rs.close();
+            DB_manager.establecerTransaccion();
+        } catch (SQLException ex) {
+            System.out.println(ex.getNextException());
+            if (DB_manager.getConection() != null) {
+                try {
+                    DB_manager.getConection().rollback();
+                } catch (SQLException ex1) {
+                    Logger lgr = Logger.getLogger(DB_Preferencia.class.getName());
+                    lgr.log(Level.WARNING, ex1.getMessage(), ex1);
+                }
+            }
+            Logger lgr = Logger.getLogger(DB_Preferencia.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        } finally {
+            try {
+                if (pst != null) {
+                    pst.close();
+                }
+                if (rs != null) {
+                    rs.close();
+                }
+            } catch (SQLException ex) {
+                Logger lgr = Logger.getLogger(DB_Preferencia.class.getName());
+                lgr.log(Level.WARNING, ex.getMessage(), ex);
+            }
+        }
+        return sq_cabecera;
+    }
 
     public static int modificarPreferenciaImpresionFactura(M_preferenciasImpresion prefPrint) {
         String UPDATE = "UPDATE preferencia_impresion "
@@ -157,6 +244,74 @@ public class DB_Preferencia {
                 }
             } catch (SQLException ex) {
                 Logger lgr = Logger.getLogger(DB_Producto.class.getName());
+                lgr.log(Level.WARNING, ex.getMessage(), ex);
+            }
+        }
+        return result;
+    }
+
+    public static int modificarPreferenciaImpresion(M_preferenciasImpresion prefPrint) {
+        String UPDATE = "UPDATE preferencia_impresion "
+                + "SET tamanho_letra=?, "
+                + "tipo_letra=?, "
+                + "formato_fecha=?, "
+                + "max_producto=?, "
+                + "id_estado_duplicado=?, "
+                + "id_estado_triplicado=?, "
+                + "distancia_entre_copias=?, "
+                + "id_imprimir_moneda=?, "
+                + "id_divisa=?, "
+                + "nombre_impresora=?, "
+                + "ancho_pagina=?, "
+                + "largo_pagina=?, "
+                + "margen_x=?, "
+                + "margen_y=?, "
+                + "id_impresion_orientacion=? "
+                + "WHERE id_preferencia_impresion = ?;";
+        int result = -1;
+        try {
+            DB_manager.getConection().setAutoCommit(false);
+            pst = DB_manager.getConection().prepareStatement(UPDATE);
+            pst.setInt(1, prefPrint.getLetterSize());
+            pst.setString(2, prefPrint.getLetterFont());
+            pst.setString(3, prefPrint.getFormatoFecha());
+            pst.setInt(4, prefPrint.getMaxProducts());
+            pst.setInt(5, prefPrint.getIdDuplicado());
+            pst.setInt(6, prefPrint.getIdTriplicado());
+            pst.setInt(7, prefPrint.getDistanceBetweenCopies());
+            pst.setInt(8, prefPrint.getImprimirMoneda());
+            pst.setInt(9, prefPrint.getDivisa().getId());
+            pst.setString(10, prefPrint.getNombreImpresora());
+            pst.setInt(11, prefPrint.getAnchoPagina());
+            pst.setInt(12, prefPrint.getLargoPagina());
+            pst.setDouble(13, prefPrint.getMargenX());
+            pst.setDouble(14, prefPrint.getMargenY());
+            pst.setDouble(15, prefPrint.getOrientacion().getId());
+            pst.setInt(16, prefPrint.getId());
+            result = pst.executeUpdate();
+            DB_manager.getConection().commit();
+        } catch (SQLException ex) {
+            System.out.println(ex.getNextException());
+            if (DB_manager.getConection() != null) {
+                try {
+                    DB_manager.getConection().rollback();
+                } catch (SQLException ex1) {
+                    Logger lgr = Logger.getLogger(DB_Preferencia.class.getName());
+                    lgr.log(Level.WARNING, ex1.getMessage(), ex1);
+                }
+            }
+            Logger lgr = Logger.getLogger(DB_Preferencia.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        } finally {
+            try {
+                if (pst != null) {
+                    pst.close();
+                }
+                if (rs != null) {
+                    rs.close();
+                }
+            } catch (SQLException ex) {
+                Logger lgr = Logger.getLogger(DB_Preferencia.class.getName());
                 lgr.log(Level.WARNING, ex.getMessage(), ex);
             }
         }
@@ -321,7 +476,7 @@ public class DB_Preferencia {
         }
         return prefPrint;
     }
-    
+
     public static M_preferenciasImpresion obtenerPreferenciaImpresion(int idPlantilla) {
         M_preferenciasImpresion prefPrint = null;
         String Query = "SELECT id_preferencia_impresion, "
@@ -347,7 +502,7 @@ public class DB_Preferencia {
         try {
             pst = DB_manager.getConection().prepareStatement(Query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             pst.setInt(1, idPlantilla);
-            rs = pst.executeQuery();            
+            rs = pst.executeQuery();
             while (rs.next()) {
                 E_Divisa d = new E_Divisa();
                 d.setId(rs.getInt("id_divisa"));
@@ -426,8 +581,8 @@ public class DB_Preferencia {
         }
         return prefGeneral;
     }
-    
-    public static int establecerTimbradoVentaPredeterminado(int idTimbradoVenta){
+
+    public static int establecerTimbradoVentaPredeterminado(int idTimbradoVenta) {
         String UPDATE = "UPDATE preferencia_general "
                 + "SET id_timbrado = ? "
                 + "WHERE id_preferencia_general = 1;";
@@ -464,7 +619,7 @@ public class DB_Preferencia {
             }
         }
         return result;
-        
+
     }
 
     public static ArrayList<E_impresionOrientacion> obtenerImpresionOrientacion() {

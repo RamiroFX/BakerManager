@@ -296,7 +296,7 @@ public class DB_manager {
         ArrayList<E_impresionPlantilla> impresionPlantilla = null;
         String q = "";
         if (idTipo > 0) {
-            q = "SELECT * FROM impresion_plantilla WHERE id_tipo = ? ;";
+            q = "SELECT * FROM impresion_plantilla WHERE id_impresion_tipo = ? ;";
         } else {
             q = "SELECT * FROM impresion_plantilla ";
         }
@@ -392,7 +392,7 @@ public class DB_manager {
     public static void insertarCampoImpresion(int idImpresionTipo, M_campoImpresion campoImpresion) {
         String insert = "INSERT INTO IMPRESION_CAMPO("
                 + "ID_IMPRESION_TIPO, DESCRIPCION, COORDENADA_X, COORDENADA_Y, ID_ESTADO"
-                + ")VALUES (?,?,?,?,?);";
+                + ")VALUES (?, ?, ?, ?, ?);";
         try {
             DB_manager.habilitarTransaccionManual();
             pst = DB_manager.getConection().prepareStatement(insert);

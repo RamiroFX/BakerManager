@@ -5,11 +5,10 @@
  */
 package Configuracion.CrearPlantillaImpresion;
 
-import Configuracion.M_configuracionFactura;
-import Configuracion.V_configuracionFactura;
 import Configuracion.V_crearModificarCampoImpresion;
 import DB.DB_Preferencia;
 import Entities.E_Divisa;
+import Entities.E_impresionPlantilla;
 import Entities.M_campoImpresion;
 import Entities.M_preferenciasImpresion;
 import Impresora.Impresora;
@@ -160,8 +159,27 @@ public class C_crearPlantillaVenta extends MouseAdapter implements ActionListene
             modelo.setIsVisible(true);
         }
     }
+    
+    private boolean validarNombrePlantilla(){
+        String nombrePlantilla="";
+        nombrePlantilla = vista.jtfNombre.getText().trim();
+        if(nombrePlantilla.isEmpty()){
+            return false;
+        }
+        if(nombrePlantilla.length()>50){
+            return false;
+        }
+        if(modelo.existeNombrePlantilla(nombrePlantilla)){
+            return false;
+        }
+        return true;
+    }
 
     private void guardarPreferencia() {
+        E_impresionPlantilla plantilla = new E_impresionPlantilla();
+        if(!validarNombrePlantilla()){
+            return;
+        }
         M_preferenciasImpresion pi = new M_preferenciasImpresion();
         Integer distancia;
         if (this.vista.jtfDistanciaEntreCopias.getText().trim().isEmpty()) {
@@ -402,7 +420,7 @@ public class C_crearPlantillaVenta extends MouseAdapter implements ActionListene
         pi.setLetterSize(this.vista.jcbTamañoLetra.getSelectedIndex() + 1);
         pi.setFormatoFecha(this.vista.jcbFormatoFecha.getSelectedItem() + "");
         pi.setOrientacion(this.vista.jcbOrientacion.getItemAt(this.vista.jcbOrientacion.getSelectedIndex()));
-        modelo.guardarPreferencias(pi);
+        modelo.guardarPreferencias(plantilla, modelo.getImpresionFacturaTM().getList(), pi);
         Impresora.PREF_PRINT_FACTURA = DB_Preferencia.obtenerPreferenciaImpresionFactura();
         javax.swing.JOptionPane.showMessageDialog(this.vista, "Cambios guardados",
                 "Éxito", javax.swing.JOptionPane.INFORMATION_MESSAGE);

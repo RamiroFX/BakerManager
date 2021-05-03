@@ -9,12 +9,14 @@ import DB.DB_Preferencia;
 import DB.DB_manager;
 import DB.ResultSetTableModel;
 import Entities.E_impresionOrientacion;
+import Entities.E_impresionPlantilla;
 import Entities.M_campoImpresion;
 import Entities.M_preferenciasImpresion;
 import ModeloTabla.ImpresionTableModel;
 import Parametros.TipoVenta;
 import Utilities.MyConstants;
 import java.util.ArrayList;
+import java.util.List;
 import javax.swing.JOptionPane;
 
 /**
@@ -135,8 +137,9 @@ public class M_crearPlantillaVenta {
         return formatoFechas;
     }
 
-    public void guardarPreferencias(M_preferenciasImpresion prefImp) {
-        DB_Preferencia.modificarPreferenciaImpresionFactura(prefImp);
+    public void guardarPreferencias(E_impresionPlantilla plantilla, List<M_campoImpresion> campos, M_preferenciasImpresion prefImp) {
+        prefImp.setId(getPreferenciasImpresion().getId());
+        DB_Preferencia.insertarPlantilla(plantilla, prefImp, campos);
     }
 
     public M_preferenciasImpresion getPreferenciasImpresion() {
@@ -145,6 +148,10 @@ public class M_crearPlantillaVenta {
 
     public ArrayList<E_impresionOrientacion> getOrientations() {
         return DB_Preferencia.obtenerImpresionOrientacion();
+    }
+
+    boolean existeNombrePlantilla(String nombrePlantilla) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
 }

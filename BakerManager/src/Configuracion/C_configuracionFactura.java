@@ -94,7 +94,9 @@ public class C_configuracionFactura extends MouseAdapter implements ActionListen
         }
         for (int i = 0; i < modelo.getPlantillas().size(); i++) {
             this.vista.jcbPlantillas.addItem(modelo.getPlantillas().get(i));
-        }/*
+        }
+        jcbPlantillasHandler();
+        /*
         this.vista.jcbMoneda.addItem(new E_Divisa(1, "Guaraní/es"));
         this.vista.jtfDistanciaEntreCopias.setText(modelo.getPreferenciasImpresion().getDistanceBetweenCopies() + "");
         this.vista.jtfTipoLetra.setText(modelo.getPreferenciasImpresion().getLetterFont());
