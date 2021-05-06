@@ -6,8 +6,11 @@
 package Configuracion.Timbrado;
 
 import DB.DB_Timbrado;
+import DB.DB_manager;
 import Entities.E_Timbrado;
+import Entities.E_impresionPlantilla;
 import MenuPrincipal.DatosUsuario;
+import java.util.ArrayList;
 
 /**
  *
@@ -44,5 +47,9 @@ public class M_crearTimbrado {
     public boolean comprobarTimbradoExistente(int nroTimbrado, int nroSucursal, int nroPVTA, int nroBoletaInicial, int nroBoletaFinal) {
         E_Timbrado unTimbrado = DB_Timbrado.obtenerTimbrado(nroTimbrado, nroSucursal, nroPVTA, nroBoletaInicial, nroBoletaFinal);
         return unTimbrado != null;
+    }
+    
+    public ArrayList<E_impresionPlantilla> getPlantillas() {
+        return DB_manager.obtenerImpresionPlantillas(E_impresionPlantilla.FACTURA);
     }
 }

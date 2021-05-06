@@ -25,7 +25,7 @@ import javax.swing.JTextField;
 public class V_configuracionFactura extends javax.swing.JDialog {
 
     private final String paperHint = "A4(595 x 842)pixels";
-    public javax.swing.JButton jbNuevo, jbCancelar, jbAgregarCampo, jbModificarCampo,
+    public javax.swing.JButton jbNuevo, jbEliminar, jbCancelar, jbAgregarCampo, jbModificarCampo,
             jbHabilitarDeshabilitarCampo, jbImprimirPaginaPrueba, jbOcultarMostrarCampo;
     public javax.swing.JPanel jpNorth, jpSouth, jpFactura, jpFacturaPreferences,
             jpImpresoraYPapel;
@@ -124,6 +124,7 @@ public class V_configuracionFactura extends javax.swing.JDialog {
         jpSouth = new javax.swing.JPanel(new java.awt.BorderLayout());
         //jpSouth.setBorder(new javax.swing.border.EtchedBorder());
         jbNuevo = new javax.swing.JButton("Nuevo");
+        jbEliminar = new javax.swing.JButton("Eliminar");
         jbCancelar = new javax.swing.JButton("Salir");
         jbAgregarCampo = new javax.swing.JButton("Agregar");
         jbModificarCampo = new javax.swing.JButton("Modificar");
@@ -139,6 +140,7 @@ public class V_configuracionFactura extends javax.swing.JDialog {
         javax.swing.JPanel jpBotones = new javax.swing.JPanel();
         jpBotones.setBorder(new javax.swing.border.EtchedBorder());
         jpBotones.add(jbNuevo);
+        jpBotones.add(jbEliminar);
         jpBotones.add(jbCancelar);
         jpFactura.add(jpSouthButtons, BorderLayout.SOUTH);
         jpSouth.add(jpBotones);

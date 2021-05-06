@@ -6,6 +6,7 @@
 package DB;
 
 import Entities.E_Timbrado;
+import Entities.E_impresionPlantilla;
 import Entities.Estado;
 import Entities.M_funcionario;
 import java.sql.PreparedStatement;
@@ -211,11 +212,14 @@ public class DB_Timbrado {
                 + "TV.NRO_PUNTO_VENTA, "
                 + "TV.NRO_BOLETA_INICIAL, "
                 + "TV.NRO_BOLETA_FINAL, "
+                + "TV.DESCRIPCION, "
                 + "(SELECT nombre ||' '||apellido FROM persona pers WHERE pers.id_persona = f.id_persona) \"FUNCIONARIO\", "
                 + "TV.TIEMPO_CREACION, "
                 + "TV.TIEMPO_VENCIMIENTO, "
                 + "(SELECT descripcion FROM ESTADO ESTA WHERE ESTA.id_estado = TV.id_estado) \"ESTADO\", "
-                + "TV.id_estado "
+                + "TV.id_estado, "
+                + "TV.id_impresion_plantilla, "
+                + "(SELECT pi.descripcion FROM impresion_plantilla pi WHERE pi.id_impresion_plantilla = tv.id_impresion_plantilla) \"plantilla_descripcion\" "
                 + "FROM  "
                 + "TIMBRADO TV, "
                 + "funcionario f "
@@ -231,9 +235,13 @@ public class DB_Timbrado {
                 Estado estado = new Estado();
                 estado.setId(rs.getInt("id_estado"));
                 estado.setDescripcion(rs.getString("ESTADO"));
+                E_impresionPlantilla pi = new E_impresionPlantilla();
+                pi.setId(rs.getInt("id_impresion_plantilla"));
+                pi.setDescripcion(rs.getString("plantilla_descripcion"));
                 unTimbrado = new E_Timbrado();
                 unTimbrado.setId(rs.getInt("ID_TIMBRADO"));
                 unTimbrado.setCreador(f);
+                unTimbrado.setDescripcion(rs.getString("DESCRIPCION"));
                 unTimbrado.setFechaCreacion(rs.getDate("TIEMPO_CREACION"));
                 unTimbrado.setFechaVencimiento(rs.getDate("TIEMPO_VENCIMIENTO"));
                 unTimbrado.setNroBoletaFinal(rs.getInt("NRO_BOLETA_FINAL"));
@@ -242,6 +250,7 @@ public class DB_Timbrado {
                 unTimbrado.setNroSucursal(rs.getInt("NRO_SUCURSAL"));
                 unTimbrado.setNroTimbrado(rs.getInt("NRO_TIMBRADO"));
                 unTimbrado.setEstado(estado);
+                unTimbrado.setPlantillaImpresion(pi);
             }
         } catch (SQLException ex) {
             Logger lgr = Logger.getLogger(DB_Timbrado.class.getName());
@@ -388,8 +397,9 @@ public class DB_Timbrado {
                 + "tiempo_vencimiento, "
                 + "id_funcionario, "
                 + "descripcion,"
-                + "id_timbrado_tipo)"
-                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);";
+                + "id_timbrado_tipo,"
+                + "id_impresion_plantilla)"
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
         long sq_cabecera = -1L;
         try {
             DB_manager.getConection().setAutoCommit(false);
@@ -403,6 +413,7 @@ public class DB_Timbrado {
             pst.setInt(7, cabecera.getCreador().getIdFuncionario());
             pst.setString(8, cabecera.getDescripcion());
             pst.setInt(9, 1);
+            pst.setInt(10, cabecera.getPlantillaImpresion().getId());
             pst.executeUpdate();
             rs = pst.getGeneratedKeys();
             if (rs != null && rs.next()) {
@@ -437,5 +448,44 @@ public class DB_Timbrado {
             }
         }
         return (int) sq_cabecera;
+    }
+    
+    public static void actualizarPlantillaImpresion(int idImpresionPlantilla, int idTimbrado) {
+        String UPDATE = "UPDATE timbrado SET "
+                + "id_impresion_plantilla = ? "
+                + "WHERE id_timbrado = ?;";
+        try {
+            DB_manager.getConection().setAutoCommit(false);
+            pst = DB_manager.getConection().prepareStatement(UPDATE);
+            pst.setInt(1, idImpresionPlantilla);
+            pst.setInt(2, idTimbrado);
+            pst.executeUpdate();
+            pst.close();
+            DB_manager.establecerTransaccion();
+        } catch (SQLException ex) {
+            System.out.println(ex.getNextException());
+            if (DB_manager.getConection() != null) {
+                try {
+                    DB_manager.getConection().rollback();
+                } catch (SQLException ex1) {
+                    Logger lgr = Logger.getLogger(DB_Timbrado.class.getName());
+                    lgr.log(Level.WARNING, ex1.getMessage(), ex1);
+                }
+            }
+            Logger lgr = Logger.getLogger(DB_Timbrado.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        } finally {
+            try {
+                if (pst != null) {
+                    pst.close();
+                }
+                if (rs != null) {
+                    rs.close();
+                }
+            } catch (SQLException ex) {
+                Logger lgr = Logger.getLogger(DB_Timbrado.class.getName());
+                lgr.log(Level.WARNING, ex.getMessage(), ex);
+            }
+        }
     }
 }

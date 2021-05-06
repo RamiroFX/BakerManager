@@ -319,6 +319,54 @@ public class DB_manager {
         return impresionPlantilla;
     }
 
+    public static boolean plantillaEnUso(int idPlantilla) {
+        String QUERY = "SELECT id_impresion_plantilla FROM timbrado "
+                + "WHERE id_impresion_plantilla = ? ;";
+        boolean enUso = false;
+        try {
+            pst = DB_manager.getConection().prepareStatement(QUERY, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            pst.setInt(1, idPlantilla);
+            rs = pst.executeQuery();
+            enUso = rs.isBeforeFirst();
+            pst.close();
+            rs.close();
+        } catch (SQLException ex) {
+            Logger lgr = Logger.getLogger(DB_manager.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        }
+        return enUso;
+    }
+
+    public static void eliminarPlantilla(int idPlantilla) {
+        String DELETE_PREFERENCES = "DELETE FROM preferencia_impresion WHERE id_impresion_plantilla = " + idPlantilla;
+        String DELETE_PRINT_FIELDS = "DELETE FROM impresion_campo WHERE id_impresion_plantilla = " + idPlantilla;
+        String DELETE_TEMPLATE = "DELETE FROM impresion_plantilla WHERE id_impresion_plantilla = " + idPlantilla;
+        try {
+            DB_manager.habilitarTransaccionManual();
+            st = DB_manager.getConection().createStatement();
+            st.executeUpdate(DELETE_PREFERENCES);
+            st = DB_manager.getConection().createStatement();
+            st.executeUpdate(DELETE_PRINT_FIELDS);
+            st = DB_manager.getConection().createStatement();
+            st.executeUpdate(DELETE_TEMPLATE);
+            DB_manager.establecerTransaccion();
+        } catch (SQLException ex) {
+            System.out.println(ex.getNextException());
+            if (DB_manager.getConection() != null) {
+                try {
+                    DB_manager.getConection().rollback();
+                } catch (SQLException ex1) {
+                    Logger lgr = Logger.getLogger(DB_manager.class
+                            .getName());
+                    lgr.log(Level.WARNING, ex1.getMessage(), ex1);
+                }
+            }
+            Logger lgr = Logger.getLogger(DB_manager.class
+                    .getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        }
+    }
+    
     public static boolean existeCampoParametro(int idTipo, String campoParametroDescripcion) {
         String Query = "SELECT DESCRIPCION FROM IMPRESION_CAMPO WHERE DESCRIPCION LIKE ? AND id_impresion_tipo = ?";
         try {

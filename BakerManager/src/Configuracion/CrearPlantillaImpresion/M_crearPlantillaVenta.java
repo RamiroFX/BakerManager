@@ -12,6 +12,7 @@ import Entities.E_impresionOrientacion;
 import Entities.E_impresionPlantilla;
 import Entities.M_campoImpresion;
 import Entities.M_preferenciasImpresion;
+import Interface.InterfaceNotificarCambio;
 import ModeloTabla.ImpresionTableModel;
 import Parametros.TipoVenta;
 import Utilities.MyConstants;
@@ -31,12 +32,21 @@ public class M_crearPlantillaVenta {
     private boolean isVisible;
     private M_preferenciasImpresion preferenciasImpresion;
     private String[] formatoFechas;
+    private InterfaceNotificarCambio avisarCambioInterface;
 
     public M_crearPlantillaVenta() {
         impresionFacturaTM = new ImpresionTableModel();
         inicializarDatos();
         isVisible = true;
         formatoFechas = new String[]{"dd/MMMM/yy", "dd/MMMM/yyyy", "dd/MM/yyyy"};
+    }
+
+    public void setAvisarCambioInterface(InterfaceNotificarCambio avisarCambioInterface) {
+        this.avisarCambioInterface = avisarCambioInterface;
+    }
+
+    public InterfaceNotificarCambio getAvisarCambioInterface() {
+        return avisarCambioInterface;
     }
 
     private void inicializarDatos() {
@@ -137,8 +147,8 @@ public class M_crearPlantillaVenta {
         return formatoFechas;
     }
 
-    public void guardarPreferencias(E_impresionPlantilla plantilla, List<M_campoImpresion> campos, M_preferenciasImpresion prefImp) {
-        prefImp.setId(getPreferenciasImpresion().getId());
+    public void guardarPlantilla(E_impresionPlantilla plantilla, List<M_campoImpresion> campos, M_preferenciasImpresion prefImp) {
+        ///prefImp.setId(getPreferenciasImpresion().getId());
         DB_Preferencia.insertarPlantilla(plantilla, prefImp, campos);
     }
 
@@ -150,8 +160,8 @@ public class M_crearPlantillaVenta {
         return DB_Preferencia.obtenerImpresionOrientacion();
     }
 
-    boolean existeNombrePlantilla(String nombrePlantilla) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    boolean existeNombrePlantilla(String nombrePlantilla, int idImpresionTipo) {
+        return DB_Preferencia.existePlantilla(nombrePlantilla, idImpresionTipo);
     }
 
 }

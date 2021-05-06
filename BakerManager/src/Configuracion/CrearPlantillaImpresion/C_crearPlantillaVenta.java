@@ -9,6 +9,8 @@ import Configuracion.V_crearModificarCampoImpresion;
 import DB.DB_Preferencia;
 import Entities.E_Divisa;
 import Entities.E_impresionPlantilla;
+import Entities.E_impresionTipo;
+import Entities.Estado;
 import Entities.M_campoImpresion;
 import Entities.M_preferenciasImpresion;
 import Impresora.Impresora;
@@ -59,14 +61,13 @@ public class C_crearPlantillaVenta extends MouseAdapter implements ActionListene
      * Agrega ActionListeners los controles.
      */
     private void agregarListeners() {
+        this.vista.jbAceptar.addActionListener(this);
         this.vista.jbCancelar.addActionListener(this);
         this.vista.jbAgregarCampo.addActionListener(this);
         this.vista.jbModificarCampo.addActionListener(this);
         this.vista.jbHabilitarDeshabilitarCampo.addActionListener(this);
         this.vista.jbImprimirPaginaPrueba.addActionListener(this);
         this.vista.jbOcultarMostrarCampo.addActionListener(this);
-        this.vista.jbGuardarPreferencias.addActionListener(this);
-        this.vista.jbGuardarImpresora.addActionListener(this);
         this.vista.jtFactura.addMouseListener(this);
     }
 
@@ -164,23 +165,30 @@ public class C_crearPlantillaVenta extends MouseAdapter implements ActionListene
         String nombrePlantilla="";
         nombrePlantilla = vista.jtfNombre.getText().trim();
         if(nombrePlantilla.isEmpty()){
+            javax.swing.JOptionPane.showMessageDialog(this.vista, "Verifique en uno de los campos el parametro:"
+                    + "Asegurese de colocar un nombre de plantilla.",
+                    "Parametros incorrectos",
+                    javax.swing.JOptionPane.OK_OPTION);
             return false;
         }
         if(nombrePlantilla.length()>50){
+            javax.swing.JOptionPane.showMessageDialog(this.vista, "Verifique en uno de los campos el parametro:"
+                    + "El nombre de plantilla supera los 50 caracteres.",
+                    "Parametros incorrectos",
+                    javax.swing.JOptionPane.OK_OPTION);
             return false;
         }
-        if(modelo.existeNombrePlantilla(nombrePlantilla)){
+        if(modelo.existeNombrePlantilla(nombrePlantilla, E_impresionTipo.FACTURA)){
+            javax.swing.JOptionPane.showMessageDialog(this.vista, "Verifique en uno de los campos el parametro:"
+                    + "El nombre de plantilla ya se encuentra registrado.",
+                    "Parametros incorrectos",
+                    javax.swing.JOptionPane.OK_OPTION);
             return false;
         }
         return true;
     }
 
-    private void guardarPreferencia() {
-        E_impresionPlantilla plantilla = new E_impresionPlantilla();
-        if(!validarNombrePlantilla()){
-            return;
-        }
-        M_preferenciasImpresion pi = new M_preferenciasImpresion();
+    private boolean validarPreferencias(){
         Integer distancia;
         if (this.vista.jtfDistanciaEntreCopias.getText().trim().isEmpty()) {
             javax.swing.JOptionPane.showMessageDialog(this.vista, "Verifique en uno de los campos el parametro:"
@@ -190,7 +198,7 @@ public class C_crearPlantillaVenta extends MouseAdapter implements ActionListene
                     javax.swing.JOptionPane.OK_OPTION);
             this.vista.jtfDistanciaEntreCopias.setText("0");
             this.vista.jtfDistanciaEntreCopias.requestFocusInWindow();
-            return;
+            return false;
         }
         try {
             String cantidad = this.vista.jtfDistanciaEntreCopias.getText().trim();
@@ -204,7 +212,7 @@ public class C_crearPlantillaVenta extends MouseAdapter implements ActionListene
                     javax.swing.JOptionPane.OK_OPTION);
             this.vista.jtfDistanciaEntreCopias.setText("0");
             this.vista.jtfDistanciaEntreCopias.requestFocusInWindow();
-            return;
+            return false;
         }
         if (distancia > 10000) {
             javax.swing.JOptionPane.showMessageDialog(this.vista, "Verifique en uno de los campos el parametro:"
@@ -214,7 +222,7 @@ public class C_crearPlantillaVenta extends MouseAdapter implements ActionListene
                     javax.swing.JOptionPane.OK_OPTION);
             this.vista.jtfDistanciaEntreCopias.setText("0");
             this.vista.jtfDistanciaEntreCopias.requestFocusInWindow();
-            return;
+            return false;
         }
         Integer anchoPagina;
         if (this.vista.jtfAnchoPapel.getText().trim().isEmpty()) {
@@ -225,7 +233,7 @@ public class C_crearPlantillaVenta extends MouseAdapter implements ActionListene
                     javax.swing.JOptionPane.OK_OPTION);
             this.vista.jtfAnchoPapel.setText("0");
             this.vista.jtfAnchoPapel.requestFocusInWindow();
-            return;
+            return false;
         }
         try {
             String anchoPaginaTxt = this.vista.jtfAnchoPapel.getText().trim();
@@ -239,7 +247,7 @@ public class C_crearPlantillaVenta extends MouseAdapter implements ActionListene
                     javax.swing.JOptionPane.OK_OPTION);
             this.vista.jtfAnchoPapel.setText("0");
             this.vista.jtfAnchoPapel.requestFocusInWindow();
-            return;
+            return false;
         }
         if (anchoPagina > 10000) {
             javax.swing.JOptionPane.showMessageDialog(this.vista, "Verifique en uno de los campos el parametro:"
@@ -249,7 +257,7 @@ public class C_crearPlantillaVenta extends MouseAdapter implements ActionListene
                     javax.swing.JOptionPane.OK_OPTION);
             this.vista.jtfAnchoPapel.setText("0");
             this.vista.jtfAnchoPapel.requestFocusInWindow();
-            return;
+            return false;
         }
 
         Integer largoPagina;
@@ -261,7 +269,7 @@ public class C_crearPlantillaVenta extends MouseAdapter implements ActionListene
                     javax.swing.JOptionPane.OK_OPTION);
             this.vista.jtfLargoPapel.setText("0");
             this.vista.jtfLargoPapel.requestFocusInWindow();
-            return;
+            return false;
         }
         try {
             String largoPaginaTxt = this.vista.jtfLargoPapel.getText().trim();
@@ -275,7 +283,7 @@ public class C_crearPlantillaVenta extends MouseAdapter implements ActionListene
                     javax.swing.JOptionPane.OK_OPTION);
             this.vista.jtfLargoPapel.setText("0");
             this.vista.jtfLargoPapel.requestFocusInWindow();
-            return;
+            return false;
         }
         if (largoPagina > 10000) {
             javax.swing.JOptionPane.showMessageDialog(this.vista, "Verifique en uno de los campos el parametro:"
@@ -285,7 +293,7 @@ public class C_crearPlantillaVenta extends MouseAdapter implements ActionListene
                     javax.swing.JOptionPane.OK_OPTION);
             this.vista.jtfLargoPapel.setText("0");
             this.vista.jtfLargoPapel.requestFocusInWindow();
-            return;
+            return false;
         }
         Double margenX;
         if (this.vista.jtfMargenX.getText().trim().isEmpty()) {
@@ -296,7 +304,7 @@ public class C_crearPlantillaVenta extends MouseAdapter implements ActionListene
                     javax.swing.JOptionPane.OK_OPTION);
             this.vista.jtfMargenX.setText("0");
             this.vista.jtfMargenX.requestFocusInWindow();
-            return;
+            return false;
         }
         try {
             String margenXTxt = this.vista.jtfMargenX.getText().trim();
@@ -310,7 +318,7 @@ public class C_crearPlantillaVenta extends MouseAdapter implements ActionListene
                     javax.swing.JOptionPane.OK_OPTION);
             this.vista.jtfMargenX.setText("0");
             this.vista.jtfMargenX.requestFocusInWindow();
-            return;
+            return false;
         }
         if (margenX > 10000) {
             javax.swing.JOptionPane.showMessageDialog(this.vista, "Verifique en uno de los campos el parametro:"
@@ -320,7 +328,7 @@ public class C_crearPlantillaVenta extends MouseAdapter implements ActionListene
                     javax.swing.JOptionPane.OK_OPTION);
             this.vista.jtfMargenX.setText("0");
             this.vista.jtfMargenX.requestFocusInWindow();
-            return;
+            return false;
         }
         Double margenY;
         if (this.vista.jtfMargenY.getText().trim().isEmpty()) {
@@ -331,7 +339,7 @@ public class C_crearPlantillaVenta extends MouseAdapter implements ActionListene
                     javax.swing.JOptionPane.OK_OPTION);
             this.vista.jtfMargenY.setText("0");
             this.vista.jtfMargenY.requestFocusInWindow();
-            return;
+            return false;
         }
         try {
             String margenYTxt = this.vista.jtfMargenY.getText().trim();
@@ -345,7 +353,7 @@ public class C_crearPlantillaVenta extends MouseAdapter implements ActionListene
                     javax.swing.JOptionPane.OK_OPTION);
             this.vista.jtfMargenY.setText("0");
             this.vista.jtfMargenY.requestFocusInWindow();
-            return;
+            return false;
         }
         if (margenY > 10000) {
             javax.swing.JOptionPane.showMessageDialog(this.vista, "Verifique en uno de los campos el parametro:"
@@ -355,7 +363,7 @@ public class C_crearPlantillaVenta extends MouseAdapter implements ActionListene
                     javax.swing.JOptionPane.OK_OPTION);
             this.vista.jtfMargenY.setText("0");
             this.vista.jtfMargenY.requestFocusInWindow();
-            return;
+            return false;
         }
         String tipoLetra;
         if (this.vista.jtfTipoLetra.getText().trim().isEmpty()) {
@@ -363,14 +371,14 @@ public class C_crearPlantillaVenta extends MouseAdapter implements ActionListene
                     "El campo nombre esta vacio",
                     "Parametros incorrectos",
                     javax.swing.JOptionPane.OK_OPTION);
-            return;
+            return false;
         } else {
             if (this.vista.jtfTipoLetra.getText().trim().length() > 30) {
                 javax.swing.JOptionPane.showMessageDialog(this.vista,
                         "El campo tipo letra sobrepasa el limite permitido(30) de caracteres",
                         "Parametros incorrectos",
                         javax.swing.JOptionPane.OK_OPTION);
-                return;
+                return false;
             } else {
                 tipoLetra = this.vista.jtfTipoLetra.getText().trim();
             }
@@ -381,25 +389,30 @@ public class C_crearPlantillaVenta extends MouseAdapter implements ActionListene
                     "El campo nombre de impresora esta vacio",
                     "Parametros incorrectos",
                     javax.swing.JOptionPane.OK_OPTION);
-            return;
+            return false;
         } else {
             if (this.vista.jtfNombreImpresora.getText().trim().length() > 30) {
                 javax.swing.JOptionPane.showMessageDialog(this.vista,
                         "El campo nombre de impresora sobrepasa el limite permitido(30) de caracteres",
                         "Parametros incorrectos",
                         javax.swing.JOptionPane.OK_OPTION);
-                return;
+                return false;
             } else {
                 nombreImpresora = this.vista.jtfNombreImpresora.getText().trim();
             }
         }
-        pi.setDistanceBetweenCopies(distancia);
-        pi.setNombreImpresora(nombreImpresora);
-        pi.setAnchoPagina(anchoPagina);
-        pi.setLargoPagina(largoPagina);
-        pi.setMargenX(margenX);
-        pi.setMargenY(margenY);
-        pi.setDivisa(new E_Divisa(1, "Guaraní/es"));
+        return true;
+    }
+    
+    private void guardarPlantilla() {
+        E_impresionPlantilla plantilla = new E_impresionPlantilla();
+        if(!validarNombrePlantilla()){
+            return;
+        }
+        M_preferenciasImpresion pi = new M_preferenciasImpresion();
+        if(!validarPreferencias()){
+            return;
+        }
         if (this.vista.jchkDuplicado.isSelected()) {
             pi.setIdDuplicado(1);
         } else {
@@ -415,19 +428,32 @@ public class C_crearPlantillaVenta extends MouseAdapter implements ActionListene
         } else {
             pi.setImprimirMoneda(2);
         }
-        pi.setLetterFont(tipoLetra);
+        plantilla.setDescripcion(this.vista.jtfNombre.getText());
+        plantilla.setTipo(new E_impresionTipo(E_impresionTipo.FACTURA, E_impresionTipo.FACTURA_STRING));
+        plantilla.setEstado(new Estado(Estado.ACTIVO, Estado.ACTIVO_STR));
+        pi.setDistanceBetweenCopies(Integer.valueOf(vista.jtfDistanciaEntreCopias.getText().trim()));
+        pi.setNombreImpresora(vista.jtfNombreImpresora.getText().trim());
+        pi.setAnchoPagina(Integer.valueOf(this.vista.jtfAnchoPapel.getText().trim()));
+        pi.setLargoPagina(Integer.valueOf(this.vista.jtfLargoPapel.getText().trim()));
+        pi.setMargenX(Double.valueOf(this.vista.jtfMargenY.getText().trim()));
+        pi.setMargenY(Double.valueOf(this.vista.jtfMargenY.getText().trim()));
+        pi.setDivisa(new E_Divisa(1, "Guaraní/es"));
+        pi.setLetterFont(this.vista.jtfTipoLetra.getText().trim());
         pi.setMaxProducts(this.vista.jcbCantProd.getSelectedIndex() + 1);
         pi.setLetterSize(this.vista.jcbTamañoLetra.getSelectedIndex() + 1);
         pi.setFormatoFecha(this.vista.jcbFormatoFecha.getSelectedItem() + "");
         pi.setOrientacion(this.vista.jcbOrientacion.getItemAt(this.vista.jcbOrientacion.getSelectedIndex()));
-        modelo.guardarPreferencias(plantilla, modelo.getImpresionFacturaTM().getList(), pi);
+        modelo.guardarPlantilla(plantilla, modelo.getImpresionFacturaTM().getList(), pi);
         Impresora.PREF_PRINT_FACTURA = DB_Preferencia.obtenerPreferenciaImpresionFactura();
         javax.swing.JOptionPane.showMessageDialog(this.vista, "Cambios guardados",
                 "Éxito", javax.swing.JOptionPane.INFORMATION_MESSAGE);
+        modelo.getAvisarCambioInterface().notificarCambio();
+        cerrar();
     }
 
     private void imprimirPaginaPrueba() {
-        Impresora.imprimirFacturaPrueba();
+        //E_impresionPlantilla plantilla = vista.jcbPlantillas.getItemAt(vista.jcbPlantillas.getSelectedIndex());
+        //Impresora.imprimirFacturaPrueba(plantilla.getId());
     }
 
     @Override
@@ -444,10 +470,8 @@ public class C_crearPlantillaVenta extends MouseAdapter implements ActionListene
             imprimirPaginaPrueba();
         } else if (e.getSource() == this.vista.jbOcultarMostrarCampo) {
             ocultarMostrarCampo();
-        } else if (e.getSource() == this.vista.jbGuardarPreferencias) {
-            guardarPreferencia();
-        } else if (e.getSource() == this.vista.jbGuardarImpresora) {
-            guardarPreferencia();
+        } else if (e.getSource() == this.vista.jbAceptar) {
+            guardarPlantilla();
         }
     }
 

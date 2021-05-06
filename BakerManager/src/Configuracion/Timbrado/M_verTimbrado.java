@@ -6,7 +6,10 @@
 package Configuracion.Timbrado;
 
 import DB.DB_Timbrado;
+import DB.DB_manager;
 import Entities.E_Timbrado;
+import Entities.E_impresionPlantilla;
+import java.util.ArrayList;
 
 /**
  *
@@ -32,4 +35,11 @@ public class M_verTimbrado {
         this.cabecera = DB_Timbrado.obtenerTimbrado(idTimbrado);
     }
 
+    public ArrayList<E_impresionPlantilla> getPlantillas() {
+        return DB_manager.obtenerImpresionPlantillas(E_impresionPlantilla.FACTURA);
+    }
+
+    public void actualizarPlantillaImpresion(int idImpresionPlantilla) {
+        DB_Timbrado.actualizarPlantillaImpresion(idImpresionPlantilla, cabecera.getId());
+    }
 }

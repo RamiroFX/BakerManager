@@ -317,7 +317,7 @@ public class C_crearVentaPorFecha implements GestionInterface, InterfaceFacturaD
         }
     }
 
-    private void confirmarVenta() {
+    private void solicitarConfirmacionVenta() {
         if (modelo.isTableEmpty()) {
             JOptionPane.showConfirmDialog(vista, VENTA_VACIA, ATENCION, JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
             return;
@@ -452,7 +452,7 @@ public class C_crearVentaPorFecha implements GestionInterface, InterfaceFacturaD
             cerrar();
         }
         if (e.getSource().equals(this.vista.jbAceptar)) {
-            confirmarVenta();
+            solicitarConfirmacionVenta();
         }
         if (e.getSource().equals(this.vista.jtfCodProd)) {
             agregarProductoPorCodigo();
@@ -535,7 +535,7 @@ public class C_crearVentaPorFecha implements GestionInterface, InterfaceFacturaD
                     e.consume();
                     return;
                 }
-                confirmarVenta();
+                solicitarConfirmacionVenta();
                 break;
             }
             case KeyEvent.VK_F2: {
@@ -588,6 +588,7 @@ public class C_crearVentaPorFecha implements GestionInterface, InterfaceFacturaD
         E_impresionTipo tipoVenta = new E_impresionTipo(E_impresionTipo.FACTURA, E_impresionTipo.FACTURA_STRING);
         modelo.getCabecera().setIdTimbrado(timbrado.getId());
         modelo.getCabecera().setNroFactura(NroFactura);
+        modelo.getCabecera().setTimbrado(timbrado);
         modelo.setTipoVenta(tipoVenta);
         isJCBTrigger = false;
         this.vista.jcbTipoVenta.setSelectedItem(tipoVenta);

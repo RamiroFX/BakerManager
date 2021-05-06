@@ -52,6 +52,9 @@ public class C_crearTimbrado implements ActionListener, KeyListener {
     private void inicializarVista() {
         Calendar calendar = Calendar.getInstance();
         this.vista.jdcFechaVencimiento.setDate(calendar.getTime());
+        for (int i = 0; i < modelo.getPlantillas().size(); i++) {
+            this.vista.jcbPlantillas.addItem(modelo.getPlantillas().get(i));
+        }
     }
 
     public void mostrarVista() {
@@ -269,6 +272,7 @@ public class C_crearTimbrado implements ActionListener, KeyListener {
         modelo.getTimbrado().setNroBoletaInicial(nroBoletaInicial);
         modelo.getTimbrado().setNroBoletaFinal(nroBoletaFinal);
         modelo.getTimbrado().setFechaVencimiento(fechaVencimiento);
+        modelo.getTimbrado().setPlantillaImpresion(this.vista.jcbPlantillas.getItemAt(this.vista.jcbPlantillas.getSelectedIndex()));
         modelo.guardarTimbrado();
         mostrarMensaje(TIMBRADO_SUCCESS);
         cerrar();

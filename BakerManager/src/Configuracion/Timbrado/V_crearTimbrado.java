@@ -5,10 +5,12 @@
  */
 package Configuracion.Timbrado;
 
+import Entities.E_impresionPlantilla;
 import com.toedter.calendar.JDateChooser;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -24,11 +26,12 @@ import net.miginfocom.swing.MigLayout;
 public class V_crearTimbrado extends JDialog {
 
     private JLabel jlDescripcion, jlNroTimbrado, jlNroSucursal, jlPuntoVenta, jlBoletaInicial, jlBoletaFinal, 
-            jlFechaVencimiento;
+            jlFechaVencimiento, jlPlantilla;
     public JTextField jtfDescripcion, jtfNroTimbrado, jtfNroSucursal, jtfPuntoVenta, jtfBoletaInicial, jtfBoletaFinal;
     public JDateChooser jdcFechaVencimiento;
     public JButton jbAceptar, jbCancelar;
     private JPanel jpPrincipal, jpBotones;
+    public JComboBox<E_impresionPlantilla> jcbPlantillas;
     public static final String CREATE_TITLE = "Crear timbrado de venta", READ_TITLE = "Ver timbrado de venta";
 
     public V_crearTimbrado(JDialog vista) {
@@ -62,6 +65,8 @@ public class V_crearTimbrado extends JDialog {
         jlBoletaFinal.setHorizontalAlignment(JLabel.CENTER);
         jlFechaVencimiento = new JLabel("Fecha de vencimiento");
         jlFechaVencimiento.setHorizontalAlignment(JLabel.CENTER);
+        jlPlantilla = new JLabel("Plantilla de impresión");
+        jlPlantilla.setHorizontalAlignment(JLabel.CENTER);
         //TextFields
         jtfDescripcion = new JTextField();
         jtfNroTimbrado = new JTextField();
@@ -70,6 +75,7 @@ public class V_crearTimbrado extends JDialog {
         jtfBoletaInicial = new JTextField();
         jtfBoletaFinal = new JTextField();
         jdcFechaVencimiento = new JDateChooser();
+        jcbPlantillas= new JComboBox<>();
         
         jpPrincipal.setBorder(new EtchedBorder());
         jpPrincipal.add(jlDescripcion);
@@ -86,10 +92,12 @@ public class V_crearTimbrado extends JDialog {
         jpPrincipal.add(jtfBoletaFinal, "pushx, growx, wrap");
         jpPrincipal.add(jlFechaVencimiento);
         jpPrincipal.add(jdcFechaVencimiento, "pushx, growx, wrap");
+        jpPrincipal.add(jlPlantilla);
+        jpPrincipal.add(jcbPlantillas, "pushx, growx, wrap");
 
         jpBotones = new JPanel();
         jbAceptar = new JButton("Aceptar");
-        jbCancelar = new JButton("Cancelar");
+        jbCancelar = new JButton("Cerrar");
         jpBotones.add(jbAceptar);
         jpBotones.add(jbCancelar);
     }
@@ -104,7 +112,7 @@ public class V_crearTimbrado extends JDialog {
     private void constructAppWindow() {
         setTitle(CREATE_TITLE);
         setName("jdCrearTimbradoVenta");
-        setSize(new Dimension(360, 320));
+        setSize(new Dimension(360, 340));
         setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
         setModal(true);

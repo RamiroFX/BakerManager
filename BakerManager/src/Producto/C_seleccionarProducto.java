@@ -15,7 +15,6 @@ import MenuPrincipal.DatosUsuario;
 import Pedido.C_crearPedido;
 import Pedido.C_verPedido;
 import Proveedor.Seleccionar_proveedor;
-import Ventas.C_crearVentaRapida;
 import Ventas.Mesas.C_verMesa;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -50,7 +49,6 @@ public class C_seleccionarProducto extends MouseAdapter implements ActionListene
     M_proveedor proveedor;
     public V_seleccionarProducto vista;
     C_crear_egreso c_egresos;
-    C_crearVentaRapida crearVenta;
     C_verMesa verMesa;
     C_crearPedido crearPedido;
     C_verPedido verPedido;
@@ -73,18 +71,10 @@ public class C_seleccionarProducto extends MouseAdapter implements ActionListene
         inicializarVista();
         agregarListeners();
     }
-    
+
     public C_seleccionarProducto(V_seleccionarProducto vista, C_crear_egreso c_egresos) {
         this.tipo = CREAR_EGRESO;
         this.c_egresos = c_egresos;
-        this.vista = vista;
-        inicializarVista();
-        agregarListeners();
-    }
-
-    public C_seleccionarProducto(V_seleccionarProducto vista, C_crearVentaRapida crearVenta) {
-        this.tipo = CREAR_INGRESO_RAPIDO;
-        this.crearVenta = crearVenta;
         this.vista = vista;
         inicializarVista();
         agregarListeners();

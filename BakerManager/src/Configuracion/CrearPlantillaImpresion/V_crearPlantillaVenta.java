@@ -37,7 +37,6 @@ public class V_crearPlantillaVenta extends javax.swing.JDialog {
     //Variables de impresora
     public JTextField jtfNombreImpresora, jtfAnchoPapel, jtfLargoPapel,
             jtfMargenX, jtfMargenY;
-    public javax.swing.JButton jbGuardarPreferencias, jbGuardarImpresora;
     public javax.swing.JLabel jlOrientacion;
     public JComboBox<E_impresionOrientacion> jcbOrientacion;
 
@@ -91,7 +90,6 @@ public class V_crearPlantillaVenta extends javax.swing.JDialog {
         jchkDuplicado = new JCheckBox("Duplicado");
         jchkTriplicado = new JCheckBox("Triplicado");
         jchkMoneda = new JCheckBox("Impimir moneda");
-        jbGuardarPreferencias = new JButton("Guardar");
         javax.swing.JPanel jpPrefAux = new javax.swing.JPanel(new java.awt.GridLayout(9, 2));
         jpPrefAux.add(new JLabel("Formato de fecha", JLabel.CENTER));
         jpPrefAux.add(jcbFormatoFecha);
@@ -111,10 +109,7 @@ public class V_crearPlantillaVenta extends javax.swing.JDialog {
         jpPrefAux.add(jchkMoneda);
         jpPrefAux.add(new JLabel("Monedas", JLabel.CENTER));
         jpPrefAux.add(jcbMoneda);
-        javax.swing.JPanel jpPrefAux2 = new javax.swing.JPanel();
-        jpPrefAux2.add(jbGuardarPreferencias);
         jpFacturaPreferences.add(jpPrefAux, BorderLayout.CENTER);
-        jpFacturaPreferences.add(jpPrefAux2, BorderLayout.SOUTH);
     }
 
     private void initPanelSouth() {
@@ -151,7 +146,6 @@ public class V_crearPlantillaVenta extends javax.swing.JDialog {
         jtfMargenY = new JTextField();
         jlOrientacion = new JLabel("Orientación", JLabel.CENTER);
         jcbOrientacion = new JComboBox();
-        jbGuardarImpresora = new javax.swing.JButton("Guardar");
         javax.swing.JPanel jpImpresoraYPapel1 = new javax.swing.JPanel(new java.awt.GridLayout(6, 2));
         jpImpresoraYPapel1.add(new JLabel("Nombre de impresora", JLabel.CENTER));
         jpImpresoraYPapel1.add(jtfNombreImpresora);
@@ -165,10 +159,7 @@ public class V_crearPlantillaVenta extends javax.swing.JDialog {
         jpImpresoraYPapel1.add(jtfMargenY);
         jpImpresoraYPapel1.add(jlOrientacion);
         jpImpresoraYPapel1.add(jcbOrientacion);
-        javax.swing.JPanel jpImpresoraYPapel2 = new javax.swing.JPanel();
-        jpImpresoraYPapel2.add(jbGuardarImpresora);
         jpImpresoraYPapel = new javax.swing.JPanel(new java.awt.BorderLayout());
         jpImpresoraYPapel.add(jpImpresoraYPapel1, BorderLayout.CENTER);
-        jpImpresoraYPapel.add(jpImpresoraYPapel2, BorderLayout.SOUTH);
     }
 }

@@ -24,6 +24,7 @@ public class E_Timbrado {
     private Date fechaVencimiento;
     private M_funcionario creador;
     private Estado estado;
+    private E_impresionPlantilla plantillaImpresion;
 
     public E_Timbrado() {
         creador = new M_funcionario();
@@ -191,6 +192,14 @@ public class E_Timbrado {
      */
     public void setDescripcion(String descripcion) {
         this.descripcion = descripcion;
+    }
+
+    public E_impresionPlantilla getPlantillaImpresion() {
+        return plantillaImpresion;
+    }
+
+    public void setPlantillaImpresion(E_impresionPlantilla plantillaImpresion) {
+        this.plantillaImpresion = plantillaImpresion;
     }
 
 }

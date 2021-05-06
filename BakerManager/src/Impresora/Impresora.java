@@ -221,7 +221,7 @@ public class Impresora {
     /*
     IMPRESIONES DE PRUEBA
      */
-    public static void imprimirFacturaPrueba() {
+    public static void imprimirFacturaPrueba(int idPlantilla) {
         String nombreImpresora = PREF_PRINT_FACTURA.getNombreImpresora();
         M_cliente cliente = obtenerClientePrueba();
         ArrayList<E_facturaDetalle> facturaDetalle = obtenerFacturaDetallePrueba();
@@ -973,7 +973,8 @@ public class Impresora {
         String nombreImpresora = PREF_PRINT_FACTURA.getNombreImpresora();
         int width = PREF_PRINT_FACTURA.getAnchoPagina();
         int height = PREF_PRINT_FACTURA.getLargoPagina();
-        final List<M_campoImpresion> textoAImprimir = DB_manager.obtenerCampoImpresionPorPlantilla(2, MyConstants.ACTIVO);
+        int idPlantilla = facturaCabecera.getTimbrado().getPlantillaImpresion().getId();
+        final List<M_campoImpresion> textoAImprimir = DB_manager.obtenerCampoImpresionPorPlantilla(idPlantilla, MyConstants.ACTIVO);
 
         PrintRequestAttributeSet aset = new HashPrintRequestAttributeSet();
         String nombreDoc = facturaCabecera.getCliente().getEntidad() + " " + facturaCabecera.getTiempo();

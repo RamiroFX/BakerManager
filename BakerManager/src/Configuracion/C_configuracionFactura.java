@@ -13,6 +13,8 @@ import Entities.M_campoImpresion;
 import Entities.M_preferenciasImpresion;
 import Interface.crearModificarParametroCallback;
 import Impresora.Impresora;
+import Interface.InterfaceNotificarCambio;
+import com.nitido.utils.toaster.Toaster;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -20,12 +22,14 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import javax.swing.JOptionPane;
 
 /**
  *
  * @author Ramiro Ferreira
  */
-public class C_configuracionFactura extends MouseAdapter implements ActionListener, KeyListener, MouseListener, crearModificarParametroCallback {
+public class C_configuracionFactura extends MouseAdapter implements ActionListener,
+        KeyListener, MouseListener, crearModificarParametroCallback, InterfaceNotificarCambio {
 
     private static final int CREAR_PARAMETRO = 1, MODIFICAR_PARAMETRO = 2;
     private V_configuracionFactura vista;
@@ -69,6 +73,7 @@ public class C_configuracionFactura extends MouseAdapter implements ActionListen
         this.vista.jbGuardarPreferencias.addActionListener(this);
         this.vista.jbGuardarImpresora.addActionListener(this);
         this.vista.jbNuevo.addActionListener(this);
+        this.vista.jbEliminar.addActionListener(this);
         this.vista.jtFactura.addMouseListener(this);
     }
 
@@ -446,11 +451,13 @@ public class C_configuracionFactura extends MouseAdapter implements ActionListen
     }
 
     private void imprimirPaginaPrueba() {
-        Impresora.imprimirFacturaPrueba();
+        E_impresionPlantilla plantilla = vista.jcbPlantillas.getItemAt(vista.jcbPlantillas.getSelectedIndex());
+        Impresora.imprimirFacturaPrueba(plantilla.getId());
     }
 
     private void invocarCrearPlantilla() {
         CrearPlantillaVenta cpv = new CrearPlantillaVenta(this.vista);
+        cpv.setInterface(this);
         cpv.mostrarVista();
     }
 
@@ -458,6 +465,19 @@ public class C_configuracionFactura extends MouseAdapter implements ActionListen
         E_impresionPlantilla plantilla = vista.jcbPlantillas.getItemAt(vista.jcbPlantillas.getSelectedIndex());
         modelo.inicializarDatos(plantilla.getId());
         actualizarVista();
+    }
+
+    private void eliminarPlantilla() {
+        int idPlantilla = this.vista.jcbPlantillas.getItemAt(this.vista.jcbPlantillas.getSelectedIndex()).getId();
+        if (modelo.plantillaEnUso(idPlantilla)) {
+            JOptionPane.showMessageDialog(vista, "La plantilla se encuentra en uso en uno o más timbrados.", "Atención", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        int opcion = JOptionPane.showConfirmDialog(vista, "¿Esta seguro que desea eliminar la plantilla?", "Atención", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+        if (opcion == JOptionPane.YES_OPTION) {
+            modelo.eliminarPlantilla(idPlantilla);
+            actualizarComboBoxPlantillas();
+        }
     }
 
     @Override
@@ -482,6 +502,8 @@ public class C_configuracionFactura extends MouseAdapter implements ActionListen
             invocarCrearPlantilla();
         } else if (e.getSource() == this.vista.jcbPlantillas) {
             jcbPlantillasHandler();
+        } else if (e.getSource() == this.vista.jbEliminar) {
+            eliminarPlantilla();
         }
     }
 
@@ -526,5 +548,22 @@ public class C_configuracionFactura extends MouseAdapter implements ActionListen
     @Override
     public void modificarParametroImpresion(M_campoImpresion ci) {
         modelo.modificarParametro(ci);
+    }
+
+    private void actualizarComboBoxPlantillas() {
+        this.vista.jcbPlantillas.removeActionListener(this);
+        this.vista.jcbPlantillas.removeAllItems();
+        for (int i = 0; i < modelo.getPlantillas().size(); i++) {
+            this.vista.jcbPlantillas.addItem(modelo.getPlantillas().get(i));
+        }
+        this.vista.jcbPlantillas.addActionListener(this);
+        jcbPlantillasHandler();
+    }
+
+    @Override
+    public void notificarCambio() {
+        Toaster t = new Toaster();
+        t.showToaster("Plantilla guardada");
+        actualizarComboBoxPlantillas();
     }
 }

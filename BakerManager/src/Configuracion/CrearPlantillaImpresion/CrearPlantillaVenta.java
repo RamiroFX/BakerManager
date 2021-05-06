@@ -5,6 +5,7 @@
  */
 package Configuracion.CrearPlantillaImpresion;
 
+import Interface.InterfaceNotificarCambio;
 import javax.swing.JDialog;
 
 /**
@@ -23,6 +24,9 @@ public class CrearPlantillaVenta {
         controlador = new C_crearPlantillaVenta(vista, modelo);
     }
 
+    public void setInterface(InterfaceNotificarCambio avisarCambioInterface){
+        this.modelo.setAvisarCambioInterface(avisarCambioInterface);
+    }
     public void mostrarVista() {
         this.controlador.mostrarVista();
     }

@@ -33,12 +33,12 @@ public class DB_Preferencia {
     private static PreparedStatement pst = null;
     private static ResultSet rs = null;
 
-    public static long insertarPlantilla(E_impresionPlantilla plantilla, M_preferenciasImpresion cabecera, List<M_campoImpresion> campos) {
+    public static long insertarPlantilla(E_impresionPlantilla plantilla, M_preferenciasImpresion preferencias, List<M_campoImpresion> campos) {
         String INSERT_TEMPLATE = "INSERT INTO impresion_plantilla (id_impresion_tipo, descripcion, id_estado) VALUES(?, ?, ?);";
         String INSERT_PRINT_FIELD = "INSERT INTO IMPRESION_CAMPO("
                 + "ID_IMPRESION_PLANTILLA, DESCRIPCION, COORDENADA_X, COORDENADA_Y, ID_ESTADO"
                 + ")VALUES (?,?,?,?,?);";
-        String QUERY = "INSERT INTO preferencia_impresion (tamanho_letra, tipo_letra, formato_fecha, max_producto, "
+        String INSERT_PREFERENCE = "INSERT INTO preferencia_impresion (tamanho_letra, tipo_letra, formato_fecha, max_producto, "
                 + "id_estado_duplicado, id_estado_triplicado, distancia_entre_copias, id_imprimir_moneda, "
                 + "nombre_impresora, ancho_pagina, largo_pagina, margen_x, margen_y, id_divisa, "
                 + "id_impresion_orientacion, distancia_triplicado, id_impresion_plantilla) "
@@ -66,23 +66,23 @@ public class DB_Preferencia {
                 pst.setInt(5, unCampo.getEstado().getId());
                 pst.executeUpdate();
             }
-            pst = DB_manager.getConection().prepareStatement(QUERY, PreparedStatement.RETURN_GENERATED_KEYS);
-            pst.setInt(1, cabecera.getLetterSize());
-            pst.setString(2, cabecera.getLetterFont());
-            pst.setString(3, cabecera.getFormatoFecha());
-            pst.setInt(4, cabecera.getMaxProducts());
-            pst.setInt(5, cabecera.getIdDuplicado());
-            pst.setInt(6, cabecera.getIdTriplicado());
-            pst.setInt(7, cabecera.getDistanceBetweenCopies());
-            pst.setInt(8, cabecera.getImprimirMoneda());
-            pst.setString(9, cabecera.getNombreImpresora());
-            pst.setInt(10, cabecera.getAnchoPagina());
-            pst.setInt(11, cabecera.getLargoPagina());
-            pst.setDouble(12, cabecera.getMargenX());
-            pst.setDouble(13, cabecera.getMargenY());
-            pst.setInt(14, cabecera.getDivisa().getId());
-            pst.setInt(15, cabecera.getOrientacion().getId());
-            pst.setInt(16, cabecera.getIdTriplicado());
+            pst = DB_manager.getConection().prepareStatement(INSERT_PREFERENCE);
+            pst.setInt(1, preferencias.getLetterSize());
+            pst.setString(2, preferencias.getLetterFont());
+            pst.setString(3, preferencias.getFormatoFecha());
+            pst.setInt(4, preferencias.getMaxProducts());
+            pst.setInt(5, preferencias.getIdDuplicado());
+            pst.setInt(6, preferencias.getIdTriplicado());
+            pst.setInt(7, preferencias.getDistanceBetweenCopies());
+            pst.setInt(8, preferencias.getImprimirMoneda());
+            pst.setString(9, preferencias.getNombreImpresora());
+            pst.setInt(10, preferencias.getAnchoPagina());
+            pst.setInt(11, preferencias.getLargoPagina());
+            pst.setDouble(12, preferencias.getMargenX());
+            pst.setDouble(13, preferencias.getMargenY());
+            pst.setInt(14, preferencias.getDivisa().getId());
+            pst.setInt(15, preferencias.getOrientacion().getId());
+            pst.setInt(16, preferencias.getIdTriplicado());
             pst.setInt(17, (int) sq_cabecera);
             pst.executeUpdate();
             pst.close();
@@ -660,5 +660,34 @@ public class DB_Preferencia {
             ex.printStackTrace();
         }
         return impresionTipos;
+    }
+    
+    public static boolean existePlantilla(String descripcion, int idImpresionTipo) {
+        String QUERY = "SELECT descripcion FROM impresion_plantilla WHERE LOWER(descripcion) LIKE ? "
+                + "AND id_impresion_tipo = ?;";
+        try {
+            pst = DB_manager.getConection().prepareStatement(QUERY);
+            pst.setString(1, descripcion.toLowerCase());
+            pst.setInt(2, idImpresionTipo);
+            rs = pst.executeQuery();
+            return rs.next();
+        } catch (SQLException ex) {
+            Logger lgr = Logger.getLogger(DB_Preferencia.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (st != null) {
+                    st.close();
+                }
+            } catch (SQLException ex) {
+                Logger lgr = Logger.getLogger(DB_Preferencia.class.getName());
+                lgr.log(Level.WARNING, ex.getMessage(), ex);
+            }
+        }
+        return false;
+    
     }
 }

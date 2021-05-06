@@ -151,4 +151,11 @@ public class M_configuracionFactura {
         return DB_manager.obtenerImpresionPlantillas(E_impresionPlantilla.FACTURA);
     }
 
+    public boolean plantillaEnUso(int idPlantilla){
+        return DB_manager.plantillaEnUso(idPlantilla);
+    }
+
+    void eliminarPlantilla(int idPlantilla){
+        DB_manager.eliminarPlantilla(idPlantilla);
+    }
 }
