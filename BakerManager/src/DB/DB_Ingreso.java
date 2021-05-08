@@ -217,7 +217,8 @@ public class DB_Ingreso {
         return (int) nroFactura;
     }
 
-    public static List<M_facturaCabecera> obtenerIngresos(Date fechaInicio, Date fechaFinal, int idCliente, int idVendedor, int idCondVenta, int nroFactura, int idEstado, boolean conFechas) {
+    public static List<M_facturaCabecera> obtenerIngresos(Date fechaInicio, Date fechaFinal, int idCliente, int idVendedor, int idCondVenta, int nroFactura, int idEstado,
+            boolean conFechas, int idTimbrado) {
         List<M_facturaCabecera> list = new ArrayList();
         String query = "SELECT "
                 + "FC.ID_FACTURA_CABECERA,"//1
@@ -242,7 +243,7 @@ public class DB_Ingreso {
                 //+ "     FUNCIONARIO F "
                 + "WHERE FC.ID_FACTURA_CABECERA = FADE.ID_FACTURA_CABECERA   "
                 + "AND FC.ID_CLIENTE = C.ID_CLIENTE ";
-                //+ "AND FC.ID_FUNCIONARIO = F.ID_FUNCIONARIO ";
+        //+ "AND FC.ID_FUNCIONARIO = F.ID_FUNCIONARIO ";
         String groupBy = " GROUP BY FC.ID_FACTURA_CABECERA,FC.NRO_FACTURA, C.ENTIDAD, FC.TIEMPO, FC.ID_COND_VENTA ";
         String orderBy = "ORDER BY FC.TIEMPO, FC.NRO_FACTURA ";
         if (conFechas) {
@@ -262,6 +263,9 @@ public class DB_Ingreso {
         }
         if (idEstado > 0) {
             query = query + " AND FC.ID_ESTADO = ? ";
+        }
+        if (idTimbrado > 0) {
+            query = query + " AND FC.ID_TIMBRADO = ? ";
         }
         query = query + groupBy + orderBy;
         int pos = 1;
@@ -291,6 +295,10 @@ public class DB_Ingreso {
             }
             if (idEstado > 0) {
                 pst.setInt(pos, idEstado);
+                pos++;
+            }
+            if (idTimbrado > 0) {
+                pst.setInt(pos, idTimbrado);
                 pos++;
             }
             rs = pst.executeQuery();
@@ -681,7 +689,7 @@ public class DB_Ingreso {
                 int total = 0;
                 for (int i = 0; i < detalle.size(); i++) {
                     E_facturaDetalle get = detalle.get(i);
-                    total = total + (int)get.calcularSubTotal();
+                    total = total + (int) get.calcularSubTotal();
                 }
                 pst = DB_manager.getConection().prepareStatement(INSERT_CTA_CTE);
                 pst.setInt(1, cabecera.getIdCliente());
@@ -786,7 +794,7 @@ public class DB_Ingreso {
                 int total = 0;
                 for (int i = 0; i < detalle.size(); i++) {
                     E_facturaDetalle get = detalle.get(i);
-                    total = total + (int)get.calcularSubTotal();
+                    total = total + (int) get.calcularSubTotal();
                 }
                 pst = DB_manager.getConection().prepareStatement(INSERT_CTA_CTE);
                 pst.setInt(1, cabecera.getIdCliente());
@@ -1036,7 +1044,7 @@ public class DB_Ingreso {
         return fc;
     }
 
-    public static ResultSetTableModel consultarIngresoDetalleAgrupado(Timestamp inicio, Timestamp fin, M_cliente cliente, Estado estado) {
+    public static ResultSetTableModel consultarIngresoDetalleAgrupado(Timestamp inicio, Timestamp fin, int idCliente, int idEstado, int idTimbrado) {
         int pos = 1;
         String QUERY = "SELECT PROD.DESCRIPCION \"Producto\", SUM(FADE.CANTIDAD) \"Cantidad\", FADE.PRECIO \"Precio\", FADE.DESCUENTO \"Descuento\", "
                 + "CASE WHEN PROD.ID_IMPUESTO = 1 THEN SUM(ROUND(FADE.CANTIDAD*(FADE.PRECIO-(FADE.PRECIO*FADE.DESCUENTO)/100))) ELSE '0' END AS \"Exenta\", "
@@ -1049,30 +1057,30 @@ public class DB_Ingreso {
 
         String PIE = "GROUP BY PROD.DESCRIPCION, FADE.PRECIO, FADE.DESCUENTO,PROD.ID_IMPUESTO "
                 + "ORDER BY PROD.DESCRIPCION";
-        if (cliente != null) {
-            if (cliente.getIdCliente() != null) {
-                QUERY = QUERY + "AND FACA.ID_CLIENTE = ? ";
-            }
+
+        if (idCliente > 0) {
+            QUERY = QUERY + "AND FACA.ID_CLIENTE = ? ";
         }
-        if (estado.getId() != Estado.TODOS) {
+        if (idEstado > 0) {
             QUERY = QUERY + "AND FACA.ID_ESTADO = ? ";
+        }
+        if (idTimbrado > 0) {
+            QUERY = QUERY + "AND FACA.ID_TIMBRADO = ? ";
         }
         QUERY = QUERY + PIE;
         ResultSetTableModel rstm = null;
         try {
             pst = DB_manager.getConection().prepareStatement(QUERY, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-            pst.setTimestamp(pos, inicio);
-            pos++;
-            pst.setTimestamp(pos, fin);
-            pos++;
-            if (cliente != null) {
-                if (cliente.getIdCliente() != null) {
-                    pst.setInt(pos, cliente.getIdCliente());
-                    pos++;
-                }
+            pst.setTimestamp(pos++, inicio);
+            pst.setTimestamp(pos++, fin);
+            if (idCliente > 0) {
+                pst.setInt(pos++, idCliente);
             }
-            if (estado.getId() != Estado.TODOS) {
-                pst.setInt(pos, estado.getId());
+            if (idEstado > 0) {
+                pst.setInt(pos++, idEstado);
+            }
+            if (idTimbrado > 0) {
+                pst.setInt(pos++, idTimbrado);
             }
             rs = pst.executeQuery();
             rstm = new ResultSetTableModel(rs);
@@ -2313,7 +2321,7 @@ public class DB_Ingreso {
                 + empleado;
         try {
             pst = DB_manager.getConection().prepareStatement(Query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-            pst.setString(1, "%"+producto + "%");
+            pst.setString(1, "%" + producto + "%");
             rs = pst.executeQuery();
             rstm = new ResultSetTableModel(rs);
         } catch (SQLException ex) {

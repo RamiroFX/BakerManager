@@ -6,6 +6,7 @@ package Ventas;
 
 import Facturacion.Facturacion;
 import Cliente.SeleccionarCliente;
+import Configuracion.Timbrado.SeleccionarTimbrado;
 import DB.DB_Egreso;
 import DB.DB_Ingreso;
 import Entities.M_cliente;
@@ -14,11 +15,13 @@ import Entities.M_menu_item;
 import Interface.GestionInterface;
 import bakermanager.C_inicio;
 import Empleado.SeleccionarFuncionario;
+import Entities.E_Timbrado;
 import Entities.E_tipoOperacion;
 import Entities.Estado;
 import Facturacion.HistorialFacturacion;
 import Interface.RecibirClienteCallback;
 import Interface.RecibirEmpleadoCallback;
+import Interface.RecibirTimbradoVentaCallback;
 import NotasCredito.GestionNotasCredito;
 import Utilities.CellRenderers.FacturaCabeceraStatusCellRenderer;
 import java.awt.EventQueue;
@@ -36,7 +39,8 @@ import javax.swing.JOptionPane;
  *
  * @author Ramiro Ferreira
  */
-public class C_gestionVentas implements GestionInterface, RecibirEmpleadoCallback, RecibirClienteCallback {
+public class C_gestionVentas implements GestionInterface, RecibirEmpleadoCallback,
+        RecibirClienteCallback, RecibirTimbradoVentaCallback {
 
     private static final String VALIDAR_NRO_FACTURA_1 = "Ingrese solo números enteros en número de factura",
             VALIDAR_NRO_FACTURA_2 = "Ingrese solo números enteros y positivos en número de factura";
@@ -80,6 +84,7 @@ public class C_gestionVentas implements GestionInterface, RecibirEmpleadoCallbac
         this.vista.jbResumen.setEnabled(false);
         this.vista.jbCliente.setEnabled(false);
         this.vista.jbVendedor.setEnabled(false);
+        this.vista.jbTimbrado.setEnabled(false);
         this.vista.jcbCondVenta.setEnabled(false);
         this.vista.jbAnular.setEnabled(false);
         this.vista.jbFacturar.setEnabled(false);
@@ -105,6 +110,8 @@ public class C_gestionVentas implements GestionInterface, RecibirEmpleadoCallbac
                 this.vista.jbCliente.addActionListener(this);
                 this.vista.jbVendedor.setEnabled(true);
                 this.vista.jbVendedor.addActionListener(this);
+                this.vista.jbTimbrado.setEnabled(true);
+                this.vista.jbTimbrado.addActionListener(this);
                 this.vista.jcbCondVenta.setEnabled(true);
                 this.vista.jbBorrar.addActionListener(this);
                 this.vista.jbBuscarDetalle.setEnabled(true);
@@ -143,6 +150,7 @@ public class C_gestionVentas implements GestionInterface, RecibirEmpleadoCallbac
         this.vista.jbBuscar.addKeyListener(this);
         this.vista.jbCliente.addKeyListener(this);
         this.vista.jbVendedor.addKeyListener(this);
+        this.vista.jbTimbrado.addKeyListener(this);
         this.vista.jcbCondVenta.addKeyListener(this);
         this.vista.jbBorrar.addKeyListener(this);
         this.vista.jbBuscarDetalle.addKeyListener(this);
@@ -209,7 +217,7 @@ public class C_gestionVentas implements GestionInterface, RecibirEmpleadoCallbac
 
     @Override
     public void recibirCliente(M_cliente cliente) {
-        this.modelo.cabecera.setCliente(cliente);
+        this.modelo.getCabecera().setCliente(cliente);
         String nombre = this.modelo.cabecera.getCliente().getNombre();
         String entidad = this.modelo.cabecera.getCliente().getEntidad();
         this.vista.jtfCliente.setText(nombre + "-(" + entidad + ")");
@@ -217,7 +225,7 @@ public class C_gestionVentas implements GestionInterface, RecibirEmpleadoCallbac
 
     @Override
     public void recibirFuncionario(M_funcionario funcionario) {
-        this.modelo.cabecera.setFuncionario(funcionario);
+        this.modelo.getCabecera().setFuncionario(funcionario);
         this.vista.jtfEmpleado.setText(this.modelo.obtenerNombreFuncionario());
     }
 
@@ -259,6 +267,7 @@ public class C_gestionVentas implements GestionInterface, RecibirEmpleadoCallbac
         this.modelo.borrarDatos();
         this.vista.jtfCliente.setText("");
         this.vista.jtfEmpleado.setText("");
+        this.vista.jtfTimbrado.setText("");
         this.vista.jtfNroFactura.setText("");
         this.vista.jcbCondVenta.setSelectedItem("Todos");
         this.vista.jcbEstado.setSelectedItem(new Estado(1, "Activo"));
@@ -328,11 +337,11 @@ public class C_gestionVentas implements GestionInterface, RecibirEmpleadoCallbac
             JOptionPane.showMessageDialog(vista, "El numero de factura debe ser solo numérico", "Atención", JOptionPane.WARNING_MESSAGE);
             return;
         }
-        String empleado = empleado();
-        M_cliente cliente = cliente();
-        String tiop = tipoOperacion();
         Estado estado = vista.jcbEstado.getItemAt(vista.jcbEstado.getSelectedIndex());
-        ResumenIngreso re = new ResumenIngreso(c_inicio, this.modelo.getTm(), cliente, nro_factura, empleado, vista.jddInicio.getDate(), vista.jddFinal.getDate(), tiop, estado);
+        E_tipoOperacion tiop = vista.jcbCondVenta.getItemAt(vista.jcbCondVenta.getSelectedIndex());
+        modelo.getCabecera().setEstado(estado);
+        modelo.getCabecera().setCondVenta(tiop);
+        ResumenIngreso re = new ResumenIngreso(c_inicio, this.modelo.getTm(), vista.jddInicio.getDate(), vista.jddFinal.getDate(), modelo.getCabecera());
         re.setVisible(true);
     }
 
@@ -533,6 +542,10 @@ public class C_gestionVentas implements GestionInterface, RecibirEmpleadoCallbac
             sf.setCallback(this);
             sf.mostrarVista();
         }
+        if (e.getSource().equals(this.vista.jbTimbrado)) {
+            SeleccionarTimbrado st = new SeleccionarTimbrado(this.c_inicio.vista, this);
+            st.mostrarVista();
+        }
         if (e.getSource().equals(this.vista.jbBorrar)) {
             borrarDatos();
         }
@@ -619,5 +632,16 @@ public class C_gestionVentas implements GestionInterface, RecibirEmpleadoCallbac
     private void buscarVentaDetalle() {
         C_buscar_venta_detalle bvd = new C_buscar_venta_detalle(c_inicio);
         bvd.mostrarVista();
+    }
+
+    @Override
+    public void recibirTimbrado(E_Timbrado timbrado) {
+        this.modelo.getCabecera().setTimbrado(timbrado);
+        this.vista.jtfTimbrado.setText(modelo.getTimbrado());
+    }
+
+    @Override
+    public void recibirTimbradoNroFactura(E_Timbrado timbrado, int nroFactura) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

@@ -10,7 +10,6 @@ import Entities.E_facturaDetalle;
 import Entities.E_facturacionCabecera;
 import Entities.E_tipoOperacion;
 import Entities.Estado;
-import Entities.M_cliente;
 import Entities.M_facturaCabecera;
 import Entities.M_rol_usuario;
 import Excel.ExportarVentas;
@@ -57,17 +56,13 @@ public class ResumenIngreso extends JDialog implements ActionListener, KeyListen
     JLabel jlContado, jlCredito, jlTotal;
     JFormattedTextField jftTotalEgreso, jftTotalEgCont, jftTotalEgCred;
     Date inicio, fin;
-    String idEmpleado, tipo_operacion;
-    Integer nro_factura;
     JTabbedPane jtpPanel;
-    M_cliente cliente;
+    M_facturaCabecera facturaCab;
     E_facturacionCabecera facturacionCabecera;
     FacturaCabeceraTableModel tm;
     Estado estado;
 
-    public ResumenIngreso(C_inicio c_inicio, FacturaCabeceraTableModel tm, M_cliente cliente_entidad,
-            Integer nro_factura, String idEmpleado, Date inicio, Date fin,
-            String tipo_operacion, Estado estado) {
+    public ResumenIngreso(C_inicio c_inicio, FacturaCabeceraTableModel tm, Date inicio, Date fin, M_facturaCabecera facturaCab) {
         super(c_inicio.vista, DEFAULT_MODALITY_TYPE);
         setTitle("Resumen de ingresos");
         setSize(800, 600);
@@ -75,11 +70,7 @@ public class ResumenIngreso extends JDialog implements ActionListener, KeyListen
         setLocationRelativeTo(c_inicio.vista);
         this.inicio = inicio;
         this.fin = fin;
-        this.cliente = cliente_entidad;
-        this.idEmpleado = idEmpleado;
-        this.tipo_operacion = tipo_operacion;
-        this.nro_factura = nro_factura;
-        this.estado = estado;
+        this.facturaCab = facturaCab;
         inicializarComponentes();
         this.tm = tm;
         inicializarVista(tm, inicio, fin);
@@ -221,7 +212,10 @@ public class ResumenIngreso extends JDialog implements ActionListener, KeyListen
         calendario.set(Calendar.SECOND, 0);
         calendario.set(Calendar.MILLISECOND, 0);
         java.sql.Timestamp fFin = java.sql.Timestamp.valueOf(sdfs.format(calendario.getTime()));
-        jtDetalle.setModel(DB_Ingreso.consultarIngresoDetalleAgrupado(fInicio, fFin, cliente, estado));
+        int idCliente = this.facturaCab.getCliente().getIdCliente();
+        int idEstado = this.facturaCab.getEstado().getId();
+        int idTimbrado = this.facturaCab.getTimbrado().getId();
+        jtDetalle.setModel(DB_Ingreso.consultarIngresoDetalleAgrupado(fInicio, fFin, idCliente, idEstado, idTimbrado));
         Utilities.c_packColumn.packColumns(jtDetalle, 1);
         jftTotalEgCred.setValue(totalCredito);
         jftTotalEgCont.setValue(totalContado);
@@ -233,13 +227,13 @@ public class ResumenIngreso extends JDialog implements ActionListener, KeyListen
         jbImportarXLS.addActionListener(this);
     }
 
-    private void importarExcelCompleto(M_cliente cliente, Integer nro_factura, String idEmpleado, String tipo_operacion, Estado estado) {
+    private void importarExcelCompleto() {
         ArrayList<M_facturaCabecera> ed = new ArrayList(this.tm.getFacturaCabeceraList());
         ExportarVentas ce = new ExportarVentas("Resumen de ingresos", ed);
         ce.exportacionCompleta();
     }
 
-    private void importarExcelResumido(M_cliente cliente, Integer nro_factura, String idEmpleado, String tipo_operacion, Estado estado) {
+    private void importarExcelResumido() {
         ArrayList<M_facturaCabecera> ed = new ArrayList(this.tm.getFacturaCabeceraList());
         ExportarVentas ce = new ExportarVentas("Resumen de ingresos", ed);
         ce.exportacionResumida();
@@ -262,7 +256,7 @@ public class ResumenIngreso extends JDialog implements ActionListener, KeyListen
                 EventQueue.invokeLater(new Runnable() {
                     @Override
                     public void run() {
-                        importarExcelCompleto(cliente, nro_factura, idEmpleado, tipo_operacion, estado);
+                        importarExcelCompleto();
                     }
                 });
                 break;
@@ -272,7 +266,7 @@ public class ResumenIngreso extends JDialog implements ActionListener, KeyListen
                 EventQueue.invokeLater(new Runnable() {
                     @Override
                     public void run() {
-                        importarExcelResumido(cliente, nro_factura, idEmpleado, tipo_operacion, estado);
+                        importarExcelResumido();
                     }
                 });
                 break;

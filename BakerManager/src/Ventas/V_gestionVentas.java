@@ -31,9 +31,9 @@ import net.miginfocom.swing.MigLayout;
 public class V_gestionVentas extends JInternalFrame {
 
     public JButton jbBuscar, jbBuscarDetalle, jbBorrar, jbAgregar, jbDetalle,
-            jbResumen, jbCliente, jbVendedor, jbAnular, jbFacturar,
+            jbResumen, jbCliente, jbVendedor, jbAnular, jbFacturar, jbTimbrado,
             jbHistorialFacturacion, jbNotasCredito, jbMasOpciones;
-    public JTextField jtfNroFactura, jtfCliente, jtfEmpleado;
+    public JTextField jtfNroFactura, jtfCliente, jtfEmpleado, jtfTimbrado;
     public JComboBox<E_tipoOperacion> jcbCondVenta;
     public JComboBox<Estado> jcbEstado;
     private JPanel jpTop, jpBotonesTop, jpBot;
@@ -65,9 +65,13 @@ public class V_gestionVentas extends JInternalFrame {
         jtfCliente.setPreferredSize(new Dimension(250, 10));
         jtfCliente.setEditable(false);
         jbVendedor = new JButton("Vendedor");
+        jbTimbrado = new JButton("Talonario");
         jtfEmpleado = new JTextField();
         jtfEmpleado.setPreferredSize(new Dimension(250, 10));
         jtfEmpleado.setEditable(false);
+        jtfTimbrado = new JTextField();
+        jtfTimbrado.setPreferredSize(new Dimension(250, 10));
+        jtfTimbrado.setEditable(false);
         jcbCondVenta = new JComboBox();
         jtfNroFactura = new JTextField();
         jddInicio = new JDateChooser();
@@ -87,10 +91,8 @@ public class V_gestionVentas extends JInternalFrame {
         jpFiltros.add(jddFinal, "growx");
         jpFiltros.add(new JLabel("Nro. factura:"));
         jpFiltros.add(jtfNroFactura, "growx, wrap");
-        jpFiltros.add(new JComponent() {
-        });
-        jpFiltros.add(new JComponent() {
-        });
+        jpFiltros.add(jbTimbrado);
+        jpFiltros.add(jtfTimbrado, "growx");
         jpFiltros.add(new JComponent() {
         });
         jpFiltros.add(new JComponent() {

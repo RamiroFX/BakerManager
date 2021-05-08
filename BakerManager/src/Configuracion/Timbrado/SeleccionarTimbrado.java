@@ -7,6 +7,7 @@ package Configuracion.Timbrado;
 
 import Interface.RecibirTimbradoVentaCallback;
 import javax.swing.JDialog;
+import javax.swing.JFrame;
 
 /**
  *
@@ -17,6 +18,12 @@ public class SeleccionarTimbrado {
     M_seleccionarTimbrado modelo;
     V_seleccionarTimbrado vista;
     C_seleccionarTimbrado controlador;
+
+    public SeleccionarTimbrado(JFrame frame, RecibirTimbradoVentaCallback callback) {
+        this.modelo = new M_seleccionarTimbrado();
+        this.vista = new V_seleccionarTimbrado(frame);
+        this.controlador = new C_seleccionarTimbrado(this.modelo, this.vista, callback);
+    }
 
     public SeleccionarTimbrado(JDialog dialog, RecibirTimbradoVentaCallback callback) {
         this.modelo = new M_seleccionarTimbrado();

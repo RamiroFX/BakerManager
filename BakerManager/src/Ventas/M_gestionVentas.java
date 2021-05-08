@@ -18,7 +18,6 @@ import ModeloTabla.FacturaCabeceraTableModel;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 
 /**
  *
@@ -36,6 +35,8 @@ public class M_gestionVentas {
         this.cabecera = new M_facturaCabecera();
         this.cabecera.getFuncionario().setIdFuncionario(-1);
         this.cabecera.getCliente().setIdCliente(-1);
+        this.cabecera.getTimbrado().setId(-1);
+        this.cabecera.getEstado().setId(-1);
         this.detalle = new M_facturaDetalle();
         this.detalles = new ArrayList<>();
         this.tm = new FacturaCabeceraTableModel(FacturaCabeceraTableModel.COMPLETO);
@@ -89,13 +90,15 @@ public class M_gestionVentas {
         calendarFinal.set(Calendar.MINUTE, 59);
         calendarFinal.set(Calendar.SECOND, 59);
         calendarFinal.set(Calendar.MILLISECOND, 999);
-        this.getTm().setFacturaCabeceraList(DB_Ingreso.obtenerIngresos(calendarInicio.getTime(), calendarFinal.getTime(), cliente.getIdCliente(), funcionario.getIdFuncionario(), condCompra.getId(), nroFactura, estado.getId(), conFecha));
+        this.getTm().setFacturaCabeceraList(DB_Ingreso.obtenerIngresos(calendarInicio.getTime(), calendarFinal.getTime(), cliente.getIdCliente(), funcionario.getIdFuncionario(), condCompra.getId(), nroFactura, estado.getId(), conFecha, getCabecera().getTimbrado().getId()));
     }
 
     public void borrarDatos() {
         this.cabecera = new M_facturaCabecera();
         this.cabecera.getFuncionario().setIdFuncionario(-1);
         this.cabecera.getCliente().setIdCliente(-1);
+        this.cabecera.getTimbrado().setId(-1);
+        this.cabecera.getEstado().setId(-1);
         this.detalles = new ArrayList<>();
         setDetalles(new ArrayList<M_facturaDetalle>());
     }
@@ -149,5 +152,14 @@ public class M_gestionVentas {
 
     public void setAccesos(ArrayList<M_menu_item> accesos) {
         this.accesos = accesos;
+    }
+
+    public String getTimbrado() {
+        String timbrado = "";
+        String descripcion = this.getCabecera().getTimbrado().getDescripcion();
+        String nro = this.getCabecera().getTimbrado().getNroTimbrado() + "";
+        String nroInicioFinal = this.getCabecera().getTimbrado().getNroBoletaInicial() + "/" + this.getCabecera().getTimbrado().getNroBoletaFinal();
+        timbrado = descripcion + " (" + nro + " - " + nroInicioFinal + ")";
+        return timbrado;
     }
 }

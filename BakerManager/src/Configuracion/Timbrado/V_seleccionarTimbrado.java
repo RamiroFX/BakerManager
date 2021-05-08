@@ -12,6 +12,7 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -32,6 +33,17 @@ public class V_seleccionarTimbrado extends JDialog {
     public JComboBox jcbTipoFecha;
     public JCheckBox jcbPorFecha;
     public JDateChooser jdcFechaInicio, jdcFechaFinal;
+
+    public V_seleccionarTimbrado(JFrame main) {
+        super(main, "Seleccionar timbrado", true);
+        setSize(800, 400);
+        setLocationRelativeTo(main);
+        initComp();
+        getContentPane().setLayout(new BorderLayout());
+        getContentPane().add(jpTop, BorderLayout.NORTH);
+        getContentPane().add(jspTimbrado, BorderLayout.CENTER);
+        getContentPane().add(jpBotones, BorderLayout.SOUTH);
+    }
 
     public V_seleccionarTimbrado(JDialog main) {
         super(main, "Seleccionar timbrado", true);
