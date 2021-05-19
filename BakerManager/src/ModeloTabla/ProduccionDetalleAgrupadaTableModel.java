@@ -5,10 +5,14 @@
  */
 package ModeloTabla;
 
+import DB.DB_Produccion;
 import Entities.E_produccionDetalle;
 import Entities.E_produccionDetallePlus;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import javax.swing.table.AbstractTableModel;
 
@@ -18,11 +22,12 @@ import javax.swing.table.AbstractTableModel;
  */
 public class ProduccionDetalleAgrupadaTableModel extends AbstractTableModel {
 
-    public static final int SIMPLE = 1, DETALLE = 2, COMPLETA = 3;
+    public static final int SIMPLE = 1, DETALLE = 2, COMPLETA = 3, SUPER = 4;
     private List<E_produccionDetallePlus> produccionList;
     private String[] colNames;
     private DecimalFormat decimalFormat;
     private int tipo;
+    private Date fechaLimite;
 
     public ProduccionDetalleAgrupadaTableModel(int tipo) {
         this.tipo = tipo;
@@ -41,7 +46,19 @@ public class ProduccionDetalleAgrupadaTableModel extends AbstractTableModel {
                 this.colNames = new String[]{"Código", "Descripción", "Cant. producida", "Cant. vendida", "Cant. actual"};
                 break;
             }
+            case SUPER: {
+                this.colNames = new String[]{"Código", "Descripción", "Saldo", "Cant. producida", "Cant. vendida", "Balance", "Cant. actual"};
+                break;
+            }
         }
+    }
+
+    public Date getFechaLimite() {
+        return fechaLimite;
+    }
+
+    public void setFechaLimite(Date fechaLimite) {
+        this.fechaLimite = fechaLimite;
     }
 
     public List<E_produccionDetallePlus> getList() {
@@ -50,6 +67,16 @@ public class ProduccionDetalleAgrupadaTableModel extends AbstractTableModel {
 
     public void setList(List<E_produccionDetallePlus> produccionList) {
         this.produccionList = produccionList;
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        Calendar fechaInicio = Calendar.getInstance();
+        fechaInicio.setTime(fechaLimite);
+        fechaInicio.add(Calendar.MONTH, 2 * -1);
+        System.out.println("ModeloTabla.ProduccionDetalleAgrupadaTableModel.setList()");
+        System.out.println("fechaInicio: " + sdf.format(fechaInicio.getTime()));
+        System.out.println("fechaLimite: " + sdf.format(fechaLimite));
+        for (E_produccionDetallePlus aProd : produccionList) {
+            aProd.setBalanceAnterior(DB_Produccion.consultarBalanceProduccion(fechaInicio.getTime(), getFechaLimite(), aProd.getProducto().getId()));
+        }
         updateTable();
     }
 
@@ -80,22 +107,12 @@ public class ProduccionDetalleAgrupadaTableModel extends AbstractTableModel {
 
     @Override
     public Object getValueAt(int rowIndex, int colIndex) {
-        E_produccionDetallePlus produccion = this.produccionList.get(rowIndex);
-        switch (colIndex) {
-            case 0: {
-                return produccion.getProducto().getCodigo();
+        switch (this.tipo) {
+            case COMPLETA: {
+                return getValueCompleteMode(rowIndex, colIndex);
             }
-            case 1: {
-                return produccion.getProducto().getDescripcion();
-            }
-            case 2: {
-                return decimalFormat.format(produccion.getCantidad());
-            }
-            case 3: {
-                return decimalFormat.format(produccion.getCantidadVendida());
-            }
-            case 4: {
-                return decimalFormat.format(produccion.getProducto().getCantActual());
+            case SUPER: {
+                return getValueSuperMode(rowIndex, colIndex);
             }
             default: {
                 return null;
@@ -128,4 +145,63 @@ public class ProduccionDetalleAgrupadaTableModel extends AbstractTableModel {
         fireTableDataChanged();
     }
 
+    public Object getValueCompleteMode(int rowIndex, int colIndex) {
+        E_produccionDetallePlus produccion = this.produccionList.get(rowIndex);
+        switch (colIndex) {
+            case 0: {
+                return produccion.getProducto().getCodigo();
+            }
+            case 1: {
+                return produccion.getProducto().getDescripcion();
+            }
+            case 2: {
+                return decimalFormat.format(produccion.getCantidad());
+            }
+            case 3: {
+                return decimalFormat.format(produccion.getCantidad());
+            }
+            case 4: {
+                return decimalFormat.format(produccion.getCantidadVendida());
+            }
+            case 5: {
+                return decimalFormat.format(produccion.getCantidad() - produccion.getCantidadVendida());
+            }
+            case 6: {
+                return decimalFormat.format(produccion.getProducto().getCantActual());
+            }
+            default: {
+                return null;
+            }
+        }
+    }
+
+    public Object getValueSuperMode(int rowIndex, int colIndex) {
+        E_produccionDetallePlus produccion = this.produccionList.get(rowIndex);
+        switch (colIndex) {
+            case 0: {
+                return produccion.getProducto().getCodigo();
+            }
+            case 1: {
+                return produccion.getProducto().getDescripcion();
+            }
+            case 2: {
+                return decimalFormat.format(produccion.getBalanceAnterior());
+            }
+            case 3: {
+                return decimalFormat.format(produccion.getCantidad());
+            }
+            case 4: {
+                return decimalFormat.format(produccion.getCantidadVendida());
+            }
+            case 5: {
+                return decimalFormat.format((produccion.getBalanceAnterior() + produccion.getCantidad()) - produccion.getCantidadVendida());
+            }
+            case 6: {
+                return decimalFormat.format(produccion.getProducto().getCantActual());
+            }
+            default: {
+                return null;
+            }
+        }
+    }
 }

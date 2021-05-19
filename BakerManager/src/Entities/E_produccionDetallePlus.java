@@ -12,6 +12,7 @@ package Entities;
 public class E_produccionDetallePlus extends E_produccionDetalle {
 
     private double cantidadVendida;
+    private double balanceAnterior;
 
     public E_produccionDetallePlus(double cantidadVendida) {
         this.cantidadVendida = cantidadVendida;
@@ -26,6 +27,14 @@ public class E_produccionDetallePlus extends E_produccionDetalle {
 
     public void setCantidadVendida(double cantidadVendida) {
         this.cantidadVendida = cantidadVendida;
+    }
+
+    public double getBalanceAnterior() {
+        return balanceAnterior;
+    }
+
+    public void setBalanceAnterior(double balanceAnterior) {
+        this.balanceAnterior = balanceAnterior;
     }
 
 }

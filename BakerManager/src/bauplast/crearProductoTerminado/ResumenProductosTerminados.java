@@ -64,7 +64,8 @@ public class ResumenProductosTerminados extends JDialog implements ActionListene
         this.fechaInicio= fechaInicio;
         this.fechaFinal = fechaFinal;
         this.conFecha = porFecha;
-        productosTerminadosAgrupadosTM = new ProduccionDetalleAgrupadaTableModel(ProduccionDetalleAgrupadaTableModel.COMPLETA);
+        productosTerminadosAgrupadosTM = new ProduccionDetalleAgrupadaTableModel(ProduccionDetalleAgrupadaTableModel.SUPER);
+        productosTerminadosAgrupadosTM.setFechaLimite(fechaInicio);
         productosTerminadosAgrupadosTM.setList(DB_Produccion.consultarProductosTerminadosAgrupado(descripcion, buscarPor, ordenarPor,
             categoria, porFecha, fechaInicio, fechaFinal));
         jtDesperdicios.setModel(productosTerminadosAgrupadosTM);

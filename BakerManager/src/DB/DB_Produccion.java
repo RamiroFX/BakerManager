@@ -1136,6 +1136,43 @@ public class DB_Produccion {
         }
     }
 
+    public static int consultarBalanceProduccion(Date desde, Date hasta, int idProducto) {
+        int balance = 0;
+        String Query = "select 	(coalesce(SUM(produccion_detalle.cantidad), 0 ) - 	"
+                + "coalesce((select SUM(fd.cantidad) from factura_detalle fd, factura_cabecera fc "
+                + "where fc.id_factura_cabecera = fd.id_factura_cabecera and fd.id_producto = producto.id_producto "
+                + "and fc.id_estado = 1 and FC.TIEMPO > ? AND FC.TIEMPO < ? ), 0 ) ) balance_anterior "
+                + "from produccion_detalle join produccion_cabecera on 	"
+                + "produccion_cabecera.id_produccion_cabecera = produccion_detalle.id_produccion_cabecera "
+                + "join producto on 	producto.id_producto = produccion_detalle.id_producto "
+                + "join producto_categoria on 	producto_categoria.id_producto_categoria = producto.id_categoria "
+                + "where produccion_cabecera.id_estado = 1 	"
+                + "and produccion_cabecera.id_produccion_tipo = 1 	"
+                + "and producto.id_producto = ? 	"
+                + "and fecha_produccion > ? AND fecha_produccion < ? "
+                + "group by producto.id_producto";
+        /*System.out.println("DB.DB_Produccion.consultarBalanceProduccion()");
+        System.out.println(hasta);
+        System.out.println(idProducto);
+        System.out.println(Query);*/
+        try {
+            pst = DB_manager.getConection().prepareStatement(Query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            pst.setTimestamp(1, new Timestamp(desde.getTime()));
+            pst.setTimestamp(2, new Timestamp(hasta.getTime()));
+            pst.setInt(3, idProducto);
+            pst.setTimestamp(4, new Timestamp(desde.getTime()));
+            pst.setTimestamp(5, new Timestamp(hasta.getTime()));
+            rs = pst.executeQuery();
+            while (rs.next()) {
+                balance = rs.getInt("balance_anterior");
+            }
+        } catch (SQLException ex) {
+            Logger lgr = Logger.getLogger(DB_Produccion.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        }
+        return balance;
+    }
+
     public static void eliminarProduccionRecuperadoPosterior(E_produccionDesperdicioDetalle unDesperdicio) {
         String INSERT_DETALLE = "DELETE FROM produccion_desperdicio WHERE id_produccion_desperdicio=?;";
         try {
@@ -3506,6 +3543,8 @@ public class DB_Produccion {
                     + "	producto_categoria.descripcion "
                     + "ORDER BY producto DESC ";
             QUERY = QUERY + GROUP_BY;
+            System.out.println("DB.DB_Produccion.consultarProductosTerminadosAgrupado()");
+            System.err.println(QUERY);
             int pos = 1;
             pst = DB_manager.getConection().prepareStatement(QUERY, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             if (porFecha) {
