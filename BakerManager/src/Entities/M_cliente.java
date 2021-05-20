@@ -154,6 +154,18 @@ public class M_cliente {
         return rucCompleto;
     }
 
+    public String getClienteDescripcion() {
+        String resultado = "";
+        if (getEntidad() != null) {
+            resultado = getEntidad();
+            if (getNombre() != null) {
+                resultado = resultado + "-" + getNombre();
+            }
+        }
+        resultado = resultado + "(" + getRucCompleto() + ")";
+        return resultado;
+    }
+
     public Date getFechaCreacion() {
         return fechaCreacion;
     }

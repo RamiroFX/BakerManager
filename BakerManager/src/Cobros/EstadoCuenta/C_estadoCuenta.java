@@ -6,6 +6,7 @@
 package Cobros.EstadoCuenta;
 
 import Cliente.SeleccionarCliente;
+import Entities.E_movimientoContable;
 import Entities.M_cliente;
 import Interface.RecibirClienteCallback;
 import Utilities.c_packColumn;
@@ -14,6 +15,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import javax.swing.JOptionPane;
 
@@ -119,6 +121,41 @@ public class C_estadoCuenta implements ActionListener, KeyListener, RecibirClien
         sc.mostrarVista();
     }
 
+    private void sumarTotales() {
+        this.vista.jtCobros.setModel(modelo.obtenerTableModel());
+        BigDecimal balance = new BigDecimal("0");
+        BigDecimal totalDebe = new BigDecimal("0");
+        BigDecimal totalHaber = new BigDecimal("0");
+        for (E_movimientoContable unMov : modelo.cabeceraTableModel.getList()) {
+            switch (unMov.getTipo()) {
+                case E_movimientoContable.TIPO_SALDO_INICIAL: {
+                    totalHaber = totalHaber.add(new BigDecimal(unMov.getClienteSaldoInicial().getSaldoInicial() + ""));
+                    break;
+                }
+                case E_movimientoContable.TIPO_VENTA: {
+                    totalHaber = totalHaber.add(new BigDecimal(unMov.getVenta().getMonto() + ""));
+                    break;
+                }
+                case E_movimientoContable.TIPO_COBRO: {
+                    totalDebe = totalDebe.add(new BigDecimal(unMov.getCobro().getMonto() + ""));
+                    break;
+                }
+                case E_movimientoContable.TIPO_NOTA_CREDITO: {
+                    totalDebe = totalDebe.add(new BigDecimal(unMov.getNotaCredito().getTotal() + ""));
+                    break;
+                }
+                case E_movimientoContable.TIPO_RETENCION_VENTA: {
+                    totalDebe = totalDebe.add(new BigDecimal(unMov.getRetencionVenta().getMonto() + ""));
+                    break;
+                }
+            }
+        }
+        balance = balance.add(totalHaber).subtract(totalDebe);
+        this.vista.jftTotalEfectivo.setValue(totalHaber);
+        this.vista.jftTotalCheque.setValue(totalDebe);
+        this.vista.jftTotalCobrado.setValue(balance);
+    }
+
     @Override
     public void actionPerformed(ActionEvent ae) {
         if (ae.getSource().equals(this.vista.jbSalir)) {
@@ -148,7 +185,9 @@ public class C_estadoCuenta implements ActionListener, KeyListener, RecibirClien
         EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
+                vista.jtfCliente.setText(cliente.getClienteDescripcion());
                 modelo.obtenerEstadoCuenta(cliente.getIdCliente());
+                sumarTotales();
                 c_packColumn.packColumns(vista.jtCobros, 1);
             }
         });

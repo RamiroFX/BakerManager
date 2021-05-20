@@ -30,7 +30,7 @@ public class V_estadoCuenta extends JDialog {
     JScrollPane jspCobros;
     JTable jtCobros;
     JButton jbCliente, jbSalir, jbImportarXLS;
-    JLabel jlEfectivo, jlCheque, jlTotal;
+    JLabel jlDebe, jlHaber, jlTotal;
     JFormattedTextField jftTotalCobrado, jftTotalCheque, jftTotalEfectivo;
 
     public V_estadoCuenta(JFrame vista) {
@@ -56,15 +56,15 @@ public class V_estadoCuenta extends JDialog {
         jftTotalCheque.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("¤#,##0"))));
         jftTotalEfectivo = new JFormattedTextField();
         jftTotalEfectivo.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("¤#,##0"))));
-        jlEfectivo = new JLabel("Cobros en efectivo");
-        jlEfectivo.setHorizontalAlignment(SwingConstants.CENTER);
-        jlCheque = new JLabel("Cobros en cheque");
-        jlCheque.setHorizontalAlignment(SwingConstants.CENTER);
-        jlTotal = new JLabel("Total");
+        jlDebe = new JLabel("Total debe");
+        jlDebe.setHorizontalAlignment(SwingConstants.CENTER);
+        jlHaber = new JLabel("Total haber");
+        jlHaber.setHorizontalAlignment(SwingConstants.CENTER);
+        jlTotal = new JLabel("Balance");
         jlTotal.setHorizontalAlignment(SwingConstants.CENTER);
-        jpTotalCobrado.add(jlEfectivo);
+        jpTotalCobrado.add(jlDebe);
         jpTotalCobrado.add(jftTotalEfectivo);
-        jpTotalCobrado.add(jlCheque);
+        jpTotalCobrado.add(jlHaber);
         jpTotalCobrado.add(jftTotalCheque);
         jpTotalCobrado.add(jlTotal);
         jpTotalCobrado.add(jftTotalCobrado);

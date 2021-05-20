@@ -22,54 +22,81 @@ public class EstadoCuentaClienteTableModel extends AbstractTableModel {
     private SimpleDateFormat dateFormater;
     private List<E_movimientoContable> list;
     private final String[] colNames = {"Fecha", "Documento", "Debe", "Haber", "Saldo"};
-    private int debe;
-    private int haber;
-    private int saldo;
 
     public EstadoCuentaClienteTableModel() {
         this.dateFormater = new SimpleDateFormat("dd/MM/YYYY");
         this.decimalFormat = new DecimalFormat("#,##0.##");
         this.list = new ArrayList<>();
-        debe = 0;
-        haber = 0;
-        saldo = 0;
 
     }
 
     public void setList(List<E_movimientoContable> facturaCabeceraList) {
-        debe = 0;
-        haber = 0;
-        saldo = 0;
-        for (E_movimientoContable row : facturaCabeceraList) {
-            switch (row.getTipo()) {
+        this.list = facturaCabeceraList;
+        /*
+        PRIMERA ITERACION PARA PREPARAR BASE DEL BALANCE
+         */
+        E_movimientoContable firsRow = list.get(0);
+        switch (firsRow.getTipo()) {
+            case E_movimientoContable.TIPO_SALDO_INICIAL: {
+                firsRow.setDebe(firsRow.getClienteSaldoInicial().getSaldoInicial());
+                firsRow.setBalance(firsRow.getClienteSaldoInicial().getSaldoInicial());
+                break;
+            }
+            case E_movimientoContable.TIPO_VENTA: {
+                firsRow.setDebe(firsRow.getVenta().getMonto());
+                firsRow.setBalance(firsRow.getVenta().getMonto());
+                break;
+            }
+            case E_movimientoContable.TIPO_COBRO: {
+                firsRow.setHaber(firsRow.getCobro().getMonto());
+                firsRow.setBalance(-firsRow.getCobro().getMonto());
+                break;
+            }
+            case E_movimientoContable.TIPO_NOTA_CREDITO: {
+                firsRow.setHaber(firsRow.getNotaCredito().getTotal());
+                firsRow.setBalance(-firsRow.getNotaCredito().getTotal());
+                break;
+            }
+            case E_movimientoContable.TIPO_RETENCION_VENTA: {
+                firsRow.setHaber(firsRow.getRetencionVenta().getMonto());
+                firsRow.setBalance(-firsRow.getRetencionVenta().getMonto());
+                break;
+            }
+        }
+        /*
+        COMIENZO DE ITERACIONES
+         */
+        for (int i = 1; i < list.size(); i++) {
+            E_movimientoContable movAnt = list.get(i - 1);
+            E_movimientoContable mov = list.get(i);
+            switch (mov.getTipo()) {
                 case E_movimientoContable.TIPO_SALDO_INICIAL: {
-                    debe = debe + (int) row.getClienteSaldoInicial().getSaldoInicial();
-                    saldo = debe - haber;
+                    mov.setDebe(mov.getClienteSaldoInicial().getSaldoInicial());
+                    mov.setBalance(mov.getDebe() + movAnt.getBalance());
                     break;
                 }
                 case E_movimientoContable.TIPO_VENTA: {
-                    debe = debe + (int) row.getVenta().getMonto();
-                    saldo = debe - haber;
+                    mov.setDebe(mov.getVenta().getMonto());
+                    mov.setBalance(mov.getDebe() + movAnt.getBalance());
                     break;
                 }
                 case E_movimientoContable.TIPO_COBRO: {
-                    haber = haber + (int) row.getCobro().getMonto();
-                    saldo = debe - haber;
+                    mov.setHaber(mov.getCobro().getMonto());
+                    mov.setBalance(-mov.getHaber() + movAnt.getBalance());
                     break;
                 }
                 case E_movimientoContable.TIPO_NOTA_CREDITO: {
-                    haber = haber + (int) row.getNotaCredito().getTotal();
-                    saldo = debe - haber;
+                    mov.setHaber(mov.getNotaCredito().getTotal());
+                    mov.setBalance(-mov.getHaber() + movAnt.getBalance());
                     break;
                 }
                 case E_movimientoContable.TIPO_RETENCION_VENTA: {
-                    haber = haber + (int) row.getRetencionVenta().getMonto();
-                    saldo = debe - haber;
+                    mov.setHaber(mov.getRetencionVenta().getMonto());
+                    mov.setBalance(-mov.getHaber() + movAnt.getBalance());
                     break;
                 }
             }
         }
-        this.list = facturaCabeceraList;
         updateTable();
     }
 
@@ -105,67 +132,21 @@ public class EstadoCuentaClienteTableModel extends AbstractTableModel {
     @Override
     public Object getValueAt(int rowIndex, int colIndex) {
         E_movimientoContable row = this.list.get(rowIndex);
-        //"Fecha", "Documento", "Debe", "Haber", "Saldo"
         switch (colIndex) {
             case 0: {
-                switch (row.getTipo()) {
-                    case E_movimientoContable.TIPO_SALDO_INICIAL: {
-                        return dateFormater.format(row.getFechaSaldoInicial());
-                    }
-                    case E_movimientoContable.TIPO_VENTA: {
-                        return dateFormater.format(row.getVenta().getFecha());
-                    }
-                    case E_movimientoContable.TIPO_COBRO: {
-                        return dateFormater.format(row.getCobro().getCuentaCorrienteCabecera().getFechaPago());
-                    }
-                    case E_movimientoContable.TIPO_NOTA_CREDITO: {
-                        return dateFormater.format(row.getNotaCredito().getTiempo());
-                    }
-                    case E_movimientoContable.TIPO_RETENCION_VENTA: {
-                        return dateFormater.format(row.getRetencionVenta().getTiempo());
-                    }
-                }
+                return dateFormater.format(row.getMovFecha());
             }
             case 1: {
-                switch (row.getTipo()) {
-                    case E_movimientoContable.TIPO_SALDO_INICIAL: {
-                        return row.getTipoDescripcion();
-                    }
-                    case E_movimientoContable.TIPO_VENTA: {
-                        int nroFactura = row.getVenta().getNroFactura();
-                        String sNroFactura = decimalFormat.format(nroFactura);
-                        return row.getTipoDescripcion() + " N° " + sNroFactura;
-                    }
-                    case E_movimientoContable.TIPO_COBRO: {
-                        int nroFactura = row.getCobro().getFacturaVenta().getNroFactura();
-                        int nroRecibo = row.getCobro().getCuentaCorrienteCabecera().getNroRecibo();
-                        String sNroFactura = decimalFormat.format(nroFactura);
-                        String sNroRecibo = decimalFormat.format(nroRecibo);
-                        return row.getTipoDescripcion() + " N° " + sNroRecibo + " (Fact. N° " + sNroFactura + ")";
-                    }
-                    case E_movimientoContable.TIPO_NOTA_CREDITO: {
-                        int nroFactura = row.getNotaCredito().getFacturaCabecera().getNroFactura();
-                        int nroNotaCredito = row.getNotaCredito().getNroNotaCredito();
-                        String sNroFactura = decimalFormat.format(nroFactura);
-                        String sNroNotaCredito = decimalFormat.format(nroNotaCredito);
-                        return row.getTipoDescripcion() + " N° " + sNroNotaCredito + " (Fact. N° " + sNroFactura + ")";
-                    }
-                    case E_movimientoContable.TIPO_RETENCION_VENTA: {
-                        int nroRetencion = row.getRetencionVenta().getNroRetencion();
-                        String sNroFactura = decimalFormat.format(row.getRetencionVenta().getVenta().getNroFactura());
-                        String sNroRetencion = decimalFormat.format(nroRetencion);
-                        return row.getTipoDescripcion() + " N° " + sNroRetencion + " (Fact. N° " + sNroFactura + ")";
-                    }
-                }
+                return row.getMovDescripcion();
             }
             case 2: {
-                return decimalFormat.format(debe);
+                return decimalFormat.format(row.getDebe());
             }
             case 3: {
-                return decimalFormat.format(haber);
+                return decimalFormat.format(row.getHaber());
             }
             case 4: {
-                return decimalFormat.format(saldo);
+                return decimalFormat.format(row.getBalance());
 
             }
             default: {

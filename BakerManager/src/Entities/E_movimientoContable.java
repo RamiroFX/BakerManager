@@ -5,6 +5,7 @@
  */
 package Entities;
 
+import java.text.DecimalFormat;
 import java.util.Date;
 
 /**
@@ -41,6 +42,12 @@ public class E_movimientoContable {
     private E_retencionVenta retencionVenta;
     //AUX
     private Date fechaSaldoInicial;
+
+    private Date movFecha;
+    private String movDescripcion;
+    private double debe;
+    private double haber;
+    private double balance;
 
     public E_movimientoContable() {
     }
@@ -179,6 +186,122 @@ public class E_movimientoContable {
      */
     public void setRetencionVenta(E_retencionVenta retencionVenta) {
         this.retencionVenta = retencionVenta;
+    }
+
+    public double getBalance() {
+        return balance;
+    }
+
+    public void setBalance(double balance) {
+        this.balance = balance;
+    }
+
+    /**
+     * @return the movFecha
+     */
+    public Date getMovFecha() {
+        switch (getTipo()) {
+            case E_movimientoContable.TIPO_SALDO_INICIAL: {
+                return getFechaSaldoInicial();
+            }
+            case E_movimientoContable.TIPO_VENTA: {
+                return getVenta().getFecha();
+            }
+            case E_movimientoContable.TIPO_COBRO: {
+                return getCobro().getCuentaCorrienteCabecera().getFechaPago();
+            }
+            case E_movimientoContable.TIPO_NOTA_CREDITO: {
+                return getNotaCredito().getTiempo();
+            }
+            case E_movimientoContable.TIPO_RETENCION_VENTA: {
+                return getRetencionVenta().getTiempo();
+            }
+        }
+        return null;
+    }
+
+    /**
+     * @param movFecha the movFecha to set
+     */
+    public void setMovFecha(Date movFecha) {
+        this.movFecha = movFecha;
+    }
+
+    /**
+     * @return the movDescripcion
+     */
+    public String getMovDescripcion() {
+        DecimalFormat decimalFormat = new DecimalFormat("#,##0.##");
+        switch (getTipo()) {
+            case E_movimientoContable.TIPO_SALDO_INICIAL: {
+                return getTipoDescripcion();
+            }
+            case E_movimientoContable.TIPO_VENTA: {
+                int nroFactura = getVenta().getNroFactura();
+                String sNroFactura = decimalFormat.format(nroFactura);
+                return getTipoDescripcion() + " N° " + sNroFactura;
+            }
+            case E_movimientoContable.TIPO_COBRO: {
+                int nroFactura = getCobro().getFacturaVenta().getNroFactura();
+                int nroRecibo = getCobro().getCuentaCorrienteCabecera().getNroRecibo();
+                String sNroFactura = decimalFormat.format(nroFactura);
+                String sNroRecibo = decimalFormat.format(nroRecibo);
+                return getTipoDescripcion() + " N° " + sNroRecibo + " (Fact. N° " + sNroFactura + ")";
+            }
+            case E_movimientoContable.TIPO_NOTA_CREDITO: {
+                int nroFactura = getNotaCredito().getFacturaCabecera().getNroFactura();
+                int nroNotaCredito = getNotaCredito().getNroNotaCredito();
+                String sNroFactura = decimalFormat.format(nroFactura);
+                String sNroNotaCredito = decimalFormat.format(nroNotaCredito);
+                return getTipoDescripcion() + " N° " + sNroNotaCredito + " (Fact. N° " + sNroFactura + ")";
+            }
+            case E_movimientoContable.TIPO_RETENCION_VENTA: {
+                int nroRetencion = getRetencionVenta().getNroRetencion();
+                String sNroFactura = decimalFormat.format(getRetencionVenta().getVenta().getNroFactura());
+                String sNroRetencion = decimalFormat.format(nroRetencion);
+                return getTipoDescripcion() + " N° " + sNroRetencion + " (Fact. N° " + sNroFactura + ")";
+            }
+        }
+        return "no data";
+    }
+
+    /**
+     * @param movDescripcion the movDescripcion to set
+     */
+    public void setMovDescripcion(String movDescripcion) {
+        this.movDescripcion = movDescripcion;
+    }
+
+    /**
+     * @return the debe
+     */
+    public double getDebe() {
+        return debe;
+    }
+
+    /**
+     * @param debe the debe to set
+     */
+    public void setDebe(double debe) {
+        this.debe = debe;
+    }
+
+    /**
+     * @return the haber
+     */
+    public double getHaber() {
+        return haber;
+    }
+
+    public double getCalculoBalance() {
+        return debe - haber;
+    }
+
+    /**
+     * @param haber the haber to set
+     */
+    public void setHaber(double haber) {
+        this.haber = haber;
     }
 
 }

@@ -6,6 +6,7 @@
 package Cobros.EstadoCuenta;
 
 import DB.DB_Cliente;
+import Entities.M_cliente;
 import ModeloTabla.EstadoCuentaClienteTableModel;
 
 /**
