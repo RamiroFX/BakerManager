@@ -12,6 +12,8 @@ import Entities.E_produccionDetalle;
 import Entities.E_produccionTipo;
 import Entities.Estado;
 import Entities.M_funcionario;
+import Entities.M_menu_item;
+import MenuPrincipal.DatosUsuario;
 import ModeloTabla.ProduccionCabeceraTableModel;
 import ModeloTabla.ProduccionDetalleTableModel;
 import java.util.ArrayList;
@@ -29,14 +31,19 @@ public class M_gestionProduccion {
     M_funcionario funcionario;
     private ProduccionCabeceraTableModel produccionCabeceraTM;
     private ProduccionDetalleTableModel produccionDetalleTM;
+    private ArrayList<M_menu_item> accesos;
 
     public M_gestionProduccion() {
         this.funcionario = new M_funcionario();
         this.funcionario.setIdFuncionario(-1);
         this.produccionCabeceraTM = new ProduccionCabeceraTableModel();
         this.produccionDetalleTM = new ProduccionDetalleTableModel(ProduccionDetalleTableModel.SIMPLE);
+        this.accesos = DatosUsuario.getRol_usuario().getAccesos();
     }
 
+    public ArrayList<M_menu_item> getAccesos() {
+        return accesos;
+    }
     public void setFuncionario(M_funcionario funcionario) {
         this.funcionario = funcionario;
     }

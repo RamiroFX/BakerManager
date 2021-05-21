@@ -4,10 +4,21 @@
  */
 package DB;
 
+import Entities.E_ajusteStockCabecera;
+import Entities.E_ajusteStockDetalle;
 import Entities.E_clienteProducto;
+import Entities.E_facturaCabecera;
+import Entities.E_facturaDetalle;
+import Entities.E_movimientoProduccion;
+import Entities.E_produccionCabecera;
+import Entities.E_produccionDesperdicioCabecera;
+import Entities.E_produccionDesperdicioDetalle;
+import Entities.E_produccionDetalle;
 import Entities.M_producto;
 import Entities.E_productoClasificacion;
 import Entities.Estado;
+import Entities.M_egresoCabecera;
+import Entities.M_egreso_detalle;
 import Entities.ProductoCategoria;
 import java.sql.CallableStatement;
 import java.sql.PreparedStatement;
@@ -1276,5 +1287,97 @@ public class DB_Producto {
             lgr.log(Level.SEVERE, ex.getMessage(), ex);
         }
         return productos;
+    }
+
+    public static List<E_movimientoProduccion> obtenerMovimientos(int idProducto) {
+        List<E_movimientoProduccion> list = new ArrayList<>();
+        String QUERY = "SELECT tipo_documento, descipcion_documento, id_producto, "
+                + "id, fecha, nro_venta, nro_compra, nro_ot, entrada, salida "
+                + "FROM public.v_movimiento_producto "
+                + "WHERE id_producto = ? "
+                + "ORDER BY fecha asc;";
+        try {
+            pst = DB_manager.getConection().prepareStatement(QUERY, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            pst.setInt(1, idProducto);
+            rs = pst.executeQuery();
+            while (rs.next()) {
+                E_movimientoProduccion mov = new E_movimientoProduccion();
+                switch (rs.getInt("tipo_documento")) {
+                    case E_movimientoProduccion.TIPO_PRODUCCION: {
+                        E_produccionCabecera produccion = new E_produccionCabecera();
+                        produccion.setId(rs.getInt("id"));
+                        produccion.setFechaProduccion(rs.getDate("fecha"));
+                        produccion.setNroOrdenTrabajo(rs.getInt("nro_ot"));
+                        E_produccionDetalle produccionDetalle = new E_produccionDetalle();
+                        produccionDetalle.setCantidad(rs.getDouble("entrada"));
+                        mov.setTipo(E_movimientoProduccion.TIPO_PRODUCCION);
+                        mov.setTipoDescripcion(E_movimientoProduccion.STR_TIPO_PRODUCCION);
+                        mov.setProduccion(produccion);
+                        mov.setProduccionDetalle(produccionDetalle);
+                        break;
+                    }
+                    case E_movimientoProduccion.TIPO_COMPRA: {
+                        M_egresoCabecera compra = new M_egresoCabecera();
+                        compra.setId_cabecera(rs.getInt("id"));
+                        compra.setTiempo(rs.getTimestamp("fecha"));
+                        compra.setNroFactura(rs.getInt("nro_compra"));
+                        M_egreso_detalle compraDetalle = new M_egreso_detalle();
+                        compraDetalle.setCantidad(rs.getDouble("entrada"));
+                        mov.setTipo(E_movimientoProduccion.TIPO_COMPRA);
+                        mov.setTipoDescripcion(E_movimientoProduccion.STR_TIPO_COMPRA);
+                        mov.setCompra(compra);
+                        mov.setCompraDetalle(compraDetalle);
+                        break;
+                    }
+                    case E_movimientoProduccion.TIPO_VENTA: {
+                        E_facturaCabecera venta = new E_facturaCabecera();
+                        venta.setIdFacturaCabecera(rs.getInt("id"));
+                        venta.setTiempo(rs.getTimestamp("fecha"));
+                        venta.setNroFactura(rs.getInt("nro_venta"));
+                        E_facturaDetalle ventaDetalle = new E_facturaDetalle();
+                        ventaDetalle.setCantidad(rs.getDouble("salida"));
+                        mov.setTipo(E_movimientoProduccion.TIPO_VENTA);
+                        mov.setTipoDescripcion(E_movimientoProduccion.STR_TIPO_VENTA);
+                        mov.setVenta(venta);
+                        mov.setVentaDetalle(ventaDetalle);
+                        break;
+                    }
+                    case E_movimientoProduccion.TIPO_DESPERDICIO: {
+                        E_produccionDesperdicioCabecera desperdicio = new E_produccionDesperdicioCabecera();
+                        desperdicio.setId(rs.getInt("id"));
+                        desperdicio.setTiempo(rs.getTimestamp("fecha"));
+                        E_produccionDesperdicioDetalle desperdicioDetalle = new E_produccionDesperdicioDetalle();
+                        desperdicioDetalle.setCantidad(rs.getDouble("salida"));
+                        mov.setTipo(E_movimientoProduccion.TIPO_DESPERDICIO);
+                        mov.setTipoDescripcion(E_movimientoProduccion.STR_TIPO_DESPERDICIO);
+                        mov.setDesperdicio(desperdicio);
+                        mov.setDesperdicioDetalle(desperdicioDetalle);
+                        break;
+                    }
+                    case E_movimientoProduccion.TIPO_INVENTARIO: {
+                        E_ajusteStockCabecera inventario = new E_ajusteStockCabecera();
+                        inventario.setId(rs.getInt("id"));
+                        inventario.setTiempoInicio(rs.getTimestamp("fecha"));
+                        E_ajusteStockDetalle inventarioDetalle = new E_ajusteStockDetalle();
+                        inventarioDetalle.setTiempoRegistro(rs.getDate("fecha"));
+                        if (rs.getDouble("salida") > 0) {
+                            inventarioDetalle.setCantidadNueva(-rs.getDouble("salida"));
+                        } else {
+                            inventarioDetalle.setCantidadNueva(rs.getDouble("entrada"));
+                        }
+                        mov.setTipo(E_movimientoProduccion.TIPO_INVENTARIO);
+                        mov.setTipoDescripcion(E_movimientoProduccion.STR_TIPO_INVENTARIO);
+                        mov.setInventario(inventario);
+                        mov.setInventarioDetalle(inventarioDetalle);
+                        break;
+                    }
+                }
+                list.add(mov);
+            }
+        } catch (SQLException ex) {
+            Logger lgr = Logger.getLogger(DB_Producto.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        }
+        return list;
     }
 }

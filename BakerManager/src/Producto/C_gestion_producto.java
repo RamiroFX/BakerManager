@@ -214,8 +214,8 @@ public class C_gestion_producto implements ActionListener, KeyListener, MouseLis
         if (e.getSource().equals(this.vista.jtProducto)) {
             int row = this.vista.jtProducto.getSelectedRow();
             int columna = this.vista.jtProducto.getSelectedRow();
-            int idProducto = productoTM.getList().get(row).getId();
             if ((row > -1) && (columna > -1)) {
+                int idProducto = productoTM.getList().get(row).getId();
                 MathContext c = new MathContext(9, RoundingMode.CEILING);
                 setProducto(DB_Producto.obtenerDatosProductoID(idProducto));
                 this.vista.jbModificar.setEnabled(true);

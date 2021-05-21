@@ -9,8 +9,10 @@ import Entities.E_produccionCabecera;
 import Entities.E_produccionTipo;
 import Entities.Estado;
 import Entities.M_funcionario;
+import Entities.M_menu_item;
 import Interface.GestionInterface;
 import Interface.RecibirEmpleadoCallback;
+import Producto.Movimientos.MovimientoProducto;
 import Utilities.ProductionCellRenderer;
 import bakermanager.C_inicio;
 import bauplast.BuscarProduccionDetalle;
@@ -83,6 +85,7 @@ public class C_gestionProduccion implements GestionInterface, RecibirEmpleadoCal
     @Override
     public final void concederPermisos() {
         //TODO add access
+        this.vista.jbMasOpciones.addActionListener(this);
         this.vista.jbCrearDesperdicio.addActionListener(this);
         this.vista.jbCrearDesperdicioRapido.addActionListener(this);
         this.vista.jbCrearRollo.addActionListener(this);
@@ -106,6 +109,7 @@ public class C_gestionProduccion implements GestionInterface, RecibirEmpleadoCal
         this.vista.jbResumen.addKeyListener(this);
         this.vista.jtProduccionCabecera.addMouseListener(this);
         this.vista.jtProduccionCabecera.addKeyListener(this);
+        this.vista.jbMasOpciones.addKeyListener(this);
     }
 
     private void verificarPermiso() {
@@ -327,7 +331,54 @@ public class C_gestionProduccion implements GestionInterface, RecibirEmpleadoCal
 
     private void invocarCrearDesperdicioRapido() {
         CrearDesperdicioRapido cdr = new CrearDesperdicioRapido(this.c_inicio.vista);
-        cdr.mostarVista();
+        cdr.mostrarVista();
+    }
+
+    private void invocarMovimientoProductos() {
+        MovimientoProducto cdr = new MovimientoProducto(this.c_inicio.vista);
+        cdr.mostrarVista();
+    }
+
+    private void masOpciones() {
+        Object[] options = {"Movimiento de productos", "Baja de Rollos"};
+        int n = JOptionPane.showOptionDialog(this.vista,
+                "Eliga su opción",
+                "Atención",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                null, //do not use a custom Icon
+                options, //the titles of buttons
+                options[0]); //default button title
+        switch (n) {
+            case 0: {
+                EventQueue.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        invocarMovimientoProductos();
+                    }
+                });
+                break;
+            }
+            case 1: {
+                EventQueue.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        invocarCrearDesperdicioRapido();
+                        /*TODO
+                        ArrayList<M_menu_item> accesos = modelo.getAccesos();
+                        System.err.println("vista.jbCrearDesperdicioRapido.getName(): " + vista.jbCrearDesperdicioRapido.getName());
+                        for (int i = 0; i < accesos.size(); i++) {
+                            System.out.println("accesos.get(i).getItemDescripcion(): " + accesos.get(i).getItemDescripcion());
+                            if (vista.jbCrearDesperdicioRapido.getName().equals(accesos.get(i).getItemDescripcion())) {
+                                invocarCrearDesperdicioRapido();
+                                return;
+                            }
+                        }*/
+                    }
+                });
+                break;
+            }
+        }
     }
 
     @Override
@@ -361,10 +412,10 @@ public class C_gestionProduccion implements GestionInterface, RecibirEmpleadoCal
             ConsultarProduccion(false);
         } else if (source.equals(this.vista.jbCrearDesperdicio)) {
             invocarCrearDesperdicio();
-        } else if (source.equals(this.vista.jbCrearDesperdicioRapido)) {
-            invocarCrearDesperdicioRapido();
         } else if (source.equals(this.vista.jbBuscarTerminados)) {
             buscarProductosTerminados();
+        } else if (source.equals(this.vista.jbMasOpciones)) {
+            masOpciones();
         }
     }
 

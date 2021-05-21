@@ -43,8 +43,6 @@ public class E_movimientoContable {
     //AUX
     private Date fechaSaldoInicial;
 
-    private Date movFecha;
-    private String movDescripcion;
     private double debe;
     private double haber;
     private double balance;
@@ -221,13 +219,6 @@ public class E_movimientoContable {
     }
 
     /**
-     * @param movFecha the movFecha to set
-     */
-    public void setMovFecha(Date movFecha) {
-        this.movFecha = movFecha;
-    }
-
-    /**
      * @return the movDescripcion
      */
     public String getMovDescripcion() {
@@ -263,13 +254,6 @@ public class E_movimientoContable {
             }
         }
         return "no data";
-    }
-
-    /**
-     * @param movDescripcion the movDescripcion to set
-     */
-    public void setMovDescripcion(String movDescripcion) {
-        this.movDescripcion = movDescripcion;
     }
 
     /**

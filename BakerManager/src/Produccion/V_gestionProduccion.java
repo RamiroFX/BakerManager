@@ -35,7 +35,7 @@ public class V_gestionProduccion extends JInternalFrame {
     public JButton jbBuscar, jbBorrar, jbCrearRollo, jbCrearProductoTerminado,
             jbDetalle, jbResumen, jbCrearDesperdicioRapido,jbEmpleado, jbAnular, jbBuscarDetalle,
             jbCrearDesperdicio, jbBuscarDetalleDesperdicio, jbBuscarMateriaPrimaBaja, 
-            jbBuscarTerminados;
+            jbBuscarTerminados, jbMasOpciones;
     public JTextField jtfNroOrdenTrabajo, jtfEmpleado;
     public JComboBox<E_produccionTipo> jcbTipoProduccion;
     public JComboBox<Estado> jcbEstado;
@@ -164,13 +164,16 @@ public class V_gestionProduccion extends JInternalFrame {
         jbResumen.setName("resumen produccion");
         jbResumen.setMargin(inset);
         jbResumen.setFont(CommonFormat.fuente);
+        jbMasOpciones= new JButton("Más opciones");
+        jbMasOpciones.setMargin(inset);
+        jbMasOpciones.setFont(CommonFormat.fuente);
         jpBot.add(jbCrearRollo);
         jpBot.add(jbCrearProductoTerminado);
         jpBot.add(jbCrearDesperdicio);
         jpBot.add(jbAnular);
         jpBot.add(jbDetalle);
         jpBot.add(jbResumen);
-        jpBot.add(jbCrearDesperdicioRapido);
+        jpBot.add(jbMasOpciones);
         jpBot.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED), "Opciones"));
     }
 }

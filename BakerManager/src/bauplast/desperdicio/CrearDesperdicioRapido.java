@@ -23,7 +23,7 @@ public class CrearDesperdicioRapido {
         this.controlador = new C_crearDesperdicioRapido(modelo, vista);
     }
     
-    public void mostarVista(){
+    public void mostrarVista(){
         this.controlador.mostrarVista();
     }
 }

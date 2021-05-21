@@ -239,13 +239,13 @@ public class C_seleccionarProducto extends MouseAdapter implements ActionListene
     private void seleccionarProducto() {
         int fila = vista.jtProducto.getSelectedRow();
         int columna = vista.jtProducto.getSelectedColumn();
-        if ((fila > -1) && (columna > -1)) {
+        if ((fila > -1) && (columna > -1)) {            
+            idProducto = Integer.valueOf(String.valueOf(this.vista.jtProducto.getValueAt(fila, 0)));
+            producto = DB_Producto.obtenerDatosProductoID(idProducto);
             if (esModoCreacion) {
                 callback.recibirProducto(0, producto.getPrecioVenta(), 0, producto, "");
                 cerrar();
             } else {
-                idProducto = Integer.valueOf(String.valueOf(vista.jtProducto.getValueAt(fila, 0)));
-                producto = DB_Producto.obtenerDatosProductoID(idProducto);
                 vista.jbAceptar.setEnabled(true);
                 SeleccionarCantidadProduducto scp = new SeleccionarCantidadProduducto(this.vista, producto, callback, tipo);
                 scp.setVisible(true);
@@ -292,8 +292,6 @@ public class C_seleccionarProducto extends MouseAdapter implements ActionListene
     public void mouseClicked(MouseEvent e) {
         int fila = this.vista.jtProducto.rowAtPoint(e.getPoint());
         int columna = this.vista.jtProducto.columnAtPoint(e.getPoint());
-        idProducto = Integer.valueOf(String.valueOf(this.vista.jtProducto.getValueAt(fila, 0)));
-        producto = DB_Producto.obtenerDatosProductoID(idProducto);
         if ((fila > -1) && (columna > -1)) {
             this.vista.jbAceptar.setEnabled(true);
             if (e.getClickCount() == 2) {

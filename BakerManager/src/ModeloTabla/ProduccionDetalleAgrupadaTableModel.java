@@ -6,7 +6,6 @@
 package ModeloTabla;
 
 import DB.DB_Produccion;
-import Entities.E_produccionDetalle;
 import Entities.E_produccionDetallePlus;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
