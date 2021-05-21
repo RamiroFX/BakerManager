@@ -32,6 +32,10 @@ public class MovimientoProduccionTableModel extends AbstractTableModel {
 
     public void setList(List<E_movimientoProduccion> facturaCabeceraList) {
         this.list = facturaCabeceraList;
+        if (this.list.isEmpty()) {
+            updateTable();
+            return;
+        }
         /*
         PRIMERA ITERACION PARA PREPARAR BASE DEL BALANCE
          */
@@ -95,16 +99,16 @@ public class MovimientoProduccionTableModel extends AbstractTableModel {
                     mov.setBalance(-mov.getSalida() + movAnt.getBalance());
                     break;
                 }
-            case E_movimientoProduccion.TIPO_INVENTARIO: {
-                if (mov.getInventarioDetalle().getCantidadNueva() > 0) {
-                    mov.setSalida(mov.getInventarioDetalle().getCantidadNueva());
-                    mov.setBalance(-mov.getSalida()+ movAnt.getBalance());
-                } else {
-                    mov.setSalida(mov.getInventarioDetalle().getCantidadNueva());
-                    mov.setBalance(mov.getSalida()+ movAnt.getBalance());
+                case E_movimientoProduccion.TIPO_INVENTARIO: {
+                    if (mov.getInventarioDetalle().getCantidadNueva() > 0) {
+                        mov.setEntrada(mov.getInventarioDetalle().getCantidadNueva());
+                        mov.setBalance(mov.getEntrada()+ movAnt.getBalance());
+                    } else {
+                        mov.setSalida(mov.getInventarioDetalle().getCantidadNueva());
+                        mov.setBalance(-mov.getSalida() + movAnt.getBalance());
+                    }
+                    break;
                 }
-                break;
-            }
             }
         }
         updateTable();

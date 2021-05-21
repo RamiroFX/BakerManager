@@ -11,16 +11,16 @@ import javax.swing.JDialog;
  *
  * @author Ramiro Ferreira
  */
-public class PrevisionStock {
+public class PrevisionTemporal {
     
-    private M_previsionStock modelo;
-    private V_previsionStock vista;
-    private C_previsionStock controlador;
+    private M_previsionTemporal modelo;
+    private V_previsionTemporal vista;
+    private C_previsionTemporal controlador;
 
-    public PrevisionStock(JDialog dialog) {
-        this.modelo = new M_previsionStock();
-        this.vista = new V_previsionStock(dialog);
-        this.controlador = new C_previsionStock(this.modelo, this.vista);
+    public PrevisionTemporal(JDialog dialog) {
+        this.modelo = new M_previsionTemporal();
+        this.vista = new V_previsionTemporal(dialog);
+        this.controlador = new C_previsionTemporal(this.modelo, this.vista);
     }
     
     public void mostrarVista(){

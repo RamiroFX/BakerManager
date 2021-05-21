@@ -17,13 +17,13 @@ import java.util.Calendar;
  *
  * @author Ramiro Ferreira
  */
-public class M_previsionStock {
+public class M_previsionTemporal {
 
     private AjusteStockCabeceraTableModel tmCabecera;
     private SeleccionAjusteStockDetalleTM tmDetalle;
 
-    public M_previsionStock() {
-        this.tmCabecera = new AjusteStockCabeceraTableModel();
+    public M_previsionTemporal() {
+        this.tmCabecera = new AjusteStockCabeceraTableModel(true);
         this.tmDetalle = new SeleccionAjusteStockDetalleTM();
     }
 

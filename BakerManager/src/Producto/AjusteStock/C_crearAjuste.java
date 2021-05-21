@@ -11,7 +11,6 @@ import Interface.RecibirAjusteStockDetalleCB;
 import ModeloTabla.SeleccionarProductoTableModel;
 import Producto.AjusteStock.SeleccionarCantidadAjuste.SeleccionarProductoAjusteStock;
 import bauplast.SeleccionarProductoPorClasif;
-import com.toedter.calendar.JDateChooser;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -19,9 +18,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.lang.reflect.Field;
 import java.util.Date;
 import javax.swing.JOptionPane;
 
@@ -167,6 +163,7 @@ public class C_crearAjuste extends MouseAdapter implements ActionListener, KeyLi
             JOptionPane.showMessageDialog(vista, "La fecha de inicio no puede ser mayor a la fecha de finalización", "Fecha inválida", JOptionPane.WARNING_MESSAGE);
             return false;
         }
+        System.out.println("Producto.AjusteStock.C_crearAjuste.validarFecha()");
         int prodFechaInicio = modelo.validarFechaInicio(dateInicio);
         if (prodFechaInicio > 0) {
             String producto = "Código: " + modelo.obtenerProducto(prodFechaInicio).getProducto().getCodigo() + "\n"

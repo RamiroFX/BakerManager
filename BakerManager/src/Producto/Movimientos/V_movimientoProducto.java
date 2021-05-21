@@ -30,8 +30,8 @@ public class V_movimientoProducto extends JDialog {
     JScrollPane jspMovimientos;
     JTable jtMovimientos;
     JButton jbProducto, jbSalir, jbImportarXLS;
-    JLabel jlEntrada, jlSalida, jlTotal;
-    JFormattedTextField jftEntrada, jftSalida, jftTotal;
+    JLabel jlEntrada, jlSalida, jlTotal, jlCantActual;
+    JFormattedTextField jftEntrada, jftSalida, jftTotal, jftCantActual;
 
     public V_movimientoProducto(JFrame vista) {
         super(vista, DEFAULT_MODALITY_TYPE);
@@ -58,32 +58,38 @@ public class V_movimientoProducto extends JDialog {
         jtMovimientos = new JTable();
         jtMovimientos.getTableHeader().setReorderingAllowed(false);
         jspMovimientos = new JScrollPane(jtMovimientos);
-        JPanel jpTotalCobrado = new JPanel(new GridLayout(3, 2));
+        JPanel jpTotalCobrado = new JPanel(new GridLayout(4, 2));
         jftEntrada = new JFormattedTextField();
         jftEntrada.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#,##0"))));
         jftSalida = new JFormattedTextField();
         jftSalida.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#,##0"))));
         jftTotal = new JFormattedTextField();
         jftTotal.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#,##0"))));
+        jftCantActual = new JFormattedTextField();
+        jftCantActual.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#,##0"))));
         jlEntrada = new JLabel("Total entradas");
         jlEntrada.setHorizontalAlignment(SwingConstants.CENTER);
         jlSalida = new JLabel("Total salidas");
         jlSalida.setHorizontalAlignment(SwingConstants.CENTER);
         jlTotal = new JLabel("Balance");
         jlTotal.setHorizontalAlignment(SwingConstants.CENTER);
+        jlCantActual = new JLabel("Cantidad actual");
+        jlCantActual.setHorizontalAlignment(SwingConstants.CENTER);
         jpTotalCobrado.add(jlEntrada);
         jpTotalCobrado.add(jftEntrada);
         jpTotalCobrado.add(jlSalida);
         jpTotalCobrado.add(jftSalida);
         jpTotalCobrado.add(jlTotal);
         jpTotalCobrado.add(jftTotal);
+        jpTotalCobrado.add(jlCantActual);
+        jpTotalCobrado.add(jftCantActual);
         jbSalir = new JButton("Salir");
         jbImportarXLS = new JButton("Importar a excel");
         jbImportarXLS.setName("exportar cobro");
 
         JPanel jpCenter = new JPanel(new BorderLayout());
         JPanel jpSouth = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        jpSouth.add(jbImportarXLS);
+        //jpSouth.add(jbImportarXLS);
         jpSouth.add(jbSalir);
         jpCenter.add(jspMovimientos, BorderLayout.CENTER);
         jpCenter.add(jpTotalCobrado, BorderLayout.SOUTH);

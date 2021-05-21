@@ -21,9 +21,11 @@ public class AjusteStockCabeceraTableModel extends AbstractTableModel {
     private SimpleDateFormat dateFormater;
     private DecimalFormat decimalFormat;
     private List<E_ajusteStockCabecera> list;
-    private final String[] colNames = {"Id.", "Responsable", "Tiempo inicio"};
+    private final String[] colNames = {"Id.", "Responsable", "Tiempo registrado"};
+    private boolean esTemporal;
 
-    public AjusteStockCabeceraTableModel() {
+    public AjusteStockCabeceraTableModel(boolean esTemporal) {
+        this.esTemporal = esTemporal;
         this.dateFormater = new SimpleDateFormat("dd/MM/YYYY HH:mm:ss");
         this.decimalFormat = new DecimalFormat("###,###");
         this.list = new ArrayList<>();
@@ -74,7 +76,11 @@ public class AjusteStockCabeceraTableModel extends AbstractTableModel {
                 return nc.getResponsable().getNombre();
             }
             case 2: {
-                return dateFormater.format(nc.getTiempoInicio());
+                if (esTemporal) {
+                    return dateFormater.format(nc.getTiempoInicio());
+                } else {
+                    return dateFormater.format(nc.getTiempoRegistroFin());
+                }
             }
             default: {
                 return null;

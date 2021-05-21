@@ -431,7 +431,7 @@ public class DB_Inventario {
                 + "(SELECT P.NOMBRE  FROM FUNCIONARIO F, PERSONA P WHERE P.ID_PERSONA = F.ID_PERSONA AND F.ID_FUNCIONARIO = a.id_funcionario_registro)\"USUARIO_NOMBRE\", "//9
                 + "(SELECT P.APELLIDO FROM FUNCIONARIO F, PERSONA P WHERE P.ID_PERSONA = F.ID_PERSONA AND F.ID_FUNCIONARIO = a.id_funcionario_registro)\"USUARIO_APELLIDO\", "//10
                 + "a.observacion, "//11
-                + "tiempo_inicio, "//12
+                + "tiempo_fin, "//12
                 + QUERY_FROM;
         try {
             pst = DB_manager.getConection().prepareStatement(QUERY, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
@@ -547,8 +547,12 @@ public class DB_Inventario {
                 + "(SELECT P.NOMBRE  FROM FUNCIONARIO F, PERSONA P WHERE P.ID_PERSONA = F.ID_PERSONA AND F.ID_FUNCIONARIO = a.id_funcionario_registro)\"USUARIO_NOMBRE\", "//9
                 + "(SELECT P.APELLIDO FROM FUNCIONARIO F, PERSONA P WHERE P.ID_PERSONA = F.ID_PERSONA AND F.ID_FUNCIONARIO = a.id_funcionario_registro)\"USUARIO_APELLIDO\", "//10
                 + "a.observacion, "//11
-                + "tiempo_fin "//12
-                + QUERY_FROM
+                + "tiempo_fin, "//12
+                + "tiempo_registro_inicio ";//13
+        if (!esTemporal) {
+            QUERY = QUERY + ", tiempo_registro_fin ";//14
+        }
+        QUERY = QUERY + QUERY_FROM
                 + "WHERE a.id_estado = e.id_estado ";
         QUERY = QUERY + QUERY_RESPONSABLE + QUERY_REGISTRADO_POR + QUERY_ESTADO + QUERY_TIEMPO + QUERY_ID + QUERY_ORDERBY;
         try {
@@ -590,6 +594,10 @@ public class DB_Inventario {
                 cabecera.setId(rs.getInt(1));
                 cabecera.setTiempoInicio(rs.getTimestamp(4));
                 cabecera.setTiempoFin(rs.getTimestamp(12));
+                cabecera.setTiempoRegistroInicio(rs.getTimestamp(13));
+                if (!esTemporal) {
+                    cabecera.setTiempoRegistroFin(rs.getTimestamp(14));
+                }
                 cabecera.setResponsable(funcResponsable);
                 cabecera.setRegistradoPor(funcRegistro);
                 cabecera.setEstado(estado);

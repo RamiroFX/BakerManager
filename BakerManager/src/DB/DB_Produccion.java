@@ -1136,32 +1136,52 @@ public class DB_Produccion {
         }
     }
 
-    public static int consultarBalanceProduccion(Date desde, Date hasta, int idProducto) {
+    //SI ES HISTORICO SE IGNORA LA FECHA DE INICIO
+    public static int consultarBalanceProduccion(Date desde, Date hasta, int idProducto, boolean esHistorico) {
         int balance = 0;
         String Query = "select 	(coalesce(SUM(produccion_detalle.cantidad), 0 ) - 	"
                 + "coalesce((select SUM(fd.cantidad) from factura_detalle fd, factura_cabecera fc "
                 + "where fc.id_factura_cabecera = fd.id_factura_cabecera and fd.id_producto = producto.id_producto "
-                + "and fc.id_estado = 1 and FC.TIEMPO > ? AND FC.TIEMPO < ? ), 0 ) ) balance_anterior "
+                + "and fc.id_estado = 1 ";
+        if (esHistorico) {
+            Query = Query + " AND FC.TIEMPO < ? ";
+        } else {
+            Query = Query + " and FC.TIEMPO > ? AND FC.TIEMPO < ? ";
+        }
+        Query = Query + "), 0 ) ) balance_anterior "
                 + "from produccion_detalle join produccion_cabecera on 	"
                 + "produccion_cabecera.id_produccion_cabecera = produccion_detalle.id_produccion_cabecera "
                 + "join producto on 	producto.id_producto = produccion_detalle.id_producto "
                 + "join producto_categoria on 	producto_categoria.id_producto_categoria = producto.id_categoria "
                 + "where produccion_cabecera.id_estado = 1 	"
                 + "and produccion_cabecera.id_produccion_tipo = 1 	"
-                + "and producto.id_producto = ? 	"
-                + "and fecha_produccion > ? AND fecha_produccion < ? "
-                + "group by producto.id_producto";
+                + "and producto.id_producto = ? 	";
+        if (esHistorico) {
+            Query = Query + " AND fecha_produccion < ? ";
+        } else {
+            Query = Query + " and fecha_produccion > ? AND fecha_produccion < ? ";
+        }
+        Query = Query + " group by producto.id_producto";
         /*System.out.println("DB.DB_Produccion.consultarBalanceProduccion()");
         System.out.println(hasta);
         System.out.println(idProducto);
         System.out.println(Query);*/
+        int pos = 1;
         try {
             pst = DB_manager.getConection().prepareStatement(Query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-            pst.setTimestamp(1, new Timestamp(desde.getTime()));
-            pst.setTimestamp(2, new Timestamp(hasta.getTime()));
-            pst.setInt(3, idProducto);
-            pst.setTimestamp(4, new Timestamp(desde.getTime()));
-            pst.setTimestamp(5, new Timestamp(hasta.getTime()));
+            if (esHistorico) {
+                pst.setTimestamp(pos++, new Timestamp(desde.getTime()));
+            } else {
+                pst.setTimestamp(pos++, new Timestamp(desde.getTime()));
+                pst.setTimestamp(pos++, new Timestamp(hasta.getTime()));
+            }
+            pst.setInt(pos++, idProducto);
+            if (esHistorico) {
+                pst.setTimestamp(pos++, new Timestamp(desde.getTime()));
+            } else {
+                pst.setTimestamp(pos++, new Timestamp(desde.getTime()));
+                pst.setTimestamp(pos++, new Timestamp(hasta.getTime()));
+            }
             rs = pst.executeQuery();
             while (rs.next()) {
                 balance = rs.getInt("balance_anterior");

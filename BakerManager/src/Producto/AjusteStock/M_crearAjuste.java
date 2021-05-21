@@ -10,6 +10,7 @@ import Entities.E_ajusteStockCabecera;
 import Entities.SeleccionAjusteStockDetalle;
 import ModeloTabla.SeleccionAjusteStockDetalleTM;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 /**
@@ -129,9 +130,8 @@ public class M_crearAjuste {
     }
 
     public int validarFechaInicio(Date dateInicio) {
-        Date fechaInicioInventario = dateInicio;
         for (SeleccionAjusteStockDetalle unDetalle : getTmDetalle().getList()) {
-            if (unDetalle.getTiempoRegistro().before(fechaInicioInventario)) {
+            if (setTimeToMidnight(unDetalle.getTiempoRegistro()).before(setTimeToMidnight(dateInicio))) {
                 return unDetalle.getProducto().getId();
             }
         }
@@ -139,9 +139,8 @@ public class M_crearAjuste {
     }
 
     public int validarFechaFin(Date fechaFin) {
-        Date fechaFinInventario = fechaFin;
         for (SeleccionAjusteStockDetalle unDetalle : getTmDetalle().getList()) {
-            if (unDetalle.getTiempoRegistro().after(fechaFinInventario)) {
+            if (setTimeToMidnight(unDetalle.getTiempoRegistro()).after(setTimeToMidnight(fechaFin))) {
                 return unDetalle.getProducto().getId();
             }
         }
@@ -155,5 +154,15 @@ public class M_crearAjuste {
             }
         }
         return null;
+    }
+
+    public Date setTimeToMidnight(Date date) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+        return calendar.getTime();
     }
 }

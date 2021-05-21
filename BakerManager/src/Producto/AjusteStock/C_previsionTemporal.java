@@ -20,12 +20,12 @@ import javax.swing.JOptionPane;
  *
  * @author Ramiro Ferreira
  */
-public class C_previsionStock extends MouseAdapter implements ActionListener, KeyListener {
+public class C_previsionTemporal extends MouseAdapter implements ActionListener, KeyListener {
 
-    public V_previsionStock vista;
-    public M_previsionStock modelo;
+    public V_previsionTemporal vista;
+    public M_previsionTemporal modelo;
 
-    public C_previsionStock(M_previsionStock modelo, V_previsionStock vista) {
+    public C_previsionTemporal(M_previsionTemporal modelo, V_previsionTemporal vista) {
         this.vista = vista;
         this.modelo = modelo;
         inicializarComponentes();

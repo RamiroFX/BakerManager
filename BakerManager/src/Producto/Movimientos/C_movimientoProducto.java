@@ -5,12 +5,8 @@
  */
 package Producto.Movimientos;
 
-import Cliente.SeleccionarCliente;
-import Entities.E_movimientoContable;
 import Entities.E_movimientoProduccion;
-import Entities.M_cliente;
 import Entities.M_producto;
-import Interface.RecibirClienteCallback;
 import Interface.RecibirProductoCallback;
 import Producto.SeleccionarProducto;
 import Utilities.c_packColumn;
@@ -20,7 +16,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import javax.swing.JOptionPane;
 
 /**
@@ -50,13 +45,10 @@ public class C_movimientoProducto implements ActionListener, KeyListener, Recibi
     private void inicializarVista() {
         this.vista.jtMovimientos.setModel(modelo.obtenerTableModel());
         Utilities.c_packColumn.packColumns(this.vista.jtMovimientos, 1);
-        BigDecimal total = new BigDecimal("0");
-        BigDecimal totalSalidas = new BigDecimal("0");
-        BigDecimal totalEntradas = new BigDecimal("0");
-        total = total.add(totalEntradas).subtract(totalSalidas);
-        this.vista.jftEntrada.setValue(totalEntradas);
-        this.vista.jftSalida.setValue(totalSalidas);
-        this.vista.jftTotal.setValue(total);
+        this.vista.jftEntrada.setValue(0);
+        this.vista.jftSalida.setValue(0);
+        this.vista.jftTotal.setValue(0);
+        this.vista.jftTotal.setValue(0);
     }
 
     private void agregarListener() {
@@ -125,10 +117,12 @@ public class C_movimientoProducto implements ActionListener, KeyListener, Recibi
         sc.mostrarVista();
     }
 
-    private void sumarTotales() {
+    private void sumarTotales(int idProducto) {
         BigDecimal total = new BigDecimal("0");
         BigDecimal totalSalidas = new BigDecimal("0");
         BigDecimal totalEntradas = new BigDecimal("0");
+        double cantActualAux = modelo.obtenerProducto(idProducto).getCantActual();
+        BigDecimal cantActual = new BigDecimal(cantActualAux + "");
         for (E_movimientoProduccion unMov : modelo.cabeceraTableModel.getList()) {
             switch (unMov.getTipo()) {
                 case E_movimientoProduccion.TIPO_PRODUCCION: {
@@ -147,12 +141,22 @@ public class C_movimientoProducto implements ActionListener, KeyListener, Recibi
                     totalSalidas = totalSalidas.add(new BigDecimal(unMov.getDesperdicioDetalle().getCantidad() + ""));
                     break;
                 }
+                case E_movimientoProduccion.TIPO_INVENTARIO: {
+                    double cantInventario = unMov.getInventarioDetalle().getCantidadNueva();
+                    if (cantInventario > 0) {
+                        totalEntradas = totalEntradas.add(new BigDecimal(cantInventario + ""));
+                    } else {
+                        totalSalidas = totalSalidas.add(new BigDecimal(cantInventario + ""));
+                    }
+                    break;
+                }
             }
         }
         total = total.add(totalEntradas).subtract(totalSalidas);
         this.vista.jftEntrada.setValue(totalEntradas);
         this.vista.jftSalida.setValue(totalSalidas);
         this.vista.jftTotal.setValue(total);
+        this.vista.jftCantActual.setValue(cantActual);
     }
 
     @Override
@@ -186,7 +190,7 @@ public class C_movimientoProducto implements ActionListener, KeyListener, Recibi
             public void run() {
                 vista.jtfProducto.setText(producto.getDescripcion());
                 modelo.obtenerMovimientos(producto.getId());
-                sumarTotales();
+                sumarTotales(producto.getId());
                 c_packColumn.packColumns(vista.jtMovimientos, 1);
             }
         });

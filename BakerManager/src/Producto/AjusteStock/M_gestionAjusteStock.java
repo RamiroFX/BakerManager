@@ -31,7 +31,7 @@ public class M_gestionAjusteStock {
         this.cabecera = new E_ajusteStockCabecera();
         this.cabecera.setId(-1);
         this.cabecera.getResponsable().setIdFuncionario(-1);
-        this.tmCabecera = new AjusteStockCabeceraTableModel();
+        this.tmCabecera = new AjusteStockCabeceraTableModel(false);
         this.tmDetalle = new SeleccionAjusteStockDetalleTM();
     }
 

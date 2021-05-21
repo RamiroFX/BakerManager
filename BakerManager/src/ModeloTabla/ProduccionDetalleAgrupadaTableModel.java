@@ -21,15 +21,19 @@ import javax.swing.table.AbstractTableModel;
  */
 public class ProduccionDetalleAgrupadaTableModel extends AbstractTableModel {
 
+    public static final int TIPO_FECHA_MES = 1, TIPO_FECHA_DIA = 2;
     public static final int SIMPLE = 1, DETALLE = 2, COMPLETA = 3, SUPER = 4;
     private List<E_produccionDetallePlus> produccionList;
     private String[] colNames;
     private DecimalFormat decimalFormat;
-    private int tipo;
+    private int tipoFormato;
+    private int tipoFecha;
+    private int cantTiempo;
+    private boolean esHistorico;
     private Date fechaLimite;
 
     public ProduccionDetalleAgrupadaTableModel(int tipo) {
-        this.tipo = tipo;
+        this.tipoFormato = tipo;
         this.decimalFormat = new DecimalFormat("#,##0.##");
         this.produccionList = new ArrayList<>();
         switch (tipo) {
@@ -52,6 +56,12 @@ public class ProduccionDetalleAgrupadaTableModel extends AbstractTableModel {
         }
     }
 
+    public void setRangoSaldoAnterior(int tipoFecha, int cant, boolean esHistorico) {
+        this.tipoFecha = tipoFecha;
+        this.esHistorico = esHistorico;
+        this.cantTiempo = cant;
+    }
+
     public Date getFechaLimite() {
         return fechaLimite;
     }
@@ -68,13 +78,23 @@ public class ProduccionDetalleAgrupadaTableModel extends AbstractTableModel {
         this.produccionList = produccionList;
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
         Calendar fechaInicio = Calendar.getInstance();
-        fechaInicio.setTime(fechaLimite);
-        fechaInicio.add(Calendar.MONTH, 2 * -1);
+        switch (tipoFecha) {
+            case TIPO_FECHA_DIA: {
+                fechaInicio.setTime(fechaLimite);
+                fechaInicio.add(Calendar.DATE, cantTiempo * -1);
+                break;
+            }
+            case TIPO_FECHA_MES: {
+                fechaInicio.setTime(fechaLimite);
+                fechaInicio.add(Calendar.MONTH, cantTiempo * -1);
+                break;
+            }
+        }
         System.out.println("ModeloTabla.ProduccionDetalleAgrupadaTableModel.setList()");
         System.out.println("fechaInicio: " + sdf.format(fechaInicio.getTime()));
         System.out.println("fechaLimite: " + sdf.format(fechaLimite));
         for (E_produccionDetallePlus aProd : produccionList) {
-            aProd.setBalanceAnterior(DB_Produccion.consultarBalanceProduccion(fechaInicio.getTime(), getFechaLimite(), aProd.getProducto().getId()));
+            aProd.setBalanceAnterior(DB_Produccion.consultarBalanceProduccion(fechaInicio.getTime(), getFechaLimite(), aProd.getProducto().getId(), esHistorico));
         }
         updateTable();
     }
@@ -106,7 +126,7 @@ public class ProduccionDetalleAgrupadaTableModel extends AbstractTableModel {
 
     @Override
     public Object getValueAt(int rowIndex, int colIndex) {
-        switch (this.tipo) {
+        switch (this.tipoFormato) {
             case COMPLETA: {
                 return getValueCompleteMode(rowIndex, colIndex);
             }

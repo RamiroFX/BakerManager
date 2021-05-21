@@ -246,7 +246,7 @@ public class C_gestionAjusteStock implements GestionInterface, RecibirEmpleadoCa
     }
 
     private void invocarPrevisionStock() {
-        PrevisionStock ps = new PrevisionStock(this.vista);
+        PrevisionTemporal ps = new PrevisionTemporal(this.vista);
         ps.mostrarVista();
     }
 

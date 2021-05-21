@@ -6,6 +6,7 @@
 package Producto.Movimientos;
 
 import DB.DB_Producto;
+import Entities.M_producto;
 import ModeloTabla.MovimientoProduccionTableModel;
 
 /**
@@ -26,5 +27,9 @@ public class M_movimientoProducto {
 
     public void obtenerMovimientos(int idProducto) {
         this.cabeceraTableModel.setList(DB_Producto.obtenerMovimientos(idProducto));
+    }
+
+    public M_producto obtenerProducto(int idProducto) {
+        return DB_Producto.obtenerDatosProductoID(idProducto);
     }
 }

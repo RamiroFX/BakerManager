@@ -17,14 +17,14 @@ import javax.swing.border.EtchedBorder;
  *
  * @author Ramiro Ferreira
  */
-public class V_previsionStock extends JDialog {
+public class V_previsionTemporal extends JDialog {
 
     public JScrollPane jspCabecera, jspDetalle;
     public JTable jtCabecera, jtDetalle;
     public JButton jbVerDetalle, jbCrearAjuste, jbEliminarDetalle, jbSalir;
     private JPanel jpNorth, jpCenter, jpSouth;
 
-    public V_previsionStock(JDialog dialog) {
+    public V_previsionTemporal(JDialog dialog) {
         super(dialog, "Crear ajuste de stock", true);
         setSize(1200, 700);
         setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
