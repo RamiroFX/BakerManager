@@ -186,7 +186,7 @@ public class C_seleccionarProducto extends MouseAdapter implements ActionListene
             @Override
             public void run() {
                 String desc = vista.jtfBuscar.getText();
-                if (desc.length() > 30) {
+                if (desc.length() > 100) {
                     JOptionPane.showMessageDialog(vista, "El texto ingresado supera el máximo permitido de 30 caracteres.", "Atención", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
