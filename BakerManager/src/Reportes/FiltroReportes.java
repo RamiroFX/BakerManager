@@ -163,10 +163,10 @@ public class FiltroReportes extends JDialog implements ActionListener, KeyListen
     }
 
     private boolean validarSeleccion() {
-        if (tm.getList().isEmpty()) {
+        /*if (tm.getList().isEmpty()) {
             JOptionPane.showMessageDialog(this, "Seleccione al menos un cliente", "Atención", JOptionPane.PLAIN_MESSAGE);
             return false;
-        }
+        }*/
         return true;
     }
 
@@ -196,14 +196,11 @@ public class FiltroReportes extends JDialog implements ActionListener, KeyListen
         if (jcbFechaHasta.isSelected()) {
             fechaHasta = jdcFechaHasta.getDate();
         }
-        File file, subFile;
+        File file;
         JasperReport reporte = null;
-        JasperReport subReports = null;
         try {
             file = new File(System.getProperty("user.dir") + "\\Assets\\Reportes\\ccc.jasper");
-            subFile = new File(System.getProperty("user.dir") + "\\Assets\\Reportes\\ccc_subtotal.jasper");
             reporte = (JasperReport) JRLoader.loadObject(file);
-            subReports = (JasperReport) JRLoader.loadObject(subFile);
         } catch (JRException ex) {
             ex.printStackTrace();
             JOptionPane.showMessageDialog(this, "No se encontró la ubicación del reporte", "Atención", JOptionPane.WARNING_MESSAGE);
@@ -216,7 +213,6 @@ public class FiltroReportes extends JDialog implements ActionListener, KeyListen
             map.put("fecha_desde", new java.sql.Date(fechaDesde.getTime()));
             map.put("fecha_hasta", new java.sql.Date(fechaHasta.getTime()));
             map.put("id_clientes", idClientes);
-            map.put("subReport", subReports);
             map.put("report", reporte);
             JasperPrint jp = JasperFillManager.fillReport(reporte, map, DB_manager.getConection());
             JRViewer jv = new JRViewer(jp);

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.6.0.final using JasperReports Library version 6.6.0  -->
+<!-- Created with Jaspersoft Studio version 6.8.0.final using JasperReports Library version 6.8.0-2ed8dfabb690ff337a5797129f2cd92902b0c87b  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ccc" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="13acf49e-4913-4d1b-bccc-113817ad15d1">
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Bauplast DB"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Bauplast"/>
 	<style name="Title" forecolor="#FFFFFF" fontName="Times New Roman" fontSize="50" isBold="false"/>
 	<style name="SubTitle" forecolor="#CCCCCC" fontName="Times New Roman" fontSize="18" isBold="false"/>
 	<style name="Column header" forecolor="#666666" fontName="Times New Roman" fontSize="14" isBold="true"/>
@@ -48,7 +48,8 @@ end orden,
 	monto,
 	sum(monto-pago) over (order by fecha) saldo,
 	cliente,
-	id_cliente
+	id_cliente,
+	consultar_saldo_anterior( $P{fecha_desde}::timestamp, id_cliente) saldo_anterior
 FROM v_documentos_comerciales_ventas
 where $X{IN,id_cliente, id_clientes}
 AND 
@@ -90,6 +91,9 @@ order by fecha, orden;]]>
 		<property name="com.jaspersoft.studio.field.label" value="id_cliente"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="v_documentos_comerciales_ventas"/>
 	</field>
+	<field name="saldo_anterior" class="java.lang.Double">
+		<property name="com.jaspersoft.studio.field.label" value="saldo_anterior"/>
+	</field>
 	<sortField name="cliente" order="Descending"/>
 	<variable name="balance" class="java.lang.Double" resetType="Group" resetGroup="Group1" calculation="Sum">
 		<variableExpression><![CDATA[new java.lang.Double(SUM($F{monto}).doubleValue())-new java.lang.Double(SUM($F{pago}).doubleValue())]]></variableExpression>
@@ -103,14 +107,14 @@ order by fecha, orden;]]>
 		<variableExpression><![CDATA[new java.lang.Double(SUM($F{monto}).doubleValue())]]></variableExpression>
 		<initialValueExpression><![CDATA[new java.lang.Double(0)]]></initialValueExpression>
 	</variable>
-	<variable name="return_value" class="java.math.BigDecimal" resetType="Group" resetGroup="Group1">
-		<variableExpression><![CDATA[$V{return_value}]]></variableExpression>
-	</variable>
 	<variable name="total_pendiente" class="java.lang.Double" resetType="Group" resetGroup="Group1">
-		<variableExpression><![CDATA[SUM($V{return_value},$V{sum_monto},$V{sum_pago})]]></variableExpression>
+		<variableExpression><![CDATA[SUM($F{saldo_anterior},$V{sum_monto},$V{sum_pago})]]></variableExpression>
 		<initialValueExpression><![CDATA[new java.math.BigDecimal(0)]]></initialValueExpression>
 	</variable>
-	<group name="Group1">
+	<variable name="suma_total_pendiente" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[SUM($F{saldo_anterior},$V{sum_monto},$V{sum_pago})]]></variableExpression>
+	</variable>
+	<group name="Group1" keepTogether="true">
 		<groupExpression><![CDATA[$F{cliente}]]></groupExpression>
 		<groupHeader>
 			<band height="70">
@@ -120,7 +124,7 @@ order by fecha, orden;]]>
 						<pen lineWidth="1.0"/>
 					</box>
 					<textField isStretchWithOverflow="true">
-						<reportElement style="SubTitle" isPrintRepeatedValues="false" x="0" y="0" width="260" height="24" forecolor="#000000" uuid="4fbebfd3-a184-45af-b7d9-5c3faaf087b5">
+						<reportElement style="SubTitle" isPrintRepeatedValues="false" x="2" y="0" width="340" height="24" forecolor="#000000" uuid="4fbebfd3-a184-45af-b7d9-5c3faaf087b5">
 							<property name="com.jaspersoft.studio.unit.x" value="px"/>
 						</reportElement>
 						<textElement>
@@ -128,22 +132,20 @@ order by fecha, orden;]]>
 						</textElement>
 						<textFieldExpression><![CDATA[$F{cliente}]]></textFieldExpression>
 					</textField>
-					<subreport>
-						<reportElement x="310" y="2" width="240" height="20" forecolor="#000000" uuid="8dfbee67-6f51-4fee-bc61-1ede2101debc">
-							<property name="com.jaspersoft.studio.unit.x" value="px"/>
-							<property name="com.jaspersoft.studio.unit.y" value="px"/>
-							<property name="com.jaspersoft.studio.unit.height" value="px"/>
-						</reportElement>
-						<subreportParameter name="id_cliente">
-							<subreportParameterExpression><![CDATA[$F{id_cliente}]]></subreportParameterExpression>
-						</subreportParameter>
-						<subreportParameter name="fecha_desde">
-							<subreportParameterExpression><![CDATA[$P{fecha_desde}]]></subreportParameterExpression>
-						</subreportParameter>
-						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
-						<returnValue subreportVariable="valor_retorno" toVariable="return_value" calculation="Sum"/>
-						<subreportExpression><![CDATA[$P{subReport}]]></subreportExpression>
-					</subreport>
+					<staticText>
+						<reportElement x="350" y="2" width="89" height="30" uuid="1f61da14-1082-47a7-aa7c-6c65b89e993d"/>
+						<textElement>
+							<font size="14"/>
+						</textElement>
+						<text><![CDATA[Saldo anterior]]></text>
+					</staticText>
+					<textField pattern="#,##0.###;#,##0.###">
+						<reportElement x="441" y="1" width="100" height="30" uuid="2d7b4016-f880-40d8-b333-956725771b80"/>
+						<textElement textAlignment="Right">
+							<font size="14"/>
+						</textElement>
+						<textFieldExpression><![CDATA[$F{saldo_anterior}]]></textFieldExpression>
+					</textField>
 				</frame>
 				<frame>
 					<reportElement mode="Transparent" x="0" y="35" width="555" height="35" forecolor="#FFFFFF" backcolor="#FFFFFF" uuid="fd3897ba-5e47-4b47-995a-bef99ab6b443">
@@ -396,6 +398,21 @@ order by fecha, orden;]]>
 		</band>
 	</pageFooter>
 	<summary>
-		<band splitType="Stretch"/>
+		<band height="46" splitType="Stretch">
+			<staticText>
+				<reportElement x="10" y="10" width="210" height="30" uuid="ac64bf2f-c777-4701-a5b6-72267e87f5d5"/>
+				<textElement>
+					<font size="18" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TOTAL PENDIENTE]]></text>
+			</staticText>
+			<textField pattern="#,##0.###;#,##0.###">
+				<reportElement x="260" y="10" width="295" height="30" uuid="cb289de1-d1ad-4764-982a-dd7023bc0869"/>
+				<textElement textAlignment="Right">
+					<font size="18" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{suma_total_pendiente}]]></textFieldExpression>
+			</textField>
+		</band>
 	</summary>
 </jasperReport>
