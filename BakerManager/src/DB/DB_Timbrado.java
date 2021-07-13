@@ -45,7 +45,8 @@ public class DB_Timbrado {
                 + "TV.TIEMPO_CREACION, "
                 + "TV.TIEMPO_VENCIMIENTO, "
                 + "(SELECT descripcion FROM ESTADO ESTA WHERE ESTA.id_estado = TV.id_estado) \"ESTADO\", "
-                + "TV.id_estado "
+                + "TV.id_estado, "
+                + "TV.id_impresion_plantilla "
                 + "FROM  "
                 + "TIMBRADO TV, "
                 + "funcionario f "
@@ -101,6 +102,8 @@ public class DB_Timbrado {
                 Estado estado = new Estado();
                 estado.setId(rs.getInt("id_estado"));
                 estado.setDescripcion(rs.getString("ESTADO"));
+                E_impresionPlantilla plantilla = new E_impresionPlantilla();
+                plantilla.setId(rs.getInt("id_impresion_plantilla"));
                 E_Timbrado unTimbrado = new E_Timbrado();
                 unTimbrado.setId(rs.getInt("ID_TIMBRADO"));
                 unTimbrado.setCreador(f);
@@ -113,6 +116,7 @@ public class DB_Timbrado {
                 unTimbrado.setNroTimbrado(rs.getInt("NRO_TIMBRADO"));
                 unTimbrado.setDescripcion(rs.getString("DESCRIPCION"));
                 unTimbrado.setEstado(estado);
+                unTimbrado.setPlantillaImpresion(plantilla);
                 list.add(unTimbrado);
             }
         } catch (SQLException ex) {

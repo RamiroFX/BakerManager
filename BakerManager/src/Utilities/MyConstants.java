@@ -22,6 +22,7 @@ public class MyConstants {
             TIOP_CREDITO = "tipo de operacion credito",
             RS = "razon social",
             DIR = "direccion",
+            TELEFONO = "telefono cliente",
             VENDEDOR = "vendedor",
             DETAIL_COD = "detalle codigo producto",
             DETAIL_CANT = "detalle cantidad producto",
