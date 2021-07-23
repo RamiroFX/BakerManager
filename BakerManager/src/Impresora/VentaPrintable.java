@@ -5,12 +5,13 @@
  */
 package Impresora;
 
+import DB.DB_Cliente;
 import Entities.E_facturaDetalle;
 import Entities.E_impresionOrientacion;
 import Entities.M_campoImpresion;
 import Entities.M_facturaCabecera;
-import Entities.M_facturaDetalle;
 import Entities.M_preferenciasImpresion;
+import Entities.M_telefono;
 import Parametros.TipoOperacion;
 import Utilities.MyConstants;
 import java.awt.Color;
@@ -55,7 +56,7 @@ public class VentaPrintable implements Printable {
         Graphics2D g2d = (Graphics2D) g;
         //g2d.translate(pf.getImageableX(), pf.getImageableY());
         g2d.setColor(Color.black);
-        final int espaciadorY = 10;
+        final int espaciadorY = 20;
         SimpleDateFormat dateFormat = new SimpleDateFormat(preferencia.getFormatoFecha());
         Date fecha = Calendar.getInstance().getTime();
         fecha.setTime(facturaCabecera.getTiempo().getTime());
@@ -176,8 +177,10 @@ public class VentaPrintable implements Printable {
                 if (object.getCampo().equals(MyConstants.TIOP_CREDITO)) {
                     if (facturaCabecera.getIdCondVenta() == TipoOperacion.CREDITO) {
                         g.drawString("X", posX, posY);
+                        g.drawString("30 días", posX - 10, posY + 10);
                         if (preferencia.getIdDuplicado() == 1) {
                             g.drawString("X", duplicadoDistX, duplicadoDistY);
+                            g.drawString("30 días", duplicadoDistX - 10, duplicadoDistY + 10);
                         }
                         if (preferencia.getIdTriplicado() == 1) {
                             g.drawString("X", triplicadoDistX, triplicadoDistY);
@@ -213,6 +216,20 @@ public class VentaPrintable implements Printable {
                     }
                     if (preferencia.getIdTriplicado() == 1) {
                         g.drawString(dir, triplicadoDistX, triplicadoDistY);
+                    }
+                }
+                if (object.getCampo().equals(MyConstants.TELEFONO)) {
+                    String stringTelefono = "";
+                    ArrayList<M_telefono> telefono = DB_Cliente.obtenerTelefonoCliente(facturaCabecera.getCliente().getIdCliente());
+                    if (!telefono.isEmpty()) {
+                        stringTelefono = telefono.get(0).getNumero();
+                    }
+                    g.drawString(stringTelefono, posX, posY);
+                    if (preferencia.getIdDuplicado() == 1) {
+                        g.drawString(stringTelefono, duplicadoDistX, duplicadoDistY);
+                    }
+                    if (preferencia.getIdTriplicado() == 1) {
+                        g.drawString(stringTelefono, triplicadoDistX, triplicadoDistY);
                     }
                 }
                 if (object.getCampo().equals(MyConstants.REMISION)) {
