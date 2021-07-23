@@ -342,6 +342,9 @@ public class ExportarVentas {
         rowCabecera.createCell(col).setCellValue(new HSSFRichTextString("Tiempo"));
         rowCabecera.getCell(col).setCellStyle(style1);
         col++;
+        rowCabecera.createCell(col).setCellValue(new HSSFRichTextString("Timbrado"));
+        rowCabecera.getCell(col).setCellStyle(style1);
+        col++;
         rowCabecera.createCell(col).setCellValue(new HSSFRichTextString("Nro. Factura"));
         rowCabecera.getCell(col).setCellStyle(style1);
         col++;
@@ -374,6 +377,9 @@ public class ExportarVentas {
             col = 0;
             row.createCell(col).setCellValue(facturaCabecera.getTiempo());
             row.getCell(col).setCellStyle(dateCellStyle);
+            col++;
+            row.createCell(col).setCellValue(facturaCabecera.getTimbrado().getNroTimbrado());
+            row.getCell(col).setCellStyle(styleNumber);
             col++;
             row.createCell(col).setCellValue(facturaCabecera.getNroFactura());
             row.getCell(col).setCellStyle(styleNumber);
