@@ -25,7 +25,9 @@ import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.DataFormat;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.ss.util.CellUtil;
 
 /**
  *
@@ -53,6 +55,13 @@ public class ExportarVentas {
     private void createWorkBook() {
         workbook = new HSSFWorkbook();
         sheet = workbook.createSheet(nombreHoja);
+
+        //Setup the Page margins - Left, Right, Top and Bottom
+        sheet.setMargin(Sheet.LeftMargin, 0.25);
+        sheet.setMargin(Sheet.RightMargin, 0.25);
+        sheet.setMargin(Sheet.TopMargin, 0.75);
+        sheet.setMargin(Sheet.BottomMargin, 0.75);
+
     }
 
     private void createCellStyles() {
@@ -446,6 +455,221 @@ public class ExportarVentas {
         sheet.autoSizeColumn(5);
         sheet.autoSizeColumn(6);
         sheet.autoSizeColumn(7);
+        try {
+            FileOutputStream out = new FileOutputStream(directory.getPath() + ".xls");
+            workbook.write(out);
+            out.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void exportacionContabilidad() {
+        String espacio="          ";
+        File directory = null;
+        String desktop = System.getProperty("user.home") + "\\Desktop";
+        JFileChooser chooser = new JFileChooser(desktop);
+        if (chooser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
+            directory = chooser.getSelectedFile();
+            directory.setWritable(true);
+            directory.setExecutable(true);
+            directory.setReadable(true);
+        } else {
+            return;
+        }
+        // Create a row and put some cells in it. Rows are 0 based.
+        int filaActual = 0;
+        int col = 0;
+        Row rowCabecera1 = sheet.createRow(filaActual);
+        filaActual++;
+        rowCabecera1.createCell(col).setCellValue(new HSSFRichTextString(espacio+"Ruc"+espacio));
+        rowCabecera1.getCell(col).setCellStyle(style1);
+        CellUtil.setAlignment(rowCabecera1.getCell(col), workbook, CellStyle.ALIGN_CENTER);
+        col++;
+        rowCabecera1.createCell(col).setCellValue(new HSSFRichTextString(espacio+"DV"+espacio));
+        rowCabecera1.getCell(col).setCellStyle(style1);
+        CellUtil.setAlignment(rowCabecera1.getCell(col), workbook, CellStyle.ALIGN_CENTER);
+        col++;
+        rowCabecera1.createCell(col).setCellValue(new HSSFRichTextString("Razón Social"));
+        rowCabecera1.getCell(col).setCellStyle(style1);
+        CellUtil.setAlignment(rowCabecera1.getCell(col), workbook, CellStyle.ALIGN_CENTER);
+        col++;
+        rowCabecera1.createCell(col).setCellValue(new HSSFRichTextString("Tipo de"));
+        rowCabecera1.getCell(col).setCellStyle(style1);
+        CellUtil.setAlignment(rowCabecera1.getCell(col), workbook, CellStyle.ALIGN_CENTER);
+        col++;
+        rowCabecera1.createCell(col).setCellValue(new HSSFRichTextString("Nro de"));
+        rowCabecera1.getCell(col).setCellStyle(style1);
+        CellUtil.setAlignment(rowCabecera1.getCell(col), workbook, CellStyle.ALIGN_CENTER);
+        col++;
+        rowCabecera1.createCell(col).setCellValue(new HSSFRichTextString("Fecha"));
+        rowCabecera1.getCell(col).setCellStyle(style1);
+        CellUtil.setAlignment(rowCabecera1.getCell(col), workbook, CellStyle.ALIGN_CENTER);
+        col++;
+        rowCabecera1.createCell(col).setCellValue(new HSSFRichTextString("Gravada"));
+        rowCabecera1.getCell(col).setCellStyle(style1);
+        CellUtil.setAlignment(rowCabecera1.getCell(col), workbook, CellStyle.ALIGN_CENTER);
+        col++;
+        rowCabecera1.createCell(col).setCellValue(new HSSFRichTextString("IVA"));
+        rowCabecera1.getCell(col).setCellStyle(style1);
+        CellUtil.setAlignment(rowCabecera1.getCell(col), workbook, CellStyle.ALIGN_CENTER);
+        col++;
+        rowCabecera1.createCell(col).setCellValue(new HSSFRichTextString("Gravada"));
+        rowCabecera1.getCell(col).setCellStyle(style1);
+        CellUtil.setAlignment(rowCabecera1.getCell(col), workbook, CellStyle.ALIGN_CENTER);
+        col++;
+        rowCabecera1.createCell(col).setCellValue(new HSSFRichTextString("IVA"));
+        rowCabecera1.getCell(col).setCellStyle(style1);
+        CellUtil.setAlignment(rowCabecera1.getCell(col), workbook, CellStyle.ALIGN_CENTER);
+        col++;
+        rowCabecera1.createCell(col).setCellValue(new HSSFRichTextString(espacio+"Exento"+espacio));
+        rowCabecera1.getCell(col).setCellStyle(style1);
+        CellUtil.setAlignment(rowCabecera1.getCell(col), workbook, CellStyle.ALIGN_CENTER);
+        col++;
+        rowCabecera1.createCell(col).setCellValue(new HSSFRichTextString("Total"));
+        rowCabecera1.getCell(col).setCellStyle(style1);
+        CellUtil.setAlignment(rowCabecera1.getCell(col), workbook, CellStyle.ALIGN_CENTER);
+        col++;
+        rowCabecera1.createCell(col).setCellValue(new HSSFRichTextString(espacio+"Condición"+espacio));
+        rowCabecera1.getCell(col).setCellStyle(style1);
+        CellUtil.setAlignment(rowCabecera1.getCell(col), workbook, CellStyle.ALIGN_CENTER);
+        col++;
+        rowCabecera1.createCell(col).setCellValue(new HSSFRichTextString(espacio+"Timbrado"+espacio));
+        rowCabecera1.getCell(col).setCellStyle(style1);
+        CellUtil.setAlignment(rowCabecera1.getCell(col), workbook, CellStyle.ALIGN_CENTER);
+
+        col = 3;
+        Row rowCabecera2 = sheet.createRow(filaActual);
+        rowCabecera2.createCell(col).setCellValue(new HSSFRichTextString(espacio+"Comprobante"+espacio));
+        rowCabecera2.getCell(col).setCellStyle(style1);
+        CellUtil.setAlignment(rowCabecera2.getCell(col), workbook, CellStyle.ALIGN_CENTER);
+        col++;
+        rowCabecera2.createCell(col).setCellValue(new HSSFRichTextString(espacio+"Comprobante"+espacio));
+        rowCabecera2.getCell(col).setCellStyle(style1);
+        CellUtil.setAlignment(rowCabecera2.getCell(col), workbook, CellStyle.ALIGN_CENTER);
+        col++;
+        col++;
+        rowCabecera2.createCell(col).setCellValue(new HSSFRichTextString(espacio+"10%"+espacio));
+        rowCabecera2.getCell(col).setCellStyle(style1);
+        CellUtil.setAlignment(rowCabecera2.getCell(col), workbook, CellStyle.ALIGN_CENTER);
+        col++;
+        rowCabecera2.createCell(col).setCellValue(new HSSFRichTextString(espacio+"10%"+espacio));
+        rowCabecera2.getCell(col).setCellStyle(style1);
+        CellUtil.setAlignment(rowCabecera2.getCell(col), workbook, CellStyle.ALIGN_CENTER);
+        col++;
+        rowCabecera2.createCell(col).setCellValue(new HSSFRichTextString(espacio+"5%"+espacio));
+        rowCabecera2.getCell(col).setCellStyle(style1);
+        CellUtil.setAlignment(rowCabecera2.getCell(col), workbook, CellStyle.ALIGN_CENTER);
+        col++;
+        rowCabecera2.createCell(col).setCellValue(new HSSFRichTextString(espacio+"5%"+espacio));
+        rowCabecera2.getCell(col).setCellStyle(style1);
+        CellUtil.setAlignment(rowCabecera2.getCell(col), workbook, CellStyle.ALIGN_CENTER);
+        col++;
+        col++;
+        rowCabecera2.createCell(col).setCellValue(new HSSFRichTextString(espacio+"de Venta"+espacio));
+        rowCabecera2.getCell(col).setCellStyle(style1);
+        CellUtil.setAlignment(rowCabecera2.getCell(col), workbook, CellStyle.ALIGN_CENTER);
+        col++;
+        filaActual++;
+        //FIN CUERPO
+        double total = 0;
+        double totalImpuesto = 0;
+        double totalIVA5 = 0;
+        double totalIVA10 = 0;
+        //TOTAL INGRESO
+        for (M_facturaCabecera facturaCabecera : facturaCabeceraFX) {
+            double IVA5 = 0;
+            double IVA10 = 0;
+            double gravada10 = 0;
+            double gravada5 = 0;
+            double exenta = 0;
+            ArrayList<E_facturaDetalle> detalles = DB_Ingreso.obtenerVentaDetalles(facturaCabecera.getIdFacturaCabecera());
+            for (E_facturaDetalle facturaDetalle : detalles) {
+                double subTotal = facturaDetalle.calcularSubTotal();
+                switch (facturaDetalle.getProducto().getIdImpuesto()) {
+                    case E_impuesto.EXENTA: {
+                        exenta = exenta + subTotal;
+                        break;
+                    }
+                    case E_impuesto.IVA5: {
+                        IVA5 = IVA5 + (subTotal / 21);
+                        gravada5 = gravada5 + subTotal;
+                        break;
+                    }
+                    case E_impuesto.IVA10: {
+                        IVA10 = IVA10 + (subTotal / 11);
+                        gravada10 = gravada10 + subTotal;
+                        break;
+                    }
+                }
+                totalImpuesto = totalImpuesto + IVA10 + IVA5;
+                totalIVA5 = totalIVA5 + IVA5;
+                totalIVA10 = totalIVA10 + IVA10;
+                total = total + subTotal;
+            }
+            Row row = sheet.createRow(filaActual);
+            col = 0;
+            row.createCell(col).setCellValue(facturaCabecera.getCliente().getRuc());
+            row.getCell(col).setCellStyle(styleNumber);
+            col++;
+            row.createCell(col).setCellValue(facturaCabecera.getCliente().getRucId());
+            row.getCell(col).setCellStyle(styleNumber);
+            col++;
+            row.createCell(col).setCellValue(facturaCabecera.getCliente().getEntidad());
+            row.getCell(col).setCellStyle(styleNumber);
+            col++;
+            row.createCell(col).setCellValue("");
+            row.getCell(col).setCellStyle(styleNumber);
+            col++;
+            row.createCell(col).setCellValue(facturaCabecera.getNroFactura());
+            row.getCell(col).setCellStyle(styleNumber);
+            col++;
+            row.createCell(col).setCellValue(facturaCabecera.getTiempo());
+            row.getCell(col).setCellStyle(dateCellStyle);
+            col++;
+            row.createCell(col).setCellValue(gravada10);
+            row.getCell(col).setCellStyle(styleNumber);
+            col++;
+            row.createCell(col).setCellValue(IVA10);
+            row.getCell(col).setCellStyle(styleNumber);
+            col++;
+            row.createCell(col).setCellValue(gravada5);
+            row.getCell(col).setCellStyle(styleNumber);
+            col++;
+            row.createCell(col).setCellValue(IVA5);
+            row.getCell(col).setCellStyle(styleNumber);
+            col++;
+            row.createCell(col).setCellValue(exenta);
+            row.getCell(col).setCellStyle(styleNumber);
+            col++;
+            row.createCell(col).setCellValue(facturaCabecera.getTotal());
+            row.getCell(col).setCellStyle(styleNumber);
+            col++;
+            row.createCell(col).setCellValue(facturaCabecera.getCondVenta().getDescripcion());
+            row.getCell(col).setCellStyle(styleNumber);
+            col++;
+            row.createCell(col).setCellValue(facturaCabecera.getTimbrado().getNroTimbrado());
+            row.getCell(col).setCellStyle(styleNumber);
+            col++;
+            filaActual++;
+        }
+        sheet.autoSizeColumn(0);
+        sheet.autoSizeColumn(1);
+        sheet.autoSizeColumn(2);
+        sheet.autoSizeColumn(3);
+        sheet.autoSizeColumn(4);
+        sheet.autoSizeColumn(5);
+        sheet.autoSizeColumn(6);
+        sheet.autoSizeColumn(7);
+        sheet.autoSizeColumn(8);
+        sheet.autoSizeColumn(9);
+        sheet.autoSizeColumn(10);
+        sheet.autoSizeColumn(11);
+        sheet.autoSizeColumn(12);
+        sheet.autoSizeColumn(13);
+        sheet.autoSizeColumn(14);
         try {
             FileOutputStream out = new FileOutputStream(directory.getPath() + ".xls");
             workbook.write(out);

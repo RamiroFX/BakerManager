@@ -236,7 +236,9 @@ public class DB_Ingreso {
                 + "(SELECT NRO_SUCURSAL FROM TIMBRADO WHERE TIMBRADO.ID_TIMBRADO = FC.ID_TIMBRADO)\"NRO_SUCURSAL\",  "//13
                 + "(SELECT NRO_PUNTO_VENTA FROM TIMBRADO WHERE TIMBRADO.ID_TIMBRADO = FC.ID_TIMBRADO)\"NRO_PUNTO_VENTA\",  "//14
                 + "FC.TIEMPO_REGISTRO, "//15                
-                + "(SELECT NOMBRE FROM PERSONA, FUNCIONARIO F WHERE PERSONA.ID_PERSONA = F.ID_PERSONA AND F.ID_FUNCIONARIO = FC.ID_VENDEDOR)\"NOMBRE_VENDEDOR\" "//16
+                + "(SELECT NOMBRE FROM PERSONA, FUNCIONARIO F WHERE PERSONA.ID_PERSONA = F.ID_PERSONA AND F.ID_FUNCIONARIO = FC.ID_VENDEDOR)\"NOMBRE_VENDEDOR\", "//16
+                + "C.RUC, "//17
+                + "C.RUC_IDENTIFICADOR "//18
                 + "FROM FACTURA_CABECERA FC, "
                 + "     FACTURA_DETALLE FADE,"
                 + "     CLIENTE C "
@@ -244,7 +246,7 @@ public class DB_Ingreso {
                 + "WHERE FC.ID_FACTURA_CABECERA = FADE.ID_FACTURA_CABECERA   "
                 + "AND FC.ID_CLIENTE = C.ID_CLIENTE ";
         //+ "AND FC.ID_FUNCIONARIO = F.ID_FUNCIONARIO ";
-        String groupBy = " GROUP BY FC.ID_FACTURA_CABECERA,FC.NRO_FACTURA, C.ENTIDAD, FC.TIEMPO, FC.ID_COND_VENTA ";
+        String groupBy = " GROUP BY FC.ID_FACTURA_CABECERA,FC.NRO_FACTURA, C.ENTIDAD, FC.TIEMPO, FC.ID_COND_VENTA, C.RUC, C.RUC_IDENTIFICADOR ";
         String orderBy = "ORDER BY FC.TIEMPO, FC.NRO_FACTURA ";
         if (conFechas) {
             query = query + "AND FC.TIEMPO BETWEEN ?  AND ? ";
@@ -313,6 +315,8 @@ public class DB_Ingreso {
                 estado.setDescripcion(rs.getString(10));
                 M_cliente cliente = new M_cliente();
                 cliente.setEntidad(rs.getString(3));
+                cliente.setRuc(rs.getString(17));
+                cliente.setRucId(rs.getString(18));
                 M_funcionario funcionario = new M_funcionario();
                 funcionario.setAlias(rs.getString(4));
                 M_funcionario vendedor = new M_funcionario();

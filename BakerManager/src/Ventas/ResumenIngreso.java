@@ -239,9 +239,15 @@ public class ResumenIngreso extends JDialog implements ActionListener, KeyListen
         ce.exportacionResumida();
     }
 
+    private void importarExcelContabilidad() {
+        ArrayList<M_facturaCabecera> ed = new ArrayList(this.tm.getFacturaCabeceraList());
+        ExportarVentas ce = new ExportarVentas("Resumen de ingresos", ed);
+        ce.exportacionContabilidad();
+    }
+
     private void exportHandler() {
         Object[] options = {"Completo",
-            "Resumido"};
+            "Resumido", "Contabilidad"};
         int n = JOptionPane.showOptionDialog(this,
                 "Eliga tipo de reporte",
                 "Atención",
@@ -267,6 +273,16 @@ public class ResumenIngreso extends JDialog implements ActionListener, KeyListen
                     @Override
                     public void run() {
                         importarExcelResumido();
+                    }
+                });
+                break;
+            }
+            case 2: {
+                //Minimalista
+                EventQueue.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        importarExcelContabilidad();
                     }
                 });
                 break;
