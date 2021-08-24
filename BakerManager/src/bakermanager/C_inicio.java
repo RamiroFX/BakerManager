@@ -13,7 +13,6 @@ import Entities.M_rol_usuario;
 import Login.Login;
 import Produccion.GestionProduccion;
 import UsoMateriaPrima.GestionMateriaPrima;
-import Ventas.VentaPorFecha.VentaPorFecha;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Toolkit;
