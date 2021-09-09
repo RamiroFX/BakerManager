@@ -198,4 +198,18 @@ public class M_facturaCabecera {
     public void setTimbrado(E_Timbrado timbrado) {
         this.timbrado = timbrado;
     }
+
+    public String obtenerNroComprobante() {
+        String comprabante = "";
+        try {
+            String nroFacturaFormateado = String.format("%0" + 7 + "d", getNroFactura());
+            String nroSucursalFormateado = String.format("%0" + 3 + "d", getTimbrado().getNroSucursal());
+            String nroPVTAFormateado = String.format("%0" + 3 + "d", getTimbrado().getNroPuntoVenta());
+            comprabante = nroSucursalFormateado + "-" + nroPVTAFormateado + "-" + nroFacturaFormateado;
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Entities.M_facturaCabecera.obtenerNroComprobante(): OCURRIO UN PROBLEMA OBTENIENDO TIMBRADO");
+        }
+        return comprabante;
+    }
 }

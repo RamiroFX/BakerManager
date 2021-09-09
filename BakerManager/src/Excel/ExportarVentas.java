@@ -40,7 +40,7 @@ public class ExportarVentas {
     Date fechaInic, fechaFinal;
     HSSFWorkbook workbook;
     HSSFSheet sheet;
-    CellStyle style1, style2, style3, styleNumber;
+    CellStyle style1, style2, style3, styleNumber, style4;
     HSSFCellStyle dateCellStyle;
 
     public ExportarVentas(String nombreHoja, ArrayList<M_facturaCabecera> ed) {
@@ -75,6 +75,10 @@ public class ExportarVentas {
         style2 = workbook.createCellStyle();
         style2.setFillForegroundColor(IndexedColors.LIGHT_YELLOW.getIndex());
         style2.setFillPattern(CellStyle.SOLID_FOREGROUND);
+        // Orange "foreground", foreground being the fill foreground not the font color.
+        style4 = workbook.createCellStyle();
+        style4.setFillForegroundColor(IndexedColors.RED.getIndex());
+        style4.setFillPattern(CellStyle.SOLID_FOREGROUND);
         //END STYLE
         // FORMAT STYLE
         DataFormat format = workbook.createDataFormat();
@@ -540,51 +544,68 @@ public class ExportarVentas {
         //rowCabecera1.getCell(col).setCellStyle(style1);
         CellUtil.setAlignment(rowCabecera1.getCell(col), workbook, CellStyle.ALIGN_CENTER);
 
-        col = 3;
+        col = 0;
         Row rowCabecera2 = sheet.createRow(filaActual);
-        rowCabecera2.createCell(col).setCellValue(new HSSFRichTextString(espacio + "Comprobante" + espacio));
-        //rowCabecera2.getCell(col).setCellStyle(style1);
+        rowCabecera2.createCell(col).setCellValue(new HSSFRichTextString(espacio));
+        CellUtil.setAlignment(rowCabecera2.getCell(col), workbook, CellStyle.ALIGN_CENTER);
+        col++;
+        rowCabecera2.createCell(col).setCellValue(new HSSFRichTextString(espacio));
+        CellUtil.setAlignment(rowCabecera2.getCell(col), workbook, CellStyle.ALIGN_CENTER);
+        col++;
+        rowCabecera2.createCell(col).setCellValue(new HSSFRichTextString(espacio));
         CellUtil.setAlignment(rowCabecera2.getCell(col), workbook, CellStyle.ALIGN_CENTER);
         col++;
         rowCabecera2.createCell(col).setCellValue(new HSSFRichTextString(espacio + "Comprobante" + espacio));
         //rowCabecera2.getCell(col).setCellStyle(style1);
         CellUtil.setAlignment(rowCabecera2.getCell(col), workbook, CellStyle.ALIGN_CENTER);
         col++;
+        rowCabecera2.createCell(col).setCellValue(new HSSFRichTextString(espacio + "Comprobante" + espacio));
+        //rowCabecera2.getCell(col).setCellStyle(style1);
+        CellUtil.setAlignment(rowCabecera2.getCell(col), workbook, CellStyle.ALIGN_CENTER);
+        col++;
+        rowCabecera2.createCell(col).setCellValue(new HSSFRichTextString(espacio));
+        CellUtil.setAlignment(rowCabecera2.getCell(col), workbook, CellStyle.ALIGN_CENTER);
         col++;
         rowCabecera2.createCell(col).setCellValue(new HSSFRichTextString(espacio + "10%" + espacio));
         //rowCabecera2.getCell(col).setCellStyle(style1);
         CellUtil.setAlignment(rowCabecera2.getCell(col), workbook, CellStyle.ALIGN_CENTER);
         col++;
         rowCabecera2.createCell(col).setCellValue(new HSSFRichTextString(espacio + "10%" + espacio));
-        //rowCabecera2.getCell(col).setCellStyle(style1);
+        rowCabecera2.getCell(col).setCellStyle(styleNumber);
         CellUtil.setAlignment(rowCabecera2.getCell(col), workbook, CellStyle.ALIGN_CENTER);
         col++;
         rowCabecera2.createCell(col).setCellValue(new HSSFRichTextString(espacio + "5%" + espacio));
-        // rowCabecera2.getCell(col).setCellStyle(style1);
+        rowCabecera2.getCell(col).setCellStyle(styleNumber);
         CellUtil.setAlignment(rowCabecera2.getCell(col), workbook, CellStyle.ALIGN_CENTER);
         col++;
         rowCabecera2.createCell(col).setCellValue(new HSSFRichTextString(espacio + "5%" + espacio));
         //rowCabecera2.getCell(col).setCellStyle(style1);
         CellUtil.setAlignment(rowCabecera2.getCell(col), workbook, CellStyle.ALIGN_CENTER);
         col++;
+        rowCabecera2.createCell(col).setCellValue(new HSSFRichTextString(espacio));
+        CellUtil.setAlignment(rowCabecera2.getCell(col), workbook, CellStyle.ALIGN_CENTER);
         col++;
         rowCabecera2.createCell(col).setCellValue(new HSSFRichTextString(espacio + "de Venta" + espacio));
         //rowCabecera2.getCell(col).setCellStyle(style1);
         CellUtil.setAlignment(rowCabecera2.getCell(col), workbook, CellStyle.ALIGN_CENTER);
         col++;
+        rowCabecera2.createCell(col).setCellValue(new HSSFRichTextString(espacio));
+        CellUtil.setAlignment(rowCabecera2.getCell(col), workbook, CellStyle.ALIGN_CENTER);
         col++;
         filaActual++;
-        //BORDE DE CABECERA
-        CellRangeAddress headerCRA = new CellRangeAddress(0, filaActual - 1, 0, col);
-        HSSFRegionUtil.setBorderTop(CellStyle.BORDER_THIN, headerCRA, sheet, workbook);
-        HSSFRegionUtil.setBorderLeft(CellStyle.BORDER_THIN, headerCRA, sheet, workbook);
-        HSSFRegionUtil.setBorderRight(CellStyle.BORDER_THIN, headerCRA, sheet, workbook);
-        HSSFRegionUtil.setBorderBottom(CellStyle.BORDER_THIN, headerCRA, sheet, workbook);
+//        //BORDE DE CABECERA
+//        CellRangeAddress headerCRA = new CellRangeAddress(0, filaActual - 1, 0, col);
+//        HSSFRegionUtil.setBorderTop(CellStyle.BORDER_THIN, headerCRA, sheet, workbook);
+//        HSSFRegionUtil.setBorderLeft(CellStyle.BORDER_THIN, headerCRA, sheet, workbook);
+//        HSSFRegionUtil.setBorderRight(CellStyle.BORDER_THIN, headerCRA, sheet, workbook);
+//        HSSFRegionUtil.setBorderBottom(CellStyle.BORDER_THIN, headerCRA, sheet, workbook);
         //FIN CUERPO
         double total = 0;
         double totalImpuesto = 0;
         double totalIVA5 = 0;
         double totalIVA10 = 0;
+        double totalGravadas10 = 0;
+        double totalGravadas5 = 0;
         //TOTAL INGRESO
         for (M_facturaCabecera facturaCabecera : facturaCabeceraFX) {
             double IVA5 = 0;
@@ -602,27 +623,41 @@ public class ExportarVentas {
                     }
                     case E_impuesto.IVA5: {
                         IVA5 = IVA5 + (subTotal / 21);
-                        gravada5 = gravada5 + subTotal;
+                        gravada5 = gravada5 + (subTotal - (subTotal / 21));
                         break;
                     }
                     case E_impuesto.IVA10: {
                         IVA10 = IVA10 + (subTotal / 11);
-                        gravada10 = gravada10 + subTotal;
+                        gravada10 = gravada10 + (subTotal - (subTotal / 11));
                         break;
                     }
                 }
-                totalImpuesto = totalImpuesto + IVA10 + IVA5;
-                totalIVA5 = totalIVA5 + IVA5;
-                totalIVA10 = totalIVA10 + IVA10;
                 total = total + subTotal;
             }
+            totalImpuesto = totalImpuesto + IVA10 + IVA5;
+            totalIVA5 = totalIVA5 + IVA5;
+            totalIVA10 = totalIVA10 + IVA10;
+            totalGravadas10 = totalGravadas10 + gravada10;
+            totalGravadas5 = totalGravadas5 + gravada5;
             Row row = sheet.createRow(filaActual);
             col = 0;
-            row.createCell(col).setCellValue(facturaCabecera.getCliente().getRuc());
-            //row.getCell(col).setCellStyle(styleNumber);
+            int intRuc = 0;
+            try {
+                intRuc = Integer.valueOf(facturaCabecera.getCliente().getRuc());
+                row.createCell(col).setCellValue(intRuc);
+                //row.getCell(col).setCellStyle(styleNumber);
+            } catch (Exception e) {
+                row.createCell(col).setCellValue(facturaCabecera.getCliente().getRuc());
+            }
             col++;
-            row.createCell(col).setCellValue(facturaCabecera.getCliente().getRucId());
-            //row.getCell(col).setCellStyle(styleNumber);
+            int rucDv = 0;
+            try {
+                rucDv = Integer.valueOf(facturaCabecera.getCliente().getRucId());
+                row.createCell(col).setCellValue(rucDv);
+                row.getCell(col).setCellStyle(styleNumber);
+            } catch (Exception e) {
+                row.createCell(col).setCellValue(facturaCabecera.getCliente().getRucId());
+            }
             col++;
             row.createCell(col).setCellValue(facturaCabecera.getCliente().getEntidad());
             //row.getCell(col).setCellStyle(styleNumber);
@@ -630,7 +665,7 @@ public class ExportarVentas {
             row.createCell(col).setCellValue("");
             //row.getCell(col).setCellStyle(styleNumber);
             col++;
-            row.createCell(col).setCellValue(facturaCabecera.getNroFactura());
+            row.createCell(col).setCellValue(facturaCabecera.obtenerNroComprobante());
             //row.getCell(col).setCellStyle(styleNumber);
             col++;
             row.createCell(col).setCellValue(facturaCabecera.getTiempo());
@@ -660,8 +695,32 @@ public class ExportarVentas {
             row.createCell(col).setCellValue(facturaCabecera.getTimbrado().getNroTimbrado());
             //row.getCell(col).setCellStyle(styleNumber);
             col++;
+            if (facturaCabecera.getEstado().getId() == 2) {
+                for (int i = 0; i < col; i++) {
+                    row.getCell(i).setCellStyle(style4);
+                }
+            }
             filaActual++;
+            CellRangeAddress CRA = new CellRangeAddress(filaActual - 1, filaActual, 0, 13);
+            HSSFRegionUtil.setBorderTop(CellStyle.BORDER_THIN, CRA, sheet, workbook);
+            HSSFRegionUtil.setBorderLeft(CellStyle.BORDER_THIN, CRA, sheet, workbook);
+            HSSFRegionUtil.setBorderRight(CellStyle.BORDER_THIN, CRA, sheet, workbook);
+            HSSFRegionUtil.setBorderBottom(CellStyle.BORDER_THIN, CRA, sheet, workbook);
+
         }
+        Row grandTotal = sheet.createRow(filaActual);
+        grandTotal.createCell(4).setCellValue(new HSSFRichTextString("TOTAL"));
+        grandTotal.getCell(4).setCellStyle(styleNumber);
+        grandTotal.createCell(6).setCellValue(totalGravadas10);
+        grandTotal.getCell(6).setCellStyle(styleNumber);
+        grandTotal.createCell(7).setCellValue(totalIVA10);
+        grandTotal.getCell(7).setCellStyle(styleNumber);
+        grandTotal.createCell(8).setCellValue(totalGravadas5);
+        grandTotal.getCell(8).setCellStyle(styleNumber);
+        grandTotal.createCell(9).setCellValue(totalIVA5);
+        grandTotal.getCell(9).setCellStyle(styleNumber);
+        grandTotal.createCell(11).setCellValue(total);
+        grandTotal.getCell(11).setCellStyle(styleNumber);
         sheet.autoSizeColumn(0);
         sheet.autoSizeColumn(1);
         sheet.autoSizeColumn(2);
@@ -676,18 +735,138 @@ public class ExportarVentas {
         sheet.autoSizeColumn(11);
         sheet.autoSizeColumn(12);
         sheet.autoSizeColumn(13);
-        sheet.autoSizeColumn(14);
-        
-        CellRangeAddress col1CRA = new CellRangeAddress(0, filaActual - 1, 0, 1);
+
+        CellRangeAddress col1CRA = new CellRangeAddress(0, 1, 0, 1);
         HSSFRegionUtil.setBorderTop(CellStyle.BORDER_THIN, col1CRA, sheet, workbook);
         HSSFRegionUtil.setBorderLeft(CellStyle.BORDER_THIN, col1CRA, sheet, workbook);
-        HSSFRegionUtil.setBorderRight(CellStyle.BORDER_THIN, col1CRA, sheet, workbook);
+        HSSFRegionUtil.setBorderRight(CellStyle.BORDER_MEDIUM, col1CRA, sheet, workbook);
         HSSFRegionUtil.setBorderBottom(CellStyle.BORDER_THIN, col1CRA, sheet, workbook);
-        CellRangeAddress col2CRA = new CellRangeAddress(0, filaActual - 1, 1, 2);
+        CellRangeAddress col2CRA = new CellRangeAddress(0, 1, 1, 2);
         HSSFRegionUtil.setBorderTop(CellStyle.BORDER_THIN, col2CRA, sheet, workbook);
         HSSFRegionUtil.setBorderLeft(CellStyle.BORDER_THIN, col2CRA, sheet, workbook);
-        HSSFRegionUtil.setBorderRight(CellStyle.BORDER_THIN, col2CRA, sheet, workbook);
+        HSSFRegionUtil.setBorderRight(CellStyle.BORDER_MEDIUM, col2CRA, sheet, workbook);
         HSSFRegionUtil.setBorderBottom(CellStyle.BORDER_THIN, col2CRA, sheet, workbook);
+        CellRangeAddress col3CRA = new CellRangeAddress(0, 1, 2, 3);
+        HSSFRegionUtil.setBorderTop(CellStyle.BORDER_THIN, col3CRA, sheet, workbook);
+        HSSFRegionUtil.setBorderLeft(CellStyle.BORDER_THIN, col3CRA, sheet, workbook);
+        HSSFRegionUtil.setBorderRight(CellStyle.BORDER_MEDIUM, col3CRA, sheet, workbook);
+        HSSFRegionUtil.setBorderBottom(CellStyle.BORDER_THIN, col3CRA, sheet, workbook);
+        CellRangeAddress col4CRA = new CellRangeAddress(0, 1, 3, 4);
+        HSSFRegionUtil.setBorderTop(CellStyle.BORDER_THIN, col4CRA, sheet, workbook);
+        HSSFRegionUtil.setBorderLeft(CellStyle.BORDER_THIN, col4CRA, sheet, workbook);
+        HSSFRegionUtil.setBorderRight(CellStyle.BORDER_MEDIUM, col4CRA, sheet, workbook);
+        HSSFRegionUtil.setBorderBottom(CellStyle.BORDER_THIN, col4CRA, sheet, workbook);
+        CellRangeAddress col5CA = new CellRangeAddress(0, 1, 4, 5);
+        HSSFRegionUtil.setBorderTop(CellStyle.BORDER_THIN, col5CA, sheet, workbook);
+        HSSFRegionUtil.setBorderLeft(CellStyle.BORDER_THIN, col5CA, sheet, workbook);
+        HSSFRegionUtil.setBorderRight(CellStyle.BORDER_MEDIUM, col5CA, sheet, workbook);
+        HSSFRegionUtil.setBorderBottom(CellStyle.BORDER_THIN, col5CA, sheet, workbook);
+        CellRangeAddress col6CRA = new CellRangeAddress(0, 1, 5, 6);
+        HSSFRegionUtil.setBorderTop(CellStyle.BORDER_THIN, col6CRA, sheet, workbook);
+        HSSFRegionUtil.setBorderLeft(CellStyle.BORDER_THIN, col6CRA, sheet, workbook);
+        HSSFRegionUtil.setBorderRight(CellStyle.BORDER_MEDIUM, col6CRA, sheet, workbook);
+        HSSFRegionUtil.setBorderBottom(CellStyle.BORDER_THIN, col6CRA, sheet, workbook);
+        CellRangeAddress col7CRA = new CellRangeAddress(0, 1, 6, 7);
+        HSSFRegionUtil.setBorderTop(CellStyle.BORDER_THIN, col7CRA, sheet, workbook);
+        HSSFRegionUtil.setBorderLeft(CellStyle.BORDER_THIN, col7CRA, sheet, workbook);
+        HSSFRegionUtil.setBorderRight(CellStyle.BORDER_MEDIUM, col7CRA, sheet, workbook);
+        HSSFRegionUtil.setBorderBottom(CellStyle.BORDER_THIN, col7CRA, sheet, workbook);
+        CellRangeAddress col8CRA = new CellRangeAddress(0, 1, 7, 8);
+        HSSFRegionUtil.setBorderTop(CellStyle.BORDER_THIN, col8CRA, sheet, workbook);
+        HSSFRegionUtil.setBorderLeft(CellStyle.BORDER_THIN, col8CRA, sheet, workbook);
+        HSSFRegionUtil.setBorderRight(CellStyle.BORDER_MEDIUM, col8CRA, sheet, workbook);
+        HSSFRegionUtil.setBorderBottom(CellStyle.BORDER_THIN, col8CRA, sheet, workbook);
+        CellRangeAddress col9CRA = new CellRangeAddress(0, 1, 8, 9);
+        HSSFRegionUtil.setBorderTop(CellStyle.BORDER_THIN, col9CRA, sheet, workbook);
+        HSSFRegionUtil.setBorderLeft(CellStyle.BORDER_THIN, col9CRA, sheet, workbook);
+        HSSFRegionUtil.setBorderRight(CellStyle.BORDER_MEDIUM, col9CRA, sheet, workbook);
+        HSSFRegionUtil.setBorderBottom(CellStyle.BORDER_THIN, col9CRA, sheet, workbook);
+        CellRangeAddress col10CRA = new CellRangeAddress(0, 1, 9, 10);
+        HSSFRegionUtil.setBorderTop(CellStyle.BORDER_THIN, col10CRA, sheet, workbook);
+        HSSFRegionUtil.setBorderLeft(CellStyle.BORDER_THIN, col10CRA, sheet, workbook);
+        HSSFRegionUtil.setBorderRight(CellStyle.BORDER_MEDIUM, col10CRA, sheet, workbook);
+        HSSFRegionUtil.setBorderBottom(CellStyle.BORDER_THIN, col10CRA, sheet, workbook);
+        CellRangeAddress col11CRA = new CellRangeAddress(0, 1, 10, 11);
+        HSSFRegionUtil.setBorderTop(CellStyle.BORDER_THIN, col11CRA, sheet, workbook);
+        HSSFRegionUtil.setBorderLeft(CellStyle.BORDER_THIN, col11CRA, sheet, workbook);
+        HSSFRegionUtil.setBorderRight(CellStyle.BORDER_MEDIUM, col11CRA, sheet, workbook);
+        HSSFRegionUtil.setBorderBottom(CellStyle.BORDER_THIN, col11CRA, sheet, workbook);
+        CellRangeAddress col12CRA = new CellRangeAddress(0, 1, 11, 12);
+        HSSFRegionUtil.setBorderTop(CellStyle.BORDER_THIN, col12CRA, sheet, workbook);
+        HSSFRegionUtil.setBorderLeft(CellStyle.BORDER_THIN, col12CRA, sheet, workbook);
+        HSSFRegionUtil.setBorderRight(CellStyle.BORDER_MEDIUM, col12CRA, sheet, workbook);
+        HSSFRegionUtil.setBorderBottom(CellStyle.BORDER_THIN, col12CRA, sheet, workbook);
+        CellRangeAddress col13CRA = new CellRangeAddress(0, 1, 12, 13);
+        HSSFRegionUtil.setBorderTop(CellStyle.BORDER_THIN, col13CRA, sheet, workbook);
+        HSSFRegionUtil.setBorderLeft(CellStyle.BORDER_THIN, col13CRA, sheet, workbook);
+        HSSFRegionUtil.setBorderRight(CellStyle.BORDER_MEDIUM, col13CRA, sheet, workbook);
+        HSSFRegionUtil.setBorderBottom(CellStyle.BORDER_THIN, col13CRA, sheet, workbook);
+
+        CellRangeAddress col1CRAThin = new CellRangeAddress(2, filaActual, 0, 1);
+        HSSFRegionUtil.setBorderTop(CellStyle.BORDER_THIN, col1CRAThin, sheet, workbook);
+        HSSFRegionUtil.setBorderLeft(CellStyle.BORDER_THIN, col1CRAThin, sheet, workbook);
+        HSSFRegionUtil.setBorderRight(CellStyle.BORDER_THIN, col1CRAThin, sheet, workbook);
+        HSSFRegionUtil.setBorderBottom(CellStyle.BORDER_THIN, col1CRAThin, sheet, workbook);
+        CellRangeAddress col2CRAThin = new CellRangeAddress(2, filaActual, 1, 2);
+        HSSFRegionUtil.setBorderTop(CellStyle.BORDER_THIN, col2CRAThin, sheet, workbook);
+        HSSFRegionUtil.setBorderLeft(CellStyle.BORDER_THIN, col2CRAThin, sheet, workbook);
+        HSSFRegionUtil.setBorderRight(CellStyle.BORDER_THIN, col2CRAThin, sheet, workbook);
+        HSSFRegionUtil.setBorderBottom(CellStyle.BORDER_THIN, col2CRAThin, sheet, workbook);
+        CellRangeAddress col3CRAThin = new CellRangeAddress(2, filaActual, 2, 3);
+        HSSFRegionUtil.setBorderTop(CellStyle.BORDER_THIN, col3CRAThin, sheet, workbook);
+        HSSFRegionUtil.setBorderLeft(CellStyle.BORDER_THIN, col3CRAThin, sheet, workbook);
+        HSSFRegionUtil.setBorderRight(CellStyle.BORDER_THIN, col3CRAThin, sheet, workbook);
+        HSSFRegionUtil.setBorderBottom(CellStyle.BORDER_THIN, col3CRAThin, sheet, workbook);
+        CellRangeAddress col4CRAThin = new CellRangeAddress(2, filaActual, 3, 4);
+        HSSFRegionUtil.setBorderTop(CellStyle.BORDER_THIN, col4CRAThin, sheet, workbook);
+        HSSFRegionUtil.setBorderLeft(CellStyle.BORDER_THIN, col4CRAThin, sheet, workbook);
+        HSSFRegionUtil.setBorderRight(CellStyle.BORDER_THIN, col4CRAThin, sheet, workbook);
+        HSSFRegionUtil.setBorderBottom(CellStyle.BORDER_THIN, col4CRAThin, sheet, workbook);
+        CellRangeAddress col5CAThin = new CellRangeAddress(2, filaActual, 4, 5);
+        HSSFRegionUtil.setBorderTop(CellStyle.BORDER_THIN, col5CAThin, sheet, workbook);
+        HSSFRegionUtil.setBorderLeft(CellStyle.BORDER_THIN, col5CAThin, sheet, workbook);
+        HSSFRegionUtil.setBorderRight(CellStyle.BORDER_THIN, col5CAThin, sheet, workbook);
+        HSSFRegionUtil.setBorderBottom(CellStyle.BORDER_THIN, col5CAThin, sheet, workbook);
+        CellRangeAddress col6CRAThin = new CellRangeAddress(2, filaActual, 5, 6);
+        HSSFRegionUtil.setBorderTop(CellStyle.BORDER_THIN, col6CRAThin, sheet, workbook);
+        HSSFRegionUtil.setBorderLeft(CellStyle.BORDER_THIN, col6CRAThin, sheet, workbook);
+        HSSFRegionUtil.setBorderRight(CellStyle.BORDER_THIN, col6CRAThin, sheet, workbook);
+        HSSFRegionUtil.setBorderBottom(CellStyle.BORDER_THIN, col6CRAThin, sheet, workbook);
+        CellRangeAddress col7CRAThin = new CellRangeAddress(2, filaActual, 6, 7);
+        HSSFRegionUtil.setBorderTop(CellStyle.BORDER_THIN, col7CRAThin, sheet, workbook);
+        HSSFRegionUtil.setBorderLeft(CellStyle.BORDER_THIN, col7CRAThin, sheet, workbook);
+        HSSFRegionUtil.setBorderRight(CellStyle.BORDER_THIN, col7CRAThin, sheet, workbook);
+        HSSFRegionUtil.setBorderBottom(CellStyle.BORDER_THIN, col7CRAThin, sheet, workbook);
+        CellRangeAddress col8CRAThin = new CellRangeAddress(2, filaActual, 7, 8);
+        HSSFRegionUtil.setBorderTop(CellStyle.BORDER_THIN, col8CRAThin, sheet, workbook);
+        HSSFRegionUtil.setBorderLeft(CellStyle.BORDER_THIN, col8CRAThin, sheet, workbook);
+        HSSFRegionUtil.setBorderRight(CellStyle.BORDER_THIN, col8CRAThin, sheet, workbook);
+        HSSFRegionUtil.setBorderBottom(CellStyle.BORDER_THIN, col8CRAThin, sheet, workbook);
+        CellRangeAddress col9CRAThin = new CellRangeAddress(2, filaActual, 8, 9);
+        HSSFRegionUtil.setBorderTop(CellStyle.BORDER_THIN, col9CRAThin, sheet, workbook);
+        HSSFRegionUtil.setBorderLeft(CellStyle.BORDER_THIN, col9CRAThin, sheet, workbook);
+        HSSFRegionUtil.setBorderRight(CellStyle.BORDER_THIN, col9CRAThin, sheet, workbook);
+        HSSFRegionUtil.setBorderBottom(CellStyle.BORDER_THIN, col9CRAThin, sheet, workbook);
+        CellRangeAddress col10CRAThin = new CellRangeAddress(2, filaActual, 9, 10);
+        HSSFRegionUtil.setBorderTop(CellStyle.BORDER_THIN, col10CRAThin, sheet, workbook);
+        HSSFRegionUtil.setBorderLeft(CellStyle.BORDER_THIN, col10CRAThin, sheet, workbook);
+        HSSFRegionUtil.setBorderRight(CellStyle.BORDER_THIN, col10CRAThin, sheet, workbook);
+        HSSFRegionUtil.setBorderBottom(CellStyle.BORDER_THIN, col10CRAThin, sheet, workbook);
+        CellRangeAddress col11CRAThin = new CellRangeAddress(2, filaActual, 10, 11);
+        HSSFRegionUtil.setBorderTop(CellStyle.BORDER_THIN, col11CRAThin, sheet, workbook);
+        HSSFRegionUtil.setBorderLeft(CellStyle.BORDER_THIN, col11CRAThin, sheet, workbook);
+        HSSFRegionUtil.setBorderRight(CellStyle.BORDER_THIN, col11CRAThin, sheet, workbook);
+        HSSFRegionUtil.setBorderBottom(CellStyle.BORDER_THIN, col11CRAThin, sheet, workbook);
+        CellRangeAddress col12CRAThin = new CellRangeAddress(2, filaActual, 11, 12);
+        HSSFRegionUtil.setBorderTop(CellStyle.BORDER_THIN, col12CRAThin, sheet, workbook);
+        HSSFRegionUtil.setBorderLeft(CellStyle.BORDER_THIN, col12CRAThin, sheet, workbook);
+        HSSFRegionUtil.setBorderRight(CellStyle.BORDER_THIN, col12CRAThin, sheet, workbook);
+        HSSFRegionUtil.setBorderBottom(CellStyle.BORDER_THIN, col12CRAThin, sheet, workbook);
+        CellRangeAddress col13CRAThin = new CellRangeAddress(2, filaActual, 12, 13);
+        HSSFRegionUtil.setBorderTop(CellStyle.BORDER_THIN, col13CRAThin, sheet, workbook);
+        HSSFRegionUtil.setBorderLeft(CellStyle.BORDER_THIN, col13CRAThin, sheet, workbook);
+        HSSFRegionUtil.setBorderRight(CellStyle.BORDER_THIN, col13CRAThin, sheet, workbook);
+        HSSFRegionUtil.setBorderBottom(CellStyle.BORDER_THIN, col13CRAThin, sheet, workbook);
         try {
             FileOutputStream out = new FileOutputStream(directory.getPath() + ".xls");
             workbook.write(out);
