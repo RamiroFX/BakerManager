@@ -67,6 +67,7 @@ public class C_inicio implements ActionListener {
         vista.getJMenuBar().jmiCobroPendientePorClienteVencidos.addActionListener(this);
         vista.getJMenuBar().jmiEstadoCuentaClientes.addActionListener(this);
         vista.getJMenuBar().jmiEstadoCuentaProveedores.addActionListener(this);
+        vista.getJMenuBar().jmiCompras.addActionListener(this);
         vista.addWindowListener(wa);
         
     }
@@ -186,6 +187,8 @@ public class C_inicio implements ActionListener {
             Reportes.ReportesCobros.estadoCuentaClientes(vista);
         }else if (fuente == vista.getJMenuBar().jmiEstadoCuentaProveedores) {
             Reportes.ReportesPagos.estadoCuentaProveedores(vista);
+        }else if (fuente == vista.getJMenuBar().jmiCompras) {
+            Reportes.ReportesCompras.compras(vista);
         }
     }
 
