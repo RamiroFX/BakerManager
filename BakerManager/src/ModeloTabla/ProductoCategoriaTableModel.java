@@ -73,6 +73,20 @@ public class ProductoCategoriaTableModel extends AbstractTableModel {
         return list;
     }
 
+    public void agregarDatos(ProductoCategoria unaCategoria) {
+        this.list.add(unaCategoria);
+        updateTable();
+    }
+
+    public void quitarDatos(int index) {
+        this.list.remove(index);
+        updateTable();
+    }
+
+    public void vaciarLista() {
+        this.list.clear();
+        updateTable();
+    }
     public void updateTable() {
         fireTableDataChanged();
     }

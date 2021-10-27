@@ -6,17 +6,21 @@ package Excel;
 
 import DB.DB_Egreso;
 import DB.DB_Ingreso;
+import Entities.E_facturaDetalle;
 import Entities.E_impuesto;
 import Entities.M_egresoCabecera;
 import Entities.M_egreso_detalle;
 import Entities.M_egreso_detalleFX;
 import Entities.M_facturaCabecera;
 import Entities.M_facturaDetalle;
+import Entities.M_proveedor;
+import Entities.ProductoCategoria;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import javax.swing.JFileChooser;
@@ -30,6 +34,7 @@ import org.apache.poi.ss.usermodel.DataFormat;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.ss.util.CellUtil;
 
 /**
  *
@@ -45,10 +50,16 @@ public class C_create_excel {
     List<M_egreso_detalle> egresoDetalle2;
     Date fechaInic, fechaFinal;
     HSSFWorkbook workbook;
+    ArrayList<HSSFSheet> sheets;
     HSSFSheet sheet;
     CellStyle style1, style2, style3, style4, styleNumber;
     HSSFCellStyle dateCellStyle;
     int tipo_fecha;
+
+    public C_create_excel() {
+        createWorkBook();
+        createCellStyles();
+    }
 
     public C_create_excel(String nombreHoja, ArrayList<M_egreso_detalleFX> egresoDetalle, Date fechaInic, Date fechaFinal) {
         this.nombreHoja = nombreHoja;
@@ -88,7 +99,6 @@ public class C_create_excel {
         createCellStyles();
     }
 
-
     public C_create_excel(String nombreHoja, Date fechaInic, Date fechaFinal, List<M_egreso_detalle> egresoDetalle2) {
         this.nombreHoja = nombreHoja;
         this.fechaInic = fechaInic;
@@ -114,7 +124,10 @@ public class C_create_excel {
 
     private void createWorkBook() {
         workbook = new HSSFWorkbook();
-        sheet = workbook.createSheet(nombreHoja);
+        sheets = new ArrayList<>();
+        if (nombreHoja != null) {
+            sheet = workbook.createSheet(nombreHoja);
+        }
     }
 
     private void createCellStyles() {
@@ -553,7 +566,7 @@ public class C_create_excel {
             e.printStackTrace();
         }
     }
-    
+
     public void exportacionResumida() {
         File directory = null;
         String desktop = System.getProperty("user.home") + "\\Desktop";
@@ -715,6 +728,108 @@ public class C_create_excel {
         sheet.autoSizeColumn(5);
         sheet.autoSizeColumn(6);
         sheet.autoSizeColumn(7);
+        try {
+            FileOutputStream out = new FileOutputStream(directory.getPath() + ".xls");
+            workbook.write(out);
+            out.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void exportacionProveedoresPorCategorias(List<M_proveedor> proveedorList, List<ProductoCategoria> categoriaList,
+            Date fechaInicio, Date fechaFin) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(fechaInicio);
+        File directory = null;
+        String desktop = System.getProperty("user.home") + "\\Desktop";
+        JFileChooser chooser = new JFileChooser(desktop);
+        if (chooser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
+            directory = chooser.getSelectedFile();
+            directory.setWritable(true);
+            directory.setExecutable(true);
+            directory.setReadable(true);
+        } else {
+            return;
+        }
+        // Create a row and put some cells in it. Rows are 0 based.
+        for (M_proveedor unProveedor : proveedorList) {
+            for (ProductoCategoria unaCategoria : categoriaList) {
+                HSSFSheet newSheet = workbook.createSheet(unProveedor.getEntidad() + "-" + unaCategoria.getDescripcion());
+                sheets.add(newSheet);
+                int filaActual = 0;
+                int col = 0;
+                Row rowTitulo = newSheet.createRow(filaActual++);
+                String titulo = "Facturas de compras " + unaCategoria.getDescripcion() + "- " + unProveedor.getEntidad() + " - " + cal.get(Calendar.YEAR);
+                rowTitulo.createCell(col).setCellValue(new HSSFRichTextString(titulo));
+                Row rowMonthTitle = newSheet.createRow(filaActual++);
+                rowMonthTitle.createCell(col).setCellValue(new HSSFRichTextString(cal.get(Calendar.MONTH) + ""));
+                Row rowCabeceras = newSheet.createRow(filaActual++);
+                rowCabeceras.createCell(col++).setCellValue(new HSSFRichTextString("Proveedor"));
+                rowCabeceras.createCell(col++).setCellValue(new HSSFRichTextString("Nro. Factura"));
+                rowCabeceras.createCell(col++).setCellValue(new HSSFRichTextString("Fecha"));
+                rowCabeceras.createCell(col++).setCellValue(new HSSFRichTextString("Código"));
+                rowCabeceras.createCell(col++).setCellValue(new HSSFRichTextString("Descripción"));
+                rowCabeceras.createCell(col++).setCellValue(new HSSFRichTextString("Cantidad"));
+                rowCabeceras.createCell(col++).setCellValue(new HSSFRichTextString("Precio-Dólar"));
+                rowCabeceras.createCell(col++).setCellValue(new HSSFRichTextString("Total-Dólar"));
+                rowCabeceras.createCell(col++).setCellValue(new HSSFRichTextString("Precio-Gs"));
+                rowCabeceras.createCell(col++).setCellValue(new HSSFRichTextString("Total-Gs"));
+                rowCabeceras.createCell(col++).setCellValue(new HSSFRichTextString("TC"));
+                col = 0;
+                List<M_egresoCabecera> comprasCabeceras = DB_Egreso.obtenerComprasCabeceraPorCategoria(unProveedor.getId(), -1, -1, -1, -1, fechaInicio, fechaFin, true, unaCategoria.getId());
+                for (M_egresoCabecera unaCompra : comprasCabeceras) {
+                    Calendar unCal = Calendar.getInstance();
+                    unCal.setTime(unaCompra.getTiempo());
+                    if (cal.get(Calendar.MONTH) != unCal.get(Calendar.MONTH)) {
+                        filaActual++;
+                        Row rowMes = newSheet.createRow(filaActual++);
+                        rowMes.createCell(col).setCellValue(new HSSFRichTextString(unCal.get(Calendar.MONTH) + ""));
+                    }
+                    List<M_egreso_detalle> comprasDetalles = DB_Egreso.obtenerEgresoDetalles(unaCompra.getId_cabecera());
+                    Double cantidad = 0.0, totalGs = 0.0;
+                    for (M_egreso_detalle unDetalle : comprasDetalles) {
+                        Row rowDetalle = newSheet.createRow(filaActual++);
+                        rowDetalle.createCell(col++).setCellValue(new HSSFRichTextString(unaCompra.getProveedor().getEntidad()));
+                        rowDetalle.createCell(col++).setCellValue(new HSSFRichTextString(unaCompra.getNro_factura() + ""));
+                        rowDetalle.createCell(col++).setCellValue(new HSSFRichTextString(unaCompra.getTiempo() + ""));
+                        rowDetalle.createCell(col++).setCellValue(new HSSFRichTextString(unaCompra.getId_cabecera() + ""));
+                        rowDetalle.createCell(col++).setCellValue(new HSSFRichTextString(unDetalle.getProducto().getDescripcion()));
+                        rowDetalle.createCell(col++).setCellValue(new HSSFRichTextString(unDetalle.getCantidad() + ""));
+                        rowDetalle.createCell(col++).setCellValue(new HSSFRichTextString(unDetalle.getPrecio() + ""));
+                        rowDetalle.createCell(col++).setCellValue(new HSSFRichTextString(unDetalle.getTotal() + ""));
+                        rowDetalle.createCell(col++).setCellValue(new HSSFRichTextString(unDetalle.getPrecio() + ""));
+                        rowDetalle.createCell(col++).setCellValue(new HSSFRichTextString(unDetalle.calcularSubTotal() + ""));
+                        rowDetalle.createCell(col++).setCellValue(new HSSFRichTextString("TC--?"));
+                        cantidad = cantidad + unDetalle.getCantidad();
+                        totalGs = totalGs + unDetalle.calcularSubTotal();
+                    }
+                    col = 0;
+                    Row rowPie = newSheet.createRow(filaActual++);
+                    rowPie.createCell(col++).setCellValue(new HSSFRichTextString("Totales"));
+                    rowPie.createCell(col++).setCellValue(new HSSFRichTextString(cantidad + ""));
+                    rowPie.createCell(col++).setCellValue(new HSSFRichTextString(totalGs + ""));
+                }
+
+                newSheet.autoSizeColumn(0);
+                newSheet.autoSizeColumn(1);
+                newSheet.autoSizeColumn(2);
+                newSheet.autoSizeColumn(3);
+                newSheet.autoSizeColumn(4);
+                newSheet.autoSizeColumn(5);
+                newSheet.autoSizeColumn(6);
+                newSheet.autoSizeColumn(7);
+                newSheet.autoSizeColumn(8);
+                newSheet.autoSizeColumn(9);
+                newSheet.autoSizeColumn(10);
+                newSheet.autoSizeColumn(11);
+                newSheet.autoSizeColumn(12);
+                newSheet.autoSizeColumn(13);
+            }
+        }
+
         try {
             FileOutputStream out = new FileOutputStream(directory.getPath() + ".xls");
             workbook.write(out);

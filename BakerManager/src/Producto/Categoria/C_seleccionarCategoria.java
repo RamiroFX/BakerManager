@@ -30,10 +30,12 @@ public class C_seleccionarCategoria implements ActionListener, MouseListener, Ke
     private static final int MAX_LENGTH = 50, CREAR_SUB_CATEGORIA = 1, MODIFICAR_SUB_CATEGORIA = 2;
     private M_seleccionarCategoria modelo;
     private V_seleccionarCategoria vista;
+    boolean cerrar;
 
     public C_seleccionarCategoria(M_seleccionarCategoria modelo, V_seleccionarCategoria vista) {
         this.modelo = modelo;
         this.vista = vista;
+        this.cerrar = true;
         initializarLogica();
         inicializarVista();
         agregarListener();
@@ -311,15 +313,18 @@ public class C_seleccionarCategoria implements ActionListener, MouseListener, Ke
             if (row > -1) {
                 ProductoCategoria pc = modelo.getProductoCategoriaTm().getList().get(row);
                 modelo.getCallback().recibirProductoCategoria(pc);
-                cerrar();
+                //cerrar();
             }
         } else if (this.vista.jtpCenter.getSelectedComponent().equals(this.vista.jpSubCategorias)) {
             int row = vista.jtSubCategorias.getSelectedRow();
             if (row > -1) {
                 ProductoCategoria pc = modelo.getProductoSubCategoriaTm().getList().get(row);
                 modelo.getCallback().recibirProductoCategoria(pc);
-                cerrar();
+                //cerrar();
             }
+        }
+        if (cerrar) {
+            cerrar();
         }
     }
 
@@ -450,6 +455,10 @@ public class C_seleccionarCategoria implements ActionListener, MouseListener, Ke
 
     @Override
     public void keyReleased(KeyEvent e) {
+    }
+
+    public void establecerSiempreVisible() {
+        this.cerrar = false;
     }
 
 }

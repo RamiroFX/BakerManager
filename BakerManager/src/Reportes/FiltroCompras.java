@@ -4,17 +4,20 @@
  */
 package Reportes;
 
-import Cliente.SeleccionarCliente;
 import DB.DB_manager;
 import Entities.E_Empresa;
-import Entities.M_cliente;
-import Interface.RecibirClienteCallback;
-import ModeloTabla.ClienteTableModel;
+import Entities.M_proveedor;
+import Entities.ProductoCategoria;
+import Excel.C_create_excel;
+import Interface.RecibirProductoCategoriaCallback;
+import Interface.RecibirProveedorCallback;
 import ModeloTabla.ProductoCategoriaTableModel;
+import ModeloTabla.ProveedorTableModel;
+import Producto.Categoria.SeleccionarCategoria;
+import Proveedor.Seleccionar_proveedor;
 import com.toedter.calendar.JDateChooser;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -49,7 +52,8 @@ import net.sf.jasperreports.swing.JRViewer;
  *
  * @author Ramiro Ferreira
  */
-public class FiltroCompras extends JDialog implements ActionListener, KeyListener, RecibirClienteCallback {
+public class FiltroCompras extends JDialog implements ActionListener, KeyListener, 
+        RecibirProveedorCallback, RecibirProductoCategoriaCallback {
 
     public static final int PENDIENTE = 1, VENCIDAS = 2;
     private JPanel  jpSouth, jpContainer, jpProveedores, jpCategorias ;
@@ -58,7 +62,7 @@ public class FiltroCompras extends JDialog implements ActionListener, KeyListene
     private JButton jbQuitarProv, jbAgregarProv, jbGenerar, jbCancelar;
     private JButton jbQuitarCate, jbAgregarCate, jbGenerarCate, jbCancelarCate;
     private JToggleButton jtbTipoSeleccionProv,jtbTipoSeleccionCate;
-    private ClienteTableModel tm;
+    private ProveedorTableModel tm;
     private ProductoCategoriaTableModel pctm;
     private int reportType, modo;
     private E_Empresa empresa;
@@ -77,25 +81,28 @@ public class FiltroCompras extends JDialog implements ActionListener, KeyListene
         getContentPane().add(jpContainer, BorderLayout.CENTER);
         getContentPane().add(jpSouth, BorderLayout.SOUTH);
         completarCampos();
-        //testInit();
+        testInit();
     }
 
     private void testInit() {
-        M_cliente unCliente = new M_cliente();
-        unCliente.setIdCliente(461);
-        unCliente.setEntidad("");
-        unCliente.setNombre("");
-        unCliente.setRuc("123");
-        unCliente.setRucId("1");
-        recibirCliente(unCliente);
+        //555
+        M_proveedor unProveedor = new M_proveedor();
+        unProveedor.setId(16);
+        unProveedor.setEntidad("Invipint S.A.C.I");
+        unProveedor.setNombre("Bambi");
+        unProveedor.setRuc("80022935");
+        unProveedor.setRuc_id("5");
+        recibirProveedor(unProveedor);
+        ProductoCategoria pc = new ProductoCategoria(4, "Materia Prima");        
+        recibirProductoCategoria(pc);
         Calendar firstDay = Calendar.getInstance();
         firstDay.set(Calendar.DAY_OF_MONTH, 1);
-        firstDay.set(Calendar.MONTH, 2);
+        firstDay.set(Calendar.MONTH, 1);
         Calendar secDay = Calendar.getInstance();
         secDay.set(Calendar.DAY_OF_MONTH, 30);
         secDay.set(Calendar.MONTH, 2);
         this.jdcFechaDesde.setDate(firstDay.getTime());
-        this.jdcFechaHasta.setDate(secDay.getTime());
+        //this.jdcFechaHasta.setDate(secDay.getTime());
     }
 
     private void inicializarVista() {
@@ -177,7 +184,7 @@ public class FiltroCompras extends JDialog implements ActionListener, KeyListene
     private void completarCampos() {
         this.empresa = DB_manager.obtenerDatosEmpresa();
         this.reportType = 1;
-        this.tm = new ClienteTableModel();
+        this.tm = new ProveedorTableModel();
         this.pctm = new ProductoCategoriaTableModel();
         this.jtProveedores.setModel(tm);
         this.jtCategorias.setModel(pctm);
@@ -189,6 +196,8 @@ public class FiltroCompras extends JDialog implements ActionListener, KeyListene
         this.jbAgregarProv.addActionListener(this);
         this.jbQuitarProv.addActionListener(this);
         this.jtbTipoSeleccionProv.addActionListener(this);
+        this.jbAgregarCate.addActionListener(this);
+        this.jbQuitarCate.addActionListener(this);
         /*
         KEYLISTENERS
          */
@@ -198,6 +207,8 @@ public class FiltroCompras extends JDialog implements ActionListener, KeyListene
         this.jbQuitarProv.addKeyListener(this);
         this.jtProveedores.addKeyListener(this);
         this.jtbTipoSeleccionProv.addKeyListener(this);
+        this.jbAgregarCate.addKeyListener(this);
+        this.jbQuitarCate.addKeyListener(this);
     }
 
     private boolean validarSeleccion() {
@@ -222,10 +233,14 @@ public class FiltroCompras extends JDialog implements ActionListener, KeyListene
         if (!validarSeleccion()) {
             return;
         }
-        ArrayList idClientes = new ArrayList();
+       /* ArrayList idProveedores = new ArrayList();
         tm.getList().forEach((unCliente) -> {
-            idClientes.add(unCliente.getIdCliente());
+            idProveedores.add(unCliente.getId());
         });
+        ArrayList idCategorias = new ArrayList();
+        pctm.getList().forEach((unaCategoria) -> {
+            idCategorias.add(unaCategoria.getId());
+        });*/
         Date fechaDesde = null;
         if (jcbFechaDesde.isSelected()) {
             fechaDesde = jdcFechaDesde.getDate();
@@ -244,27 +259,9 @@ public class FiltroCompras extends JDialog implements ActionListener, KeyListene
             JOptionPane.showMessageDialog(this, "No se encontró la ubicación del reporte", "Atención", JOptionPane.WARNING_MESSAGE);
             return;
         }
-        try {
-            Map<String, Object> map = new HashMap<String, Object>();
-            map.put("empresa_nombre", empresa.getEntidad());
-            map.put("empresa_descripcion", empresa.getDescripcion());
-            map.put("fecha_desde", new java.sql.Date(fechaDesde.getTime()));
-            map.put("fecha_hasta", new java.sql.Date(fechaHasta.getTime()));
-            map.put("id_clientes", idClientes);
-            map.put("report", reporte);
-            JasperPrint jp = JasperFillManager.fillReport(reporte, map, DB_manager.getConection());
-            JRViewer jv = new JRViewer(jp);
-            JFrame jf = new JFrame();
-            jf.getContentPane().add(jv);
-            jf.validate();
-            jf.setVisible(true);
-            jf.setSize(new Dimension(800, 600));
-            jf.setLocation(300, 100);
-            jf.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-        } catch (JRException ex) {
-            ex.printStackTrace();
-            JOptionPane.showMessageDialog(this, "Hubo un problema al generar el reporte, intentelo nuevamente", "Alerta", JOptionPane.WARNING_MESSAGE);
-        }
+        
+        C_create_excel c = new C_create_excel();
+        c.exportacionProveedoresPorCategorias(tm.getList(), pctm.getList(), fechaDesde, fechaHasta);
     }
 
     @Override
@@ -272,14 +269,18 @@ public class FiltroCompras extends JDialog implements ActionListener, KeyListene
         Object src = e.getSource();
         if (src.equals(this.jbGenerar)) {
             generarReporte();
+        } else if (src.equals(this.jbCancelar)) {
+            cerrar();
         } else if (src.equals(this.jbQuitarProv)) {
             quitarCliente();
         } else if (src.equals(this.jbAgregarProv)) {
-            buscarClientes();
-        } else if (src.equals(this.jbCancelar)) {
-            cerrar();
+            buscarProveedor();
         } else if (src.equals(this.jtbTipoSeleccionProv)) {
             establecerTipoReporte();
+        }else if (src.equals(this.jbAgregarCate)) {
+            buscarCategoria();
+        } else if (src.equals(this.jbQuitarCate)) {
+            quitarCategoria();
         }
 
     }
@@ -293,12 +294,28 @@ public class FiltroCompras extends JDialog implements ActionListener, KeyListene
         }
     }
 
+    private void quitarCategoria() {
+        int row = jtCategorias.getSelectedRow();
+        if (row > -1) {
+            pctm.quitarDatos(row);
+        } else {
+            JOptionPane.showMessageDialog(this, "Seleccione una categoría para remover", "Atención", JOptionPane.INFORMATION_MESSAGE);
+        }
+    }
+
     private void cerrar() {
         this.dispose();
     }
 
-    private void buscarClientes() {
-        SeleccionarCliente sc = new SeleccionarCliente(this);
+    private void buscarProveedor() {
+        Seleccionar_proveedor sc = new Seleccionar_proveedor(this);
+        sc.setCallback(this);
+        sc.establecerSiempreVisible();
+        sc.mostrarVista();
+    }
+
+    private void buscarCategoria() {
+        SeleccionarCategoria sc = new SeleccionarCategoria(this);
         sc.setCallback(this);
         sc.establecerSiempreVisible();
         sc.mostrarVista();
@@ -322,22 +339,35 @@ public class FiltroCompras extends JDialog implements ActionListener, KeyListene
     public void keyReleased(KeyEvent e) {
     }
 
-    private boolean clienteRepetido() {
-        return true;
-    }
-
     @Override
-    public void recibirCliente(M_cliente cliente) {
+    public void recibirProveedor(M_proveedor proveedor) {
         boolean existe = false;
-        for (M_cliente unCliente : tm.getList()) {
-            if (Objects.equals(unCliente.getIdCliente(), cliente.getIdCliente())) {
+        for (M_proveedor unCliente : tm.getList()) {
+            if (Objects.equals(unCliente.getId(), proveedor.getId())) {
                 existe = true;
                 break;
             }
         }
         if (!existe) {
-            tm.agregarDatos(cliente);
+            tm.agregarDatos(proveedor);
         }
         Utilities.c_packColumn.packColumns(this.jtProveedores, 1);
     }
+
+    @Override
+    public void recibirProductoCategoria(ProductoCategoria pc) {
+        boolean existe = false;
+        for (ProductoCategoria unCliente : pctm.getList()) {
+            if (Objects.equals(unCliente.getId(), pc.getId())) {
+                existe = true;
+                break;
+            }
+        }
+        if (!existe) {
+            pctm.agregarDatos(pc);
+        }
+        Utilities.c_packColumn.packColumns(this.jtCategorias, 1);        
+    }
+    
+    
 }
