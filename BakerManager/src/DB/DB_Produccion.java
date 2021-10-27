@@ -648,9 +648,7 @@ public class DB_Produccion {
     }
 
     public static void actualizarProduccionRollosDesperdicioPosterior(E_produccionFilm currentFilm, E_produccionFilm newFilm, int idDesperdicioDetalle, int idFilmBaja) {
-        /*
-        String INSERT_PRODUCCION_FILM_BAJA = "INSERT INTO produccion_film_baja(id_produccion_film, id_produccion_cabecera, peso_utilizado, fecha_utilizado, id_produccion_tipo_baja)VALUES (?, ?, ?, ?, ?);";
-         */
+        
         String UPDATE_DETALLE = "UPDATE produccion_desperdicio SET cantidad = ? WHERE id_produccion_desperdicio = ?;";
         String UPDATE_DETALLE_FILM_BAJA = "UPDATE produccion_film_baja SET peso_utilizado = ?  WHERE id_produccion_film_baja = ?;";
         try {

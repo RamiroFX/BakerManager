@@ -56,7 +56,7 @@ public class VentaPrintable implements Printable {
         Graphics2D g2d = (Graphics2D) g;
         //g2d.translate(pf.getImageableX(), pf.getImageableY());
         g2d.setColor(Color.black);
-        final int espaciadorY = 20;
+        final int espaciadorY = 10;
         SimpleDateFormat dateFormat = new SimpleDateFormat(preferencia.getFormatoFecha());
         Date fecha = Calendar.getInstance().getTime();
         fecha.setTime(facturaCabecera.getTiempo().getTime());

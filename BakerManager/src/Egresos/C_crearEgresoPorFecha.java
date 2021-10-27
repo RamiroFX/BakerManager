@@ -61,7 +61,7 @@ public class C_crearEgresoPorFecha extends MouseAdapter implements ActionListene
         this.vista.jbAgregarProducto.addActionListener(this);
         this.vista.jbAgregarProv.addActionListener(this);
         this.vista.jbAceptar.addActionListener(this);
-        this.vista.jtProductos.addMouseListener(this);
+        this.vista.jtDetalles.addMouseListener(this);
         this.vista.jbModificarDetalle.addActionListener(this);
         this.vista.jbEliminarDetalle.addActionListener(this);
         this.vista.jbSalir.addActionListener(this);
@@ -73,7 +73,7 @@ public class C_crearEgresoPorFecha extends MouseAdapter implements ActionListene
         this.vista.jbAgregarProducto.addKeyListener(this);
         this.vista.jbAgregarProv.addKeyListener(this);
         this.vista.jbAceptar.addKeyListener(this);
-        this.vista.jtProductos.addKeyListener(this);
+        this.vista.jtDetalles.addKeyListener(this);
         this.vista.jbModificarDetalle.addKeyListener(this);
         this.vista.jbEliminarDetalle.addKeyListener(this);
         this.vista.jbSalir.addKeyListener(this);
@@ -93,7 +93,7 @@ public class C_crearEgresoPorFecha extends MouseAdapter implements ActionListene
         for (E_tipoOperacion item : modelo.obtenerTipoOperaciones()) {
             this.vista.jcbTipoCompra.addItem(item);
         }
-        this.vista.jtProductos.setModel(modelo.getTM());
+        this.vista.jtDetalles.setModel(modelo.getTM());
         this.vista.jbModificarDetalle.setEnabled(false);
         this.vista.jbEliminarDetalle.setEnabled(false);
     }
@@ -272,7 +272,7 @@ public class C_crearEgresoPorFecha extends MouseAdapter implements ActionListene
     }
 
     private void invocarModificarDetalle() {
-        int row = this.vista.jtProductos.getSelectedRow();
+        int row = this.vista.jtDetalles.getSelectedRow();
         M_egreso_detalle unDetalle = modelo.getTM().getList().get(row);
         M_producto prod = unDetalle.getProducto();
         prod.setPrecioCosto(unDetalle.getPrecio());
@@ -303,7 +303,7 @@ public class C_crearEgresoPorFecha extends MouseAdapter implements ActionListene
         } else if (e.getSource().equals(this.vista.jbModificarDetalle)) {
             invocarModificarDetalle();
         } else if (e.getSource().equals(this.vista.jbEliminarDetalle)) {
-            eliminarCompra(this.vista.jtProductos.getSelectedRow());
+            eliminarCompra(this.vista.jtDetalles.getSelectedRow());
         } else if (e.getSource().equals(this.vista.jcbTipoCompra)) {
             JCBTipoOperacionHandler();
         } else if (e.getSource().equals(this.vista.jbNroFactura)) {

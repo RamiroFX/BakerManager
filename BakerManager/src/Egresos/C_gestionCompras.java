@@ -6,8 +6,6 @@ package Egresos;
 
 import Charts.MenuDiagramas;
 import DB.DB_Egreso;
-import DB.DB_manager;
-import Entities.M_egresoCabecera;
 import Entities.M_funcionario;
 import Entities.M_menu_item;
 import Entities.M_proveedor;
@@ -18,7 +16,6 @@ import Empleado.SeleccionarFuncionario;
 import Entities.E_tipoOperacion;
 import Entities.Estado;
 import Interface.RecibirEmpleadoCallback;
-import ModeloTabla.EgresoCabeceraTableModel;
 import Utilities.CellRenderers.CompraCabeceraStatusCellRenderer;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
@@ -28,11 +25,9 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.beans.PropertyVetoException;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Vector;
 import javax.swing.JOptionPane;
 
 /**

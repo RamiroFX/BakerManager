@@ -16,10 +16,11 @@ import java.util.Date;
 public class E_movimientoProduccion {
 
     public static final int TIPO_PRODUCCION = 1, TIPO_DESPERDICIO = 2, TIPO_VENTA = 3,
-            TIPO_COMPRA = 4, TIPO_INVENTARIO = 5;
+            TIPO_COMPRA = 4, TIPO_INVENTARIO = 5, TIPO_UTILIZACION = 6;
     public static final String STR_TIPO_PRODUCCION = "Produccion", STR_TIPO_DESPERDICIO = "Desperdicio",
-            STR_TIPO_VENTA = "Venta", STR_TIPO_COMPRA = "Compra", STR_TIPO_INVENTARIO = "Inventario";
-    
+            STR_TIPO_VENTA = "Venta", STR_TIPO_COMPRA = "Compra", STR_TIPO_INVENTARIO = "Inventario",
+            STR_TIPO_UTILIZACION = "Utilización";
+
     private int tipo;
     private String tipoDescripcion;
     private E_facturaCabecera venta;
@@ -32,6 +33,7 @@ public class E_movimientoProduccion {
     private E_ajusteStockDetalle inventarioDetalle;
     private M_egresoCabecera compra;
     private M_egreso_detalle compraDetalle;
+    private E_produccionFilmBaja produccionFilmBaja;
 
     private double entrada;
     private double salida;
@@ -59,14 +61,19 @@ public class E_movimientoProduccion {
                 return getTipoDescripcion() + " OT° " + sNroOT;
             }
             case E_movimientoProduccion.TIPO_DESPERDICIO: {
-                int nroID = getDesperdicio().getId();
+                int nroID = getDesperdicio().getProduccionCabecera().getNroOrdenTrabajo();
                 String sNroID = decimalFormat.format(nroID);
-                return getTipoDescripcion() + " ID° " + sNroID;
+                return getTipoDescripcion() + " OT° " + sNroID;
             }
             case E_movimientoProduccion.TIPO_INVENTARIO: {
                 int nroID = getInventario().getId();
                 String sNroID = decimalFormat.format(nroID);
                 return getTipoDescripcion() + " ID° " + sNroID;
+            }
+            case E_movimientoProduccion.TIPO_UTILIZACION: {
+                int nroID = getProduccionFilmBaja().getProduccionCabecera().getNroOrdenTrabajo();
+                String sNroID = decimalFormat.format(nroID);
+                return getTipoDescripcion() + " OT° " + sNroID;
             }
         }
         return "no data";
@@ -88,6 +95,9 @@ public class E_movimientoProduccion {
             }
             case E_movimientoProduccion.TIPO_INVENTARIO: {
                 return getInventarioDetalle().getTiempoRegistro();
+            }
+            case E_movimientoProduccion.TIPO_UTILIZACION: {
+                return getProduccionFilmBaja().getFechaUtilizacion();
             }
         }
         System.out.println("Entities.E_movimientoProduccion.getMovFecha()");
@@ -213,6 +223,14 @@ public class E_movimientoProduccion {
 
     public void setInventarioDetalle(E_ajusteStockDetalle inventarioDetalle) {
         this.inventarioDetalle = inventarioDetalle;
+    }
+
+    public E_produccionFilmBaja getProduccionFilmBaja() {
+        return produccionFilmBaja;
+    }
+
+    public void setProduccionFilmBaja(E_produccionFilmBaja produccionFilmBaja) {
+        this.produccionFilmBaja = produccionFilmBaja;
     }
 
 }

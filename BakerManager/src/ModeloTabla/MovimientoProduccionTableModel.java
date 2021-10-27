@@ -71,6 +71,11 @@ public class MovimientoProduccionTableModel extends AbstractTableModel {
                 }
                 break;
             }
+            case E_movimientoProduccion.TIPO_UTILIZACION: {
+                firsRow.setSalida(firsRow.getProduccionFilmBaja().getPesoUtilizado());
+                firsRow.setBalance(-firsRow.getSalida());
+                break;
+            }
         }
         /*
         COMIENZO DE ITERACIONES
@@ -107,6 +112,11 @@ public class MovimientoProduccionTableModel extends AbstractTableModel {
                         mov.setSalida(mov.getInventarioDetalle().getCantidadNueva());
                         mov.setBalance(-mov.getSalida() + movAnt.getBalance());
                     }
+                    break;
+                }
+                case E_movimientoProduccion.TIPO_UTILIZACION: {
+                    mov.setSalida(mov.getProduccionFilmBaja().getPesoUtilizado());
+                    mov.setBalance(-mov.getSalida() + movAnt.getBalance());
                     break;
                 }
             }

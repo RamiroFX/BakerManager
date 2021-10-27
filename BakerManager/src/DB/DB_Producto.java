@@ -14,6 +14,7 @@ import Entities.E_produccionCabecera;
 import Entities.E_produccionDesperdicioCabecera;
 import Entities.E_produccionDesperdicioDetalle;
 import Entities.E_produccionDetalle;
+import Entities.E_produccionFilmBaja;
 import Entities.M_producto;
 import Entities.E_productoClasificacion;
 import Entities.Estado;
@@ -1343,9 +1344,12 @@ public class DB_Producto {
                         break;
                     }
                     case E_movimientoProduccion.TIPO_DESPERDICIO: {
+                        E_produccionCabecera pc = new E_produccionCabecera();
+                        pc.setNroOrdenTrabajo(rs.getInt("nro_ot"));
                         E_produccionDesperdicioCabecera desperdicio = new E_produccionDesperdicioCabecera();
                         desperdicio.setId(rs.getInt("id"));
                         desperdicio.setTiempo(rs.getTimestamp("fecha"));
+                        desperdicio.setProduccionCabecera(pc);
                         E_produccionDesperdicioDetalle desperdicioDetalle = new E_produccionDesperdicioDetalle();
                         desperdicioDetalle.setCantidad(rs.getDouble("salida"));
                         mov.setTipo(E_movimientoProduccion.TIPO_DESPERDICIO);
@@ -1369,6 +1373,19 @@ public class DB_Producto {
                         mov.setTipoDescripcion(E_movimientoProduccion.STR_TIPO_INVENTARIO);
                         mov.setInventario(inventario);
                         mov.setInventarioDetalle(inventarioDetalle);
+                        break;
+                    }
+                    case E_movimientoProduccion.TIPO_UTILIZACION: {
+                        E_produccionCabecera pc =new E_produccionCabecera();
+                        pc.setNroOrdenTrabajo(rs.getInt("nro_ot"));
+                        E_produccionFilmBaja pfb = new E_produccionFilmBaja();
+                        pfb.setId(rs.getInt("id"));
+                        pfb.setFechaUtilizacion(rs.getTimestamp("fecha"));
+                        pfb.setProduccionCabecera(pc);
+                        pfb.setPesoUtilizado(rs.getDouble("salida"));
+                        mov.setTipo(E_movimientoProduccion.TIPO_UTILIZACION);
+                        mov.setTipoDescripcion(E_movimientoProduccion.STR_TIPO_UTILIZACION);
+                        mov.setProduccionFilmBaja(pfb);
                         break;
                     }
                 }

@@ -48,7 +48,6 @@ public class C_movimientoProducto implements ActionListener, KeyListener, Recibi
         this.vista.jftEntrada.setValue(0);
         this.vista.jftSalida.setValue(0);
         this.vista.jftTotal.setValue(0);
-        this.vista.jftTotal.setValue(0);
     }
 
     private void agregarListener() {
@@ -148,6 +147,10 @@ public class C_movimientoProducto implements ActionListener, KeyListener, Recibi
                     } else {
                         totalSalidas = totalSalidas.add(new BigDecimal(cantInventario + ""));
                     }
+                    break;
+                }
+                case E_movimientoProduccion.TIPO_UTILIZACION: {
+                    totalSalidas = totalSalidas.add(new BigDecimal(unMov.getProduccionFilmBaja().getPesoUtilizado() + ""));
                     break;
                 }
             }

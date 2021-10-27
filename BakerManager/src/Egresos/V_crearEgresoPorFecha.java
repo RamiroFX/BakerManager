@@ -39,7 +39,7 @@ public class V_crearEgresoPorFecha extends JDialog {
     public JDateChooser jdcFecha;
     //CENTRO
     JPanel jpCenter;
-    public JTable jtProductos;
+    public JTable jtDetalles;
     public JScrollPane jspFacturaDetalle;
     public JButton jbAgregarProducto, jbModificarDetalle, jbEliminarDetalle;
     public JLabel jlIva5, jlIva10, jlExenta, jlTotal;
@@ -114,10 +114,10 @@ public class V_crearEgresoPorFecha extends JDialog {
     private void initCenter() {
         jpCenter = new JPanel(new BorderLayout());
         jpCenter.setBorder(new EtchedBorder(EtchedBorder.RAISED));
-        jtProductos = new JTable();
-        jtProductos.getTableHeader().setReorderingAllowed(false);
-        jtProductos.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        jspFacturaDetalle = new JScrollPane(jtProductos);
+        jtDetalles = new JTable();
+        jtDetalles.getTableHeader().setReorderingAllowed(false);
+        jtDetalles.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        jspFacturaDetalle = new JScrollPane(jtDetalles);
         jbAgregarProducto = new JButton("Agregar producto [F4]");
         jbModificarDetalle = new JButton("Modificar detalle");
         jbEliminarDetalle = new JButton("Eliminar detalle");
