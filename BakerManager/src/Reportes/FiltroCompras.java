@@ -233,14 +233,6 @@ public class FiltroCompras extends JDialog implements ActionListener, KeyListene
         if (!validarSeleccion()) {
             return;
         }
-       /* ArrayList idProveedores = new ArrayList();
-        tm.getList().forEach((unCliente) -> {
-            idProveedores.add(unCliente.getId());
-        });
-        ArrayList idCategorias = new ArrayList();
-        pctm.getList().forEach((unaCategoria) -> {
-            idCategorias.add(unaCategoria.getId());
-        });*/
         Date fechaDesde = null;
         if (jcbFechaDesde.isSelected()) {
             fechaDesde = jdcFechaDesde.getDate();
@@ -248,18 +240,7 @@ public class FiltroCompras extends JDialog implements ActionListener, KeyListene
         Date fechaHasta = null;
         if (jcbFechaHasta.isSelected()) {
             fechaHasta = jdcFechaHasta.getDate();
-        }
-        File file;
-        JasperReport reporte = null;
-        try {
-            file = new File(System.getProperty("user.dir") + "\\Assets\\Reportes\\ccc.jasper");
-            reporte = (JasperReport) JRLoader.loadObject(file);
-        } catch (JRException ex) {
-            ex.printStackTrace();
-            JOptionPane.showMessageDialog(this, "No se encontró la ubicación del reporte", "Atención", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-        
+        }        
         C_create_excel c = new C_create_excel();
         c.exportacionProveedoresPorCategorias(tm.getList(), pctm.getList(), fechaDesde, fechaHasta);
     }

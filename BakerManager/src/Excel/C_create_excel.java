@@ -26,12 +26,14 @@ import java.util.List;
 import java.util.Locale;
 import javax.swing.JFileChooser;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
+import org.apache.poi.hssf.usermodel.HSSFFont;
 import org.apache.poi.hssf.usermodel.HSSFRichTextString;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.HSSFRegionUtil;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.DataFormat;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.util.CellRangeAddress;
@@ -53,7 +55,7 @@ public class C_create_excel {
     HSSFWorkbook workbook;
     ArrayList<HSSFSheet> sheets;
     HSSFSheet sheet;
-    CellStyle style1, style2, style3, style4, styleNumber;
+    CellStyle style1, style2, style3, style4, styleNumber, sBold;
     HSSFCellStyle dateCellStyle;
     int tipo_fecha;
 
@@ -132,15 +134,22 @@ public class C_create_excel {
     }
 
     private void createCellStyles() {
+        HSSFFont font = workbook.createFont();
+        font.setBold(true);
+        font.setItalic(false);
         //COLOR STYLE
         // Aqua background
         style1 = workbook.createCellStyle();
-        style1.setFillForegroundColor(IndexedColors.GOLD.getIndex());
+        style1.setFillForegroundColor(IndexedColors.LIGHT_BLUE.getIndex());
+        style1.setFont(font);
+        style1.setAlignment(CellStyle.ALIGN_CENTER);
         style1.setFillPattern(CellStyle.SOLID_FOREGROUND);
 
         // Orange "foreground", foreground being the fill foreground not the font color.
         style2 = workbook.createCellStyle();
-        style2.setFillForegroundColor(IndexedColors.LIGHT_YELLOW.getIndex());
+        style2.setFillForegroundColor(IndexedColors.LIGHT_GREEN.getIndex());
+        style2.setFont(font);
+        style2.setAlignment(CellStyle.ALIGN_CENTER);
         style2.setFillPattern(CellStyle.SOLID_FOREGROUND);
         //END STYLE
         // FORMAT STYLE
@@ -157,6 +166,10 @@ public class C_create_excel {
 
         styleNumber = workbook.createCellStyle();
         styleNumber.setDataFormat(format.getFormat("#,##0"));
+
+        sBold = workbook.createCellStyle();
+        sBold = workbook.createCellStyle();
+        sBold.setFont(font);
         //END FORMAT STYLE
     }
 
@@ -769,23 +782,36 @@ public class C_create_excel {
                 sheets.get(sheetCursor).addMergedRegion(new CellRangeAddress(filaActual, filaActual++, 0, 10));
                 rowTitulo.createCell(col).setCellValue(new HSSFRichTextString(titulo));
                 CellUtil.setAlignment(rowTitulo.getCell(0), workbook, CellStyle.ALIGN_CENTER);
+                rowTitulo.getCell(col).setCellStyle(style1);
                 filaActual++;
                 Row rowMonthTitle = newSheet.createRow(filaActual);
                 sheets.get(sheetCursor).addMergedRegion(new CellRangeAddress(filaActual, filaActual++, col, 10));
-                rowMonthTitle.createCell(col).setCellValue(new HSSFRichTextString(cal.getDisplayName(Calendar.MONTH, Calendar.LONG_STANDALONE, Locale.getDefault())));
+                rowMonthTitle.createCell(col).setCellValue(new HSSFRichTextString(cal.getDisplayName(Calendar.MONTH, Calendar.LONG_STANDALONE, Locale.getDefault()).toUpperCase()));
                 CellUtil.setAlignment(rowMonthTitle.getCell(0), workbook, CellStyle.ALIGN_CENTER);
+                rowMonthTitle.getCell(col).setCellStyle(style2);
                 Row rowCabeceras = newSheet.createRow(filaActual++);
-                rowCabeceras.createCell(col++).setCellValue(new HSSFRichTextString("Proveedor"));
-                rowCabeceras.createCell(col++).setCellValue(new HSSFRichTextString("Nro. Factura"));
-                rowCabeceras.createCell(col++).setCellValue(new HSSFRichTextString("Fecha"));
-                rowCabeceras.createCell(col++).setCellValue(new HSSFRichTextString("Código"));
-                rowCabeceras.createCell(col++).setCellValue(new HSSFRichTextString("Descripción"));
-                rowCabeceras.createCell(col++).setCellValue(new HSSFRichTextString("Cantidad"));
-                rowCabeceras.createCell(col++).setCellValue(new HSSFRichTextString("Precio-Dólar"));
-                rowCabeceras.createCell(col++).setCellValue(new HSSFRichTextString("Total-Dólar"));
-                rowCabeceras.createCell(col++).setCellValue(new HSSFRichTextString("Precio-Gs"));
-                rowCabeceras.createCell(col++).setCellValue(new HSSFRichTextString("Total-Gs"));
-                rowCabeceras.createCell(col++).setCellValue(new HSSFRichTextString("TC"));
+                rowCabeceras.createCell(col).setCellValue(new HSSFRichTextString("Proveedor"));
+                rowCabeceras.getCell(col++).setCellStyle(sBold);
+                rowCabeceras.createCell(col).setCellValue(new HSSFRichTextString("Nro. Factura"));
+                rowCabeceras.getCell(col++).setCellStyle(sBold);
+                rowCabeceras.createCell(col).setCellValue(new HSSFRichTextString("Fecha"));
+                rowCabeceras.getCell(col++).setCellStyle(sBold);
+                rowCabeceras.createCell(col).setCellValue(new HSSFRichTextString("Código"));
+                rowCabeceras.getCell(col++).setCellStyle(sBold);
+                rowCabeceras.createCell(col).setCellValue(new HSSFRichTextString("Descripción"));
+                rowCabeceras.getCell(col++).setCellStyle(sBold);
+                rowCabeceras.createCell(col).setCellValue(new HSSFRichTextString("Cantidad"));
+                rowCabeceras.getCell(col++).setCellStyle(sBold);
+                rowCabeceras.createCell(col).setCellValue(new HSSFRichTextString("Precio-Dólar"));
+                rowCabeceras.getCell(col++).setCellStyle(sBold);
+                rowCabeceras.createCell(col).setCellValue(new HSSFRichTextString("Total-Dólar"));
+                rowCabeceras.getCell(col++).setCellStyle(sBold);
+                rowCabeceras.createCell(col).setCellValue(new HSSFRichTextString("Precio-Gs"));
+                rowCabeceras.getCell(col++).setCellStyle(sBold);
+                rowCabeceras.createCell(col).setCellValue(new HSSFRichTextString("Total-Gs"));
+                rowCabeceras.getCell(col++).setCellStyle(sBold);
+                rowCabeceras.createCell(col).setCellValue(new HSSFRichTextString("TC"));
+                rowCabeceras.getCell(col++).setCellStyle(sBold);
                 col = 0;
                 List<M_egresoCabecera> comprasCabeceras = DB_Egreso.obtenerComprasCabeceraPorCategoria(unProveedor.getId(), -1, -1, -1, -1, fechaInicio, fechaFin, true, unaCategoria.getId());
                 Double totalCantidad = 0.0, totalGs = 0.0;
@@ -796,32 +822,47 @@ public class C_create_excel {
 
                     if (currentMonth != unCal.get(Calendar.MONTH)) {
                         currentMonth = unCal.get(Calendar.MONTH);
-                        Row rowPie = newSheet.createRow(filaActual++);
+                        Row rowPie = newSheet.createRow(filaActual);
+                        sheets.get(sheetCursor).addMergedRegion(new CellRangeAddress(filaActual, filaActual++, 0, 4));
                         rowPie.createCell(0).setCellValue(new HSSFRichTextString("Totales"));
-                        rowPie.createCell(5).setCellValue(new HSSFRichTextString(totalCantidad + ""));
+                        rowPie.getCell(0).setCellStyle(sBold);
+                        CellUtil.setAlignment(rowPie.getCell(0), workbook, CellStyle.ALIGN_CENTER);
+                        rowPie.createCell(5).setCellValue(totalCantidad);
                         rowPie.getCell(5).setCellStyle(styleNumber);
-                        rowPie.createCell(9).setCellValue(new HSSFRichTextString(totalGs + ""));
+                        rowPie.createCell(9).setCellValue(totalGs);
                         rowPie.getCell(9).setCellStyle(styleNumber);
                         totalCantidad = 0.0;
                         totalGs = 0.0;
                         filaActual++;
                         Row rowMes = newSheet.createRow(filaActual);
                         sheets.get(sheetCursor).addMergedRegion(new CellRangeAddress(filaActual, filaActual++, 0, 10));
-                        rowMes.createCell(0).setCellValue(new HSSFRichTextString(unCal.getDisplayName(Calendar.MONTH, Calendar.LONG_STANDALONE, Locale.getDefault())));
+                        rowMes.createCell(0).setCellValue(new HSSFRichTextString(unCal.getDisplayName(Calendar.MONTH, Calendar.LONG_STANDALONE, Locale.getDefault()).toUpperCase()));
                         CellUtil.setAlignment(rowMes.getCell(0), workbook, CellStyle.ALIGN_CENTER);
+                        rowMes.getCell(0).setCellStyle(style2);
                         Row rowCabeceras2 = newSheet.createRow(filaActual++);
                         col = 0;
-                        rowCabeceras2.createCell(col++).setCellValue(new HSSFRichTextString("Proveedor"));
-                        rowCabeceras2.createCell(col++).setCellValue(new HSSFRichTextString("Nro. Factura"));
-                        rowCabeceras2.createCell(col++).setCellValue(new HSSFRichTextString("Fecha"));
-                        rowCabeceras2.createCell(col++).setCellValue(new HSSFRichTextString("Código"));
-                        rowCabeceras2.createCell(col++).setCellValue(new HSSFRichTextString("Descripción"));
-                        rowCabeceras2.createCell(col++).setCellValue(new HSSFRichTextString("Cantidad"));
-                        rowCabeceras2.createCell(col++).setCellValue(new HSSFRichTextString("Precio-Dólar"));
-                        rowCabeceras2.createCell(col++).setCellValue(new HSSFRichTextString("Total-Dólar"));
-                        rowCabeceras2.createCell(col++).setCellValue(new HSSFRichTextString("Precio-Gs"));
-                        rowCabeceras2.createCell(col++).setCellValue(new HSSFRichTextString("Total-Gs"));
-                        rowCabeceras2.createCell(col++).setCellValue(new HSSFRichTextString("TC"));
+                        rowCabeceras2.createCell(col).setCellValue(new HSSFRichTextString("Proveedor"));
+                        rowCabeceras2.getCell(col++).setCellStyle(sBold);
+                        rowCabeceras2.createCell(col).setCellValue(new HSSFRichTextString("Nro. Factura"));
+                        rowCabeceras2.getCell(col++).setCellStyle(sBold);
+                        rowCabeceras2.createCell(col).setCellValue(new HSSFRichTextString("Fecha"));
+                        rowCabeceras2.getCell(col++).setCellStyle(sBold);
+                        rowCabeceras2.createCell(col).setCellValue(new HSSFRichTextString("Código"));
+                        rowCabeceras2.getCell(col++).setCellStyle(sBold);
+                        rowCabeceras2.createCell(col).setCellValue(new HSSFRichTextString("Descripción"));
+                        rowCabeceras2.getCell(col++).setCellStyle(sBold);
+                        rowCabeceras2.createCell(col).setCellValue(new HSSFRichTextString("Cantidad"));
+                        rowCabeceras2.getCell(col++).setCellStyle(sBold);
+                        rowCabeceras2.createCell(col).setCellValue(new HSSFRichTextString("Precio-Dólar"));
+                        rowCabeceras2.getCell(col++).setCellStyle(sBold);
+                        rowCabeceras2.createCell(col).setCellValue(new HSSFRichTextString("Total-Dólar"));
+                        rowCabeceras2.getCell(col++).setCellStyle(sBold);
+                        rowCabeceras2.createCell(col).setCellValue(new HSSFRichTextString("Precio-Gs"));
+                        rowCabeceras2.getCell(col++).setCellStyle(sBold);
+                        rowCabeceras2.createCell(col).setCellValue(new HSSFRichTextString("Total-Gs"));
+                        rowCabeceras2.getCell(col++).setCellStyle(sBold);
+                        rowCabeceras2.createCell(col).setCellValue(new HSSFRichTextString("TC"));
+                        rowCabeceras2.getCell(col++).setCellStyle(sBold);
                     }
                     for (M_egreso_detalle unDetalle : comprasDetalles) {
                         col = 0;
@@ -848,10 +889,15 @@ public class C_create_excel {
                         totalGs = totalGs + unDetalle.calcularSubTotal();
                     }
                 }
-                Row rowPie = newSheet.createRow(filaActual++);
-                rowPie.createCell(1).setCellValue(new HSSFRichTextString("Totales"));
-                rowPie.createCell(5).setCellValue(new HSSFRichTextString(totalCantidad + ""));
-                rowPie.createCell(9).setCellValue(new HSSFRichTextString(totalGs + ""));
+                Row rowPie = newSheet.createRow(filaActual);
+                sheets.get(sheetCursor).addMergedRegion(new CellRangeAddress(filaActual, filaActual++, 0, 4));
+                rowPie.createCell(0).setCellValue(new HSSFRichTextString("Totales"));
+                rowPie.getCell(0).setCellStyle(sBold);
+                CellUtil.setAlignment(rowPie.getCell(0), workbook, CellStyle.ALIGN_CENTER);
+                rowPie.createCell(5).setCellValue(totalCantidad);
+                rowPie.getCell(5).setCellStyle(styleNumber);
+                rowPie.createCell(9).setCellValue(totalGs);
+                rowPie.getCell(9).setCellStyle(styleNumber);
 
                 newSheet.autoSizeColumn(0);
                 newSheet.autoSizeColumn(1);
