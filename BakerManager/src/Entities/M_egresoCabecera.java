@@ -5,6 +5,7 @@
 package Entities;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 /**
  *
@@ -25,6 +26,7 @@ public class M_egresoCabecera {
     private E_tipoOperacion condCompra;
     private E_Timbrado timbrado;
     private Estado estado;
+    private List<M_egreso_detalle> detalles;
 
     public M_egresoCabecera() {
         this.proveedor = new M_proveedor();
@@ -178,6 +180,14 @@ public class M_egresoCabecera {
 
     public void setEstado(Estado estado) {
         this.estado = estado;
+    }
+
+    public List<M_egreso_detalle> getDetalles() {
+        return detalles;
+    }
+
+    public void setDetalles(List<M_egreso_detalle> detalles) {
+        this.detalles = detalles;
     }
 
 }

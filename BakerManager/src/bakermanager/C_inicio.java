@@ -9,7 +9,10 @@ import Configuracion.ConfiguracionFactura;
 import Configuracion.ConfiguracionTicket;
 import Configuracion.Timbrado.GestionTimbrado;
 import Empresa.Empresa;
+import Entities.M_proveedor;
 import Entities.M_rol_usuario;
+import Entities.ProductoCategoria;
+import Excel.C_create_excel;
 import Login.Login;
 import Produccion.GestionProduccion;
 import UsoMateriaPrima.GestionMateriaPrima;
@@ -21,6 +24,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.beans.PropertyVetoException;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
 import javax.swing.JInternalFrame;
 
 /**
@@ -69,7 +75,7 @@ public class C_inicio implements ActionListener {
         vista.getJMenuBar().jmiEstadoCuentaProveedores.addActionListener(this);
         vista.getJMenuBar().jmiCompras.addActionListener(this);
         vista.addWindowListener(wa);
-        
+
     }
 
     public void agregarVentana(JInternalFrame mdi) {
@@ -183,11 +189,11 @@ public class C_inicio implements ActionListener {
             Reportes.ReportesCobros.cobrosPendientesPorCliente(vista);
         } else if (fuente == vista.getJMenuBar().jmiCobroPendientePorClienteVencidos) {
             Reportes.ReportesCobros.cobrosPendientesPorClienteVencidos(vista);
-        }else if (fuente == vista.getJMenuBar().jmiEstadoCuentaClientes) {
+        } else if (fuente == vista.getJMenuBar().jmiEstadoCuentaClientes) {
             Reportes.ReportesCobros.estadoCuentaClientes(vista);
-        }else if (fuente == vista.getJMenuBar().jmiEstadoCuentaProveedores) {
+        } else if (fuente == vista.getJMenuBar().jmiEstadoCuentaProveedores) {
             Reportes.ReportesPagos.estadoCuentaProveedores(vista);
-        }else if (fuente == vista.getJMenuBar().jmiCompras) {
+        } else if (fuente == vista.getJMenuBar().jmiCompras) {
             Reportes.ReportesCompras.compras(vista);
         }
     }

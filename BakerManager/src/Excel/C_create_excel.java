@@ -755,8 +755,6 @@ public class C_create_excel {
 
     public void exportacionProveedoresPorCategorias(List<M_proveedor> proveedorList, List<ProductoCategoria> categoriaList,
             Date fechaInicio, Date fechaFin) {
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(fechaInicio);
         File directory = null;
         String desktop = System.getProperty("user.home") + "\\Desktop";
         JFileChooser chooser = new JFileChooser(desktop);
@@ -769,61 +767,69 @@ public class C_create_excel {
             return;
         }
         // Create a row and put some cells in it. Rows are 0 based.
+        //List<M_egreso_detalle> detalleCompraList = new ArrayList<>();
+        List<M_egresoCabecera> cabeceraCompraList = new ArrayList<>();
+        List<Integer> mergeRegList = new ArrayList<>();
         int sheetCursor = 0;
-        int currentMonth = cal.get(Calendar.MONTH);
+        int currentMonth = -1;
         for (M_proveedor unProveedor : proveedorList) {
             for (ProductoCategoria unaCategoria : categoriaList) {
                 HSSFSheet newSheet = workbook.createSheet(unProveedor.getEntidad() + "-" + unaCategoria.getDescripcion());
                 sheets.add(newSheet);
                 int filaActual = 1;
                 int col = 0;
-                Row rowTitulo = newSheet.createRow(filaActual);
-                String titulo = "Facturas de compras " + unaCategoria.getDescripcion() + "- " + unProveedor.getEntidad() + " - " + cal.get(Calendar.YEAR);
-                sheets.get(sheetCursor).addMergedRegion(new CellRangeAddress(filaActual, filaActual++, 0, 10));
-                rowTitulo.createCell(col).setCellValue(new HSSFRichTextString(titulo));
-                CellUtil.setAlignment(rowTitulo.getCell(0), workbook, CellStyle.ALIGN_CENTER);
-                rowTitulo.getCell(col).setCellStyle(style1);
-                filaActual++;
-                Row rowMonthTitle = newSheet.createRow(filaActual);
-                sheets.get(sheetCursor).addMergedRegion(new CellRangeAddress(filaActual, filaActual++, col, 10));
-                rowMonthTitle.createCell(col).setCellValue(new HSSFRichTextString(cal.getDisplayName(Calendar.MONTH, Calendar.LONG_STANDALONE, Locale.getDefault()).toUpperCase()));
-                CellUtil.setAlignment(rowMonthTitle.getCell(0), workbook, CellStyle.ALIGN_CENTER);
-                rowMonthTitle.getCell(col).setCellStyle(style2);
-                Row rowCabeceras = newSheet.createRow(filaActual++);
-                rowCabeceras.createCell(col).setCellValue(new HSSFRichTextString("Proveedor"));
-                rowCabeceras.getCell(col++).setCellStyle(sBold);
-                rowCabeceras.createCell(col).setCellValue(new HSSFRichTextString("Nro. Factura"));
-                rowCabeceras.getCell(col++).setCellStyle(sBold);
-                rowCabeceras.createCell(col).setCellValue(new HSSFRichTextString("Fecha"));
-                rowCabeceras.getCell(col++).setCellStyle(sBold);
-                rowCabeceras.createCell(col).setCellValue(new HSSFRichTextString("Código"));
-                rowCabeceras.getCell(col++).setCellStyle(sBold);
-                rowCabeceras.createCell(col).setCellValue(new HSSFRichTextString("Descripción"));
-                rowCabeceras.getCell(col++).setCellStyle(sBold);
-                rowCabeceras.createCell(col).setCellValue(new HSSFRichTextString("Cantidad"));
-                rowCabeceras.getCell(col++).setCellStyle(sBold);
-                rowCabeceras.createCell(col).setCellValue(new HSSFRichTextString("Precio-Dólar"));
-                rowCabeceras.getCell(col++).setCellStyle(sBold);
-                rowCabeceras.createCell(col).setCellValue(new HSSFRichTextString("Total-Dólar"));
-                rowCabeceras.getCell(col++).setCellStyle(sBold);
-                rowCabeceras.createCell(col).setCellValue(new HSSFRichTextString("Precio-Gs"));
-                rowCabeceras.getCell(col++).setCellStyle(sBold);
-                rowCabeceras.createCell(col).setCellValue(new HSSFRichTextString("Total-Gs"));
-                rowCabeceras.getCell(col++).setCellStyle(sBold);
-                rowCabeceras.createCell(col).setCellValue(new HSSFRichTextString("TC"));
-                rowCabeceras.getCell(col++).setCellStyle(sBold);
-                col = 0;
                 List<M_egresoCabecera> comprasCabeceras = DB_Egreso.obtenerComprasCabeceraPorCategoria(unProveedor.getId(), -1, -1, -1, -1, fechaInicio, fechaFin, true, unaCategoria.getId());
                 Double totalCantidad = 0.0, totalGs = 0.0;
+                if (!comprasCabeceras.isEmpty()) {
+                    Calendar unCal = Calendar.getInstance();
+                    unCal.setTime(comprasCabeceras.get(0).getTiempo());
+                    Row rowTitulo = newSheet.createRow(filaActual);
+                    String titulo = "Facturas de compras " + unaCategoria.getDescripcion() + "- " + unProveedor.getEntidad() + " - " + unCal.get(Calendar.YEAR);
+                    sheets.get(sheetCursor).addMergedRegion(new CellRangeAddress(filaActual, filaActual++, 0, 10));
+                    rowTitulo.createCell(col).setCellValue(new HSSFRichTextString(titulo));
+                    CellUtil.setAlignment(rowTitulo.getCell(0), workbook, CellStyle.ALIGN_CENTER);
+                    rowTitulo.getCell(col).setCellStyle(style1);
+                    filaActual++;
+                    currentMonth = unCal.get(Calendar.MONTH);
+                    mergeRegList.add(filaActual);
+                    Row rowMonthTitle = newSheet.createRow(filaActual++);
+                    rowMonthTitle.createCell(col).setCellValue(new HSSFRichTextString(unCal.getDisplayName(Calendar.MONTH, Calendar.LONG_STANDALONE, Locale.getDefault()).toUpperCase()));
+                    CellUtil.setAlignment(rowMonthTitle.getCell(0), workbook, CellStyle.ALIGN_CENTER);
+                    rowMonthTitle.getCell(col).setCellStyle(style2);
+                    Row rowCabeceras = newSheet.createRow(filaActual++);
+                    rowCabeceras.createCell(col).setCellValue(new HSSFRichTextString("Proveedor"));
+                    rowCabeceras.getCell(col++).setCellStyle(sBold);
+                    rowCabeceras.createCell(col).setCellValue(new HSSFRichTextString("Nro. Factura"));
+                    rowCabeceras.getCell(col++).setCellStyle(sBold);
+                    rowCabeceras.createCell(col).setCellValue(new HSSFRichTextString("Fecha"));
+                    rowCabeceras.getCell(col++).setCellStyle(sBold);
+                    rowCabeceras.createCell(col).setCellValue(new HSSFRichTextString("Código"));
+                    rowCabeceras.getCell(col++).setCellStyle(sBold);
+                    rowCabeceras.createCell(col).setCellValue(new HSSFRichTextString("Descripción"));
+                    rowCabeceras.getCell(col++).setCellStyle(sBold);
+                    rowCabeceras.createCell(col).setCellValue(new HSSFRichTextString("Cantidad"));
+                    rowCabeceras.getCell(col++).setCellStyle(sBold);
+                    rowCabeceras.createCell(col).setCellValue(new HSSFRichTextString("Precio-Dólar"));
+                    rowCabeceras.getCell(col++).setCellStyle(sBold);
+                    rowCabeceras.createCell(col).setCellValue(new HSSFRichTextString("Total-Dólar"));
+                    rowCabeceras.getCell(col++).setCellStyle(sBold);
+                    rowCabeceras.createCell(col).setCellValue(new HSSFRichTextString("Precio-Gs"));
+                    rowCabeceras.getCell(col++).setCellStyle(sBold);
+                    rowCabeceras.createCell(col).setCellValue(new HSSFRichTextString("Total-Gs"));
+                    rowCabeceras.getCell(col++).setCellStyle(sBold);
+                    rowCabeceras.createCell(col).setCellValue(new HSSFRichTextString("TC"));
+                    rowCabeceras.getCell(col++).setCellStyle(sBold);
+                }
                 for (M_egresoCabecera unaCompra : comprasCabeceras) {
                     Calendar unCal = Calendar.getInstance();
                     unCal.setTime(unaCompra.getTiempo());
-                    List<M_egreso_detalle> comprasDetalles = DB_Egreso.obtenerEgresoDetalles(unaCompra.getId_cabecera());
-
+                    List<M_egreso_detalle> comprasDetalles = DB_Egreso.obtenerEgresoDetalles(unaCompra.getId_cabecera(), unaCategoria.getId());
+                    unaCompra.setDetalles(comprasDetalles);
+                    cabeceraCompraList.add(unaCompra);
+                    //detalleCompraList.addAll(comprasDetalles);
                     if (currentMonth != unCal.get(Calendar.MONTH)) {
                         currentMonth = unCal.get(Calendar.MONTH);
                         Row rowPie = newSheet.createRow(filaActual);
-                        sheets.get(sheetCursor).addMergedRegion(new CellRangeAddress(filaActual, filaActual++, 0, 4));
                         rowPie.createCell(0).setCellValue(new HSSFRichTextString("Totales"));
                         rowPie.getCell(0).setCellStyle(sBold);
                         CellUtil.setAlignment(rowPie.getCell(0), workbook, CellStyle.ALIGN_CENTER);
@@ -833,12 +839,14 @@ public class C_create_excel {
                         rowPie.getCell(9).setCellStyle(styleNumber);
                         totalCantidad = 0.0;
                         totalGs = 0.0;
-                        filaActual++;
-                        Row rowMes = newSheet.createRow(filaActual);
-                        sheets.get(sheetCursor).addMergedRegion(new CellRangeAddress(filaActual, filaActual++, 0, 10));
-                        rowMes.createCell(0).setCellValue(new HSSFRichTextString(unCal.getDisplayName(Calendar.MONTH, Calendar.LONG_STANDALONE, Locale.getDefault()).toUpperCase()));
-                        CellUtil.setAlignment(rowMes.getCell(0), workbook, CellStyle.ALIGN_CENTER);
-                        rowMes.getCell(0).setCellStyle(style2);
+                        filaActual++;// Defining and merging the cells
+                        filaActual++;// Defining and merging the cells
+                        mergeRegList.add(filaActual);
+                        Row rowMonthTitle = newSheet.createRow(filaActual++);
+                        rowMonthTitle.createCell(0).setCellValue(new HSSFRichTextString(unCal.getDisplayName(Calendar.MONTH, Calendar.LONG_STANDALONE, Locale.getDefault()).toUpperCase()));
+                        CellUtil.setAlignment(rowMonthTitle.getCell(0), workbook, CellStyle.ALIGN_CENTER);
+                        rowMonthTitle.getCell(0).setCellStyle(style2);
+
                         Row rowCabeceras2 = newSheet.createRow(filaActual++);
                         col = 0;
                         rowCabeceras2.createCell(col).setCellValue(new HSSFRichTextString("Proveedor"));
@@ -890,7 +898,9 @@ public class C_create_excel {
                     }
                 }
                 Row rowPie = newSheet.createRow(filaActual);
-                sheets.get(sheetCursor).addMergedRegion(new CellRangeAddress(filaActual, filaActual++, 0, 4));
+                sheets.get(sheetCursor).addMergedRegion(new CellRangeAddress(filaActual, filaActual, 0, 4));
+                filaActual++;
+                filaActual++;
                 rowPie.createCell(0).setCellValue(new HSSFRichTextString("Totales"));
                 rowPie.getCell(0).setCellStyle(sBold);
                 CellUtil.setAlignment(rowPie.getCell(0), workbook, CellStyle.ALIGN_CENTER);
@@ -913,10 +923,63 @@ public class C_create_excel {
                 newSheet.autoSizeColumn(11);
                 newSheet.autoSizeColumn(12);
                 newSheet.autoSizeColumn(13);
+                for (Integer integer : mergeRegList) {
+                    sheets.get(sheetCursor).addMergedRegion(new CellRangeAddress(integer, integer, 0, 10));
+                }
+                mergeRegList.clear();
+                sheetCursor++;
             }
-            sheetCursor++;
         }
-
+        /**
+         * PESTAÑA DE MOVIMIENTOS
+         */
+        int col = 0;
+        int filaActual = 0;
+        HSSFSheet newSheet = workbook.createSheet("detalle de movimientos");
+        sheets.add(newSheet);
+        //FILA DE CABECERA DE TITULO
+        Row rowTitulo = newSheet.createRow(filaActual);
+        String titulo = "Detalle de movimientos";
+        sheets.get(sheetCursor).addMergedRegion(new CellRangeAddress(filaActual, filaActual++, 0, 10));
+        rowTitulo.createCell(col).setCellValue(new HSSFRichTextString(titulo));
+        CellUtil.setAlignment(rowTitulo.getCell(0), workbook, CellStyle.ALIGN_CENTER);
+        rowTitulo.getCell(col).setCellStyle(style1);
+        for (M_egresoCabecera unaCabecera : cabeceraCompraList) {
+            Row rowCabecera = newSheet.createRow(filaActual++);
+            col = 0;
+            rowCabecera.createCell(col).setCellValue(new HSSFRichTextString("Fecha"));
+            rowCabecera.getCell(col++).setCellStyle(sBold);
+            rowCabecera.createCell(col).setCellValue(new HSSFRichTextString("Nro. Factura"));
+            rowCabecera.getCell(col++).setCellStyle(sBold);
+            rowCabecera.createCell(col).setCellValue(new HSSFRichTextString("Proveedor"));
+            rowCabecera.getCell(col++).setCellStyle(sBold);
+            rowCabecera.createCell(col).setCellValue(new HSSFRichTextString("Descripción"));
+            rowCabecera.getCell(col++).setCellStyle(sBold);
+            rowCabecera.createCell(col).setCellValue(new HSSFRichTextString("Cantidad"));
+            rowCabecera.getCell(col++).setCellStyle(sBold);
+            for (M_egreso_detalle unDetalle : unaCabecera.getDetalles()) {
+                col = 0;
+                Row rowDetalle = newSheet.createRow(filaActual++);
+                rowDetalle.createCell(col).setCellValue(unaCabecera.getTiempo());
+                rowDetalle.getCell(col++).setCellStyle(dateCellStyle);
+                rowDetalle.createCell(col).setCellValue(unaCabecera.getNro_factura());
+                rowDetalle.getCell(col++).setCellStyle(styleNumber);
+                rowDetalle.createCell(col++).setCellValue(new HSSFRichTextString(unaCabecera.getProveedor().getEntidad()));
+                //rowDetalle.createCell(col++).setCellValue(unaCabecera.getId_cabecera());
+                rowDetalle.createCell(col++).setCellValue(new HSSFRichTextString(unDetalle.getProducto().getDescripcion()));
+                rowDetalle.createCell(col).setCellValue(unDetalle.getCantidad());
+                rowDetalle.getCell(col++).setCellStyle(styleNumber);
+                //Encargado retiro	OT 	Fecha	Bidon	Utilizado	Sobrante
+            }
+            filaActual++;
+        }
+        newSheet.autoSizeColumn(0);
+        newSheet.autoSizeColumn(1);
+        newSheet.autoSizeColumn(2);
+        newSheet.autoSizeColumn(3);
+        newSheet.autoSizeColumn(4);
+        newSheet.autoSizeColumn(5);
+        newSheet.autoSizeColumn(6);
         try {
             FileOutputStream out = new FileOutputStream(directory.getPath() + ".xls");
             workbook.write(out);

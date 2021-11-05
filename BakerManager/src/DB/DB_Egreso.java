@@ -392,6 +392,8 @@ public class DB_Egreso {
                 + categoriaQuery;
         Query = Query +" GROUP BY 1,2,3,4,5,6,7,8,9,10,11,12 "+ " ORDER BY EGCA.TIEMPO, EGCA.NRO_FACTURA ";
         int pos = 1;
+        System.out.println("DB.DB_Egreso.obtenerComprasCabeceraPorCategoria()");
+        System.out.println(Query);
         try {
             pst = DB_manager.getConection().prepareStatement(Query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             if (conFecha) {
@@ -924,6 +926,57 @@ public class DB_Egreso {
         return detalles;
     }
 
+    public static ArrayList<M_egreso_detalle> obtenerEgresoDetalles(Integer idEgresoCabecera, int idProductoCategoria) {
+        ArrayList<M_egreso_detalle> detalles = null;
+        String query = "SELECT ID_EGRESO_DETALLE, "
+                + "ID_EGRESO_CABECERA, ED.ID_PRODUCTO, P.DESCRIPCION, P.ID_IMPUESTO, P.CODIGO , "
+                + "CANTIDAD, "
+                + "PRECIO, "
+                + "DESCUENTO, "
+                + "ED.OBSERVACION "
+                + "FROM EGRESO_DETALLE ED, PRODUCTO P "
+                + "WHERE ED.ID_PRODUCTO = P.ID_PRODUCTO "
+                + "AND P.id_categoria = " + idProductoCategoria
+                + " AND ED.ID_EGRESO_CABECERA = " + idEgresoCabecera;
+        try {
+            st = DB_manager.getConection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            rs = st.executeQuery(query);
+            detalles = new ArrayList();
+            while (rs.next()) {
+                M_egreso_detalle detalle = new M_egreso_detalle();
+                detalle.setCantidad(rs.getDouble("CANTIDAD"));
+                detalle.setDescuento(rs.getDouble("DESCUENTO"));
+                detalle.setId_cabecera(rs.getInt("ID_EGRESO_CABECERA"));
+                detalle.setId_detalle(rs.getInt("ID_EGRESO_DETALLE"));
+                detalle.setObservacion(rs.getString("OBSERVACION"));
+                detalle.setPrecio(rs.getDouble("PRECIO"));
+                M_producto producto = new M_producto();
+                producto.setId(rs.getInt("ID_PRODUCTO"));
+                producto.setDescripcion(rs.getString("DESCRIPCION"));
+                producto.setCodigo(rs.getString("CODIGO"));
+                producto.setIdImpuesto(rs.getInt("ID_IMPUESTO"));
+                detalle.setProducto(producto);
+                detalles.add(detalle);
+            }
+        } catch (SQLException ex) {
+            Logger lgr = Logger.getLogger(DB_Egreso.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (st != null) {
+                    st.close();
+                }
+            } catch (SQLException ex) {
+                Logger lgr = Logger.getLogger(DB_Egreso.class.getName());
+                lgr.log(Level.WARNING, ex.getMessage(), ex);
+            }
+        }
+        return detalles;
+    }
+    
     public static ResultSetTableModel obtenerEgresoCabecera(Integer idEgresoDetalle) {
         ResultSetTableModel rstm = null;
         String Query = "SELECT EGCA.ID_EGRESO_CABECERA \"ID egreso\", "

@@ -81,7 +81,7 @@ public class FiltroCompras extends JDialog implements ActionListener, KeyListene
         getContentPane().add(jpContainer, BorderLayout.CENTER);
         getContentPane().add(jpSouth, BorderLayout.SOUTH);
         completarCampos();
-        testInit();
+        //testInit();
     }
 
     private void testInit() {
@@ -95,9 +95,11 @@ public class FiltroCompras extends JDialog implements ActionListener, KeyListene
         recibirProveedor(unProveedor);
         ProductoCategoria pc = new ProductoCategoria(4, "Materia Prima");        
         recibirProductoCategoria(pc);
+        ProductoCategoria pc2 = new ProductoCategoria(2, "Diluyente");        
+        recibirProductoCategoria(pc2);
         Calendar firstDay = Calendar.getInstance();
         firstDay.set(Calendar.DAY_OF_MONTH, 1);
-        firstDay.set(Calendar.MONTH, 1);
+        firstDay.set(Calendar.MONTH, 0);
         Calendar secDay = Calendar.getInstance();
         secDay.set(Calendar.DAY_OF_MONTH, 30);
         secDay.set(Calendar.MONTH, 2);

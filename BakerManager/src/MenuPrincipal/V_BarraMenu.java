@@ -155,7 +155,7 @@ public class V_BarraMenu extends JMenuBar {
         jmiCobroPendientePorClienteVencidos = new JMenuItem("Cobros pendientes por Cliente vencidos(30Días)");
         jmiEstadoCuentaClientes = new JMenuItem("Estado de cuenta de clientes");
         jmiEstadoCuentaProveedores = new JMenuItem("Estado de cuenta de proveedores");
-        jmiCompras = new JMenuItem("Compras");
+        jmiCompras = new JMenuItem("Proveedores x Categorías");
         jmReportes.add(jmiCobro);
         jmReportes.add(jmPago);
         jmReportes.add(jmCompras);

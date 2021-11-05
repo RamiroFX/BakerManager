@@ -4,6 +4,9 @@
  */
 package Login;
 
+import Entities.M_proveedor;
+import Entities.ProductoCategoria;
+import Excel.C_create_excel;
 import Utilities.Config;
 import bakermanager.C_inicio;
 import com.nitido.utils.toaster.Toaster;
@@ -13,6 +16,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
 import javax.swing.JOptionPane;
 
 /**
@@ -37,7 +43,7 @@ public class C_login implements ActionListener, KeyListener {
 
     private void inicializarVista() {
         this.vista.txtNombre.setText(Config.getUser());
-        this.vista.txtPassword.setText("admin");
+        //this.vista.txtPassword.setText("admin");
         this.vista.jtfHost.setText(Config.getHost());
         this.vista.jtfPort.setText(Config.getPort());
         this.vista.jtfDB.setText(Config.getDB());
@@ -178,5 +184,29 @@ public class C_login implements ActionListener, KeyListener {
     }
 
     public void keyReleased(KeyEvent e) {
+    }
+
+    protected void testReport() {
+        M_proveedor unProveedor = new M_proveedor();
+        unProveedor.setId(16);
+        unProveedor.setEntidad("Invipint S.A.C.I");
+        unProveedor.setNombre("Bambi");
+        unProveedor.setRuc("80022935");
+        unProveedor.setRuc_id("5");
+        //ProductoCategoria pc = new ProductoCategoria(4, "Materia Prima");
+        ProductoCategoria pc2 = new ProductoCategoria(2, "Diluyente");
+        List<ProductoCategoria> listpc = new ArrayList<>();
+        //listpc.add(pc);
+        listpc.add(pc2);
+        List<M_proveedor> listp = new ArrayList<>();
+        listp.add(unProveedor);
+        Calendar firstDay = Calendar.getInstance();
+        firstDay.set(Calendar.DAY_OF_MONTH, 1);
+        firstDay.set(Calendar.MONTH, 0);
+        Calendar secDay = Calendar.getInstance();
+        secDay.set(Calendar.DAY_OF_MONTH, 30);
+        secDay.set(Calendar.MONTH, 2);
+        C_create_excel c = new C_create_excel();
+        c.exportacionProveedoresPorCategorias(listp, listpc, firstDay.getTime(), Calendar.getInstance().getTime());
     }
 }
