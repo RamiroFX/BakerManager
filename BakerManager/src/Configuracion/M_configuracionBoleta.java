@@ -7,6 +7,7 @@ package Configuracion;
 
 import DB.DB_Preferencia;
 import DB.DB_manager;
+import Entities.E_impresionPlantilla;
 import Entities.M_campoImpresion;
 import Entities.M_preferenciasImpresion;
 import ModeloTabla.ImpresionTableModel;
@@ -30,16 +31,24 @@ public class M_configuracionBoleta {
 
     public M_configuracionBoleta() {
         impresionBoletaTM = new ImpresionTableModel();
-        inicializarDatos();
+        //inicializarDatos();del
         isVisible = true;
         formatoFechas = new String[]{"dd/MMMM/yy", "dd/MMMM/yyyy", "dd/MM/yyyy"};
     }
 
+    
+    public void inicializarDatos(int idPlantilla) {
+        preferenciasBoleta = DB_Preferencia.obtenerPreferenciaImpresion(idPlantilla);
+        ArrayList<M_campoImpresion> campoImpresionLista = DB_manager.obtenerCampoImpresionPorPlantilla(idPlantilla, MyConstants.TODOS);
+        impresionBoletaTM.setCampoImpresionList(campoImpresionLista);
+    }
+
+    /*
     private void inicializarDatos() {
         preferenciasBoleta = DB_Preferencia.obtenerPreferenciaImpresionBoleta();
         ArrayList<M_campoImpresion> campoImpresionLista = DB_manager.obtenerCampoImpresionPorPlantilla(TipoVenta.BOLETA, MyConstants.TODOS);
         impresionBoletaTM.setCampoImpresionList(campoImpresionLista);
-    }
+    }*/
 
     public ImpresionTableModel getImpresionBoletaTM() {
         return impresionBoletaTM;
@@ -123,6 +132,18 @@ public class M_configuracionBoleta {
 
     public M_preferenciasImpresion getPreferenciasImpresion() {
         return preferenciasBoleta;
+    }
+
+    public ArrayList<E_impresionPlantilla> getPlantillas() {
+        return DB_manager.obtenerImpresionPlantillas(E_impresionPlantilla.BOLETA);
+    }
+    
+    public boolean plantillaEnUso(int idPlantilla){
+        return DB_manager.plantillaEnUso(idPlantilla);
+    }
+
+    void eliminarPlantilla(int idPlantilla){
+        DB_manager.eliminarPlantilla(idPlantilla);
     }
 
 }

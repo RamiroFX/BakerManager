@@ -429,7 +429,6 @@ public class C_crearPlantillaVenta extends MouseAdapter implements ActionListene
             pi.setImprimirMoneda(2);
         }
         plantilla.setDescripcion(this.vista.jtfNombre.getText());
-        plantilla.setTipo(new E_impresionTipo(E_impresionTipo.FACTURA, E_impresionTipo.FACTURA_STRING));
         plantilla.setEstado(new Estado(Estado.ACTIVO, Estado.ACTIVO_STR));
         pi.setDistanceBetweenCopies(Integer.valueOf(vista.jtfDistanciaEntreCopias.getText().trim()));
         pi.setNombreImpresora(vista.jtfNombreImpresora.getText().trim());

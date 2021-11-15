@@ -9,6 +9,7 @@ import Configuracion.CrearPlantillaImpresion.CrearPlantillaVenta;
 import DB.DB_Preferencia;
 import Entities.E_Divisa;
 import Entities.E_impresionPlantilla;
+import Entities.E_impresionTipo;
 import Entities.M_campoImpresion;
 import Entities.M_preferenciasImpresion;
 import Interface.crearModificarParametroCallback;
@@ -456,7 +457,7 @@ public class C_configuracionFactura extends MouseAdapter implements ActionListen
     }
 
     private void invocarCrearPlantilla() {
-        CrearPlantillaVenta cpv = new CrearPlantillaVenta(this.vista);
+        CrearPlantillaVenta cpv = new CrearPlantillaVenta(this.vista, E_impresionTipo.FACTURA);
         cpv.setInterface(this);
         cpv.mostrarVista();
     }

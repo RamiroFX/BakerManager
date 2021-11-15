@@ -18,8 +18,8 @@ public class CrearPlantillaVenta {
     private V_crearPlantillaVenta vista;
     private C_crearPlantillaVenta controlador;
 
-    public CrearPlantillaVenta(JDialog dialog) {
-        modelo = new M_crearPlantillaVenta();
+    public CrearPlantillaVenta(JDialog dialog, int tipoPlantilla) {
+        modelo = new M_crearPlantillaVenta(tipoPlantilla);
         vista = new V_crearPlantillaVenta(dialog);
         controlador = new C_crearPlantillaVenta(vista, modelo);
     }

@@ -10,6 +10,7 @@ import DB.DB_manager;
 import DB.ResultSetTableModel;
 import Entities.E_impresionOrientacion;
 import Entities.E_impresionPlantilla;
+import Entities.E_impresionTipo;
 import Entities.M_campoImpresion;
 import Entities.M_preferenciasImpresion;
 import Interface.InterfaceNotificarCambio;
@@ -33,11 +34,13 @@ public class M_crearPlantillaVenta {
     private M_preferenciasImpresion preferenciasImpresion;
     private String[] formatoFechas;
     private InterfaceNotificarCambio avisarCambioInterface;
+    private int tipoPlantilla;
 
-    public M_crearPlantillaVenta() {
+    public M_crearPlantillaVenta(int tipoPlantilla) {
         impresionFacturaTM = new ImpresionTableModel();
         inicializarDatos();
         isVisible = true;
+        this.tipoPlantilla = tipoPlantilla;
         formatoFechas = new String[]{"dd/MMMM/yy", "dd/MMMM/yyyy", "dd/MM/yyyy"};
     }
 
@@ -149,6 +152,7 @@ public class M_crearPlantillaVenta {
 
     public void guardarPlantilla(E_impresionPlantilla plantilla, List<M_campoImpresion> campos, M_preferenciasImpresion prefImp) {
         ///prefImp.setId(getPreferenciasImpresion().getId());
+        plantilla.setTipo(new E_impresionTipo(tipoPlantilla, ""));
         DB_Preferencia.insertarPlantilla(plantilla, prefImp, campos);
     }
 

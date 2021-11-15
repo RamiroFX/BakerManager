@@ -390,7 +390,7 @@ public class DB_Egreso {
                 + nuneroFacturaString
                 + estadoQuery
                 + categoriaQuery;
-        Query = Query +" GROUP BY 1,2,3,4,5,6,7,8,9,10,11,12 "+ " ORDER BY EGCA.TIEMPO, EGCA.NRO_FACTURA ";
+        Query = Query + " GROUP BY 1,2,3,4,5,6,7,8,9,10,11,12 " + " ORDER BY EGCA.TIEMPO, EGCA.NRO_FACTURA ";
         int pos = 1;
         System.out.println("DB.DB_Egreso.obtenerComprasCabeceraPorCategoria()");
         System.out.println(Query);
@@ -976,7 +976,7 @@ public class DB_Egreso {
         }
         return detalles;
     }
-    
+
     public static ResultSetTableModel obtenerEgresoCabecera(Integer idEgresoDetalle) {
         ResultSetTableModel rstm = null;
         String Query = "SELECT EGCA.ID_EGRESO_CABECERA \"ID egreso\", "
@@ -1375,6 +1375,7 @@ public class DB_Egreso {
         for (M_egresoCabecera seleccionVenta : possibleValues) {
             builder.append("?,");
         }
+
         String QUERY = "SELECT PROD.CODIGO \"Codigo\", "
                 + "(SELECT IMPU.DESCRIPCION FROM IMPUESTO IMPU WHERE IMPU.ID_IMPUESTO = PROD.ID_IMPUESTO)\"IMPUESTO\","
                 + "PROD.DESCRIPCION \"Producto\", SUM(FADE.CANTIDAD) \"Cantidad\", "
@@ -1383,9 +1384,13 @@ public class DB_Egreso {
                 + "FADE.DESCUENTO \"Descuento\" "
                 + "FROM EGRESO_DETALLE FADE, EGRESO_CABECERA FACA, PRODUCTO PROD "
                 + "WHERE FADE.ID_EGRESO_CABECERA = FACA.ID_EGRESO_CABECERA "
-                + "AND FADE.ID_PRODUCTO = PROD.ID_PRODUCTO "
-                + "AND FACA.ID_EGRESO_CABECERA IN ("
-                + builder.substring(0, builder.length() - 1) + ")";
+                + "AND FADE.ID_PRODUCTO = PROD.ID_PRODUCTO ";
+
+        if (builder.length() > 0) {
+            QUERY = QUERY 
+                    + "AND FACA.ID_EGRESO_CABECERA IN ("
+                    + builder.substring(0, builder.length() - 1) + ")";
+        }
 
         String PIE = "GROUP BY PROD.DESCRIPCION, PROD.CODIGO, PROD.ID_IMPUESTO, FADE.PRECIO, FADE.DESCUENTO,PROD.ID_IMPUESTO  "
                 + "ORDER BY PROD.DESCRIPCION";

@@ -5,13 +5,18 @@
  */
 package Configuracion;
 
+import Configuracion.CrearPlantillaImpresion.CrearPlantillaVenta;
 import DB.DB_Preferencia;
 import Entities.E_Divisa;
 import Entities.E_impresionOrientacion;
+import Entities.E_impresionPlantilla;
+import Entities.E_impresionTipo;
 import Entities.M_campoImpresion;
 import Entities.M_preferenciasImpresion;
 import Interface.crearModificarParametroCallback;
 import Impresora.Impresora;
+import Interface.InterfaceNotificarCambio;
+import com.nitido.utils.toaster.Toaster;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -19,12 +24,14 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import javax.swing.JOptionPane;
 
 /**
  *
  * @author Ramiro
  */
-public class C_configuracionBoleta extends MouseAdapter implements ActionListener, KeyListener, MouseListener, crearModificarParametroCallback {
+public class C_configuracionBoleta extends MouseAdapter implements ActionListener,
+        KeyListener, MouseListener, crearModificarParametroCallback, InterfaceNotificarCambio {
 
     private static final int CREAR_PARAMETRO = 1, MODIFICAR_PARAMETRO = 2;
     private V_configuracionFactura vista;
@@ -58,6 +65,7 @@ public class C_configuracionBoleta extends MouseAdapter implements ActionListene
      * Agrega ActionListeners los controles.
      */
     private void agregarListeners() {
+        this.vista.jcbPlantillas.addActionListener(this);
         this.vista.jbCancelar.addActionListener(this);
         this.vista.jbAgregarCampo.addActionListener(this);
         this.vista.jbModificarCampo.addActionListener(this);
@@ -67,6 +75,8 @@ public class C_configuracionBoleta extends MouseAdapter implements ActionListene
         this.vista.jbGuardarPreferencias.addActionListener(this);
         this.vista.jbGuardarImpresora.addActionListener(this);
         this.vista.jtFactura.addMouseListener(this);
+        this.vista.jbNuevo.addActionListener(this);
+        this.vista.jbEliminar.addActionListener(this);
     }
 
     /**
@@ -88,7 +98,11 @@ public class C_configuracionBoleta extends MouseAdapter implements ActionListene
         for (int i = 1; i < modelo.getMaxLetterSize(); i++) {
             this.vista.jcbTamañoLetra.addItem(i);
         }
-        this.vista.jcbMoneda.addItem(new E_Divisa(1, "Guaraní/es"));
+        for (int i = 0; i < modelo.getPlantillas().size(); i++) {
+            this.vista.jcbPlantillas.addItem(modelo.getPlantillas().get(i));
+        }
+        jcbPlantillasHandler();
+        /*this.vista.jcbMoneda.addItem(new E_Divisa(1, "Guaraní/es"));
         this.vista.jtfDistanciaEntreCopias.setText(modelo.getPreferenciasImpresion().getDistanceBetweenCopies() + "");
         this.vista.jtfTipoLetra.setText(modelo.getPreferenciasImpresion().getLetterFont());
         this.vista.jcbCantProd.setSelectedItem(modelo.getPreferenciasImpresion().getMaxProducts());
@@ -115,7 +129,44 @@ public class C_configuracionBoleta extends MouseAdapter implements ActionListene
         this.vista.jtfAnchoPapel.setText(modelo.getPreferenciasImpresion().getAnchoPagina() + "");
         this.vista.jtfLargoPapel.setText(modelo.getPreferenciasImpresion().getLargoPagina() + "");
         this.vista.jtfMargenX.setText(modelo.getPreferenciasImpresion().getMargenX() + "");
+        this.vista.jtfMargenY.setText(modelo.getPreferenciasImpresion().getMargenY() + "");*/
+    }
+
+    private void actualizarVista() {
+        //panel de preferencia
+        this.vista.jcbMoneda.addItem(new E_Divisa(1, "Guaraní/es"));
+        this.vista.jtfDistanciaEntreCopias.setText(modelo.getPreferenciasImpresion().getDistanceBetweenCopies() + "");
+        this.vista.jtfTipoLetra.setText(modelo.getPreferenciasImpresion().getLetterFont());
+        this.vista.jcbCantProd.setSelectedItem(modelo.getPreferenciasImpresion().getMaxProducts());
+        this.vista.jcbTamañoLetra.setSelectedItem(modelo.getPreferenciasImpresion().getLetterSize());
+        this.vista.jcbFormatoFecha.setSelectedItem(modelo.getPreferenciasImpresion().getFormatoFecha());
+        if (modelo.getPreferenciasImpresion().getIdDuplicado() == 1) {
+            this.vista.jchkDuplicado.setSelected(true);
+        } else {
+            this.vista.jchkDuplicado.setSelected(false);
+        }
+        if (modelo.getPreferenciasImpresion().getIdTriplicado() == 1) {
+            this.vista.jchkTriplicado.setSelected(true);
+        } else {
+            this.vista.jchkTriplicado.setSelected(false);
+        }
+        if (modelo.getPreferenciasImpresion().getImprimirMoneda() == 1) {
+            this.vista.jchkMoneda.setSelected(true);
+        } else {
+            this.vista.jchkMoneda.setSelected(false);
+        }
+        this.vista.jcbOrientacion.setSelectedItem(modelo.getPreferenciasImpresion().getOrientacion());
+        this.vista.jtfNombreImpresora.setText(modelo.getPreferenciasImpresion().getNombreImpresora());
+        this.vista.jtfAnchoPapel.setText(modelo.getPreferenciasImpresion().getAnchoPagina() + "");
+        this.vista.jtfLargoPapel.setText(modelo.getPreferenciasImpresion().getLargoPagina() + "");
+        this.vista.jtfMargenX.setText(modelo.getPreferenciasImpresion().getMargenX() + "");
         this.vista.jtfMargenY.setText(modelo.getPreferenciasImpresion().getMargenY() + "");
+    }
+
+    private void jcbPlantillasHandler() {
+        E_impresionPlantilla plantilla = vista.jcbPlantillas.getItemAt(vista.jcbPlantillas.getSelectedIndex());
+        modelo.inicializarDatos(plantilla.getId());
+        actualizarVista();
     }
 
     private void agregarCampo() {
@@ -410,6 +461,25 @@ public class C_configuracionBoleta extends MouseAdapter implements ActionListene
         Impresora.imprimirBoletaPrueba();
     }
 
+    private void invocarCrearPlantilla() {
+        CrearPlantillaVenta cpv = new CrearPlantillaVenta(this.vista, E_impresionTipo.BOLETA);
+        cpv.setInterface(this);
+        cpv.mostrarVista();
+    }
+
+    private void eliminarPlantilla() {
+        int idPlantilla = this.vista.jcbPlantillas.getItemAt(this.vista.jcbPlantillas.getSelectedIndex()).getId();
+        if (modelo.plantillaEnUso(idPlantilla)) {
+            JOptionPane.showMessageDialog(vista, "La plantilla se encuentra en uso en uno o más timbrados.", "Atención", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        int opcion = JOptionPane.showConfirmDialog(vista, "¿Esta seguro que desea eliminar la plantilla?", "Atención", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+        if (opcion == JOptionPane.YES_OPTION) {
+            modelo.eliminarPlantilla(idPlantilla);
+            actualizarComboBoxPlantillas();
+        }
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == this.vista.jbCancelar) {
@@ -428,6 +498,12 @@ public class C_configuracionBoleta extends MouseAdapter implements ActionListene
             guardarPreferencia();
         } else if (e.getSource() == this.vista.jbGuardarImpresora) {
             guardarPreferencia();
+        } else if (e.getSource() == this.vista.jcbPlantillas) {
+            jcbPlantillasHandler();
+        } else if (e.getSource() == this.vista.jbNuevo) {
+            invocarCrearPlantilla();
+        } else if (e.getSource() == this.vista.jbEliminar) {
+            eliminarPlantilla();
         }
     }
 
@@ -473,4 +549,22 @@ public class C_configuracionBoleta extends MouseAdapter implements ActionListene
     public void modificarParametroImpresion(M_campoImpresion ci) {
         modelo.modificarParametro(ci);
     }
+
+    private void actualizarComboBoxPlantillas() {
+        this.vista.jcbPlantillas.removeActionListener(this);
+        this.vista.jcbPlantillas.removeAllItems();
+        for (int i = 0; i < modelo.getPlantillas().size(); i++) {
+            this.vista.jcbPlantillas.addItem(modelo.getPlantillas().get(i));
+        }
+        this.vista.jcbPlantillas.addActionListener(this);
+        jcbPlantillasHandler();
+    }
+
+    @Override
+    public void notificarCambio() {
+        Toaster t = new Toaster();
+        t.showToaster("Plantilla guardada");
+        actualizarComboBoxPlantillas();
+    }
+
 }
