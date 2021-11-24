@@ -325,7 +325,7 @@ public class DB_Inventario {
             pst.close();
             rs.close();
             Calendar cal = Calendar.getInstance();
-            cal.setTime(cabecera.getTiempoInicio());
+            cal.setTime(cabecera.getTiempoFin());
             cal.add(Calendar.YEAR, 1);
             for (int i = 0; i < detalle.size(); i++) {
                 double cantMovimiento = 0.0;

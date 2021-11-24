@@ -141,12 +141,14 @@ public class C_movimientoProducto implements ActionListener, KeyListener, Recibi
                     break;
                 }
                 case E_movimientoProduccion.TIPO_INVENTARIO: {
-                    double cantInventario = unMov.getInventarioDetalle().getCantidadNueva();
-                    if (cantInventario > 0) {
-                        totalEntradas = totalEntradas.add(new BigDecimal(cantInventario + ""));
-                    } else {
-                        totalSalidas = totalSalidas.add(new BigDecimal(cantInventario + ""));
-                    }
+//                    double cantInventario = unMov.getInventarioDetalle().getCantidadNueva();
+//                    if (cantInventario > 0) {
+//                        totalEntradas = totalEntradas.add(new BigDecimal(cantInventario + ""));
+//                    } else {
+//                        totalSalidas = totalSalidas.add(new BigDecimal(cantInventario + ""));
+//                    }
+                    totalEntradas = totalEntradas.add(new BigDecimal(unMov.getEntrada() + ""));
+                    totalSalidas = totalSalidas.add(new BigDecimal(unMov.getSalida() + ""));
                     break;
                 }
                 case E_movimientoProduccion.TIPO_UTILIZACION: {

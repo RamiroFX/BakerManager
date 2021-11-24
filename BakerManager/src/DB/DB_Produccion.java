@@ -1621,7 +1621,8 @@ public class DB_Produccion {
 
     public static void anularProduccionFilm(int idProduccion) {
         String UPDATE_PRODUCCION = "UPDATE PRODUCCION_FILM SET "
-                + "ID_ESTADO = 2 "
+                + "ID_ESTADO = 2, "
+                + "NRO_FILM = -1 "
                 + "WHERE ID_PRODUCCION_CABECERA = ?; ";
         try {
             DB_manager.habilitarTransaccionManual();

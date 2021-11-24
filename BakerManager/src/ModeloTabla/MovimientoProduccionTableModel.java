@@ -105,13 +105,29 @@ public class MovimientoProduccionTableModel extends AbstractTableModel {
                     break;
                 }
                 case E_movimientoProduccion.TIPO_INVENTARIO: {
-                    if (mov.getInventarioDetalle().getCantidadNueva() > 0) {
-                        mov.setEntrada(mov.getInventarioDetalle().getCantidadNueva());
-                        mov.setBalance(mov.getEntrada()+ movAnt.getBalance());
-                    } else {
-                        mov.setSalida(mov.getInventarioDetalle().getCantidadNueva());
-                        mov.setBalance(-mov.getSalida() + movAnt.getBalance());
+                    if (mov.getTipo() == 5) {
+
                     }
+                    //Si la cantidad nueva es mayor al balance entonces es entrada
+                    //double cantNueva = mov.getInventarioDetalle().getCantidadNueva()+mov.getInventarioDetalle().getCantidadMovimiento();
+                    double cantNueva = mov.getInventarioDetalle().getCantidadNueva();
+                    double cantBalanceAnterior = movAnt.getBalance();
+                    if (cantNueva == cantBalanceAnterior) {
+                        mov.setSalida(0);
+                        mov.setEntrada(0);
+                    } else if (cantNueva > cantBalanceAnterior) {
+                        //mov.setEntrada(mov.getInventarioDetalle().getCantidadNueva());
+                        //mov.setBalance(mov.getEntrada()+ movAnt.getBalance());
+                        //mov.setBalance(movAnt.getBalance() - mov.getInventarioDetalle().getCantidadNueva());
+                        mov.setEntrada(Math.abs(cantBalanceAnterior - cantNueva));
+                        mov.setSalida(0);
+                    } else {
+                        //mov.setSalida(mov.getInventarioDetalle().getCantidadNueva());
+                        //mov.setBalance(-mov.getSalida() + movAnt.getBalance());
+                        mov.setSalida(Math.abs(cantBalanceAnterior - cantNueva));
+                        mov.setEntrada(0);
+                    }
+                    mov.setBalance(cantBalanceAnterior + (mov.getEntrada() - mov.getSalida()));
                     break;
                 }
                 case E_movimientoProduccion.TIPO_UTILIZACION: {

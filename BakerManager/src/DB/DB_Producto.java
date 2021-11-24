@@ -1365,7 +1365,7 @@ public class DB_Producto {
                         E_ajusteStockDetalle inventarioDetalle = new E_ajusteStockDetalle();
                         inventarioDetalle.setTiempoRegistro(rs.getDate("fecha"));
                         if (rs.getDouble("salida") > 0) {
-                            inventarioDetalle.setCantidadNueva(-rs.getDouble("salida"));
+                            inventarioDetalle.setCantidadNueva(rs.getDouble("salida"));
                         } else {
                             inventarioDetalle.setCantidadNueva(rs.getDouble("entrada"));
                         }
