@@ -5,6 +5,7 @@
 package Reportes;
 
 import Cliente.SeleccionarCliente;
+import DB.DB_Cliente;
 import DB.DB_manager;
 import Entities.E_Empresa;
 import Entities.M_cliente;
@@ -30,11 +31,13 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JToggleButton;
+import javax.swing.SwingConstants;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.TitledBorder;
 import net.sf.jasperreports.engine.JRException;
@@ -58,6 +61,7 @@ public class FiltroReportes extends JDialog implements ActionListener, KeyListen
     private ClienteTableModel tm;
     private int reportType, modo;
     private E_Empresa empresa;
+    private JLabel jlStatus;
     private JDateChooser jdcFechaDesde, jdcFechaHasta;
     private JCheckBox jcbFechaDesde, jcbFechaHasta;
 
@@ -73,25 +77,37 @@ public class FiltroReportes extends JDialog implements ActionListener, KeyListen
         getContentPane().add(jpCliente, BorderLayout.CENTER);
         getContentPane().add(jpSouth, BorderLayout.SOUTH);
         completarCampos();
-        //testInit();
+        testInit();
     }
 
     private void testInit() {
         M_cliente unCliente = new M_cliente();
         unCliente.setIdCliente(461);
-        unCliente.setEntidad("");
+        unCliente.setEntidad("trastras");
         unCliente.setNombre("");
         unCliente.setRuc("123");
         unCliente.setRucId("1");
         recibirCliente(unCliente);
-        Calendar firstDay = Calendar.getInstance();
+        M_cliente c1 = new M_cliente();
+        c1.setIdCliente(15);
+        c1.setEntidad("Gustavo Alonso");
+        recibirCliente(c1);
+        M_cliente c2 = new M_cliente();
+        c2.setIdCliente(2161);
+        c2.setEntidad("ALBA ROSA INDUSTRIAL Y COMERCIAL S.A");
+        recibirCliente(c2);
+        M_cliente c3 = new M_cliente();
+        c3.setIdCliente(170);
+        c3.setEntidad("ANTONIO JAVIER SANTACRUZ BOGARIN");
+        recibirCliente(c3);
+        /*Calendar firstDay = Calendar.getInstance();
         firstDay.set(Calendar.DAY_OF_MONTH, 1);
         firstDay.set(Calendar.MONTH, 2);
         Calendar secDay = Calendar.getInstance();
         secDay.set(Calendar.DAY_OF_MONTH, 30);
         secDay.set(Calendar.MONTH, 2);
         this.jdcFechaDesde.setDate(firstDay.getTime());
-        this.jdcFechaHasta.setDate(secDay.getTime());
+        this.jdcFechaHasta.setDate(secDay.getTime());*/
     }
 
     private void inicializarVista() {
@@ -132,11 +148,16 @@ public class FiltroReportes extends JDialog implements ActionListener, KeyListen
         /*
          * BOTONES
          */
+        this.jlStatus = new JLabel("Estado del reporte");
+        jlStatus.setHorizontalTextPosition(SwingConstants.CENTER);
         this.jbGenerar = new JButton("Generar");
         this.jbCancelar = new JButton("Cancelar");
-        this.jpSouth = new JPanel();
-        this.jpSouth.add(jbGenerar);
-        this.jpSouth.add(jbCancelar);
+        this.jpSouth = new JPanel(new GridLayout(2, 1));
+        JPanel jpSouthAux = new JPanel();
+        jpSouthAux.add(jbGenerar);
+        jpSouthAux.add(jbCancelar);
+        this.jpSouth.add(jpSouthAux);
+        this.jpSouth.add(jlStatus);
     }
 
     private void completarCampos() {
@@ -186,9 +207,7 @@ public class FiltroReportes extends JDialog implements ActionListener, KeyListen
             return;
         }
         List clienteList = new ArrayList();
-        tm.getList().forEach((unCliente) -> {
-            clienteList.add(unCliente);
-        });
+        tm.getList().forEach(clienteList::add);
         Date fechaDesde = null;
         if (jcbFechaDesde.isSelected()) {
             fechaDesde = jdcFechaDesde.getDate();
@@ -201,8 +220,12 @@ public class FiltroReportes extends JDialog implements ActionListener, KeyListen
             M_cliente m = new M_cliente();
             m.setIdCliente(15);
             m.setEntidad("Gustavo Alonso");
-            Excel.ExportarEstadoCuentaCliente eecc = new Excel.ExportarEstadoCuentaCliente("Estado de ", m);
-            eecc.exportarEstadoCuenta(fechaDesde, fechaHasta, clienteList, jtbTipoSeleccion.isSelected());
+            if (clienteList.isEmpty()) {
+                clienteList = DB_Cliente.consultarClienteFX("", false, true, false, jtbTipoSeleccion.isSelected());
+            }
+            Excel.ExportarEstadoCuentaCliente eecc = new Excel.ExportarEstadoCuentaCliente("Estado de cuenta", m);
+            eecc.exportarEstadoCuenta(fechaDesde, fechaHasta, clienteList, jtbTipoSeleccion.isSelected(), jlStatus, jbGenerar);
+            this.jbGenerar.setEnabled(false);
             return;
         }
         ArrayList idClientes = new ArrayList();

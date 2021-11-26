@@ -1564,7 +1564,7 @@ public class DB_Cliente {
                         E_cuentaCorrienteDetalle recibo = new E_cuentaCorrienteDetalle();
                         recibo.setCuentaCorrienteCabecera(reciboCabecera);
                         recibo.setFacturaVenta(facturaCabecera);
-                        recibo.setMonto(rs.getInt("pago"));
+                        recibo.setMonto(rs.getDouble("pago"));
                         recibo.setId(0);
                         movCont.setTipo(E_movimientoContable.TIPO_COBRO);
                         movCont.setTipoDescripcion(E_movimientoContable.STR_TIPO_COBRO);
