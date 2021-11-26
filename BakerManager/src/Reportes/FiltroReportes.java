@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import javax.swing.JButton;
@@ -49,7 +50,7 @@ import net.sf.jasperreports.swing.JRViewer;
  */
 public class FiltroReportes extends JDialog implements ActionListener, KeyListener, RecibirClienteCallback {
 
-    public static final int PENDIENTE = 1, VENCIDAS = 2;
+    public static final int PENDIENTE = 1, VENCIDAS = 2, ESTADO_CUENTA_XLS = 3;
     private JPanel jpCliente, jpSouth;
     private JTable jtClientes;
     private JButton jbQuitar, jbAgregar, jbGenerar, jbCancelar;
@@ -184,9 +185,9 @@ public class FiltroReportes extends JDialog implements ActionListener, KeyListen
         if (!validarSeleccion()) {
             return;
         }
-        ArrayList idClientes = new ArrayList();
+        List clienteList = new ArrayList();
         tm.getList().forEach((unCliente) -> {
-            idClientes.add(unCliente.getIdCliente());
+            clienteList.add(unCliente);
         });
         Date fechaDesde = null;
         if (jcbFechaDesde.isSelected()) {
@@ -196,6 +197,18 @@ public class FiltroReportes extends JDialog implements ActionListener, KeyListen
         if (jcbFechaHasta.isSelected()) {
             fechaHasta = jdcFechaHasta.getDate();
         }
+        if (modo == ESTADO_CUENTA_XLS) {
+            M_cliente m = new M_cliente();
+            m.setIdCliente(15);
+            m.setEntidad("Gustavo Alonso");
+            Excel.ExportarEstadoCuentaCliente eecc = new Excel.ExportarEstadoCuentaCliente("Estado de ", m);
+            eecc.exportarEstadoCuenta(fechaDesde, fechaHasta, clienteList, jtbTipoSeleccion.isSelected());
+            return;
+        }
+        ArrayList idClientes = new ArrayList();
+        tm.getList().forEach((unCliente) -> {
+            idClientes.add(unCliente.getIdCliente());
+        });
         File file;
         JasperReport reporte = null;
         try {

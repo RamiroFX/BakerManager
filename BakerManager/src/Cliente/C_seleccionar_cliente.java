@@ -114,7 +114,7 @@ public class C_seleccionar_cliente extends MouseAdapter implements ActionListene
                 boolean entidad = vista.jckbEntidadNombre.isSelected();
                 boolean ruc = vista.jckbRUC.isSelected();
                 boolean exclusivo = vista.jrbExclusivo.isSelected();
-                tm.setList(DB_Cliente.consultarClienteFX(cliente.toLowerCase(), exclusivo, entidad, ruc));
+                tm.setList(DB_Cliente.consultarClienteFX(cliente.toLowerCase(), exclusivo, entidad, ruc, false));
                 Utilities.c_packColumn.packColumns(vista.jtCliente, 1);
             }
         });

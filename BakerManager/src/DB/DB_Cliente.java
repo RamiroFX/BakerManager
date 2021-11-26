@@ -111,7 +111,7 @@ public class DB_Cliente {
         return rstm;
     }
 
-    public static List<M_cliente> consultarClienteFX(String busqueda, boolean isExclusivo, boolean entidad, boolean ruc) {
+    public static List<M_cliente> consultarClienteFX(String busqueda, boolean isExclusivo, boolean entidad, boolean ruc, boolean notIn) {
         List<M_cliente> list = new ArrayList<>();
         String SELECT = "SELECT CLIE.ID_CLIENTE \"ID\", CLIE.ENTIDAD  \"ENTIDAD\", CLIE.NOMBRE \"NOMBRE\", CLIE.RUC \"RUC\", CLIE.RUC_IDENTIFICADOR \"RUC_ID\" ";
         String FROM = "FROM CLIENTE CLIE ";
@@ -130,6 +130,9 @@ public class DB_Cliente {
             WHERE = WHERE + "LOWER(CLIE.RUC) LIKE ? ";
         } else if (!entidad && !ruc) {
             WHERE = WHERE + "LOWER(CLIE.NOMBRE) LIKE ? OR LOWER(CLIE.ENTIDAD) LIKE ? OR LOWER(CLIE.RUC) LIKE ? ";
+        }
+        if(notIn){
+            WHERE = WHERE.replace("LIKE", "NOT LIKE");
         }
         String QUERY = SELECT + FROM + WHERE + ORDER_BY;
         try {
