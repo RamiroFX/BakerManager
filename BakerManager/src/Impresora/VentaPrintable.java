@@ -56,7 +56,7 @@ public class VentaPrintable implements Printable {
         Graphics2D g2d = (Graphics2D) g;
         //g2d.translate(pf.getImageableX(), pf.getImageableY());
         g2d.setColor(Color.black);
-        final int espaciadorY = 10;
+        final int espaciadorY = 20;
         SimpleDateFormat dateFormat = new SimpleDateFormat(preferencia.getFormatoFecha());
         Date fecha = Calendar.getInstance().getTime();
         fecha.setTime(facturaCabecera.getTiempo().getTime());
@@ -177,10 +177,10 @@ public class VentaPrintable implements Printable {
                 if (object.getCampo().equals(MyConstants.TIOP_CREDITO)) {
                     if (facturaCabecera.getIdCondVenta() == TipoOperacion.CREDITO) {
                         g.drawString("X", posX, posY);
-                        g.drawString("30 días", posX - 10, posY + 10);
+                        //g.drawString("30 días", posX - 10, posY + 10);
                         if (preferencia.getIdDuplicado() == 1) {
                             g.drawString("X", duplicadoDistX, duplicadoDistY);
-                            g.drawString("30 días", duplicadoDistX - 10, duplicadoDistY + 10);
+                            //g.drawString("30 días", duplicadoDistX - 10, duplicadoDistY + 10);
                         }
                         if (preferencia.getIdTriplicado() == 1) {
                             g.drawString("X", triplicadoDistX, triplicadoDistY);

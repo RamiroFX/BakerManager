@@ -326,6 +326,7 @@ public class ExportarEstadoCuentaCliente {
                     cabeceraList = DB_Cliente.obtenerEstadoCuenta(unCliente.getIdCliente());
                     for (int i = 0; i < cabeceraList.size(); i++) {
                         E_movimientoContable unDetalle = cabeceraList.get(i);
+                        System.out.println("mov: "+unDetalle.getMovDescripcion()+" - fec: "+unDetalle.getMovFecha());
                         //VERIFICA SI SE EMPIEZA A IMPRIMIR LAS CELDAS
                         if (unDetalle.getMovFecha().after(fechaInicio)) {
                             iniciar = true;
@@ -335,7 +336,7 @@ public class ExportarEstadoCuentaCliente {
                         }
                         //VERIFICA SI SE TERMINA DE IMPRIMIR LAS CELDAS
                         if (unDetalle.getMovFecha().after(fechaFin)) {
-                            return "";
+                            break;
                         }
                         Row rowDetalle = null;
                         if (iniciar) {

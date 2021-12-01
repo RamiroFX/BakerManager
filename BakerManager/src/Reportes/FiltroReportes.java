@@ -81,6 +81,15 @@ public class FiltroReportes extends JDialog implements ActionListener, KeyListen
     }
 
     private void testInit() {
+        //1.039	Nery Benegas (Pastas Las Delicias)		2312969-7
+        M_cliente unCliente0 = new M_cliente();
+        unCliente0.setIdCliente(1039);
+        unCliente0.setEntidad("Nery Benegas (Pastas Las Delicias)");
+        unCliente0.setNombre("");
+        unCliente0.setRuc("2312969");
+        unCliente0.setRucId("7");
+        recibirCliente(unCliente0);
+        /*
         M_cliente unCliente = new M_cliente();
         unCliente.setIdCliente(461);
         unCliente.setEntidad("trastras");
@@ -99,15 +108,15 @@ public class FiltroReportes extends JDialog implements ActionListener, KeyListen
         M_cliente c3 = new M_cliente();
         c3.setIdCliente(170);
         c3.setEntidad("ANTONIO JAVIER SANTACRUZ BOGARIN");
-        recibirCliente(c3);
-        /*Calendar firstDay = Calendar.getInstance();
+        recibirCliente(c3);*/
+        Calendar firstDay = Calendar.getInstance();
         firstDay.set(Calendar.DAY_OF_MONTH, 1);
-        firstDay.set(Calendar.MONTH, 2);
+        firstDay.set(Calendar.MONTH, 9);
         Calendar secDay = Calendar.getInstance();
         secDay.set(Calendar.DAY_OF_MONTH, 30);
-        secDay.set(Calendar.MONTH, 2);
+        secDay.set(Calendar.MONTH, 10);
         this.jdcFechaDesde.setDate(firstDay.getTime());
-        this.jdcFechaHasta.setDate(secDay.getTime());*/
+        this.jdcFechaHasta.setDate(secDay.getTime());
     }
 
     private void inicializarVista() {
