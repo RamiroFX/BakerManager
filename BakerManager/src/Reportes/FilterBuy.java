@@ -52,7 +52,7 @@ import net.sf.jasperreports.swing.JRViewer;
  *
  * @author Ramiro Ferreira
  */
-public class FiltroCompras extends JDialog implements ActionListener, KeyListener, 
+public class FilterBuy extends JDialog implements ActionListener, KeyListener, 
         RecibirProveedorCallback, RecibirProductoCategoriaCallback {
 
     public static final int PENDIENTE = 1, VENCIDAS = 2;
@@ -69,7 +69,7 @@ public class FiltroCompras extends JDialog implements ActionListener, KeyListene
     private JDateChooser jdcFechaDesde, jdcFechaHasta;
     private JCheckBox jcbFechaDesde, jcbFechaHasta;
 
-    public FiltroCompras(JFrame frame, int reportType, int modo) {
+    public FilterBuy(JFrame frame, int reportType, int modo) {
         super(frame, "Filtro", false);
         setSize(800, 600);
         setLocationRelativeTo(frame);

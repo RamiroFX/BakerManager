@@ -319,6 +319,7 @@ public class ExportarEstadoCuentaCliente {
                     //INICIO DETALLE
                     boolean iniciar = false;
                     boolean saldoAntImprimido = false;
+                    boolean cabeceraImprimido = false;
                     int debe = 0;
                     int haber = 0;
                     int balance = 0;
@@ -338,7 +339,7 @@ public class ExportarEstadoCuentaCliente {
                         }
                         Row rowDetalle = null;
                         if (iniciar) {
-                            if (!saldoAntImprimido) {
+                            if (!cabeceraImprimido) {
                                 filaActual++;
                                 Row rowClienteDescripcion = sheet.createRow(filaActual);
                                 filaActual++;
@@ -359,7 +360,8 @@ public class ExportarEstadoCuentaCliente {
                                 rowCabecera.getCell(3).setCellStyle(style1);
                                 rowCabecera.createCell(4).setCellValue(new HSSFRichTextString("Balance"));
                                 rowCabecera.getCell(4).setCellStyle(style1);
-                                //FIN CABECERA DETALLE                                
+                                //FIN CABECERA DETALLE    
+                                cabeceraImprimido = true;
                             }
                             if (balance != 0 && !saldoAntImprimido) {
                                 Row rowSaldoAnt = sheet.createRow(filaActual);
@@ -371,9 +373,9 @@ public class ExportarEstadoCuentaCliente {
                                 rowSaldoAnt.getCell(3).setCellStyle(style4);
                                 rowSaldoAnt.createCell(4).setCellValue(balance);
                                 rowSaldoAnt.getCell(4).setCellStyle(style4);
-                                saldoAntImprimido = true;
                             }
                             rowDetalle = sheet.createRow(filaActual);
+                            saldoAntImprimido = true;
                             filaActual++;
                         }
                         switch (unDetalle.getTipo()) {

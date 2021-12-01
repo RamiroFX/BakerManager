@@ -14,7 +14,7 @@ import javax.swing.JFrame;
 public class ReportesCompras {
 
     public static void compras(JFrame frame) {
-        FiltroCompras fc = new FiltroCompras(frame, 1, FiltroCliente.VENCIDAS);
+        FilterBuy fc = new FilterBuy(frame, 1, FiltroCliente.VENCIDAS);
         fc.setVisible(true);
     }
 }

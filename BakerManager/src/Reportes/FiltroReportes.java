@@ -77,7 +77,7 @@ public class FiltroReportes extends JDialog implements ActionListener, KeyListen
         getContentPane().add(jpCliente, BorderLayout.CENTER);
         getContentPane().add(jpSouth, BorderLayout.SOUTH);
         completarCampos();
-        testInit();
+        //testInit();
     }
 
     private void testInit() {

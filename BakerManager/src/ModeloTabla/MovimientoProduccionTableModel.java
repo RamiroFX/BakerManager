@@ -112,22 +112,24 @@ public class MovimientoProduccionTableModel extends AbstractTableModel {
                     //double cantNueva = mov.getInventarioDetalle().getCantidadNueva()+mov.getInventarioDetalle().getCantidadMovimiento();
                     double cantNueva = mov.getInventarioDetalle().getCantidadNueva();
                     double cantBalanceAnterior = movAnt.getBalance();
+                    double aux = cantBalanceAnterior - cantNueva;
                     if (cantNueva == cantBalanceAnterior) {
                         mov.setSalida(0);
                         mov.setEntrada(0);
-                    } else if (cantNueva > cantBalanceAnterior) {
+                    } else if (cantBalanceAnterior > 0) {
                         //mov.setEntrada(mov.getInventarioDetalle().getCantidadNueva());
                         //mov.setBalance(mov.getEntrada()+ movAnt.getBalance());
                         //mov.setBalance(movAnt.getBalance() - mov.getInventarioDetalle().getCantidadNueva());
-                        mov.setEntrada(Math.abs(cantBalanceAnterior - cantNueva));
-                        mov.setSalida(0);
+                        mov.setSalida(Math.abs(aux)-cantNueva);
+                        mov.setEntrada(0);
                     } else {
                         //mov.setSalida(mov.getInventarioDetalle().getCantidadNueva());
                         //mov.setBalance(-mov.getSalida() + movAnt.getBalance());
-                        mov.setSalida(Math.abs(cantBalanceAnterior - cantNueva));
-                        mov.setEntrada(0);
+                        mov.setEntrada(Math.abs(cantBalanceAnterior)+cantNueva);
+                        mov.setSalida(0);
                     }
-                    mov.setBalance(cantBalanceAnterior + (mov.getEntrada() - mov.getSalida()));
+                    //mov.setBalance(cantBalanceAnterior + (mov.getEntrada() - mov.getSalida()));
+                    mov.setBalance(cantNueva);
                     break;
                 }
                 case E_movimientoProduccion.TIPO_UTILIZACION: {
