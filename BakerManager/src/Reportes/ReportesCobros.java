@@ -88,4 +88,8 @@ public class ReportesCobros {
         FiltroReportes fc = new FiltroReportes(frame, 1, FiltroReportes.ESTADO_CUENTA_XLS);
         fc.setVisible(true);
     }
+    public static void saldoPendienteClientesXLS(JFrame frame) {
+        FiltroReportes fc = new FiltroReportes(frame, 1, FiltroReportes.SALDO_CLIENTE_XLS);
+        fc.setVisible(true);
+    }
 }

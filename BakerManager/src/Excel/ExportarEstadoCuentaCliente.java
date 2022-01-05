@@ -6,6 +6,7 @@
 package Excel;
 
 import DB.DB_Cliente;
+import DB.DB_Cobro;
 import Entities.E_movimientoContable;
 import Entities.M_cliente;
 import java.io.File;
@@ -326,7 +327,7 @@ public class ExportarEstadoCuentaCliente {
                     cabeceraList = DB_Cliente.obtenerEstadoCuenta(unCliente.getIdCliente());
                     for (int i = 0; i < cabeceraList.size(); i++) {
                         E_movimientoContable unDetalle = cabeceraList.get(i);
-                        System.out.println("mov: "+unDetalle.getMovDescripcion()+" - fec: "+unDetalle.getMovFecha());
+                        System.out.println("mov: " + unDetalle.getMovDescripcion() + " - fec: " + unDetalle.getMovFecha());
                         //VERIFICA SI SE EMPIEZA A IMPRIMIR LAS CELDAS
                         if (unDetalle.getMovFecha().after(fechaInicio)) {
                             iniciar = true;
@@ -379,6 +380,251 @@ public class ExportarEstadoCuentaCliente {
                             saldoAntImprimido = true;
                             filaActual++;
                         }
+                        switch (unDetalle.getTipo()) {
+                            case E_movimientoContable.TIPO_SALDO_INICIAL: {
+                                debe = debe + (int) unDetalle.getClienteSaldoInicial().getSaldoInicial();
+                                balance = debe - haber;
+                                if (!iniciar) {
+                                    break;
+                                }
+                                rowDetalle.createCell(0).setCellValue(unDetalle.getFechaSaldoInicial());
+                                rowDetalle.getCell(0).setCellStyle(dateCellStyle);
+                                rowDetalle.createCell(1).setCellValue(unDetalle.getTipoDescripcion());
+                                //rowDetalle.createCell(2).setCellValue();
+                                rowDetalle.createCell(2).setCellValue(unDetalle.getClienteSaldoInicial().getSaldoInicial());
+                                rowDetalle.getCell(2).setCellStyle(style4);
+                                rowDetalle.createCell(3).setCellValue(0);
+                                rowDetalle.getCell(3).setCellStyle(style4);
+                                rowDetalle.createCell(4).setCellValue(balance);
+                                rowDetalle.getCell(4).setCellStyle(style4);
+                                break;
+                            }
+                            case E_movimientoContable.TIPO_COBRO: {
+                                haber = haber + (int) unDetalle.getCobro().getMonto();
+                                balance = debe - haber;
+                                if (!iniciar) {
+                                    break;
+                                }
+                                int nroFactura = unDetalle.getCobro().getFacturaVenta().getNroFactura();
+                                int nroRecibo = unDetalle.getCobro().getCuentaCorrienteCabecera().getNroRecibo();
+                                String sNroFactura = decimalFormat.format(nroFactura);
+                                String sNroRecibo = decimalFormat.format(nroRecibo);
+                                rowDetalle.createCell(0).setCellValue(unDetalle.getCobro().getCuentaCorrienteCabecera().getFechaPago());
+                                rowDetalle.getCell(0).setCellStyle(dateCellStyle);
+                                rowDetalle.createCell(1).setCellValue(unDetalle.getTipoDescripcion() + " N° " + sNroRecibo + " (Fact. N° " + sNroFactura + ")");
+                                rowDetalle.createCell(2).setCellValue(0);
+                                rowDetalle.getCell(2).setCellStyle(style4);
+                                rowDetalle.createCell(3).setCellValue(unDetalle.getCobro().getMonto());
+                                rowDetalle.getCell(3).setCellStyle(style4);
+                                rowDetalle.createCell(4).setCellValue(balance);
+                                rowDetalle.getCell(4).setCellStyle(style4);
+                                break;
+                            }
+                            case E_movimientoContable.TIPO_VENTA: {
+                                debe = debe + (int) unDetalle.getVenta().getMonto();
+                                balance = debe - haber;
+                                if (!iniciar) {
+                                    break;
+                                }
+                                int nroFactura = unDetalle.getVenta().getNroFactura();
+                                String sNroFactura = decimalFormat.format(nroFactura);
+                                rowDetalle.createCell(0).setCellValue(unDetalle.getVenta().getFecha());
+                                rowDetalle.getCell(0).setCellStyle(dateCellStyle);
+                                rowDetalle.createCell(1).setCellValue(unDetalle.getTipoDescripcion() + " N° " + sNroFactura);
+                                rowDetalle.createCell(2).setCellValue(unDetalle.getVenta().getMonto());
+                                rowDetalle.getCell(2).setCellStyle(style4);
+                                rowDetalle.createCell(3).setCellValue(0);
+                                rowDetalle.getCell(3).setCellStyle(style4);
+                                rowDetalle.createCell(4).setCellValue(balance);
+                                rowDetalle.getCell(4).setCellStyle(style4);
+                                break;
+                            }
+                            case E_movimientoContable.TIPO_NOTA_CREDITO: {
+                                haber = haber + (int) unDetalle.getNotaCredito().getTotal();
+                                balance = debe - haber;
+                                if (!iniciar) {
+                                    break;
+                                }
+                                int nroFactura = unDetalle.getNotaCredito().getFacturaCabecera().getNroFactura();
+                                int nroNotaCredito = unDetalle.getNotaCredito().getNroNotaCredito();
+                                String sNroFactura = decimalFormat.format(nroFactura);
+                                String sNroNotaCredito = decimalFormat.format(nroNotaCredito);
+                                rowDetalle.createCell(0).setCellValue(unDetalle.getNotaCredito().getTiempo());
+                                rowDetalle.getCell(0).setCellStyle(dateCellStyle);
+                                rowDetalle.createCell(1).setCellValue(unDetalle.getTipoDescripcion() + " N° " + sNroNotaCredito + " (Fact. N° " + sNroFactura + ")");
+                                rowDetalle.createCell(2).setCellValue(0);
+                                rowDetalle.getCell(2).setCellStyle(style4);
+                                rowDetalle.createCell(3).setCellValue(unDetalle.getNotaCredito().getTotal());
+                                rowDetalle.getCell(3).setCellStyle(style4);
+                                rowDetalle.createCell(4).setCellValue(balance);
+                                rowDetalle.getCell(4).setCellStyle(style4);
+                                break;
+                            }
+                            case E_movimientoContable.TIPO_RETENCION_VENTA: {
+                                haber = haber + (int) unDetalle.getRetencionVenta().getMonto();
+                                balance = debe - haber;
+                                if (!iniciar) {
+                                    break;
+                                }
+                                int nroRetencion = unDetalle.getRetencionVenta().getNroRetencion();
+                                String sNroFactura = decimalFormat.format(unDetalle.getRetencionVenta().getVenta().getNroFactura());
+                                String sNroRetencion = decimalFormat.format(nroRetencion);
+                                rowDetalle.createCell(0).setCellValue(unDetalle.getRetencionVenta().getTiempo());
+                                rowDetalle.getCell(0).setCellStyle(dateCellStyle);
+                                rowDetalle.createCell(1).setCellValue(unDetalle.getTipoDescripcion() + " N° " + sNroRetencion + " (Fact. N° " + sNroFactura + ")");
+                                rowDetalle.createCell(2).setCellValue(0);
+                                rowDetalle.getCell(2).setCellStyle(style4);
+                                rowDetalle.createCell(3).setCellValue(unDetalle.getRetencionVenta().getMonto());
+                                rowDetalle.getCell(3).setCellStyle(style4);
+                                rowDetalle.createCell(4).setCellValue(balance);
+                                rowDetalle.getCell(4).setCellStyle(style4);
+                                break;
+                            }
+                        }
+                    }
+                    //rowTotal.createCell(1).setCellValue(balance);
+                    //rowTotal.getCell(1).setCellStyle(style4);
+                }
+
+                //INICIO AJUSTAR COLUMNAS
+                sheet.autoSizeColumn(0);
+                sheet.autoSizeColumn(1);
+                sheet.autoSizeColumn(2);
+                sheet.autoSizeColumn(3);
+                sheet.autoSizeColumn(4);
+                //FIN AJUSTAR COLUMNAS
+                try {
+                    try (FileOutputStream out = new FileOutputStream(directory.getPath() + ".xls")) {
+                        workbook.write(out);
+                    }
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                /*
+                for (int i = 10; i >= 0; i--) {
+                Thread.sleep(100);
+                System.out.println("Value in thread : " + i);
+                publish(i);
+                }
+                 */
+                String res = "Reporte finalizado";
+                return res;
+            }
+
+            @Override
+            protected void process(List chunks) {
+                cur++;
+                // define what the event dispatch thread 
+                // will do with the intermediate results received
+                // while the thread is executing
+                M_cliente val = (M_cliente) chunks.get(chunks.size() - 1);
+
+                statusLabel.setText(String.format("%.2f", calculatePercentage(cur, clientesList.size())) + "% Procesado: " + String.valueOf(val.getEntidad()));
+            }
+
+            @Override
+            protected void done() {
+                // this method is called when the background 
+                // thread finishes execution
+                try {
+                    String statusMsg = (String) get();
+                    System.out.println("Reporte finalizado");
+                    statusLabel.setText(statusMsg);
+                    jbAceptar.setEnabled(true);
+
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+
+        // executes the swingworker on worker thread
+        sw1.execute();
+    }
+
+    public void exportarMovimientos(Date fechaInicio, Date fechaFin, final List<M_cliente> clientesList,
+            boolean inclusivo, JLabel statusLabel, JButton jbAceptar) {
+        int totalVal = clientesList.size();
+        directory = null;
+        String desktop = System.getProperty("user.home") + "\\Desktop";
+        JFileChooser chooser = new JFileChooser(desktop);
+        if (chooser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
+            directory = chooser.getSelectedFile();
+            directory.setWritable(true);
+            directory.setExecutable(true);
+            directory.setReadable(true);
+        } else {
+            return;
+        }
+
+        SwingWorker sw1;
+        sw1 = new SwingWorker() {
+
+            @Override
+            protected String doInBackground() throws Exception {
+                // define what thread will do here
+
+                // Create a row and put some cells in it. Rows are 0 based.
+                int filaActual = 0;
+                //INICIO ESTADO DE CUENTA - FECHAS
+                Row rowFechaInicio = sheet.createRow(filaActual);
+                filaActual++;
+                rowFechaInicio.createCell(0).setCellValue(new HSSFRichTextString("Fecha inicio"));
+                rowFechaInicio.createCell(1).setCellValue(fechaInicio);
+                rowFechaInicio.getCell(0).setCellStyle(style5);
+                rowFechaInicio.getCell(1).setCellStyle(dateCellStyle);
+                Row rowFechaFin = sheet.createRow(filaActual);
+                filaActual++;
+                rowFechaFin.createCell(0).setCellValue(new HSSFRichTextString("Fecha Fin"));
+                rowFechaFin.createCell(1).setCellValue(fechaFin);
+                rowFechaFin.getCell(0).setCellStyle(style5);
+                rowFechaFin.getCell(1).setCellStyle(dateCellStyle);
+                /**
+                 * INICIO DE BUCLE DE CLIENTES
+                 */
+                for (M_cliente unCliente : clientesList) {
+                    publish(unCliente);
+                    System.out.println("unCliente: " + unCliente);
+
+                    //INICIO DETALLE
+                    boolean iniciar = false;
+                    boolean saldoAntImprimido = false;
+                    boolean cabeceraImprimido = false;
+                    int debe = 0;
+                    int haber = 0;
+                    int balance = 0;
+                    cabeceraList = (ArrayList<E_movimientoContable>) DB_Cobro.consultarPagosPendiente(new Date(), new Date(), unCliente.getIdCliente(), -1, false);
+                    for (int i = 0; i < cabeceraList.size(); i++) {
+                        E_movimientoContable unDetalle = cabeceraList.get(i);
+                        System.out.println("mov: " + unDetalle.getMovDescripcion() + " - fec: " + unDetalle.getMovFecha());
+                        Row rowDetalle = null;
+                        filaActual++;
+                        Row rowClienteDescripcion = sheet.createRow(filaActual);
+                        filaActual++;
+                        rowClienteDescripcion.createCell(0).setCellValue(new HSSFRichTextString("Cliente"));
+                        rowClienteDescripcion.createCell(1).setCellValue(unCliente.getEntidad());
+                        rowClienteDescripcion.getCell(0).setCellStyle(style5);
+                        //FIN ESTADO DE CUENTA - CABECERA
+                        //INICIO CABECERA DETALLE 
+                        Row rowCabecera = sheet.createRow(filaActual);
+                        filaActual++;
+                        rowCabecera.createCell(0).setCellValue(new HSSFRichTextString("Fecha"));
+                        rowCabecera.getCell(0).setCellStyle(style1);
+                        rowCabecera.createCell(1).setCellValue(new HSSFRichTextString("Documento"));
+                        rowCabecera.getCell(1).setCellStyle(style1);
+                        rowCabecera.createCell(2).setCellValue(new HSSFRichTextString("Monto"));
+                        rowCabecera.getCell(2).setCellStyle(style1);
+                        rowCabecera.createCell(3).setCellValue(new HSSFRichTextString("Pago"));
+                        rowCabecera.getCell(3).setCellStyle(style1);
+                        rowCabecera.createCell(4).setCellValue(new HSSFRichTextString("Saldo"));
+                        rowCabecera.getCell(4).setCellStyle(style1);
+                        rowDetalle = sheet.createRow(filaActual);
+                        saldoAntImprimido = true;
+                        filaActual++;
                         switch (unDetalle.getTipo()) {
                             case E_movimientoContable.TIPO_SALDO_INICIAL: {
                                 debe = debe + (int) unDetalle.getClienteSaldoInicial().getSaldoInicial();

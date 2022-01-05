@@ -53,7 +53,7 @@ import net.sf.jasperreports.swing.JRViewer;
  */
 public class FiltroReportes extends JDialog implements ActionListener, KeyListener, RecibirClienteCallback {
 
-    public static final int PENDIENTE = 1, VENCIDAS = 2, ESTADO_CUENTA_XLS = 3;
+    public static final int PENDIENTE = 1, VENCIDAS = 2, ESTADO_CUENTA_XLS = 3, SALDO_CLIENTE_XLS = 4;
     private JPanel jpCliente, jpSouth;
     private JTable jtClientes;
     private JButton jbQuitar, jbAgregar, jbGenerar, jbCancelar;

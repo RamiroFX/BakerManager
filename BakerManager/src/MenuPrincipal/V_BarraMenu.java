@@ -27,7 +27,7 @@ public class V_BarraMenu extends JMenuBar {
             
     public JMenuItem jmiCobroPendiente, jmiCobroPendienteVencidos, jmiCobroPendientePorCliente,
             jmiCobroPendientePorClienteVencidos, jmiEstadoCuentaClientes, jmiEstadoCuentaProveedores,
-            jmiCompras, jmiEstadoCuentaClientesXLS;
+            jmiCompras, jmiEstadoCuentaClientesXLS, jmiSaldoPendienteClientesXLS;
     //public JMenuItem  jmiLogIn,jmiLogOut, jmiMenuPrincipal;
     private V_inicio frame; //referencia al frame principal.
     //private boolean loginActivo=true;
@@ -155,6 +155,7 @@ public class V_BarraMenu extends JMenuBar {
         jmiCobroPendientePorClienteVencidos = new JMenuItem("Cobros pendientes por Cliente vencidos(30Días)");
         jmiEstadoCuentaClientes = new JMenuItem("Estado de cuenta de clientes(PDF)");
         jmiEstadoCuentaClientesXLS = new JMenuItem("Estado de cuenta de clientes(XLS)");
+        jmiSaldoPendienteClientesXLS = new JMenuItem("Saldos pendientes de clientes(XLS)");
         jmiEstadoCuentaProveedores = new JMenuItem("Estado de cuenta de proveedores");
         jmiCompras = new JMenuItem("Proveedores x Categorías");
         jmReportes.add(jmiCobro);
@@ -162,6 +163,7 @@ public class V_BarraMenu extends JMenuBar {
         jmReportes.add(jmCompras);
         jmiCobro.add(jmiEstadoCuentaClientes);
         jmiCobro.add(jmiEstadoCuentaClientesXLS);
+        jmiCobro.add(jmiSaldoPendienteClientesXLS);
         jmiCobro.addSeparator();
         jmiCobro.add(jmiCobroPendiente);
         jmiCobro.add(jmiCobroPendienteVencidos);
